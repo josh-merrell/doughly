@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
 const { supabase, verifyUser } = require('./db');
+// Import the express module
+const express = require('express');
 
 // Instantiate an express application
 const app = express();
