@@ -3,7 +3,8 @@
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "supabase": "^1.62.3"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.22.0",
