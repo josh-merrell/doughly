@@ -22,7 +22,6 @@ async function getPersonByID(req, res) {
   const db = req.client.db;
   const processor = require('./index')({ db });
   const { personID } = req.params;
-  console.log(`personID: ${personID}`)
   const returner = await processor.exists.by.personID({
     personID,
   });
@@ -50,9 +49,7 @@ async function deletePerson(req, res) {
   const db = req.client.db;
   const processor = require('./index')({ db });
   const { personID } = req.params;
-  const returner = await processor.delete({
-    personID,
-  });
+  const returner = await processor.delete({ personID });
   return res.json(returner);
 }
 

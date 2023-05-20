@@ -8,16 +8,16 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { cursor, limit, clientIDs, firstName, lastName, phone, city, state } = options;
+    const { limit, clientIDs, firstName, lastName, phone, city, state } = options;
 
     let q = await db
       .from('clients')
       .select()
-      .order('client_id', { ascending: true })
+      .order('clientID', { ascending: true })
       .limit(limit)
       // .offset(cursor);
 
-    if (clientIDs) { q = q.in('client_id', clientIDs) }
+    if (clientIDs) { q = q.in('clientID', clientIDs) }
     if (firstName) { q = q.like('firstName', firstName) }
     if (lastName) { q = q.like('lastName', lastName) }
     if (phone) { q = q.like('phone', phone) }
@@ -41,22 +41,22 @@ module.exports = ({ db }) => {
     person = person.data;
 
     //if successful, record timestamp and create the client mapping with the new personID
-    if (person.person_id) {
+    if (person.personID) {
       const { data: newClient, error: newClientError } = await db
         .from('clients')
         .insert({
-          person_id: person.person_id,
-          created_time: new Date().toISOString(),
+          personID: person.personID,
+          createdTime: new Date().toISOString(),
         })
-        .select('client_id');
+        .select('clientID');
 
       if (newClientError) {
         global.logger.info(`Error creating client: ${newClientError.message}`);
         //delete the person that was just created
-        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${person.person_id}`);
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${person.personID}`);
         return { error: newClientError.message };
       } else {
-        global.logger.info(`Created client ${newClient.client_id}`);
+        global.logger.info(`Created client ${newClient.clientID}`);
         return newClient;
       }
     } else {

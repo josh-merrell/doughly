@@ -9,16 +9,16 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { cursor, limit, personIDs, firstName, lastName, phone, city, state } = options;
+    const { limit, personIDs, firstName, lastName, phone, city, state } = options;
 
     let q = await db
       .from('persons')
       .select()
-      .order('person_id', { ascending: true })
+      .order('personID', { ascending: true })
       .limit(limit)
       // .offset(cursor);
 
-    if (personIDs) { q = q.in('person_id', personIDs) }
+    if (personIDs) { q = q.in('personID', personIDs) }
     if (firstName) { q = q.like('firstName', firstName) }
     if (lastName) { q = q.like('lastName', lastName) }
     if (phone) { q = q.like('phone', phone) }
@@ -39,7 +39,7 @@ module.exports = ({ db }) => {
   async function create(options) {
     const { firstName, lastName, email, phone, address1, address2, city, state } = options;
 
-    //if anything except phone and address_2 are missing, return an error
+    //if anything except phone and address2 are missing, return an error
     if (!firstName || !lastName || !email || !address1 || !city || !state) {
       global.logger.info(`Missing required fields`);
       return { error: 'Missing required fields' };
@@ -63,15 +63,15 @@ module.exports = ({ db }) => {
     const { data, error } = await db
       .from('persons')
       .insert({ 
-        name_first: firstName, 
-        name_last: lastName, email, phone, address_1: address1, address_2: address2, city, state })
-      .select('person_id');
+        nameFirst: firstName, 
+        nameLast: lastName, email, phone, address1: address1, address2: address2, city, state })
+      .select('personID');
 
     if (error) {
       global.logger.info(`Error creating person ${firstName} ${lastName}: ${error.message}`);
       return { error: error.message };
     } else {
-      global.logger.info(`Created person ${firstName} ${lastName}, ID ${data[0].person_id}`);
+      global.logger.info(`Created person ${firstName} ${lastName}, ID ${data[0].personID}`);
       return data[0];
     }
   }
@@ -106,7 +106,7 @@ module.exports = ({ db }) => {
       return { error: `Person to delete ${options.personID} does not exist` };
     }
 
-    let { data, error } = await db.from('persons').delete().eq( 'person_id', options.personID );
+    let { data, error } = await db.from('persons').delete().eq( 'personID', options.personID );
     if (error) {
       global.logger.info(`Error deleting personID: ${options.personID}: ${error.message}`);
       return { error: error.message };
@@ -116,7 +116,7 @@ module.exports = ({ db }) => {
   }
 
   async function existsByPersonID(options) {
-    const { data, error } = await db.from('persons').select('person_id').match({ person_id: options.personID });
+    const { data, error } = await db.from('persons').select('personID').match({ personID: options.personID });
     if (error) {
       global.logger.info(`Error checking if personID: ${options.personID} exists: ${error.message}`);
       return { error: error.message };
