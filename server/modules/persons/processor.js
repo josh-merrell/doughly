@@ -9,21 +9,22 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { limit, personIDs, firstName, lastName, phone, city, state } = options;
+    const { personIDs, nameFirst, nameLast, phone, city, state, zip } = options;
 
-    let q = await db
+    let q = db
       .from('persons')
       .select()
       .order('personID', { ascending: true })
-      .limit(limit)
+      // .limit(limit)
       // .offset(cursor);
 
     if (personIDs) { q = q.in('personID', personIDs) }
-    if (firstName) { q = q.like('firstName', firstName) }
-    if (lastName) { q = q.like('lastName', lastName) }
+    if (nameFirst) { q = q.like('nameFirst', nameFirst); }
+    if (nameLast) { q = q.like('nameLast', nameLast); }
     if (phone) { q = q.like('phone', phone) }
     if (city) { q = q.like('city', city) }
     if (state) { q = q.like('state', state) }
+    if (zip) { q = q.like('zip', zip) }
 
     const { data: persons, error } = await q;
 
@@ -37,13 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { firstName, lastName, email, phone, address1, address2, city, state } = options;
-
-    //if anything except phone and address2 are missing, return an error
-    if (!firstName || !lastName || !email || !address1 || !city || !state) {
-      global.logger.info(`Missing required fields`);
-      return { error: 'Missing required fields' };
-    }
+    const { nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
 
     //make sure the email is not already in use. If so, return an error.
     const { data: emailExists, error: emailExistsError } = await db
@@ -63,15 +58,14 @@ module.exports = ({ db }) => {
     const { data, error } = await db
       .from('persons')
       .insert({ 
-        nameFirst: firstName, 
-        nameLast: lastName, email, phone, address1: address1, address2: address2, city, state })
+        nameFirst, nameLast, email, phone, address1, address2, city, state, zip })
       .select('personID');
 
     if (error) {
-      global.logger.info(`Error creating person ${firstName} ${lastName}: ${error.message}`);
+      global.logger.info(`Error creating person ${nameFirst} ${nameLast}: ${error.message}`);
       return { error: error.message };
     } else {
-      global.logger.info(`Created person ${firstName} ${lastName}, ID ${data[0].personID}`);
+      global.logger.info(`Created person ${nameFirst} ${nameLast}, ID ${data[0].personID}`);
       return data[0];
     }
   }
@@ -79,13 +73,29 @@ module.exports = ({ db }) => {
   async function update(options) {
     const updateFields = {};
     for (const key in options) {
-      if (key !== 'personID' && options[key] !== undefined) {
+      if (key !== 'personID' && options[key]) {
         updateFields[key] = options[key];
       }
     }
+    //if email is being updated, make sure the new email is not already in use. If so, return an error.
+    if (updateFields.email) {
+      const { data: emailExists, error: emailExistsError } = await db
+        .from('persons')
+        .select('email')
+        .match({ email: updateFields.email });
 
+      if (emailExistsError) {
+        global.logger.info(`Error checking if email ${updateFields.email} exists: ${emailExistsError.message}`);
+        return { error: emailExistsError.message };
+      } else if (emailExists.length > 0) {
+        global.logger.info(`Email ${updateFields.email} already exists`);
+        return { error: `Email ${updateFields.email} already exists` };
+      }
+    }
+
+    //if the email is unique, update provided fields in the 'persons' table,
     try {
-      const updatedPerson = await updater('persons', updateFields, { personID: options.personID });
+      const updatedPerson = await updater('personID', options.personID, 'persons', updateFields)
       global.logger.info(`Updated person ${options.personID}`);
       return updatedPerson;
     } catch (error) {
@@ -106,6 +116,7 @@ module.exports = ({ db }) => {
       return { error: `Person to delete ${options.personID} does not exist` };
     }
 
+    //if the person exists, delete the person from the 'persons' table,
     let { data, error } = await db.from('persons').delete().eq( 'personID', options.personID );
     if (error) {
       global.logger.info(`Error deleting personID: ${options.personID}: ${error.message}`);

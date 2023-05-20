@@ -28,7 +28,7 @@
             "explode": false
           },
           {
-            "name": "firstName",
+            "name": "nameFirst",
             "in": "query",
             "description": "Optional first name to filter users by",
             "required": false,
@@ -37,7 +37,7 @@
             }
           },
           {
-            "name": "lastName",
+            "name": "nameLast",
             "in": "query",
             "description": "Optional last name to filter users by",
             "required": false,
@@ -67,6 +67,15 @@
             "name": "state",
             "in": "query",
             "description": "Optional city to filter users by",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "zip",
+            "in": "query",
+            "description": "Optional zip to filter users by",
             "required": false,
             "schema": {
               "type": "string"
@@ -168,6 +177,9 @@
                           "WI",
                           "WY"
                         ]
+                      },
+                      "zip": {
+                        "type": "string"
                       }
                     }
                   }
@@ -196,10 +208,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "firstName": {
+                  "nameFirst": {
                     "type": "string"
                   },
-                  "lastName": {
+                  "nameLast": {
                     "type": "string"
                   },
                   "email": {
@@ -277,6 +289,9 @@
                     "type": "string"
                   },
                   "phone": {
+                    "type": "string"
+                  },
+                  "zip": {
                     "type": "string"
                   }
                 }
@@ -334,10 +349,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "firstName": {
+                  "nameFirst": {
                     "type": "string"
                   },
-                  "lastName": {
+                  "nameLast": {
                     "type": "string"
                   },
                   "email": {
@@ -415,6 +430,9 @@
                     ]
                   },
                   "phone": {
+                    "type": "string"
+                  },
+                  "zip": {
                     "type": "string"
                   }
                 }
@@ -515,6 +533,9 @@
                         "WI",
                         "WY"
                       ]
+                    },
+                    "zip": {
+                      "type": "string"
                     }
                   }
                 }
@@ -6522,10 +6543,10 @@
       "NewClient": {
         "type": "object",
         "properties": {
-          "firstName": {
+          "nameFirst": {
             "type": "string"
           },
-          "lastName": {
+          "nameLast": {
             "type": "string"
           },
           "email": {
@@ -6603,6 +6624,9 @@
             "type": "string"
           },
           "phone": {
+            "type": "string"
+          },
+          "zip": {
             "type": "string"
           }
         }
@@ -6703,16 +6727,19 @@
               "WI",
               "WY"
             ]
+          },
+          "zip": {
+            "type": "string"
           }
         }
       },
       "ClientUpdateRequest": {
         "type": "object",
         "properties": {
-          "firstName": {
+          "nameFirst": {
             "type": "string"
           },
-          "lastName": {
+          "nameLast": {
             "type": "string"
           },
           "email": {
@@ -6790,6 +6817,9 @@
             ]
           },
           "phone": {
+            "type": "string"
+          },
+          "zip": {
             "type": "string"
           }
         }
