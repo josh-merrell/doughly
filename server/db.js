@@ -1,12 +1,9 @@
-const { createClient } = require('@supabase/supabase.js');
-const fs = require('fs');
-const path = require('path');
-const { set } = require('lodash');
+const { createClient } = require('@supabase/supabase-js');
 
 const url = process.env.SUPABASE_DOUGHLEAP_URL;
 const key = process.env.SUPABASE_DOUGHLEAP_KEY;
 
-const supabase = createClient(url, key);
+const supabase = createClient(url, key, { db: { schema: 'bakery' } });
 
 const verifyUser = async (req, res, next) => {
   const token = req.headers.token;
@@ -31,33 +28,4 @@ const updater = async (clientID, table, updateFields) => {
   }
 };
 
-const normalizePath = (p) => p.replace(/\\/gm, '/');
-
-function walkDir(dir) {
-  const dirents = fs.readdirSync(dir, { withFileTypes: true });
-  const files = dirents.map((dirent) => {
-    const res = normalizePath(path.resolve(dir, dirent.name));
-    return dirent.isDirectory() ? walkDir(res) : res;
-  });
-  return Array.prototype.concat(...files);
-}
-
-const requireSQL = (dir) => {
-  const returner = {};
-
-  const rawPaths = walkDir(dir);
-
-  const currentPath = `${normalizePath(path.resolve(path.normalize(dir)))}/`;
-
-  const paths = rawPaths.filter((f) => f.endsWith(`.sql`));
-
-  for (const p of paths) {
-    const subtracted = p.replace(currentPath, '');
-    const dotted = subtracted.replace(/\.sql/gm, '').replace(/\//gm, '.');
-    const sqlFile = fs.readFileSync(p).toString();
-    set(returner, dotted, sqlFile);
-  }
-  return returner;
-};
-
-module.exports = { supabase, verifyUser, updater, requireSQL };
+module.exports = { supabase, verifyUser, updater };

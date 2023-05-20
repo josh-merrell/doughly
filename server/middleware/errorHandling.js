@@ -36,7 +36,8 @@ module.exports.error = (m, c) => {
   return e;
 };
 
-//with async/await, you need some way to catch error instead of using try/catch in each controller, we wrap the function in catchErrors(), catch any thrown errors, and pass it along to our express middleware with next()
+//with async/await, you need some way to catch error instead of using try/catch in each controller, so we wrap
+//the function in catchErrors(), catch any thrown errors, and pass it along to our express middleware with next()
 module.exports.errorCatcher = (fn) => (req, res, next) => {
   fn(req, res, next).catch(next);
 };
@@ -52,26 +53,17 @@ module.exports.getErrorHandler = () => {
 const devErrorHandler = (err, req, res, _next) => {
   let status = err.code || 500;
   if (isNaN(status)) {
-    console.log(
-      `In errorHandler, error code: ${err.code}, error object: ${JSON.stringify(
-        err,
-      )}`,
-    );
+    global.logger.info(`In errorHandler, error code: ${err.code}, error object: ${JSON.stringify(err)}`);
     status = 400;
   }
   delete err.code;
 
   if (err.message !== ErrSystemUnavailable().message) {
-    console.log(`Error: ${err.message}`);
+    global.logger.info(`Error: ${err.message}`);
   }
 
   if (err.stack) {
-    res
-      .status(status)
-      .send(
-        `<h1>${err.message}</h1><h2>${err.code}</h2><pre>${err.stack}</pre>`,
-      )
-      .end();
+    res.status(status).send(`<h1>${err.message}</h1><h2>${err.code}</h2><pre>${err.stack}</pre>`).end();
   } else {
     //else return the json
     res
