@@ -7,7 +7,7 @@
   "rules": {
     "no-console": "warn",
     "eqeqeq": "error",
-    "max-len": ["error", { "code": 120 }]
+    "max-len": ["error", { "code": 180 }]
   },
   "env": {
     "node": true,

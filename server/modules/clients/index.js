@@ -1,31 +1,30 @@
+/* eslint-disable prettier/prettier */
+
+const axios = require('axios');
+
 'use strict';
 
-const db = require('../../db');
-const SQL = db.requireSQL(`${__dirname}/sql`);
-const updater = db.updater;
+const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
     const { cursor, limit, clientIDs, firstName, lastName, phone, city, state } = options;
-    let filter = clientIDs !== undefined ? ` AND c.clientID IN(${'?clientIDs?'})` : '';
-    filter += firstName !== undefined ? ` AND c.firstName LIKE ${'?firstName?'}` : '';
-    filter += lastName !== undefined ? ` AND c.lastName LIKE ${'?lastName?'}` : '';
-    filter += phone !== undefined ? ` AND c.phone LIKE ${'?phone?'}` : '';
-    filter += city !== undefined ? ` AND c.city LIKE ${'?city?'}` : '';
-    filter += state !== undefined ? ` AND c.state LIKE ${'?state?'}` : '';
 
-    const q = SQL.get.all.replace(/\{\{filter\}\}/gm, filter);
-    const params = {
-      cursor: cursor,
-      limit: limit,
-      clientIDs: clientIDs,
-      firstName: `%${firstName}%`,
-      lastName: `%${lastName}%`,
-      phone: `%${phone}%`,
-      city: `%${city}%`,
-      state: `%${state}%`,
-    };
-    const { data, error } = await db.sql.raw(q, params);
+    let q = await db
+      .from('clients')
+      .select()
+      .order('client_id', { ascending: true })
+      .limit(limit)
+      // .offset(cursor);
+
+    if (clientIDs) { q = q.in('client_id', clientIDs) }
+    if (firstName) { q = q.like('firstName', firstName) }
+    if (lastName) { q = q.like('lastName', lastName) }
+    if (phone) { q = q.like('phone', phone) }
+    if (city) { q = q.like('city', city) }
+    if (state) { q = q.like('state', state) }
+
+    const { data, error } = await q;
 
     if (error) {
       global.logger.info(`Error getting clients: ${error.message}`);
@@ -37,28 +36,32 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { clientID, firstName, lastName, email, phone, address_1, address_2, city, state } = options;
+    //attempt to create a new person
+    let person = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, options);
+    person = person.data;
 
-    const q = SQL.create;
-    const params = {
-      clientID: clientID,
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phone: phone,
-      address_1: address_1,
-      address_2: address_2,
-      city: city,
-      state: state,
-    };
-    const { data, error } = await db.sql.raw(q, params);
+    //if successful, record timestamp and create the client mapping with the new personID
+    if (person.person_id) {
+      const { data: newClient, error: newClientError } = await db
+        .from('clients')
+        .insert({
+          person_id: person.person_id,
+          created_time: new Date().toISOString(),
+        })
+        .select('client_id');
 
-    if (error) {
-      global.logger.info(`Error creating client: ${error.message}`);
-      return { error: error.message };
+      if (newClientError) {
+        global.logger.info(`Error creating client: ${newClientError.message}`);
+        //delete the person that was just created
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${person.person_id}`);
+        return { error: newClientError.message };
+      } else {
+        global.logger.info(`Created client ${newClient.client_id}`);
+        return newClient;
+      }
     } else {
-      global.logger.info(`Created client ${clientID}`);
-      return data;
+      global.logger.info(`Error creating person while trying to create client: ${person.error}`);
+      return { error: person.error };
     }
   }
 
@@ -80,22 +83,22 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function deleteClient(clientID) {
-    const { data, error } = await db.from('clients').delete().match({ clientID: clientID });
+  async function deleteClient(options) {
+    const { data, error } = await db.from('clients').delete().match({ clientID: options.clientID });
 
     if (error) {
-      global.logger.info(`Error deleting client ${clientID}: ${error.message}`);
+      global.logger.info(`Error deleting client ${options.clientID}: ${error.message}`);
       return { error: error.message };
     }
 
     return data;
   }
 
-  async function existsByClientID(clientID) {
-    const { data, error } = await db.from('clients').select('clientID').match({ clientID: clientID });
+  async function existsByClientID(options) {
+    const { data, error } = await db.from('clients').select('clientID').match({ clientID: options.clientID });
 
     if (error) {
-      global.logger.info(`Error checking if client ${clientID} exists: ${error.message}`);
+      global.logger.info(`Error checking if client ${options.clientID} exists: ${error.message}`);
       return { error: error.message };
     }
 

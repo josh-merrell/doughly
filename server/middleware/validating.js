@@ -12,4 +12,4 @@ function routeValidator(schema, location = 'body') {
   };
 }
 
-module.exports = routeValidator;
+module.exports = { routeValidator };
