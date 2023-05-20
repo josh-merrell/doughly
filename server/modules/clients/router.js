@@ -12,7 +12,7 @@ const h = handler;
 router.get('/', queryItemsSplitter('clientIDs'), routeValidator(getClientsSchema, 'query'), errorCatcher(h.getClients));
 router.post('/', routeValidator(newClientSchema, 'body'), errorCatcher(h.createClient));
 
-router.patch('/:clientID', routeValidator(clientUpdateSchema, 'body'), errorCatcher(h.updateClient));
+router.patch('/:clientID', routeValidator(clientUpdateSchema, 'body', 'clientID'), errorCatcher(h.updateClient));
 router.delete('/:clientID', errorCatcher(h.deleteClient));
 
 module.exports = router;

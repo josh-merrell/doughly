@@ -15,15 +15,20 @@ const verifyUser = async (req, res, next) => {
   next();
 };
 
-const updater = async (clientID, table, updateFields) => {
-  const updateQuery = supabase.from(table).update(updateFields).match({ clientID: clientID }).returning('*');
+const updater = async (IDfield, ID, table, updateFields) => {
+  //make a query to supabase to update the record
+  const updateQuery = supabase
+    .from(table)
+    .update(updateFields)
+    .match({ [IDfield]: ID })
+    .select('*');
 
   const { data, error } = await updateQuery;
   if (error) {
-    global.logger.info(`Error updating ${table}: ${error.message}`);
+    global.logger.info(`Error updating ID:${ID} in table:${table} ${error.message}`);
     return { error: error.message };
   } else {
-    global.logger.info(`Updated ${table} ${clientID}`);
+    global.logger.info(`Updated ${table}, ID: ${ID}`);
     return data;
   }
 };
