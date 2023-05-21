@@ -62,10 +62,9 @@ module.exports = ({ db }) => {
     if (error) {
       global.logger.info(`Error creating invoice: ${error.message}`);
       return { error: error.message };
-    } else {
-      global.logger.info(`Created invoice`);
-      return data;
     }
+    global.logger.info(`Created invoice`);
+    return data;
   }
 
   async function update(options) {

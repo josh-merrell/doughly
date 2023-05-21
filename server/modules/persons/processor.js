@@ -23,7 +23,7 @@ module.exports = ({ db }) => {
     if (nameLast) { q = q.like('nameLast', nameLast); }
     if (phone) { q = q.like('phone', phone) }
     if (city) { q = q.like('city', city) }
-    if (state) { q = q.like('state', state) }
+    if (state) { q = q.eq('state', state) }
     if (zip) { q = q.like('zip', zip) }
 
     const { data: persons, error } = await q;
