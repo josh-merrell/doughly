@@ -72,7 +72,7 @@ module.exports = ({ db }) => {
 
   async function update(options) {
     const updateFields = {};
-    for (const key in options) {
+    for (let key in options) {
       if (key !== 'personID' && options[key]) {
         updateFields[key] = options[key];
       }
@@ -132,7 +132,6 @@ module.exports = ({ db }) => {
       global.logger.info(`Error checking if personID: ${options.personID} exists: ${error.message}`);
       return { error: error.message };
     }
-    
     return data.length > 0;
   }
 
