@@ -1173,7 +1173,7 @@
         "operationId": "getStockProducts",
         "parameters": [
           {
-            "name": "stockProductID",
+            "name": "stockProductIDs",
             "in": "query",
             "description": "filter on ID(s) of stock product(s)",
             "schema": {
@@ -1404,7 +1404,7 @@
         "operationId": "getProductStocks",
         "parameters": [
           {
-            "name": "stockID",
+            "name": "stockIDs",
             "in": "query",
             "description": "filter on ID(s) of product stock(s)",
             "schema": {
@@ -1633,7 +1633,7 @@
         "operationId": "getOrderTaskProducts",
         "parameters": [
           {
-            "name": "orderTaskID",
+            "name": "orderTaskIDs",
             "in": "query",
             "description": "Filter on ID(s) of orderTaskProducts.",
             "required": false,
@@ -1861,7 +1861,7 @@
         "operationId": "getInvoices",
         "parameters": [
           {
-            "name": "invoiceID",
+            "name": "invoiceIDs",
             "in": "query",
             "description": "The ID(s) of the invoice(s). Comma-separated list of integers.",
             "required": false,
@@ -1908,6 +1908,24 @@
                 "disputed"
               ]
             }
+          },
+          {
+            "name": "subtotalMin",
+            "in": "query",
+            "description": "A filter on the minimum invoice amount.",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "subtotalMax",
+            "in": "query",
+            "description": "A filter on the maximum invoice amount.",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
           }
         ],
         "responses": {
@@ -1944,6 +1962,21 @@
                           "refunded",
                           "disputed"
                         ]
+                      },
+                      "subtotal": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "The total billable amount for this invoice."
+                      },
+                      "taxesFees": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Taxes and Fees applied to subtotal."
+                      },
+                      "totalBillable": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Subtotal plus taxes and fees."
                       }
                     }
                   }
@@ -1966,7 +1999,8 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "status"
+                  "status",
+                  "billableAmount"
                 ],
                 "properties": {
                   "type": {
@@ -1992,6 +2026,11 @@
                       "disputed"
                     ],
                     "description": "The status of the invoice."
+                  },
+                  "subtotal": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "The total billable amount for this invoice."
                   }
                 }
               }
@@ -2030,6 +2069,21 @@
                         "refunded",
                         "disputed"
                       ]
+                    },
+                    "subtotal": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The total billable amount for this invoice."
+                    },
+                    "taxesFees": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "Taxes and Fees applied to subtotal."
+                    },
+                    "totalBillable": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "Subtotal plus taxes and fees."
                     }
                   }
                 }
@@ -2079,6 +2133,11 @@
                       "disputed"
                     ],
                     "description": "The status of the invoice."
+                  },
+                  "subtotal": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "The total billable amount for this invoice."
                   }
                 }
               }
@@ -2117,6 +2176,21 @@
                         "refunded",
                         "disputed"
                       ]
+                    },
+                    "subtotal": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The total billable amount for this invoice."
+                    },
+                    "taxesFees": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "Taxes and Fees applied to subtotal."
+                    },
+                    "totalBillable": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "Subtotal plus taxes and fees."
                     }
                   }
                 }
@@ -2450,7 +2524,7 @@
         "operationId": "getPayments",
         "parameters": [
           {
-            "name": "paymentID",
+            "name": "paymentIDs",
             "in": "query",
             "description": "Comma-separated list of payment IDs.",
             "required": false,
@@ -3150,7 +3224,7 @@
         "operationId": "getTags",
         "parameters": [
           {
-            "name": "tagID",
+            "name": "tagIDs",
             "in": "query",
             "description": "Comma-separated list of tag IDs",
             "required": false,
@@ -3340,7 +3414,7 @@
         "operationId": "getOrderTags",
         "parameters": [
           {
-            "name": "orderTagID",
+            "name": "orderTagIDs",
             "in": "query",
             "description": "Comma-separated list of order tag IDs.",
             "required": false,
@@ -3491,7 +3565,7 @@
         "operationId": "getRecipeTags",
         "parameters": [
           {
-            "name": "recipeTagID",
+            "name": "recipeTagIDs",
             "in": "query",
             "description": "Comma-separated list of recipe tag IDs.",
             "required": false,
@@ -6913,6 +6987,21 @@
               "refunded",
               "disputed"
             ]
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double",
+            "description": "The total billable amount for this invoice."
+          },
+          "taxesFees": {
+            "type": "number",
+            "format": "double",
+            "description": "Taxes and Fees applied to subtotal."
+          },
+          "totalBillable": {
+            "type": "number",
+            "format": "double",
+            "description": "Subtotal plus taxes and fees."
           }
         }
       },
@@ -6920,7 +7009,8 @@
         "type": "object",
         "required": [
           "type",
-          "status"
+          "status",
+          "billableAmount"
         ],
         "properties": {
           "type": {
@@ -6946,6 +7036,11 @@
               "disputed"
             ],
             "description": "The status of the invoice."
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double",
+            "description": "The total billable amount for this invoice."
           }
         }
       },
@@ -6968,6 +7063,11 @@
               "disputed"
             ],
             "description": "The status of the invoice."
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double",
+            "description": "The total billable amount for this invoice."
           }
         }
       },

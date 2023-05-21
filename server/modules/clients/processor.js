@@ -8,6 +8,8 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { limit, clientIDs, nameFirst, nameLast, phone, city, state, zip } = options;
     const personIDs = [];
+
+    //if filtering by clientIDs, need to get the personID for each clientID
     if (clientIDs) {
       for (const clientID of clientIDs) {
         const { data, error } = await db
