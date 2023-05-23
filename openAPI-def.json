@@ -2200,7 +2200,7 @@
         }
       }
     },
-    "/invoiceNotes": {
+    "/invoices/notes": {
       "get": {
         "tags": [
           "Finance"
@@ -2216,21 +2216,6 @@
               "type": "array",
               "items": {
                 "type": "integer"
-              }
-            },
-            "style": "form",
-            "explode": false
-          },
-          {
-            "name": "dateRange",
-            "in": "query",
-            "description": "Start and end timestamps for filtering invoice notes. Array with two values (start and end timestamps).",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "format": "date-time"
               }
             },
             "style": "form",
@@ -2280,12 +2265,25 @@
             }
           }
         }
-      },
+      }
+    },
+    "/invoices/notes/{invoiceID}": {
       "post": {
         "tags": [
           "Finance"
         ],
         "operationId": "createInvoiceNote",
+        "parameters": [
+          {
+            "name": "invoiceID",
+            "in": "path",
+            "description": "The ID of the invoice.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2293,14 +2291,9 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "invoiceID",
                   "note"
                 ],
                 "properties": {
-                  "invoiceID": {
-                    "type": "integer",
-                    "description": "The ID of the invoice."
-                  },
                   "note": {
                     "type": "string",
                     "description": "The note for the invoice."
@@ -7078,10 +7071,6 @@
           "note"
         ],
         "properties": {
-          "invoiceID": {
-            "type": "integer",
-            "description": "The ID of the invoice."
-          },
           "note": {
             "type": "string",
             "description": "The note for the invoice."
