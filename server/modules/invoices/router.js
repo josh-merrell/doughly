@@ -5,14 +5,17 @@ const { errorCatcher } = require('../../middleware/errorHandling');
 const { queryItemsSplitter } = require('../../middleware/queryStringSplitting');
 const handler = require('./handler');
 const { newInvoiceSchema, invoiceUpdateSchema, getInvoicesSchema } = require('../../schemas/invoice-types');
+const invoiceNotesRouter = require('./notes/router');
+// const { invoiceLogsRouter } = require('./logs/router');
 
 const router = express.Router();
 const h = handler;
 
+router.use('/notes', invoiceNotesRouter);
+// router.use('/logs', invoiceLogsRouter);
+
 router.get('/', queryItemsSplitter('invoiceIDs'), routeValidator(getInvoicesSchema, 'query'), errorCatcher(h.getInvoices));
-
 router.post('/', routeValidator(newInvoiceSchema, 'body'), errorCatcher(h.createInvoice));
-
 router.patch('/:invoiceID', routeValidator(invoiceUpdateSchema, 'body', 'invoiceID'), errorCatcher(h.updateInvoice));
 
 module.exports = router;

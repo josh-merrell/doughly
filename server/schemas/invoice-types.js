@@ -46,8 +46,27 @@ const getInvoicesSchema = {
   },
 };
 
+const getInvoiceNotesSchema = {
+  type: 'object',
+  properties: {
+    invoiceNoteIDs: { type: 'array', items: { type: 'integer' } },
+    invoiceID: { type: 'string' },
+  },
+};
+
+const newInvoiceNoteSchema = {
+  type: 'object',
+  properties: {
+    newNote: {
+      type: 'string',
+    },
+  },
+};
+
 module.exports = {
   newInvoiceSchema,
   invoiceUpdateSchema,
   getInvoicesSchema,
+  getInvoiceNotesSchema,
+  newInvoiceNoteSchema,
 };
