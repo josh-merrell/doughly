@@ -33,7 +33,7 @@ module.exports = ({ db }) => {
     }
 
     //add note to invoice
-    const { data, error } = await db.from('invoiceNotes').insert({ invoiceID, note, time: new Date().toISOString() });
+    const { data, error } = await db.from('invoiceNotes').insert({ invoiceID, note, time: new Date().toISOString() }).select('invoiceNoteID');
 
     if (error) {
       global.logger.info(`Error creating invoiceNote: ${error.message}`);

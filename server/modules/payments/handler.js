@@ -4,15 +4,14 @@ async function getPayments(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { cursor, limit } = req.query;
-  const { paymentIDs, type, status, subtotalMin, subtotalMax } = req.query;
+  const { paymentIDs, method, invoiceID, dateRange } = req.query;
   const returner = await p.get.all({
     cursor,
     limit,
     paymentIDs,
-    type,
-    status,
-    subtotalMin,
-    subtotalMax,
+    invoiceID,
+    method,
+    dateRange,
   });
   return res.json(returner);
 }

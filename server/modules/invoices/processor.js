@@ -81,8 +81,11 @@ module.exports = ({ db }) => {
 
     const taxesFees = await calculateLocalTax(updatedFields.subtotal);
 
-    updatedFields.taxesFees = taxesFees;
-    updatedFields.totalBillable = updatedFields.subtotal + taxesFees;
+    //only update taxesFees and totalBillable if subtotal is being updated
+    if (options.subtotal) {
+      updatedFields.taxesFees = taxesFees;
+      updatedFields.totalBillable = updatedFields.subtotal + taxesFees;
+    }
 
     try {
       const updatedInvoice = await updater('invoiceID', options.invoiceID, 'invoices', updatedFields);

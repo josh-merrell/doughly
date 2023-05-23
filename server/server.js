@@ -26,6 +26,7 @@ const clientsRouter = require('./modules/clients/router');
 const personsRouter = require('./modules/persons/router');
 const invoicesRouter = require('./modules/invoices/router');
 const paymentRouter = require('./modules/payments/router');
+const { queryArrayParser } = require('./middleware/queryParsing');
 // const ordersRouter = require('./modules/orders/router');
 
 app.use(express.json());
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
   req.client = { db: supabase };
   next();
 });
+app.use(queryArrayParser);
 
 app.use('/clients', clientsRouter);
 app.use('/persons', personsRouter);

@@ -1,4 +1,4 @@
-const personUpdateSchema = {
+const personUpdateSchema_body = {
   type: 'object',
   properties: {
     nameFirst: { type: 'string' },
@@ -13,7 +13,23 @@ const personUpdateSchema = {
   },
 };
 
-const newPersonSchema = {
+const personUpdateSchema_params = {
+  type: 'object',
+  required: ['personID'],
+  properties: {
+    personID: { type: 'string' },
+  },
+};
+
+const personDeleteSchema_params = {
+  type: 'object',
+  required: ['personID'],
+  properties: {
+    personID: { type: 'string' },
+  },
+};
+
+const newPersonSchema_body = {
   type: 'object',
   required: ['nameFirst', 'nameLast', 'email', 'city', 'state', 'address1', 'zip'],
   properties: {
@@ -29,7 +45,7 @@ const newPersonSchema = {
   },
 };
 
-const getPersonsSchema = {
+const getPersonsSchema_query = {
   type: 'object',
   properties: {
     personIDs: { type: 'array', items: { type: 'number' } },
@@ -45,8 +61,19 @@ const getPersonsSchema = {
   },
 };
 
+const getPersonSchema_params = {
+  type: 'object',
+  required: ['personID'],
+  properties: {
+    personID: { type: 'string' },
+  },
+};
+
 module.exports = {
-  newPersonSchema,
-  getPersonsSchema,
-  personUpdateSchema,
+  getPersonsSchema_query,
+  getPersonSchema_params,
+  newPersonSchema_body,
+  personUpdateSchema_body,
+  personUpdateSchema_params,
+  personDeleteSchema_params,
 };

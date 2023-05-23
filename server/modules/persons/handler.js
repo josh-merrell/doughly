@@ -23,7 +23,7 @@ async function getPersonByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { personID } = req.params;
-  const returner = await p.exists.by.personID({
+  const returner = await p.exists.by.ID({
     personID,
   });
   return res.json(returner);
