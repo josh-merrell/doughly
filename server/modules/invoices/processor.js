@@ -30,10 +30,9 @@ module.exports = ({ db }) => {
     if (error) {
       global.logger.info(`Error getting invoices: ${error.message}`);
       return { error: error.message };
-    } else {
-      global.logger.info(`Got invoices`);
-      return invoices;
     }
+    global.logger.info(`Got invoices`);
+    return invoices;
   }
 
   async function create(options) {
