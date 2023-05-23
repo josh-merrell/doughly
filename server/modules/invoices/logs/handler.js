@@ -1,32 +1,35 @@
 'use strict';
 
-async function getInvoiceNotes(req, res) {
+async function getInvoiceLogs(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { cursor, limit } = req.query;
-  const { invoiceNoteIDs, invoiceID } = req.query;
+  const { invoiceLogIDs, invoiceID, type, dateRange } = req.query;
   const returner = await p.get.all({
     cursor,
     limit,
-    invoiceNoteIDs,
+    invoiceLogIDs,
     invoiceID,
+    type,
+    dateRange,
   });
   return res.json(returner);
 }
 
-async function createInvoiceNote(req, res) {
+async function createInvoiceLog(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { invoiceID } = req.params;
-  const { note } = req.body;
+  const { log, type } = req.body;
   const returner = await p.create({
     invoiceID,
-    note,
+    log,
+    type,
   });
   return res.json(returner);
 }
 
 module.exports = {
-  getInvoiceNotes,
-  createInvoiceNote,
+  getInvoiceLogs,
+  createInvoiceLog,
 };

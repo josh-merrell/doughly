@@ -1,4 +1,4 @@
-const newPaymentSchema = {
+const newPaymentSchema_body = {
   type: 'object',
   required: ['invoiceID', 'method', 'amount'],
   properties: {
@@ -8,7 +8,7 @@ const newPaymentSchema = {
   },
 };
 
-const getPaymentsSchema = {
+const getPaymentsSchema_query = {
   type: 'object',
   properties: {
     paymentIDs: { type: 'array', items: { type: 'integer' } },
@@ -23,6 +23,6 @@ const getPaymentsSchema = {
 };
 
 module.exports = {
-  newPaymentSchema,
-  getPaymentsSchema,
+  newPaymentSchema_body,
+  getPaymentsSchema_query,
 };

@@ -2336,7 +2336,7 @@
         }
       }
     },
-    "/invoiceLogs": {
+    "/invoices/logs": {
       "get": {
         "tags": [
           "Finance"
@@ -2434,12 +2434,25 @@
             }
           }
         }
-      },
+      }
+    },
+    "/invoices/logs/{invoiceID}": {
       "post": {
         "tags": [
           "Finance"
         ],
         "operationId": "createInvoiceLog",
+        "parameters": [
+          {
+            "name": "invoiceID",
+            "in": "path",
+            "description": "The ID of the invoice.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2447,15 +2460,10 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "invoiceID",
                   "type",
                   "log"
                 ],
                 "properties": {
-                  "invoiceID": {
-                    "type": "integer",
-                    "description": "The ID of the invoice."
-                  },
                   "type": {
                     "type": "string",
                     "enum": [
@@ -2602,6 +2610,11 @@
                         "type": "string",
                         "format": "date-time",
                         "description": "The timestamp when the payment was received."
+                      },
+                      "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "The amount of this payment."
                       }
                     }
                   }
@@ -2645,6 +2658,11 @@
                     "type": "string",
                     "format": "date-time",
                     "description": "The timestamp when the payment was received."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "The amount of this payment."
                   }
                 }
               }
@@ -2680,6 +2698,11 @@
                       "type": "string",
                       "format": "date-time",
                       "description": "The timestamp when the payment was received."
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The amount of this payment."
                     }
                   }
                 }
@@ -7102,15 +7125,10 @@
       "NewInvoiceLog": {
         "type": "object",
         "required": [
-          "invoiceID",
           "type",
           "log"
         ],
         "properties": {
-          "invoiceID": {
-            "type": "integer",
-            "description": "The ID of the invoice."
-          },
           "type": {
             "type": "string",
             "enum": [
@@ -7175,6 +7193,11 @@
             "type": "string",
             "format": "date-time",
             "description": "The timestamp when the payment was received."
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "description": "The amount of this payment."
           }
         }
       },
@@ -7202,6 +7225,11 @@
             "type": "string",
             "format": "date-time",
             "description": "The timestamp when the payment was received."
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "description": "The amount of this payment."
           }
         }
       },

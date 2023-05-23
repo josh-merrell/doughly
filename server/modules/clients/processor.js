@@ -8,7 +8,6 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { limit, clientIDs, nameFirst, nameLast, phone, city, state, zip } = options;
     const personIDs = [];
-
     //if filtering by clientIDs, need to get the personID for each clientID
     if (clientIDs) {
       for (const clientID of clientIDs) {
@@ -19,11 +18,21 @@ module.exports = ({ db }) => {
           .single();
 
         if (error) {
-          global.logger.info(`Error getting personID for clientID ${clientID}: ${error.message}`);
+          global.logger.info(`Error getting personID from clients table ${clientID}: ${error.message}`);
           return { error: error.message };
         } else {
           if (data) personIDs.push(data.personID);
         }
+      }
+    } else {
+      //otherwise, need to just add all personIDs that exist in clients table to the array
+      const { data, error } = await db.from('clients').select('personID');
+      if (error) {
+        global.logger.info(`Error getting all personIDs from clients table: ${error.message}`);
+        return { error: error.message };
+      }
+      for (const client of data) {
+        personIDs.push(client.personID);
       }
     }
 
@@ -37,9 +46,7 @@ module.exports = ({ db }) => {
       state,
       zip,
     }
-    if (clientIDs) {
-      queryParams.personIDs = personIDs.join(',');
-    }
+    queryParams.personIDs = personIDs.join(',');
     let { data, error } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, {
       params: queryParams,
     });
@@ -51,6 +58,15 @@ module.exports = ({ db }) => {
       global.logger.info(`Got clients`);
       return data;
     }
+  }
+
+  async function getClientByID(options) {
+    const { data, error } = await db.from('clients').select().eq('clientID', options.clientID).single();
+    if (error) {
+      global.logger.info(`Error getting client by ID: ${options.clientID}:${error.message}`);
+      return { error: error.message };
+    }
+    return data;
   }
 
   async function create(options) {
@@ -150,10 +166,13 @@ module.exports = ({ db }) => {
     delete: deleteClient,
     exists: {
       by: {
-        clientID: existsByClientID,
+        ID: existsByClientID,
       },
     },
     get: {
+      by: {
+        clientID: getClientByID,
+      },
       all: getAll,
     },
   };
