@@ -126,12 +126,23 @@ module.exports = ({ db }) => {
     return data;
   }
 
-  async function existsByPersonID(options) {
+  async function getPersonByID(options) {
     const { data, error } = await db.from('persons').select('personID').match({ personID: options.personID });
     if (error) {
-      global.logger.info(`Error checking if personID: ${options.personID} exists: ${error.message}`);
+      global.logger.info(`Error getting person by ID:${options.personID}: ${error.message}`);
       return { error: error.message };
     }
+    return data;
+  }
+
+  async function existsByPersonID(options) {
+    const { data, error } = await db.from('persons').select('personID').match({ personID: options.personID });
+
+    if (error) {
+      global.logger.info(`Error checking if person ${options.personID} exists: ${error.message}`);
+      return { error: error.message };
+    }
+
     return data.length > 0;
   }
 
@@ -141,10 +152,13 @@ module.exports = ({ db }) => {
     delete: deletePerson,
     exists: {
       by: {
-        personID: existsByPersonID,
+        ID: existsByPersonID,
       },
     },
     get: {
+      by: {
+        personID: getPersonByID,
+      },
       all: getAll,
     },
   };

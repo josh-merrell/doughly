@@ -19,6 +19,14 @@ async function getClients(req, res) {
   return res.json(returner);
 }
 
+async function getClientByID(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { clientID } = req.params;
+  const returner = await p.get.byID({ clientID });
+  return res.json(returner);
+}
+
 async function createClient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -67,6 +75,7 @@ async function deleteClient(req, res) {
 
 module.exports = {
   getClients,
+  getClientByID,
   createClient,
   updateClient,
   deleteClient,
