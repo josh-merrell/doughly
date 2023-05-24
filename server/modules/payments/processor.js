@@ -2,7 +2,7 @@
 
 module.exports = ({ db }) => {
   async function create(options) {
-    const { method, invoiceID, amount } = options;
+    const { method, invoiceID, amount, receivedTime } = options;
 
     //if amount is 0 or negative, return an error
     if (amount <= 0) {
@@ -44,7 +44,7 @@ module.exports = ({ db }) => {
     const { data: newPayment, error } = await db
       .from('payments')
       .insert({
-        receivedTime: new Date().toISOString(),
+        receivedTime: receivedTime ? receivedTime : new Date().toISOString(),
         method,
         invoiceID,
         amount,
