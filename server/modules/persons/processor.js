@@ -31,10 +31,9 @@ module.exports = ({ db }) => {
     if (error) {
       global.logger.info(`Error getting persons: ${error.message}`);
       return { error: error.message };
-    } else {
-      global.logger.info(`Got persons`);
-      return persons;
     }
+    global.logger.info(`Got ${persons.length} persons`);
+    return persons;
   }
 
   async function create(options) {
@@ -47,7 +46,7 @@ module.exports = ({ db }) => {
       .match({ email: email });
 
     if (emailExistsError) {
-      global.logger.info(`Error checking if email ${email} exists: ${emailExistsError.message}`);
+      global.logger.info(`Error checking whether email ${email} exists: ${emailExistsError.message}`);
       return { error: emailExistsError.message };
     } else if (emailExists.length > 0) {
       global.logger.info(`Email ${email} already exists`);
@@ -85,7 +84,7 @@ module.exports = ({ db }) => {
         .match({ email: updateFields.email });
 
       if (emailExistsError) {
-        global.logger.info(`Error checking if email ${updateFields.email} exists: ${emailExistsError.message}`);
+        global.logger.info(`Error checking whether email ${updateFields.email} exists: ${emailExistsError.message}`);
         return { error: emailExistsError.message };
       } else if (emailExists.length > 0) {
         global.logger.info(`Email ${updateFields.email} already exists`);
@@ -99,7 +98,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Updated person ${options.personID}`);
       return updatedPerson;
     } catch (error) {
-      global.logger.info(`Error updating persons ${options.personID}: ${error.message}`);
+      global.logger.info(`Error updating persons ID:${options.personID}: ${error.message}`);
       return { error: error.message };
     }
   }
@@ -109,7 +108,7 @@ module.exports = ({ db }) => {
     let { data: personExists, error: personExistsError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${options.personID}`, options);
 
     if (personExistsError) {
-      global.logger.info(`Error checking if personID to del: ${options.personID} exists: ${personExistsError.message}`);
+      global.logger.info(`Error checking whether personID to del: ${options.personID} exists: ${personExistsError.message}`);
       return { error: personExistsError.message };
     } else if (!personExists) {
       global.logger.info(`Person to delete ${options.personID} does not exist`);
@@ -139,7 +138,7 @@ module.exports = ({ db }) => {
     const { data, error } = await db.from('persons').select('personID').match({ personID: options.personID });
 
     if (error) {
-      global.logger.info(`Error checking if person ${options.personID} exists: ${error.message}`);
+      global.logger.info(`Error checking whether person ${options.personID} exists: ${error.message}`);
       return { error: error.message };
     }
 
