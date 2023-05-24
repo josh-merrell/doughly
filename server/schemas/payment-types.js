@@ -5,6 +5,7 @@ const newPaymentSchema_body = {
     invoiceID: { type: 'integer' },
     method: { type: 'string' },
     amount: { type: 'number' },
+    receivedTime: { type: 'string', description: 'When the payment was received' },
   },
 };
 

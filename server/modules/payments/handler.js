@@ -19,11 +19,12 @@ async function getPayments(req, res) {
 async function createPayment(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { method, invoiceID, amount } = req.body;
+  const { method, invoiceID, amount, receivedTime } = req.body;
   const returner = await p.create({
     method,
     invoiceID,
     amount,
+    receivedTime,
   });
   return res.json(returner);
 }
