@@ -988,7 +988,7 @@
         }
       }
     },
-    "/orderStockProducts": {
+    "/orders/products/stock": {
       "get": {
         "tags": [
           "Orders"
@@ -1150,7 +1150,7 @@
         }
       }
     },
-    "/orderStockProducts/{orderStockID}": {
+    "/orders/products/stock/{orderStockID}": {
       "delete": {
         "tags": [
           "Orders"
@@ -1644,7 +1644,7 @@
         }
       }
     },
-    "/orderTaskProducts": {
+    "/orders/products/task": {
       "get": {
         "tags": [
           "Orders"
@@ -1849,7 +1849,7 @@
         }
       }
     },
-    "/orderTaskProducts/{orderTaskID}": {
+    "/orders/products/task/{orderTaskID}": {
       "delete": {
         "tags": [
           "Orders"
@@ -3442,7 +3442,7 @@
         }
       }
     },
-    "/orderTags": {
+    "/tags/orders": {
       "get": {
         "tags": [
           "Tags"
@@ -3569,7 +3569,7 @@
         }
       }
     },
-    "/orderTags/{orderTagID}": {
+    "/tags/orders/{orderTagID}": {
       "delete": {
         "tags": [
           "Tags"
@@ -3593,7 +3593,7 @@
         }
       }
     },
-    "/recipeTags": {
+    "/tags/recipes": {
       "get": {
         "tags": [
           "Tags"
@@ -3720,7 +3720,7 @@
         }
       }
     },
-    "/recipeTags/{recipeTagID}": {
+    "/tags/recipes/{recipeTagID}": {
       "delete": {
         "tags": [
           "Tags"
@@ -3775,7 +3775,7 @@
             }
           },
           {
-            "name": "categoryID",
+            "name": "recipeCategoryID",
             "in": "query",
             "description": "The ID of the recipe category.",
             "required": false,
@@ -3798,7 +3798,7 @@
                         "type": "string",
                         "description": "The title of the recipe."
                       },
-                      "categoryID": {
+                      "recipeCategoryID": {
                         "type": "integer",
                         "description": "The ID of the recipe category."
                       },
@@ -3831,7 +3831,7 @@
                 "type": "object",
                 "required": [
                   "title",
-                  "categoryID",
+                  "recipeCategoryID",
                   "servings",
                   "lifespanDays"
                 ],
@@ -3840,7 +3840,7 @@
                     "type": "string",
                     "description": "The title of the recipe."
                   },
-                  "categoryID": {
+                  "recipeCategoryID": {
                     "type": "integer",
                     "description": "The ID of the recipe category."
                   },
@@ -3870,7 +3870,7 @@
                       "type": "string",
                       "description": "The title of the recipe."
                     },
-                    "categoryID": {
+                    "recipeCategoryID": {
                       "type": "integer",
                       "description": "The ID of the recipe category."
                     },
@@ -3922,7 +3922,7 @@
                     "type": "integer",
                     "description": "The updated number of servings the recipe yields."
                   },
-                  "categoryID": {
+                  "recipeCategoryID": {
                     "type": "integer",
                     "description": "The updated ID of the recipe category."
                   },
@@ -3947,7 +3947,7 @@
                       "type": "string",
                       "description": "The title of the recipe."
                     },
-                    "categoryID": {
+                    "recipeCategoryID": {
                       "type": "integer",
                       "description": "The ID of the recipe category."
                     },
@@ -3991,7 +3991,7 @@
         }
       }
     },
-    "/recipeComponents": {
+    "/recipes/components": {
       "get": {
         "tags": [
           "Recipes"
@@ -4123,7 +4123,7 @@
         }
       }
     },
-    "/recipeComponents/{recipeComponentID}": {
+    "/recipes/components/{recipeComponentID}": {
       "patch": {
         "tags": [
           "Recipes"
@@ -4210,7 +4210,7 @@
         }
       }
     },
-    "/recipeCategories": {
+    "/recipes/categories": {
       "get": {
         "tags": [
           "Recipes"
@@ -4226,7 +4226,7 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "categoryID": {
+                      "recipeCategoryID": {
                         "type": "integer",
                         "description": "The ID of the recipe category."
                       },
@@ -4236,7 +4236,7 @@
                       }
                     },
                     "required": [
-                      "categoryID",
+                      "recipeCategoryID",
                       "name"
                     ],
                     "additionalProperties": false
@@ -4280,7 +4280,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "categoryID": {
+                    "recipeCategoryID": {
                       "type": "integer",
                       "description": "The ID of the recipe category."
                     },
@@ -4290,7 +4290,7 @@
                     }
                   },
                   "required": [
-                    "categoryID",
+                    "recipeCategoryID",
                     "name"
                   ],
                   "additionalProperties": false
@@ -4301,7 +4301,7 @@
         }
       }
     },
-    "/recipeCategories/{categoryID}": {
+    "/recipes/categories/{recipeCategoryID}": {
       "patch": {
         "tags": [
           "Recipes"
@@ -4309,7 +4309,7 @@
         "operationId": "updateRecipeCategory",
         "parameters": [
           {
-            "name": "categoryID",
+            "name": "recipeCategoryID",
             "in": "path",
             "description": "The ID of the recipe category.",
             "required": true,
@@ -4346,7 +4346,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "categoryID": {
+                    "recipeCategoryID": {
                       "type": "integer",
                       "description": "The ID of the recipe category."
                     },
@@ -4356,7 +4356,7 @@
                     }
                   },
                   "required": [
-                    "categoryID",
+                    "recipeCategoryID",
                     "name"
                   ],
                   "additionalProperties": false
@@ -4373,7 +4373,7 @@
         "operationId": "deleteRecipeCategory",
         "parameters": [
           {
-            "name": "categoryID",
+            "name": "recipeCategoryID",
             "in": "path",
             "description": "The ID of the recipe category.",
             "required": true,
@@ -4598,7 +4598,7 @@
         }
       }
     },
-    "/recipeSteps": {
+    "/steps/recipes": {
       "post": {
         "tags": [
           "Recipe Steps"
@@ -4740,7 +4740,7 @@
         }
       }
     },
-    "/recipeSteps/{recipeStepID}": {
+    "/steps/recipes/{recipeStepID}": {
       "patch": {
         "tags": [
           "Recipe Steps"
@@ -5016,7 +5016,7 @@
         }
       }
     },
-    "/recipeTools": {
+    "/tools/recipes": {
       "get": {
         "tags": [
           "Tools"
@@ -5159,7 +5159,7 @@
         }
       }
     },
-    "/recipeTools/{recipeToolID}": {
+    "/tools/recipes/{recipeToolID}": {
       "patch": {
         "tags": [
           "Tools"
@@ -5722,7 +5722,7 @@
         }
       }
     },
-    "/recipeIngredients": {
+    "/ingredients/recipes": {
       "get": {
         "tags": [
           "Ingredients"
@@ -5902,7 +5902,7 @@
         }
       }
     },
-    "/recipeIngredients/{recipeIngredientID}": {
+    "/ingredients/recipes/{recipeIngredientID}": {
       "patch": {
         "tags": [
           "Ingredients"
@@ -7539,7 +7539,7 @@
         "type": "object",
         "required": [
           "title",
-          "categoryID",
+          "recipeCategoryID",
           "servings",
           "lifespanDays"
         ],
@@ -7548,7 +7548,7 @@
             "type": "string",
             "description": "The title of the recipe."
           },
-          "categoryID": {
+          "recipeCategoryID": {
             "type": "integer",
             "description": "The ID of the recipe category."
           },
@@ -7570,7 +7570,7 @@
             "type": "string",
             "description": "The title of the recipe."
           },
-          "categoryID": {
+          "recipeCategoryID": {
             "type": "integer",
             "description": "The ID of the recipe category."
           },
@@ -7595,7 +7595,7 @@
             "type": "integer",
             "description": "The updated number of servings the recipe yields."
           },
-          "categoryID": {
+          "recipeCategoryID": {
             "type": "integer",
             "description": "The updated ID of the recipe category."
           },
@@ -7674,7 +7674,7 @@
       "RecipeCategory": {
         "type": "object",
         "properties": {
-          "categoryID": {
+          "recipeCategoryID": {
             "type": "integer",
             "description": "The ID of the recipe category."
           },
@@ -7684,7 +7684,7 @@
           }
         },
         "required": [
-          "categoryID",
+          "recipeCategoryID",
           "name"
         ],
         "additionalProperties": false
