@@ -3,7 +3,7 @@ const getRecipesSchema_query = {
   properties: {
     cursor: { type: 'string' },
     limit: { type: 'integer' },
-    recipeIDs: { type: 'array', items: { type: 'string' } },
+    recipeIDs: { type: 'array', items: { type: 'integer' } },
     title: { type: 'string' },
     recipeCategoryID: { type: 'string' },
   },
@@ -24,7 +24,7 @@ const newRecipeSchema_body = {
     title: { type: 'string' },
     servings: { type: 'integer' },
     lifespanDays: { type: 'integer' },
-    recipeCategoryID: { type: 'string' },
+    recipeCategoryID: { type: 'integer' },
   },
 };
 
@@ -34,7 +34,7 @@ const RecipeUpdateSchema_body = {
     title: { type: 'string' },
     servings: { type: 'integer' },
     lifespanDays: { type: 'integer' },
-    recipeCategoryID: { type: 'string' },
+    recipeCategoryID: { type: 'integer' },
   },
 };
 
