@@ -27,6 +27,7 @@ const personsRouter = require('./modules/persons/router');
 const invoicesRouter = require('./modules/invoices/router');
 const paymentRouter = require('./modules/payments/router');
 const ordersRouter = require('./modules/orders/router');
+const recipesRouter = require('./modules/recipes/router');
 const { queryArrayParser } = require('./middleware/queryParsing');
 
 app.use(express.json());
@@ -47,6 +48,7 @@ app.use('/persons', personsRouter);
 app.use('/invoices', invoicesRouter);
 app.use('/payments', paymentRouter);
 app.use('/orders', ordersRouter);
+app.use('/recipes', recipesRouter);
 
 // Start the server
 const port = 3000;
