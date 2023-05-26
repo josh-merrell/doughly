@@ -12,13 +12,13 @@ const {
   RecipeDeleteSchema_params,
 } = require('../../schemas/recipe-types');
 const recipeCategoriesRouter = require('./categories/router');
-// const recipeComponentsRouter = require('./components/router');
+const recipeComponentsRouter = require('./components/router');
 
 const router = express.Router();
 const h = handler;
 
 router.use('/categories', recipeCategoriesRouter);
-// router.use('/components', recipeComponentsRouter);
+router.use('/components', recipeComponentsRouter);
 
 router.get('/:recipeID', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeByID));
 router.patch('/:recipeID', routeValidator(RecipeUpdateSchema_body, 'body'), routeValidator(RecipeUpdateSchema_params, 'params'), errorCatcher(h.updateRecipe));
