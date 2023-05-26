@@ -11,9 +11,14 @@ const {
   OrderUpdateSchema_params,
   OrderDeleteSchema_params,
 } = require('../../schemas/order-types');
+const orderTaskProductsRouter = require('../products/task/router');
+// const orderStockProductsRouter = require('../products/stock/router');
 
 const router = express.Router();
 const h = handler;
+
+router.use('/products/task', orderTaskProductsRouter);
+// router.use('/products/stock', orderStockProductsRouter);
 
 router.get('/:orderID', routeValidator(getOrderSchema_params, 'params'), errorCatcher(h.getOrderByID));
 router.get('/', routeValidator(getOrdersSchema_query, 'query'), errorCatcher(h.getOrders));
