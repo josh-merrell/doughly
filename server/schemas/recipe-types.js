@@ -93,6 +93,55 @@ const RecipeCategoryDeleteSchema_params = {
   },
 };
 
+const getRecipeComponentsSchema_query = {
+  type: 'object',
+  properties: {
+    recipeComponentIDs: { type: 'array', items: { type: 'integer' } },
+    recipeID: { type: 'string' },
+  },
+};
+
+const getRecipeComponentSchema_params = {
+  type: 'object',
+  required: ['recipeComponentID'],
+  properties: {
+    recipeComponentID: { type: 'string' },
+  },
+};
+
+const newRecipeComponentSchema_body = {
+  type: 'object',
+  required: ['recipeID', 'componentID', 'componentAdvanceDays'],
+  properties: {
+    recipeID: { type: 'integer' },
+    componentID: { type: 'integer' },
+    componentAdvanceDays: { type: 'integer' },
+  },
+};
+
+const RecipeComponentUpdateSchema_body = {
+  type: 'object',
+  properties: {
+    componentAdvanceDays: { type: 'integer' },
+  },
+};
+
+const RecipeComponentUpdateSchema_params = {
+  type: 'object',
+  required: ['recipeComponentID'],
+  properties: {
+    recipeComponentID: { type: 'string' },
+  },
+};
+
+const RecipeComponentDeleteSchema_params = {
+  type: 'object',
+  required: ['recipeComponentID'],
+  properties: {
+    recipeComponentID: { type: 'string' },
+  },
+};
+
 module.exports = {
   getRecipesSchema_query,
   getRecipeSchema_params,
@@ -105,4 +154,10 @@ module.exports = {
   RecipeCategoryUpdateSchema_body,
   RecipeCategoryUpdateSchema_params,
   RecipeCategoryDeleteSchema_params,
+  getRecipeComponentsSchema_query,
+  getRecipeComponentSchema_params,
+  newRecipeComponentSchema_body,
+  RecipeComponentUpdateSchema_body,
+  RecipeComponentUpdateSchema_params,
+  RecipeComponentDeleteSchema_params,
 };
