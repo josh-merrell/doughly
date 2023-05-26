@@ -1686,15 +1686,6 @@
             }
           },
           {
-            "name": "productName",
-            "in": "query",
-            "description": "The name of the product.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "status",
             "in": "query",
             "description": "The status of the order task product.",
@@ -1786,10 +1777,6 @@
                     "type": "integer",
                     "description": "The ID of the recipe."
                   },
-                  "productName": {
-                    "type": "string",
-                    "description": "The name of the product."
-                  },
                   "quantity": {
                     "type": "integer",
                     "description": "The quantity of the product."
@@ -1823,10 +1810,6 @@
                       "type": "integer",
                       "description": "The ID of the recipe this task will follow."
                     },
-                    "productName": {
-                      "type": "string",
-                      "description": "The name of product this task will produce."
-                    },
                     "unitIncome": {
                       "type": "integer",
                       "description": "Gross Income per unit from this order task"
@@ -1850,6 +1833,86 @@
       }
     },
     "/orders/products/task/{orderTaskID}": {
+      "patch": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "updateOrderTaskProduct",
+        "parameters": [
+          {
+            "name": "orderTaskID",
+            "in": "path",
+            "description": "The ID of the order task.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "unitIncome": {
+                    "type": "number",
+                    "description": "The updated income per unit for this order task"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "description": "The updated number of products needed for this order task"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "created",
+                      "inProgress",
+                      "done",
+                      "removed"
+                    ],
+                    "description": "The updated current status of this order task"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "orderTaskID": {
+                      "type": "integer"
+                    },
+                    "unitIncome": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "created",
+                        "inProgress",
+                        "done",
+                        "removed"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Orders"
@@ -6594,10 +6657,6 @@
             "type": "integer",
             "description": "The ID of the recipe this task will follow."
           },
-          "productName": {
-            "type": "string",
-            "description": "The name of product this task will produce."
-          },
           "unitIncome": {
             "type": "integer",
             "description": "Gross Income per unit from this order task"
@@ -6631,10 +6690,6 @@
           "recipeID": {
             "type": "integer",
             "description": "The ID of the recipe."
-          },
-          "productName": {
-            "type": "string",
-            "description": "The name of the product."
           },
           "quantity": {
             "type": "integer",
