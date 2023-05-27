@@ -5,9 +5,7 @@ const { updater } = require('../../db');
 module.exports = ({ db }) => {
   async function getAll(options) {
     const { recipeIDs, title, recipeCategoryID } = options;
-
     let q = db.from('recipes').select().order('recipeID', { ascending: true });
-
     if (recipeIDs) {
       q = q.in('recipeID', recipeIDs);
     }
@@ -29,14 +27,14 @@ module.exports = ({ db }) => {
 
   async function getByID(options) {
     const { recipeID } = options;
-    const { data: recipes, error } = await db.from('recipes').select().eq('recipeID', recipeID);
+    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
 
     if (error) {
       global.logger.info(`Error getting recipe: ${error.message}`);
       return { error: error.message };
     }
     global.logger.info(`Got recipe`);
-    return recipes;
+    return recipe;
   }
 
   async function create(options) {
