@@ -21,6 +21,7 @@ const requestLogStream = fs.createWriteStream(path.join(__dirname, 'request.log'
 
 app.use(morgan('combined')); //send request logs to console
 app.use(morgan('combined', { stream: requestLogStream })); //also send request logs to file
+const { queryArrayParser } = require('./middleware/queryParsing');
 
 const clientsRouter = require('./modules/clients/router');
 const personsRouter = require('./modules/persons/router');
@@ -28,7 +29,7 @@ const invoicesRouter = require('./modules/invoices/router');
 const paymentRouter = require('./modules/payments/router');
 const ordersRouter = require('./modules/orders/router');
 const recipesRouter = require('./modules/recipes/router');
-const { queryArrayParser } = require('./middleware/queryParsing');
+const tagsRouter = require('./modules/tags/router');
 
 app.use(express.json());
 
@@ -49,6 +50,7 @@ app.use('/invoices', invoicesRouter);
 app.use('/payments', paymentRouter);
 app.use('/orders', ordersRouter);
 app.use('/recipes', recipesRouter);
+app.use('/tags', tagsRouter);
 
 // Start the server
 const port = 3000;
