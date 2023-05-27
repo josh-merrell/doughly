@@ -1199,10 +1199,11 @@
             "schema": {
               "type": "array",
               "items": {
-                "type": "integer",
-                "minimum": 1
+                "type": "integer"
               }
-            }
+            },
+            "style": "form",
+            "explode": false
           },
           {
             "name": "productName",

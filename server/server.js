@@ -30,6 +30,7 @@ const paymentRouter = require('./modules/payments/router');
 const ordersRouter = require('./modules/orders/router');
 const recipesRouter = require('./modules/recipes/router');
 const tagsRouter = require('./modules/tags/router');
+const stockProductsRouter = require('./modules/products/stock/router');
 
 app.use(express.json());
 
@@ -51,6 +52,7 @@ app.use('/payments', paymentRouter);
 app.use('/orders', ordersRouter);
 app.use('/recipes', recipesRouter);
 app.use('/tags', tagsRouter);
+app.use('/stockProducts', stockProductsRouter);
 
 // Start the server
 const port = 3000;
