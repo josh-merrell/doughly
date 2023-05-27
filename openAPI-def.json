@@ -3505,7 +3505,7 @@
         }
       }
     },
-    "/tags/orders": {
+    "/tags/order": {
       "get": {
         "tags": [
           "Tags"
@@ -3632,7 +3632,7 @@
         }
       }
     },
-    "/tags/orders/{orderTagID}": {
+    "/tags/order/{orderTagID}": {
       "delete": {
         "tags": [
           "Tags"
@@ -3656,7 +3656,7 @@
         }
       }
     },
-    "/tags/recipes": {
+    "/tags/recipe": {
       "get": {
         "tags": [
           "Tags"
@@ -3742,7 +3742,7 @@
                   "tagID"
                 ],
                 "properties": {
-                  "orderID": {
+                  "recipeID": {
                     "type": "integer",
                     "description": "The ID of the recipe."
                   },
@@ -3783,7 +3783,7 @@
         }
       }
     },
-    "/tags/recipes/{recipeTagID}": {
+    "/tags/recipe/{recipeTagID}": {
       "delete": {
         "tags": [
           "Tags"

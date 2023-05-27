@@ -1,0 +1,16 @@
+const express = require('express');
+
+const { routeValidator } = require('../../../middleware/validating');
+const { errorCatcher } = require('../../../middleware/errorHandling');
+const handler = require('./handler');
+const { getOrderTagsSchema_query, getOrderTagSchema_params, newOrderTagSchema_body, OrderTagDeleteSchema_params } = require('../../../schemas/tag-types');
+
+const router = express.Router();
+const h = handler;
+
+router.get('/:orderTagID', routeValidator(getOrderTagSchema_params, 'params'), errorCatcher(h.getOrderTagByID));
+router.delete('/:orderTagID', routeValidator(OrderTagDeleteSchema_params, 'params'), errorCatcher(h.deleteOrderTag));
+router.get('/', routeValidator(getOrderTagsSchema_query, 'query'), errorCatcher(h.getOrderTags));
+router.post('/', routeValidator(newOrderTagSchema_body, 'body'), errorCatcher(h.createOrderTag));
+
+module.exports = router;
