@@ -170,6 +170,7 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
 
+    global.logger.info(`Deleted order ${options.orderID}`);
     return data;
   }
 
