@@ -29,7 +29,7 @@ const updater = async (IDfield, ID, table, updateFields) => {
     return { error: error.message };
   } else {
     global.logger.info(`Updated ${table}, ID: ${ID}`);
-    return data;
+    return data[0];
   }
 };
 

@@ -828,74 +828,62 @@
         "parameters": [
           {
             "name": "orderID",
+            "in": "path",
             "description": "ID of the order to update",
             "required": true,
             "schema": {
               "type": "integer"
             }
-          },
-          {
-            "name": "scheduledDeliveryTime",
-            "in": "query",
-            "description": "Updated delivery date (YYYY-MM-DD format)",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "description": "Updated description",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "Updated name",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "fulfillment",
-            "in": "query",
-            "description": "Updated fulfillment type",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "pickup",
-                "delivery"
-              ]
-            }
-          },
-          {
-            "name": "fulfilledTime",
-            "in": "query",
-            "description": "Updated fulfilled date (YYYY-MM-DD format)",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Updated status",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "created",
-                "inProgress",
-                "readyForDelivery",
-                "delivered",
-                "cancelled"
-              ]
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scheduledDeliveryTime": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Updated delivery date (YYYY-MM-DD format)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Updated description"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Updated name"
+                  },
+                  "fulfillment": {
+                    "type": "string",
+                    "enum": [
+                      "pickup",
+                      "delivery"
+                    ],
+                    "description": "Updated fulfillment type"
+                  },
+                  "fulfilledTime": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Updated fulfilled date (YYYY-MM-DD format)"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "created",
+                      "inProgress",
+                      "readyForDelivery",
+                      "delivered",
+                      "cancelled"
+                    ],
+                    "description": "Updated status"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Order updated successfully",
@@ -4662,7 +4650,7 @@
         }
       }
     },
-    "/steps/recipes": {
+    "/steps/recipe": {
       "post": {
         "tags": [
           "Recipe Steps"
@@ -4804,7 +4792,7 @@
         }
       }
     },
-    "/steps/recipes/{recipeStepID}": {
+    "/steps/recipe/{recipeStepID}": {
       "patch": {
         "tags": [
           "Recipe Steps"
@@ -4822,7 +4810,7 @@
           },
           {
             "name": "sequence",
-            "in": "query",
+            "in": "body",
             "description": "The updated sequence number of the recipe step.",
             "required": false,
             "schema": {

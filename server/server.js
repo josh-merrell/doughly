@@ -31,6 +31,7 @@ const ordersRouter = require('./modules/orders/router');
 const recipesRouter = require('./modules/recipes/router');
 const tagsRouter = require('./modules/tags/router');
 const stockProductsRouter = require('./modules/products/stock/router');
+const stepsRouter = require('./modules/steps/router');
 
 app.use(express.json());
 
@@ -53,6 +54,7 @@ app.use('/orders', ordersRouter);
 app.use('/recipes', recipesRouter);
 app.use('/tags', tagsRouter);
 app.use('/stockProducts', stockProductsRouter);
+app.use('/steps', stepsRouter);
 
 // Start the server
 const port = 3000;
