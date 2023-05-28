@@ -5068,7 +5068,7 @@
         }
       }
     },
-    "/tools/recipes": {
+    "/tools/recipe": {
       "get": {
         "tags": [
           "Tools"
@@ -5211,7 +5211,7 @@
         }
       }
     },
-    "/tools/recipes/{recipeToolID}": {
+    "/tools/recipe/{recipeToolID}": {
       "patch": {
         "tags": [
           "Tools"

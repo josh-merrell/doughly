@@ -43,6 +43,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Error getting recipeStep by ID: ${options.recipeStepID}:${error.message}`);
       return { error: error.message };
     }
+    global.logger.info(`Got recipeStep ${options.recipeStepID}`);
     return data;
   }
 
