@@ -1,0 +1,166 @@
+('use strict');
+
+const { updater } = require('../../../db');
+
+module.exports = ({ db }) => {
+  async function getAll(options) {
+    const { recipeToolIDs, recipeID, toolID } = options;
+
+    let q = db.from('recipeTools').select().order('recipeToolID', { ascending: true });
+
+    if (recipeToolIDs) {
+      q = q.in('recipeToolID', recipeToolIDs);
+    }
+    if (recipeID) {
+      q = q.eq('recipeID', recipeID);
+    }
+    if (toolID) {
+      q = q.eq('toolID', toolID);
+    }
+
+    const { data: recipeTools, error } = await q;
+
+    if (error) {
+      global.logger.info(`Error getting recipeTools: ${error}`);
+      return { error };
+    }
+    global.logger.info(`Got ${recipeTools.length} recipeTools`);
+    return recipeTools;
+  }
+
+  async function getByID(options) {
+    const { recipeToolID } = options;
+
+    const { data: recipeTool, error } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID).single();
+
+    if (error) {
+      global.logger.info(`Error getting recipeTool by ID: ${recipeToolID}: ${error}`);
+      return { error };
+    }
+    global.logger.info(`Got recipeTool ${recipeToolID}`);
+    return recipeTool;
+  }
+
+  async function create(options) {
+    const { recipeID, toolID, quantity } = options;
+    //validate that provided recipeID exists
+    const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID);
+    if (recipeError) {
+      global.logger.info(`Error validating recipe ID: ${recipeID}: ${recipeError}`);
+      return { error: recipeError };
+    }
+    if (!recipe.length) {
+      global.logger.info(`Provided recipe ID: ${recipeID} does not exist, cannot create recipeTool`);
+      return { error: `Provided recipe ID: ${recipeID} does not exist, cannot create recipeTool` };
+    }
+
+    //validate that provided toolID exists
+    const { data: tool, error: toolError } = await db.from('tools').select().eq('toolID', toolID);
+    if (toolError) {
+      global.logger.info(`Error validating tool ID: ${toolID}: ${toolError}`);
+      return { error: toolError };
+    }
+    if (!tool.length) {
+      global.logger.info(`Provided tool ID: ${toolID} does not exist, cannot create recipeTool`);
+      return { error: `Provided tool ID: ${toolID} does not exist, cannot create recipeTool` };
+    }
+
+    //validate that provided quantity is a positive integer
+    if (quantity < 1) {
+      global.logger.info(`Provided quantity: ${quantity} is not a positive integer, cannot create recipeTool`);
+      return { error: `Provided quantity: ${quantity} is not a positive integer, cannot create recipeTool` };
+    }
+
+    //validate that recipeTool does not already exist
+    const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('toolID', toolID);
+    if (recipeToolError) {
+      global.logger.info(`Error checking for duplicate recipeTool: ${recipeToolError}`);
+      return { error: recipeToolError };
+    }
+    if (recipeTool.length) {
+      global.logger.info(`RecipeTool already exists, cannot create recipeTool`);
+      return { error: `RecipeTool already exists, cannot create recipeTool` };
+    }
+
+    //create recipeTool
+    const { data: newRecipeTool, error: newRecipeToolError } = await db.from('recipeTools').insert({ recipeID, toolID, quantity }).select().single();
+
+    if (newRecipeToolError) {
+      global.logger.info(`Error creating recipeTool: ${newRecipeToolError}`);
+      return { error: newRecipeToolError };
+    }
+    global.logger.info(`Created recipeTool ${newRecipeTool.recipeToolID}`);
+    return newRecipeTool;
+  }
+
+  async function update(options) {
+    const { recipeToolID, quantity } = options;
+
+    //validate that provided recipeToolID exists
+    const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID);
+    if (recipeToolError) {
+      global.logger.info(`Error validating recipeTool ID: ${recipeToolID}: ${recipeToolError}`);
+      return { error: recipeToolError };
+    }
+    if (!recipeTool.length) {
+      global.logger.info(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot update recipeTool`);
+      return { error: `Provided recipeTool ID: ${recipeToolID} does not exist, cannot update recipeTool` };
+    }
+
+    //validate that provided quantity is a positive integer
+    if (quantity < 1) {
+      global.logger.info(`Provided quantity: ${quantity} is not a positive integer, cannot update recipeTool`);
+      return { error: `Provided quantity: ${quantity} is not a positive integer, cannot update recipeTool` };
+    }
+
+    //update recipeTool
+    const updateFields = {};
+    for (let key in options) {
+      if (key !== 'recipeToolID' && options[key]) {
+        updateFields[key] = options[key];
+      }
+    }
+
+    try {
+      const updatedRecipeTool = await updater('recipeToolID', recipeToolID, 'recipeTools', updateFields);
+      global.logger.info(`Updated recipeTool ${recipeToolID}`);
+      return updatedRecipeTool;
+    } catch (error) {
+      global.logger.info(`Error updating recipeTool: ${error}`);
+      return { error };
+    }
+  }
+
+  async function deleteRecipeStep(options) {
+    const { recipeToolID } = options;
+    //validate that provided recipeToolID exists
+    const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID);
+    if (recipeToolError) {
+      global.logger.info(`Error validating recipeTool ID: ${recipeToolID}: ${recipeToolError}`);
+      return { error: recipeToolError };
+    }
+    if (!recipeTool.length) {
+      global.logger.info(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot delete recipeTool`);
+      return { error: `Provided recipeTool ID: ${recipeToolID} does not exist, cannot delete recipeTool` };
+    }
+
+    //delete recipeTool
+    const { error: deleteError } = await db.from('recipeTools').delete().eq('recipeToolID', recipeToolID);
+    if (deleteError) {
+      global.logger.info(`Error deleting recipeTool: ${deleteError}`);
+      return { error: deleteError };
+    }
+    global.logger.info(`Deleted recipeTool ${recipeToolID}`);
+    return { success: true };
+  }
+
+  return {
+    get: {
+      all: getAll,
+      byID: getByID,
+    },
+    create,
+    update,
+    delete: deleteRecipeStep,
+  };
+};

@@ -65,13 +65,13 @@ module.exports = ({ db }) => {
         return { error: `Provided RecipeCategory ID:(${recipeCategoryID}) does not exist` };
       }
     }
-    const { data: recipe, error } = await db.from('recipes').insert({ title, servings, lifespanDays, recipeCategoryID }).select('recipeID');
+    const { data: recipe, error } = await db.from('recipes').insert({ title, servings, lifespanDays, recipeCategoryID }).select('recipeID').single();
 
     if (error) {
       global.logger.info(`Error creating recipe: ${error.message}`);
       return { error: error.message };
     }
-    global.logger.info(`Created recipe`);
+    global.logger.info(`Created recipe ID:${recipe.recipeID}`);
     return recipe;
   }
 
