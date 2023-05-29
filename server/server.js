@@ -33,7 +33,8 @@ const tagsRouter = require('./modules/tags/router');
 const stockProductsRouter = require('./modules/products/stock/router');
 const stepsRouter = require('./modules/steps/router');
 const toolsRouter = require('./modules/tools/router');
-// const toolStocksRouter = require('./modules/toolStocks/router');
+const toolStocksRouter = require('./modules/toolStocks/router');
+const employeesRouter = require('./modules/employees/router');
 
 app.use(express.json());
 
@@ -50,6 +51,7 @@ app.use(queryArrayParser);
 
 app.use('/clients', clientsRouter);
 app.use('/persons', personsRouter);
+app.use('/employees', employeesRouter);
 app.use('/invoices', invoicesRouter);
 app.use('/payments', paymentRouter);
 app.use('/orders', ordersRouter);
@@ -58,7 +60,7 @@ app.use('/tags', tagsRouter);
 app.use('/stockProducts', stockProductsRouter);
 app.use('/steps', stepsRouter);
 app.use('/tools', toolsRouter);
-// app.use('/toolStocks', toolStocksRouter);
+app.use('/toolStocks', toolStocksRouter);
 
 // Start the server
 const port = 3000;

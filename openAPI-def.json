@@ -586,6 +586,498 @@
         }
       }
     },
+    "/employees": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Retrieve a list of employees based on query parameters",
+        "operationId": "getEmployees",
+        "parameters": [
+          {
+            "name": "employeeIDs",
+            "in": "query",
+            "description": "Array of employee IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "personID",
+            "in": "query",
+            "description": "Person ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "payPerHourRange",
+            "in": "query",
+            "description": "Array of pay per hour range",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "double"
+              }
+            }
+          },
+          {
+            "name": "hireDateRange",
+            "in": "query",
+            "description": "Array of hire date range",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "style": "form",
+              "explode": true
+            }
+          },
+          {
+            "name": "position",
+            "in": "query",
+            "description": "Employee position",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Employee status (active, inactive, or leave)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive",
+                "leave"
+              ]
+            }
+          },
+          {
+            "name": "nameFirst",
+            "in": "query",
+            "description": "First name of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nameLast",
+            "in": "query",
+            "description": "Last name of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email address of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Phone number of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "description": "City of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "State of the employee",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "AL",
+                "AK",
+                "AZ",
+                "AR",
+                "AS",
+                "CA",
+                "CO",
+                "CT",
+                "DE",
+                "DC",
+                "FL",
+                "GA",
+                "GU",
+                "HI",
+                "ID",
+                "IL",
+                "IN",
+                "IA",
+                "KS",
+                "KY",
+                "LA",
+                "ME",
+                "MD",
+                "MA",
+                "MI",
+                "MN",
+                "MS",
+                "MO",
+                "MT",
+                "NE",
+                "NV",
+                "NH",
+                "NJ",
+                "NM",
+                "NY",
+                "NC",
+                "ND",
+                "MP",
+                "OH",
+                "OK",
+                "OR",
+                "PA",
+                "PR",
+                "RI",
+                "SC",
+                "SD",
+                "TN",
+                "TX",
+                "TT",
+                "UT",
+                "VT",
+                "VA",
+                "VI",
+                "WA",
+                "WV",
+                "WI",
+                "WY"
+              ]
+            }
+          },
+          {
+            "name": "zip",
+            "in": "query",
+            "description": "ZIP code of the employee",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Create a new employee",
+        "operationId": "createEmployee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "payPerHour",
+                  "hireDate",
+                  "position",
+                  "nameFirst",
+                  "email",
+                  "phone",
+                  "address1",
+                  "city",
+                  "state",
+                  "zip"
+                ],
+                "properties": {
+                  "payPerHour": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "hireDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "position": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "inactive",
+                      "leave"
+                    ],
+                    "default": "active"
+                  },
+                  "nameFirst": {
+                    "type": "string"
+                  },
+                  "nameLast": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "address1": {
+                    "type": "string"
+                  },
+                  "address2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "AL",
+                      "AK",
+                      "AZ",
+                      "AR",
+                      "CA",
+                      "CO",
+                      "CT",
+                      "DE",
+                      "DC",
+                      "FL",
+                      "GA",
+                      "HI",
+                      "ID",
+                      "IL",
+                      "IN",
+                      "IA",
+                      "KS",
+                      "KY",
+                      "LA",
+                      "ME",
+                      "MD",
+                      "MA",
+                      "MI",
+                      "MN",
+                      "MS",
+                      "MO",
+                      "MT",
+                      "NE",
+                      "NV",
+                      "NH",
+                      "NJ",
+                      "NM",
+                      "NY",
+                      "NC",
+                      "ND",
+                      "OH",
+                      "OK",
+                      "OR",
+                      "PA",
+                      "RI",
+                      "SC",
+                      "SD",
+                      "TN",
+                      "TX",
+                      "UT",
+                      "VT",
+                      "VA",
+                      "WA",
+                      "WV",
+                      "WI",
+                      "WY"
+                    ]
+                  },
+                  "zip": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/employees/{employeeID}": {
+      "patch": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Update an existing employee",
+        "operationId": "updateEmployee",
+        "parameters": [
+          {
+            "name": "employeeID",
+            "in": "path",
+            "description": "Employee ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payPerHour": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "hireDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "position": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "inactive",
+                      "leave"
+                    ]
+                  },
+                  "nameFirst": {
+                    "type": "string"
+                  },
+                  "nameLast": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "address1": {
+                    "type": "string"
+                  },
+                  "address2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "AL",
+                      "AK",
+                      "AZ",
+                      "AR",
+                      "CA",
+                      "CO",
+                      "CT",
+                      "DE",
+                      "DC",
+                      "FL",
+                      "GA",
+                      "HI",
+                      "ID",
+                      "IL",
+                      "IN",
+                      "IA",
+                      "KS",
+                      "KY",
+                      "LA",
+                      "ME",
+                      "MD",
+                      "MA",
+                      "MI",
+                      "MN",
+                      "MS",
+                      "MO",
+                      "MT",
+                      "NE",
+                      "NV",
+                      "NH",
+                      "NJ",
+                      "NM",
+                      "NY",
+                      "NC",
+                      "ND",
+                      "OH",
+                      "OK",
+                      "OR",
+                      "PA",
+                      "RI",
+                      "SC",
+                      "SD",
+                      "TN",
+                      "TX",
+                      "UT",
+                      "VT",
+                      "VA",
+                      "WA",
+                      "WV",
+                      "WI",
+                      "WY"
+                    ]
+                  },
+                  "zip": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Delete an employee",
+        "operationId": "deleteEmployee",
+        "parameters": [
+          {
+            "name": "employeeID",
+            "in": "path",
+            "description": "Employee ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
     "/orders": {
       "get": {
         "tags": [
@@ -5366,10 +5858,6 @@
                         "type": "string",
                         "format": "date",
                         "description": "The purchase date of the tool (YYYY-MM-DD)."
-                      },
-                      "quantity": {
-                        "type": "integer",
-                        "description": "The quantity of the tool purchased."
                       }
                     },
                     "additionalProperties": false
@@ -5394,8 +5882,7 @@
                 "required": [
                   "toolID",
                   "purchasedBy",
-                  "purchaseDate",
-                  "quantity"
+                  "purchaseDate"
                 ],
                 "properties": {
                   "toolID": {
@@ -5413,7 +5900,7 @@
                   },
                   "quantity": {
                     "type": "integer",
-                    "description": "The quantity of the tool purchased."
+                    "description": "The quantity of this tool acquired"
                   }
                 },
                 "additionalProperties": false
@@ -5445,10 +5932,6 @@
                       "type": "string",
                       "format": "date",
                       "description": "The purchase date of the tool (YYYY-MM-DD)."
-                    },
-                    "quantity": {
-                      "type": "integer",
-                      "description": "The quantity of the tool purchased."
                     }
                   },
                   "additionalProperties": false
@@ -5483,10 +5966,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "quantity": {
-                    "type": "integer",
-                    "description": "The updated quantity of the tool stock."
-                  },
                   "purchasedBy": {
                     "type": "string",
                     "description": "The updated purchaser of the tool stock."
@@ -5526,10 +6005,6 @@
                       "type": "string",
                       "format": "date",
                       "description": "The purchase date of the tool (YYYY-MM-DD)."
-                    },
-                    "quantity": {
-                      "type": "integer",
-                      "description": "The quantity of the tool purchased."
                     }
                   },
                   "additionalProperties": false
@@ -6411,6 +6886,337 @@
   },
   "components": {
     "schemas": {
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "employeeID": {
+            "type": "integer"
+          },
+          "personID": {
+            "type": "string"
+          },
+          "payPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "position": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "leave"
+            ]
+          },
+          "nameFirst": {
+            "type": "string"
+          },
+          "nameLast": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "AL",
+              "AK",
+              "AZ",
+              "AR",
+              "CA",
+              "CO",
+              "CT",
+              "DE",
+              "DC",
+              "FL",
+              "GA",
+              "HI",
+              "ID",
+              "IL",
+              "IN",
+              "IA",
+              "KS",
+              "KY",
+              "LA",
+              "ME",
+              "MD",
+              "MA",
+              "MI",
+              "MN",
+              "MS",
+              "MO",
+              "MT",
+              "NE",
+              "NV",
+              "NH",
+              "NJ",
+              "NM",
+              "NY",
+              "NC",
+              "ND",
+              "OH",
+              "OK",
+              "OR",
+              "PA",
+              "RI",
+              "SC",
+              "SD",
+              "TN",
+              "TX",
+              "UT",
+              "VT",
+              "VA",
+              "WA",
+              "WV",
+              "WI",
+              "WY"
+            ]
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "NewEmployee": {
+        "type": "object",
+        "required": [
+          "payPerHour",
+          "hireDate",
+          "position",
+          "nameFirst",
+          "email",
+          "phone",
+          "address1",
+          "city",
+          "state",
+          "zip"
+        ],
+        "properties": {
+          "payPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "position": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "leave"
+            ],
+            "default": "active"
+          },
+          "nameFirst": {
+            "type": "string"
+          },
+          "nameLast": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "AL",
+              "AK",
+              "AZ",
+              "AR",
+              "CA",
+              "CO",
+              "CT",
+              "DE",
+              "DC",
+              "FL",
+              "GA",
+              "HI",
+              "ID",
+              "IL",
+              "IN",
+              "IA",
+              "KS",
+              "KY",
+              "LA",
+              "ME",
+              "MD",
+              "MA",
+              "MI",
+              "MN",
+              "MS",
+              "MO",
+              "MT",
+              "NE",
+              "NV",
+              "NH",
+              "NJ",
+              "NM",
+              "NY",
+              "NC",
+              "ND",
+              "OH",
+              "OK",
+              "OR",
+              "PA",
+              "RI",
+              "SC",
+              "SD",
+              "TN",
+              "TX",
+              "UT",
+              "VT",
+              "VA",
+              "WA",
+              "WV",
+              "WI",
+              "WY"
+            ]
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateEmployee": {
+        "type": "object",
+        "properties": {
+          "payPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "position": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "leave"
+            ]
+          },
+          "nameFirst": {
+            "type": "string"
+          },
+          "nameLast": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "AL",
+              "AK",
+              "AZ",
+              "AR",
+              "CA",
+              "CO",
+              "CT",
+              "DE",
+              "DC",
+              "FL",
+              "GA",
+              "HI",
+              "ID",
+              "IL",
+              "IN",
+              "IA",
+              "KS",
+              "KY",
+              "LA",
+              "ME",
+              "MD",
+              "MA",
+              "MI",
+              "MN",
+              "MS",
+              "MO",
+              "MT",
+              "NE",
+              "NV",
+              "NH",
+              "NJ",
+              "NM",
+              "NY",
+              "NC",
+              "ND",
+              "OH",
+              "OK",
+              "OR",
+              "PA",
+              "RI",
+              "SC",
+              "SD",
+              "TN",
+              "TX",
+              "UT",
+              "VT",
+              "VA",
+              "WA",
+              "WV",
+              "WI",
+              "WY"
+            ]
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
       "Order": {
         "type": "object",
         "properties": {
@@ -7923,8 +8729,7 @@
         "required": [
           "toolID",
           "purchasedBy",
-          "purchaseDate",
-          "quantity"
+          "purchaseDate"
         ],
         "properties": {
           "toolID": {
@@ -7942,7 +8747,7 @@
           },
           "quantity": {
             "type": "integer",
-            "description": "The quantity of the tool purchased."
+            "description": "The quantity of this tool acquired."
           }
         },
         "additionalProperties": false
@@ -7966,10 +8771,6 @@
             "type": "string",
             "format": "date",
             "description": "The purchase date of the tool (YYYY-MM-DD)."
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "The quantity of the tool purchased."
           }
         },
         "additionalProperties": false
@@ -7977,10 +8778,6 @@
       "ToolStockUpdateInput": {
         "type": "object",
         "properties": {
-          "quantity": {
-            "type": "integer",
-            "description": "The updated quantity of the tool stock."
-          },
           "purchasedBy": {
             "type": "string",
             "description": "The updated purchaser of the tool stock."
