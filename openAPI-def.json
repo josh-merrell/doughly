@@ -1720,6 +1720,9 @@
                       },
                       "recipeID": {
                         "type": "integer"
+                      },
+                      "yield": {
+                        "type": "integer"
                       }
                     }
                   }
@@ -1749,7 +1752,8 @@
                 "type": "object",
                 "required": [
                   "recipeID",
-                  "productName"
+                  "productName",
+                  "yield"
                 ],
                 "properties": {
                   "recipeID": {
@@ -1757,6 +1761,9 @@
                   },
                   "productName": {
                     "type": "string"
+                  },
+                  "yield": {
+                    "type": "integer"
                   }
                 }
               }
@@ -1778,6 +1785,9 @@
                       "type": "string"
                     },
                     "recipeID": {
+                      "type": "integer"
+                    },
+                    "yield": {
                       "type": "integer"
                     }
                   }
@@ -1856,6 +1866,9 @@
                 "properties": {
                   "productName": {
                     "type": "string"
+                  },
+                  "yield": {
+                    "type": "integer"
                   }
                 }
               }
@@ -1877,6 +1890,9 @@
                       "type": "string"
                     },
                     "recipeID": {
+                      "type": "integer"
+                    },
+                    "yield": {
                       "type": "integer"
                     }
                   }
@@ -1905,7 +1921,7 @@
         "operationId": "getProductStocks",
         "parameters": [
           {
-            "name": "stockIDs",
+            "name": "productStockIDs",
             "in": "query",
             "description": "filter on ID(s) of product stock(s)",
             "schema": {
@@ -1925,7 +1941,7 @@
             }
           },
           {
-            "name": "produced",
+            "name": "producedDate",
             "in": "query",
             "description": "Date of production (YYYY-MM-DD format)",
             "schema": {
@@ -1964,13 +1980,13 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "stockID": {
+                      "productStockID": {
                         "type": "integer"
                       },
                       "stockProductID": {
                         "type": "integer"
                       },
-                      "produced": {
+                      "producedDate": {
                         "type": "string",
                         "format": "date"
                       },
@@ -2012,19 +2028,15 @@
                 "type": "object",
                 "required": [
                   "stockProductID",
-                  "produced",
-                  "daysRemaining"
+                  "producedDate"
                 ],
                 "properties": {
                   "stockProductID": {
                     "type": "integer"
                   },
-                  "produced": {
+                  "producedDate": {
                     "type": "string",
                     "format": "date"
-                  },
-                  "daysRemaining": {
-                    "type": "integer"
                   }
                 }
               }
@@ -2039,13 +2051,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "stockID": {
+                    "productStockID": {
                       "type": "integer"
                     },
                     "stockProductID": {
                       "type": "integer"
                     },
-                    "produced": {
+                    "producedDate": {
                       "type": "string",
                       "format": "date"
                     },
@@ -2073,7 +2085,7 @@
         }
       }
     },
-    "/productStocks/{stockID}": {
+    "/productStocks/{productStockID}": {
       "delete": {
         "tags": [
           "Stock Products"
@@ -2082,7 +2094,7 @@
         "operationId": "deleteProductStock",
         "parameters": [
           {
-            "name": "stockID",
+            "name": "productStockID",
             "in": "path",
             "description": "ID of the product stock to delete",
             "required": true,
@@ -2121,6 +2133,80 @@
           },
           "500": {
             "description": "Internal server error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Stock Products"
+        ],
+        "operationId": "updateProductStock",
+        "parameters": [
+          {
+            "name": "productStockID",
+            "in": "path",
+            "description": "The ID of the product stock to update.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "producedDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The updated produced date for this order task"
+                  },
+                  "daysRemaining": {
+                    "type": "integer",
+                    "description": "The number of days remaining before this product expires"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "fresh",
+                      "expired"
+                    ],
+                    "description": "The updated current status of this product stock"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "producedDate": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "daysRemaining": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "fresh",
+                        "expired"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -7357,6 +7443,9 @@
           },
           "recipeID": {
             "type": "integer"
+          },
+          "yield": {
+            "type": "integer"
           }
         }
       },
@@ -7372,6 +7461,9 @@
           },
           "productName": {
             "type": "string"
+          },
+          "yield": {
+            "type": "integer"
           }
         }
       },
@@ -7383,19 +7475,22 @@
         "properties": {
           "productName": {
             "type": "string"
+          },
+          "yield": {
+            "type": "integer"
           }
         }
       },
       "ProductStock": {
         "type": "object",
         "properties": {
-          "stockID": {
+          "productStockID": {
             "type": "integer"
           },
           "stockProductID": {
             "type": "integer"
           },
-          "produced": {
+          "producedDate": {
             "type": "string",
             "format": "date"
           },
@@ -7415,19 +7510,15 @@
         "type": "object",
         "required": [
           "stockProductID",
-          "produced",
-          "daysRemaining"
+          "producedDate"
         ],
         "properties": {
           "stockProductID": {
             "type": "integer"
           },
-          "produced": {
+          "producedDate": {
             "type": "string",
             "format": "date"
-          },
-          "daysRemaining": {
-            "type": "integer"
           }
         }
       },
