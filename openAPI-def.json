@@ -6091,6 +6091,18 @@
                       "lifespanDays": {
                         "type": "integer",
                         "description": "The lifespan of the ingredient in days."
+                      },
+                      "brand": {
+                        "type": "string",
+                        "description": "Brand of this ingredient."
+                      },
+                      "purchaseUnit": {
+                        "type": "string",
+                        "description": "The unit in which this ingredient will be purchased and stocked."
+                      },
+                      "gramRatio": {
+                        "type": "integer",
+                        "description": "The number of grams per purchaseUnit for this ingredient."
                       }
                     },
                     "additionalProperties": false
@@ -6114,7 +6126,9 @@
                 "type": "object",
                 "required": [
                   "name",
-                  "lifespanDays"
+                  "lifespanDays",
+                  "purchaseUnit",
+                  "gramRatio"
                 ],
                 "properties": {
                   "name": {
@@ -6124,6 +6138,18 @@
                   "lifespanDays": {
                     "type": "integer",
                     "description": "The lifespan of the ingredient in days."
+                  },
+                  "brand": {
+                    "type": "string",
+                    "description": "Brand of this ingredient."
+                  },
+                  "purchaseUnit": {
+                    "type": "string",
+                    "description": "The unit in which this ingredient will be purchased and stocked."
+                  },
+                  "gramRatio": {
+                    "type": "integer",
+                    "description": "The number of grams per purchaseUnit for this ingredient."
                   }
                 },
                 "additionalProperties": false
@@ -6150,6 +6176,18 @@
                     "lifespanDays": {
                       "type": "integer",
                       "description": "The lifespan of the ingredient in days."
+                    },
+                    "brand": {
+                      "type": "string",
+                      "description": "Brand of this ingredient."
+                    },
+                    "purchaseUnit": {
+                      "type": "string",
+                      "description": "The unit in which this ingredient will be purchased and stocked."
+                    },
+                    "gramRatio": {
+                      "type": "integer",
+                      "description": "The number of grams per purchaseUnit for this ingredient."
                     }
                   },
                   "additionalProperties": false
@@ -6191,6 +6229,18 @@
                   "lifespanDays": {
                     "type": "integer",
                     "description": "The updated lifespan of the ingredient in days."
+                  },
+                  "brand": {
+                    "type": "string",
+                    "description": "Brand of this ingredient."
+                  },
+                  "purchaseUnit": {
+                    "type": "string",
+                    "description": "The unit in which this ingredient will be purchased and stocked."
+                  },
+                  "gramRatio": {
+                    "type": "integer",
+                    "description": "The number of grams per purchaseUnit for this ingredient."
                   }
                 },
                 "additionalProperties": false
@@ -6217,6 +6267,18 @@
                     "lifespanDays": {
                       "type": "integer",
                       "description": "The lifespan of the ingredient in days."
+                    },
+                    "brand": {
+                      "type": "string",
+                      "description": "Brand of this ingredient."
+                    },
+                    "purchaseUnit": {
+                      "type": "string",
+                      "description": "The unit in which this ingredient will be purchased and stocked."
+                    },
+                    "gramRatio": {
+                      "type": "integer",
+                      "description": "The number of grams per purchaseUnit for this ingredient."
                     }
                   },
                   "additionalProperties": false
@@ -6249,7 +6311,7 @@
         }
       }
     },
-    "/ingredients/recipes": {
+    "/ingredients/recipe": {
       "get": {
         "tags": [
           "Ingredients"
@@ -6429,7 +6491,7 @@
         }
       }
     },
-    "/ingredients/recipes/{recipeIngredientID}": {
+    "/ingredients/recipe/{recipeIngredientID}": {
       "patch": {
         "tags": [
           "Ingredients"
@@ -6602,10 +6664,6 @@
                         "type": "integer",
                         "description": "The ID of the ingredient."
                       },
-                      "measurementUnit": {
-                        "type": "string",
-                        "description": "The measurement unit for the ingredient stock."
-                      },
                       "measurement": {
                         "type": "integer",
                         "description": "The measurement value for the ingredient stock."
@@ -6641,7 +6699,6 @@
                 "type": "object",
                 "required": [
                   "ingredientID",
-                  "measurementUnit",
                   "measurement",
                   "purchasedDate",
                   "purchasedBy"
@@ -6650,28 +6707,6 @@
                   "ingredientID": {
                     "type": "integer",
                     "description": "The ID of the ingredient."
-                  },
-                  "measurementUnit": {
-                    "type": "string",
-                    "description": "The measurement unit for the ingredient stock.",
-                    "enum": [
-                      "gram",
-                      "ounce",
-                      "pound",
-                      "teaspoon",
-                      "tablespoon",
-                      "cup",
-                      "quart",
-                      "gallon",
-                      "milliliter",
-                      "liter",
-                      "bags",
-                      "boxes",
-                      "cartons",
-                      "pallets",
-                      "bottles",
-                      "containers"
-                    ]
                   },
                   "measurement": {
                     "type": "integer",
@@ -6707,10 +6742,6 @@
                     "ingredientID": {
                       "type": "integer",
                       "description": "The ID of the ingredient."
-                    },
-                    "measurementUnit": {
-                      "type": "string",
-                      "description": "The measurement unit for the ingredient stock."
                     },
                     "measurement": {
                       "type": "integer",
@@ -6758,28 +6789,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "measurementUnit": {
-                    "type": "string",
-                    "description": "The updated measurement unit for the ingredient stock.",
-                    "enum": [
-                      "gram",
-                      "ounce",
-                      "pound",
-                      "teaspoon",
-                      "tablespoon",
-                      "cup",
-                      "quart",
-                      "gallon",
-                      "milliliter",
-                      "liter",
-                      "bags",
-                      "boxes",
-                      "cartons",
-                      "pallets",
-                      "bottles",
-                      "containers"
-                    ]
-                  },
                   "measurement": {
                     "type": "integer",
                     "description": "The updated measurement value for the ingredient stock."
@@ -6814,10 +6823,6 @@
                     "ingredientID": {
                       "type": "integer",
                       "description": "The ID of the ingredient."
-                    },
-                    "measurementUnit": {
-                      "type": "string",
-                      "description": "The measurement unit for the ingredient stock."
                     },
                     "measurement": {
                       "type": "integer",
@@ -8794,7 +8799,9 @@
         "type": "object",
         "required": [
           "name",
-          "lifespanDays"
+          "lifespanDays",
+          "purchaseUnit",
+          "gramRatio"
         ],
         "properties": {
           "name": {
@@ -8804,6 +8811,18 @@
           "lifespanDays": {
             "type": "integer",
             "description": "The lifespan of the ingredient in days."
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of this ingredient."
+          },
+          "purchaseUnit": {
+            "type": "string",
+            "description": "The unit in which this ingredient will be purchased and stocked."
+          },
+          "gramRatio": {
+            "type": "integer",
+            "description": "The number of grams per purchaseUnit for this ingredient."
           }
         },
         "additionalProperties": false
@@ -8822,6 +8841,18 @@
           "lifespanDays": {
             "type": "integer",
             "description": "The lifespan of the ingredient in days."
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of this ingredient."
+          },
+          "purchaseUnit": {
+            "type": "string",
+            "description": "The unit in which this ingredient will be purchased and stocked."
+          },
+          "gramRatio": {
+            "type": "integer",
+            "description": "The number of grams per purchaseUnit for this ingredient."
           }
         },
         "additionalProperties": false
@@ -8836,6 +8867,18 @@
           "lifespanDays": {
             "type": "integer",
             "description": "The updated lifespan of the ingredient in days."
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of this ingredient."
+          },
+          "purchaseUnit": {
+            "type": "string",
+            "description": "The unit in which this ingredient will be purchased and stocked."
+          },
+          "gramRatio": {
+            "type": "integer",
+            "description": "The number of grams per purchaseUnit for this ingredient."
           }
         },
         "additionalProperties": false
@@ -8950,7 +8993,6 @@
         "type": "object",
         "required": [
           "ingredientID",
-          "measurementUnit",
           "measurement",
           "purchasedDate",
           "purchasedBy"
@@ -8959,28 +9001,6 @@
           "ingredientID": {
             "type": "integer",
             "description": "The ID of the ingredient."
-          },
-          "measurementUnit": {
-            "type": "string",
-            "description": "The measurement unit for the ingredient stock.",
-            "enum": [
-              "gram",
-              "ounce",
-              "pound",
-              "teaspoon",
-              "tablespoon",
-              "cup",
-              "quart",
-              "gallon",
-              "milliliter",
-              "liter",
-              "bags",
-              "boxes",
-              "cartons",
-              "pallets",
-              "bottles",
-              "containers"
-            ]
           },
           "measurement": {
             "type": "integer",
@@ -9009,10 +9029,6 @@
             "type": "integer",
             "description": "The ID of the ingredient."
           },
-          "measurementUnit": {
-            "type": "string",
-            "description": "The measurement unit for the ingredient stock."
-          },
           "measurement": {
             "type": "integer",
             "description": "The measurement value for the ingredient stock."
@@ -9032,28 +9048,6 @@
       "IngredientStockUpdateInput": {
         "type": "object",
         "properties": {
-          "measurementUnit": {
-            "type": "string",
-            "description": "The updated measurement unit for the ingredient stock.",
-            "enum": [
-              "gram",
-              "ounce",
-              "pound",
-              "teaspoon",
-              "tablespoon",
-              "cup",
-              "quart",
-              "gallon",
-              "milliliter",
-              "liter",
-              "bags",
-              "boxes",
-              "cartons",
-              "pallets",
-              "bottles",
-              "containers"
-            ]
-          },
           "measurement": {
             "type": "integer",
             "description": "The updated measurement value for the ingredient stock."

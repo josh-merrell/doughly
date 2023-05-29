@@ -30,7 +30,7 @@ module.exports = ({ db }) => {
     const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
 
     if (error) {
-      global.logger.info(`Error getting recipe: ${error.message}`);
+      global.logger.info(`Error getting recipe: ${recipeID}: ${error.message}`);
       return { error: error.message };
     }
     global.logger.info(`Got recipe`);
