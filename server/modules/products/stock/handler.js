@@ -19,10 +19,11 @@ async function getStockProductByID(req, res) {
 async function createStockProduct(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { recipeID, productName } = req.body;
+  const { recipeID, productName, yield: recipeYield } = req.body;
   const returner = await p.create({
     recipeID,
     productName,
+    recipeYield,
   });
   return res.json(returner);
 }
@@ -31,10 +32,11 @@ async function updateStockProduct(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { stockProductID } = req.params;
-  const { productName } = req.body;
+  const { productName, yield: recipeYield } = req.body;
   const returner = await p.update({
     stockProductID,
     productName,
+    recipeYield,
   });
   return res.json(returner);
 }

@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { recipeID, productName } = options;
+    const { recipeID, productName, recipeYield } = options;
 
     //validate that there are no other stockProducts with the same recipeID
     const { data: existingStockProducts, error: existingStockProductsError } = await db.from('stockProducts').select().eq('recipeID', recipeID);
@@ -62,7 +62,13 @@ module.exports = ({ db }) => {
       return { error: `provided recipe ID: ${recipeID} does not exist. Cannot create stockProduct` };
     }
 
-    const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').insert({ recipeID, productName }).select().single();
+    //validate that provided recipeYield is positive integer
+    if (!recipeYield || recipeYield < 1) {
+      global.logger.info(`provided recipeYield: ${recipeYield} is not a positive integer. Cannot create stockProduct`);
+      return { error: `provided recipeYield: ${recipeYield} is not a positive integer. Cannot create stockProduct` };
+    }
+
+    const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').insert({ recipeID, productName, yield: recipeYield }).select().single();
 
     if (stockProductError) {
       global.logger.info(`Error creating stockProduct: ${stockProductError.message}`);
@@ -89,10 +95,11 @@ module.exports = ({ db }) => {
 
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'stockProductID' && options[key]) {
+      if (key !== 'stockProductID' && key !== 'recipeYield' && options[key]) {
         updateFields[key] = options[key];
       }
     }
+    updateFields.yield = options.recipeYield;
 
     try {
       const updatedStockProduct = await updater('stockProductID', stockProductID, 'stockProducts', updateFields);
