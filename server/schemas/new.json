@@ -1,0 +1,74 @@
+"patch": {
+  "tags": [
+    "Stock Products"
+  ],
+  "operationId": "updateProductStock",
+  "parameters": [
+    {
+      "name": "productStockID",
+      "in": "path",
+      "description": "The ID of the product stock to update.",
+      "required": true,
+      "schema": {
+        "type": "integer"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "producedDate": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The updated produced date for this order task"
+            },
+            "daysRemaining": {
+              "type": "integer",
+              "description": "The number of days remaining before this product expires"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "fresh",
+                "expired"
+              ],
+              "description": "The updated current status of this product stock"
+            }
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "description": "OK",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "producedDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "daysRemaining": {
+                "type": "integer"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "fresh",
+                  "expired"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+},

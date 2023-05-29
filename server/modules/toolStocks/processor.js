@@ -96,6 +96,7 @@ module.exports = ({ db }) => {
         }
       });
 
+      global.logger.info(`Created ${toolStockIDs.length} toolStocks`);
       return { toolStockIDs };
     } catch (error) {
       global.logger.info(`Error creating toolStock: ${error.message}`);

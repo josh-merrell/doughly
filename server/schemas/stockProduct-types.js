@@ -21,6 +21,7 @@ const newStockProductSchema_body = {
   properties: {
     recipeID: { type: 'integer' },
     productName: { type: 'string' },
+    yield: { type: 'integer' },
   },
 };
 
@@ -28,6 +29,7 @@ const StockProductUpdateSchema_body = {
   type: 'object',
   properties: {
     productName: { type: 'string' },
+    yield: { type: 'integer' },
   },
 };
 
