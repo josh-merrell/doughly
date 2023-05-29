@@ -100,6 +100,60 @@ const RecipeToolDeleteSchema_params = {
   },
 };
 
+//TOOL STOCKS
+
+const getToolStocksSchema_query = {
+  type: 'object',
+  properties: {
+    toolStockIDs: { type: 'array', items: { type: 'integer' } },
+    toolID: { type: 'string' },
+    purchasedBy: { type: 'string' },
+  },
+};
+
+const getToolStockSchema_params = {
+  type: 'object',
+  required: ['toolStockID'],
+  properties: {
+    toolStockID: { type: 'string' },
+  },
+};
+
+const newToolStockSchema_body = {
+  type: 'object',
+  required: ['toolID', 'purchasedBy', 'quantity', 'purchaseDate'],
+  properties: {
+    toolID: { type: 'integer' },
+    purchasedBy: { type: 'integer' },
+    quantity: { type: 'integer' },
+    purchaseDate: { type: 'string' },
+  },
+};
+
+const ToolStockUpdateSchema_body = {
+  type: 'object',
+  properties: {
+    purchasedBy: { type: 'integer' },
+    purchaseDate: { type: 'string' },
+  },
+};
+
+const ToolStockUpdateSchema_params = {
+  type: 'object',
+  required: ['toolStockID'],
+  properties: {
+    toolStockID: { type: 'string' },
+  },
+};
+
+const ToolStockDeleteSchema_params = {
+  type: 'object',
+  required: ['toolStockID'],
+  properties: {
+    toolStockID: { type: 'string' },
+  },
+};
+
 module.exports = {
   getToolsSchema_query,
   getToolSchema_params,
@@ -113,4 +167,10 @@ module.exports = {
   RecipeToolUpdateSchema_body,
   RecipeToolUpdateSchema_params,
   RecipeToolDeleteSchema_params,
+  getToolStocksSchema_query,
+  getToolStockSchema_params,
+  newToolStockSchema_body,
+  ToolStockUpdateSchema_body,
+  ToolStockUpdateSchema_params,
+  ToolStockDeleteSchema_params,
 };

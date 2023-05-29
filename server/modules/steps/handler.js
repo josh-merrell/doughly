@@ -29,7 +29,7 @@ async function updateStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { stepID } = req.params;
-  const { title, description } = req.query;
+  const { title, description } = req.body;
   const returner = await p.update({
     stepID,
     title,
