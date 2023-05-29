@@ -14,14 +14,13 @@ module.exports = ({ db }) => {
         const { data, error } = await db
           .from('clients')
           .select('personID')
-          .eq('clientID', clientID)
-          .single();
+          .eq('clientID', clientID);
 
         if (error) {
           global.logger.info(`Error getting personID from clients table ${clientID}: ${error.message}`);
           return { error: error.message };
         } else {
-          if (data) personIDs.push(data.personID);
+          if (data && data.length > 0) personIDs.push(data[0].personID);
         }
       }
     } else {
@@ -52,7 +51,7 @@ module.exports = ({ db }) => {
     });
 
     if (error) {
-      global.logger.info(`Error getting clients: ${error.message}`);
+      global.logger.info(`Error getting client persons: ${error.message}`);
       return { error: error.message };
     } else {
       global.logger.info(`Got clients`);
@@ -115,7 +114,7 @@ module.exports = ({ db }) => {
     } else {
       //call the PATCH /persons/{personID} endpoint
       const personID = data.personID;
-      const { data: person, error: personError } = await axios.patch(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${personID}`, {
+      const { data: personUpdateResult } = await axios.patch(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${personID}`, {
         nameFirst,
         nameLast,
         email,
@@ -127,19 +126,19 @@ module.exports = ({ db }) => {
         zip,
       });
 
-      if (personError) {
-        global.logger.info(`Error updating person ${personID} while trying to update client ${clientID}: ${personError.message}`);
-        return { error: personError.message };
+      if (personUpdateResult.error) {
+        global.logger.info(`Error updating person ${personID} while trying to update client ${clientID}: ${personUpdateResult.error.message}`);
+        return { error: personUpdateResult.error.message };
       } else {
         global.logger.info(`Updated person ${personID} while updating client ${clientID}`);
-        person.clientID = clientID;
-        return person;
+        personUpdateResult.clientID = clientID;
+        return personUpdateResult;
       }
     }
   }
 
   async function deleteClient(options) {
-    const { data, error } = await db.from('clients').delete().match({ clientID: options.clientID });
+    const { data, error } = await db.from('clients').delete().eq({ clientID: options.clientID });
 
     if (error) {
       global.logger.info(`Error deleting client ${options.clientID}: ${error.message}`);
@@ -150,7 +149,7 @@ module.exports = ({ db }) => {
   }
 
   async function existsByClientID(options) {
-    const { data, error } = await db.from('clients').select('clientID').match({ clientID: options.clientID });
+    const { data, error } = await db.from('clients').select('clientID').eq({ clientID: options.clientID });
 
     if (error) {
       global.logger.info(`Error checking if client ${options.clientID} exists: ${error.message}`);

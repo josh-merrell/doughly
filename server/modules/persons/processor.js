@@ -95,7 +95,7 @@ module.exports = ({ db }) => {
     //if the email is unique, update provided fields in the 'persons' table,
     try {
       const updatedPerson = await updater('personID', options.personID, 'persons', updateFields)
-      global.logger.info(`Updated person ID:${options.personID}`);
+      global.logger.info(`Updated person with ID:${options.personID}`);
       return updatedPerson;
     } catch (error) {
       global.logger.info(`Error updating persons ID:${options.personID}: ${error.message}`);
