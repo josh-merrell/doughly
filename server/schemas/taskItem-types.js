@@ -1,22 +1,22 @@
-const getOrdersTasksSchema_query = {
+const getTaskItemsSchema_query = {
   type: 'object',
   properties: {
-    orderTaskIDs: { type: 'array', items: { type: 'integer' } },
+    taskItemIDs: { type: 'array', items: { type: 'integer' } },
     orderID: { type: 'string' },
     recipeID: { type: 'string' },
     status: { type: 'string', enum: ['created', 'inProgress', 'done', 'removed'] },
   },
 };
 
-const getOrderTaskSchema_params = {
+const getTaskItemSchema_params = {
   type: 'object',
-  required: ['orderTaskID'],
+  required: ['taskItemID'],
   properties: {
-    orderTaskID: { type: 'string' },
+    taskItemID: { type: 'string' },
   },
 };
 
-const newOrderTaskSchema_body = {
+const newTaskItemSchema_body = {
   type: 'object',
   required: ['orderID', 'recipeID', 'quantity', 'unitIncome'],
   properties: {
@@ -27,7 +27,7 @@ const newOrderTaskSchema_body = {
   },
 };
 
-const OrderTaskUpdateSchema_body = {
+const TaskItemUpdateSchema_body = {
   type: 'object',
   properties: {
     unitIncome: { type: 'number' },
@@ -36,27 +36,27 @@ const OrderTaskUpdateSchema_body = {
   },
 };
 
-const OrderTaskUpdateSchema_params = {
+const TaskItemUpdateSchema_params = {
   type: 'object',
-  required: ['orderTaskID'],
+  required: ['taskItemID'],
   properties: {
-    orderTaskID: { type: 'string' },
+    taskItemID: { type: 'string' },
   },
 };
 
-const OrderTaskDeleteSchema_params = {
+const TaskItemDeleteSchema_params = {
   type: 'object',
-  required: ['orderTaskID'],
+  required: ['taskItemID'],
   properties: {
-    orderTaskID: { type: 'string' },
+    taskItemID: { type: 'string' },
   },
 };
 
 module.exports = {
-  getOrdersTasksSchema_query,
-  getOrderTaskSchema_params,
-  newOrderTaskSchema_body,
-  OrderTaskUpdateSchema_body,
-  OrderTaskUpdateSchema_params,
-  OrderTaskDeleteSchema_params,
+  getTaskItemsSchema_query,
+  getTaskItemSchema_params,
+  newTaskItemSchema_body,
+  TaskItemUpdateSchema_body,
+  TaskItemUpdateSchema_params,
+  TaskItemDeleteSchema_params,
 };

@@ -1,7 +1,7 @@
 const express = require('express');
 
-const { routeValidator } = require('../../../middleware/validating');
-const { errorCatcher } = require('../../../middleware/errorHandling');
+const { routeValidator } = require('../../middleware/validating');
+const { errorCatcher } = require('../../middleware/errorHandling');
 const handler = require('./handler');
 const {
   getStockProductsSchema_query,
@@ -10,7 +10,7 @@ const {
   StockProductUpdateSchema_body,
   StockProductUpdateSchema_params,
   StockProductDeleteSchema_params,
-} = require('../../../schemas/stockProduct-types');
+} = require('../../schemas/stockProduct-types');
 
 const router = express.Router();
 const h = handler;
