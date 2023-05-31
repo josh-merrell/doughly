@@ -1,22 +1,22 @@
 'use strict';
 
-async function getOrderTasks(req, res) {
+async function getTaskItems(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { cursor, limit, orderTaskIDs, orderID, recipeID, status } = req.query;
-  const returner = await p.get.all({ cursor, limit, orderTaskIDs, orderID, recipeID, status });
+  const { cursor, limit, taskItemIDs, orderID, recipeID, status } = req.query;
+  const returner = await p.get.all({ cursor, limit, taskItemIDs, orderID, recipeID, status });
   return res.json(returner);
 }
 
-async function getOrderTaskByID(req, res) {
+async function getTaskItemByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { orderTaskID } = req.params;
-  const returner = await p.get.byID({ orderTaskID });
+  const { taskItemID } = req.params;
+  const returner = await p.get.byID({ taskItemID });
   return res.json(returner);
 }
 
-async function createOrderTask(req, res) {
+async function createTaskItem(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { orderID, recipeID, quantity, unitIncome } = req.body;
@@ -29,13 +29,13 @@ async function createOrderTask(req, res) {
   return res.json(returner);
 }
 
-async function updateOrderTask(req, res) {
+async function updateTaskItem(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { orderTaskID } = req.params;
+  const { taskItemID } = req.params;
   const { quantity, status, unitIncome } = req.body;
   const returner = await p.update({
-    orderTaskID,
+    taskItemID,
     quantity,
     status,
     unitIncome,
@@ -43,20 +43,20 @@ async function updateOrderTask(req, res) {
   return res.json(returner);
 }
 
-async function deleteOrderTask(req, res) {
+async function deleteTaskItem(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { orderTaskID } = req.params;
+  const { taskItemID } = req.params;
   const returner = await p.delete({
-    orderTaskID,
+    taskItemID,
   });
   return res.json(returner);
 }
 
 module.exports = {
-  getOrderTasks,
-  getOrderTaskByID,
-  createOrderTask,
-  updateOrderTask,
-  deleteOrderTask,
+  getTaskItems,
+  getTaskItemByID,
+  createTaskItem,
+  updateTaskItem,
+  deleteTaskItem,
 };

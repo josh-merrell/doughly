@@ -1,6 +1,6 @@
 ('use strict');
 
-const { updater } = require('../../../db');
+const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {

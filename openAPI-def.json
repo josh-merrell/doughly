@@ -1468,16 +1468,29 @@
         }
       }
     },
-    "/orders/products/stock": {
+    "/orders/items/stock": {
       "get": {
         "tags": [
           "Orders"
         ],
         "summary": "Get Stock Product <> Order associations",
-        "operationId": "getOrderStockProducts",
+        "operationId": "getOrderStockItems",
         "parameters": [
           {
-            "name": "orderIDs",
+            "name": "stockItemIDs",
+            "in": "query",
+            "description": "IDs of the order stock item to filter by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "style": "form",
+            "explode": false
+          },
+          {
+            "name": "orderID",
             "in": "query",
             "description": "ID of the order",
             "schema": {
@@ -1493,22 +1506,13 @@
             }
           },
           {
-            "name": "orderStockID",
+            "name": "stockStatus",
             "in": "query",
-            "description": "ID of the order stock",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Status of the order stock product",
+            "description": "Status of the order stock item",
             "schema": {
               "type": "string",
               "enum": [
                 "sufficient",
-                "conflict",
                 "insufficient"
               ]
             }
@@ -1524,22 +1528,27 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "stockItemID": {
+                        "type": "integer"
+                      },
                       "orderID": {
                         "type": "integer"
                       },
                       "stockProductID": {
                         "type": "integer"
                       },
-                      "orderStockID": {
-                        "type": "integer"
-                      },
-                      "status": {
+                      "stockStatus": {
                         "type": "string",
                         "enum": [
                           "sufficient",
-                          "confict",
                           "insufficient"
                         ]
+                      },
+                      "unitIncome": {
+                        "type": "number"
+                      },
+                      "quantity": {
+                        "type": "integer"
                       }
                     }
                   }
@@ -1559,8 +1568,8 @@
         "tags": [
           "Orders"
         ],
-        "summary": "Add an amount of a Stock Product to an order",
-        "operationId": "createOrderStockProduct",
+        "summary": "Add Stock Item to an order",
+        "operationId": "createOrderStockItem",
         "requestBody": {
           "required": true,
           "content": {
@@ -1593,7 +1602,7 @@
         },
         "responses": {
           "201": {
-            "description": "Order stock product created successfully",
+            "description": "Order stock item created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1605,16 +1614,21 @@
                     "stockProductID": {
                       "type": "integer"
                     },
-                    "orderStockID": {
+                    "stockItemID": {
                       "type": "integer"
                     },
-                    "status": {
+                    "stockStatus": {
                       "type": "string",
                       "enum": [
                         "sufficient",
-                        "confict",
                         "insufficient"
                       ]
+                    },
+                    "unitIncome": {
+                      "type": "number"
+                    },
+                    "quantity": {
+                      "type": "integer"
                     }
                   }
                 }
@@ -1630,18 +1644,100 @@
         }
       }
     },
-    "/orders/products/stock/{orderStockID}": {
+    "/orders/items/stock/{stockItemID}": {
+      "patch": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Update an Order Stock Item",
+        "operationId": "updateOrderStockItem",
+        "parameters": [
+          {
+            "name": "stockItemID",
+            "in": "path",
+            "description": "ID of the Order Stock Item to update",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "unitIncome": {
+                    "type": "number",
+                    "description": "Updated income per unit for this order"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "description": "Updated quantity of this order item"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order Stock Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stockItemID": {
+                      "type": "integer"
+                    },
+                    "orderID": {
+                      "type": "integer"
+                    },
+                    "stockProductID": {
+                      "type": "integer"
+                    },
+                    "unitIncome": {
+                      "type": "number"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "stockStatus": {
+                      "type": "string",
+                      "enum": [
+                        "sufficient",
+                        "insufficient"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Orders"
         ],
-        "summary": "Delete a Stock Product quantity association of an Order",
-        "operationId": "deleteOrderStockProduct",
+        "summary": "Delete a Stock Item quantity association from an Order",
+        "operationId": "deleteOrderStockItem",
         "parameters": [
           {
-            "name": "orderStockID",
+            "name": "stockItemID",
             "in": "path",
-            "description": "ID of the order stock product to delete",
+            "description": "ID of the order stock item to delete",
             "required": true,
             "schema": {
               "type": "integer"
@@ -1650,13 +1746,13 @@
         ],
         "responses": {
           "204": {
-            "description": "Order Stock Product association deleted successfully"
+            "description": "Order Stock Item deleted successfully"
           },
           "400": {
             "description": "Bad request"
           },
           "404": {
-            "description": "Order stock product not found"
+            "description": "Order stock item not found"
           },
           "500": {
             "description": "Internal server error"
@@ -2211,18 +2307,18 @@
         }
       }
     },
-    "/orders/products/task": {
+    "/orders/items/task": {
       "get": {
         "tags": [
           "Orders"
         ],
-        "summary": "Retrieve order task products",
-        "operationId": "getOrderTaskProducts",
+        "summary": "Retrieve order task items",
+        "operationId": "getOrderTaskItems",
         "parameters": [
           {
-            "name": "orderTaskIDs",
+            "name": "taskItemIDs",
             "in": "query",
-            "description": "Filter on ID(s) of orderTaskProducts.",
+            "description": "Filter on ID(s) of orderTaskItems.",
             "required": false,
             "schema": {
               "type": "array",
@@ -2278,9 +2374,9 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "orderTaskID": {
+                      "taskItemID": {
                         "type": "integer",
-                        "description": "The ID of the order task."
+                        "description": "The ID of the order task item."
                       },
                       "orderID": {
                         "type": "integer",
@@ -2289,10 +2385,6 @@
                       "recipeID": {
                         "type": "integer",
                         "description": "The ID of the recipe this task will follow."
-                      },
-                      "productName": {
-                        "type": "string",
-                        "description": "The name of product this task will produce."
                       },
                       "unitIncome": {
                         "type": "integer",
@@ -2320,8 +2412,8 @@
         "tags": [
           "Orders"
         ],
-        "summary": "Add a task product to an order",
-        "operationId": "addOrderStockProduct",
+        "summary": "Add a task item to an order",
+        "operationId": "addOrderStockItem",
         "requestBody": {
           "required": true,
           "content": {
@@ -2331,7 +2423,6 @@
                 "required": [
                   "orderID",
                   "recipeID",
-                  "productName",
                   "quantity",
                   "unitIncome"
                 ],
@@ -2346,11 +2437,11 @@
                   },
                   "quantity": {
                     "type": "integer",
-                    "description": "The quantity of the product."
+                    "description": "The quantity of the task product."
                   },
                   "unitIncome": {
                     "type": "integer",
-                    "description": "The unit income of the product."
+                    "description": "The unit income of the task product."
                   }
                 }
               }
@@ -2365,9 +2456,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "orderTaskID": {
+                    "taskItemID": {
                       "type": "integer",
-                      "description": "The ID of the order task."
+                      "description": "The ID of the order task item."
                     },
                     "orderID": {
                       "type": "integer",
@@ -2383,7 +2474,7 @@
                     },
                     "status": {
                       "type": "string",
-                      "description": "The status of the order task.",
+                      "description": "The status of the order task item.",
                       "enum": [
                         "created",
                         "inProgress",
@@ -2399,17 +2490,17 @@
         }
       }
     },
-    "/orders/products/task/{orderTaskID}": {
+    "/orders/items/task/{taskItemID}": {
       "patch": {
         "tags": [
           "Orders"
         ],
-        "operationId": "updateOrderTaskProduct",
+        "operationId": "updateOrderTaskItem",
         "parameters": [
           {
-            "name": "orderTaskID",
+            "name": "taskItemID",
             "in": "path",
-            "description": "The ID of the order task.",
+            "description": "The ID of the order task item.",
             "required": true,
             "schema": {
               "type": "integer"
@@ -2425,11 +2516,11 @@
                 "properties": {
                   "unitIncome": {
                     "type": "number",
-                    "description": "The updated income per unit for this order task"
+                    "description": "The updated income per unit for this order task item"
                   },
                   "quantity": {
                     "type": "integer",
-                    "description": "The updated number of products needed for this order task"
+                    "description": "The updated number of products needed for this order task item"
                   },
                   "status": {
                     "type": "string",
@@ -2439,7 +2530,7 @@
                       "done",
                       "removed"
                     ],
-                    "description": "The updated current status of this order task"
+                    "description": "The updated current status of this order task item"
                   }
                 }
               }
@@ -2454,7 +2545,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "orderTaskID": {
+                    "taskItemID": {
                       "type": "integer"
                     },
                     "unitIncome": {
@@ -2484,12 +2575,12 @@
         "tags": [
           "Orders"
         ],
-        "operationId": "deleteOrderTaskProduct",
+        "operationId": "deleteOrderTaskItem",
         "parameters": [
           {
-            "name": "orderTaskID",
+            "name": "taskItemID",
             "in": "path",
-            "description": "The ID of the order task.",
+            "description": "The ID of the order task item to delete.",
             "required": true,
             "schema": {
               "type": "integer"
@@ -7387,7 +7478,7 @@
           }
         }
       },
-      "OrderStockProduct": {
+      "OrderStockItem": {
         "type": "object",
         "properties": {
           "orderID": {
@@ -7396,20 +7487,19 @@
           "stockProductID": {
             "type": "integer"
           },
-          "orderStockID": {
+          "stockItemID": {
             "type": "integer"
           },
           "status": {
             "type": "string",
             "enum": [
               "sufficient",
-              "confict",
               "insufficient"
             ]
           }
         }
       },
-      "NewOrderStockProduct": {
+      "NewOrderStockItem": {
         "type": "object",
         "required": [
           "orderID",
@@ -7533,10 +7623,10 @@
           }
         }
       },
-      "OrderTaskProduct": {
+      "OrderTaskItem": {
         "type": "object",
         "properties": {
-          "orderTaskID": {
+          "taskItemID": {
             "type": "integer",
             "description": "The ID of the order task."
           },
@@ -7564,12 +7654,11 @@
           }
         }
       },
-      "NewOrderTaskProduct": {
+      "NewOrderTaskItem": {
         "type": "object",
         "required": [
           "orderID",
           "recipeID",
-          "productName",
           "quantity",
           "unitIncome"
         ],
