@@ -2,7 +2,7 @@
 
 const { updater } = require('../../../../db');
 
-const { supplyCheck } = require('../../../../services/supply');
+const { supplyCheckMoreDemand, supplyCheckLessDemand } = require('../../../../services/supply');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -78,9 +78,9 @@ module.exports = ({ db }) => {
       return { error: `unitIncome: ${unitIncome} is not a positive number, cannot add orderStockItem` };
     }
 
-    const scheduledDeliveryDate = order[0].scheduledDeliveryDate;
+    const scheduledDeliveryTime = order[0].scheduledDeliveryTime;
     //call helper to determine 'stockStatus' of this new recipe stockItem
-    const stockStatus = await supplyCheck(quantity, stockProductID, scheduledDeliveryDate);
+    const stockStatus = await supplyCheckMoreDemand(quantity, order[0].orderID, stockProductID, scheduledDeliveryTime);
 
     //create orderStockItem
     const { data: orderStockItem, error: orderStockItemError } = await db
@@ -135,7 +135,12 @@ module.exports = ({ db }) => {
     }
 
     //calculate new stockStatus based on provided quantity
-    const stockStatus = await supplyCheck(quantity, orderStock[0].stockProductID, order[0].scheduledDeliveryDate);
+    let stockStatus;
+    if (quantity > orderStock[0].quantity) {
+      stockStatus = await supplyCheckMoreDemand(quantity, order[0].orderID, orderStock[0].stockProductID, order[0].scheduledDeliveryTime, stockItemID);
+    } else {
+      stockStatus = await supplyCheckLessDemand(quantity, order[0].orderID, orderStock[0].stockProductID, order[0].scheduledDeliveryTime, stockItemID);
+    }
 
     //update the orderStockItem
     const updateFields = {};
