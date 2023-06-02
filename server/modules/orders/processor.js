@@ -84,12 +84,6 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating order: ${orderError.message}`);
       return { error: orderError.message };
     }
-
-
-
-    //TODO: create orderStockProducts
-    //TODO: create orderTaskProducts
-
     //TODO: calculate subtotal from orderStockProducts and orderTaskProducts, then update invoice 'subtotal'
 
     global.logger.info(`Created order ${order.orderID}`);
