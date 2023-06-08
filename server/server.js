@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
+const cors = require('cors');
 require('dotenv').config();
 const logger = winston.createLogger({
   level: 'info',
@@ -19,6 +20,7 @@ global.logger = logger;
 
 const requestLogStream = fs.createWriteStream(path.join(__dirname, 'request.log'), { flags: 'a' });
 
+app.use(cors());
 app.use(morgan('combined')); //send request logs to console
 app.use(morgan('combined', { stream: requestLogStream })); //also send request logs to file
 const { queryArrayParser } = require('./middleware/queryParsing');
