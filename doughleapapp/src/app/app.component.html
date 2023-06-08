@@ -1,0 +1,49 @@
+<!-- <h1 class="m-3 rounded-lg border-4 border-dl-blue-8 p-2 bg-gray-200 p-1.5 shadow-sm hover:bg-gray-100">Root Component</h1>
+<div [ngSwitch]="role">
+  <div *ngSwitchCase="'Admin'">Welcome Admin</div>
+  <div *ngSwitchCase="'User'">Welcome User</div>
+  <div *ngSwitchDefault>Unknown User</div>
+</div>
+<dl-container>
+  <dl-employee></dl-employee>
+  <dl-ingredients></dl-ingredients>
+  <h1>This is from ng-content</h1>
+</dl-container>
+<dl-container>
+  <dl-employee></dl-employee>
+  <dl-ingredients></dl-ingredients>
+  <h1>This is from ng-content</h1>
+</dl-container> -->
+<div class="bg-dl-gray-10 h-screen">
+  <header class="p-dl-3">
+    <div>
+      <div class="m-dl-0 p-dl-0 bg-dl-gray-9 flex space-x-3">
+        <a
+          class="p-dl-2 rounded-dl-1 font-dl-3 font-novo-sans text-dl-gray-1 bg-dl-gray-9 hover:bg-dl-gray-8 active:bg-dl-gray-6 active:text-dl-gray-10 text-dl-6 w-dl-8 border-2 text-center"
+          [routerLink]="'/'"
+        >
+          Home
+        </a>
+        <a
+          class="p-dl-2 rounded-dl-1 font-dl-3 font-novo-sans text-dl-gray-1 bg-dl-gray-9 hover:bg-dl-gray-8 active:bg-dl-gray-6 active:text-dl-gray-10 text-dl-6 w-dl-8 border-2 text-center"
+          [routerLink]="'/employee'"
+        >
+          Employee
+        </a>
+        <a
+          class="p-dl-2 rounded-dl-1 font-dl-3 font-novo-sans text-dl-gray-1 bg-dl-gray-9 hover:bg-dl-gray-8 active:bg-dl-gray-6 active:text-dl-gray-10 text-dl-6 w-dl-8 border-2 text-center"
+          [routerLink]="'/ingredients'"
+        >
+          Ingredients
+        </a>
+        <a
+          class="p-dl-2 rounded-dl-1 font-dl-3 font-novo-sans text-dl-gray-1 bg-dl-gray-9 hover:bg-dl-gray-8 active:bg-dl-gray-6 active:text-dl-gray-10 text-dl-6 w-dl-10 border-2 text-center"
+          [routerLink]="'/ingredients/add'"
+        >
+          Add Ingredient
+        </a>
+      </div>
+    </div>
+  </header>
+  <router-outlet></router-outlet>
+</div>

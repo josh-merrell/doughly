@@ -1,33 +1,13 @@
-<div class="cursor-pointer rounded-lg m-3 border-4 bg-gray-200 p-1.5 shadow-sm">
-  <h1>{{title}} View</h1>
-  <div *ngIf="ingredients.length > 2" [hidden]="typesVisable">
-    Number of Ingredients: <span [innerText]="ingredients.length"></span>
-  </div>
-  <button (click)="hideTypes()">Toggle Count</button>
-
-  <div *ngIf="ingredientsLength > 0">
-    Ingredients List
+<div>
+  <h1 class="text-dl-5 text-dl-gray-3 font-dl-3">Number of Ingredients: {{ ingredientsCount$ | async }}</h1>
+  <div *ngIf="ingredients$ | async as ingredients">
     <div>
-      <table>
-        <tr>
-          <th>Index</th>
-          <th>Name</th>
-          <th>Quantity</th>
-          <th>Expire</th>
-        <tr *ngFor="let ingredient of ingredients; let i=index">
-          <td [ngClass]="{
-              'visible text-red-600': i === 1,
-              'visible text-blue-500': i !== 1
-            }"> 
-            {{(i+1) % 2 === 0 ? "Even" : "Odd"}}
-          </td>
-          <td>{{ingredient.name}}</td>
-          <td>{{ingredient.quantity}}</td>
-          <td>{{ingredient.expire}}</td>
-        </tr>
-      </table>
+      <dl-ingredients-list
+        [ingredients]="ingredients"
+        [title]="'ingredient list'"
+      ></dl-ingredients-list>
     </div>
   </div>
-
-
 </div>
+
+<router-outlet></router-outlet>
