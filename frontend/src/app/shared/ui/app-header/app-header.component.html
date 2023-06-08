@@ -1,0 +1,165 @@
+<nav class="bg-dl-grey-10 shadow">
+  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <div class="relative flex h-dl-5 justify-between">
+      <div class="absolute inset-y-0 left-0 flex items-center sm:hidden"></div>
+      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+        <div class="flex flex-shrink-0 items-center">
+          <img
+            class="block h-8 w-auto lg"
+            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+            alt="doughleap"
+          />
+          <!-- <img class="hidden h-8 w-auto lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="doughleap"> -->
+        </div>
+        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <a
+            routerLink="/ingredients"
+            class="inline-flex items-center border-b-2 border-dl-pink-5 px-1 pt-1 text-sm font-medium text-dl-grey-1 hover:border-dl-grey-8 hover:text-dl-grey-3"
+          >
+            Ingredients
+          </a>
+          <a
+            routerLink="/employees"
+            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
+          >
+            Employees
+          </a>
+          <!-- <a
+            routerLink="/Orders"
+            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
+          >
+            Orders
+          </a> -->
+          <!-- <a
+            routerLink="/Clients"
+            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
+          >
+            Clients
+          </a> -->
+        </div>
+      </div>
+      <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+        <button
+          type="button"
+          class="rounded-full bg-white p-dl-1 text-dl-grey-4 hover:text-dl-grey-3 focus:outline-none focus:ring-2 focus:ring-dl-pink-6 focus:ring-offset-2"
+        >
+          <span class="sr-only">View Notifications</span>
+          <svg
+            class="h-dl-3 w-dl-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+            />
+          </svg>
+        </button>
+
+        <!-- !!Profile dropdown -->
+        <div class="relative ml-3">
+          <div>
+            <button
+              type="button"
+              class="flex rounded-full bg-dl-grey-10 text-sm focus:outline-none focus:ring-2 focus:ring-dl-pink-4 focus:ring-offset-2"
+              id="user-menu-button"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              <span class="sr-only">Open User Menu</span>
+              <img
+                class="h-dl-4 w-dl-4 rounded-full"
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+              />
+            </button>
+          </div>
+
+          <!-- !!
+            Dropdown menu, show/hide based on menu state.
+
+            Entering: "transition ease-out duration-200"
+              From: "transform opacity-0 scale-95"
+              To: "transform opacity-100 scale-100"
+            Leaving: "transition ease-in duration-75"
+              From: "transform opacity-100 scale-100"
+              To: "transform opacity-0 scale-95"
+          !! -->
+          <div
+            class="absolute right-0 z-10 mt-2 w-dl-10 origin-top-right rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 focus:outline-none"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="user-menu-button"
+            tabindex="-1"
+          >
+            <!-- !!Active: "bg-dl-grey-9", Not Active: "" -->
+            <a
+              routerLink="#"
+              class="block px-4 py-2 text-sm text-dl-grey-3"
+              role="menuitem"
+              tabindex="-1"
+              id="user-menu-item-0"
+            >
+              Your Profile
+            </a>
+            <a
+              routerLink="#"
+              class="block px-4 py-2 text-sm text-dl-grey-3"
+              role="menuitem"
+              tabindex="-1"
+              id="user-menu-item-1"
+            >
+              Settings
+            </a>
+            <a
+              routerLink="#"
+              class="block px-4 py-2 text-sm text-dl-grey-3"
+              role="menuitem"
+              tabindex="-1"
+              id="user-menu-item-2"
+            >
+              Sign out
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu, show/hide based on menu state. -->
+  <div
+    class="sm:hidden"
+    id="mobile-menu"
+  >
+    <div class="space-y-1 pb-4 pt-2">
+      <a
+        routerLink="#"
+        class="block border-l-4 border-dl-pink-5 bg-dl-pink-10 py-2 pl-3 pr-4 text-base font-medium text-dl-pink-3"
+      >
+        Dashboard
+      </a>
+      <a
+        routerLink="#"
+        class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:bg-dl-grey-10 hover:text-dl-grey-3"
+      >
+        Team
+      </a>
+      <a
+        routerLink="#"
+        class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:bg-dl-grey-10 hover:text-dl-grey-3"
+      >
+        Projects
+      </a>
+      <a
+        routerLink="#"
+        class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:bg-dl-grey-10 hover:text-dl-grey-3"
+      >
+        Calendar
+      </a>
+    </div>
+  </div>
+</nav>
