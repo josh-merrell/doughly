@@ -14,34 +14,40 @@
         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
           <a
             routerLink="/ingredients"
-            class="inline-flex items-center border-b-2 border-dl-pink-5 px-1 pt-1 text-sm font-medium text-dl-grey-1 hover:border-dl-grey-8 hover:text-dl-grey-3"
+            routerLinkActive="border-dl-blue-6"
+            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-1 hover:border-dl-grey-8 hover:text-dl-grey-3"
           >
             Ingredients
           </a>
           <a
             routerLink="/employees"
+            routerLinkActive="border-dl-blue-6"
             class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
           >
             Employees
           </a>
-          <!-- <a
-            routerLink="/Orders"
+          <a
+            routerLink="/orders"
+            routerLinkActive="border-dl-blue-6"
             class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
           >
             Orders
-          </a> -->
-          <!-- <a
-            routerLink="/Clients"
+          </a>
+          <a
+            routerLink="/"
+            routerLinkActive="border-dl-blue-6"
             class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
           >
-            Clients
-          </a> -->
+            Home
+          </a>
         </div>
       </div>
       <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+
+        <!-- Notifications Button -->
         <button
           type="button"
-          class="rounded-full bg-white p-dl-1 text-dl-grey-4 hover:text-dl-grey-3 focus:outline-none focus:ring-2 focus:ring-dl-pink-6 focus:ring-offset-2"
+          class="hidden rounded-full bg-dl-grey-10 p-dl-1 text-dl-grey-4 hover:text-dl-grey-3 focus:outline-none focus:ring-2 focus:ring-dl-pink-6 focus:ring-offset-2"
         >
           <span class="sr-only">View Notifications</span>
           <svg
@@ -60,12 +66,13 @@
           </svg>
         </button>
 
-        <!-- !!Profile dropdown -->
+        <!-- Profile dropdown -->
         <div class="relative ml-3">
           <div>
             <button
               type="button"
-              class="flex rounded-full bg-dl-grey-10 text-sm focus:outline-none focus:ring-2 focus:ring-dl-pink-4 focus:ring-offset-2"
+              (click)="toggleMenu($event)"
+              class="flex rounded-full bg-dl-grey-10 text-sm focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
               id="user-menu-button"
               aria-expanded="false"
               aria-haspopup="true"
@@ -78,28 +85,18 @@
               />
             </button>
           </div>
-
-          <!-- !!
-            Dropdown menu, show/hide based on menu state.
-
-            Entering: "transition ease-out duration-200"
-              From: "transform opacity-0 scale-95"
-              To: "transform opacity-100 scale-100"
-            Leaving: "transition ease-in duration-75"
-              From: "transform opacity-100 scale-100"
-              To: "transform opacity-0 scale-95"
-          !! -->
           <div
-            class="absolute right-0 z-10 mt-2 w-dl-10 origin-top-right rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 focus:outline-none"
+            #menu
+            [ngClass]="{ 'scale-100 opacity-100 duration-200': isMenuOpen, 'scale-95 opacity-0 duration-75': !isMenuOpen }"
+            class="ease-out absolute right-0 z-10 mt-2 w-dl-10 origin-top-right rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 focus:outline-none"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="user-menu-button"
             tabindex="-1"
           >
-            <!-- !!Active: "bg-dl-grey-9", Not Active: "" -->
             <a
               routerLink="#"
-              class="block px-4 py-2 text-sm text-dl-grey-3"
+              class="hover:bg-dl-grey-9 cursor-pointer block px-4 py-2 text-sm text-dl-grey-3"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-0"
@@ -108,7 +105,7 @@
             </a>
             <a
               routerLink="#"
-              class="block px-4 py-2 text-sm text-dl-grey-3"
+              class="hover:bg-dl-grey-9 cursor-pointer block px-4 py-2 text-sm text-dl-grey-3"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-1"
@@ -117,7 +114,7 @@
             </a>
             <a
               routerLink="#"
-              class="block px-4 py-2 text-sm text-dl-grey-3"
+              class="hover:bg-dl-grey-9 cursor-pointer block px-4 py-2 text-sm text-dl-grey-3"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-2"
@@ -138,7 +135,7 @@
     <div class="space-y-1 pb-4 pt-2">
       <a
         routerLink="#"
-        class="block border-l-4 border-dl-pink-5 bg-dl-pink-10 py-2 pl-3 pr-4 text-base font-medium text-dl-pink-3"
+        class="block border-l-4 border-dl-blue-6 bg-dl-pink-10 py-2 pl-3 pr-4 text-base font-medium text-dl-pink-3"
       >
         Dashboard
       </a>
@@ -163,3 +160,5 @@
     </div>
   </div>
 </nav>
+
+<router-outlet></router-outlet>

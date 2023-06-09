@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{html,ts}'],
-  // mode: 'jit',
+  mode: 'jit',
   purge: ['./src/**/*.{html,ts}'],
   theme: {
     extend: {
+      display: ['responseive', 'group-hover', 'group-focus', 'hover', 'focus', 'focus-within', '!important'],
       height: {
         'dl-0': '0px',
         'dl-1': '2px',
@@ -180,5 +181,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography'), require('@tailwindcss/forms')],
 };
