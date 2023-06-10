@@ -2,13 +2,18 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/routes';
+import { provideState, provideStore } from '@ngrx/store';
+import { sharedReducer } from './app/shared/state/shared-reducers';
+// import { ingredientReducer } from './app/ingredients/state/ingredient-reducers';
+// import { SharedState } from './app/shared/state/shared-state';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    // provideStore({ router: routerReducer, auth: authReducer }),
+    provideStore(),
+    provideState( 'shared', sharedReducer ),
+    // provideState( 'ingredient', ingredientReducer )
     // provideRouterStore(),
     // provideEffects([RouterEffects, AuthEffects])
   ],
-})
-  .catch((err) => console.error(err));
+}).catch((err) => console.error(err));
