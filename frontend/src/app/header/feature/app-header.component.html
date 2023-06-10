@@ -1,4 +1,4 @@
-<nav class="bg-dl-grey-10 shadow">
+<nav class="bg-dl-grey-10 shadow border-b-2">
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
     <div class="relative flex h-dl-5 justify-between">
       <div class="absolute inset-y-0 left-0 flex items-center sm:hidden"></div>
@@ -15,52 +15,64 @@
         </div>
         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
           <a
-            routerLink="/ingredients"
+            routerLink="/"
             [ngClass]="{
-              'border-dl-blue-6 hover:border-dl-blue-8':
-                (currentUrl$ | async) === '/ingredients',
-              'border-transparent hover:border-dl-grey-8':
-                (currentUrl$ | async) !== '/ingredients'
+              'border-dl-blue-6 hover:border-dl-blue-8 text-dl-grey-1':
+                (currentUrl$ | async) === '/',
+              'border-transparent hover:border-dl-grey-8 text-dl-grey-3':
+                (currentUrl$ | async) !== '/'
             }"
-            class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium text-dl-grey-1 hover:text-dl-grey-3"
+            class="transition-all duration-200 ease-in-out inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium hover:text-dl-grey-3"
           >
-            Ingredients
+            Home
           </a>
           <a
-            routerLink="/employees"
+            routerLink="/recipes"
             [ngClass]="{
-              'border-dl-blue-6 hover:border-dl-blue-8':
-                (currentUrl$ | async) === '/employees',
-              'border-transparent hover:border-dl-grey-8':
-                (currentUrl$ | async) !== '/employees'
+              'border-dl-blue-6 hover:border-dl-blue-8 text-dl-grey-1':
+                (currentUrl$ | async) === '/recipes',
+              'border-transparent hover:border-dl-grey-8 text-dl-grey-3':
+                (currentUrl$ | async) !== '/recipes'
             }"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:text-dl-grey-3"
+            class="transition-all duration-200 ease-in-out inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium hover:text-dl-grey-3"
           >
-            Employees
+            Recipes
           </a>
           <a
             routerLink="/orders"
             [ngClass]="{
-              'border-dl-blue-6 hover:border-dl-blue-8':
+              'border-dl-blue-6 hover:border-dl-blue-8 text-dl-grey-1':
                 (currentUrl$ | async) === '/orders',
-              'border-transparent hover:border-dl-grey-8':
+              'border-transparent hover:border-dl-grey-8 text-dl-grey-3':
                 (currentUrl$ | async) !== '/orders'
             }"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:text-dl-grey-3"
+            class="transition-all duration-200 ease-in-out inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium hover:text-dl-grey-3"
           >
             Orders
           </a>
           <a
-            routerLink="/"
+            routerLink="/kitchen"
             [ngClass]="{
-              'border-dl-blue-6 hover:border-dl-blue-8':
-                (currentUrl$ | async) === '/',
-              'border-transparent hover:border-dl-grey-8':
-                (currentUrl$ | async) !== '/'
+              'border-dl-blue-6 hover:border-dl-blue-8 text-dl-grey-1':
+                (currentUrl$ | async) === '/kitchen',
+              'border-transparent hover:border-dl-grey-8 text-dl-grey-3':
+                (currentUrl$ | async) !== '/kitchen'
             }"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:text-dl-grey-3"
+            class="transition-all duration-200 ease-in-out inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium hover:text-dl-grey-3"
           >
-            Home
+            Kitchen
+          </a>
+          <a
+            routerLink="/products"
+            [ngClass]="{
+              'border-dl-blue-6 hover:border-dl-blue-8 text-dl-grey-1':
+                (currentUrl$ | async) === '/products',
+              'border-transparent hover:border-dl-grey-8 text-dl-grey-3':
+                (currentUrl$ | async) !== '/products'
+            }"
+            class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium hover:text-dl-grey-3"
+          >
+            Products
           </a>
         </div>
       </div>
@@ -110,6 +122,7 @@
           </div>
           <div
             #menu
+            *ngIf="isMenuOpen"
             [ngClass]="{
               'scale-100 opacity-100 duration-200': isMenuOpen,
               'scale-95 opacity-0 duration-75': !isMenuOpen
