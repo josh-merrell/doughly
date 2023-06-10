@@ -2,10 +2,12 @@
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
     <div class="relative flex h-dl-5 justify-between">
       <div class="absolute inset-y-0 left-0 flex items-center sm:hidden"></div>
-      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+      <div
+        class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"
+      >
         <div class="flex flex-shrink-0 items-center">
           <img
-            class="block h-8 w-auto lg"
+            class="lg block h-8 w-auto"
             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
             alt="doughleap"
           />
@@ -14,36 +16,57 @@
         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
           <a
             routerLink="/ingredients"
-            routerLinkActive="border-dl-blue-6"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-1 hover:border-dl-grey-8 hover:text-dl-grey-3"
+            [ngClass]="{
+              'border-dl-blue-6 hover:border-dl-blue-8':
+                (currentUrl$ | async) === '/ingredients',
+              'border-transparent hover:border-dl-grey-8':
+                (currentUrl$ | async) !== '/ingredients'
+            }"
+            class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium text-dl-grey-1 hover:text-dl-grey-3"
           >
             Ingredients
           </a>
           <a
             routerLink="/employees"
-            routerLinkActive="border-dl-blue-6"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
+            [ngClass]="{
+              'border-dl-blue-6 hover:border-dl-blue-8':
+                (currentUrl$ | async) === '/employees',
+              'border-transparent hover:border-dl-grey-8':
+                (currentUrl$ | async) !== '/employees'
+            }"
+            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:text-dl-grey-3"
           >
             Employees
           </a>
           <a
             routerLink="/orders"
-            routerLinkActive="border-dl-blue-6"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
+            [ngClass]="{
+              'border-dl-blue-6 hover:border-dl-blue-8':
+                (currentUrl$ | async) === '/orders',
+              'border-transparent hover:border-dl-grey-8':
+                (currentUrl$ | async) !== '/orders'
+            }"
+            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:text-dl-grey-3"
           >
             Orders
           </a>
           <a
             routerLink="/"
-            routerLinkActive="border-dl-blue-6"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:border-dl-grey-8 hover:text-dl-grey-3"
+            [ngClass]="{
+              'border-dl-blue-6 hover:border-dl-blue-8':
+                (currentUrl$ | async) === '/',
+              'border-transparent hover:border-dl-grey-8':
+                (currentUrl$ | async) !== '/'
+            }"
+            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-dl-grey-5 hover:text-dl-grey-3"
           >
             Home
           </a>
         </div>
       </div>
-      <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-
+      <div
+        class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
+      >
         <!-- Notifications Button -->
         <button
           type="button"
@@ -87,8 +110,11 @@
           </div>
           <div
             #menu
-            [ngClass]="{ 'scale-100 opacity-100 duration-200': isMenuOpen, 'scale-95 opacity-0 duration-75': !isMenuOpen }"
-            class="ease-out absolute right-0 z-10 mt-2 w-dl-10 origin-top-right rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 focus:outline-none"
+            [ngClass]="{
+              'scale-100 opacity-100 duration-200': isMenuOpen,
+              'scale-95 opacity-0 duration-75': !isMenuOpen
+            }"
+            class="absolute right-0 z-10 mt-2 w-dl-10 origin-top-right rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 ease-out focus:outline-none"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="user-menu-button"
@@ -96,7 +122,7 @@
           >
             <a
               routerLink="#"
-              class="hover:bg-dl-grey-9 cursor-pointer block px-4 py-2 text-sm text-dl-grey-3"
+              class="block cursor-pointer px-4 py-2 text-sm text-dl-grey-3 hover:bg-dl-grey-9"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-0"
@@ -105,7 +131,7 @@
             </a>
             <a
               routerLink="#"
-              class="hover:bg-dl-grey-9 cursor-pointer block px-4 py-2 text-sm text-dl-grey-3"
+              class="block cursor-pointer px-4 py-2 text-sm text-dl-grey-3 hover:bg-dl-grey-9"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-1"
@@ -114,7 +140,7 @@
             </a>
             <a
               routerLink="#"
-              class="hover:bg-dl-grey-9 cursor-pointer block px-4 py-2 text-sm text-dl-grey-3"
+              class="block cursor-pointer px-4 py-2 text-sm text-dl-grey-3 hover:bg-dl-grey-9"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-2"
@@ -128,10 +154,7 @@
   </div>
 
   <!-- Mobile menu, show/hide based on menu state. -->
-  <div
-    class="sm:hidden"
-    id="mobile-menu"
-  >
+  <div class="sm:hidden" id="mobile-menu">
     <div class="space-y-1 pb-4 pt-2">
       <a
         routerLink="#"
