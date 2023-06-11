@@ -4,7 +4,7 @@ async function getRecipeTools(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeToolIDs, recipeID, toolID } = req.query;
-  const returner = await p.get.all({ recipeToolIDs, recipeID, toolID });
+  const returner = await p.get.all({ userID: req.userID, recipeToolIDs, recipeID, toolID });
   return res.json(returner);
 }
 
@@ -12,7 +12,7 @@ async function getRecipeToolByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeToolID } = req.params;
-  const returner = await p.get.byID({ recipeToolID });
+  const returner = await p.get.byID({ userID: req.userID, recipeToolID });
   return res.json(returner);
 }
 
@@ -21,6 +21,7 @@ async function createRecipeTool(req, res) {
   const p = require('./processor')({ db });
   const { recipeID, toolID, quantity } = req.body;
   const returner = await p.create({
+    userID: req.userID,
     recipeID,
     toolID,
     quantity,
@@ -34,6 +35,7 @@ async function updateRecipeTool(req, res) {
   const { recipeToolID } = req.params;
   const { quantity } = req.body;
   const returner = await p.update({
+    userID: req.userID,
     recipeToolID,
     quantity,
   });
@@ -45,6 +47,7 @@ async function deleteRecipeTool(req, res) {
   const p = require('./processor')({ db });
   const { recipeToolID } = req.params;
   const returner = await p.delete({
+    userID: req.userID,
     recipeToolID,
   });
   return res.json(returner);

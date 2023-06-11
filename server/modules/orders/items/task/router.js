@@ -2,6 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../../../middleware/validating');
 const { errorCatcher } = require('../../../../middleware/errorHandling');
+const { authenticateJWT } = require('../../../../middleware/authenticateJWT');
 const handler = require('./handler');
 const {
   getTaskItemsSchema_query,
@@ -14,6 +15,8 @@ const {
 
 const router = express.Router();
 const h = handler;
+
+router.use(authenticateJWT);
 
 router.get('/:taskItemID', routeValidator(getTaskItemSchema_params, 'params'), errorCatcher(h.getTaskItemByID));
 router.patch('/:taskItemID', routeValidator(TaskItemUpdateSchema_body, 'body'), routeValidator(TaskItemUpdateSchema_params, 'params'), errorCatcher(h.updateTaskItem));

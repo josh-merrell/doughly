@@ -6,6 +6,7 @@ async function getInvoiceNotes(req, res) {
   const { cursor, limit } = req.query;
   const { invoiceNoteIDs, invoiceID } = req.query;
   const returner = await p.get.all({
+    userID: req.userID,
     cursor,
     limit,
     invoiceNoteIDs,
@@ -20,6 +21,7 @@ async function createInvoiceNote(req, res) {
   const { invoiceID } = req.params;
   const { note } = req.body;
   const returner = await p.create({
+    userID: req.userID,
     invoiceID,
     note,
   });

@@ -2,6 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
+const { authenticateJWT } = require('../../middleware/authenticateJWT');
 const handler = require('./handler');
 const {
   getProductStocksSchema_query,
@@ -14,6 +15,8 @@ const {
 
 const router = express.Router();
 const h = handler;
+
+router.use(authenticateJWT);
 
 router.get('/:productStockID', routeValidator(getProductStockSchema_params, 'params'), errorCatcher(h.getProductStockByID));
 router.delete('/:productStockID', routeValidator(ProductStockDeleteSchema_params, 'params'), errorCatcher(h.deleteProductStock));

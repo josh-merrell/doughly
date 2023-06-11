@@ -9,6 +9,10 @@ function routeValidator(schema, dataToValidate) {
       global.logger.info(`Invalid data in request ${dataToValidate}: ${ajv.errorsText()}`);
       return res.status(422).json(ajv.errors);
     }
+    if (!req.userID) {
+      global.logger.info(`No userID in request`);
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
     next();
   };
 }

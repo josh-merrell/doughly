@@ -2,6 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../../middleware/validating');
 const { errorCatcher } = require('../../../middleware/errorHandling');
+const { authenticateJWT } = require('../../../middleware/authenticateJWT');
 const handler = require('./handler');
 const {
   getRecipeCategorySchema_params,
@@ -13,6 +14,8 @@ const {
 
 const router = express.Router();
 const h = handler;
+
+router.use(authenticateJWT);
 
 router.get('/:recipeCategoryID', routeValidator(getRecipeCategorySchema_params, 'params'), errorCatcher(h.getRecipeCategoryByID));
 router.get('/', errorCatcher(h.getRecipeCategories));
