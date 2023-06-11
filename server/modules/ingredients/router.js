@@ -2,6 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
+const { authenticateJWT } = require('../../middleware/authenticateJWT');
 const handler = require('./handler');
 const {
   getIngredientsSchema_query,
@@ -18,6 +19,7 @@ const h = handler;
 
 router.use('/recipe', recipeIngredientsRouter);
 
+router.use(authenticateJWT);
 router.get('/:ingredientID', routeValidator(getIngredientSchema_params, 'params'), errorCatcher(h.getIngredientByID));
 router.get('/', routeValidator(getIngredientsSchema_query, 'query'), errorCatcher(h.getIngredients));
 router.post('/', routeValidator(newIngredientSchema_body, 'body'), errorCatcher(h.createIngredient));

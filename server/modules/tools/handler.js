@@ -4,7 +4,7 @@ async function getTools(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolIDs, name } = req.query;
-  const returner = await p.get.all({ toolIDs, name });
+  const returner = await p.get.all({ userID: req.userID, toolIDs, name });
   return res.json(returner);
 }
 
@@ -12,7 +12,7 @@ async function getToolByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolID } = req.params;
-  const returner = await p.get.byID({ toolID });
+  const returner = await p.get.byID({ userID: req.userID, toolID });
   return res.json(returner);
 }
 
@@ -21,6 +21,7 @@ async function createTool(req, res) {
   const p = require('./processor')({ db });
   const { name } = req.body;
   const returner = await p.create({
+    userID: req.userID,
     name,
   });
   return res.json(returner);
@@ -32,6 +33,7 @@ async function updateTool(req, res) {
   const { toolID } = req.params;
   const { name } = req.body;
   const returner = await p.update({
+    userID: req.userID,
     toolID,
     name,
   });
@@ -43,6 +45,7 @@ async function deleteTool(req, res) {
   const p = require('./processor')({ db });
   const { toolID } = req.params;
   const returner = await p.delete({
+    userID: req.userID,
     toolID,
   });
   return res.json(returner);

@@ -6,6 +6,7 @@ async function getInvoiceLogs(req, res) {
   const { cursor, limit } = req.query;
   const { invoiceLogIDs, invoiceID, type, dateRange } = req.query;
   const returner = await p.get.all({
+    userID: req.userID,
     cursor,
     limit,
     invoiceLogIDs,
@@ -22,6 +23,7 @@ async function createInvoiceLog(req, res) {
   const { invoiceID } = req.params;
   const { log, type } = req.body;
   const returner = await p.create({
+    userID: req.userID,
     invoiceID,
     log,
     type,

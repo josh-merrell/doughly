@@ -2,6 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
+const { authenticateJWT } = require('../../middleware/authenticateJWT');
 const handler = require('./handler');
 const {
   getStepsSchema_query,
@@ -17,6 +18,8 @@ const router = express.Router();
 const h = handler;
 
 router.use('/recipe', recipeStepsRouter);
+
+router.use(authenticateJWT);
 
 router.get('/:stepID', routeValidator(getStepSchema_params, 'params'), errorCatcher(h.getStepByID));
 router.get('/', routeValidator(getStepsSchema_query, 'query'), errorCatcher(h.getSteps));

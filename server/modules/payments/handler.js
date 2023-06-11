@@ -6,6 +6,7 @@ async function getPayments(req, res) {
   const { cursor, limit } = req.query;
   const { paymentIDs, method, invoiceID, dateRange } = req.query;
   const returner = await p.get.all({
+    userID: req.userID,
     cursor,
     limit,
     paymentIDs,
@@ -21,6 +22,7 @@ async function createPayment(req, res) {
   const p = require('./processor')({ db });
   const { method, invoiceID, amount, receivedTime } = req.body;
   const returner = await p.create({
+    userID: req.userID,
     method,
     invoiceID,
     amount,

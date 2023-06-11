@@ -2,6 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
+const { authenticateJWT } = require('../../middleware/authenticateJWT');
 const handler = require('./handler');
 const {
   getToolsSchema_query,
@@ -17,6 +18,8 @@ const router = express.Router();
 const h = handler;
 
 router.use('/recipe', recipeToolsRouter);
+
+router.use(authenticateJWT);
 
 router.get('/:toolID', routeValidator(getToolSchema_params, 'params'), errorCatcher(h.getToolByID));
 router.patch('/:toolID', routeValidator(ToolUpdateSchema_body, 'body'), routeValidator(ToolUpdateSchema_params, 'params'), errorCatcher(h.updateTool));
