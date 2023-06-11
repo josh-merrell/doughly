@@ -1,1 +1,11 @@
-<p>inventory works!</p>
+<div *ngIf="inventoryView$ | async as inventoryView">
+  <dl-inventory-header [inventoryView]="inventoryView"></dl-inventory-header>
+  <div [ngSwitch]="inventoryView">
+    <div *ngSwitchCase="'ingredients'">
+      <dl-ingredient-inventory-table></dl-ingredient-inventory-table>
+    </div>
+    <div *ngSwitchCase="'materials'">
+      <dl-material-inventory-table></dl-material-inventory-table>
+    </div>
+  </div>
+</div>
