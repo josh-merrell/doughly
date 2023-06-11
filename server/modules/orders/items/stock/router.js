@@ -2,6 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../../../middleware/validating');
 const { errorCatcher } = require('../../../../middleware/errorHandling');
+const { authenticateJWT } = require('../../../../middleware/authenticateJWT');
 const handler = require('./handler');
 const {
   getStockItemsSchema_query,
@@ -14,6 +15,8 @@ const {
 
 const router = express.Router();
 const h = handler;
+
+router.use(authenticateJWT);
 
 router.get('/:stockItemID', routeValidator(getStockItemSchema_params, 'params'), errorCatcher(h.getStockItemByID));
 router.patch('/:stockItemID', routeValidator(StockItemsUpdateSchema_body, 'body'), routeValidator(StockItemsUpdateSchema_params, 'params'), errorCatcher(h.updateStockItem));

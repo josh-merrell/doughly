@@ -2,7 +2,7 @@ async function getSteps(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeStepIDs, recipeID, stepID } = req.query;
-  const returner = await p.get.all({ recipeStepIDs, recipeID, stepID });
+  const returner = await p.get.all({ userID: req.userID, recipeStepIDs, recipeID, stepID });
   return res.json(returner);
 }
 
@@ -10,7 +10,7 @@ async function getStepByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeStepID } = req.params;
-  const returner = await p.get.byID({ recipeStepID });
+  const returner = await p.get.byID({ userID: req.userID, recipeStepID });
   return res.json(returner);
 }
 
@@ -19,6 +19,7 @@ async function createStep(req, res) {
   const p = require('./processor')({ db });
   const { recipeID, stepID, sequence } = req.body;
   const returner = await p.create({
+    userID: req.userID,
     recipeID,
     stepID,
     sequence,
@@ -32,6 +33,7 @@ async function updateStep(req, res) {
   const { recipeStepID } = req.params;
   const { sequence } = req.body;
   const returner = await p.update({
+    userID: req.userID,
     recipeStepID,
     sequence,
   });
@@ -42,7 +44,7 @@ async function deleteStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeStepID } = req.params;
-  const returner = await p.delete({ recipeStepID });
+  const returner = await p.delete({ userID: req.userID, recipeStepID });
   return res.json(returner);
 }
 
