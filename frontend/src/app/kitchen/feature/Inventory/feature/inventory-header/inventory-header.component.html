@@ -1,1 +1,11 @@
-<p>inventory-header works!</p>
+<main >
+  <div class="flex items-center justify-left">
+    <div class=" ">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">{{ inventoryView | singularizeAndCapitalize }} Inventory</h1>
+      <p class="mt-2 text-sm text-gray-700">Multiple entries may exist for each  <strong class="font-semibold text-gray-900">{{ inventoryView | singularizeAndCapitalize }}</strong>.</p>
+    </div>
+    <div class="min-w-fit ml-dl-7 mr-dl-6 mt-dl-4 ">
+      <button type="button" class="block rounded-md bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-2 font-semibold text-dl-grey-10 shadow-sm hover:bg-dl-pink-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Stock Entry</button>
+    </div>
+  </div>
+</main>
