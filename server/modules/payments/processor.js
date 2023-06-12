@@ -2,7 +2,7 @@
 
 module.exports = ({ db }) => {
   async function create(options) {
-    const { method, invoiceID, amount, receivedTime } = options;
+    const { userID, method, invoiceID, amount, receivedTime } = options;
 
     //if amount is 0 or negative, return an error
     if (amount <= 0) {
@@ -44,6 +44,7 @@ module.exports = ({ db }) => {
     const { data: newPayment, error } = await db
       .from('payments')
       .insert({
+        userID,
         receivedTime: receivedTime ? receivedTime : new Date().toISOString(),
         method,
         invoiceID,
@@ -75,18 +76,18 @@ module.exports = ({ db }) => {
   }
 
   async function getAll(options) {
-    const { paymentIDs, invoiceID, method, dateRange } = options;
+    const { userID, paymentIDs, invoiceID, method, dateRange } = options;
 
-    let q = db.from('payments').select().order('paymentID', { ascending: true });
+    let q = db.from('payments').select().filter('userID', 'eq', userID).order('paymentID', { ascending: true });
 
     if (paymentIDs) {
       q = q.in('paymentID', paymentIDs);
     }
     if (invoiceID) {
-      q = q.eq('invoiceID', invoiceID);
+      q = q.filter('invoiceID', 'eq', invoiceID);
     }
     if (method) {
-      q = q.eq('method', method);
+      q = q.filter('method', 'eq', method);
     }
     if (dateRange) {
       q = q.gte('receivedTime', dateRange[0]).lte('receivedTime', dateRange[1]);

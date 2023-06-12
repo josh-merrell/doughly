@@ -8,15 +8,12 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { orderIDs, clientID, name, scheduledDeliveryTimeRange, createdTimeRange, fulfilledTimeRange, fulfillment, status } = options;
+    const { userID, orderIDs, clientID, name, scheduledDeliveryTimeRange, createdTimeRange, fulfilledTimeRange, fulfillment, status } = options;
     
-    let q = db
-      .from('orders')
-      .select()
-      .order('orderID', { ascending: true })
+    let q = db.from('orders').select().filter('userID', 'eq', userID).order('orderID', { ascending: true });
 
     if (orderIDs) { q = q.in('orderID', orderIDs) }
-    if (clientID) { q = q.eq('clientID', clientID) }
+    if (clientID) { q = q.filter('clientID', 'eq', clientID) }
     if (name) { q = q.like('name', name) }
     if (scheduledDeliveryTimeRange) {
       q = q.gte('scheduledDeliveryTime', scheduledDeliveryTimeRange[0]).lte('scheduledDeliveryTime', scheduledDeliveryTimeRange[1]);
@@ -27,8 +24,8 @@ module.exports = ({ db }) => {
     if (fulfilledTimeRange) {
       q = q.gte('fulfilledTime', fulfilledTimeRange[0]).lte('fulfilledTime', fulfilledTimeRange[1]);
     }
-    if (fulfillment) { q = q.eq('fulfillment', fulfillment) }
-    if (status) { q = q.eq('status', status) }
+    if (fulfillment) { q = q.filter('fulfillment', 'eq', fulfillment) }
+    if (status) { q = q.filter('status', 'eq', status) }
 
     const { data: orders, error } = await q;
 
@@ -50,7 +47,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { clientID, name, scheduledDeliveryTime, fulfillment, description } = options;
+    const { userID, clientID, name, scheduledDeliveryTime, fulfillment, description } = options;
 
     //validate client, return error if they don't exist
     const { data: client, error } = await db.from('clients').select().eq('clientID', clientID);
@@ -77,7 +74,7 @@ module.exports = ({ db }) => {
     //create an order
     const { data: order, error: orderError } = await db
       .from('orders')
-      .insert({ clientID, name, scheduledDeliveryTime, fulfillment, status, fulfilledTime, invoiceID: invoice.data[0].invoiceID, description, createdTime: new Date() })
+      .insert({ userID, clientID, name, scheduledDeliveryTime, fulfillment, status, fulfilledTime, invoiceID: invoice.data[0].invoiceID, description, createdTime: new Date() })
       .select('orderID');
 
     if (orderError) {

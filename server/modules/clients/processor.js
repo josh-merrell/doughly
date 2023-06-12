@@ -61,7 +61,7 @@ module.exports = ({ db }) => {
   }
 
   async function getClientByID(options) {
-    const { data, error } = await db.from('clients').select().filter('userID', 'eq', options.userID).filter('clientID', 'eq', options.clientID).single();
+    const { data, error } = await db.from('clients').select().eq('clientID', options.clientID).single();
     if (error) {
       global.logger.info(`Error getting client by ID: ${options.clientID}:${error.message}`);
       return { error: error.message };
@@ -101,14 +101,13 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { userID, clientID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
+    const { clientID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
 
     //get the personID for the client
     const { data, error } = await db
       .from('clients')
       .select('personID')
-      .filter('userID', 'eq', userID)
-      .filter('clientID', 'eq', clientID)
+      .eq('clientID', clientID)
       .single();
 
     if (error) {
@@ -118,7 +117,6 @@ module.exports = ({ db }) => {
       //call the PATCH /persons/{personID} endpoint
       const personID = data.personID;
       const { data: personUpdateResult } = await axios.patch(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${personID}`, {
-        userID,
         nameFirst,
         nameLast,
         email,
@@ -142,7 +140,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteClient(options) {
-    const { data, error } = await db.from('clients').delete().filter('userID', 'eq', options.userID).filter('clientID', 'eq', options.clientID );
+    const { data, error } = await db.from('clients').delete().eq('clientID', options.clientID );
 
     if (error) {
       global.logger.info(`Error deleting client ${options.clientID}: ${error.message}`);
@@ -153,7 +151,7 @@ module.exports = ({ db }) => {
   }
 
   async function existsByClientID(options) {
-    const { data, error } = await db.from('clients').select('clientID').filter('userID', 'eq', options.userID).filter('clientID', 'eq', options.clientID);
+    const { data, error } = await db.from('clients').select('clientID').eq('clientID', options.clientID);
 
     if (error) {
       global.logger.info(`Error checking if client ${options.clientID} exists: ${error.message}`);

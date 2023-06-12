@@ -4,9 +4,9 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { stepIDs, title } = options;
+    const { userID, stepIDs, title } = options;
 
-    let q = db.from('steps').select().order('stepID', { ascending: true });
+    let q = db.from('steps').select().filter('userID', 'eq', userID).order('stepID', { ascending: true });
 
     if (stepIDs) {
       q = q.in('stepID', stepIDs);
@@ -35,7 +35,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { title, description } = options;
+    const { userID, title, description } = options;
 
     //verify that no steps exist with provided title
     const { data: steps, error: error2 } = await db.from('steps').select('title').eq('title', title);
@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
       return { error: `Step with title ${title} already exists, can't use this title` };
     }
 
-    const { data, error } = await db.from('steps').insert({ title, description }).select().single();
+    const { data, error } = await db.from('steps').insert({ userID, title, description }).select().single();
     if (error) {
       global.logger.info(`Error creating step: ${error.message}`);
       return { error: error.message };

@@ -2,8 +2,8 @@
 
 module.exports = ({ db }) => {
   async function getTags(options) {
-    const { tagIDs, name } = options;
-    let q = db.from('tags').select().order('tagID', { ascending: true });
+    const { userID, tagIDs, name } = options;
+    let q = db.from('tags').select().filter('userID', 'eq', userID).order('tagID', { ascending: true });
     if (tagIDs) {
       q = q.in('tagID', tagIDs);
     }
