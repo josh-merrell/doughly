@@ -11,9 +11,9 @@ out:
 
 const { supabase } = require('../db.js');
 
-const supplyCheckMoreDemand = async (neededQuantity, orderID, stockProductID, scheduledDeliveryTimeString, stockItemID) => {
+const supplyCheckMoreDemand = async (userID, neededQuantity, orderID, stockProductID, scheduledDeliveryTimeString, stockItemID) => {
   //retrieve available stock, find all rows in productStocks table with matching stockProductID
-  const { data: productStocks, error: productStocksError } = await supabase.from('productStocks').select('productStockID, daysRemaining').eq('stockProductID', stockProductID);
+  const { data: productStocks, error: productStocksError } = await supabase.from('productStocks').select('productStockID, daysRemaining').filter('userID', 'eq', userID).filter('stockProductID', 'eq', stockProductID);
   if (productStocksError) {
     global.logger.info(`Error getting available product stocks: ${productStocksError.message}`);
     return { error: productStocksError.message };
@@ -26,10 +26,7 @@ const supplyCheckMoreDemand = async (neededQuantity, orderID, stockProductID, sc
   productStocks.sort((a, b) => a.daysRemaining - b.daysRemaining);
   //retrieve all stockItemIDs that share the stockProductID.
   //Then retrieve all orders associated with those stockItemIDs. Use order column 'scheduledDeliveryTime' to order the stockItemIDs by date.
-  const { data: stockItems, error: stockItemsError } = await supabase
-    .from('orderStockItems')
-    .select('stockItemID, quantity, orderID, stockStatus')
-    .eq('stockProductID', stockProductID);
+  const { data: stockItems, error: stockItemsError } = await supabase.from('orderStockItems').select('stockItemID, quantity, orderID, stockStatus').filter('userID', 'eq', userID).filter('stockProductID', 'eq', stockProductID);
   if (stockItemsError) {
     global.logger.info(`Error getting stockItems: ${stockItemsError.message}`);
     return { error: stockItemsError.message };
@@ -42,7 +39,7 @@ const supplyCheckMoreDemand = async (neededQuantity, orderID, stockProductID, sc
   const orderIDs = [...new Set(stockItems.map((stockItem) => stockItem.orderID))];
   const orderDates = {};
   for (const orderID of orderIDs) {
-    const { data: order, error: orderError } = await supabase.from('orders').select('scheduledDeliveryTime').eq('orderID', orderID);
+    const { data: order, error: orderError } = await supabase.from('orders').select('scheduledDeliveryTime').filter('userID', 'eq', userID).filter('orderID', 'eq', orderID);
     if (orderError) {
       global.logger.info(`Error getting order: ${orderError.message}`);
       return { error: orderError.message };
@@ -91,8 +88,7 @@ const supplyCheckMoreDemand = async (neededQuantity, orderID, stockProductID, sc
         global.logger.info(`Error patching stockItem: ${patchStockItemError.message}`);
         return { error: patchStockItemError.message };
       }
-      if (stockItems[i].stockItemID > 0)
-        global.logger.info(`New stockItem caused previously sufficient stockStatus of stockItem ID: ${stockItems[i].stockItemID} to be insufficient. Updated stockStatus.`);
+      if (stockItems[i].stockItemID > 0) global.logger.info(`New stockItem caused previously sufficient stockStatus of stockItem ID: ${stockItems[i].stockItemID} to be insufficient. Updated stockStatus.`);
     }
   }
   return newStockStatus;

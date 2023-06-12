@@ -4,18 +4,18 @@ const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { recipeToolIDs, recipeID, toolID } = options;
+    const { userID, recipeToolIDs, recipeID, toolID } = options;
 
-    let q = db.from('recipeTools').select().order('recipeToolID', { ascending: true });
+    let q = db.from('recipeTools').select().filter('userID', 'eq', userID).order('recipeToolID', { ascending: true });
 
     if (recipeToolIDs) {
       q = q.in('recipeToolID', recipeToolIDs);
     }
     if (recipeID) {
-      q = q.eq('recipeID', recipeID);
+      q = q.filter('recipeID', 'eq', recipeID);
     }
     if (toolID) {
-      q = q.eq('toolID', toolID);
+      q = q.filter('toolID', 'eq', toolID);
     }
 
     const { data: recipeTools, error } = await q;
@@ -42,7 +42,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { recipeID, toolID, quantity } = options;
+    const { userID, recipeID, toolID, quantity } = options;
     //validate that provided recipeID exists
     const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (recipeError) {
@@ -83,7 +83,7 @@ module.exports = ({ db }) => {
     }
 
     //create recipeTool
-    const { data: newRecipeTool, error: newRecipeToolError } = await db.from('recipeTools').insert({ recipeID, toolID, quantity }).select().single();
+    const { data: newRecipeTool, error: newRecipeToolError } = await db.from('recipeTools').insert({ userID, recipeID, toolID, quantity }).select().single();
 
     if (newRecipeToolError) {
       global.logger.info(`Error creating recipeTool: ${newRecipeToolError}`);

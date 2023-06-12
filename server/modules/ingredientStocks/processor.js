@@ -4,9 +4,9 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { ingredientStockIDs, ingredientID, purchasedBy } = options;
+    const { userID, ingredientStockIDs, ingredientID, purchasedBy } = options;
 
-    let q = db.from('ingredientStocks').select().order('ingredientStockID', { ascending: true });
+    let q = db.from('ingredientStocks').select().filter('userID', 'eq', userID).order('ingredientStockID', { ascending: true });
     if (ingredientStockIDs) {
       q = q.in('ingredientStockID', ingredientStockIDs);
     }
@@ -39,10 +39,10 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { ingredientID, measurement, purchasedBy, purchasedDate } = options;
+    const { userID, ingredientID, measurement, purchasedBy, purchasedDate } = options;
 
     //verify that the provided ingredientID is valid, return error if not
-    const { data: existingIngredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID);
+    const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
     if (error) {
       global.logger.info(`Error validating provided ingredientID: ${error.message}`);
       return { error: error.message };
@@ -59,7 +59,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that provided purchasedBy is valid, return error if not
-    const { data: existingEmployee, error: employeeError } = await db.from('employees').select().eq('employeeID', purchasedBy);
+    const { data: existingEmployee, error: employeeError } = await db.from('employees').select().filter('userID', 'eq', userID).filter('employeeID', 'eq', purchasedBy);
     if (employeeError) {
       global.logger.info(`Error validating provided employeeID: ${purchasedBy}: ${employeeError.message}`);
       return { error: employeeError.message };
@@ -73,11 +73,7 @@ module.exports = ({ db }) => {
     const grams = measurement * existingIngredient[0].gramRatio;
 
     //create the ingredientStock
-    const { data: newIngredientStock, error: newIngredientStockError } = await db
-      .from('ingredientStocks')
-      .insert({ ingredientID, purchasedBy, purchasedDate, grams })
-      .select('ingredientStockID')
-      .single();
+    const { data: newIngredientStock, error: newIngredientStockError } = await db.from('ingredientStocks').insert({ userID, ingredientID, purchasedBy, purchasedDate, grams }).select('ingredientStockID').single();
     if (newIngredientStockError) {
       global.logger.info(`Error creating ingredientStock: ${newIngredientStockError.message}`);
       return { error: newIngredientStockError.message };
@@ -87,10 +83,10 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { ingredientStockID, measurement, purchasedBy } = options;
+    const { userID, ingredientStockID, measurement, purchasedBy } = options;
 
     //verify that the provided ingredientStockID is valid, return error if not
-    const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID);
+    const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().filter('userID', 'eq', userID).filter('ingredientStockID', 'eq', ingredientStockID);
     if (error) {
       global.logger.info(`Error validating provided ingredientStockID: ${error.message}`);
       return { error: error.message };
@@ -107,7 +103,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that provided purchasedBy is valid, return error if not
-    const { data: existingEmployee, error: employeeError } = await db.from('employees').select().eq('employeeID', purchasedBy);
+    const { data: existingEmployee, error: employeeError } = await db.from('employees').select().filter('userID', 'eq', userID).filter('employeeID', 'eq', purchasedBy);
     if (employeeError) {
       global.logger.info(`Error validating provided employeeID: ${purchasedBy}: ${employeeError.message}`);
       return { error: employeeError.message };
@@ -118,7 +114,7 @@ module.exports = ({ db }) => {
     }
 
     //calculate grams for new stock using gramRatio for the ingredient
-    const { data: ingredient, error: ingredientError } = await db.from('ingredients').select('gramRatio').eq('ingredientID', existingIngredientStock[0].ingredientID);
+    const { data: ingredient, error: ingredientError } = await db.from('ingredients').select('gramRatio').filter('userID', 'eq', userID).filter('ingredientID', 'eq', existingIngredientStock[0].ingredientID);
     if (ingredientError) {
       global.logger.info(`Error getting ingredient: ${ingredientError.message}`);
       return { error: ingredientError.message };

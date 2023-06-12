@@ -4,15 +4,15 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { stockProductIDs, recipeID, productName } = options;
+    const { userID, stockProductIDs, recipeID, productName } = options;
 
-    let q = db.from('stockProducts').select().order('stockProductID', { ascending: true });
+    let q = db.from('stockProducts').select().filter('userID', 'eq', userID).order('stockProductID', { ascending: true });
 
     if (stockProductIDs) {
       q = q.in('stockProductID', stockProductIDs);
     }
     if (recipeID) {
-      q = q.eq('recipeID', recipeID);
+      q = q.filter('recipeID', 'eq', recipeID);
     }
     if (productName) {
       q = q.like('productName', productName);
@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { recipeID, productName, recipeYield } = options;
+    const { userID, recipeID, productName, recipeYield } = options;
 
     //validate that there are no other stockProducts with the same recipeID
     const { data: existingStockProducts, error: existingStockProductsError } = await db.from('stockProducts').select().eq('recipeID', recipeID);
@@ -68,7 +68,7 @@ module.exports = ({ db }) => {
       return { error: `provided recipeYield: ${recipeYield} is not a positive integer. Cannot create stockProduct` };
     }
 
-    const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').insert({ recipeID, productName, yield: recipeYield }).select().single();
+    const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').insert({ userID, recipeID, productName, yield: recipeYield }).select().single();
 
     if (stockProductError) {
       global.logger.info(`Error creating stockProduct: ${stockProductError.message}`);

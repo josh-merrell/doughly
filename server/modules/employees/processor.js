@@ -6,14 +6,14 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { employeeIDs, personID, hireDateRange, payPerHourRange, position, status, email, nameFirst, nameLast, phone, city, state, zip } = options;
+    const { userID, employeeIDs, personID, hireDateRange, payPerHourRange, position, status, email, nameFirst, nameLast, phone, city, state, zip } = options;
 
     const personIDs = [];
     //if filtering by employeeIDs, need to get the personID for each employeeID
     if (personID) personIDs.push(personID);
     else if (employeeIDs) {
       for (const employeeID of employeeIDs) {
-        const { data, error } = await db.from('employees').select('personID').eq('employeeID', employeeID);
+        const { data, error } = await db.from('employees').select('personID').filter('userID', 'eq', userID).filter('employeeID', 'eq', employeeID);
 
         if (error) {
           global.logger.info(`Error getting personID from employees table ${employeeID}: ${error.message}`);
@@ -24,7 +24,7 @@ module.exports = ({ db }) => {
       }
     } else {
       //otherwise, need to just add all personIDs that exist in employees table to the array
-      const { data, error } = await db.from('employees').select('personID');
+      const { data, error } = await db.from('employees').select('personID').eq('userID', userID);
       if (error) {
         global.logger.info(`Error getting all personIDs from employees table: ${error.message}`);
         return { error: error.message };
@@ -36,6 +36,7 @@ module.exports = ({ db }) => {
 
     //collect persons data first, using query params relevent to the table. Then, collect employees data using the personIDs and join the two before returning
     const queryParams = {
+      userID,
       limit: options.limit,
       nameFirst,
       nameLast,
@@ -60,14 +61,14 @@ module.exports = ({ db }) => {
     }
 
     //start building the query to get employees data
-    let q = db.from('employees').select();
+    let q = db.from('employees').select().filter('userID', 'eq', userID);
 
     if (employeeIDs) q = q.in('employeeID', employeeIDs);
     if (hireDateRange) q = q.gte('hireDate', hireDateRange[0]).lte('hireDate', hireDateRange[1]);
     if (payPerHourRange) q = q.gte('payPerHour', payPerHourRange[0]).lte('payPerHour', payPerHourRange[1]);
     if (position) q = q.like('position', position);
-    if (status) q = q.eq('status', status);
-    if (personID) q = q.eq('personID', personID);
+    if (status) q = q.filter('status', 'eq', status);
+    if (personID) q = q.filter('personID', 'eq', personID);
 
     const { data: employees, error: employeesError } = await q;
 
@@ -107,20 +108,20 @@ module.exports = ({ db }) => {
     return employeesWithMatchingPersons;
   }
 
-  async function getByID(employeeID) {
-    const { data, error } = await db.from('employees').select().eq('employeeID', employeeID).single();
+  async function getByID(options) {
+    const { data, error } = await db.from('employees').select().eq('employeeID', options.employeeID).single();
 
     if (error) {
       global.logger.info(`Error getting employee: ${error.message}`);
       return { error: error.message };
     }
 
-    global.logger.info(`Retrieved employee ${employeeID}`);
+    global.logger.info(`Retrieved employee ${options.employeeID}`);
     return data;
   }
 
   async function create(options) {
-    const { nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
+    const { userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
 
     //validate that provided payPerHour is a positive number
     if (payPerHour <= 0) {
@@ -139,6 +140,7 @@ module.exports = ({ db }) => {
 
     //attempt to create a person first
     let person = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, {
+      userID,
       nameFirst,
       nameLast,
       email,
@@ -156,6 +158,7 @@ module.exports = ({ db }) => {
       const { data, error } = await db
         .from('employees')
         .insert({
+          userID,
           personID: person.personID,
           hireDate,
           position,
@@ -179,7 +182,7 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { employeeID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
+    const { userID, employeeID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
 
     //validate that provided employeeID exists
     const { data: employeeExists, error: employeeExistsError } = await db.from('employees').select().eq('employeeID', employeeID);
@@ -208,7 +211,7 @@ module.exports = ({ db }) => {
     const statusToUse = status ? status : 'active';
 
     //attempt to update the person first
-    const updatePersonFields = {};
+    const updatePersonFields = { userID };
     if (nameFirst) updatePersonFields.nameFirst = nameFirst;
     if (nameLast) updatePersonFields.nameLast = nameLast;
     if (email) updatePersonFields.email = email;
@@ -228,7 +231,7 @@ module.exports = ({ db }) => {
     }
 
     //if succsessful, update the employee
-    const updateEmployeeFields = {};
+    const updateEmployeeFields = { userID };
     if (hireDate) updateEmployeeFields.hireDate = hireDate;
     if (position) updateEmployeeFields.position = position;
     if (status) updateEmployeeFields.status = statusToUse;

@@ -13,18 +13,18 @@ module.exports = ({ db }) => {
   };
 
   async function getAll(options) {
-    const { recipeStepIDs, recipeID, stepID } = options;
+    const { userID, recipeStepIDs, recipeID, stepID } = options;
 
-    let q = db.from('recipeSteps').select().order('recipeStepID', { ascending: true });
+    let q = db.from('recipeSteps').select().filter('userID', 'eq', userID).order('recipeStepID', { ascending: true });
 
     if (recipeStepIDs) {
       q = q.in('recipeStepID', recipeStepIDs);
     }
     if (recipeID) {
-      q = q.eq('recipeID', recipeID);
+      q = q.filter('recipeID', 'eq', recipeID);
     }
     if (stepID) {
-      q = q.eq('stepID', stepID);
+      q = q.filter('stepID', 'eq', stepID);
     }
 
     const { data: recipeSteps, error } = await q;
@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { recipeID, stepID, sequence } = options;
+    const { userID, recipeID, stepID, sequence } = options;
     //validate that provided recipeID exists
     const { data: recipe, validationError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (validationError) {
@@ -108,7 +108,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Shifted sequence of recipeStep ID: ${existingRecipeSteps[i].recipeStepID} to ${existingRecipeSteps[i].sequence + 1}`);
     }
 
-    const { data: newRecipeStep, error } = await db.from('recipeSteps').insert({ recipeID, stepID, sequence }).select().single();
+    const { data: newRecipeStep, error } = await db.from('recipeSteps').insert({ userID, recipeID, stepID, sequence }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipeStep: ${error.message}`);
@@ -144,11 +144,7 @@ module.exports = ({ db }) => {
     }
 
     //get existing steps, order by sequence ascending
-    const { data: existingRecipeSteps, error: existingRecipeStepsError } = await db
-      .from('recipeSteps')
-      .select()
-      .eq('recipeID', recipeStep[0].recipeID)
-      .order('sequence', { ascending: true });
+    const { data: existingRecipeSteps, error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeStep[0].recipeID).order('sequence', { ascending: true });
     if (existingRecipeStepsError) {
       global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while updating recipeStep ${existingRecipeStepsError.message}`);
       return { error: existingRecipeStepsError.message };
@@ -204,11 +200,7 @@ module.exports = ({ db }) => {
     }
 
     //get existing steps for recipeID of provided recipeStepID, order by sequence ascending
-    const { data: existingRecipeSteps, error: existingRecipeStepsError } = await db
-      .from('recipeSteps')
-      .select()
-      .eq('recipeID', recipeStep[0].recipeID)
-      .order('sequence', { ascending: true });
+    const { data: existingRecipeSteps, error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeStep[0].recipeID).order('sequence', { ascending: true });
 
     if (existingRecipeStepsError) {
       global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while deleting recipeStep ${existingRecipeStepsError.message}`);

@@ -4,9 +4,9 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { ingredientIDs, name } = options;
+    const { userID, ingredientIDs, name } = options;
 
-    let q = db.from('ingredients').select().order('ingredientID', { ascending: true });
+    let q = db.from('ingredients').select().filter('userID', 'eq', userID).order('ingredientID', { ascending: true });
     if (ingredientIDs) {
       q = q.in('ingredientID', ingredientIDs);
     }
@@ -36,7 +36,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { name, lifespanDays, brand, purchaseUnit, gramRatio } = options;
+    const { userID, name, lifespanDays, brand, purchaseUnit, gramRatio } = options;
 
     //verify that the provided lifespanDays is a positive integer, return error if not
     if (!lifespanDays || lifespanDays < 0) {
@@ -45,7 +45,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that the provided name is unique, return error if not
-    const { data: existingIngredient, error } = await db.from('ingredients').select().eq('name', name);
+    const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('name', 'eq', name);
     if (error) {
       global.logger.info(`Error validating provided ingredient name: ${error.message}`);
       return { error: error.message };
@@ -62,7 +62,7 @@ module.exports = ({ db }) => {
     }
 
     //create the ingredient
-    const { data: ingredient, error: createError } = await db.from('ingredients').insert({ name, lifespanDays, brand, purchaseUnit, gramRatio }).select('ingredientID').single();
+    const { data: ingredient, error: createError } = await db.from('ingredients').insert({ userID, name, lifespanDays, brand, purchaseUnit, gramRatio }).select('ingredientID').single();
     if (createError) {
       global.logger.info(`Error creating ingredient: ${createError.message}`);
       return { error: createError.message };
@@ -72,9 +72,9 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { ingredientID, name, lifespanDays, gramRatio } = options;
+    const { userID, ingredientID, name, lifespanDays, gramRatio } = options;
     //verify that the provided ingredientID exists, return error if not
-    const { data: existingIngredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID);
+    const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
     if (error) {
       global.logger.info(`Error validating provided ingredientID: ${error.message}`);
       return { error: error.message };
@@ -91,7 +91,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that the provided name is unique, return error if not
-    const { data: existingIngredientName, error: nameError } = await db.from('ingredients').select().eq('name', name);
+    const { data: existingIngredientName, error: nameError } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('name', 'eq', name);
     if (nameError) {
       global.logger.info(`Error validating provided ingredient name: ${nameError.message}`);
       return { error: nameError.message };

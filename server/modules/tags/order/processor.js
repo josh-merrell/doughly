@@ -2,16 +2,16 @@
 
 module.exports = ({ db }) => {
   async function getTags(options) {
-    const { orderTagIDs, orderID, tagID } = options;
-    let q = db.from('orderTags').select().order('orderTagID', { ascending: true });
+    const { userID, orderTagIDs, orderID, tagID } = options;
+    let q = db.from('orderTags').select().filter('userID', 'eq', userID).order('orderTagID', { ascending: true });
     if (orderTagIDs) {
       q = q.in('orderTagID', orderTagIDs);
     }
     if (orderID) {
-      q = q.eq('orderID', orderID);
+      q = q.filter('orderID', 'eq', orderID);
     }
     if (tagID) {
-      q = q.eq('tagID', tagID);
+      q = q.filter('tagID', 'eq', tagID);
     }
     const { data: orderTags, error } = await q;
 
@@ -36,7 +36,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { orderID, tagID } = options;
+    const { userID, orderID, tagID } = options;
 
     //verify that the provided orderID exists, return error if not
     const { data: orderCheck, error: orderCheckError } = await db.from('orders').select().eq('orderID', orderID);
@@ -71,7 +71,7 @@ module.exports = ({ db }) => {
       return { error: `provided orderID(${orderID}) and tagIDtagID(${tagID}) combination already exists, can't create orderTag with orderID: ${orderID} and tagID: ${tagID}` };
     }
 
-    const { data: orderTag, error } = await db.from('orderTags').insert({ orderID, tagID }).select().single();
+    const { data: orderTag, error } = await db.from('orderTags').insert({ userID, orderID, tagID }).select().single();
 
     if (error) {
       global.logger.info(`Error creating orderTag: ${error.message}`);

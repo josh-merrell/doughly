@@ -4,17 +4,17 @@ const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { recipeIngredientIDs, recipeID, ingredientID } = options;
+    const { userID, recipeIngredientIDs, recipeID, ingredientID } = options;
 
-    let q = db.from('recipeIngredients').select().order('recipeIngredientID', { ascending: true });
+    let q = db.from('recipeIngredients').select().filter('userID', 'eq', userID).order('recipeIngredientID', { ascending: true });
     if (recipeIngredientIDs) {
       q = q.in('recipeIngredientID', recipeIngredientIDs);
     }
     if (recipeID) {
-      q = q.eq('recipeID', recipeID);
+      q = q.filter('recipeID', 'eq', recipeID);
     }
     if (ingredientID) {
-      q = q.eq('ingredientID', ingredientID);
+      q = q.filter('ingredientID', 'eq', ingredientID);
     }
     const { data: recipeIngredients, error } = await q;
 
@@ -39,10 +39,10 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { recipeID, ingredientID, measurementUnit, measurement } = options;
+    const { userID, recipeID, ingredientID, measurementUnit, measurement } = options;
 
     //verify that the provided recipeID exists, return error if not
-    const { data: existingRecipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
+    const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID);
     if (error) {
       global.logger.info(`Error validating provided recipeID: ${error.message}`);
       return { error: error.message };
@@ -53,7 +53,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that the provided ingredientID exists, return error if not
-    const { data: existingIngredient, error2 } = await db.from('ingredients').select().eq('ingredientID', ingredientID);
+    const { data: existingIngredient, error2 } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
     if (error2) {
       global.logger.info(`Error validating provided ingredientID: ${error2.message}`);
       return { error: error2.message };
@@ -70,11 +70,7 @@ module.exports = ({ db }) => {
     }
 
     //create the recipeIngredient
-    const { data: recipeIngredient, error3 } = await db
-      .from('recipeIngredients')
-      .insert({ recipeID, ingredientID, measurementUnit, measurement })
-      .select('recipeIngredientID')
-      .single();
+    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ userID, recipeID, ingredientID, measurementUnit, measurement }).select('recipeIngredientID').single();
 
     if (error3) {
       global.logger.info(`Error creating recipeIngredient: ${error3.message}`);
@@ -85,10 +81,10 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { recipeIngredientID, measurement } = options;
+    const { userID, recipeIngredientID, measurement } = options;
 
     //verify that the provided recipeIngredientID exists, return error if not
-    const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID);
+    const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().filter('userID', 'eq', userID).filter('recipeIngredientID', 'eq', recipeIngredientID);
     if (error) {
       global.logger.info(`Error validating provided recipeIngredientID: ${error.message}`);
       return { error: error.message };

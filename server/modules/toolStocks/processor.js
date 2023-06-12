@@ -4,16 +4,16 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { toolStockIDs, toolID, purchasedBy } = options;
-    let q = db.from('toolStocks').select().order('toolStockID', { ascending: true });
+    const { userID, toolStockIDs, toolID, purchasedBy } = options;
+    let q = db.from('toolStocks').select().filter('userID', 'eq', userID).order('toolStockID', { ascending: true });
     if (toolStockIDs) {
       q = q.in('toolStockID', toolStockIDs);
     }
     if (toolID) {
-      q = q.eq('toolID', toolID);
+      q = q.filter('toolID', 'eq', toolID);
     }
     if (purchasedBy) {
-      q = q.eq('purchasedBy', purchasedBy);
+      q = q.filter('purchasedBy', 'eq', purchasedBy);
     }
 
     const { data: toolStocks, error } = await q;
@@ -39,7 +39,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { toolID, purchasedBy, purchaseDate, quantity } = options;
+    const { userID, toolID, purchasedBy, purchaseDate, quantity } = options;
 
     //validate that the provided toolID is valid
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID);
@@ -77,6 +77,7 @@ module.exports = ({ db }) => {
         db
           .from('toolStocks')
           .insert({
+            userID,
             toolID,
             purchasedBy,
             purchaseDate,
