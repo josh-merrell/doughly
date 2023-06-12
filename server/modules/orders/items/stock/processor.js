@@ -6,20 +6,20 @@ const { supplyCheckMoreDemand, supplyCheckLessDemand } = require('../../../../se
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { stockItemIDs, orderID, stockProductID, stockStatus } = options;
-    let q = db.from('orderStockItems').select().order('stockItemID', { ascending: true });
+    const { userID, stockItemIDs, orderID, stockProductID, stockStatus } = options;
+    let q = db.from('orderStockItems').select().filter('userID', 'eq', userID).order('stockItemID', { ascending: true });
 
     if (stockItemIDs) {
       q = q.in('stockItemID', stockItemIDs);
     }
     if (orderID) {
-      q = q.eq('orderID', orderID);
+      q = q.filter('orderID', 'eq', orderID);
     }
     if (stockProductID) {
-      q = q.eq('stockProductID', stockProductID);
+      q = q.filter('stockProductID', 'eq', stockProductID);
     }
     if (stockStatus) {
-      q = q.eq('stockStatus', stockStatus);
+      q = q.filter('stockStatus', 'eq', stockStatus);
     }
 
     const { data: orderStockItems, error } = await q;
@@ -33,7 +33,7 @@ module.exports = ({ db }) => {
   }
 
   async function getByID(options) {
-    const { data, error } = await db.from('orderStockItems').select().eq('stockItemID', options.stockItemID).single();
+    const { data, error } = await db.from('orderStockItems').select().filter('userID', 'eq', options.userID).filter('stockItemID', 'eq', options.stockItemID).single();
     if (error) {
       global.logger.info(`Error getting orderStockItem by ID: ${options.stockItemID}:${error.message}`);
       return { error: error.message };
@@ -42,10 +42,10 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { orderID, stockProductID, quantity, unitIncome } = options;
+    const { userID, orderID, stockProductID, quantity, unitIncome } = options;
 
     //validate that provided orderID exists
-    const { data: order, error } = await db.from('orders').select().eq('orderID', orderID);
+    const { data: order, error } = await db.from('orders').select().filter('userID', 'eq', userID).filter('orderID', 'eq', orderID);
     if (error) {
       global.logger.info(`Error validating order ID: ${orderID} while creating orderStockItem ${error.message}`);
       return { error: error.message };
@@ -56,7 +56,7 @@ module.exports = ({ db }) => {
     }
 
     //validate that provided stockProductID exists
-    const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').select().eq('stockProductID', stockProductID);
+    const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').select().filter('userID', 'eq', userID).filter('stockProductID', 'eq', stockProductID);
     if (stockProductError) {
       global.logger.info(`Error validating stockProduct ID: ${stockProductID} while creating orderStockItem ${stockProductError.message}`);
       return { error: stockProductError.message };
@@ -83,11 +83,7 @@ module.exports = ({ db }) => {
     const stockStatus = await supplyCheckMoreDemand(quantity, order[0].orderID, stockProductID, scheduledDeliveryTime);
 
     //create orderStockItem
-    const { data: orderStockItem, error: orderStockItemError } = await db
-      .from('orderStockItems')
-      .insert({ orderID, stockProductID, quantity, unitIncome, stockStatus })
-      .select('stockItemID')
-      .single();
+    const { data: orderStockItem, error: orderStockItemError } = await db.from('orderStockItems').insert({ userID, orderID, stockProductID, quantity, unitIncome, stockStatus }).select('stockItemID').single();
 
     if (orderStockItemError) {
       global.logger.info(`Error creating orderStockItem: ${orderStockItemError.message}`);
@@ -98,10 +94,10 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { stockItemID, quantity, unitIncome } = options;
+    const { userID, stockItemID, quantity, unitIncome } = options;
 
     //validate that provided stockItemID exists
-    const { data: orderStock, error } = await db.from('orderStockItems').select().eq('stockItemID', stockItemID);
+    const { data: orderStock, error } = await db.from('orderStockItems').select().filter('userID', 'eq', userID).filter('stockItemID', 'eq', stockItemID);
     if (error) {
       global.logger.info(`Error validating orderStock ID: ${stockItemID} while updating orderStockItem ${error.message}`);
       return { error: error.message };
@@ -124,7 +120,7 @@ module.exports = ({ db }) => {
     }
 
     //get order associated with this orderStockItem
-    const { data: order, error: orderError } = await db.from('orders').select().eq('orderID', orderStock[0].orderID);
+    const { data: order, error: orderError } = await db.from('orders').select().filter('userID', 'eq', userID).filter('orderID', 'eq', orderStock[0].orderID);
     if (orderError) {
       global.logger.info(`Error getting order associated with orderStockItem: ${stockItemID} while updating orderStockItem ${orderError.message}`);
       return { error: orderError.message };
@@ -137,9 +133,9 @@ module.exports = ({ db }) => {
     //calculate new stockStatus based on provided quantity
     let stockStatus;
     if (quantity > orderStock[0].quantity) {
-      stockStatus = await supplyCheckMoreDemand(quantity, order[0].orderID, orderStock[0].stockProductID, order[0].scheduledDeliveryTime, stockItemID);
+      stockStatus = await supplyCheckMoreDemand(userID, quantity, order[0].orderID, orderStock[0].stockProductID, order[0].scheduledDeliveryTime, stockItemID);
     } else {
-      stockStatus = await supplyCheckLessDemand(quantity, order[0].orderID, orderStock[0].stockProductID, order[0].scheduledDeliveryTime, stockItemID);
+      stockStatus = await supplyCheckLessDemand(userID, quantity, order[0].orderID, orderStock[0].stockProductID, order[0].scheduledDeliveryTime, stockItemID);
     }
 
     //update the orderStockItem

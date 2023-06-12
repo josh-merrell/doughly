@@ -4,8 +4,8 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { toolIDs, name } = options;
-    let q = db.from('tools').select().order('toolID', { ascending: true });
+    const { userID, toolIDs, name } = options;
+    let q = db.from('tools').select().filter('userID', 'eq', userID).order('toolID', { ascending: true });
     if (toolIDs) {
       q = q.in('toolID', toolIDs);
     }
@@ -35,7 +35,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { name } = options;
+    const { userID, name } = options;
 
     //validate that the provided name is not already used by another tool
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('name', name);
@@ -49,7 +49,7 @@ module.exports = ({ db }) => {
     }
 
     //create the tool
-    const { data: tool, error } = await db.from('tools').insert({ name }).select('toolID').single();
+    const { data: tool, error } = await db.from('tools').insert({ userID, name }).select('toolID').single();
 
     if (error) {
       global.logger.info(`Error creating tool: ${error.message}`);

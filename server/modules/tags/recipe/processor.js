@@ -2,16 +2,16 @@
 
 module.exports = ({ db }) => {
   async function getTags(options) {
-    const { recipeTagIDs, recipeID, tagID } = options;
-    let q = db.from('recipeTags').select().order('recipeTagID', { ascending: true });
+    const { userID, recipeTagIDs, recipeID, tagID } = options;
+    let q = db.from('recipeTags').select().filter('userID', 'eq', userID).order('recipeTagID', { ascending: true });
     if (recipeTagIDs) {
       q = q.in('recipeTagID', recipeTagIDs);
     }
     if (recipeID) {
-      q = q.eq('recipeID', recipeID);
+      q = q.filter('recipeID', 'eq', recipeID);
     }
     if (tagID) {
-      q = q.eq('tagID', tagID);
+      q = q.filter('tagID', 'eq', tagID);
     }
     const { data: recipeTags, error } = await q;
 
@@ -36,7 +36,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { recipeID, tagID } = options;
+    const { userID, recipeID, tagID } = options;
 
     //verify that the provided recipeID exists, return error if not
     const { data: recipeCheck, error: recipeCheckError } = await db.from('recipes').select().eq('recipeID', recipeID);
@@ -70,7 +70,7 @@ module.exports = ({ db }) => {
       return { error: `provided recipeTag already exists, can't create recipeTag` };
     }
 
-    const { data: recipeTag, error } = await db.from('recipeTags').insert({ recipeID, tagID }).select().single();
+    const { data: recipeTag, error } = await db.from('recipeTags').insert({ userID, recipeID, tagID }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipeTag: ${error.message}`);

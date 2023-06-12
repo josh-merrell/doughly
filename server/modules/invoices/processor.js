@@ -5,18 +5,18 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { invoiceIDs, type, status, subtotalMin, subtotalMax } = options;
+    const { userID, invoiceIDs, type, status, subtotalMin, subtotalMax } = options;
 
-    let q = db.from('invoices').select().order('invoiceID', { ascending: true });
+    let q = db.from('invoices').select().filter('userID', 'eq', userID).order('invoiceID', { ascending: true });
 
     if (invoiceIDs) {
       q = q.in('invoiceID', invoiceIDs);
     }
     if (type) {
-      q = q.eq('type', type);
+      q = q.filter('type', 'eq', type);
     }
     if (status) {
-      q = q.eq('status', status);
+      q = q.filter('status', 'eq', status);
     }
     if (subtotalMin) {
       q = q.gte('subtotal', subtotalMin);
@@ -36,7 +36,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { type, status, subtotal } = options;
+    const { userID, type, status, subtotal } = options;
 
     //if subtotal is 0 or negative, return an error
     if (subtotal <= 0) {
@@ -49,6 +49,7 @@ module.exports = ({ db }) => {
     const { data, error } = await db
       .from('invoices')
       .insert({
+        userID,
         createdTime: new Date().toISOString(),
         type,
         status,
@@ -97,10 +98,10 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function existsByInvoiceID(invoiceID) {
-    const { data, error } = await db.from('invoices').select('invoiceID').eq('invoiceID', invoiceID);
+  async function existsByInvoiceID(options) {
+    const { data, error } = await db.from('invoices').select('invoiceID').eq('invoiceID', options.invoiceID);
     if (error) {
-      global.logger.info(`Error checking if invoice ${invoiceID} exists: ${error.message}`);
+      global.logger.info(`Error checking if invoice ${options.invoiceID} exists: ${error.message}`);
       return { error: error.message };
     }
     return data.length > 0;

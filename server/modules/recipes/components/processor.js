@@ -4,14 +4,14 @@ const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { recipeComponentIDs, recipeID } = options;
-    let q = db.from('recipeComponents').select().order('recipeComponentID', { ascending: true });
+    const { userID, recipeComponentIDs, recipeID } = options;
+    let q = db.from('recipeComponents').select().filter('userID', 'eq', userID).order('recipeComponentID', { ascending: true });
 
     if (recipeComponentIDs) {
       q = q.in('recipeComponentID', recipeComponentIDs);
     }
     if (recipeID) {
-      q = q.eq('recipeID', recipeID);
+      q = q.filter('recipeID', 'eq', recipeID);
     }
 
     const { data: recipeComponents, error } = await q;
@@ -25,7 +25,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { recipeID, componentID, componentAdvanceDays } = options;
+    const { userID, recipeID, componentID, componentAdvanceDays } = options;
 
     //if params are not present, return error
     if (!recipeID || !componentID || !componentAdvanceDays) {
@@ -58,7 +58,7 @@ module.exports = ({ db }) => {
       return { error: `Component Recipe with provided ID (${componentID}) does not exist` };
     }
 
-    const { data, errorInsert } = await db.from('recipeComponents').insert({ recipeID, componentID, componentAdvanceDays }).select('recipeComponentID');
+    const { data, errorInsert } = await db.from('recipeComponents').insert({ userID, recipeID, componentID, componentAdvanceDays }).select('recipeComponentID');
 
     if (error) {
       global.logger.info(`Error creating recipeComponent: ${errorInsert.message}`);

@@ -3,8 +3,8 @@
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
-  async function getAll() {
-    let q = db.from('recipeCategories').select().order('recipeCategoryID', { ascending: true });
+  async function getAll(options) {
+    let q = db.from('recipeCategories').select().filter('userID', 'eq', options.userID).order('recipeCategoryID', { ascending: true });
 
     const { data: recipeCategories, error } = await q;
 
@@ -17,7 +17,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { name } = options;
+    const { userID, name } = options;
 
     //if name is not provided, return error
     if (!name) {
@@ -25,7 +25,7 @@ module.exports = ({ db }) => {
       return { error: `Name is required` };
     }
 
-    const { data, error } = await db.from('recipeCategories').insert({ name }).select('recipeCategoryID');
+    const { data, error } = await db.from('recipeCategories').insert({ userID, name }).select('recipeCategoryID');
 
     if (error) {
       global.logger.info(`Error creating recipeCategory: ${error.message}`);

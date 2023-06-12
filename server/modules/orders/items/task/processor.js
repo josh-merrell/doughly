@@ -4,21 +4,21 @@ const { updater } = require('../../../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { taskItemIDs, orderID, recipeID, status } = options;
+    const { userID, taskItemIDs, orderID, recipeID, status } = options;
 
-    let q = db.from('orderTaskItems').select().order('taskItemID', { ascending: true });
+    let q = db.from('orderTaskItems').select().filter('userID', 'eq', userID).order('taskItemID', { ascending: true });
 
     if (taskItemIDs) {
       q = q.in('taskItemID', taskItemIDs);
     }
     if (orderID) {
-      q = q.eq('orderID', orderID);
+      q = q.filter('orderID', 'eq', orderID);
     }
     if (recipeID) {
-      q = q.eq('recipeID', recipeID);
+      q = q.filter('recipeID', 'eq', recipeID);
     }
     if (status) {
-      q = q.eq('status', status);
+      q = q.filter('status', 'eq', status);
     }
 
     const { data: orderTaskItems, error } = await q;
@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { orderID, recipeID, quantity, unitIncome } = options;
+    const { userID, orderID, recipeID, quantity, unitIncome } = options;
 
     //verify that provided orderID exists
     const { data: order, error } = await db.from('orders').select().eq('orderID', orderID);
@@ -78,10 +78,7 @@ module.exports = ({ db }) => {
     }
 
     //create orderTaskItem
-    const { data: orderTaskItem, error: orderTaskItemError } = await db
-      .from('orderTaskItems')
-      .insert({ orderID, recipeID, quantity, unitIncome, status: 'created' })
-      .select('taskItemID');
+    const { data: orderTaskItem, error: orderTaskItemError } = await db.from('orderTaskItems').insert({ userID, orderID, recipeID, quantity, unitIncome, status: 'created' }).select('taskItemID');
     if (orderTaskItemError) {
       global.logger.info(`Error creating orderTaskItem ${orderTaskItemError.message}`);
       return { error: orderTaskItemError.message };

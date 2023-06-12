@@ -4,24 +4,24 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { productStockIDs, stockProductID, producedDate, daysRemaining, status } = options;
+    const { userID, productStockIDs, stockProductID, producedDate, daysRemaining, status } = options;
 
-    let q = db.from('productStocks').select().order('productStockID', { ascending: true });
+    let q = db.from('productStocks').select().filter('userID', 'eq', userID).order('productStockID', { ascending: true });
 
     if (productStockIDs) {
       q = q.in('productStockID', productStockIDs);
     }
     if (stockProductID) {
-      q = q.eq('stockProductID', stockProductID);
+      q = q.filter('stockProductID', 'eq', stockProductID);
     }
     if (producedDate) {
-      q = q.eq('producedDate', producedDate);
+      q = q.filter('producedDate', 'eq', producedDate);
     }
     if (daysRemaining) {
-      q = q.eq('daysRemaining', daysRemaining);
+      q = q.filter('daysRemaining', 'eq', daysRemaining);
     }
     if (status) {
-      q = q.eq('status', status);
+      q = q.filter('status', 'eq', status);
     }
 
     const { data: productStocks, error } = await q;
@@ -44,7 +44,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { stockProductID, producedDate } = options;
+    const { userID, stockProductID, producedDate } = options;
 
     //validate that the provided stockProductID is valid
     const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').select().eq('stockProductID', stockProductID);
@@ -81,7 +81,7 @@ module.exports = ({ db }) => {
       productStockPromises.push(
         db
           .from('productStocks')
-          .insert({ stockProductID, producedDate, daysRemaining, status: daysRemaining ? 'fresh' : 'expired' })
+          .insert({ userID, stockProductID, producedDate, daysRemaining, status: daysRemaining ? 'fresh' : 'expired' })
           .select('productStockID'),
       );
     }

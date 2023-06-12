@@ -2,29 +2,39 @@
 
 const axios = require('axios');
 
-
-'use strict';
+('use strict');
 
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { personIDs, nameFirst, nameLast, phone, city, state, zip } = options;
+    const { userID, personIDs, nameFirst, nameLast, phone, city, state, zip } = options;
 
-    let q = db
-      .from('persons')
-      .select()
-      .order('personID', { ascending: true })
-      // .limit(limit)
-      // .offset(cursor);
+    let q = db.from('persons').select().filter('userID', 'eq', userID).order('personID', { ascending: true });
+    // .limit(limit)
+    // .offset(cursor);
 
-    if (personIDs) { q = q.in('personID', personIDs) }
-    if (nameFirst) { q = q.like('nameFirst', nameFirst); }
-    if (nameLast) { q = q.like('nameLast', nameLast); }
-    if (phone) { q = q.like('phone', phone) }
-    if (city) { q = q.like('city', city) }
-    if (state) { q = q.eq('state', state) }
-    if (zip) { q = q.like('zip', zip) }
+    if (personIDs) {
+      q = q.in('personID', personIDs);
+    }
+    if (nameFirst) {
+      q = q.like('nameFirst', nameFirst);
+    }
+    if (nameLast) {
+      q = q.like('nameLast', nameLast);
+    }
+    if (phone) {
+      q = q.like('phone', phone);
+    }
+    if (city) {
+      q = q.like('city', city);
+    }
+    if (state) {
+      q = q.filter('state', 'eq', state);
+    }
+    if (zip) {
+      q = q.like('zip', zip);
+    }
 
     const { data: persons, error } = await q;
 
@@ -37,13 +47,10 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
+    const { userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
 
     //make sure the email is not already in use. If so, return an error.
-    const { data: emailExists, error: emailExistsError } = await db
-      .from('persons')
-      .select('email')
-      .match({ email: email });
+    const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').eq('email',  email);
 
     if (emailExistsError) {
       global.logger.info(`Error checking whether email ${email} exists: ${emailExistsError.message}`);
@@ -53,11 +60,21 @@ module.exports = ({ db }) => {
       return { error: `Email ${email} already exists` };
     }
 
-    //if the email is new, add the new person to the 'persons' table, 
+    //if the email is new, add the new person to the 'persons' table,
     const { data, error } = await db
       .from('persons')
-      .insert({ 
-        nameFirst, nameLast, email, phone, address1, address2, city, state, zip })
+      .insert({
+        userID,
+        nameFirst,
+        nameLast,
+        email,
+        phone,
+        address1,
+        address2,
+        city,
+        state,
+        zip,
+      })
       .select('personID');
 
     if (error) {
@@ -78,10 +95,7 @@ module.exports = ({ db }) => {
     }
     //if email is being updated, make sure the new email is not already in use. If so, return an error.
     if (updateFields.email) {
-      const { data: emailExists, error: emailExistsError } = await db
-        .from('persons')
-        .select('email')
-        .match({ email: updateFields.email });
+      const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').match({ email: updateFields.email });
 
       if (emailExistsError) {
         global.logger.info(`Error checking whether email ${updateFields.email} exists: ${emailExistsError.message}`);
@@ -94,7 +108,7 @@ module.exports = ({ db }) => {
 
     //if the email is unique, update provided fields in the 'persons' table,
     try {
-      const updatedPerson = await updater('personID', options.personID, 'persons', updateFields)
+      const updatedPerson = await updater('personID', options.personID, 'persons', updateFields);
       global.logger.info(`Updated person with ID:${options.personID}`);
       return updatedPerson;
     } catch (error) {
@@ -116,7 +130,7 @@ module.exports = ({ db }) => {
     }
 
     //if the person exists, delete the person from the 'persons' table,
-    let { data, error } = await db.from('persons').delete().eq( 'personID', options.personID );
+    let { data, error } = await db.from('persons').delete().eq('personID', options.personID);
     if (error) {
       global.logger.info(`Error deleting personID: ${options.personID}: ${error.message}`);
       return { error: error.message };

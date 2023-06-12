@@ -4,8 +4,8 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { recipeIDs, title, recipeCategoryID } = options;
-    let q = db.from('recipes').select().order('recipeID', { ascending: true });
+    const { userID, recipeIDs, title, recipeCategoryID } = options;
+    let q = db.from('recipes').select().filter('userID', 'eq', userID).order('recipeID', { ascending: true });
     if (recipeIDs) {
       q = q.in('recipeID', recipeIDs);
     }
@@ -13,7 +13,7 @@ module.exports = ({ db }) => {
       q = q.like('title', title);
     }
     if (recipeCategoryID) {
-      q = q.eq('recipeCategoryID', recipeCategoryID);
+      q = q.filter('recipeCategoryID', 'eq', recipeCategoryID);
     }
     const { data: recipes, error } = await q;
 
@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { title, servings, lifespanDays, recipeCategoryID } = options;
+    const { userID, title, servings, lifespanDays, recipeCategoryID } = options;
 
     if (!title) {
       global.logger.info(`Title is required`);
@@ -65,7 +65,7 @@ module.exports = ({ db }) => {
         return { error: `Provided RecipeCategory ID:(${recipeCategoryID}) does not exist` };
       }
     }
-    const { data: recipe, error } = await db.from('recipes').insert({ title, servings, lifespanDays, recipeCategoryID }).select('recipeID').single();
+    const { data: recipe, error } = await db.from('recipes').insert({ userID, title, servings, lifespanDays, recipeCategoryID }).select('recipeID').single();
 
     if (error) {
       global.logger.info(`Error creating recipe: ${error.message}`);
