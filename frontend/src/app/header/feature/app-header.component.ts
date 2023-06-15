@@ -12,6 +12,7 @@ import { setCurrentUrl } from '../../shared/state/shared-actions';
 import { Observable } from 'rxjs';
 import { selectCurrentUrl } from '../../shared/state/shared-selectors';
 import { AppState } from '../../shared/state/app-state';
+import { AuthService } from '../../shared/utils/authenticationService';
 
 @Component({
   selector: 'app-header',
@@ -31,7 +32,8 @@ export class AppHeaderComponent {
   constructor(
     private renderer: Renderer2,
     private router: Router,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    public authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -72,5 +74,11 @@ export class AppHeaderComponent {
 
   closeMenu() {
     this.isMenuOpen = false;
+  }
+
+  logout() {
+    this.authService.logout().then(() => {
+      this.router.navigate(['/login']);
+    });
   }
 }

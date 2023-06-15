@@ -4,11 +4,18 @@ import { IngredientsComponent } from './ingredients/feature/ingredients/ingredie
 import { NotfoundComponent } from './shared/ui/app-notfound/app-notfound.component';
 import { KitchenPageComponent } from './kitchen/kitchen-page.component';
 import { RecipePageComponent } from './recipes/feature/recipe-page/recipe-page.component';
+import { LoginPageComponent } from './login/login-page.component';
+import { ProfileGuard } from './guards/profile.guard';
 
 export const routes: Route[] = [
   {
     path: '',
     component: HomeComponent,
+    canActivate: [ProfileGuard],
+  },
+  {
+    path: 'login',
+    component: LoginPageComponent,
   },
   {
     path: 'recipes',
