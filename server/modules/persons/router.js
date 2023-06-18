@@ -2,16 +2,9 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
-const {
-  getPersonsSchema_query,
-  getPersonSchema_params,
-  newPersonSchema_body,
-  personUpdateSchema_body,
-  personUpdateSchema_params,
-  personDeleteSchema_params,
-} = require('../../schemas/person-types');
+const { getPersonsSchema_query, getPersonSchema_params, newPersonSchema_body, personUpdateSchema_body, personUpdateSchema_params, personDeleteSchema_params } = require('../../schemas/person-types');
 
 const router = express.Router();
 const h = handler;
