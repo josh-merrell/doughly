@@ -2,16 +2,9 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
-const {
-  getIngredientsSchema_query,
-  getIngredientSchema_params,
-  newIngredientSchema_body,
-  IngredientUpdateSchema_body,
-  IngredientUpdateSchema_params,
-  IngredientDeleteSchema_params,
-} = require('../../schemas/ingredient-types');
+const { getIngredientsSchema_query, getIngredientSchema_params, newIngredientSchema_body, IngredientUpdateSchema_body, IngredientUpdateSchema_params, IngredientDeleteSchema_params } = require('../../schemas/ingredient-types');
 const recipeIngredientsRouter = require('./recipe/router');
 
 const router = express.Router();

@@ -2,16 +2,9 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
-const {
-  getEmployeesSchema_query,
-  getEmployeeSchema_params,
-  newEmployeeSchema_body,
-  employeeUpdateSchema_body,
-  employeeUpdateSchema_params,
-  employeeDeleteSchema_params,
-} = require('../../schemas/employee-types');
+const { getEmployeesSchema_query, getEmployeeSchema_params, newEmployeeSchema_body, employeeUpdateSchema_body, employeeUpdateSchema_params, employeeDeleteSchema_params } = require('../../schemas/employee-types');
 
 const router = express.Router();
 const h = handler;

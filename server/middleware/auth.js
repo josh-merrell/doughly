@@ -1,22 +1,16 @@
-const jwt = require('jsonwebtoken');
+const { createClient } = require('@supabase/supabase-js');
 
-const authenticateJWT = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+const authenticateJWT = async (req, res, next) => {
+  const supabase = createClient(process.env.SUPABASE_DOUGHLEAP_URL, process.env.SUPABASE_DOUGHLEAP_KEY);
 
-  //parse the token from the header
-  JSON.parse(authHeader);
+  const result = await supabase.auth.getUser(req.headers.authorization);
 
-  if (authHeader.access_token) {
-    jwt.verify(authHeader.access_token, process.env.JWT_SECRET, (err, user) => {
-      if (err) {
-        global.logger.error(`Error while authenticating JWT: ${err.message}`);
-        return res.sendStatus(403);
-      }
-
-      req.userID = user.id;
-      next();
-    });
+  if (result) {
+    // The JWT token is valid, and 'user' contains the authenticated user's info.
+    req.userID = result.data.user.id;
+    next();
   } else {
+    // The JWT token is invalid or missing.
     res.sendStatus(401);
   }
 };

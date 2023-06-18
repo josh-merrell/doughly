@@ -2,7 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
 const { newInvoiceSchema_body, invoiceUpdateSchema_body, invoiceUpdateSchema_params, getInvoicesSchema_query, getInvoiceSchema_params } = require('../../schemas/invoice-types');
 const invoiceNotesRouter = require('./notes/router');

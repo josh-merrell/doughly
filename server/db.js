@@ -5,16 +5,6 @@ const key = process.env.SUPABASE_DOUGHLEAP_KEY;
 
 const supabase = createClient(url, key, { db: { schema: 'bakery' } });
 
-const verifyUser = async (req, res, next) => {
-  const token = req.headers.token;
-  const { data: payload, error } = await supabase.auth.api.getUser(token);
-  if (error) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-  req.user = payload;
-  next();
-};
-
 const updater = async (IDfield, ID, table, updateFields) => {
   //make a query to supabase to update the record
   const updateQuery = supabase
@@ -33,4 +23,4 @@ const updater = async (IDfield, ID, table, updateFields) => {
   }
 };
 
-module.exports = { supabase, verifyUser, updater };
+module.exports = { supabase, updater };

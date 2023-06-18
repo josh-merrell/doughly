@@ -2,16 +2,9 @@ const express = require('express');
 
 const { routeValidator } = require('../../../../middleware/validating');
 const { errorCatcher } = require('../../../../middleware/errorHandling');
-const { authenticateJWT } = require('../../../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../../../middleware/auth');
 const handler = require('./handler');
-const {
-  getStockItemsSchema_query,
-  getStockItemSchema_params,
-  newStockItemsSchema_body,
-  StockItemsUpdateSchema_body,
-  StockItemsUpdateSchema_params,
-  StockItemsDeleteSchema_params,
-} = require('../../../../schemas/stockItem-types');
+const { getStockItemsSchema_query, getStockItemSchema_params, newStockItemsSchema_body, StockItemsUpdateSchema_body, StockItemsUpdateSchema_params, StockItemsDeleteSchema_params } = require('../../../../schemas/stockItem-types');
 
 const router = express.Router();
 const h = handler;
