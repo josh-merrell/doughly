@@ -2,7 +2,7 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
 const { getTagsSchema_query, getTagSchema_params, newTagSchema_body, TagUpdateSchema_body, TagUpdateSchema_params, TagDeleteSchema_params } = require('../../schemas/tag-types');
 const recipeTagsRouter = require('./recipe/router');

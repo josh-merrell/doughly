@@ -21,7 +21,7 @@ export class IngredientInventoryTableComponent {
     console.log('Sending request');
     this.http
       .get(
-        'https://jlsvceuxoiayhibrwobf.supabase.com/rest/v1/ingredient_inventory'
+        'http://localhost:3000/ingredientStocks'
       )
       .subscribe((data) => {
         console.log(data);

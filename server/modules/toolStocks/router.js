@@ -2,16 +2,9 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
-const {
-  getToolStocksSchema_query,
-  getToolStockSchema_params,
-  newToolStockSchema_body,
-  ToolStockUpdateSchema_body,
-  ToolStockUpdateSchema_params,
-  ToolStockDeleteSchema_params,
-} = require('../../schemas/tool-types');
+const { getToolStocksSchema_query, getToolStockSchema_params, newToolStockSchema_body, ToolStockUpdateSchema_body, ToolStockUpdateSchema_params, ToolStockDeleteSchema_params } = require('../../schemas/tool-types');
 
 const router = express.Router();
 const h = handler;

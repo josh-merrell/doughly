@@ -2,16 +2,9 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
-const {
-  getOrdersSchema_query,
-  getOrderSchema_params,
-  newOrderSchema_body,
-  OrderUpdateSchema_body,
-  OrderUpdateSchema_params,
-  OrderDeleteSchema_params,
-} = require('../../schemas/order-types');
+const { getOrdersSchema_query, getOrderSchema_params, newOrderSchema_body, OrderUpdateSchema_body, OrderUpdateSchema_params, OrderDeleteSchema_params } = require('../../schemas/order-types');
 const orderItemsRouter = require('./items/router');
 
 const router = express.Router();

@@ -3,7 +3,7 @@ import {
   HttpHandlerFn,
   HttpRequest,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, from, mergeMap } from 'rxjs';
 import { createClient, Session } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
 
@@ -17,16 +17,20 @@ export function authInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> {
-  const session = supabase.auth.getSession();
-  if (session) {
-    const authReq = req.clone({
-      headers: req.headers.set(
-        'Authorization',
-        `${session}`
-      ),
-    });
-    return next(authReq);
-  } else {
-    return next(req);
-  }
+  
+  return from(supabase.auth.getSession()).pipe(
+    mergeMap((result: any) => {
+      if (result) {
+        const authReq = req.clone({
+          headers: req.headers.set(
+            'authorization',
+            `${result.data.session.access_token}`
+          ),
+        });
+        return next(authReq);
+      } else {
+        return next(req);
+      }
+    })
+  );
 }

@@ -2,16 +2,9 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
-const {
-  getRecipesSchema_query,
-  getRecipeSchema_params,
-  newRecipeSchema_body,
-  RecipeUpdateSchema_body,
-  RecipeUpdateSchema_params,
-  RecipeDeleteSchema_params,
-} = require('../../schemas/recipe-types');
+const { getRecipesSchema_query, getRecipeSchema_params, newRecipeSchema_body, RecipeUpdateSchema_body, RecipeUpdateSchema_params, RecipeDeleteSchema_params } = require('../../schemas/recipe-types');
 const recipeCategoriesRouter = require('./categories/router');
 const recipeComponentsRouter = require('./components/router');
 

@@ -2,16 +2,9 @@ const express = require('express');
 
 const { routeValidator } = require('../../middleware/validating');
 const { errorCatcher } = require('../../middleware/errorHandling');
-const { authenticateJWT } = require('../../middleware/authenticateJWT');
+const { authenticateJWT } = require('../../middleware/auth');
 const handler = require('./handler');
-const {
-  getToolsSchema_query,
-  getToolSchema_params,
-  newToolSchema_body,
-  ToolUpdateSchema_body,
-  ToolUpdateSchema_params,
-  ToolDeleteSchema_params,
-} = require('../../schemas/tool-types');
+const { getToolsSchema_query, getToolSchema_params, newToolSchema_body, ToolUpdateSchema_body, ToolUpdateSchema_params, ToolDeleteSchema_params } = require('../../schemas/tool-types');
 const recipeToolsRouter = require('./recipe/router');
 
 const router = express.Router();
