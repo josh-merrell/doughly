@@ -3,11 +3,20 @@ import { AppComponent } from './app/app.component';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/routes';
 import { provideState, provideStore } from '@ngrx/store';
-import { sharedReducer } from './app/shared/state/shared-reducers';
-import { kitchenReducer } from './app/kitchen/state/kitchen-reducers';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideEffects } from '@ngrx/effects';
+
+// Services
 import { authInterceptor } from './app/shared/utils/authInterceptor';
 
+// NgRX Items
+import { IngredientStockEffects } from './app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-effects'
+import { IngredientEffects } from './app/ingredients/state/ingredient-effects';
+import { sharedReducer } from './app/shared/state/shared-reducers';
+import { kitchenReducer } from './app/kitchen/state/kitchen-reducers';
+import { IngredientReducer } from './app/ingredients/state/ingredient-reducers';
+import { ingredientStockReducer } from './app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-reducers';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -15,7 +24,17 @@ bootstrapApplication(AppComponent, {
     provideStore(),
     provideState('shared', sharedReducer),
     provideState('kitchen', kitchenReducer),
+    provideState('ingredient', IngredientReducer),
+    provideState('ingredientStocks', ingredientStockReducer),
+    provideEffects([IngredientEffects, IngredientStockEffects]),
     provideHttpClient(withInterceptors([authInterceptor])),
+    provideStoreDevtools({
+      maxAge: 25, // Retains last 25 states
+      logOnly: false, // Restrict extension to log-only mode
+      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+      trace: true, // If set to true, will include stack trace for every dispatched action
+      traceLimit: 25, // maximum stack trace frames to be stored (in case trace option was provided as true)
+    }),
     // provideRouterStore(),
     // provideEffects([RouterEffects, AuthEffects])
   ],

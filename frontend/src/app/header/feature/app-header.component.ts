@@ -37,19 +37,9 @@ export class AppHeaderComponent {
   ) {}
 
   ngOnInit() {
-    this.globalClickListener = this.renderer.listen(
-      'document',
-      'click',
-      (event) => {
-        const clickedInside = this.menu.nativeElement.contains(event.target);
-        if (!clickedInside && this.isMenuOpen) {
-          this.closeMenu();
-        }
-      }
-    );
-
+    
     this.router.events
-      .pipe(
+    .pipe(
         takeUntil(this.destroy$),
         filter(
           (event): event is NavigationEnd => event instanceof NavigationEnd
@@ -59,6 +49,20 @@ export class AppHeaderComponent {
         })
       )
       .subscribe();
+    }
+    
+    ngAfterViewInit() {
+      this.globalClickListener = this.renderer.listen(
+        'document',
+        'click',
+        (event) => {
+          const clickedInside = this.menu?.nativeElement.contains(event.target);
+          if (!clickedInside && this.isMenuOpen) {
+            this.closeMenu();
+          }
+        }
+      );
+      
   }
 
   ngOnDestroy() {
@@ -77,6 +81,7 @@ export class AppHeaderComponent {
   }
 
   logout() {
+    this.closeMenu();
     this.authService.logout().then(() => {
       this.router.navigate(['/login']);
     });

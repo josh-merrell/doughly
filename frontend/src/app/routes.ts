@@ -4,8 +4,11 @@ import { IngredientsComponent } from './ingredients/feature/ingredients/ingredie
 import { NotfoundComponent } from './shared/ui/app-notfound/app-notfound.component';
 import { KitchenPageComponent } from './kitchen/kitchen-page.component';
 import { RecipePageComponent } from './recipes/feature/recipe-page/recipe-page.component';
-import { LoginPageComponent } from './login/login-page.component';
+import { LoginPageComponent } from './account/feature/login/login-page.component';
 import { ProfileGuard } from './guards/profile.guard';
+import { PasswordResetPageComponent } from './account/feature/password/password-reset-page.component';
+import { SignupPageComponent } from './account/feature/signup/signup-page.component';
+import { VerifyComponent } from './account/feature/verify/verify.component';
 
 export const routes: Route[] = [
   {
@@ -16,6 +19,18 @@ export const routes: Route[] = [
   {
     path: 'login',
     component: LoginPageComponent,
+  },
+  {
+    path: 'register',
+    component: SignupPageComponent,
+  },
+  {
+    path: 'verify-account',
+    component: VerifyComponent,
+  },
+  {
+    path: 'password-reset',
+    component: PasswordResetPageComponent,
   },
   {
     path: 'recipes',

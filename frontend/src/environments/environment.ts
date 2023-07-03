@@ -6,5 +6,6 @@ export const environment = {
   SUPABASE_USER_EMAIL: 'joshmerrell.us@gmail.com',
   SUPABASE_USER_PW: 'Ginger93!',
   SUPABASE_TEST_USER_EMAIL: 'jmerrell93@hotmail.com',
-  SUPABASE_TEST_USER_PW: 'test123'
+  SUPABASE_TEST_USER_PW: 'test123',
+  BACKEND: 'http://localhost:3000'
 };

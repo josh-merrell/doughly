@@ -26,63 +26,71 @@
           >
             Home
           </a>
-          <a
-            routerLink="/recipes"
-            [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                (currentUrl$ | async) === '/recipes',
-              'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                (currentUrl$ | async) !== '/recipes'
-            }"
-            class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
-          >
-            Recipes
-          </a>
-          <a
-            routerLink="/orders"
-            [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                (currentUrl$ | async) === '/orders',
-              'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                (currentUrl$ | async) !== '/orders'
-            }"
-            class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
-          >
-            Orders
-          </a>
-          <a
-            routerLink="/kitchen"
-            [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                (currentUrl$ | async) === '/kitchen',
-              'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                (currentUrl$ | async) !== '/kitchen'
-            }"
-            class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
-          >
-            Kitchen
-          </a>
-          <a
-            routerLink="/products"
-            [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                (currentUrl$ | async) === '/products',
-              'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                (currentUrl$ | async) !== '/products'
-            }"
-            class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium hover:text-dl-grey-3"
-          >
-            Products
-          </a>
+          <ng-container *ngIf="authService.$profile | async as profile">
+            <a
+              routerLink="/recipes"
+              [ngClass]="{
+                'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
+                  (currentUrl$ | async) === '/recipes',
+                'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
+                  (currentUrl$ | async) !== '/recipes'
+              }"
+              class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
+            >
+              Recipes
+            </a>
+          </ng-container>
+          <ng-container *ngIf="authService.$profile | async as profile">
+            <a
+              routerLink="/orders"
+              [ngClass]="{
+                'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
+                  (currentUrl$ | async) === '/orders',
+                'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
+                  (currentUrl$ | async) !== '/orders'
+              }"
+              class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
+            >
+              Orders
+            </a>
+          </ng-container>
+          <ng-container *ngIf="authService.$profile | async as profile">
+            <a
+              routerLink="/kitchen"
+              [ngClass]="{
+                'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
+                  (currentUrl$ | async) === '/kitchen',
+                'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
+                  (currentUrl$ | async) !== '/kitchen'
+              }"
+              class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
+            >
+              Kitchen
+            </a>
+          </ng-container>
           <ng-container *ngIf="authService.$profile | async as profile">
             <a
               routerLink="/products"
-              (click)="logout()"
               [ngClass]="{
                 'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
                   (currentUrl$ | async) === '/products',
                 'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
                   (currentUrl$ | async) !== '/products'
+              }"
+              class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium hover:text-dl-grey-3"
+            >
+              Products
+            </a>
+          </ng-container>
+          <ng-container *ngIf="authService.$profile | async as profile">
+            <a
+              routerLink="/"
+              (click)="logout()"
+              [ngClass]="{
+                'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
+                  (currentUrl$ | async) === '/logout',
+                'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
+                  (currentUrl$ | async) !== '/logout'
               }"
               class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium hover:text-dl-grey-3"
             >
@@ -167,7 +175,8 @@
               Settings
             </a>
             <a
-              routerLink="#"
+              routerLink="/"
+              (click)="logout()"
               class="block cursor-pointer px-4 py-2 text-sm text-dl-grey-3 hover:bg-dl-grey-9"
               role="menuitem"
               tabindex="-1"
@@ -211,5 +220,4 @@
     </div>
   </div>
 </nav>
-
 <router-outlet></router-outlet>
