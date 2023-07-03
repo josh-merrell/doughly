@@ -1,5 +1,4 @@
 <div *ngIf="inventoryView$ | async as inventoryView">
-  <dl-inventory-header [inventoryView]="inventoryView"></dl-inventory-header>
   <div [ngSwitch]="inventoryView">
     <div *ngSwitchCase="'ingredients'">
       <dl-ingredient-inventory-table></dl-ingredient-inventory-table>

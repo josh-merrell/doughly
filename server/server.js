@@ -11,6 +11,7 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'routing-service' },
   transports: [new winston.transports.Console({ format: winston.format.simple() })],
 });
+
 const { supabase, verifyUser } = require('./db');
 
 // Instantiate an express application

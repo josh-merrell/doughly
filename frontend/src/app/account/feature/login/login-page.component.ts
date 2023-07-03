@@ -1,13 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { AuthService } from '../shared/utils/authenticationService';
-import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router, RouterLinkWithHref } from '@angular/router';
+import { AuthService } from '../../../shared/utils/authenticationService';
+import {
+  ReactiveFormsModule,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'dl-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLinkWithHref],
   templateUrl: './login-page.component.html',
 })
 export class LoginPageComponent {
@@ -28,7 +33,7 @@ export class LoginPageComponent {
       this.authService
         .signIn(email!, password!)
         .then(() => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/kitchen']);
         })
         .catch((error) => {
           this.error = error.message;

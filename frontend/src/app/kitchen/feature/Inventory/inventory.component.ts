@@ -5,7 +5,6 @@ import { Store } from '@ngrx/store';
 import { selectInventoryView } from '../../state/kitchen-selectors';
 import { MaterialInventoryTableComponent } from './feature/material-inventory/material-inventory-table.component';
 import { IngredientInventoryTableComponent } from './feature/ingredient-inventory/ingredient-inventory-table.component';
-import { InventoryHeaderComponent } from './feature/inventory-header/inventory-header.component';
 
 
 
@@ -14,7 +13,6 @@ import { InventoryHeaderComponent } from './feature/inventory-header/inventory-h
   standalone: true,
   imports: [
     CommonModule,
-    InventoryHeaderComponent,
     IngredientInventoryTableComponent,
     MaterialInventoryTableComponent,
   ],
