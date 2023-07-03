@@ -1,2 +1,5 @@
-<!-- <dl-table-full [title]="title" [heading_phrase]="heading_phrase" [button_title]="button_title"></dl-table-full> -->
-<dl-ingredients></dl-ingredients>
+<dl-table-full *ngIf="(rows$ | async) as rows; else noData" [title]="title" [columns]="columns" [rows]="rows" [heading_phrase]="heading_phrase" [button_title]="button_title"></dl-table-full>
+<ng-template #noData>
+  <p class="mt-2 text-sm text-gray-700">No data available.</p>
+</ng-template>
+<!-- <dl-ingredients></dl-ingredients> -->

@@ -1,11 +1,18 @@
 <div class="px-4 sm:px-6 lg:px-8">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
-      <h1 class="text-base font-semibold leading-6 text-gray-900">{{title}}</h1>
-      <p class="mt-2 text-sm text-gray-700">{{heading_phrase}}</p>
+      <h1 class="text-base font-semibold leading-6 text-gray-900">
+        {{ title }}
+      </h1>
+      <p class="mt-2 text-sm text-gray-700">{{ heading_phrase }}</p>
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-      <button type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{{button_title}}</button>
+      <button
+        type="button"
+        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        {{ button_title }}
+      </button>
     </div>
   </div>
   <div class="mt-8 flow-root">
@@ -14,27 +21,34 @@
         <table class="min-w-full divide-y divide-gray-300">
           <thead>
             <tr>
-              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Title</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Role</th>
+              <th
+                *ngFor="let column of columns"
+                scope="col"
+                class="text-dl-grey-2 py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-3"
+              >
+                {{ column.name }}
+              </th>
               <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
                 <span class="sr-only">Edit</span>
               </th>
             </tr>
           </thead>
           <tbody class="bg-white">
-            <tr class="even:bg-gray-50">
-              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">Lindsay Walton</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Front-end Developer</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">lindsay.walton@example.com</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Member</td>
-              <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit<span class="sr-only">, Lindsay Walton</span></a>
+            <tr *ngFor="let row of rows" class="odd:bg-dl-grey-10">
+              <td
+                *ngFor="let column of columns"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3"
+              >
+                {{ row[column.prop] }}
+              </td>
+              <td
+                class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3"
+              >
+                <a href="#" class="text-indigo-600 hover:text-indigo-900"
+                  >Edit<span class="sr-only">, Lindsay Walton</span></a
+                >
               </td>
             </tr>
-
-            <!-- More people... -->
           </tbody>
         </table>
       </div>
