@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { IngredientStockService } from '../data/ingredient-stock.service';
 import { IngredientStockActions } from './ingredient-stock-actions';
@@ -39,6 +39,22 @@ export class IngredientStockEffects {
           ),
           catchError((error) =>
             of(IngredientStockActions.loadIngredientStocksFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  loadIngredientStock$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientStockActions.loadIngredientStock),
+      mergeMap((action) =>
+        this.ingredientStockService.getByID(action.ingredientStockID).pipe(
+          map((ingredientStock) =>
+            IngredientStockActions.loadIngredientStockSuccess({ ingredientStock })
+          ),
+          catchError((error) =>
+            of(IngredientStockActions.loadIngredientStockFailure({ error }))
           )
         )
       )

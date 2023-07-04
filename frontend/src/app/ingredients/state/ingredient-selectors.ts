@@ -1,5 +1,4 @@
 import { createSelector } from '@ngrx/store';
-import { IngredientState } from './ingredient-state';
 
 export const selectIngredients = (state: any) => state.ingredient.ingredients;
 

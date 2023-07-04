@@ -10,6 +10,19 @@ const loadIngredientStocksFailure = createAction(
   '[IngredientStocks] Load Failure',
   props<{ error: any }>()
   );
+
+const loadIngredientStock = createAction(
+  '[IngredientStocks] Load Single',
+  props<{ ingredientStockID: number }>()
+);
+const loadIngredientStockSuccess = createAction(
+  '[IngredientStocks] Load Single Success',
+  props<{ ingredientStock: IngredientStock }>()
+);
+const loadIngredientStockFailure = createAction(
+  '[IngredientStocks] Load Single Failure',
+  props<{ error: any }>()
+);
     
 const addIngredientStock = createAction(
   '[IngredientStocks] Add',
@@ -27,7 +40,6 @@ const addIngredientStockFailure = createAction(
 
 
 
-
 export const IngredientStockActions = {
   loadIngredientStocks,
   loadIngredientStocksSuccess,
@@ -35,4 +47,7 @@ export const IngredientStockActions = {
   addIngredientStock,
   addIngredientStockSuccess,
   addIngredientStockFailure,
+  loadIngredientStock,
+  loadIngredientStockSuccess,
+  loadIngredientStockFailure,
 };
