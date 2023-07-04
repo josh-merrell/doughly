@@ -29,4 +29,19 @@ export class IngredientStockEffects {
     );
   });
 
+  loadIngredientStocks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientStockActions.loadIngredientStocks),
+      mergeMap(() =>
+        this.ingredientStockService.getAll().pipe(
+          map((ingredientStocks) =>
+            IngredientStockActions.loadIngredientStocksSuccess({ ingredientStocks })
+          ),
+          catchError((error) =>
+            of(IngredientStockActions.loadIngredientStocksFailure({ error }))
+          )
+        )
+      )
+    )
+  );
 }

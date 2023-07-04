@@ -21,10 +21,6 @@ export class IngredientsComponent {
   constructor(private store: Store<IngredientState>) {}
 
   ngOnInit() {
-    this.store.dispatch(IngredientActions.loadIngredients());
-    this.store.pipe(select(selectIngredients)).subscribe((state) => {
-      console.log(`STATE: ${Object.keys(state)}, STATE ARRAY PROPERTY:`);
-    });
     this.ingredients$ = this.store.pipe(select(selectIngredients));
   }
 }
