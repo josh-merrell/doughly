@@ -75,7 +75,8 @@ async function deletePerson(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { personID } = req.params;
-  const returner = await p.delete({ userID: req.userID, personID });
+  const { authorization } = req.headers;
+  const returner = await p.delete({ authorization, userID: req.userID, personID });
   return res.json(returner);
 }
 

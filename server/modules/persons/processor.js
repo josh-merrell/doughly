@@ -119,7 +119,11 @@ module.exports = ({ db }) => {
 
   async function deletePerson(options) {
     //verify that the person to delete exists
-    let { data: personExists, error: personExistsError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${options.personID}`, options);
+    let { data: personExists, error: personExistsError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${options.personID}`, options, {
+      headers: {
+        'authorization': options.authorization,
+      }
+    });
 
     if (personExistsError) {
       global.logger.info(`Error checking whether personID to del: ${options.personID} exists: ${personExistsError.message}`);

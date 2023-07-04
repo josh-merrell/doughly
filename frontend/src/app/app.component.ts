@@ -7,6 +7,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { Store } from '@ngrx/store';
 import { IngredientActions } from './ingredients/state/ingredient-actions';
 import { IngredientStockActions } from './kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions'
+import { EmployeeActions } from './employees/state/employee-actions';
 
 @Component({
   standalone: true,
@@ -25,8 +26,9 @@ export class AppComponent {
   constructor(private router: Router, private store: Store) {}
 
   ngOnInit() {
-    //hydrate ingredients and ingredient stocks
+    //hydrate ingredients, ingredient stocks, employees
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+    this.store.dispatch(EmployeeActions.loadEmployees());
   }
 }

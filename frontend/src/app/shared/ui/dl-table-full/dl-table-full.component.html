@@ -1,34 +1,39 @@
-<div class="px-4 sm:px-6 lg:px-8">
+<div class="px-dl-4 sm:px-dl-6 lg:px-dl-8">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
-      <h1 class="text-base font-semibold leading-6 text-gray-900">
+      <h1 class="text-base font-dl-3 leading-dl-2 text-dl-grey-1">
         {{ title }}
       </h1>
-      <p class="mt-2 text-sm text-gray-700">{{ heading_phrase }}</p>
+      <p class="mt-dl-3 text-dl-2 text-dl-grey-2">{{ heading_phrase }}</p>
     </div>
-    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+    <div class="mt-dl-4 sm:ml-dl-8 sm:mt-dl-0 sm:flex-none">
       <button
         type="button"
-        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        class="block rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-2 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
       >
         {{ button_title }}
       </button>
     </div>
   </div>
-  <div class="mt-8 flow-root">
-    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-        <table class="min-w-full divide-y divide-gray-300">
+  <div class="mt-dl-7 flow-root">
+    <div class="-mx-dl-4 -my-dl-2 overflow-x-auto sm:-mx-dl-6 lg:-mx-dl-8">
+      <div
+        class="inline-block min-w-full py-dl-2 align-middle sm:px-dl-6 lg:px-dl-8"
+      >
+        <table class="min-w-full divide-y divide-dl-grey-8">
           <thead>
             <tr>
               <th
                 *ngFor="let column of columns"
                 scope="col"
-                class="text-dl-grey-2 py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-3"
+                class="py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-dl-grey-2 sm:pl-dl-3 lg:pr-dl-9"
               >
                 {{ column.name }}
               </th>
-              <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
+              <th
+                scope="col"
+                class="relative py-dl-3 pl-dl-3 pr-dl-4 sm:pr-dl-3"
+              >
                 <span class="sr-only">Edit</span>
               </th>
             </tr>
@@ -37,15 +42,21 @@
             <tr *ngFor="let row of rows" class="odd:bg-dl-grey-10">
               <td
                 *ngFor="let column of columns"
-                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3"
+                class="whitespace-nowrap py-dl-4 pl-dl-4 text-dl-2 font-dl-2 text-dl-grey-1 sm:pl-dl-3 lg:pr-dl-9"
               >
                 {{ row[column.prop] }}
               </td>
               <td
-                class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3"
+                class="relative whitespace-nowrap py-dl-4 pl-dl-3 pr-dl-4 text-right text-dl-2 font-dl-2 sm:pr-dl-3"
               >
-                <a href="#" class="text-indigo-600 hover:text-indigo-900"
-                  >Edit<span class="sr-only">, Lindsay Walton</span></a
+                <a
+                  (click)="openEditDialog(row[IDKey])"
+                  class="mr-dl-2 cursor-pointer text-dl-blue-4 transition-all duration-200 ease-in-out hover:text-dl-blue-2"
+                  >Edit</a
+                >
+                <a
+                  class="mr-dl-2 cursor-pointer text-dl-red-3 transition-all duration-150 ease-in-out hover:text-dl-red-5"
+                  >Delete</a
                 >
               </td>
             </tr>

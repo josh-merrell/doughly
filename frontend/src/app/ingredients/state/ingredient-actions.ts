@@ -17,7 +17,7 @@ const addIngredient = createAction(
 );
 const addIngredientSuccess = createAction(
   '[Ingredients] Add Success',
-  props<{ ingredients: Ingredient }>()
+  props<{ ingredient: Ingredient }>()
 );
 const addIngredientFailure = createAction(
   '[Ingredients] Add Failure',

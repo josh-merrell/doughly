@@ -13,7 +13,6 @@ import { Store, select } from '@ngrx/store';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './ingredients.component.html',
-  styleUrls: ['./ingredients.component.css'],
 })
 export class IngredientsComponent {
   ingredients$!: Observable<Ingredient[]>;
