@@ -29,6 +29,7 @@ export class IngredientStockService {
         );
         if (!ingredient) {
           return {
+            ingredientStockID: 0,
             name: `IngredientID:${stock.ingredientID} missing, can't get details for IngredientStockID:${stock.ingredientStockID}`,
             brand: "Unknown",
             quantity: "Unknown",
@@ -42,6 +43,7 @@ export class IngredientStockService {
           .add(ingredient.lifespanDays, 'day')
           .format('MM/DD/YYYY');
         return {
+          ingredientStockID: stock.ingredientStockID,
           name: ingredient.name,
           brand: ingredient.brand,
           quantity: quantity,
@@ -63,4 +65,5 @@ export class IngredientStockService {
   add(ingredientStock: IngredientStock): Observable<IngredientStock> {
     return this.http.post<IngredientStock>(this.API_URL, ingredientStock);
   }
+
 }

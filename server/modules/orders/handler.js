@@ -33,7 +33,9 @@ async function createOrder(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { name, clientID, scheduledDeliveryTime, fulfillment, description } = req.body;
+  const { authorization } = req.headers;
   const returner = await p.create({
+    authorization,
     userID: req.userID,
     name,
     clientID,
@@ -66,7 +68,8 @@ async function deleteOrder(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { orderID } = req.params;
-  const returner = await p.delete({ userID: req.userID, orderID });
+  const { authorization } = req.headers;
+  const returner = await p.delete({ authorization, userID: req.userID, orderID });
   return res.json(returner);
 }
 

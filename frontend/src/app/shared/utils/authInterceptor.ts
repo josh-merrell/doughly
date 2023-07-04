@@ -6,6 +6,7 @@ import {
 import { Observable, from, mergeMap } from 'rxjs';
 import { createClient, Session } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
+import { throwError } from 'rxjs';
 
 const SUPABASE_URL = environment.SUPABASE_DOUGHLEAP_URL;
 const SUPABASE_ANON_KEY = environment.SUPABASE_DOUGHLEAP_KEY;
@@ -29,7 +30,8 @@ export function authInterceptor(
         });
         return next(authReq);
       } else {
-        return next(req);
+        console.log(`NO SESSION FOUND`)
+        return throwError(new Error('No session found, unauthorized request'));
       }
     })
   );

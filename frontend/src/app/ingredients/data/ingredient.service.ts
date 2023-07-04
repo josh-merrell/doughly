@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class IngredientsService {
+export class IngredientService {
   private API_URL = `${environment.BACKEND}/ingredients`;
 
   constructor(private http: HttpClient) { }

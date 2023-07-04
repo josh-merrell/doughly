@@ -49,6 +49,10 @@ module.exports = ({ db }) => {
     queryParams.personIDs = personIDs.join(',');
     let { data, error } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, {
       params: queryParams,
+    }, {
+      headers: {
+        'authorization': options.authorization,
+      }
     });
 
     if (error) {
@@ -71,7 +75,11 @@ module.exports = ({ db }) => {
 
   async function create(options) {
     //attempt to create a new person
-    let person = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, options);
+    let person = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, options, {
+      headers: {
+        'authorization': options.authorization,
+      }
+    });
     person = person.data;
 
     //if successful, record timestamp and create the client mapping with the new personID
@@ -88,7 +96,11 @@ module.exports = ({ db }) => {
       if (error) {
         global.logger.info(`Error creating client: ${error.message}`);
         //delete the person that was just created
-        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${person.personID}`);
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${person.personID}`, {
+          headers: {
+            'authorization': options.authorization,
+          }
+        });
         return { error: error.message };
       } else {
         global.logger.info(`Created client ${data[0].clientID}`);
@@ -126,6 +138,10 @@ module.exports = ({ db }) => {
         city,
         state,
         zip,
+      }, {
+        headers: {
+          'authorization': options.authorization,
+        }
       });
 
       if (personUpdateResult.error) {

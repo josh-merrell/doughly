@@ -6,7 +6,7 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { userID, employeeIDs, personID, hireDateRange, payPerHourRange, position, status, email, nameFirst, nameLast, phone, city, state, zip } = options;
+    const { authorization, userID, employeeIDs, personID, hireDateRange, payPerHourRange, position, status, email, nameFirst, nameLast, phone, city, state, zip } = options;
 
     const personIDs = [];
     //if filtering by employeeIDs, need to get the personID for each employeeID
@@ -49,6 +49,9 @@ module.exports = ({ db }) => {
     queryParams.personIDs = personIDs.join(',');
     let { data: employeePersons, error } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, {
       params: queryParams,
+      headers: {
+        authorization: authorization,
+      },
     });
 
     if (error) {
@@ -121,7 +124,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
+    const { authorization, userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
 
     //validate that provided payPerHour is a positive number
     if (payPerHour <= 0) {
@@ -139,18 +142,26 @@ module.exports = ({ db }) => {
     const statusToUse = status ? status : 'active';
 
     //attempt to create a person first
-    let person = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, {
-      userID,
-      nameFirst,
-      nameLast,
-      email,
-      phone,
-      address1,
-      address2,
-      city,
-      state,
-      zip,
-    });
+    let person = await axios.post(
+      `${process.env.NODE_HOST}:${process.env.PORT}/persons`,
+      {
+        userID,
+        nameFirst,
+        nameLast,
+        email,
+        phone,
+        address1,
+        address2,
+        city,
+        state,
+        zip,
+      },
+      {
+        headers: {
+          authorization: authorization,
+        },
+      },
+    );
     person = person.data;
 
     //if succsessful, create the employee
@@ -170,7 +181,11 @@ module.exports = ({ db }) => {
       if (error) {
         global.logger.info(`Error creating employee: ${error.message}`);
         //if employee creation fails, delete the person that was created
-        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${person.personID}`);
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${person.personID}`, {
+          headers: {
+            authorization: authorization,
+          },
+        });
         return { error: error.message };
       }
       global.logger.info(`Created employee ${person.personID}`);
@@ -182,7 +197,7 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { userID, employeeID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
+    const { authorization, userID, employeeID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
 
     //validate that provided employeeID exists
     const { data: employeeExists, error: employeeExistsError } = await db.from('employees').select().eq('employeeID', employeeID);
@@ -223,7 +238,11 @@ module.exports = ({ db }) => {
     if (zip) updatePersonFields.zip = zip;
 
     const personID = employeeExists[0].personID;
-    const { data: personUpdateResult } = await axios.patch(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${personID}`, updatePersonFields);
+    const { data: personUpdateResult } = await axios.patch(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${personID}`, updatePersonFields, {
+      headers: {
+        authorization: authorization,
+      },
+    });
 
     if (personUpdateResult.error) {
       global.logger.info(`Error updating person while trying to update employee: ${personUpdateResult.error.message}`);

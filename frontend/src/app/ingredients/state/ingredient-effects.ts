@@ -2,23 +2,23 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { IngredientsService } from '../data/ingredients.service';
+import { IngredientService } from '../data/ingredient.service';
 import { IngredientActions } from './ingredient-actions';
 
 @Injectable()
 export class IngredientEffects {
   constructor(
     private actions$: Actions,
-    private ingredientsService: IngredientsService
+    private ingredientService: IngredientService
   ) {}
 
   addIngredient$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(IngredientActions.addIngredient),
       mergeMap((action) =>
-        this.ingredientsService.add(action.ingredient).pipe(
-          map((ingredients) =>
-            IngredientActions.addIngredientSuccess({ ingredients })
+        this.ingredientService.add(action.ingredient).pipe(
+          map((ingredient) =>
+            IngredientActions.addIngredientSuccess({ ingredient })
           ),
           catchError((error) =>
             of(IngredientActions.addIngredientFailure({ error }))
@@ -32,7 +32,7 @@ export class IngredientEffects {
     this.actions$.pipe(
       ofType(IngredientActions.loadIngredients),
       mergeMap(() =>
-        this.ingredientsService.getAll().pipe(
+        this.ingredientService.getAll().pipe(
           map((ingredients) =>
             IngredientActions.loadIngredientsSuccess({ ingredients })
           ),

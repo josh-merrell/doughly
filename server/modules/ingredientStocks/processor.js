@@ -34,8 +34,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Error getting ingredientStock ID: ${ingredientStockID}: ${error.message}`);
       return { error: error.message };
     }
-    global.logger.info(`Got ingredientStock`);
-    return ingredientStock;
+    return ingredientStock[0];
   }
 
   async function create(options) {

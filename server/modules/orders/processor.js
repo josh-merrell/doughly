@@ -70,6 +70,10 @@ module.exports = ({ db }) => {
       type: 'order',
       status: 'draft',
       subtotal: 10.00 //TODO: calculate subtotal from orderStockProducts and orderTaskProducts
+    }, {
+      headers: {
+        'authorization': options.authorization,
+      }
     });
     //create an order
     const { data: order, error: orderError } = await db
@@ -148,6 +152,10 @@ module.exports = ({ db }) => {
     try {
       await axios.patch(`${process.env.NODE_HOST}:${process.env.PORT}/invoices/${order.invoiceID}`, {
         status: 'void',
+      }, {
+        headers: {
+          'authorization': options.authorization,
+        }
       });
     } catch (error) {
       global.logger.info(`Error voiding invoice ${order.invoiceID} while deleting order ${options.orderID}: ${error.message}`);
