@@ -12,5 +12,7 @@ export class TableFullComponent {
   @Input() title!: string;
   @Input() heading_phrase!: string;
   @Input() button_title!: string;
+  @Input() columns!: any[];
+  @Input() rows!: any[];
 
 }

@@ -25,7 +25,7 @@ bootstrapApplication(AppComponent, {
     provideState('shared', sharedReducer),
     provideState('kitchen', kitchenReducer),
     provideState('ingredient', IngredientReducer),
-    provideState('ingredientStocks', ingredientStockReducer),
+    provideState('ingredientStock', ingredientStockReducer),
     provideEffects([IngredientEffects, IngredientStockEffects]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({

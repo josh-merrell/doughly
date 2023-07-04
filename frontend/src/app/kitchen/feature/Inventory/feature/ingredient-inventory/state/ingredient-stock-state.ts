@@ -12,3 +12,11 @@ export interface IngredientStockState {
   loading: boolean;
   error: any;
 }
+
+
+export interface IngredientStockRow {
+  name: string;
+  brand: string;
+  quantity: string;
+  expiration: string;
+}
