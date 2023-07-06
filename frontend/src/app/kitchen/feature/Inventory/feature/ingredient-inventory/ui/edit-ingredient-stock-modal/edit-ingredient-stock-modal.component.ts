@@ -120,6 +120,7 @@ export class EditIngredientStockModalComponent {
                 Validators.required,
                 this.dateValidator(hireDate),
               ]);
+            this.form.get('purchasedDate')!.updateValueAndValidity();
           });
       });
 
