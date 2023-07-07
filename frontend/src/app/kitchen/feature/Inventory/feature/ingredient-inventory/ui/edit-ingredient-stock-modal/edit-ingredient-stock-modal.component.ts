@@ -21,13 +21,13 @@ import {
   ValidationErrors,
   ValidatorFn,
   Validators,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { selectEmployees } from 'src/app/employees/state/employee-selectors';
 import { environment } from 'src/environments/environment';
 import { Employee } from 'src/app/employees/state/employee-state';
 import { HttpClient } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -174,7 +174,6 @@ export class EditIngredientStockModalComponent {
         )
         .subscribe({
           next: () => {
-            console.log('Success');
             this.submittingChanges = false;
             // dispatch ingredientStock update action to refresh its state
             this.store.dispatch(
@@ -186,10 +185,8 @@ export class EditIngredientStockModalComponent {
             this.dialogRef.close(this.form.value);
           },
           error: (error) => {
-            console.log('Error', error);
             this.submittingChanges = false;
             this.dialogRef.close(error)
-            // handle error
           },
         });
     }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
+  MatDialogRef,
 } from '@angular/material/dialog';
 
 
@@ -14,7 +15,10 @@ import {
 })
 export class UpdateRequestErrorModalComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { error: any }) {
-      console.log(`IN UPDATE REQUEST ERROR COMPONENT. ERROR RECEIVED: ${data.error}`)
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { error: any, updateFailureMessage: string }, public dialogRef: MatDialogRef<UpdateRequestErrorModalComponent>) {
    }
+
+  onDismiss(): void {
+    this.dialogRef.close();
+  }
 }

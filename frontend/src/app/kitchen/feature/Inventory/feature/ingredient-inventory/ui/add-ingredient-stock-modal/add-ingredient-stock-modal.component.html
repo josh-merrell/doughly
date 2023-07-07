@@ -1,5 +1,5 @@
 <div
-  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-lg sm:p-dl-6"
+  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="submittingChanges"></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!submittingChanges">
@@ -9,11 +9,11 @@
           class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4"
           id="editIngredientStockModal"
         >
-          Edit Inventory Item
+          Add Inventory Item
         </h3>
         <div class="mt-dl-2">
           <p class="text-dl-2 text-dl-grey-5">
-            Edit details of this Inventory item
+            Add a new Ingredient Stock to your Inventory
           </p>
         </div>
       </div>
@@ -43,6 +43,20 @@
 
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
+        <div id="form-ingredientID" class="relative flex flex-col">
+          <label class="text-dl-2 text-dl-grey-4 font-dl-3">Ingredient</label>
+          <mat-form-field>
+            <mat-select formControlName="ingredientID">
+              <mat-option
+                *ngFor="let ingredient of ingredients$ | async"
+                [value]="ingredient.ingredientID"
+              >
+                {{ ingredient.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
         <div id="form-purchasedBy" class="relative flex flex-col">
           <label class="text-dl-2 text-dl-grey-4 font-dl-3">Purchased By</label>
           <mat-form-field>
@@ -75,11 +89,11 @@
         </div>
 
         <div id="form-measurement">
-          <label class="text-dl-2 text-dl-grey-4 font-dl-3">Measurement in <ng-container *ngIf="ingredient$ | async as ingredient">{{
-                ingredient.purchaseUnit
+          <label class="text-dl-2 text-dl-grey-4 font-dl-3">Measurement <ng-container *ngIf="ingredient$ | async as ingredient">in {{
+                ingredient?.purchaseUnit
               }}s</ng-container></label>
           <mat-form-field class="w-full">
-            <input matInput formControlName="measurement" />
+            <input matInput formControlName="measurement" [disabled]="!form.get('ingredientID')?.value" />
           </mat-form-field>
         </div>
       </div>  
