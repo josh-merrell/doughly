@@ -13,6 +13,7 @@ import { selectIngredients } from 'src/app/ingredients/state/ingredient-selector
 import { selectIngredientStocks } from './state/ingredient-stock-selectors';
 import { IngredientStockService } from './data/ingredient-stock.service';
 import { EditIngredientStockModalComponent } from './ui/edit-ingredient-stock-modal/edit-ingredient-stock-modal.component';
+import { AddIngredientStockModalComponent } from './ui/add-ingredient-stock-modal/add-ingredient-stock-modal.component';
 
 @Component({
   selector: 'dl-ingredient-inventory-table',
@@ -22,12 +23,13 @@ import { EditIngredientStockModalComponent } from './ui/edit-ingredient-stock-mo
     TableFullComponent,
     IngredientsComponent,
     EditIngredientStockModalComponent,
+    AddIngredientStockModalComponent,
   ],
   templateUrl: './ingredient-inventory-table.component.html',
 })
 export class IngredientInventoryTableComponent {
-
   editModalComponent: Type<any> = EditIngredientStockModalComponent;
+  addModalComponent: Type<any> = AddIngredientStockModalComponent;
 
   constructor(
     private http: HttpClient,
@@ -40,6 +42,10 @@ export class IngredientInventoryTableComponent {
   heading_phrase = 'Multiple entries may exist for each Ingredient.';
   button_title = 'Add Inventory';
   IDKey = 'ingredientStockID';
+  updateSuccessMessage = 'Updated Ingredient Stock with ID:';
+  updateFailureMessage = 'Failed to update Ingredient Stock with ID:';
+  addSuccessMessage = 'Added Ingredient Stock with ID:';
+  addFailureMessage = 'Failed to add Ingredient Stock. Try again later.';
   columns = [
     { name: 'Name', prop: 'name' },
     { name: 'Brand', prop: 'brand' },

@@ -116,7 +116,6 @@ const RecipeIngredientDeleteSchema_params = {
 };
 
 // INGREDIENT STOCKS
-
 const getIngredientStocksSchema_query = {
   type: 'object',
   properties: {
@@ -140,7 +139,7 @@ const newIngredientStockSchema_body = {
   properties: {
     ingredientID: { type: 'integer' },
     purchasedBy: { type: 'integer' },
-    measurement: { type: 'integer' },
+    measurement: { type: 'number' },
     purchasedDate: { type: 'string' },
   },
 };
