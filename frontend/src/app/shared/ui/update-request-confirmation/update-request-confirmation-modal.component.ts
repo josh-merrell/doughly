@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
+  MatDialogRef
 } from '@angular/material/dialog';
 
 
@@ -13,8 +14,14 @@ import {
   templateUrl: './update-request-confirmation-modal.component.html',
 })
 export class UpdateRequestConfirmationModalComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { result: any }) {
-    console.log(data.result); // Log the result data
+
+
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { result: any, updateSuccessMessage: string }, public dialogRef: MatDialogRef<UpdateRequestConfirmationModalComponent>) {
+  }
+
+  onDismiss(): void {
+    this.dialogRef.close();
   }
 
 }
