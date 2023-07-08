@@ -6,7 +6,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, recipeToolIDs, recipeID, toolID } = options;
 
-    let q = db.from('recipeTools').select().filter('userID', 'eq', userID).order('recipeToolID', { ascending: true });
+    let q = db.from('recipeTools').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeToolID', { ascending: true });
 
     if (recipeToolIDs) {
       q = q.in('recipeToolID', recipeToolIDs);
@@ -31,7 +31,7 @@ module.exports = ({ db }) => {
   async function getByID(options) {
     const { recipeToolID } = options;
 
-    const { data: recipeTool, error } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID).single();
+    const { data: recipeTool, error } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID).eq('deleted', false).single();
 
     if (error) {
       global.logger.info(`Error getting recipeTool by ID: ${recipeToolID}: ${error}`);
@@ -134,7 +134,7 @@ module.exports = ({ db }) => {
   async function deleteRecipeStep(options) {
     const { recipeToolID } = options;
     //validate that provided recipeToolID exists
-    const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID);
+    const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID).eq('deleted', false);
     if (recipeToolError) {
       global.logger.info(`Error validating recipeTool ID: ${recipeToolID}: ${recipeToolError}`);
       return { error: recipeToolError };
@@ -145,7 +145,7 @@ module.exports = ({ db }) => {
     }
 
     //delete recipeTool
-    const { error: deleteError } = await db.from('recipeTools').delete().eq('recipeToolID', recipeToolID);
+    const { error: deleteError } = await db.from('recipeTools').update({ deleted: true }).eq('recipeToolID', recipeToolID);
     if (deleteError) {
       global.logger.info(`Error deleting recipeTool: ${deleteError}`);
       return { error: deleteError };

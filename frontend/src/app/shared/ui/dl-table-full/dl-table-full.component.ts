@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateRequestErrorModalComponent } from '../update-request-error/update-request-error-modal.component';
 import { UpdateRequestConfirmationModalComponent } from '../update-request-confirmation/update-request-confirmation-modal.component';
+import { DeleteRequestErrorModalComponent } from '../delete-request-error/delete-request-error-modal.component';
+import { DeleteRequestConfirmationModalComponent } from '../delete-request-confirmation/delete-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from '../add-request-error/add-request-error-modal.component';
 import { AddRequestConfirmationModalComponent } from '../add-request-confirmation/add-request-confirmation-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -23,12 +25,14 @@ export class TableFullComponent {
   @Input() IDKey!: string;
   @Input() updateSuccessMessage!: string;
   @Input() updateFailureMessage!: string;
+  @Input() deleteModalComponent!: Type<any>;
+  @Input() deleteSuccessMessage!: string;
+  @Input() deleteFailureMessage!: string;
   @Input() addModalComponent!: Type<any>;
   @Input() addSuccessMessage!: string;
   @Input() addFailureMessage!: string;
 
   constructor(public dialog: MatDialog) {
-    console.log(`IN TABLE FULL COMPONENT. ERROR Failure Message: ${this.updateFailureMessage}`)
   }
 
   openEditDialog(itemID: number): void {
@@ -43,7 +47,7 @@ export class TableFullComponent {
         this.dialog.open(UpdateRequestErrorModalComponent, {
           data: { 
             error: result, 
-            updateFailureMessage: `${this.updateFailureMessage}: ${itemID}`
+            updateFailureMessage: `${this.updateFailureMessage}`
           },
         });
       } else if (result) {
@@ -51,6 +55,31 @@ export class TableFullComponent {
           data: { 
             result: result,
             updateSuccessMessage: `${this.updateSuccessMessage}: ${itemID}`,
+          }
+        });
+      }
+    });
+  }
+
+  openDeleteDialog(itemID: number): void {
+    const dialogRef = this.dialog.open(this.deleteModalComponent, {
+      data: {
+        itemID: itemID,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result instanceof HttpErrorResponse) {
+        this.dialog.open(DeleteRequestErrorModalComponent, {
+          data: { 
+            error: result, 
+            deleteFailureMessage: `${this.deleteFailureMessage}`
+          },
+        });
+      } else if (result === 'success') {
+        this.dialog.open(DeleteRequestConfirmationModalComponent, {
+          data: {
+            deleteSuccessMessage: `${this.deleteSuccessMessage}: ${itemID}`,
           }
         });
       }

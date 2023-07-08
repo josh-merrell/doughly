@@ -3,7 +3,7 @@
 module.exports = ({ db }) => {
   async function getTags(options) {
     const { userID, tagIDs, name } = options;
-    let q = db.from('tags').select().filter('userID', 'eq', userID).order('tagID', { ascending: true });
+    let q = db.from('tags').select().filter('userID', 'eq', userID).eq('deleted', false).order('tagID', { ascending: true });
     if (tagIDs) {
       q = q.in('tagID', tagIDs);
     }
@@ -22,7 +22,7 @@ module.exports = ({ db }) => {
 
   async function getTagByID(options) {
     const { tagID } = options;
-    const { data: tag, error } = await db.from('tags').select().eq('tagID', tagID);
+    const { data: tag, error } = await db.from('tags').select().eq('tagID', tagID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting tag: ${error.message}`);
@@ -94,7 +94,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that the provided tagID exists, return error if not
-    const { data: tagCheck, error: tagCheckError } = await db.from('tags').select().eq('tagID', tagID);
+    const { data: tagCheck, error: tagCheckError } = await db.from('tags').select().eq('tagID', tagID).eq('deleted', false);
     if (tagCheckError) {
       global.logger.info(`Error checking whether provided tag exists: ${tagCheckError.message}`);
       return { error: tagCheckError.message };
@@ -104,7 +104,7 @@ module.exports = ({ db }) => {
       return { error: `tagID does not exist` };
     }
 
-    const { data: tag, error } = await db.from('tags').delete().eq('tagID', tagID);
+    const { data: tag, error } = await db.from('tags').update({ deleted: true }).eq('tagID', tagID);
 
     if (error) {
       global.logger.info(`Error deleting tag: ${error.message}`);

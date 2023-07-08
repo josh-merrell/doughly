@@ -3,7 +3,7 @@
 module.exports = ({ db }) => {
   async function getTags(options) {
     const { userID, recipeTagIDs, recipeID, tagID } = options;
-    let q = db.from('recipeTags').select().filter('userID', 'eq', userID).order('recipeTagID', { ascending: true });
+    let q = db.from('recipeTags').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeTagID', { ascending: true });
     if (recipeTagIDs) {
       q = q.in('recipeTagID', recipeTagIDs);
     }
@@ -25,7 +25,7 @@ module.exports = ({ db }) => {
 
   async function getTagByID(options) {
     const { recipeTagID } = options;
-    const { data: recipeTag, error } = await db.from('recipeTags').select().eq('recipeTagID', recipeTagID);
+    const { data: recipeTag, error } = await db.from('recipeTags').select().eq('recipeTagID', recipeTagID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting recipeTag: ${error.message}`);
@@ -88,7 +88,7 @@ module.exports = ({ db }) => {
       return { error: `recipeTagID is required` };
     }
 
-    const { data: recipeTag, error } = await db.from('recipeTags').delete().eq('recipeTagID', recipeTagID);
+    const { data: recipeTag, error } = await db.from('recipeTags').update({ deleted: true }).eq('recipeTagID', recipeTagID);
 
     if (error) {
       global.logger.info(`Error deleting recipeTag: ${error.message}`);

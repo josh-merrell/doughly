@@ -10,7 +10,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, orderIDs, clientID, name, scheduledDeliveryTimeRange, createdTimeRange, fulfilledTimeRange, fulfillment, status } = options;
     
-    let q = db.from('orders').select().filter('userID', 'eq', userID).order('orderID', { ascending: true });
+    let q = db.from('orders').select().filter('userID', 'eq', userID).eq('deleted', false).order('orderID', { ascending: true });
 
     if (orderIDs) { q = q.in('orderID', orderIDs) }
     if (clientID) { q = q.filter('clientID', 'eq', clientID) }
@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function getOrderByID(options) {
-    const { data, error } = await db.from('orders').select().eq('orderID', options.orderID).single();
+    const { data, error } = await db.from('orders').select().eq('orderID', options.orderID).eq('deleted', false).single();
     if (error) {
       global.logger.info(`Error getting order by ID: ${options.orderID}:${error.message}`);
       return { error: error.message };
@@ -138,7 +138,7 @@ module.exports = ({ db }) => {
 
   async function deleteOrder(options) {
     //get order, if it doesn't exist, return error
-    const { data: order, error: orderError } = await db.from('orders').select().eq('orderID', options.orderID);
+    const { data: order, error: orderError } = await db.from('orders').select().eq('orderID', options.orderID).eq('deleted', false).single();
     if (orderError) {
       global.logger.info(`Error getting order ID:${options.orderID}: while deleting order: ${orderError.message}`);
       return { error: orderError.message };
@@ -162,7 +162,7 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
 
-    const { data, error } = await db.from('orders').delete().match({ orderID: options.orderID });
+    const { data, error } = await db.from('orders').update({ deleted: true }).match({ orderID: options.orderID });
 
     if (error) {
       global.logger.info(`Error deleting order ${options.orderID}: ${error.message}`);
@@ -174,7 +174,7 @@ module.exports = ({ db }) => {
   }
 
   async function existsByOrderID(options) {
-    const { data, error } = await db.from('orders').select('orderID').match({ orderID: options.orderID });
+    const { data, error } = await db.from('orders').select('orderID').match({ orderID: options.orderID }).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error checking whether order ${options.orderID} exists: ${error.message}`);

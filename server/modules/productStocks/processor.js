@@ -6,7 +6,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, productStockIDs, stockProductID, producedDate, daysRemaining, status } = options;
 
-    let q = db.from('productStocks').select().filter('userID', 'eq', userID).order('productStockID', { ascending: true });
+    let q = db.from('productStocks').select().filter('userID', 'eq', userID).eq('deleted', false).order('productStockID', { ascending: true });
 
     if (productStockIDs) {
       q = q.in('productStockID', productStockIDs);
@@ -35,7 +35,7 @@ module.exports = ({ db }) => {
   }
 
   async function getByID(options) {
-    const { data, error } = await db.from('productStocks').select().eq('productStockID', options.productStockID).single();
+    const { data, error } = await db.from('productStocks').select().eq('productStockID', options.productStockID).eq('deleted', false).single();
     if (error) {
       global.logger.info(`Error getting productStock by ID: ${options.productStockID}:${error.message}`);
       return { error: error.message };
@@ -142,7 +142,7 @@ module.exports = ({ db }) => {
     const { productStockID, reason } = options;
 
     //validate that the provided productStockID is valid
-    const { data: productStock, error: productStockError } = await db.from('productStocks').select().eq('productStockID', productStockID);
+    const { data: productStock, error: productStockError } = await db.from('productStocks').select().eq('productStockID', productStockID).eq('deleted', false);
     if (productStockError) {
       global.logger.info(`Error validating productStock ID: ${productStockID} while deleting productStock ${productStockError.message}`);
       return { error: productStockError.message };
@@ -153,7 +153,7 @@ module.exports = ({ db }) => {
     }
 
     //delete productStock
-    const { error: deletedProductStockError } = await db.from('productStocks').delete().eq('productStockID', productStockID).single();
+    const { error: deletedProductStockError } = await db.from('productStocks').update({ deleted: true, reason }).eq('productStockID', productStockID);
     if (deletedProductStockError) {
       global.logger.info(`Error deleting productStock: ${deletedProductStockError.message}`);
       return { error: deletedProductStockError.message };

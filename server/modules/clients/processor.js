@@ -16,6 +16,7 @@ module.exports = ({ db }) => {
           .select('personID')
           .filter('userID', 'eq', userID)
           .filter('clientID', 'eq', clientID)
+          .filter('deleted', 'eq', false)
 
         if (error) {
           global.logger.info(`Error getting personID from clients table ${clientID}: ${error.message}`);
@@ -65,7 +66,7 @@ module.exports = ({ db }) => {
   }
 
   async function getClientByID(options) {
-    const { data, error } = await db.from('clients').select().eq('clientID', options.clientID).single();
+    const { data, error } = await db.from('clients').select().eq('clientID', options.clientID).eq('deleted', false).single();
     if (error) {
       global.logger.info(`Error getting client by ID: ${options.clientID}:${error.message}`);
       return { error: error.message };
@@ -156,7 +157,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteClient(options) {
-    const { data, error } = await db.from('clients').delete().eq('clientID', options.clientID );
+    const { data, error } = await db.from('clients').update({ deleted: true }).eq('clientID', options.clientID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error deleting client ${options.clientID}: ${error.message}`);
@@ -167,7 +168,7 @@ module.exports = ({ db }) => {
   }
 
   async function existsByClientID(options) {
-    const { data, error } = await db.from('clients').select('clientID').eq('clientID', options.clientID);
+    const { data, error } = await db.from('clients').select('clientID').eq('clientID', options.clientID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error checking if client ${options.clientID} exists: ${error.message}`);

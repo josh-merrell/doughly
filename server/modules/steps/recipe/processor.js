@@ -15,7 +15,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, recipeStepIDs, recipeID, stepID } = options;
 
-    let q = db.from('recipeSteps').select().filter('userID', 'eq', userID).order('recipeStepID', { ascending: true });
+    let q = db.from('recipeSteps').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeStepID', { ascending: true });
 
     if (recipeStepIDs) {
       q = q.in('recipeStepID', recipeStepIDs);
@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function getStepByID(options) {
-    const { data, error } = await db.from('recipeSteps').select().eq('recipeStepID', options.recipeStepID).single();
+    const { data, error } = await db.from('recipeSteps').select().eq('recipeStepID', options.recipeStepID).eq('deleted', false).single();
     if (error) {
       global.logger.info(`Error getting recipeStep by ID: ${options.recipeStepID}:${error.message}`);
       return { error: error.message };
@@ -189,7 +189,7 @@ module.exports = ({ db }) => {
   async function deleteStep(options) {
     const { recipeStepID } = options;
     //validate that provided recipeStepID exists
-    const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID);
+    const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID).eq('deleted', false);
     if (validationError) {
       global.logger.info(`Error validating recipeStep ID: ${recipeStepID} while deleting recipeStep ${validationError.message}`);
       return { error: validationError.message };
@@ -208,7 +208,7 @@ module.exports = ({ db }) => {
     }
 
     //delete recipeStep
-    const { error: deleteError } = await db.from('recipeSteps').delete().eq('recipeStepID', recipeStepID);
+    const { error: deleteError } = await db.from('recipeSteps').update({ deleted: true }).eq('recipeStepID', recipeStepID);
     if (deleteError) {
       global.logger.info(`Error deleting recipeStep ${recipeStepID}: ${deleteError.message}`);
       return { error: deleteError.message };

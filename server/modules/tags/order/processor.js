@@ -3,7 +3,7 @@
 module.exports = ({ db }) => {
   async function getTags(options) {
     const { userID, orderTagIDs, orderID, tagID } = options;
-    let q = db.from('orderTags').select().filter('userID', 'eq', userID).order('orderTagID', { ascending: true });
+    let q = db.from('orderTags').select().filter('userID', 'eq', userID).eq('deleted', false).order('orderTagID', { ascending: true });
     if (orderTagIDs) {
       q = q.in('orderTagID', orderTagIDs);
     }
@@ -25,7 +25,7 @@ module.exports = ({ db }) => {
 
   async function getTagByID(options) {
     const { orderTagID } = options;
-    const { data: orderTag, error } = await db.from('orderTags').select().eq('orderTagID', orderTagID);
+    const { data: orderTag, error } = await db.from('orderTags').select().eq('orderTagID', orderTagID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting orderTag: ${error.message}`);
@@ -89,7 +89,7 @@ module.exports = ({ db }) => {
       return { error: `orderTagID is required` };
     }
 
-    const { data: orderTag, error } = await db.from('orderTags').delete().eq('orderTagID', orderTagID);
+    const { data: orderTag, error } = await db.from('orderTags').update({ deleted: true }).eq('orderTagID', orderTagID);
 
     if (error) {
       global.logger.info(`Error deleting orderTag: ${error.message}`);

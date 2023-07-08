@@ -6,7 +6,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, stepIDs, title } = options;
 
-    let q = db.from('steps').select().filter('userID', 'eq', userID).order('stepID', { ascending: true });
+    let q = db.from('steps').select().filter('userID', 'eq', userID).eq('deleted', false).order('stepID', { ascending: true });
 
     if (stepIDs) {
       q = q.in('stepID', stepIDs);
@@ -26,7 +26,7 @@ module.exports = ({ db }) => {
   }
 
   async function getStepByID(options) {
-    const { data, error } = await db.from('steps').select().eq('stepID', options.stepID).single();
+    const { data, error } = await db.from('steps').select().eq('stepID', options.stepID).eq('deleted', false).single();
     if (error) {
       global.logger.info(`Error getting step by ID: ${options.stepID}:${error.message}`);
       return { error: error.message };
@@ -101,7 +101,7 @@ module.exports = ({ db }) => {
   async function deleteStep(options) {
     const { stepID } = options;
     //verify that provided stepID exists
-    const { data: step, error } = await db.from('steps').select().eq('stepID', stepID);
+    const { data: step, error } = await db.from('steps').select().eq('stepID', stepID).eq('deleted', false);
     if (error) {
       global.logger.info(`Error validating step ID: ${stepID} while deleting step ${error.message}`);
       return { error: error.message };
@@ -111,7 +111,7 @@ module.exports = ({ db }) => {
       return { error: `Provided step ID: ${stepID} does not exist, can't delete` };
     }
 
-    const { data, error: deleteError } = await db.from('steps').delete().eq('stepID', stepID).single();
+    const { data, error: deleteError } = await db.from('steps').update({ deleted: true }).eq('stepID', stepID);
     if (deleteError) {
       global.logger.info(`Error deleting step: ${deleteError.message}`);
       return { error: deleteError.message };
