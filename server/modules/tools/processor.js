@@ -5,7 +5,7 @@ const { updater } = require('../../db');
 module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, toolIDs, name } = options;
-    let q = db.from('tools').select().filter('userID', 'eq', userID).order('toolID', { ascending: true });
+    let q = db.from('tools').select().filter('userID', 'eq', userID).eq('deleted', false).order('toolID', { ascending: true });
     if (toolIDs) {
       q = q.in('toolID', toolIDs);
     }
@@ -24,7 +24,7 @@ module.exports = ({ db }) => {
 
   async function getByID(options) {
     const { toolID } = options;
-    const { data: tool, error } = await db.from('tools').select().eq('toolID', toolID);
+    const { data: tool, error } = await db.from('tools').select().eq('toolID', toolID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting tool: ${error.message}`);
@@ -106,7 +106,7 @@ module.exports = ({ db }) => {
     const { toolID } = options;
 
     //validate that the provided toolID exists
-    const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID);
+    const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID).eq('deleted', false);
     if (existingToolError) {
       global.logger.info(`Error checking for existing tool: ${existingToolError.message}`);
       return { error: existingToolError.message };
@@ -117,7 +117,7 @@ module.exports = ({ db }) => {
     }
 
     //delete the tool
-    const { error } = await db.from('tools').delete().eq('toolID', toolID);
+    const { error } = await db.from('tools').update({ deleted: true }).eq('toolID', toolID);
 
     if (error) {
       global.logger.info(`Error deleting tool: ${error.message}`);

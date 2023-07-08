@@ -6,7 +6,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, ingredientStockIDs, ingredientID, purchasedBy } = options;
 
-    let q = db.from('ingredientStocks').select().filter('userID', 'eq', userID).order('ingredientStockID', { ascending: true });
+    let q = db.from('ingredientStocks').select().filter('userID', 'eq', userID).eq('deleted', false).order('ingredientStockID', { ascending: true });
     if (ingredientStockIDs) {
       q = q.in('ingredientStockID', ingredientStockIDs);
     }
@@ -28,7 +28,7 @@ module.exports = ({ db }) => {
 
   async function getIngredientStockByID(options) {
     const { ingredientStockID } = options;
-    const { data: ingredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID);
+    const { data: ingredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting ingredientStock ID: ${ingredientStockID}: ${error.message}`);
@@ -147,7 +147,7 @@ module.exports = ({ db }) => {
     const { ingredientStockID } = options;
 
     //verify that the provided ingredientStockID is valid, return error if not
-    const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID);
+    const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false);
     if (error) {
       global.logger.info(`Error validating provided ingredientStockID: ${error.message}`);
       return { error: error.message };
@@ -158,7 +158,7 @@ module.exports = ({ db }) => {
     }
 
     //delete the ingredientStock
-    const { error: deleteError } = await db.from('ingredientStocks').delete().eq('ingredientStockID', ingredientStockID);
+    const { error: deleteError } = await db.from('ingredientStocks').update({ deleted: true }).eq('ingredientStockID', ingredientStockID);
     if (deleteError) {
       global.logger.info(`Error deleting ingredientStock: ${deleteError.message}`);
       return { error: deleteError.message };
