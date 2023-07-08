@@ -224,6 +224,31 @@ export class TableFullComponent {
     });
   }
 
+  openDeleteDialog(itemID: number): void {
+    const dialogRef = this.dialog.open(this.deleteModalComponent, {
+      data: {
+        itemID: itemID,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result instanceof HttpErrorResponse) {
+        this.dialog.open(DeleteRequestErrorModalComponent, {
+          data: { 
+            error: result, 
+            deleteFailureMessage: `${this.deleteFailureMessage}`
+          },
+        });
+      } else if (result === 'success') {
+        this.dialog.open(DeleteRequestConfirmationModalComponent, {
+          data: {
+            deleteSuccessMessage: `${this.deleteSuccessMessage}: ${itemID}`,
+          }
+        });
+      }
+    });
+  }
+
   openAddDialog(): void {
     const dialogRef = this.dialog.open(this.addModalComponent, {
       data: {},
