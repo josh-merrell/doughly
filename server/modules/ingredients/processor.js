@@ -6,7 +6,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, ingredientIDs, name } = options;
 
-    let q = db.from('ingredients').select().filter('userID', 'eq', userID).order('ingredientID', { ascending: true });
+    let q = db.from('ingredients').select().filter('userID', 'eq', userID).eq('deleted', false).order('ingredientID', { ascending: true });
     if (ingredientIDs) {
       q = q.in('ingredientID', ingredientIDs);
     }
@@ -25,7 +25,7 @@ module.exports = ({ db }) => {
 
   async function getIngredientByID(options) {
     const { ingredientID } = options;
-    const { data: ingredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID);
+    const { data: ingredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting ingredient ID: ${ingredientID}: ${error.message}`);
@@ -129,7 +129,7 @@ module.exports = ({ db }) => {
   async function deleteIngredient(options) {
     const { ingredientID } = options;
     //verify that the provided ingredientID exists, return error if not
-    const { data: existingIngredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID);
+    const { data: existingIngredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
     if (error) {
       global.logger.info(`Error validating provided ingredientID: ${error.message}`);
       return { error: error.message };
@@ -139,8 +139,8 @@ module.exports = ({ db }) => {
       return { error: `Ingredient ID does not exist, cannot delete ingredient` };
     }
 
-    //delete the ingredient
-    const { error: deleteError } = await db.from('ingredients').delete().eq('ingredientID', ingredientID).single();
+    //delete the ingredient;
+    const { error: deleteError } = await db.from('ingredients').update({ deleted: true }).eq('ingredientID', ingredientID).single();
     if (deleteError) {
       global.logger.info(`Error deleting ingredient: ${deleteError.message}`);
       return { error: deleteError.message };

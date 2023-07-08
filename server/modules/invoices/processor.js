@@ -7,7 +7,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, invoiceIDs, type, status, subtotalMin, subtotalMax } = options;
 
-    let q = db.from('invoices').select().filter('userID', 'eq', userID).order('invoiceID', { ascending: true });
+    let q = db.from('invoices').select().filter('userID', 'eq', userID).eq('deleted', false).order('invoiceID', { ascending: true });
 
     if (invoiceIDs) {
       q = q.in('invoiceID', invoiceIDs);
@@ -99,7 +99,7 @@ module.exports = ({ db }) => {
   }
 
   async function existsByInvoiceID(options) {
-    const { data, error } = await db.from('invoices').select('invoiceID').eq('invoiceID', options.invoiceID);
+    const { data, error } = await db.from('invoices').select('invoiceID').eq('invoiceID', options.invoiceID).eq('deleted', false);
     if (error) {
       global.logger.info(`Error checking if invoice ${options.invoiceID} exists: ${error.message}`);
       return { error: error.message };

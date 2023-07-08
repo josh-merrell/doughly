@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   MatDialog,
@@ -6,7 +6,6 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Inject } from '@angular/core';
 import { selectIngredientStockByID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { Store, select } from '@ngrx/store';
 import { Observable, combineLatest, map, of, switchMap } from 'rxjs';
@@ -181,7 +180,6 @@ export class EditIngredientStockModalComponent {
                 ingredientStockID: this.data.itemID,
               })
             );
-
             this.dialogRef.close(this.form.value);
           },
           error: (error) => {

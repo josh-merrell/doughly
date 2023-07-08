@@ -5,7 +5,7 @@ const { updater } = require('../../db');
 module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, toolStockIDs, toolID, purchasedBy } = options;
-    let q = db.from('toolStocks').select().filter('userID', 'eq', userID).order('toolStockID', { ascending: true });
+    let q = db.from('toolStocks').select().filter('userID', 'eq', userID).eq('deleted', false).order('toolStockID', { ascending: true });
     if (toolStockIDs) {
       q = q.in('toolStockID', toolStockIDs);
     }
@@ -28,7 +28,7 @@ module.exports = ({ db }) => {
 
   async function getByID(options) {
     const { toolStockID } = options;
-    const { data: toolStock, error } = await db.from('toolStocks').select().eq('toolStockID', toolStockID);
+    const { data: toolStock, error } = await db.from('toolStocks').select().eq('toolStockID', toolStockID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting toolStock: ${error.message}`);
@@ -152,7 +152,7 @@ module.exports = ({ db }) => {
     const { toolStockID } = options;
 
     //validate that the provided toolStockID exists
-    const { data: existingToolStock, error: existingToolStockError } = await db.from('toolStocks').select().eq('toolStockID', toolStockID);
+    const { data: existingToolStock, error: existingToolStockError } = await db.from('toolStocks').select().eq('toolStockID', toolStockID).eq('deleted', false);
     if (existingToolStockError) {
       global.logger.info(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`);
       return { error: existingToolStockError.message };
@@ -163,7 +163,7 @@ module.exports = ({ db }) => {
     }
 
     //delete toolStock
-    const { error } = await db.from('toolStocks').delete().eq('toolStockID', toolStockID);
+    const { error } = await db.from('toolStocks').update({ deleted: true }).eq('toolStockID', toolStockID);
 
     if (error) {
       global.logger.info(`Error deleting toolStock ID: ${toolStockID}: ${error.message}`);

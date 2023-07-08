@@ -4,7 +4,7 @@ const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    let q = db.from('recipeCategories').select().filter('userID', 'eq', options.userID).order('recipeCategoryID', { ascending: true });
+    let q = db.from('recipeCategories').select().filter('userID', 'eq', options.userID).eq('deleted', false).order('recipeCategoryID', { ascending: true });
 
     const { data: recipeCategories, error } = await q;
 
@@ -69,7 +69,7 @@ module.exports = ({ db }) => {
 
   async function deleteRecipeCategory(options) {
     //verify that the provided recipeCategoryID exists, return error if not
-    const { data: recipeCategory, error } = await db.from('recipeCategories').select().eq('recipeCategoryID', options.recipeCategoryID);
+    const { data: recipeCategory, error } = await db.from('recipeCategories').select().eq('recipeCategoryID', options.recipeCategoryID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting recipeCategory: ${error.message}`);
@@ -81,7 +81,7 @@ module.exports = ({ db }) => {
     }
 
     //delete recipeCategory
-    const { data, error: deleteError } = await db.from('recipeCategories').delete().match({ recipeCategoryID: options.recipeCategoryID });
+    const { data, error: deleteError } = await db.from('recipeCategories').update({ deleted: true }).match({ recipeCategoryID: options.recipeCategoryID });
 
     if (deleteError) {
       global.logger.info(`Error deleting recipeCategory: ${deleteError.message}`);

@@ -13,7 +13,7 @@ module.exports = ({ db }) => {
     if (personID) personIDs.push(personID);
     else if (employeeIDs) {
       for (const employeeID of employeeIDs) {
-        const { data, error } = await db.from('employees').select('personID').filter('userID', 'eq', userID).filter('employeeID', 'eq', employeeID);
+        const { data, error } = await db.from('employees').select('personID').filter('userID', 'eq', userID).filter('employeeID', 'eq', employeeID).eq('deleted', false);
 
         if (error) {
           global.logger.info(`Error getting personID from employees table ${employeeID}: ${error.message}`);
@@ -24,7 +24,7 @@ module.exports = ({ db }) => {
       }
     } else {
       //otherwise, need to just add all personIDs that exist in employees table to the array
-      const { data, error } = await db.from('employees').select('personID').eq('userID', userID);
+      const { data, error } = await db.from('employees').select('personID').eq('userID', userID).eq('deleted', false);
       if (error) {
         global.logger.info(`Error getting all personIDs from employees table: ${error.message}`);
         return { error: error.message };
@@ -64,7 +64,7 @@ module.exports = ({ db }) => {
     }
 
     //start building the query to get employees data
-    let q = db.from('employees').select().filter('userID', 'eq', userID);
+    let q = db.from('employees').select().filter('userID', 'eq', userID).eq('deleted', false);
 
     if (employeeIDs) q = q.in('employeeID', employeeIDs);
     if (hireDateRange) q = q.gte('hireDate', hireDateRange[0]).lte('hireDate', hireDateRange[1]);
@@ -112,7 +112,7 @@ module.exports = ({ db }) => {
   }
 
   async function getByID(options) {
-    const { data, error } = await db.from('employees').select().eq('employeeID', options.employeeID).single();
+    const { data, error } = await db.from('employees').select().eq('employeeID', options.employeeID).eq('deleted', false).single();
 
     if (error) {
       global.logger.info(`Error getting employee: ${error.message}`);
@@ -269,7 +269,7 @@ module.exports = ({ db }) => {
   async function deleteEmployee(options) {
     const { employeeID } = options;
     //verify provided employeeID exists
-    const { data: employeeExists, error: employeeExistsError } = await db.from('employees').select('employeeID').eq('employeeID', employeeID);
+    const { data: employeeExists, error: employeeExistsError } = await db.from('employees').select('employeeID').eq('employeeID', employeeID).eq('deleted', false);
     if (employeeExistsError) {
       global.logger.info(`Error validating provided employee ID for deletion: ${employeeExistsError.message}`);
       return { error: employeeExistsError.message };
@@ -278,7 +278,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting employee: employeeID ${employeeID} does not exist`);
       return { error: `employeeID ${employeeID} does not exist` };
     }
-    const { error: employeeDeletedError } = await db.from('employees').delete().eq('employeeID', employeeID);
+    const { error: employeeDeletedError } = await db.from('employees').update({ status: 'deleted' }).eq('employeeID', employeeID);
     if (employeeDeletedError) {
       global.logger.info(`Error deleting employee: ${employeeDeletedError.message}`);
       return { error: employeeDeletedError.message };

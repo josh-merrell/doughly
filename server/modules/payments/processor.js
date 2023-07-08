@@ -78,7 +78,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, paymentIDs, invoiceID, method, dateRange } = options;
 
-    let q = db.from('payments').select().filter('userID', 'eq', userID).order('paymentID', { ascending: true });
+    let q = db.from('payments').select().filter('userID', 'eq', userID).eq('deleted', false).order('paymentID', { ascending: true });
 
     if (paymentIDs) {
       q = q.in('paymentID', paymentIDs);

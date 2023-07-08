@@ -6,7 +6,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, recipeIngredientIDs, recipeID, ingredientID } = options;
 
-    let q = db.from('recipeIngredients').select().filter('userID', 'eq', userID).order('recipeIngredientID', { ascending: true });
+    let q = db.from('recipeIngredients').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeIngredientID', { ascending: true });
     if (recipeIngredientIDs) {
       q = q.in('recipeIngredientID', recipeIngredientIDs);
     }
@@ -28,7 +28,7 @@ module.exports = ({ db }) => {
 
   async function getRecipeIngredientByID(options) {
     const { recipeIngredientID } = options;
-    const { data: recipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID);
+    const { data: recipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID).eq('deleted', false);
 
     if (error) {
       global.logger.info(`Error getting recipeIngredient ID: ${recipeIngredientID}: ${error.message}`);
@@ -123,7 +123,7 @@ module.exports = ({ db }) => {
     const { recipeIngredientID } = options;
 
     //verify that the provided recipeIngredientID exists, return error if not
-    const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID);
+    const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID).eq('deleted', false);
     if (error) {
       global.logger.info(`Error validating provided recipeIngredientID: ${error.message}`);
       return { error: error.message };
@@ -134,7 +134,7 @@ module.exports = ({ db }) => {
     }
 
     //delete the recipeIngredient
-    const { error2 } = await db.from('recipeIngredients').delete().eq('recipeIngredientID', recipeIngredientID);
+    const { error2 } = await db.from('recipeIngredients').update({ deleted: true }).eq('recipeIngredientID', recipeIngredientID);
 
     if (error2) {
       global.logger.info(`Error deleting recipeIngredient ID: ${recipeIngredientID}: ${error2.message}`);

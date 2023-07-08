@@ -14,6 +14,7 @@ import { selectIngredientStocks } from './state/ingredient-stock-selectors';
 import { IngredientStockService } from './data/ingredient-stock.service';
 import { EditIngredientStockModalComponent } from './ui/edit-ingredient-stock-modal/edit-ingredient-stock-modal.component';
 import { AddIngredientStockModalComponent } from './ui/add-ingredient-stock-modal/add-ingredient-stock-modal.component';
+import { DeleteIngredientStockModalComponent } from './ui/delete-ingredient-stock-modal/delete-ingredient-stock-modal.component';
 
 @Component({
   selector: 'dl-ingredient-inventory-table',
@@ -29,6 +30,7 @@ import { AddIngredientStockModalComponent } from './ui/add-ingredient-stock-moda
 })
 export class IngredientInventoryTableComponent {
   editModalComponent: Type<any> = EditIngredientStockModalComponent;
+  deleteModalComponent: Type<any> = DeleteIngredientStockModalComponent;
   addModalComponent: Type<any> = AddIngredientStockModalComponent;
 
   constructor(
@@ -43,7 +45,9 @@ export class IngredientInventoryTableComponent {
   button_title = 'Add Inventory';
   IDKey = 'ingredientStockID';
   updateSuccessMessage = 'Updated Ingredient Stock with ID:';
-  updateFailureMessage = 'Failed to update Ingredient Stock with ID:';
+  updateFailureMessage = 'Failed to update Ingredient Stock. Try again later.';
+  deleteSuccessMessage = 'Deleted Ingredient Stock with ID:';
+  deleteFailureMessage = 'Failed to delete Ingredient Stock. Try again later.';
   addSuccessMessage = 'Added Ingredient Stock with ID:';
   addFailureMessage = 'Failed to add Ingredient Stock. Try again later.';
   columns = [

@@ -4,7 +4,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, invoiceNoteIDs, invoiceID } = options;
 
-    let q = db.from('invoiceNotes').select().filter('userID', 'eq', userID).order('invoiceNoteID', { ascending: true });
+    let q = db.from('invoiceNotes').select().filter('userID', 'eq', userID).eq('deleted', false).order('invoiceNoteID', { ascending: true });
 
     if (invoiceNoteIDs) {
       q = q.in('invoiceNoteID', invoiceNoteIDs);

@@ -10,7 +10,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, personIDs, nameFirst, nameLast, phone, city, state, zip } = options;
 
-    let q = db.from('persons').select().filter('userID', 'eq', userID).order('personID', { ascending: true });
+    let q = db.from('persons').select().filter('userID', 'eq', userID).eq('deleted', false).order('personID', { ascending: true });
     // .limit(limit)
     // .offset(cursor);
 
@@ -134,7 +134,8 @@ module.exports = ({ db }) => {
     }
 
     //if the person exists, delete the person from the 'persons' table,
-    let { data, error } = await db.from('persons').delete().eq('personID', options.personID);
+    // let { data, error } = await db.from('persons').delete().eq('personID', options.personID);
+    let { data, error } = await db.from('persons').update({ deleted: true }).eq('personID', options.personID);
     if (error) {
       global.logger.info(`Error deleting personID: ${options.personID}: ${error.message}`);
       return { error: error.message };

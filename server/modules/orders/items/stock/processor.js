@@ -7,7 +7,7 @@ const { supplyCheckMoreDemand, supplyCheckLessDemand } = require('../../../../se
 module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, stockItemIDs, orderID, stockProductID, stockStatus } = options;
-    let q = db.from('orderStockItems').select().filter('userID', 'eq', userID).order('stockItemID', { ascending: true });
+    let q = db.from('orderStockItems').select().filter('userID', 'eq', userID).eq('deleted', false).order('stockItemID', { ascending: true });
 
     if (stockItemIDs) {
       q = q.in('stockItemID', stockItemIDs);
@@ -33,7 +33,7 @@ module.exports = ({ db }) => {
   }
 
   async function getByID(options) {
-    const { data, error } = await db.from('orderStockItems').select().filter('userID', 'eq', options.userID).filter('stockItemID', 'eq', options.stockItemID).single();
+    const { data, error } = await db.from('orderStockItems').select().filter('userID', 'eq', options.userID).filter('stockItemID', 'eq', options.stockItemID).eq('deleted', false).single();
     if (error) {
       global.logger.info(`Error getting orderStockItem by ID: ${options.stockItemID}:${error.message}`);
       return { error: error.message };
@@ -162,7 +162,7 @@ module.exports = ({ db }) => {
     const { stockItemID } = options;
 
     //validate that provided stockItemID exists
-    const { data: orderStock, error } = await db.from('orderStockItems').select().eq('stockItemID', stockItemID);
+    const { data: orderStock, error } = await db.from('orderStockItems').select().eq('stockItemID', stockItemID).eq('deleted', false);
     if (error) {
       global.logger.info(`Error validating orderStockItem ${error.message}`);
       return { error: error.message };
@@ -171,8 +171,7 @@ module.exports = ({ db }) => {
       global.logger.info(`orderStock ID: ${stockItemID} does not exist, cannot delete orderStockItem`);
       return { error: `orderStock ID: ${stockItemID} does not exist, cannot delete orderStockItem` };
     }
-
-    const { errorDelete } = await db.from('orderStockItems').delete().eq('stockItemID', stockItemID);
+    const { errorDelete } = await db.from('orderStockItems').update({ deleted: true }).eq('stockItemID', stockItemID);
     if (errorDelete) {
       global.logger.info(`Error deleting orderStockItem ${errorDelete.message}`);
       return { error: errorDelete.message };

@@ -6,7 +6,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, taskItemIDs, orderID, recipeID, status } = options;
 
-    let q = db.from('orderTaskItems').select().filter('userID', 'eq', userID).order('taskItemID', { ascending: true });
+    let q = db.from('orderTaskItems').select().filter('userID', 'eq', userID).eq('deleted', false).order('taskItemID', { ascending: true });
 
     if (taskItemIDs) {
       q = q.in('taskItemID', taskItemIDs);
@@ -32,7 +32,7 @@ module.exports = ({ db }) => {
   }
 
   async function getByID(options) {
-    const { data, error } = await db.from('orderTaskItems').select().eq('taskItemID', options.taskItemID).single();
+    const { data, error } = await db.from('orderTaskItems').select().eq('taskItemID', options.taskItemID).eq('deleted', false).single();
     if (error) {
       global.logger.info(`Error getting orderTaskItem by ID: ${options.taskItemID}:${error.message}`);
       return { error: error.message };
@@ -141,7 +141,7 @@ module.exports = ({ db }) => {
       return { error: `taskItemID: ${options.taskItemID} does not exist, cannot remove orderTaskItem` };
     }
 
-    const { data: deletedTaskProduct, errorDelete } = await db.from('orderTaskItems').delete().match({ taskItemID: options.taskItemID });
+    const { data: deletedTaskProduct, errorDelete } = await db.from('orderTaskItems').update({ status: 'deleted' }).match({ taskItemID: options.taskItemID });
     if (errorDelete) {
       global.logger.info(`Error getting orderTaskItem by ID: ${options.taskItemID}:${errorDelete.message}`);
       return { error: errorDelete.message };
