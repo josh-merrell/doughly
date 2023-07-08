@@ -15,6 +15,8 @@ import { IngredientStockService } from './data/ingredient-stock.service';
 import { EditIngredientStockModalComponent } from './ui/edit-ingredient-stock-modal/edit-ingredient-stock-modal.component';
 import { AddIngredientStockModalComponent } from './ui/add-ingredient-stock-modal/add-ingredient-stock-modal.component';
 import { DeleteIngredientStockModalComponent } from './ui/delete-ingredient-stock-modal/delete-ingredient-stock-modal.component';
+import { FilterEnum, SortEnum, TableFullColumn, SortRotateStateEnum } from 'src/app/shared/state/shared-state';
+
 
 @Component({
   selector: 'dl-ingredient-inventory-table',
@@ -42,7 +44,7 @@ export class IngredientInventoryTableComponent {
 
   title = 'Ingredient Inventory';
   heading_phrase = 'Multiple entries may exist for each Ingredient.';
-  button_title = 'Add Inventory';
+  addButtonTitle = 'Add Inventory';
   IDKey = 'ingredientStockID';
   updateSuccessMessage = 'Updated Ingredient Stock with ID:';
   updateFailureMessage = 'Failed to update Ingredient Stock. Try again later.';
@@ -50,11 +52,36 @@ export class IngredientInventoryTableComponent {
   deleteFailureMessage = 'Failed to delete Ingredient Stock. Try again later.';
   addSuccessMessage = 'Added Ingredient Stock with ID:';
   addFailureMessage = 'Failed to add Ingredient Stock. Try again later.';
-  columns = [
-    { name: 'Name', prop: 'name' },
-    { name: 'Brand', prop: 'brand' },
-    { name: 'Quantity', prop: 'quantity' },
-    { name: 'Expiration', prop: 'expiration' },
+  columns: TableFullColumn[] = [
+    {
+      name: 'Name',
+      prop: 'name',
+      sort: SortEnum.alphabetical,
+      sortRotateState: SortRotateStateEnum.default,
+      sortOrderState: null,
+      filter: FilterEnum.search,
+    },
+    {
+      name: 'Brand',
+      prop: 'brand',
+      sort: SortEnum.alphabetical,
+      sortRotateState: SortRotateStateEnum.default,
+      sortOrderState: null,
+      filter: FilterEnum.search,
+    },
+    {
+      name: 'Quantity',
+      prop: 'quantity',
+      filter: FilterEnum.none,
+    },
+    {
+      name: 'Expiration',
+      prop: 'expiration',
+      sort: SortEnum.numberical,
+      sortRotateState: SortRotateStateEnum.default,
+      sortOrderState: null,
+      filter: FilterEnum.dateRange,
+    },
   ];
 
   rows$: Observable<IngredientStockRow[]> = this.ingredientStockService.rows$;
