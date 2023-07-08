@@ -1,4 +1,4 @@
-import { Component, Input, Type } from '@angular/core';
+import { Component, Input, SimpleChanges, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateRequestErrorModalComponent } from '../update-request-error/update-request-error-modal.component';
@@ -8,19 +8,55 @@ import { DeleteRequestConfirmationModalComponent } from '../delete-request-confi
 import { AddRequestErrorModalComponent } from '../add-request-error/add-request-error-modal.component';
 import { AddRequestConfirmationModalComponent } from '../add-request-confirmation/add-request-confirmation-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Sort, SortEnum, SortRotateStateEnum, TableFullColumn } from '../../state/shared-state';
+import { SortingService } from '../../utils/sortingService';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+} from '@angular/animations';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'dl-table-full',
   standalone: true,
-  imports: [CommonModule, UpdateRequestErrorModalComponent, UpdateRequestConfirmationModalComponent],
+  imports: [
+    CommonModule,
+    UpdateRequestErrorModalComponent,
+    UpdateRequestConfirmationModalComponent,
+  ],
   templateUrl: './dl-table-full.component.html',
+  animations: [
+    trigger('rotateState', [
+      state(
+        'default',
+        style({
+          transform: 'rotate(0)',
+        })
+      ),
+      state(
+        'down',
+        style({
+          transform: 'rotate(90deg)',
+        })
+      ),
+      state(
+        'up',
+        style({
+          transform: 'rotate(270deg)',
+        })
+      ),
+      transition('* => *', animate('0.3s ease')),
+    ]),
+  ],
 })
 export class TableFullComponent {
   @Input() title!: string;
   @Input() heading_phrase!: string;
-  @Input() button_title!: string;
+  @Input() addButtonTitle!: string;
   @Input() columns!: any[];
-  @Input() rows!: any[];
   @Input() editModalComponent!: Type<any>;
   @Input() IDKey!: string;
   @Input() updateSuccessMessage!: string;
@@ -31,8 +67,110 @@ export class TableFullComponent {
   @Input() addModalComponent!: Type<any>;
   @Input() addSuccessMessage!: string;
   @Input() addFailureMessage!: string;
+  @Input()
+  set rows(value: any[]) {
+    this.rows$.next(value);
+  }
+  get rows(): any[] {
+    return this.rows$.getValue();
+  }
+  
+  constructor(
+    public dialog: MatDialog,
+    private sortingService: SortingService
+  ) {}
 
-  constructor(public dialog: MatDialog) {
+  public rows$ = new BehaviorSubject<any[]>([]);
+  public sortedRows$ = new BehaviorSubject<any[]>([]);
+  sorts: Sort[] = [];
+  SortEnum = SortEnum;
+  SortRotateStateEnum = SortRotateStateEnum;
+
+  onSortIconClick(rowIndex: number): void {
+    //first update direction of sort
+    this.updateSort(rowIndex);
+    //then call appropriate method to add, update, or clear sorting
+    switch (this.columns[rowIndex].sortRotateState) {
+      case SortRotateStateEnum.up:
+        this.addSort(rowIndex);
+        break;
+      case SortRotateStateEnum.down:
+        this.updateSortedRows();
+        break;
+      case SortRotateStateEnum.default:
+        this.clearSort(this.columns[rowIndex].sortOrderState);
+        break;
+    }
+  }
+
+  updateSort(colIndex: number) {
+    switch (this.columns[colIndex].sortRotateState) {
+      case SortRotateStateEnum.default:
+        this.columns[colIndex].sortRotateState = SortRotateStateEnum.up;
+        //find the corresponding sort and update its direction
+        for (let i = 0; i < this.sorts.length; i++) {
+          if (this.sorts[i].prop === this.columns[colIndex].prop) {
+            this.sorts[i].direction = 'asc';
+          }
+        }
+        break;
+      case SortRotateStateEnum.down:
+        this.columns[colIndex].sortRotateState = SortRotateStateEnum.default;
+        break;
+      case SortRotateStateEnum.up:
+        this.columns[colIndex].sortRotateState = SortRotateStateEnum.down;
+        for (let i = 0; i < this.sorts.length; i++) {
+          if (this.sorts[i].prop === this.columns[colIndex].prop) {
+            this.sorts[i].direction = 'desc';
+          }
+        }
+        break;
+    }
+  }
+
+  addSort(rowIndex: number): void {
+    const newSort: Sort = {
+      prop: this.columns[rowIndex].prop,
+      sortOrderIndex: this.sorts.length,
+      direction: 'asc',
+    };
+    this.sorts.push(newSort);
+    this.columns[rowIndex].sortOrderState = newSort.sortOrderIndex;
+    //Apply the sorts to rows, then emit the sorted rows
+    const sortedRows = this.sortingService.applySorts(this.rows, this.sorts);
+    this.sortedRows$.next(sortedRows);
+  }
+
+  updateSortedRows(): void {
+    const sortedRows = this.sortingService.applySorts(this.rows, this.sorts);
+    this.sortedRows$.next(sortedRows);
+  }
+
+  clearSort(index: number): void {
+    for (let i = index + 1; i < this.sorts.length; i++) {
+      this.sorts[i].sortOrderIndex--;
+    }
+    this.sorts.splice(index, 1);
+    this.columns.forEach((column) => {
+      if (column.sortOrderState > index) {
+        column.sortOrderState--;
+      }
+    });
+    //Apply the sorts to rows, then emit the sorted rows
+    const sortedRows = this.sortingService.applySorts(this.rows, this.sorts);
+    this.sortedRows$.next(sortedRows);
+  }
+
+  clearAllSorts(): void {
+    this.sorts = [];
+    this.columns.forEach((column) => {
+      if (column.sort) {
+        column.sortOrderState = null;
+        column.sortRotateState = SortRotateStateEnum.default;
+      }
+    });
+    //Return sortedRows to default, matching rows
+    this.sortedRows$.next(this.rows);
   }
 
   openEditDialog(itemID: number): void {
@@ -45,17 +183,42 @@ export class TableFullComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result instanceof HttpErrorResponse) {
         this.dialog.open(UpdateRequestErrorModalComponent, {
-          data: { 
-            error: result, 
-            updateFailureMessage: `${this.updateFailureMessage}`
+          data: {
+            error: result,
+            updateFailureMessage: `${this.updateFailureMessage}`,
           },
         });
       } else if (result) {
         this.dialog.open(UpdateRequestConfirmationModalComponent, {
-          data: { 
+          data: {
             result: result,
             updateSuccessMessage: `${this.updateSuccessMessage}: ${itemID}`,
-          }
+          },
+        });
+      }
+    });
+  }
+
+  openDeleteDialog(itemID: number): void {
+    const dialogRef = this.dialog.open(this.deleteModalComponent, {
+      data: {
+        itemID: itemID,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result instanceof HttpErrorResponse) {
+        this.dialog.open(DeleteRequestErrorModalComponent, {
+          data: {
+            error: result,
+            deleteFailureMessage: `${this.deleteFailureMessage}`,
+          },
+        });
+      } else if (result === 'success') {
+        this.dialog.open(DeleteRequestConfirmationModalComponent, {
+          data: {
+            deleteSuccessMessage: `${this.deleteSuccessMessage}: ${itemID}`,
+          },
         });
       }
     });
@@ -94,20 +257,26 @@ export class TableFullComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result instanceof HttpErrorResponse) {
         this.dialog.open(AddRequestErrorModalComponent, {
-          data: { 
-            error: result, 
-            addFailureMessage: `${this.addFailureMessage}`
+          data: {
+            error: result,
+            addFailureMessage: `${this.addFailureMessage}`,
           },
         });
       } else if (result) {
         this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: { 
+          data: {
             result: result,
             addSuccessMessage: `${this.addSuccessMessage}`,
-          }
+          },
         });
       }
-    })
+    });
+  }
 
+  ngOnInit(): void {
+    this.rows$.subscribe(rows => {
+      const sortedRows = this.sortingService.applySorts(rows, this.sorts);
+      this.sortedRows$.next(sortedRows);
+    })
   }
 }
