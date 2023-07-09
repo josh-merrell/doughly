@@ -41,7 +41,8 @@ export class IngredientStockService {
         }`;
         const expiration = dayjs(stock.purchasedDate)
           .add(ingredient.lifespanDays, 'day')
-          .format('MM/DD/YYYY');
+          // .format('MM/DD/YYYY');
+          .toDate();
         return {
           ingredientStockID: stock.ingredientStockID,
           name: ingredient.name,

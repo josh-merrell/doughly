@@ -6,12 +6,6 @@ import { Sort } from '../state/shared-state';
 })
 export class SortingService {
   constructor() {}
-
-  // applySorts(rows: any[], sorts: Sort[]): any[] {
-  //   console.log(`IN APPLY SORTS. SORTS: ${JSON.stringify(sorts)}`);
-
-  //   return [...rows];
-  // }
   applySorts(rows: any[], sorts: Sort[]): any[] {
     if (sorts.length === 0) {
       return rows;
@@ -31,6 +25,11 @@ export class SortingService {
         if (typeof value1 === 'string') {
           value1 = value1.toLowerCase();
           value2 = value2.toLowerCase();
+        }
+
+        if (value1 instanceof Date) {
+          value1 = value1.getTime();
+          value2 = value2.getTime();
         }
 
         if (value1 !== value2) {
