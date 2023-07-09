@@ -7,9 +7,11 @@ import { DeleteRequestErrorModalComponent } from '../delete-request-error/delete
 import { DeleteRequestConfirmationModalComponent } from '../delete-request-confirmation/delete-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from '../add-request-error/add-request-error-modal.component';
 import { AddRequestConfirmationModalComponent } from '../add-request-confirmation/add-request-confirmation-modal.component';
+import { TableFullFiltersComponent } from '../dl-table-full-filters/dl-table-full-filters.component';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Sort, SortEnum, SortRotateStateEnum, TableFullColumn } from '../../state/shared-state';
+import { Filter, Sort, SortEnum, SortRotateStateEnum, TableFullColumn } from '../../state/shared-state';
 import { SortingService } from '../../utils/sortingService';
+import { FilterService } from '../../utils/filterService';
 import {
   trigger,
   state,
@@ -26,6 +28,7 @@ import { BehaviorSubject } from 'rxjs';
     CommonModule,
     UpdateRequestErrorModalComponent,
     UpdateRequestConfirmationModalComponent,
+    TableFullFiltersComponent,
   ],
   templateUrl: './dl-table-full.component.html',
   animations: [
@@ -67,6 +70,7 @@ export class TableFullComponent {
   @Input() addModalComponent!: Type<any>;
   @Input() addSuccessMessage!: string;
   @Input() addFailureMessage!: string;
+  @Input() searchPlaceholder!: string;
   @Input()
   set rows(value: any[]) {
     this.rows$.next(value);
@@ -74,17 +78,21 @@ export class TableFullComponent {
   get rows(): any[] {
     return this.rows$.getValue();
   }
-  
+
   constructor(
     public dialog: MatDialog,
-    private sortingService: SortingService
+    private sortingService: SortingService,
+    private filterService: FilterService
   ) {}
 
   public rows$ = new BehaviorSubject<any[]>([]);
-  public sortedRows$ = new BehaviorSubject<any[]>([]);
+  public filters: Filter[] = [];
+  public filteredRows$ = new BehaviorSubject<any[]>([]);
+  public displayedRows$ = new BehaviorSubject<any[]>([]);
   sorts: Sort[] = [];
   SortEnum = SortEnum;
   SortRotateStateEnum = SortRotateStateEnum;
+  public clearAllSortsEnabled = false;
 
   onSortIconClick(rowIndex: number): void {
     //first update direction of sort
@@ -128,6 +136,10 @@ export class TableFullComponent {
     }
   }
 
+  isDate(value: any): boolean {
+    return value instanceof Date;
+  }
+
   addSort(rowIndex: number): void {
     const newSort: Sort = {
       prop: this.columns[rowIndex].prop,
@@ -137,13 +149,20 @@ export class TableFullComponent {
     this.sorts.push(newSort);
     this.columns[rowIndex].sortOrderState = newSort.sortOrderIndex;
     //Apply the sorts to rows, then emit the sorted rows
-    const sortedRows = this.sortingService.applySorts(this.rows, this.sorts);
-    this.sortedRows$.next(sortedRows);
+    const sortedRows = this.sortingService.applySorts(
+      this.filteredRows$.getValue(),
+      this.sorts
+    );
+    this.displayedRows$.next(sortedRows);
+    this.clearAllSortsEnabled = this.sorts.length > 0;
   }
 
   updateSortedRows(): void {
-    const sortedRows = this.sortingService.applySorts(this.rows, this.sorts);
-    this.sortedRows$.next(sortedRows);
+    const sortedRows = this.sortingService.applySorts(
+      this.filteredRows$.getValue(),
+      this.sorts
+    );
+    this.displayedRows$.next(sortedRows);
   }
 
   clearSort(index: number): void {
@@ -157,8 +176,12 @@ export class TableFullComponent {
       }
     });
     //Apply the sorts to rows, then emit the sorted rows
-    const sortedRows = this.sortingService.applySorts(this.rows, this.sorts);
-    this.sortedRows$.next(sortedRows);
+    const sortedRows = this.sortingService.applySorts(
+      this.filteredRows$.getValue(),
+      this.sorts
+    );
+    this.clearAllSortsEnabled = this.sorts.length > 0;
+    this.displayedRows$.next(sortedRows);
   }
 
   clearAllSorts(): void {
@@ -170,7 +193,8 @@ export class TableFullComponent {
       }
     });
     //Return sortedRows to default, matching rows
-    this.sortedRows$.next(this.rows);
+    this.displayedRows$.next(this.filteredRows$.getValue());
+    this.clearAllSortsEnabled = false;
   }
 
   openEditDialog(itemID: number): void {
@@ -224,31 +248,6 @@ export class TableFullComponent {
     });
   }
 
-  openDeleteDialog(itemID: number): void {
-    const dialogRef = this.dialog.open(this.deleteModalComponent, {
-      data: {
-        itemID: itemID,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result instanceof HttpErrorResponse) {
-        this.dialog.open(DeleteRequestErrorModalComponent, {
-          data: { 
-            error: result, 
-            deleteFailureMessage: `${this.deleteFailureMessage}`
-          },
-        });
-      } else if (result === 'success') {
-        this.dialog.open(DeleteRequestConfirmationModalComponent, {
-          data: {
-            deleteSuccessMessage: `${this.deleteSuccessMessage}: ${itemID}`,
-          }
-        });
-      }
-    });
-  }
-
   openAddDialog(): void {
     const dialogRef = this.dialog.open(this.addModalComponent, {
       data: {},
@@ -273,10 +272,26 @@ export class TableFullComponent {
     });
   }
 
+  onFiltersChange(filters: Filter[]): void {
+    this.filters = filters;
+
+    this.filteredRows$.next(
+      this.filterService.applyFilters(this.rows$.getValue(), filters)
+    );
+  }
+
   ngOnInit(): void {
-    this.rows$.subscribe(rows => {
-      const sortedRows = this.sortingService.applySorts(rows, this.sorts);
-      this.sortedRows$.next(sortedRows);
-    })
+    this.rows$.subscribe((rows) => {
+      const filteredRows = this.filterService.applyFilters(rows, this.filters);
+      this.filteredRows$.next(filteredRows);
+    });
+
+    this.filteredRows$.subscribe((filteredRows) => {
+      const sortedRows = this.sortingService.applySorts(
+        filteredRows,
+        this.sorts
+      );
+      this.displayedRows$.next(sortedRows);
+    });
   }
 }

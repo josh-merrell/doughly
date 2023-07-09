@@ -1,0 +1,122 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Filter,
+  FilterTypeEnum,
+  FilterOperatorEnum,
+  FilterOption,
+} from '../../state/shared-state';
+import { StringFilterModalComponent } from '../filterModals/string-filter-modal/string-filter-modal.component';
+import { NumericFilterModalComponent } from '../filterModals/numeric-filter-modal/numeric-filter-modal.component';
+import { CurrencyFilterModalComponent } from '../filterModals/currency-filter-modal/currency-filter-modal.component';
+import { DateFilterModalComponent } from '../filterModals/date-filter-modal/date-filter-modal.component';
+import { BehaviorSubject } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AddRequestErrorModalComponent } from '../add-request-error/add-request-error-modal.component';
+import { AddRequestConfirmationModalComponent } from '../add-request-confirmation/add-request-confirmation-modal.component';
+
+@Component({
+  selector: 'dl-table-full-filters',
+  standalone: true,
+  imports: [
+    CommonModule,
+    StringFilterModalComponent,
+    NumericFilterModalComponent,
+    CurrencyFilterModalComponent,
+    DateFilterModalComponent,
+  ],
+  templateUrl: './dl-table-full-filters.component.html',
+})
+export class TableFullFiltersComponent {
+  @Input() searchPlaceholder!: string;
+  @Input()
+  set columns(value: any[]) {
+    this.columns$.next(value);
+  }
+  get columns(): any[] {
+    return this.columns$.getValue();
+  }
+  public columns$ = new BehaviorSubject<any[]>([]);
+  public filters$ = new BehaviorSubject<Filter[]>([]);
+
+  @Output() filtersChange = new EventEmitter<Filter[]>();
+
+  filtersExpanded = false;
+  addFilterMenuOpen = false;
+  filterOptions: FilterOption[] = [];
+
+  constructor(public dialog: MatDialog) {}
+
+  removeFilter(filter: Filter) {
+    this.filters$.next(
+      this.filters$.getValue().filter((f) => f.id !== filter.id)
+    );
+  }
+
+  isDate(value: any): value is Date {
+    return value instanceof Date;
+  }
+
+  toggleAddFilterMenu() {
+    this.addFilterMenuOpen = !this.addFilterMenuOpen;
+  }
+
+  addFilter(filterOption: FilterOption) {
+    let filterModal: any;
+    switch (filterOption.type) {
+      case FilterTypeEnum.search:
+        filterModal = StringFilterModalComponent;
+        break;
+      case FilterTypeEnum.numRange:
+        filterModal = NumericFilterModalComponent;
+        break;
+      case FilterTypeEnum.currencyRange:
+        filterModal = CurrencyFilterModalComponent;
+        break;
+      case FilterTypeEnum.dateRange:
+        filterModal = DateFilterModalComponent;
+        break;
+    }
+    this.openAddDialog(filterOption, filterModal);
+  }
+
+  openAddDialog(filterOption: FilterOption, component: any): void {
+    const dialogRef = this.dialog.open(component, {
+      data: {
+        filterOption: filterOption,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.addFilterMenuOpen = false;
+        //add unique 'id' to new filter before adding to filters$ array
+        result.id = this.filters$.getValue().length;
+        this.filters$.next([...this.filters$.getValue(), result]);
+      } else {
+        this.addFilterMenuOpen = false;
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.columns$.subscribe((columns) => {
+      for (let column of columns) {
+        if (column.filterType !== FilterTypeEnum.none) {
+          this.filterOptions.push({
+            name: column.name,
+            prop: column.prop,
+            type: column.filterType,
+          });
+        }
+      }
+    });
+  }
+
+  ngOnChanges() {
+    this.filters$.subscribe((filters) => {
+      this.filtersChange.emit(filters);
+    });
+  }
+}
