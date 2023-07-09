@@ -22,20 +22,19 @@
       <div
         class="inline-block min-w-full py-dl-2 align-middle sm:px-dl-6 lg:px-dl-8"
       >
-        <div id="tableFilters" class="min-w-full"></div>
-        <table class="min-w-full divide-y divide-dl-grey-8">
-          <thead>
+        <dl-table-full-filters (filtersChange)="onFiltersChange($event)" [columns]="columns" [searchPlaceholder]="searchPlaceholder" id="tableFilters"> </dl-table-full-filters>
+        <table>
+          <thead class="bg-dl-grey-2">
             <tr>
               <th
                 *ngFor="let column of columns; let i = index"
+                [ngClass]="{'rounded-tl-dl-3': i === 0}"
                 scope="col"
-                class="d-flex justify-content-between relative py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-dl-grey-2 sm:pl-dl-3 lg:pr-dl-9"
+                class="d-flex justify-content-between relative py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-white sm:pl-dl-3 lg:pr-dl-9"
               >
                 <div style="display: flex; align-items: center">
                   {{ column.name }}
-                  <ng-container
-                    *ngIf="column.sort"
-                  >
+                  <ng-container *ngIf="column.sort">
                     <div class="relative pl-dl-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +48,7 @@
                         clip-rule="evenodd"
                         class="left-3 h-4 w-4 cursor-pointer fill-current transition-all duration-200"
                         [ngClass]="{
-                          'text-dl-grey-4 hover:text-dl-grey-6':
+                          'text-dl-grey-9 hover:text-white':
                             column.sortRotateState ===
                             SortRotateStateEnum.default,
                           'text-dl-blue-6 hover:text-dl-blue-8':
@@ -72,7 +71,7 @@
                       >
                         <button
                           type="button"
-                          class="absolute left-8 top-0 flex rounded-full bg-dl-grey-10 text-dl-2 text-dl-blue-6 focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
+                          class="absolute left-8 top-0 flex rounded-full bg-dl-grey-2 text-dl-2 text-dl-blue-6 focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
                         >
                           <span class="sr-only">Sort Order</span>
                           <div>{{ column.sortOrderState + 1 }}</div>
@@ -82,27 +81,39 @@
                   </ng-container>
                 </div>
               </th>
-              <th scope="col" class="relative">
+              <th scope="col" class="relative" class="rounded-tr-dl-3" >
                 <span class="sr-only">Edit</span>
-                <ng-container *ngIf="sorts.length">
-                  <button
-                    type="button"
-                    class="shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap bg-dl-grey-10 px-dl-3 text-dl-2 font-dl-3 text-dl-grey-3 hover:text-dl-grey-6 sm:w-auto"
-                    (click)="clearAllSorts()"
-                  >
-                    Clear Sorts
-                  </button>
-                </ng-container>
+                <button
+                  type="button"
+                  class="shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap px-dl-3 text-dl-2 font-dl-3 sm:w-auto"
+                  [disabled]="!clearAllSortsEnabled"
+                  [ngClass]="{
+                    'bg-dl-grey-2 text-dl-grey-9 hover:text-white': clearAllSortsEnabled,
+                    'bg-dl-grey-2 text-dl-grey-2': !clearAllSortsEnabled
+                  }"
+                  (click)="clearAllSorts()"
+                >
+                  Clear Sorts
+                </button>
               </th>
             </tr>
           </thead>
           <tbody class="bg-white">
-            <tr *ngFor="let row of sortedRows$ | async" class="odd:bg-dl-grey-10">
+            <tr
+              *ngFor="let row of displayedRows$ | async"
+              class="even:bg-dl-grey-10"
+            >
               <td
                 *ngFor="let column of columns"
                 class="whitespace-nowrap py-dl-4 pl-dl-4 text-dl-2 font-dl-2 text-dl-grey-1 sm:pl-dl-3 lg:pr-dl-9"
               >
-                {{ row[column.prop] }}
+                <!-- {{ row[column.prop] }} -->
+                <ng-container *ngIf="isDate(row[column.prop]); else notDate">
+                    {{ row[column.prop] | date:'shortDate' }}
+                </ng-container>
+                <ng-template #notDate>
+                    {{ row[column.prop] }}
+                </ng-template>
               </td>
               <td
                 class="relative whitespace-nowrap py-dl-4 pl-dl-3 pr-dl-4 text-right text-dl-2 font-dl-2 sm:pr-dl-3"

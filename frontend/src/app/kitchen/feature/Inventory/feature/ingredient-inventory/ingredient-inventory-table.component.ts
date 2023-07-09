@@ -15,7 +15,7 @@ import { IngredientStockService } from './data/ingredient-stock.service';
 import { EditIngredientStockModalComponent } from './ui/edit-ingredient-stock-modal/edit-ingredient-stock-modal.component';
 import { AddIngredientStockModalComponent } from './ui/add-ingredient-stock-modal/add-ingredient-stock-modal.component';
 import { DeleteIngredientStockModalComponent } from './ui/delete-ingredient-stock-modal/delete-ingredient-stock-modal.component';
-import { FilterEnum, SortEnum, TableFullColumn, SortRotateStateEnum } from 'src/app/shared/state/shared-state';
+import { FilterTypeEnum, SortEnum, TableFullColumn, SortRotateStateEnum } from 'src/app/shared/state/shared-state';
 
 
 @Component({
@@ -52,14 +52,15 @@ export class IngredientInventoryTableComponent {
   deleteFailureMessage = 'Failed to delete Ingredient Stock. Try again later.';
   addSuccessMessage = 'Added Ingredient Stock with ID:';
   addFailureMessage = 'Failed to add Ingredient Stock. Try again later.';
+  searchPlaceholder = 'Search by Ingredient or Brand...';
   columns: TableFullColumn[] = [
     {
-      name: 'Name',
+      name: 'Ingredient',
       prop: 'name',
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
-      filter: FilterEnum.search,
+      filterType: FilterTypeEnum.search,
     },
     {
       name: 'Brand',
@@ -67,12 +68,12 @@ export class IngredientInventoryTableComponent {
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
-      filter: FilterEnum.search,
+      filterType: FilterTypeEnum.search,
     },
     {
       name: 'Quantity',
       prop: 'quantity',
-      filter: FilterEnum.none,
+      filterType: FilterTypeEnum.none,
     },
     {
       name: 'Expiration',
@@ -80,7 +81,7 @@ export class IngredientInventoryTableComponent {
       sort: SortEnum.numberical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
-      filter: FilterEnum.dateRange,
+      filterType: FilterTypeEnum.dateRange,
     },
   ];
 
