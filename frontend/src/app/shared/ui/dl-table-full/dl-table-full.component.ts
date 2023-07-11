@@ -1,4 +1,4 @@
-import { Component, Input, SimpleChanges, Type } from '@angular/core';
+import { Component, ElementRef, Input, Renderer2, SimpleChanges, Type, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateRequestErrorModalComponent } from '../update-request-error/update-request-error-modal.component';
@@ -80,6 +80,7 @@ export class TableFullComponent {
   }
 
   constructor(
+    private renderer: Renderer2,
     public dialog: MatDialog,
     private sortingService: SortingService,
     private filterService: FilterService
@@ -93,6 +94,22 @@ export class TableFullComponent {
   SortEnum = SortEnum;
   SortRotateStateEnum = SortRotateStateEnum;
   public clearAllSortsEnabled = false;
+  rowItemMenuOpen = { index: -1, open: false };
+  @ViewChild('rowItemMenu') rowItemMenu!: ElementRef;
+  globalClickListener: () => void = () => {};
+
+  toggleRowItemMenu(event: any, index: number) {
+    event.stopPropagation();
+    if (this.rowItemMenuOpen.index === index) {
+      this.rowItemMenuOpen.open = !this.rowItemMenuOpen.open;
+    } else {
+      this.rowItemMenuOpen.index = index;
+      this.rowItemMenuOpen.open = true;
+    }
+  }
+  closeRowItemMenu() {
+    this.rowItemMenuOpen = { index: -1, open: false };
+  }
 
   onSortIconClick(rowIndex: number): void {
     //first update direction of sort
@@ -293,5 +310,20 @@ export class TableFullComponent {
       );
       this.displayedRows$.next(sortedRows);
     });
+  }
+
+  ngAfterViewInit() {
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.rowItemMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInside && this.rowItemMenu) {
+          this.closeRowItemMenu();
+        }
+      }
+    );
   }
 }

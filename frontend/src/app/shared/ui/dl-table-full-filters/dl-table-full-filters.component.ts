@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Filter,
@@ -10,7 +10,7 @@ import { StringFilterModalComponent } from '../filterModals/string-filter-modal/
 import { NumericFilterModalComponent } from '../filterModals/numeric-filter-modal/numeric-filter-modal.component';
 import { CurrencyFilterModalComponent } from '../filterModals/currency-filter-modal/currency-filter-modal.component';
 import { DateFilterModalComponent } from '../filterModals/date-filter-modal/date-filter-modal.component';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription, fromEvent } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AddRequestErrorModalComponent } from '../add-request-error/add-request-error-modal.component';
@@ -43,10 +43,13 @@ export class TableFullFiltersComponent {
   @Output() filtersChange = new EventEmitter<Filter[]>();
 
   filtersExpanded = false;
-  addFilterMenuOpen = false;
   filterOptions: FilterOption[] = [];
 
-  constructor(public dialog: MatDialog) {}
+  addFilterMenuOpen = false;
+  @ViewChild('filterMenu') filterMenu!: ElementRef;
+  globalClickListener: () => void = () => {};
+
+  constructor(private renderer: Renderer2, public dialog: MatDialog) {}
 
   removeFilter(filter: Filter) {
     this.filters$.next(
@@ -54,12 +57,20 @@ export class TableFullFiltersComponent {
     );
   }
 
+  removeAllFilters() {
+    this.filters$.next([]);
+  }
+
   isDate(value: any): value is Date {
     return value instanceof Date;
   }
 
-  toggleAddFilterMenu() {
+  toggleAddFilterMenu(event: any) {
+    event.stopPropagation();
     this.addFilterMenuOpen = !this.addFilterMenuOpen;
+  }
+  closeFilterMenu() {
+    this.addFilterMenuOpen = false;
   }
 
   addFilter(filterOption: FilterOption) {
@@ -114,9 +125,26 @@ export class TableFullFiltersComponent {
     });
   }
 
+  ngAfterViewInit() {
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.filterMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInside && this.addFilterMenuOpen) {
+          this.closeFilterMenu();
+        }
+      }
+    );
+  }
+
   ngOnChanges() {
     this.filters$.subscribe((filters) => {
       this.filtersChange.emit(filters);
     });
   }
+
+  ngOnDestroy() {}
 }
