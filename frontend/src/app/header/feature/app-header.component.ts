@@ -62,8 +62,7 @@ export class AppHeaderComponent {
           }
         }
       );
-      
-  }
+    }
 
   ngOnDestroy() {
     if (this.globalClickListener) {

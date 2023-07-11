@@ -22,15 +22,21 @@
       <div
         class="inline-block min-w-full py-dl-2 align-middle sm:px-dl-6 lg:px-dl-8"
       >
-        <dl-table-full-filters (filtersChange)="onFiltersChange($event)" [columns]="columns" [searchPlaceholder]="searchPlaceholder" id="tableFilters"> </dl-table-full-filters>
+        <dl-table-full-filters
+          (filtersChange)="onFiltersChange($event)"
+          [columns]="columns"
+          [searchPlaceholder]="searchPlaceholder"
+          id="tableFilters"
+        >
+        </dl-table-full-filters>
         <table>
-          <thead class="bg-dl-grey-2">
+          <thead class="bg-dl-grey-10">
             <tr>
               <th
                 *ngFor="let column of columns; let i = index"
-                [ngClass]="{'rounded-tl-dl-3': i === 0}"
+                [ngClass]="{ 'rounded-tl-dl-3': i === 0 }"
                 scope="col"
-                class="d-flex justify-content-between relative py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-white sm:pl-dl-3 lg:pr-dl-9"
+                class="d-flex justify-content-between relative py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-dl-grey-2 sm:pl-dl-3 lg:pr-dl-9"
               >
                 <div style="display: flex; align-items: center">
                   {{ column.name }}
@@ -48,7 +54,7 @@
                         clip-rule="evenodd"
                         class="left-3 h-4 w-4 cursor-pointer fill-current transition-all duration-200"
                         [ngClass]="{
-                          'text-dl-grey-9 hover:text-white':
+                          'text-dl-grey-6 hover:text-dl-grey-8':
                             column.sortRotateState ===
                             SortRotateStateEnum.default,
                           'text-dl-blue-6 hover:text-dl-blue-8':
@@ -71,7 +77,7 @@
                       >
                         <button
                           type="button"
-                          class="absolute left-8 top-0 flex rounded-full bg-dl-grey-2 text-dl-2 text-dl-blue-6 focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
+                          class="absolute left-8 top-0 flex rounded-full bg-dl-grey-10 text-dl-2 text-dl-blue-6 focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
                         >
                           <span class="sr-only">Sort Order</span>
                           <div>{{ column.sortOrderState + 1 }}</div>
@@ -81,15 +87,16 @@
                   </ng-container>
                 </div>
               </th>
-              <th scope="col" class="relative" class="rounded-tr-dl-3" >
+              <th scope="col" class="relative" class="rounded-tr-dl-3">
                 <span class="sr-only">Edit</span>
                 <button
                   type="button"
                   class="shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap px-dl-3 text-dl-2 font-dl-3 sm:w-auto"
                   [disabled]="!clearAllSortsEnabled"
                   [ngClass]="{
-                    'bg-dl-grey-2 text-dl-grey-9 hover:text-white': clearAllSortsEnabled,
-                    'bg-dl-grey-2 text-dl-grey-2': !clearAllSortsEnabled
+                    'bg-dl-grey-10 text-dl-grey-3 hover:text-dl-grey-5':
+                      clearAllSortsEnabled,
+                    'bg-dl-grey-10 text-dl-grey-10': !clearAllSortsEnabled
                   }"
                   (click)="clearAllSorts()"
                 >
@@ -100,8 +107,8 @@
           </thead>
           <tbody class="bg-white">
             <tr
-              *ngFor="let row of displayedRows$ | async"
-              class="even:bg-dl-grey-10"
+              *ngFor="let row of displayedRows$ | async; let i = index"
+              class="even:white"
             >
               <td
                 *ngFor="let column of columns"
@@ -109,25 +116,55 @@
               >
                 <!-- {{ row[column.prop] }} -->
                 <ng-container *ngIf="isDate(row[column.prop]); else notDate">
-                    {{ row[column.prop] | date:'shortDate' }}
+                  {{ row[column.prop] | date : "shortDate" }}
                 </ng-container>
                 <ng-template #notDate>
-                    {{ row[column.prop] }}
+                  {{ row[column.prop] }}
                 </ng-template>
               </td>
               <td
                 class="relative whitespace-nowrap py-dl-4 pl-dl-3 pr-dl-4 text-right text-dl-2 font-dl-2 sm:pr-dl-3"
               >
-                <a
-                  (click)="openEditDialog(row[IDKey])"
-                  class="mr-dl-2 cursor-pointer text-dl-blue-4 transition-all duration-200 ease-in-out hover:text-dl-blue-2"
-                  >Edit</a
+                <button
+                  (click)="toggleRowItemMenu($event, i)"
+                  id="buttonToggleRowItemMenu"
+                  class="relative"
                 >
-                <a
-                  (click)="openDeleteDialog(row[IDKey])"
-                  class="mr-dl-2 cursor-pointer text-dl-red-3 transition-all duration-150 ease-in-out hover:text-dl-red-5"
-                  >Delete</a
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </button>
+                <div
+                  #rowItemMenu
+                  *ngIf="rowItemMenuOpen.open && rowItemMenuOpen.index === i"
+                  class="focus:outling-none absolute right-9 bottom-2 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
                 >
+                  <button
+                    (click)="openEditDialog(row[IDKey])"
+                    type="button"
+                    class="block cursor-pointer px-dl-3 py-dl-2 text-dl-2 text-dl-grey-3 hover:bg-dl-grey-10"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    (click)="openDeleteDialog(row[IDKey])"
+                    type="button"
+                    class="block cursor-pointer px-dl-3 py-dl-2 text-dl-2 text-dl-grey-3 hover:bg-dl-grey-10"
+                  >
+                    Delete
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
