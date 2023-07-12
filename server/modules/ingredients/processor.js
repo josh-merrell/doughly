@@ -1,5 +1,6 @@
 ('use strict');
 
+const { default: axios } = require('axios');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -146,6 +147,27 @@ module.exports = ({ db }) => {
       return { error: deleteError.message };
     }
     global.logger.info(`Deleted ingredient ID: ${ingredientID}`);
+
+    //get list of related stock entries
+    const { data: relatedStockEntries, error: stockError } = await db.from('ingredientStocks').select().eq('ingredientID', ingredientID).eq('deleted', false);
+    if (stockError) {
+      global.logger.info(`Error getting related stock entries after deleting ingredient ID: ${ingredientID} : ${stockError.message}`);
+      return { error: stockError.message };
+    }
+
+    //delete any associated ingredient stock entries;
+    for (let i = 0; i < relatedStockEntries.length; i++) {
+      const { data: ingredientStockDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks/${relatedStockEntries[i].ingredientStockID}`, {
+        headers: {
+          authorization: options.authorization,
+        },
+      });
+      if (ingredientStockDeleteResult.error) {
+        global.logger.info(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} after deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
+        return { error: ingredientStockDeleteResult.error };
+      }
+    }
+
     return { success: true };
   }
 

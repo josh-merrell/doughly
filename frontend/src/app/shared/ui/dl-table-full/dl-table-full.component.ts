@@ -58,20 +58,20 @@ import { BehaviorSubject } from 'rxjs';
 export class TableFullComponent {
   @Input() title!: string;
   @Input() heading_phrase!: string;
-  @Input() addButtonTitle!: string;
-  @Input() columns!: any[];
-  @Input() editModalComponent!: Type<any>;
   @Input() IDKey!: string;
-  @Input() updateSuccessMessage!: string;
-  @Input() updateFailureMessage!: string;
-  @Input() deleteModalComponent!: Type<any>;
-  @Input() deleteSuccessMessage!: string;
-  @Input() deleteFailureMessage!: string;
+  @Input() searchPlaceholder!: string;
+  @Input() searchSubject!: string;
+  @Input() addButtonTitle!: string;
   @Input() addModalComponent!: Type<any>;
   @Input() addSuccessMessage!: string;
   @Input() addFailureMessage!: string;
-  @Input() searchPlaceholder!: string;
-  @Input() searchSubject!: string;
+  @Input() editModalComponent!: Type<any>;
+  @Input() editSuccessMessage!: string;
+  @Input() editFailureMessage!: string;
+  @Input() deleteModalComponent!: Type<any>;
+  @Input() deleteSuccessMessage!: string;
+  @Input() deleteFailureMessage!: string;
+  @Input() columns!: any[];
   @Input()
   set rows(value: any[]) {
     this.rows$.next(value);
@@ -238,14 +238,14 @@ export class TableFullComponent {
         this.dialog.open(UpdateRequestErrorModalComponent, {
           data: {
             error: result,
-            updateFailureMessage: `${this.updateFailureMessage}`,
+            updateFailureMessage: `${this.editFailureMessage}`,
           },
         });
       } else if (result) {
         this.dialog.open(UpdateRequestConfirmationModalComponent, {
           data: {
             result: result,
-            updateSuccessMessage: `${this.updateSuccessMessage}: ${itemID}`,
+            updateSuccessMessage: `${this.editSuccessMessage}: ${itemID}`,
           },
         });
       }

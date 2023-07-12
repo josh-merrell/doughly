@@ -7,12 +7,13 @@ import { Observable } from 'rxjs';
 import { AppState } from  '../shared/state/app-state';
 import { Store } from '@ngrx/store';
 import { setView, setInventoryView } from './state/kitchen-actions';
+import { IngredientsComponent } from './feature/ingredients/ingredients.component';
 
 
 @Component({
   selector: 'dl-kitchen-page',
   standalone: true,
-  imports: [CommonModule, InventoryComponent, ToolsComponent],
+  imports: [CommonModule, InventoryComponent, ToolsComponent, IngredientsComponent],
   templateUrl: './kitchen-page.component.html',
 })
 export class KitchenPageComponent {
