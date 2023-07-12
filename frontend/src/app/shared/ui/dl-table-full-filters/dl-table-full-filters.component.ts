@@ -30,6 +30,7 @@ import { AddRequestConfirmationModalComponent } from '../add-request-confirmatio
 })
 export class TableFullFiltersComponent {
   @Input() searchPlaceholder!: string;
+  @Input() searchSubject!: string;
   @Input()
   set columns(value: any[]) {
     this.columns$.next(value);
@@ -39,6 +40,7 @@ export class TableFullFiltersComponent {
   }
   public columns$ = new BehaviorSubject<any[]>([]);
   public filters$ = new BehaviorSubject<Filter[]>([]);
+  private searchBarFilterID: number | null = null;
 
   @Output() filtersChange = new EventEmitter<Filter[]>();
 
@@ -73,7 +75,7 @@ export class TableFullFiltersComponent {
     this.addFilterMenuOpen = false;
   }
 
-  addFilter(filterOption: FilterOption) {
+  openAddFilterModal(filterOption: FilterOption) {
     let filterModal: any;
     switch (filterOption.type) {
       case FilterTypeEnum.search:
@@ -102,13 +104,37 @@ export class TableFullFiltersComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.addFilterMenuOpen = false;
-        //add unique 'id' to new filter before adding to filters$ array
-        result.id = this.filters$.getValue().length;
-        this.filters$.next([...this.filters$.getValue(), result]);
+        this.addFilter(result);
       } else {
         this.addFilterMenuOpen = false;
       }
     });
+  }
+
+  addFilter(filter: Filter, isSearchBar: boolean = false) {
+    const filtersLength = this.filters$.getValue().length;
+    filter.id = (filtersLength) ? filtersLength : 0;
+    if (isSearchBar) this.searchBarFilterID = filter.id;
+    this.filters$.next([...this.filters$.getValue(), filter]);
+  }
+
+  addSearchBarFilter(event: any) {
+    //first remove existing search bar filter
+    if (this.searchBarFilterID !== null) {
+      const existingSearchBarFilter = this.filters$.getValue().find(f => f.id === this.searchBarFilterID);
+      if (existingSearchBarFilter) {
+        this.removeFilter(existingSearchBarFilter);
+      }
+    }
+    //add new search bar filter if search term is provided
+    if (event.target.value !== '') {
+      this.addFilter({
+        subject: this.searchSubject,
+        filterType: FilterTypeEnum.search,
+        operator: FilterOperatorEnum.contains,
+        operand1: event.target.value,
+      }, true);
+    }
   }
 
   ngOnInit() {

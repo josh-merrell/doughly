@@ -26,6 +26,7 @@
           (filtersChange)="onFiltersChange($event)"
           [columns]="columns"
           [searchPlaceholder]="searchPlaceholder"
+          [searchSubject]="searchSubject"
           id="tableFilters"
         >
         </dl-table-full-filters>
@@ -91,16 +92,16 @@
                 <span class="sr-only">Edit</span>
                 <button
                   type="button"
-                  class="shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap px-dl-3 text-dl-2 font-dl-3 sm:w-auto"
+                  class="bg-dl-grey-10 shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap px-dl-3 text-dl-2 font-dl-3 sm:w-auto"
                   [disabled]="!clearAllSortsEnabled"
                   [ngClass]="{
-                    'bg-dl-grey-10 text-dl-grey-3 hover:text-dl-grey-5':
+                    ' text-dl-grey-5 hover:text-dl-grey-7':
                       clearAllSortsEnabled,
-                    'bg-dl-grey-10 text-dl-grey-10': !clearAllSortsEnabled
+                    ' text-dl-grey-10': !clearAllSortsEnabled
                   }"
                   (click)="clearAllSorts()"
                 >
-                  Clear Sorts
+                  Clear All Sorts
                 </button>
               </th>
             </tr>
@@ -113,6 +114,7 @@
               <td
                 *ngFor="let column of columns"
                 class="whitespace-nowrap py-dl-4 pl-dl-4 text-dl-2 font-dl-2 text-dl-grey-1 sm:pl-dl-3 lg:pr-dl-9"
+                [ngClass]="{'bg-dl-grey-9': modalActiveForRowID === i}"
               >
                 <!-- {{ row[column.prop] }} -->
                 <ng-container *ngIf="isDate(row[column.prop]); else notDate">
@@ -151,14 +153,14 @@
                   class="focus:outling-none absolute right-9 bottom-2 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
                 >
                   <button
-                    (click)="openEditDialog(row[IDKey])"
+                    (click)="openEditDialog(row[IDKey], i)"
                     type="button"
                     class="block cursor-pointer px-dl-3 py-dl-2 text-dl-2 text-dl-grey-3 hover:bg-dl-grey-10"
                   >
                     Edit
                   </button>
                   <button
-                    (click)="openDeleteDialog(row[IDKey])"
+                    (click)="openDeleteDialog(row[IDKey], i)"
                     type="button"
                     class="block cursor-pointer px-dl-3 py-dl-2 text-dl-2 text-dl-grey-3 hover:bg-dl-grey-10"
                   >
