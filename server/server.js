@@ -9,7 +9,7 @@ const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   defaultMeta: { service: 'routing-service' },
-  transports: [new winston.transports.Console({ format: winston.format.simple() })],
+  transports: [new winston.transports.Console({ format: winston.format.simple() }), new winston.transports.File({ filename: 'logger.log', level: 'info' })],
 });
 
 const { supabase, verifyUser } = require('./db');

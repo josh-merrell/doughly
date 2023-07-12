@@ -37,9 +37,6 @@ const addIngredientStockFailure = createAction(
   props<{ error: any }>()
 );
 
-
-
-
 export const IngredientStockActions = {
   loadIngredientStocks,
   loadIngredientStocksSuccess,

@@ -50,7 +50,8 @@ async function deleteIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { ingredientID } = req.params;
-  const returner = await p.delete({ userID: req.userID, ingredientID });
+  const { authorization } = req.headers;
+  const returner = await p.delete({ userID: req.userID, ingredientID, authorization });
   return res.json(returner);
 }
 
