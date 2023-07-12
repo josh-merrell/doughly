@@ -1,4 +1,4 @@
-<div class="px-dl-4 sm:px-dl-6 lg:px-dl-8">
+<div class="px-dl-4 sm:px-dl-6 lg:px-dl-8 h-full">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
       <h1 class="text-base font-dl-3 leading-dl-2 text-dl-grey-1">
@@ -17,8 +17,8 @@
       </button>
     </div>
   </div>
-  <div class="mt-dl-7 flow-root">
-    <div class="-mx-dl-4 -my-dl-2 overflow-x-auto sm:-mx-dl-6 lg:-mx-dl-8">
+  <div class="mt-dl-7 flow-root h-full">
+    <div class="-mx-dl-4 -my-dl-2 overflow-x-auto sm:-mx-dl-6 lg:-mx-dl-8 h-full">
       <div
         class="inline-block min-w-full py-dl-2 align-middle sm:px-dl-6 lg:px-dl-8"
       >
@@ -30,16 +30,18 @@
           id="tableFilters"
         >
         </dl-table-full-filters>
-        <table>
+        <table class="h-full">
           <thead class="bg-dl-grey-10">
             <tr>
               <th
                 *ngFor="let column of columns; let i = index"
                 [ngClass]="{ 'rounded-tl-dl-3': i === 0 }"
+                [style.min-width]="column.width || 'auto'"
+                [style.width.%]="columns.length"
                 scope="col"
-                class="d-flex justify-content-between relative py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-dl-grey-2 sm:pl-dl-3 lg:pr-dl-9"
+                class="whitespace-nowrap d-flex justify-content-between relative py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-dl-grey-2 sm:pl-dl-3 lg:pr-dl-3"
               >
-                <div style="display: flex; align-items: center">
+                <div style="display: flex; align-items: center ">
                   {{ column.name }}
                   <ng-container *ngIf="column.sort">
                     <div class="relative pl-dl-2">
@@ -92,7 +94,7 @@
                 <span class="sr-only">Edit</span>
                 <button
                   type="button"
-                  class="bg-dl-grey-10 shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap px-dl-3 text-dl-2 font-dl-3 sm:w-auto"
+                  class="bg-dl-grey-10 min-w-dl-3 shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap px-dl-3 text-dl-2 font-dl-3 sm:w-auto"
                   [disabled]="!clearAllSortsEnabled"
                   [ngClass]="{
                     ' text-dl-grey-5 hover:text-dl-grey-7':
@@ -106,7 +108,7 @@
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white">
+          <tbody class="bg-white h-full">
             <tr
               *ngFor="let row of displayedRows$ | async; let i = index"
               class="even:white"
@@ -114,6 +116,7 @@
               <td
                 *ngFor="let column of columns"
                 class="whitespace-nowrap py-dl-4 pl-dl-4 text-dl-2 font-dl-2 text-dl-grey-1 sm:pl-dl-3 lg:pr-dl-9"
+                [style.width]="column.width || 'auto'"
                 [ngClass]="{'bg-dl-grey-9': modalActiveForRowID === i}"
               >
                 <!-- {{ row[column.prop] }} -->

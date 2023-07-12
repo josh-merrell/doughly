@@ -19,10 +19,10 @@ import { authInterceptor } from './app/shared/utils/authInterceptor';
 
 // NgRX Items
 import { IngredientStockEffects } from './app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-effects';
-import { IngredientEffects } from './app/ingredients/state/ingredient-effects';
+import { IngredientEffects } from './app/kitchen/feature/ingredients/state/ingredient-effects';
 import { sharedReducer } from './app/shared/state/shared-reducers';
 import { kitchenReducer } from './app/kitchen/state/kitchen-reducers';
-import { IngredientReducer } from './app/ingredients/state/ingredient-reducers';
+import { IngredientReducer } from './app/kitchen/feature/ingredients/state/ingredient-reducers';
 import { ingredientStockReducer } from './app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-reducers';
 import { employeeReducer } from './app/employees/state/employee-reducers';
 import { EmployeeEffects } from './app/employees/state/employee-effects';

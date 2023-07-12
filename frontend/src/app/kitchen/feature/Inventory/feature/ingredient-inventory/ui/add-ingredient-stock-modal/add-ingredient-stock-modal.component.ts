@@ -20,8 +20,11 @@ import { Store, select } from '@ngrx/store';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, Subscription, map } from 'rxjs';
-import { Ingredient } from 'src/app/ingredients/state/ingredient-state';
-import { selectIngredientByID, selectIngredients } from 'src/app/ingredients/state/ingredient-selectors';
+import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
+import {
+  selectIngredientByID,
+  selectIngredients,
+} from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectEmployees } from 'src/app/employees/state/employee-selectors';
 import { Employee } from 'src/app/employees/state/employee-state';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
@@ -172,23 +175,18 @@ export class AddIngredientStockModalComponent {
         measurement: parseFloat(this.form.value.measurement),
       };
       this.http
-        .post(
-          `${this.BACKEND_URL}/ingredientStocks`,
-          payload
-        )
+        .post(`${this.BACKEND_URL}/ingredientStocks`, payload)
         .subscribe({
           next: () => {
             this.submittingChanges = false;
             //dispatch ingredientStocks update action to refresh the state
-            this.store.dispatch(
-              IngredientStockActions.loadIngredientStocks()
-            );
+            this.store.dispatch(IngredientStockActions.loadIngredientStocks());
 
             this.dialogRef.close(this.form.value);
           },
           error: (error) => {
             this.submittingChanges = false;
-            this.dialogRef.close(error)
+            this.dialogRef.close(error);
           },
         });
     }

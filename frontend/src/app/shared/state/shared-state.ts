@@ -9,7 +9,7 @@ export interface Sort {
 
 export enum SortEnum {
   alphabetical = 'alphabetical',
-  numberical = 'numberical',
+  numerical = 'numberical',
 }
 
 
@@ -20,6 +20,7 @@ export enum SortRotateStateEnum {
 }
 export interface TableFullColumn {
   name: string;
+  width: string;
   prop: string;
   sort?: SortEnum;
   sortRotateState?: SortRotateStateEnum;
@@ -45,8 +46,8 @@ export enum FilterOperatorEnum {
   isAnyOf = 'is any of',
   isEqualTo = 'is equal to',
   isNotEqualTo = 'is not equal to',
-  isGreaterThan = 'greater than',
-  isLessThan = 'less than',
+  isGreaterThan = 'is greater than',
+  isLessThan = 'is less than',
   isBetween = 'is between',
   isNotBetween = 'is not between',
   isAfter = 'is after',

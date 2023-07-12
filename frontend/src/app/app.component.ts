@@ -5,8 +5,8 @@ import { AppHeaderComponent } from './header/feature/app-header.component';
 import { Router } from '@angular/router';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { Store } from '@ngrx/store';
-import { IngredientActions } from './ingredients/state/ingredient-actions';
-import { IngredientStockActions } from './kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions'
+import { IngredientActions } from './kitchen/feature/ingredients/state/ingredient-actions';
+import { IngredientStockActions } from './kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 import { EmployeeActions } from './employees/state/employee-actions';
 
 @Component({

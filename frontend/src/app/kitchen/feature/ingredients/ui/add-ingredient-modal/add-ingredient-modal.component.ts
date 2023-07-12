@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'dl-ingredients-table',
+  selector: 'dl-add-ingredient-modal',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './ingredients-table.component.html',
+  templateUrl: './add-ingredient-modal.component.html',
 })
-export class IngredientsTableComponent {
+export class AddIngredientModalComponent {
 
 }

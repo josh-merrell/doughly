@@ -11,8 +11,8 @@ import { Store, select } from '@ngrx/store';
 import { Observable, combineLatest, map, of, switchMap } from 'rxjs';
 import { IngredientStock } from '../../state/ingredient-stock-state';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
-import { Ingredient } from 'src/app/ingredients/state/ingredient-state';
-import { selectIngredientByID } from 'src/app/ingredients/state/ingredient-selectors';
+import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
+import { selectIngredientByID } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import {
   AbstractControl,
   FormBuilder,
@@ -31,7 +31,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
-
 
 @Component({
   selector: 'dl-edit-ingredient-stock-modal',
@@ -123,17 +122,19 @@ export class EditIngredientStockModalComponent {
           });
       });
 
-    this.form
-      .get('purchasedDate')!
-      .valueChanges.subscribe((selectedDate) => {
-        const selectedDateTime = new Date(selectedDate).getTime();
-        const selectedEmployeeId = purchasedByControl.value;
+    this.form.get('purchasedDate')!.valueChanges.subscribe((selectedDate) => {
+      const selectedDateTime = new Date(selectedDate).getTime();
+      const selectedEmployeeId = purchasedByControl.value;
 
-        this.employees$.pipe(
+      this.employees$
+        .pipe(
           map((employees) =>
-            employees.find((employee) => employee.employeeID === selectedEmployeeId)
+            employees.find(
+              (employee) => employee.employeeID === selectedEmployeeId
+            )
           )
-        ).subscribe((employee) => {
+        )
+        .subscribe((employee) => {
           if (employee) {
             const hireDate = new Date(employee.hireDate).getTime();
             if (selectedDateTime < hireDate) {
@@ -143,8 +144,7 @@ export class EditIngredientStockModalComponent {
             }
           }
         });
-      })
-
+    });
   }
 
   dateValidator(minDate: Date): ValidatorFn {
@@ -184,7 +184,7 @@ export class EditIngredientStockModalComponent {
           },
           error: (error) => {
             this.submittingChanges = false;
-            this.dialogRef.close(error)
+            this.dialogRef.close(error);
           },
         });
     }

@@ -4,6 +4,7 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { IngredientService } from '../data/ingredient.service';
 import { IngredientActions } from './ingredient-actions';
+import { IngredientStockActions } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 
 @Injectable()
 export class IngredientEffects {
@@ -36,11 +37,52 @@ export class IngredientEffects {
           map((ingredients) =>
             IngredientActions.loadIngredientsSuccess({ ingredients })
           ),
-          catchError((error) => 
+          catchError((error) =>
             of(IngredientActions.loadIngredientsFailure({ error }))
           )
         )
       )
+    )
+  );
+
+  loadIngredient$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientActions.loadIngredient),
+      mergeMap((action) =>
+        this.ingredientService.getByID(action.ingredientID).pipe(
+          map((ingredient) =>
+            IngredientActions.loadIngredientSuccess({ ingredient })
+          ),
+          catchError((error) =>
+            of(IngredientActions.loadIngredientFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  deleteIngredient$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientActions.deleteIngredient),
+      mergeMap((action) =>
+        this.ingredientService.delete(action.ingredientID).pipe(
+          map(() =>
+            IngredientActions.deleteIngredientSuccess({
+              ingredientID: action.ingredientID,
+            })
+          ),
+          catchError((error) =>
+            of(IngredientActions.deleteIngredientFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  loadIngredientStockAfterDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientActions.deleteIngredientSuccess),
+      map(() => IngredientStockActions.loadIngredientStocks())
     )
   );
 }
