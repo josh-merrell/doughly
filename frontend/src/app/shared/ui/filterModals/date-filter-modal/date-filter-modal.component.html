@@ -1,6 +1,12 @@
 <div
   class="max-w-dl-14 sm:max-w-dl-14 relative my-dl-0 transform overflow-hidden bg-white px-dl-4 text-left transition-all sm:w-dl-12 sm:p-dl-6"
 >
+  <h3
+    class="leading-dl-4 mb-dl-3 text-dl-4 font-dl-2 text-dl-blue-4"
+    id="addDateFilterTitle"
+  >
+    {{ data.filterOption.name }}...
+  </h3>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="relative flex flex-col">
       <div

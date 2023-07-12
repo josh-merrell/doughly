@@ -84,7 +84,6 @@ export class AddIngredientStockModalComponent {
       .get('ingredientID')!
       .valueChanges.subscribe((ingredientID) => {
         if (ingredientID) {
-          console.log(`INGREDIENT ID: ${ingredientID}`)
           this.form.get('measurement')!.enable();
           this.ingredient$ = this.store.pipe(
             select(selectIngredientByID(ingredientID))
@@ -179,7 +178,6 @@ export class AddIngredientStockModalComponent {
         )
         .subscribe({
           next: () => {
-            console.log('Ingredient Stock: Add Success')
             this.submittingChanges = false;
             //dispatch ingredientStocks update action to refresh the state
             this.store.dispatch(

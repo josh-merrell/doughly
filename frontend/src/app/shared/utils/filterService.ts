@@ -8,7 +8,6 @@ import { FilterOperatorEnum } from '../state/shared-state';
 export class FilterService {
   constructor() {}
   applyFilters(rows: any[], filters: Filter[]): any[] {
-    console.log(`FILTERS: ${JSON.stringify(filters)}`);
     return rows.filter((row) =>
       //switch case for different filter.filterType values, call corresponding function
       filters.every((filter) => {

@@ -52,7 +52,8 @@ export class IngredientInventoryTableComponent {
   deleteFailureMessage = 'Failed to delete Ingredient Stock. Try again later.';
   addSuccessMessage = 'Added Ingredient Stock with ID:';
   addFailureMessage = 'Failed to add Ingredient Stock. Try again later.';
-  searchPlaceholder = 'Search by Ingredient or Brand...';
+  searchPlaceholder = 'Search by Ingredient...';
+  searchSubject = 'name';
   columns: TableFullColumn[] = [
     {
       name: 'Ingredient',

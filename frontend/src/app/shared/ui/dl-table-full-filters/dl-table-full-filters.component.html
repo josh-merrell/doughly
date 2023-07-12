@@ -22,6 +22,7 @@
       type="text"
       class="ml-dl-2 h-dl-3.5 w-dl-11 border-none pt-dl-3 text-dl-2 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent sm:w-dl-12"
       placeholder="{{ searchPlaceholder }}"
+      (input)="addSearchBarFilter($event)"
     />
   </div>
   <div class="flex items-center">
@@ -159,7 +160,7 @@
         <button
           *ngFor="let option of filterOptions"
           type="button"
-          (click)="addFilter(option)"
+          (click)="openAddFilterModal(option)"
           class="block cursor-pointer px-dl-3 py-dl-2 text-dl-2 text-dl-grey-3 hover:bg-dl-grey-10"
         >
           {{ option.name }}

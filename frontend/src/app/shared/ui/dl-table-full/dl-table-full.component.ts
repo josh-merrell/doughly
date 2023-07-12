@@ -71,6 +71,7 @@ export class TableFullComponent {
   @Input() addSuccessMessage!: string;
   @Input() addFailureMessage!: string;
   @Input() searchPlaceholder!: string;
+  @Input() searchSubject!: string;
   @Input()
   set rows(value: any[]) {
     this.rows$.next(value);
@@ -90,6 +91,7 @@ export class TableFullComponent {
   public filters: Filter[] = [];
   public filteredRows$ = new BehaviorSubject<any[]>([]);
   public displayedRows$ = new BehaviorSubject<any[]>([]);
+  modalActiveForRowID: number | null = null;
   sorts: Sort[] = [];
   SortEnum = SortEnum;
   SortRotateStateEnum = SortRotateStateEnum;
@@ -214,7 +216,16 @@ export class TableFullComponent {
     this.clearAllSortsEnabled = false;
   }
 
-  openEditDialog(itemID: number): void {
+  activateModalForRow(index: number) {
+    this.modalActiveForRowID = index;
+  }
+
+  deactivateModalForRow() {
+    this.modalActiveForRowID = null;
+  }
+
+  openEditDialog(itemID: number, rowIndex: number): void {
+    this.activateModalForRow(rowIndex);
     const dialogRef = this.dialog.open(this.editModalComponent, {
       data: {
         itemID: itemID,
@@ -222,6 +233,7 @@ export class TableFullComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      this.deactivateModalForRow();
       if (result instanceof HttpErrorResponse) {
         this.dialog.open(UpdateRequestErrorModalComponent, {
           data: {
@@ -240,14 +252,17 @@ export class TableFullComponent {
     });
   }
 
-  openDeleteDialog(itemID: number): void {
+  openDeleteDialog(itemID: number, rowIndex: number): void {
+    this.activateModalForRow(rowIndex);
     const dialogRef = this.dialog.open(this.deleteModalComponent, {
       data: {
         itemID: itemID,
+        itemName: this.displayedRows$.getValue()[rowIndex].name,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      this.deactivateModalForRow();
       if (result instanceof HttpErrorResponse) {
         this.dialog.open(DeleteRequestErrorModalComponent, {
           data: {
