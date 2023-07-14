@@ -24,7 +24,7 @@ export function authInterceptor(
       if (result) {
         const authReq = req.clone({
           headers: req.headers.set(
-            'authorization',
+            'Authorization',
             `${result.data.session.access_token}`
           ),
         });

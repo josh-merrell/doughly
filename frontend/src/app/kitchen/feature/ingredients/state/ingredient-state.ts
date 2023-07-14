@@ -11,5 +11,6 @@ export interface IngredientState {
   ingredients: Ingredient[];
   loading: boolean;
   deleting: boolean;
+  adding: boolean;
   error: any;
 }
