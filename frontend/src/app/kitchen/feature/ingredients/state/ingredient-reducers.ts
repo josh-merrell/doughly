@@ -7,6 +7,7 @@ export const initialState: IngredientState = {
   ingredients: [],
   loading: false,
   deleting: false,
+  adding: false,
   error: null,
 };
 
@@ -46,17 +47,17 @@ export const IngredientReducer = createReducer(
   })),
   on(IngredientActions.addIngredient, (state) => ({
     ...state,
-    loading: true,
+    adding: true,
   })),
   on(IngredientActions.addIngredientSuccess, (state, { ingredient }) => ({
     ...state,
-    loading: false,
+    adding: false,
     ingredients: [...state.ingredients, ingredient],
   })),
   on(IngredientActions.addIngredientFailure, (state, { error }) => ({
     ...state,
     error,
-    loading: false,
+    adding: false,
   })),
   on(IngredientActions.deleteIngredient, (state) => ({
     ...state,

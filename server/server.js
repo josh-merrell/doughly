@@ -21,7 +21,13 @@ global.logger = logger;
 
 const requestLogStream = fs.createWriteStream(path.join(__dirname, 'request.log'), { flags: 'a' });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
+);
 app.use(morgan('combined')); //send request logs to console
 app.use(morgan('combined', { stream: requestLogStream })); //also send request logs to file
 const { queryArrayParser } = require('./middleware/queryParsing');
