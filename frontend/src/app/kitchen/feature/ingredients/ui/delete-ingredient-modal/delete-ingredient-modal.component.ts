@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { HttpClient } from '@angular/common/http';
 import { IngredientActions } from '../../state/ingredient-actions';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectDeleting } from '../../state/ingredient-selectors';
@@ -24,7 +23,6 @@ export class DeleteIngredientModalComponent {
     public dialogRef: MatDialogRef<DeleteIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private http: HttpClient
   ) {
     this.isDeleting$ = this.store.select(selectDeleting);
   }

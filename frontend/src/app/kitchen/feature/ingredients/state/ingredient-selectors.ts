@@ -10,3 +10,5 @@ export const selectIngredientByID = (ingredientID: number) =>
   );
 
 export const selectDeleting = (state: any) => state.ingredient.deleting;
+
+export const selectAdding = (state: any) => state.ingredient.adding;
