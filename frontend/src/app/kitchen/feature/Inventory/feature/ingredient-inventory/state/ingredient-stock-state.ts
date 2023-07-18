@@ -17,7 +17,7 @@ export interface IngredientStockState {
 export interface IngredientStockRow {
   ingredientStockID: number;
   name: string;
-  brand: string;
+  brand?: string;
   quantity: string;
   expiration: string;
 }

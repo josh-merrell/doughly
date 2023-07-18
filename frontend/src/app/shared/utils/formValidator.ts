@@ -1,0 +1,24 @@
+import { AbstractControl, ValidatorFn } from "@angular/forms";
+
+export function positiveIntegerValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const value = Number(control.value);
+    return value > 0 && Number.isInteger(value) ? null : { notPositiveInteger: { value: control.value } };
+  };
+}
+
+export function enumValidator(enumValues: any): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    return enumValues[control.value]
+      ? null
+      : { notInEnum: { value: control.value } };
+  };
+}
+
+export function nonDuplicateString(stringArray: string[]): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    return stringArray.includes(control.value)
+      ? { duplicateString: { value: control.value } }
+      : null;
+  };
+}

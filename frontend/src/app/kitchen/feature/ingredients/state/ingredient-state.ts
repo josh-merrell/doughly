@@ -2,7 +2,7 @@ export interface Ingredient {
   ingredientID: number;
   name: string;
   lifespanDays: number;
-  brand: string;
+  brand?: string;
   gramRatio: number;
   purchaseUnit: string;
 }
@@ -12,5 +12,13 @@ export interface IngredientState {
   loading: boolean;
   deleting: boolean;
   adding: boolean;
-  error: any;
+  editing: boolean;
+  error: IngredientError | null;
+}
+
+export interface IngredientError {
+  errorType: string;
+  message: string;
+  statusCode?: number;
+  rawError?: any;
 }

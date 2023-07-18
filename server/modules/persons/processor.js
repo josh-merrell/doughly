@@ -50,7 +50,7 @@ module.exports = ({ db }) => {
     const { userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
 
     //make sure the email is not already in use. If so, return an error.
-    const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').eq('email',  email);
+    const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').eq('email', email);
 
     if (emailExistsError) {
       global.logger.info(`Error checking whether email ${email} exists: ${emailExistsError.message}`);
@@ -89,7 +89,7 @@ module.exports = ({ db }) => {
   async function update(options) {
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'personID' && options[key]) {
+      if (key !== 'personID' && options[key] !== undefined) {
         updateFields[key] = options[key];
       }
     }
@@ -121,8 +121,8 @@ module.exports = ({ db }) => {
     //verify that the person to delete exists
     let { data: personExists, error: personExistsError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${options.personID}`, options, {
       headers: {
-        'authorization': options.authorization,
-      }
+        authorization: options.authorization,
+      },
     });
 
     if (personExistsError) {

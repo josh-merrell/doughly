@@ -116,7 +116,7 @@ module.exports = ({ db }) => {
 
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'taskItemID' && options[key]) updateFields[key] = options[key];
+      if (key !== 'taskItemID' && options[key] !== undefined) updateFields[key] = options[key];
     }
 
     try {

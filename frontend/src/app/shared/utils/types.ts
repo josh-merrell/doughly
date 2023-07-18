@@ -1,0 +1,30 @@
+//export a 'PurchaseUnit' enum with following:
+//const unitEnum = ['gram', 'kilogram', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'pint', 'quart', 'gallon', 'milliliter', 'liter', 'bags', 'boxes', 'cartons', 'pallets', 'bottles', 'containers', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen'];
+
+export enum PurchaseUnit {
+  gram = 'gram',
+  kilogram = 'kilogram',
+  ounce = 'ounce',
+  pound = 'pound',
+  teaspoon = 'teaspoon',
+  tablespoon = 'tablespoon',
+  cup = 'cup',
+  pint = 'pint',
+  quart = 'quart',
+  gallon = 'gallon',
+  milliliter = 'milliliter',
+  liter = 'liter',
+  bags = 'bags',
+  boxes = 'boxes',
+  cartons = 'cartons',
+  pallets = 'pallets',
+  bottles = 'bottles',
+  containers = 'containers',
+  bunch = 'bunch',
+  dash = 'dash',
+  pinch = 'pinch',
+  bar = 'bar',
+  stick = 'stick',
+  single = 'single',
+  dozen = 'dozen',
+}

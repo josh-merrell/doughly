@@ -8,6 +8,7 @@ export const initialState: IngredientState = {
   loading: false,
   deleting: false,
   adding: false,
+  editing: false,
   error: null,
 };
 
@@ -16,6 +17,7 @@ export const IngredientReducer = createReducer(
   on(IngredientActions.loadIngredients, (state) => ({
     ...state,
     loading: true,
+    error: null,
   })),
   on(IngredientActions.loadIngredientsSuccess, (state, { ingredients }) => ({
     ...state,
@@ -30,13 +32,16 @@ export const IngredientReducer = createReducer(
   on(IngredientActions.loadIngredient, (state) => ({
     ...state,
     loading: true,
+    error: null,
   })),
   on(IngredientActions.loadIngredientSuccess, (state, { ingredient }) => {
     return {
       ...state,
       loading: false,
       ingredients: state.ingredients.map((storeIngredient) =>
-        storeIngredient.ingredientID === ingredient.ingredientID ? ingredient : storeIngredient
+        storeIngredient.ingredientID === ingredient.ingredientID
+          ? ingredient
+          : storeIngredient
       ),
     };
   }),
@@ -48,6 +53,7 @@ export const IngredientReducer = createReducer(
   on(IngredientActions.addIngredient, (state) => ({
     ...state,
     adding: true,
+    error: null,
   })),
   on(IngredientActions.addIngredientSuccess, (state, { ingredient }) => ({
     ...state,
@@ -62,16 +68,37 @@ export const IngredientReducer = createReducer(
   on(IngredientActions.deleteIngredient, (state) => ({
     ...state,
     deleting: true,
+    error: null,
   })),
   on(IngredientActions.deleteIngredientSuccess, (state, { ingredientID }) => ({
     ...state,
     deleting: false,
-    ingredients: state.ingredients.filter((ingredient) => ingredient.ingredientID !== ingredientID),
+    ingredients: state.ingredients.filter(
+      (ingredient) => ingredient.ingredientID !== ingredientID
+    ),
   })),
   on(IngredientActions.deleteIngredientFailure, (state, { error }) => ({
     ...state,
     error,
     deleting: false,
+  })),
+  on(IngredientActions.editIngredient, (state) => ({
+    ...state,
+    editing: true,
+    error: null,
+  })),
+  on(IngredientActions.editIngredientSuccess, (state, { ingredient }) => ({
+    ...state,
+    editing: false,
+    ingredients: state.ingredients.map((storeIngredient) =>
+      storeIngredient.ingredientID === ingredient.ingredientID
+        ? ingredient
+        : storeIngredient
+    ),
+  })),
+  on(IngredientActions.editIngredientFailure, (state, { error }) => ({
+    ...state,
+    error,
+    editing: false,
   }))
-
 );

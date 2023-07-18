@@ -16,7 +16,6 @@ import { Observable, Subscription, filter } from 'rxjs';
 })
 export class DeleteIngredientModalComponent {
   isDeleting$: Observable<boolean>;
-  private BACKEND_URL = `${environment.BACKEND}`;
   private subscription!: Subscription;
 
   constructor(
@@ -49,6 +48,8 @@ export class DeleteIngredientModalComponent {
 
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }
