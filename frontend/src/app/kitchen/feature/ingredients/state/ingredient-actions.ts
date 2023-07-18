@@ -48,6 +48,18 @@ const deleteIngredientFailure = createAction(
   '[Ingredients] Delete Failure',
   props<{ error: any }>()
 );
+const editIngredient = createAction(
+  '[Ingredients] Edit',
+  props<{ ingredient: Ingredient }>()
+);
+const editIngredientSuccess = createAction(
+  '[Ingredients] Edit Success',
+  props<{ ingredient: Ingredient }>()
+);
+const editIngredientFailure = createAction(
+  '[Ingredients] Edit Failure',
+  props<{ error: any }>()
+);
 
 export const IngredientActions = {
   loadIngredients,
@@ -62,4 +74,7 @@ export const IngredientActions = {
   deleteIngredient,
   deleteIngredientSuccess,
   deleteIngredientFailure,
+  editIngredient,
+  editIngredientSuccess,
+  editIngredientFailure,
 };

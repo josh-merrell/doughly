@@ -104,7 +104,7 @@ module.exports = ({ db }) => {
     const updateFields = {};
 
     for (let key in options) {
-      if (key !== 'recipeIngredientID' && options[key]) {
+      if (key !== 'recipeIngredientID' && options[key] !== undefined) {
         updateFields[key] = options[key];
       }
     }

@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { IngredientService } from '../data/ingredient.service';
 import { IngredientActions } from './ingredient-actions';
 import { IngredientStockActions } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class IngredientEffects {
@@ -19,10 +20,19 @@ export class IngredientEffects {
       mergeMap((action) =>
         this.ingredientService.add(action.ingredient).pipe(
           map((ingredient) =>
-            IngredientActions.addIngredientSuccess({ ingredient })
+            IngredientActions.addIngredientSuccess({ingredient})
           ),
-          catchError((error) =>
-            of(IngredientActions.addIngredientFailure({ error }))
+          catchError((error: HttpErrorResponse) =>
+            of(
+              IngredientActions.addIngredientFailure({
+                error: {
+                  errorType: 'ADD_INGREDIENT_FAILURE',
+                  message: 'Failed to add ingredient',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -83,6 +93,22 @@ export class IngredientEffects {
     this.actions$.pipe(
       ofType(IngredientActions.deleteIngredientSuccess),
       map(() => IngredientStockActions.loadIngredientStocks())
+    )
+  );
+
+  editIngredient$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientActions.editIngredient),
+      mergeMap((action) =>
+        this.ingredientService.update(action.ingredient).pipe(
+          map((ingredient) =>
+            IngredientActions.editIngredientSuccess({ ingredient })
+          ),
+          catchError((error) =>
+            of(IngredientActions.editIngredientFailure({ error }))
+          )
+        )
+      )
     )
   );
 }

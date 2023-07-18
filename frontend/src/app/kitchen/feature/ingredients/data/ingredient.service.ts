@@ -44,4 +44,11 @@ export class IngredientService {
   delete(ingredientID: number): Observable<Ingredient> {
     return this.http.delete<Ingredient>(`${this.API_URL}/${ingredientID}`);
   }
+
+  update(ingredient: Ingredient): Observable<Ingredient> {
+    return this.http.patch<Ingredient>(
+      `${this.API_URL}/${ingredient.ingredientID}`,
+      ingredient
+    );
+  }
 }

@@ -49,9 +49,18 @@ export class TableFullFiltersComponent {
 
   addFilterMenuOpen = false;
   @ViewChild('filterMenu') filterMenu!: ElementRef;
+  @ViewChild('searchBar') searchBar!: ElementRef;
   globalClickListener: () => void = () => {};
 
   constructor(private renderer: Renderer2, public dialog: MatDialog) {}
+
+  removeFilterAndClearSearchBar(filter: Filter) {
+    if (filter.id === this.searchBarFilterID) {
+      this.searchBarFilterID = null;
+      this.clearSearchBar();
+    }
+    this.removeFilter(filter);
+  }
 
   removeFilter(filter: Filter) {
     this.filters$.next(
@@ -59,8 +68,14 @@ export class TableFullFiltersComponent {
     );
   }
 
+  clearSearchBar() {
+    this.searchBar.nativeElement.value = '';
+  }
+
   removeAllFilters() {
     this.filters$.next([]);
+    this.searchBarFilterID = null;
+    this.clearSearchBar();
   }
 
   isDate(value: any): value is Date {
@@ -113,27 +128,34 @@ export class TableFullFiltersComponent {
 
   addFilter(filter: Filter, isSearchBar: boolean = false) {
     const filtersLength = this.filters$.getValue().length;
-    filter.id = (filtersLength) ? filtersLength : 0;
+    filter.id = filtersLength ? filtersLength : 0;
     if (isSearchBar) this.searchBarFilterID = filter.id;
     this.filters$.next([...this.filters$.getValue(), filter]);
   }
 
   addSearchBarFilter(event: any) {
     //first remove existing search bar filter
-    if (this.searchBarFilterID !== null) {
-      const existingSearchBarFilter = this.filters$.getValue().find(f => f.id === this.searchBarFilterID);
-      if (existingSearchBarFilter) {
+    if (this.searchBarFilterID && this.searchBarFilterID > -1) {
+      const existingSearchBarFilter = this.filters$
+        .getValue()
+        .find((f) => f.id === this.searchBarFilterID);
+      if (existingSearchBarFilter && event.target.value !== '') {
         this.removeFilter(existingSearchBarFilter);
+      } else if (existingSearchBarFilter) {
+        this.removeFilterAndClearSearchBar(existingSearchBarFilter);
       }
     }
     //add new search bar filter if search term is provided
     if (event.target.value !== '') {
-      this.addFilter({
-        subject: this.searchSubject,
-        filterType: FilterTypeEnum.search,
-        operator: FilterOperatorEnum.contains,
-        operand1: event.target.value,
-      }, true);
+      this.addFilter(
+        {
+          subject: this.searchSubject,
+          filterType: FilterTypeEnum.search,
+          operator: FilterOperatorEnum.contains,
+          operand1: event.target.value,
+        },
+        true
+      );
     }
   }
 

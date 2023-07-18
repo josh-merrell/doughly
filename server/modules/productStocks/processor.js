@@ -123,7 +123,7 @@ module.exports = ({ db }) => {
     const updateFields = {};
 
     for (let key in options) {
-      if (key !== 'productStockID' && options[key]) {
+      if (key !== 'productStockID' && options[key] !== undefined) {
         updateFields[key] = options[key];
       }
     }

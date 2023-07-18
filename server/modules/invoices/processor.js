@@ -70,7 +70,7 @@ module.exports = ({ db }) => {
   async function update(options) {
     const updatedFields = {};
     for (let key in options) {
-      if (key !== 'invoiceID' && options[key]) {
+      if (key !== 'invoiceID' && options[key] !== undefined) {
         updatedFields[key] = options[key];
       }
     }

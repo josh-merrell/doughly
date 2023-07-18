@@ -83,7 +83,7 @@ module.exports = ({ db }) => {
 
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'stepID' && options[key]) {
+      if (key !== 'stepID' && options[key] !== undefined) {
         updateFields[key] = options[key];
       }
     }

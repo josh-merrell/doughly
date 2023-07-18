@@ -46,7 +46,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that the provided name is unique, return error if not
-    const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('name', 'eq', name);
+    const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('name', 'eq', name).filter('deleted', 'eq', false);
     if (error) {
       global.logger.info(`Error validating provided ingredient name: ${error.message}`);
       return { error: error.message };
@@ -63,13 +63,20 @@ module.exports = ({ db }) => {
     }
 
     //create the ingredient
-    const { data: ingredient, error: createError } = await db.from('ingredients').insert({ userID, name, lifespanDays, brand, purchaseUnit, gramRatio }).select('ingredientID').single();
+    const { data: ingredient, error: createError } = await db.from('ingredients').insert({ userID, name, lifespanDays, brand, purchaseUnit, gramRatio }).select().single();
     if (createError) {
       global.logger.info(`Error creating ingredient: ${createError.message}`);
       return { error: createError.message };
     }
     global.logger.info(`Created ingredient ID: ${ingredient.ingredientID}`);
-    return ingredient;
+    return {
+      ingredientID: ingredient.ingredientID,
+      name: ingredient.name,
+      lifespanDays: ingredient.lifespanDays,
+      brand: ingredient.brand,
+      purchaseUnit: ingredient.purchaseUnit,
+      gramRatio: ingredient.gramRatio,
+    };
   }
 
   async function update(options) {
@@ -112,15 +119,23 @@ module.exports = ({ db }) => {
     const updateFields = {};
 
     for (let key in options) {
-      if (key !== 'ingredientID' && options[key]) {
+      if (key !== 'ingredientID' && options[key] !== undefined) {
         updateFields[key] = options[key];
       }
     }
 
     try {
+      console.log(`FIELDS TO UPDATE: ${JSON.stringify(updateFields)}`);
       const updatedIngredient = await updater('ingredientID', ingredientID, 'ingredients', updateFields);
       global.logger.info(`Updated ingredient ID: ${ingredientID}`);
-      return updatedIngredient;
+      return {
+        ingredientID: updatedIngredient.ingredientID,
+        name: updatedIngredient.name,
+        lifespanDays: updatedIngredient.lifespanDays,
+        brand: updatedIngredient.brand,
+        purchaseUnit: updatedIngredient.purchaseUnit,
+        gramRatio: updatedIngredient.gramRatio,
+      };
     } catch (error) {
       global.logger.info(`Error updating ingredient: ${error.message}`);
       return { error: error.message };

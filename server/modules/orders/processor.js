@@ -9,12 +9,18 @@ const { updater } = require('../../db');
 module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, orderIDs, clientID, name, scheduledDeliveryTimeRange, createdTimeRange, fulfilledTimeRange, fulfillment, status } = options;
-    
+
     let q = db.from('orders').select().filter('userID', 'eq', userID).eq('deleted', false).order('orderID', { ascending: true });
 
-    if (orderIDs) { q = q.in('orderID', orderIDs) }
-    if (clientID) { q = q.filter('clientID', 'eq', clientID) }
-    if (name) { q = q.like('name', name) }
+    if (orderIDs) {
+      q = q.in('orderID', orderIDs);
+    }
+    if (clientID) {
+      q = q.filter('clientID', 'eq', clientID);
+    }
+    if (name) {
+      q = q.like('name', name);
+    }
     if (scheduledDeliveryTimeRange) {
       q = q.gte('scheduledDeliveryTime', scheduledDeliveryTimeRange[0]).lte('scheduledDeliveryTime', scheduledDeliveryTimeRange[1]);
     }
@@ -24,8 +30,12 @@ module.exports = ({ db }) => {
     if (fulfilledTimeRange) {
       q = q.gte('fulfilledTime', fulfilledTimeRange[0]).lte('fulfilledTime', fulfilledTimeRange[1]);
     }
-    if (fulfillment) { q = q.filter('fulfillment', 'eq', fulfillment) }
-    if (status) { q = q.filter('status', 'eq', status) }
+    if (fulfillment) {
+      q = q.filter('fulfillment', 'eq', fulfillment);
+    }
+    if (status) {
+      q = q.filter('status', 'eq', status);
+    }
 
     const { data: orders, error } = await q;
 
@@ -59,27 +69,27 @@ module.exports = ({ db }) => {
       global.logger.info(`Order creation failed: client ${clientID} does not exist`);
       return { error: `Order creation failed: client ${clientID} does not exist` };
     }
-    
-    
+
     //if delivery date is in the past, set to fulfilled, otherwise set to created
     const status = new Date(scheduledDeliveryTime) < new Date() ? 'delivered' : 'created';
     //if delivery date is in the past, set fulfillment date to delivery date
     const fulfilledTime = new Date(scheduledDeliveryTime) < new Date() ? scheduledDeliveryTime : null;
     //create an invoice
-    const invoice = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/invoices`, {
-      type: 'order',
-      status: 'draft',
-      subtotal: 10.00 //TODO: calculate subtotal from orderStockProducts and orderTaskProducts
-    }, {
-      headers: {
-        'authorization': options.authorization,
-      }
-    });
+    const invoice = await axios.post(
+      `${process.env.NODE_HOST}:${process.env.PORT}/invoices`,
+      {
+        type: 'order',
+        status: 'draft',
+        subtotal: 10.0, //TODO: calculate subtotal from orderStockProducts and orderTaskProducts
+      },
+      {
+        headers: {
+          authorization: options.authorization,
+        },
+      },
+    );
     //create an order
-    const { data: order, error: orderError } = await db
-      .from('orders')
-      .insert({ userID, clientID, name, scheduledDeliveryTime, fulfillment, status, fulfilledTime, invoiceID: invoice.data[0].invoiceID, description, createdTime: new Date() })
-      .select('orderID');
+    const { data: order, error: orderError } = await db.from('orders').insert({ userID, clientID, name, scheduledDeliveryTime, fulfillment, status, fulfilledTime, invoiceID: invoice.data[0].invoiceID, description, createdTime: new Date() }).select('orderID');
 
     if (orderError) {
       global.logger.info(`Error creating order: ${orderError.message}`);
@@ -119,12 +129,12 @@ module.exports = ({ db }) => {
 
     //if status is being changed to a valued not equal to 'delivered', set fulfilledTime to null before updating
     if (options.status !== 'delivered') options.fulfilledTime = null;
-    
+
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'orderID' && options[key]) updateFields[key] = options[key];
+      if (key !== 'orderID' && options[key] !== undefined) updateFields[key] = options[key];
     }
-    
+
     try {
       const updatedOrder = await updater('orderID', options.orderID, 'orders', updateFields);
       global.logger.info(`Updated order ${options.orderID}`);
@@ -133,7 +143,6 @@ module.exports = ({ db }) => {
       global.logger.info(`Error updating order ID:${options.orderID}: ${error.message}`);
       return { error: error.message };
     }
-    
   }
 
   async function deleteOrder(options) {
@@ -150,13 +159,17 @@ module.exports = ({ db }) => {
 
     //change status of related invoice to 'void'
     try {
-      await axios.patch(`${process.env.NODE_HOST}:${process.env.PORT}/invoices/${order.invoiceID}`, {
-        status: 'void',
-      }, {
-        headers: {
-          'authorization': options.authorization,
-        }
-      });
+      await axios.patch(
+        `${process.env.NODE_HOST}:${process.env.PORT}/invoices/${order.invoiceID}`,
+        {
+          status: 'void',
+        },
+        {
+          headers: {
+            authorization: options.authorization,
+          },
+        },
+      );
     } catch (error) {
       global.logger.info(`Error voiding invoice ${order.invoiceID} while deleting order ${options.orderID}: ${error.message}`);
       return { error: error.message };

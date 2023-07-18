@@ -133,7 +133,7 @@ module.exports = ({ db }) => {
     //update toolStock
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'toolStockID' && options[key]) {
+      if (key !== 'toolStockID' && options[key] !== undefined) {
         updateFields[key] = options[key];
       }
     }

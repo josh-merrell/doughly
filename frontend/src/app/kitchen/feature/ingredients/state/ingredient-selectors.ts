@@ -12,3 +12,11 @@ export const selectIngredientByID = (ingredientID: number) =>
 export const selectDeleting = (state: any) => state.ingredient.deleting;
 
 export const selectAdding = (state: any) => state.ingredient.adding;
+
+export const selectEditing = (state: any) => state.ingredient.editing;
+
+export const selectError = (state: any) => state.ingredient.error;
+
+export const selectLoading = (state: any) => state.ingredient.loading;
+
+export const selectLastIngredientID = (state: any) => state.ingredient.lastIngredientID;

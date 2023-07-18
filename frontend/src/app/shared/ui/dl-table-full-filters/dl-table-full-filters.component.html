@@ -19,6 +19,7 @@
       ></path>
     </svg>
     <input
+      #searchBar
       type="text"
       class="ml-dl-2 h-dl-3.5 w-dl-11 border-none pt-dl-3 text-dl-2 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent sm:w-dl-12"
       placeholder="{{ searchPlaceholder }}"
@@ -79,7 +80,7 @@
           </ng-template>
         </ng-container>
         <!-- operand2 -->
-        <ng-container *ngIf="filter.operand2 !== null">
+        <ng-container *ngIf="filter.operand2">
           <ng-container *ngIf="isDate(filter.operand2); else operand2NotDate">
             <span>and</span>
             <span class="font-dl-3">{{
@@ -95,7 +96,7 @@
         <button
           type="button"
           class="ml-dl-2 rounded-dl-2 bg-dl-grey-10 text-dl-grey-3 hover:bg-dl-grey-9 focus:outline-none"
-          (click)="removeFilter(filter)"
+          (click)="removeFilterAndClearSearchBar(filter)"
         >
           <svg
             class="h-4 w-4"

@@ -241,7 +241,7 @@ export class TableFullComponent {
             updateFailureMessage: `${this.editFailureMessage}`,
           },
         });
-      } else if (result) {
+      } else if (result === 'success') {
         this.dialog.open(UpdateRequestConfirmationModalComponent, {
           data: {
             result: result,
@@ -286,18 +286,18 @@ export class TableFullComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result instanceof HttpErrorResponse) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `${this.addFailureMessage}`,
-          },
-        });
-      } else if (result) {
+      if (result === 'success') {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             result: result,
             addSuccessMessage: `${this.addSuccessMessage}`,
+          },
+        });
+      } else if (result instanceof HttpErrorResponse) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            error: result,
+            addFailureMessage: `${this.addFailureMessage}`,
           },
         });
       }
