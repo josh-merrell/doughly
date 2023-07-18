@@ -10,9 +10,9 @@ export interface Ingredient {
 export interface IngredientState {
   ingredients: Ingredient[];
   loading: boolean;
-  deleting: boolean;
   adding: boolean;
-  editing: boolean;
+  updating: boolean;
+  deleting: boolean;
   error: IngredientError | null;
 }
 

@@ -8,7 +8,7 @@ export const initialState: IngredientState = {
   loading: false,
   deleting: false,
   adding: false,
-  editing: false,
+  updating: false,
   error: null,
 };
 

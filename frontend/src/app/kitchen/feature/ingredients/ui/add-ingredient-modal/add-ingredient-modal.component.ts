@@ -8,7 +8,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { Observable, Subscription, filter, of, switchMap, take } from 'rxjs';
-import { selectAdding, selectIngredients, selectLastIngredientID, selectLoading } from '../../state/ingredient-selectors';
+import { selectAdding, selectIngredients, selectLoading } from '../../state/ingredient-selectors';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { enumValidator, nonDuplicateString, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
@@ -81,13 +81,13 @@ export class AddIngredientModalComponent {
   }
 
   onSubmit() {
-    const newIngredient = this.form.value;
+    const payload = this.form.value;
 
-    newIngredient.lifespanDays = parseInt(newIngredient.lifespanDays);
-    newIngredient.gramRatio = parseInt(newIngredient.gramRatio);
+    payload.lifespanDays = parseInt(payload.lifespanDays);
+    payload.gramRatio = parseInt(payload.gramRatio);
 
     this.store.dispatch(
-      IngredientActions.addIngredient({ ingredient: newIngredient })
+      IngredientActions.addIngredient({ ingredient: payload })
     );
 
     this.addingSubscription = this.store

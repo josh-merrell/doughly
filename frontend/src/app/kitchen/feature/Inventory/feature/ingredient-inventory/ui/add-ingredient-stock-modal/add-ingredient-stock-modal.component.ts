@@ -17,10 +17,12 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { Observable, Subscription, map } from 'rxjs';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
+import {
+  selectAdding,
+  selectError,
+} from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import {
   selectIngredientByID,
   selectIngredients,
@@ -28,6 +30,7 @@ import {
 import { selectEmployees } from 'src/app/employees/state/employee-selectors';
 import { Employee } from 'src/app/employees/state/employee-state';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
+import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 
 @Component({
   selector: 'dl-add-ingredient-stock-modal',
@@ -45,40 +48,43 @@ import { IngredientStockActions } from '../../state/ingredient-stock-actions';
   templateUrl: './add-ingredient-stock-modal.component.html',
 })
 export class AddIngredientStockModalComponent {
-  form: FormGroup;
-  submittingChanges: boolean = false;
-  private BACKEND_URL = `${environment.BACKEND}`;
+  form!: FormGroup;
 
   ingredients$!: Observable<Ingredient[]>;
   ingredient$!: Observable<Ingredient>;
   employees$!: Observable<any>;
 
+  isAdding$: Observable<boolean>;
+
   private ingredientIDSubscription!: Subscription;
+  private addingSubscription!: Subscription;
   private purchasedDateSubscription!: Subscription;
   private purchasedBySubscription!: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<AddIngredientStockModalComponent>,
     private store: Store,
-    private http: HttpClient,
     private fb: FormBuilder
   ) {
+    this.isAdding$ = this.store.select(selectAdding);
+  }
+
+  setForm() {
     this.form = this.fb.group({
       ingredientID: ['', Validators.required],
       purchasedBy: ['', Validators.required],
       purchasedDate: ['', Validators.required],
-      measurement: ['', Validators.required],
+      measurement: ['', [Validators.required, positiveIntegerValidator()]],
     });
   }
 
   ngOnInit(): void {
     this.ingredients$ = this.store.select(selectIngredients);
     this.employees$ = this.store.select(selectEmployees);
+    this.setForm();
 
     const purchasedByControl = this.form.get('purchasedBy')!;
     const purchasedDateControl = this.form.get('purchasedDate')!;
-    const measurementControl = this.form.get('measurement')!;
-    const ingredientIDControl = this.form.get('ingredientID')!;
 
     this.form.get('measurement')!.disable();
 
@@ -149,9 +155,18 @@ export class AddIngredientStockModalComponent {
   }
 
   ngOnDestroy(): void {
-    this.ingredientIDSubscription.unsubscribe();
-    this.purchasedDateSubscription.unsubscribe();
-    this.purchasedBySubscription.unsubscribe();
+    if (this.ingredientIDSubscription) {
+      this.ingredientIDSubscription.unsubscribe();
+    }
+    if (this.purchasedDateSubscription) {
+      this.purchasedDateSubscription.unsubscribe();
+    }
+    if (this.purchasedBySubscription) {
+      this.purchasedBySubscription.unsubscribe();
+    }
+    if (this.addingSubscription) {
+      this.addingSubscription.unsubscribe();
+    }
   }
 
   dateValidator(minDate: Date): ValidatorFn {
@@ -164,32 +179,31 @@ export class AddIngredientStockModalComponent {
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
-      this.submittingChanges = true;
-      const date = new Date(this.form.value.purchasedDate);
-      const payload = {
-        ...this.form.value,
-        ingredientID: parseInt(this.form.value.ingredientID, 10),
-        purchasedBy: parseInt(this.form.value.purchasedBy, 10),
-        purchasedDate: date.toISOString(),
-        measurement: parseFloat(this.form.value.measurement),
-      };
-      this.http
-        .post(`${this.BACKEND_URL}/ingredientStocks`, payload)
-        .subscribe({
-          next: () => {
-            this.submittingChanges = false;
-            //dispatch ingredientStocks update action to refresh the state
-            this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+    const date = new Date(this.form.value.purchasedDate);
 
-            this.dialogRef.close(this.form.value);
-          },
-          error: (error) => {
-            this.submittingChanges = false;
-            this.dialogRef.close(error);
-          },
-        });
+    const payload = {
+      ...this.form.value,
+      ingredientID: parseInt(this.form.value.ingredientID, 10),
+      purchasedBy: parseInt(this.form.value.purchasedBy, 10),
+      measurement: parseFloat(this.form.value.measurement),
+      purchasedDate: date.toISOString(),
     }
+
+    this.store.dispatch(IngredientStockActions.addIngredientStock({ ingredientStock: payload }));
+
+    this.addingSubscription = this.store.select(selectAdding).subscribe((adding:boolean) => {
+      if (!adding) {
+        this.store.select(selectError).subscribe((error) => {
+          if (error) {
+            console.log(`GOT ERROR`)
+            this.dialogRef.close(error);
+          } else {
+            console.log(`NO ERROR`)
+            this.dialogRef.close('success');
+          }
+        })
+      }
+    })
   }
 
   onCancel(): void {

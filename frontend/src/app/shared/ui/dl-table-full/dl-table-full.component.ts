@@ -286,6 +286,7 @@ export class TableFullComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      console.log(`RESULT: ${result}`)
       if (result === 'success') {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
