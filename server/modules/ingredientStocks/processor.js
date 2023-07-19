@@ -102,42 +102,45 @@ module.exports = ({ db }) => {
     }
 
     //verify that provided measurement is positive integer, return error if not
-    if (!measurement || measurement < 1) {
+    if (measurement && measurement < 1) {
       global.logger.info(`positive measurement integer is required`);
       return { error: `positive measurement integer is required` };
     }
 
     //verify that provided purchasedBy is valid, return error if not
-    const { data: existingEmployee, error: employeeError } = await db.from('employees').select().filter('userID', 'eq', userID).filter('employeeID', 'eq', purchasedBy);
-    if (employeeError) {
-      global.logger.info(`Error validating provided employeeID: ${purchasedBy}: ${employeeError.message}`);
-      return { error: employeeError.message };
-    }
-    if (existingEmployee.length === 0) {
-      global.logger.info(`Employee ID does not exist, cannot update ingredientStock`);
-      return { error: `Employee ID does not exist, cannot update ingredientStock` };
+    if (purchasedBy) {
+      const { data: existingEmployee, error: employeeError } = await db.from('employees').select().filter('userID', 'eq', userID).filter('employeeID', 'eq', purchasedBy);
+      if (employeeError) {
+        global.logger.info(`Error validating provided employeeID: ${purchasedBy}: ${employeeError.message}`);
+        return { error: employeeError.message };
+      }
+      if (existingEmployee.length === 0) {
+        global.logger.info(`Employee ID does not exist, cannot update ingredientStock`);
+        return { error: `Employee ID does not exist, cannot update ingredientStock` };
+      }
     }
 
-    //calculate grams for new stock using gramRatio for the ingredient
-    const { data: ingredient, error: ingredientError } = await db.from('ingredients').select('gramRatio').filter('userID', 'eq', userID).filter('ingredientID', 'eq', existingIngredientStock[0].ingredientID);
-    if (ingredientError) {
-      global.logger.info(`Error getting ingredient: ${ingredientError.message}`);
-      return { error: ingredientError.message };
-    }
-    if (ingredient.length === 0) {
-      global.logger.info(`Ingredient ID does not exist, cannot update ingredientStock`);
-      return { error: `Ingredient ID does not exist, cannot update ingredientStock` };
-    }
-    const grams = measurement * ingredient[0].gramRatio;
     //update the ingredientStock
     const updateFields = {};
-
     for (let key in options) {
       if (key !== 'ingredientStockID' && key !== 'measurement' && options[key] !== undefined) {
         updateFields[key] = options[key];
       }
     }
-    updateFields.grams = grams;
+    //calculate grams for new stock using gramRatio for the ingredient
+    if (measurement) {
+      const { data: ingredient, error: ingredientError } = await db.from('ingredients').select('gramRatio').filter('userID', 'eq', userID).filter('ingredientID', 'eq', existingIngredientStock[0].ingredientID);
+      if (ingredientError) {
+        global.logger.info(`Error getting ingredient: ${ingredientError.message}`);
+        return { error: ingredientError.message };
+      }
+      if (ingredient.length === 0) {
+        global.logger.info(`Ingredient ID does not exist, cannot update ingredientStock`);
+        return { error: `Ingredient ID does not exist, cannot update ingredientStock` };
+      }
+      const grams = measurement * ingredient[0].gramRatio;
+      updateFields.grams = grams;
+    }
 
     try {
       const updatedIngredientStock = await updater('ingredientStockID', ingredientStockID, 'ingredientStocks', updateFields);

@@ -8,11 +8,11 @@ import {
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectIngredientStockByID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { Store, select } from '@ngrx/store';
-import { Observable, combineLatest, map, of, switchMap } from 'rxjs';
+import { Observable, Subscription, combineLatest, map, of, switchMap } from 'rxjs';
 import { IngredientStock } from '../../state/ingredient-stock-state';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
-import { selectIngredientByID } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
+import { selectError, selectIngredientByID, selectUpdating } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import {
   AbstractControl,
   FormBuilder,
@@ -23,14 +23,13 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { selectEmployees } from 'src/app/employees/state/employee-selectors';
-import { environment } from 'src/environments/environment';
 import { Employee } from 'src/app/employees/state/employee-state';
-import { HttpClient } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
+import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 
 @Component({
   selector: 'dl-edit-ingredient-stock-modal',
@@ -49,32 +48,49 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class EditIngredientStockModalComponent {
   ingredientStock$!: Observable<IngredientStock>;
-  form: FormGroup;
+  form!: FormGroup;
   employees$!: Observable<Employee[]>;
   submittingChanges: boolean = false;
-  private BACKEND_URL = `${environment.BACKEND}`;
   ingredient$!: Observable<Ingredient>;
+  originalIngredientStock!: any;
+
+  isUpdating$!: Observable<boolean>;
+
+  private updatingSubscription!: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<EditIngredientStockModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private http: HttpClient,
     private fb: FormBuilder
   ) {
+    this.isUpdating$ = this.store.pipe(select(selectUpdating));
+  }
+
+  setForm() {
     this.form = this.fb.group({
       purchasedBy: ['', Validators.required],
       purchasedDate: ['', Validators.required],
-      measurement: ['', Validators.required],
+      measurement: ['', [Validators.required, positiveIntegerValidator()]],
     });
   }
 
   ngOnInit(): void {
+    this.setForm();
     this.employees$ = this.store.pipe(select(selectEmployees));
-
     this.ingredientStock$ = this.store.pipe(
       select(selectIngredientStockByID(this.data.itemID))
     );
+
+    this.ingredientStock$.subscribe((ingredientStock) => {
+      this.originalIngredientStock = ingredientStock;
+      this.form.patchValue({
+        purchasedBy: ingredientStock.purchasedBy,
+        purchasedDate: ingredientStock.purchasedDate,
+        measurement: ingredientStock.grams,
+      });
+    });
+    
     const purchasedByControl = this.form.get('purchasedBy')!;
     const purchasedDateControl = this.form.get('purchasedDate')!;
 
@@ -157,40 +173,55 @@ export class EditIngredientStockModalComponent {
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
-      this.submittingChanges = true;
-      const date = new Date(this.form.value.purchasedDate);
-      const payload = {
-        ...this.form.value,
-        purchasedBy: parseInt(this.form.value.purchasedBy, 10),
-        purchasedDate: date.toISOString(),
-        measurement: parseFloat(this.form.value.measurement),
-      };
-      this.http
-        .patch(
-          `${this.BACKEND_URL}/ingredientStocks/${this.data.itemID}`,
-          payload
-        )
-        .subscribe({
-          next: () => {
-            this.submittingChanges = false;
-            // dispatch ingredientStock update action to refresh its state
-            this.store.dispatch(
-              IngredientStockActions.loadIngredientStock({
-                ingredientStockID: this.data.itemID,
-              })
-            );
-            this.dialogRef.close(this.form.value);
-          },
-          error: (error) => {
-            this.submittingChanges = false;
-            this.dialogRef.close(error);
-          },
-        });
+    const updatedIngredientStock: any = {
+      ingredientStockID: this.data.itemID,
+    };
+
+    const formValues = this.form.value;
+
+    for (let key in formValues) { 
+      if (key === 'measurement') {
+        updatedIngredientStock['measurement'] = parseFloat(formValues[key]);
+      } else if (
+        key in this.originalIngredientStock &&
+        formValues[key] !== this.originalIngredientStock[key]
+      ) {
+        if (key === 'purchasedBy') {
+          updatedIngredientStock[key] = parseInt(formValues[key], 10);
+        } else if (key === 'purchasedDate') {
+          updatedIngredientStock[key] = new Date(formValues[key]).toISOString();
+        } else {
+          updatedIngredientStock[key] = formValues[key];
+        }
+      }
     }
+
+    this.store.dispatch(
+      IngredientStockActions.updateIngredientStock({ ingredientStock: updatedIngredientStock })
+    );
+
+    this.updatingSubscription = this.store
+      .select(selectUpdating)
+      .subscribe((updating: boolean) => {
+        if (!updating) {
+          this.store.select(selectError).subscribe((error) => {
+            if (error) {
+              this.dialogRef.close(error);
+            } else {
+              this.dialogRef.close('success');
+            }
+          });
+        }
+      });
   }
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  ngOnDestroy(): void {
+    if (this.updatingSubscription) {
+      this.updatingSubscription.unsubscribe();
+    }
   }
 }

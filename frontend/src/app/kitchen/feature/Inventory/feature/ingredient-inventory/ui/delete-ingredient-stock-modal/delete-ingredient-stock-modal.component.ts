@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { environment } from 'src/environments/environment';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { HttpClient } from '@angular/common/http';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { selectDeleting, selectError } from '../../state/ingredient-stock-selectors';
+import { Observable, Subscription } from 'rxjs';
 
 
 @Component({
@@ -16,34 +16,47 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class DeleteIngredientStockModalComponent {
   submittingChanges: boolean = false;
-  private BACKEND_URL = `${environment.BACKEND}`;
+  isDeleting$: Observable<boolean>;
+  private deleteSubscription!: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<DeleteIngredientStockModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private http: HttpClient
-  ) {}
+  ) {
+    this.isDeleting$ = this.store.select(selectDeleting);
+  }
 
   onSubmit(): void {
-    this.submittingChanges = true;
-    this.http
-      .delete(`${this.BACKEND_URL}/ingredientStocks/${this.data.itemID}`)
-      .subscribe({
-        next: () => {
-          this.submittingChanges = false;
-          //dispatch ingredientStock update action to refresh the state
-          this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-          this.dialogRef.close('success');
-        },
-        error: (error) => {
-          this.submittingChanges = false;
-          this.dialogRef.close(error);
-        },
+    this.store.dispatch(
+      IngredientStockActions.deleteIngredientStock({
+        ingredientStockID: this.data.itemID,
+      })
+    );
+
+    // Listen for updates to isDeleting after dispatching the action
+    this.deleteSubscription = this.store
+      .select(selectDeleting)
+      .subscribe((deleting: boolean) => {
+        if (!deleting) {
+          this.store.select(selectError).subscribe((error) => {
+            if (error) {
+              this.dialogRef.close(error);
+            } else {
+              this.dialogRef.close('success');
+            }
+          });
+        }
       });
   }
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  ngOnDestroy(): void {
+    if (this.deleteSubscription) {
+      this.deleteSubscription.unsubscribe();
+    }
   }
 }
