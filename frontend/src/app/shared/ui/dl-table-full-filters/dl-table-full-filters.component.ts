@@ -129,13 +129,15 @@ export class TableFullFiltersComponent {
   addFilter(filter: Filter, isSearchBar: boolean = false) {
     const filtersLength = this.filters$.getValue().length;
     filter.id = filtersLength ? filtersLength : 0;
-    if (isSearchBar) this.searchBarFilterID = filter.id;
+    if (isSearchBar) {
+      this.searchBarFilterID = filter.id;
+    }
     this.filters$.next([...this.filters$.getValue(), filter]);
   }
 
   addSearchBarFilter(event: any) {
     //first remove existing search bar filter
-    if (this.searchBarFilterID && this.searchBarFilterID > -1) {
+    if (this.searchBarFilterID !== null) {
       const existingSearchBarFilter = this.filters$
         .getValue()
         .find((f) => f.id === this.searchBarFilterID);
