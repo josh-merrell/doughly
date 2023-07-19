@@ -18,5 +18,3 @@ export const selectUpdating = (state: any) => state.ingredient.updating;
 export const selectError = (state: any) => state.ingredient.error;
 
 export const selectLoading = (state: any) => state.ingredient.loading;
-
-// export const selectLastIngredientID = (state: any) => state.ingredient.lastIngredientID;

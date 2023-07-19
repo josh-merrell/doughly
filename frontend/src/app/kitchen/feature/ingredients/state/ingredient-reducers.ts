@@ -1,5 +1,4 @@
 import { createReducer, on } from '@ngrx/store';
-import { Ingredient } from './ingredient-state';
 import { IngredientActions } from './ingredient-actions';
 import { IngredientState } from './ingredient-state';
 
