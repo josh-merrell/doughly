@@ -1,1 +1,24 @@
-<p>tools works!</p>
+<dl-table-full
+  *ngIf="rows$ | async as rows; else noData"
+  [title]="title"
+  [heading_phrase]="headingPhrase"
+  [IDKey]="IDKey"
+  [searchPlaceholder]="searchPlaceholder"
+  [searchSubject]="searchSubject"
+  [addButtonTitle]="addButtonTitle"
+  [addModalComponent]="addModalComponent"
+  [addSuccessMessage]="addSuccessMessage"
+  [addFailureMessage]="addFailureMessage"
+  [editModalComponent]="editModalComponent"
+  [editSuccessMessage]="editSuccessMessage"
+  [editFailureMessage]="editFailureMessage"
+  [deleteModalComponent]="deleteModalComponent"
+  [deleteSuccessMessage]="deleteSuccessMessage"
+  [deleteFailureMessage]="deleteFailureMessage"
+  [columns]="columns"
+  [rows]="rows"
+>
+</dl-table-full>
+<ng-template #noData>
+  <p class="mt-2 text-sm text-gray-700">No data available.</p>
+</ng-template>

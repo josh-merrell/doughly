@@ -4,13 +4,16 @@ const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { userID, toolIDs, name } = options;
+    const { userID, toolIDs, name, brand } = options;
     let q = db.from('tools').select().filter('userID', 'eq', userID).eq('deleted', false).order('toolID', { ascending: true });
     if (toolIDs) {
       q = q.in('toolID', toolIDs);
     }
     if (name) {
       q = q.like('name', name);
+    }
+    if (brand) {
+      q = q.like('brand', brand);
     }
     const { data: tools, error } = await q;
 
@@ -35,10 +38,10 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, name } = options;
+    const { userID, name, brand } = options;
 
     //validate that the provided name is not already used by another tool
-    const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('name', name);
+    const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('name', name).filter('deleted', 'eq', false);
     if (existingToolError) {
       global.logger.info(`Error getting existing tools: ${existingToolError.message}`);
       return { error: existingToolError.message };
@@ -49,14 +52,18 @@ module.exports = ({ db }) => {
     }
 
     //create the tool
-    const { data: tool, error } = await db.from('tools').insert({ userID, name }).select('toolID').single();
+    const { data: tool, error } = await db.from('tools').insert({ userID, name, brand }).select('*').single();
 
     if (error) {
       global.logger.info(`Error creating tool: ${error.message}`);
       return { error: error.message };
     }
     global.logger.info(`Created tool ID ${tool.toolID}`);
-    return tool;
+    return {
+      toolID: tool.toolID,
+      name: tool.name,
+      brand: tool.brand,
+    };
   }
 
   async function update(options) {
@@ -95,7 +102,11 @@ module.exports = ({ db }) => {
     try {
       const updatedTool = await updater('toolID', toolID, 'tools', updateFields);
       global.logger.info(`Updated tool ID ${toolID}`);
-      return updatedTool;
+      return {
+        toolID: updatedTool.toolID,
+        name: updatedTool.name,
+        brand: updatedTool.brand,
+      };
     } catch (error) {
       global.logger.info(`Error updating tool: ${error.message}`);
       return { error: error.message };

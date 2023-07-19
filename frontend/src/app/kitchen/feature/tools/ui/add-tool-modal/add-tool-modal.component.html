@@ -15,11 +15,11 @@
         <h3
           class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4"
         >
-          Add Ingredient
+          Add Tool
         </h3>
         <div class="mt-dl-2">
           <p class="text-dl-2 text-dl-grey-5">
-            Add a new Ingredient that can be stocked in your kitchen
+            Add a new Tool that can be stocked in your kitchen
           </p>
         </div>
       </div>
@@ -49,14 +49,14 @@
 
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
-        <div id="form-ingredientName" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Ingredient</label>
+        <div id="form-toolName" class="relative flex flex-col">
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Tool</label>
           <mat-form-field class="w-full">
             <input matInput formControlName="name" />
             <mat-error
               *ngIf="form.get('name')?.hasError('duplicateString')"
             >
-              Cannot reuse an existing ingredient name
+              Cannot reuse an existing tool name
             </mat-error>
           </mat-form-field>
         </div>
@@ -65,40 +65,6 @@
           <label class="text-dl-2 font-dl-3 text-dl-grey-4">Brand</label>
           <mat-form-field class="w-full">
             <input matInput formControlName="brand" />
-          </mat-form-field>
-        </div>
-
-        <div id="form-ingredientLifespanDays" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
-            >Lifespan (days)</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="lifespanDays" />
-            <mat-error
-              *ngIf="form.get('lifespanDays')?.hasError('notPositiveInteger')"
-            >
-              Must be a positive whole number
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div id="form-ingredientPurchaseUnit" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
-            >Purchase Unit</label
-          >
-          <mat-form-field>
-            <mat-select formControlName="purchaseUnit">
-              <mat-option *ngFor="let unit of purchaseUnits" [value]="unit">
-                {{ unit }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <div id="form-ingredientGramRatio" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Gram Ratio</label>
-          <mat-form-field class="w-full">
-            <input matInput formControlName="gramRatio" />
           </mat-form-field>
         </div>
       </div>
