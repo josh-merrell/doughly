@@ -5,7 +5,6 @@ import { of } from 'rxjs';
 import { IngredientService } from '../data/ingredient.service';
 import { IngredientActions } from './ingredient-actions';
 import { IngredientStockActions } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class IngredientEffects {
@@ -22,7 +21,7 @@ export class IngredientEffects {
           map((ingredient) =>
             IngredientActions.addIngredientSuccess({ingredient})
           ),
-          catchError((error: HttpErrorResponse) =>
+          catchError((error) =>
             of(
               IngredientActions.addIngredientFailure({
                 error: {

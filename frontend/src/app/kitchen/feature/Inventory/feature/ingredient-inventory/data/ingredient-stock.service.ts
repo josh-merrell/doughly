@@ -72,4 +72,17 @@ export class IngredientStockService {
   add(ingredientStock: IngredientStock): Observable<IngredientStock> {
     return this.http.post<IngredientStock>(this.API_URL, ingredientStock);
   }
+
+  update(ingredientStock: IngredientStock): Observable<IngredientStock> {
+    return this.http.patch<IngredientStock>(
+      `${this.API_URL}/${ingredientStock.ingredientStockID}`,
+      ingredientStock
+    );
+  }
+
+  delete(ingredientStockID: number): Observable<IngredientStock> {
+    return this.http.delete<IngredientStock>(
+      `${this.API_URL}/${ingredientStockID}`
+    );
+  }
 }

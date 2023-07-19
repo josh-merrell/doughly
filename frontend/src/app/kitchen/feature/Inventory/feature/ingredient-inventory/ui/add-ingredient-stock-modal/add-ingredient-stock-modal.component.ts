@@ -195,10 +195,8 @@ export class AddIngredientStockModalComponent {
       if (!adding) {
         this.store.select(selectError).subscribe((error) => {
           if (error) {
-            console.log(`GOT ERROR`)
             this.dialogRef.close(error);
           } else {
-            console.log(`NO ERROR`)
             this.dialogRef.close('success');
           }
         })
