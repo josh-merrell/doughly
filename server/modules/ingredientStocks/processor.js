@@ -72,13 +72,19 @@ module.exports = ({ db }) => {
     const grams = measurement * existingIngredient[0].gramRatio;
 
     //create the ingredientStock
-    const { data: newIngredientStock, error: newIngredientStockError } = await db.from('ingredientStocks').insert({ userID, ingredientID, purchasedBy, purchasedDate, grams }).select('ingredientStockID').single();
+    const { data: newIngredientStock, error: newIngredientStockError } = await db.from('ingredientStocks').insert({ userID, ingredientID, purchasedBy, purchasedDate, grams }).select().single();
     if (newIngredientStockError) {
       global.logger.info(`Error creating ingredientStock: ${newIngredientStockError.message}`);
       return { error: newIngredientStockError.message };
     }
     global.logger.info(`Created ingredientStock ID: ${newIngredientStock.ingredientStockID}`);
-    return newIngredientStock;
+    return {
+      ingredientStockID: newIngredientStock.ingredientStockID,
+      ingredientID: newIngredientStock.ingredientID,
+      measurement: newIngredientStock.measurement,
+      purchasedBy: newIngredientStock.purchasedBy,
+      purchasedDate: newIngredientStock.purchasedDate,
+    };
   }
 
   async function update(options) {

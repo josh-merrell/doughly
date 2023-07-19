@@ -10,9 +10,11 @@ export interface IngredientStock {
 export interface IngredientStockState {
   ingredientStocks: IngredientStock[];
   loading: boolean;
-  error: any;
+  adding: boolean;
+  updating: boolean;
+  deleting: boolean;
+  error: IngredientStockError | null;
 }
-
 
 export interface IngredientStockRow {
   ingredientStockID: number;
@@ -20,4 +22,11 @@ export interface IngredientStockRow {
   brand?: string;
   quantity: string;
   expiration: string;
+}
+
+export interface IngredientStockError {
+  errorType: string;
+  message: string;
+  statusCode?: number;
+  rawError?: any;
 }

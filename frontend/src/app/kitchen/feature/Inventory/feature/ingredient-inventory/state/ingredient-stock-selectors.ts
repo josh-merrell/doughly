@@ -11,3 +11,13 @@ export const selectIngredientStockByID = (ingredientStockID: number) => {
     );
   });
 };
+
+export const selectDeleting = (state: any) => state.ingredientStock.deleting;
+
+export const selectAdding = (state: any) => state.ingredientStock.adding;
+
+export const selectUpdating = (state: any) => state.ingredientStock.updating;
+
+export const selectError = (state: any) => state.ingredientStock.error;
+
+export const selectLoading = (state: any) => state.ingredientStock.loading;

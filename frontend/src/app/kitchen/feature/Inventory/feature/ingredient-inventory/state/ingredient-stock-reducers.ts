@@ -6,6 +6,9 @@ export const initialState: IngredientStockState = {
   ingredientStocks: [],
   loading: false,
   error: null,
+  adding: false,
+  updating: false,
+  deleting: false,
 };
 
 export const ingredientStockReducer = createReducer(

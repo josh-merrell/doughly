@@ -18,10 +18,11 @@ import {
 } from 'rxjs';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
 import {
-  selectEditing,
+  selectUpdating,
   selectError,
   selectIngredientByID,
   selectIngredients,
+  selectLoading,
 } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import {
   AbstractControl,
@@ -72,7 +73,7 @@ export class EditIngredientModalComponent {
   isEditing$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
-  private editingSubscription!: Subscription;
+  private updatingSubscription!: Subscription;
   private ingredientsSubscription: Subscription = new Subscription();
 
   constructor(
@@ -82,8 +83,8 @@ export class EditIngredientModalComponent {
     private fb: FormBuilder
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
-    this.isEditing$ = this.store.select(selectEditing);
-    this.isLoading$ = this.store.select(selectEditing);
+    this.isEditing$ = this.store.select(selectUpdating);
+    this.isLoading$ = this.store.select(selectLoading);
   }
 
   ngOnInit(): void {
@@ -143,10 +144,10 @@ export class EditIngredientModalComponent {
       IngredientActions.editIngredient({ ingredient: updatedIngredient })
     );
 
-    this.editingSubscription = this.store
-      .select(selectEditing)
-      .subscribe((editing) => {
-        if (!editing) {
+    this.updatingSubscription = this.store
+      .select(selectUpdating)
+      .subscribe((updating) => {
+        if (!updating) {
           this.store.select(selectError).subscribe((error) => {
             if (error) {
               this.dialogRef.close(error);
@@ -166,8 +167,8 @@ export class EditIngredientModalComponent {
     if (this.ingredientsSubscription) {
       this.ingredientsSubscription.unsubscribe();
     }
-    if (this.editingSubscription) {
-      this.editingSubscription.unsubscribe();
+    if (this.updatingSubscription) {
+      this.updatingSubscription.unsubscribe();
     }
   }
 }
