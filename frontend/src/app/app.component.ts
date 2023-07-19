@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { IngredientActions } from './kitchen/feature/ingredients/state/ingredient-actions';
 import { IngredientStockActions } from './kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 import { EmployeeActions } from './employees/state/employee-actions';
+import { ToolActions } from './kitchen/feature/tools/state/tool-actions';
 
 @Component({
   standalone: true,
@@ -30,5 +31,6 @@ export class AppComponent {
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());
     this.store.dispatch(EmployeeActions.loadEmployees());
+    this.store.dispatch(ToolActions.loadTools());
   }
 }

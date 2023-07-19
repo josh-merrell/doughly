@@ -4,6 +4,7 @@ const getToolsSchema_query = {
   properties: {
     toolIDs: { type: 'array', items: { type: 'integer' } },
     name: { type: 'string' },
+    brand: { type: 'string' },
   },
 };
 
@@ -11,7 +12,7 @@ const getToolSchema_params = {
   type: 'object',
   required: ['toolID'],
   properties: {
-    toolID: { type: 'string' },
+    toolID: { type: 'integer' },
   },
 };
 
@@ -20,6 +21,7 @@ const newToolSchema_body = {
   required: ['name'],
   properties: {
     name: { type: 'string' },
+    brand: { type: 'string' },
   },
 };
 
@@ -27,6 +29,7 @@ const ToolUpdateSchema_body = {
   type: 'object',
   properties: {
     name: { type: 'string' },
+    brand: { type: 'string' },
   },
 };
 
@@ -34,7 +37,7 @@ const ToolUpdateSchema_params = {
   type: 'object',
   required: ['toolID'],
   properties: {
-    toolID: { type: 'string' },
+    toolID: { type: 'integer' },
   },
 };
 

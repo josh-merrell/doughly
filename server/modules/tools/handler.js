@@ -3,8 +3,8 @@
 async function getTools(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { toolIDs, name } = req.query;
-  const returner = await p.get.all({ userID: req.userID, toolIDs, name });
+  const { toolIDs, name, brand } = req.query;
+  const returner = await p.get.all({ userID: req.userID, toolIDs, name, brand });
   return res.json(returner);
 }
 
@@ -19,10 +19,11 @@ async function getToolByID(req, res) {
 async function createTool(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { name } = req.body;
+  const { name, brand } = req.body;
   const returner = await p.create({
     userID: req.userID,
     name,
+    brand,
   });
   return res.json(returner);
 }
@@ -31,11 +32,12 @@ async function updateTool(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolID } = req.params;
-  const { name } = req.body;
+  const { name, brand } = req.body;
   const returner = await p.update({
     userID: req.userID,
     toolID,
     name,
+    brand,
   });
   return res.json(returner);
 }
