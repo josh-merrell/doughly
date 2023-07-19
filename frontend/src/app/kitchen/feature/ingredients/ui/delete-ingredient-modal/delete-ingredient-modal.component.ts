@@ -1,11 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { environment } from 'src/environments/environment';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { IngredientActions } from '../../state/ingredient-actions';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { selectDeleting } from '../../state/ingredient-selectors';
+import { selectDeleting, selectError } from '../../state/ingredient-selectors';
 import { Observable, Subscription, filter } from 'rxjs';
 
 @Component({
@@ -16,7 +15,7 @@ import { Observable, Subscription, filter } from 'rxjs';
 })
 export class DeleteIngredientModalComponent {
   isDeleting$: Observable<boolean>;
-  private subscription!: Subscription;
+  private deletingSubscription!: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<DeleteIngredientModalComponent>,
@@ -34,11 +33,18 @@ export class DeleteIngredientModalComponent {
     );
 
     // Initiate the subscription after dispatching the action
-    this.subscription = this.store
+    this.deletingSubscription = this.store
       .select(selectDeleting)
-      .pipe(filter((deleting: boolean) => !deleting))
-      .subscribe((_) => {
-        this.dialogRef.close('success');
+      .subscribe((deleting: boolean) => {
+        if (!deleting) {
+          this.store.select(selectError).subscribe((error) => {
+            if (error) {
+              this.dialogRef.close(error);
+            } else {
+              this.dialogRef.close('success');
+            }
+          });
+        }
       });
   }
 
@@ -48,8 +54,8 @@ export class DeleteIngredientModalComponent {
 
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+    if (this.deletingSubscription) {
+      this.deletingSubscription.unsubscribe();
     }
   }
 }

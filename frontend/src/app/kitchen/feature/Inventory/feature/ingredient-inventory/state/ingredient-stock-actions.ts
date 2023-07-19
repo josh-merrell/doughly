@@ -30,10 +30,34 @@ const addIngredientStock = createAction(
 );
 const addIngredientStockSuccess = createAction(
   '[IngredientStocks] Add Success',
-  props<{ ingredientStocks: IngredientStock }>()
+  props<{ ingredientStock: IngredientStock }>()
 );
 const addIngredientStockFailure = createAction(
   '[IngredientStocks] Add Failure',
+  props<{ error: any }>()
+);
+const deleteIngredientStock = createAction(
+  '[IngredientStocks] Delete',
+  props<{ ingredientStockID: number }>()
+);
+const deleteIngredientStockSuccess = createAction(
+  '[IngredientStocks] Delete Success',
+  props<{ ingredientStockID: number }>()
+);
+const deleteIngredientStockFailure = createAction(
+  '[IngredientStocks] Delete Failure',
+  props<{ error: any }>()
+);
+const updateIngredientStock = createAction(
+  '[IngredientStocks] Edit',
+  props<{ ingredientStock: IngredientStock }>()
+);
+const updateIngredientStockSuccess = createAction(
+  '[IngredientStocks] Edit Success',
+  props<{ ingredientStock: IngredientStock }>()
+);
+const updateIngredientStockFailure = createAction(
+  '[IngredientStocks] Edit Failure',
   props<{ error: any }>()
 );
 
@@ -47,4 +71,10 @@ export const IngredientStockActions = {
   loadIngredientStock,
   loadIngredientStockSuccess,
   loadIngredientStockFailure,
+  deleteIngredientStock,
+  deleteIngredientStockSuccess,
+  deleteIngredientStockFailure,
+  updateIngredientStock,
+  updateIngredientStockSuccess,
+  updateIngredientStockFailure,
 };

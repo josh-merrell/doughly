@@ -15,6 +15,7 @@ export const ingredientStockReducer = createReducer(
   initialState,
   on(IngredientStockActions.loadIngredientStocks, (state) => ({
     ...state,
+    error: null,
     loading: true,
   })),
   on(
@@ -35,6 +36,7 @@ export const ingredientStockReducer = createReducer(
   ),
   on(IngredientStockActions.loadIngredientStock, (state) => ({
     ...state,
+    error: null,
     loading: true,
   })),
   on(
@@ -53,5 +55,63 @@ export const ingredientStockReducer = createReducer(
     ...state,
     error,
     loading: false,
+  })),
+  on(IngredientStockActions.addIngredientStock, (state) => ({
+    ...state,
+    error: null,
+    adding: true,
+  })),
+  on(
+    IngredientStockActions.addIngredientStockSuccess,
+    (state, { ingredientStock }) => ({
+      ...state,
+      adding: false,
+      ingredientStocks: [...state.ingredientStocks, ingredientStock],
+    })
+  ),
+  on(IngredientStockActions.addIngredientStockFailure, (state, { error }) => ({
+    ...state,
+    error,
+    adding: false,
+  })),
+  on(IngredientStockActions.updateIngredientStock, (state) => ({
+    ...state,
+    error: null,
+    updating: true,
+  })),
+  on(
+    IngredientStockActions.updateIngredientStockSuccess,
+    (state, { ingredientStock }) => ({
+      ...state,
+      updating: false,
+      ingredientStocks: state.ingredientStocks.map((stock) =>
+        stock.ingredientStockID === ingredientStock.ingredientStockID ? ingredientStock : stock
+      ),
+    })
+  ),
+  on(IngredientStockActions.updateIngredientStockFailure, (state, { error }) => ({
+    ...state,
+    error,
+    updating: false,
+  })),
+  on(IngredientStockActions.deleteIngredientStock, (state) => ({
+    ...state,
+    error: null,
+    deleting: true,
+  })),
+  on(
+    IngredientStockActions.deleteIngredientStockSuccess,
+    (state, { ingredientStockID }) => ({
+      ...state,
+      deleting: false,
+      ingredientStocks: state.ingredientStocks.filter(
+        (stock) => stock.ingredientStockID !== ingredientStockID
+      ),
+    })
+  ),
+  on(IngredientStockActions.deleteIngredientStockFailure, (state, { error }) => ({
+    ...state,
+    error,
+    deleting: false,
   }))
 );
