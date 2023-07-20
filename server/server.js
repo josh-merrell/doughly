@@ -61,6 +61,9 @@ app.use((req, res, next) => {
 });
 app.use(queryArrayParser);
 
+app.use('/ping', (req, res) => {
+  res.send('pong');
+});
 app.use('/clients', clientsRouter);
 app.use('/persons', personsRouter);
 app.use('/employees', employeesRouter);
