@@ -37,7 +37,7 @@ const ToolUpdateSchema_params = {
   type: 'object',
   required: ['toolID'],
   properties: {
-    toolID: { type: 'integer' },
+    toolID: { type: 'string' },
   },
 };
 

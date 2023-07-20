@@ -7,5 +7,5 @@ export const environment = {
   SUPABASE_USER_PW: 'Ginger93!',
   SUPABASE_TEST_USER_EMAIL: 'jmerrell93@hotmail.com',
   SUPABASE_TEST_USER_PW: 'test123',
-  BACKEND: 'http://54.214.80.184:3000',
+  BACKEND: 'https://api.doughleap.com',
 };
