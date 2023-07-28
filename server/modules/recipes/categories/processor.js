@@ -12,7 +12,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Error getting recipeCategories: ${error.message}`);
       return { error: error.message };
     }
-    global.logger.info(`Got recipeCategories`);
+    global.logger.info(`Got ${recipeCategories.length} recipeCategories`);
     return recipeCategories;
   }
 
@@ -25,15 +25,18 @@ module.exports = ({ db }) => {
       return { error: `Name is required` };
     }
 
-    const { data, error } = await db.from('recipeCategories').insert({ userID, name }).select('recipeCategoryID');
+    const { data: newRecipeCategory, error } = await db.from('recipeCategories').insert({ userID, name }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipeCategory: ${error.message}`);
       return { error: error.message };
     }
 
-    global.logger.info(`Created recipeCategory`);
-    return data;
+    global.logger.info(`Created recipeCategory ID ${newRecipeCategory.recipeCategoryID}`);
+    return {
+      recipeCategoryID: newRecipeCategory.recipeCategoryID,
+      name: newRecipeCategory.name,
+    };
   }
 
   async function update(options) {
