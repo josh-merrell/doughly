@@ -28,6 +28,8 @@ import { employeeReducer } from './app/employees/state/employee-reducers';
 import { EmployeeEffects } from './app/employees/state/employee-effects';
 import { ToolReducer } from './app/kitchen/feature/tools/state/tool-reducers';
 import { ToolEffects } from './app/kitchen/feature/tools/state/tool-effects';
+import { recipeCategoryReducer } from './app/recipes/state/recipe-category-reducers';
+import { RecipeCategoryEffects } from './app/recipes/state/recipe-category-effects';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -39,11 +41,13 @@ bootstrapApplication(AppComponent, {
     provideState('ingredientStock', ingredientStockReducer),
     provideState('employee', employeeReducer),
     provideState('tool', ToolReducer),
+    provideState('recipeCategory', recipeCategoryReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
       EmployeeEffects,
       ToolEffects,
+      RecipeCategoryEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({

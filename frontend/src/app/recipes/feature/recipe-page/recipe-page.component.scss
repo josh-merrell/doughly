@@ -1,0 +1,9 @@
+@keyframes colorThrob {
+    0% { color: hsl(201, 79%, 46%); }
+    50% { color: hsl(195, 97%, 75%); }
+    100% { color: hsl(201, 79%, 46%); }
+}
+
+.throb-icon {
+  animation: colorThrob 2s infinite;
+}

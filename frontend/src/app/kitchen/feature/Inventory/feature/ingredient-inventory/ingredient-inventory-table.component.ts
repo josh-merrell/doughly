@@ -41,9 +41,6 @@ export class IngredientInventoryTableComponent {
   deleteModalComponent: Type<any> = DeleteIngredientStockModalComponent;
 
   constructor(
-    private http: HttpClient,
-    private auth: AuthService,
-    private store: Store,
     private ingredientStockService: IngredientStockService
   ) {}
 
