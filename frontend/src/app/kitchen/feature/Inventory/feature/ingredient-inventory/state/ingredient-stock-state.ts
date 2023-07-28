@@ -1,3 +1,11 @@
+export interface IngredientStockState {
+  ingredientStocks: IngredientStock[];
+  loading: boolean;
+  adding: boolean;
+  updating: boolean;
+  deleting: boolean;
+  error: IngredientStockError | null;
+}
 export interface IngredientStock {
   ingredientStockID: number;
   ingredientID: number;
@@ -7,14 +15,6 @@ export interface IngredientStock {
   userID: string;
 }
 
-export interface IngredientStockState {
-  ingredientStocks: IngredientStock[];
-  loading: boolean;
-  adding: boolean;
-  updating: boolean;
-  deleting: boolean;
-  error: IngredientStockError | null;
-}
 
 export interface IngredientStockRow {
   ingredientStockID: number;
