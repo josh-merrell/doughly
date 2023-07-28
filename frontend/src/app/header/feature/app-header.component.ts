@@ -24,6 +24,7 @@ export class AppHeaderComponent {
   @ViewChild('menu') menu!: ElementRef;
   globalClickListener: () => void = () => {};
   isMenuOpen = false;
+  showMobileMenu = false;
   currentUrl$: Observable<string> = this.store.select(selectCurrentUrl);
   private destroy$ = new Subject<void>();
 
@@ -37,9 +38,8 @@ export class AppHeaderComponent {
   ) {}
 
   ngOnInit() {
-    
     this.router.events
-    .pipe(
+      .pipe(
         takeUntil(this.destroy$),
         filter(
           (event): event is NavigationEnd => event instanceof NavigationEnd
@@ -49,20 +49,20 @@ export class AppHeaderComponent {
         })
       )
       .subscribe();
-    }
-    
-    ngAfterViewInit() {
-      this.globalClickListener = this.renderer.listen(
-        'document',
-        'click',
-        (event) => {
-          const clickedInside = this.menu?.nativeElement.contains(event.target);
-          if (!clickedInside && this.isMenuOpen) {
-            this.closeMenu();
-          }
+  }
+
+  ngAfterViewInit() {
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.menu?.nativeElement.contains(event.target);
+        if (!clickedInside && this.isMenuOpen) {
+          this.closeMenu();
         }
-      );
-    }
+      }
+    );
+  }
 
   ngOnDestroy() {
     if (this.globalClickListener) {
