@@ -1,5 +1,7 @@
 ('use strict');
 
+const axios = require('axios');
+
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
@@ -83,6 +85,44 @@ module.exports = ({ db }) => {
       return { error: `RecipeCategory with provided ID (${options.recipeCategoryID}) does not exist` };
     }
 
+    //collect list of recipes that reference this category
+    const { data: recipes, error: recipeError } = await db.from('recipes').select().eq('recipeCategoryID', options.recipeCategoryID).eq('deleted', false);
+
+    if (recipeError) {
+      global.logger.info(`Error getting recipes associated with category to delete. Backing out: ${recipeError.message}`);
+      return { error: recipeError.message };
+    }
+    if (recipes.length) {
+      let otherCategoryID;
+      //search db for category with name 'Other', selecting the recipeCategoryID
+      const { data: otherCategory, error: otherCategoryError } = await db.from('recipeCategories').select().eq('name', 'Other').eq('userID', options.userID).eq('deleted', false);
+      if (otherCategoryError) {
+        global.logger.info(`Error getting 'Other' recipeCategory. Backing out from Category delete: ${otherCategoryError.message}`);
+        return { error: otherCategoryError.message };
+      }
+      if (!otherCategory) {
+        //create a new recipeCategory with name 'Other'
+        const { data: newCategory, error: newCategoryError } = await axios.post(`${process.env.API_URL}/recipeCategories`, { userID: options.userID, name: 'Other' });
+        if (newCategoryError) {
+          global.logger.info(`Error creating new 'Other' recipeCategory: ${newCategoryError.message}`);
+          return { error: newCategoryError.message };
+        }
+        otherCategoryID = newCategory.recipeCategoryID;
+      } else {
+        otherCategoryID = otherCategory.recipeCategoryID;
+      }
+      //Move any recipes in category to delete to 'Other' category
+      const promises = recipes.map((recipe) => {
+        return axios.patch(`${process.env.API_URL}/recipes/${recipe.recipeID}`, { recipeCategoryID: otherCategoryID });
+      });
+      const { data: updatedRecipes, error: updateError } = await Promise.all(promises);
+      if (updateError) {
+        global.logger.info(`Error moving recipes from category to be deleted. Backing out: ${updateError.message}`);
+        return { error: updateError.message };
+      }
+      global.logger.info(`Moved ${updatedRecipes.length} recipes to 'Other' category to allow for deletion of Category: ${options.recipeCategoryID}`);
+    }
+
     //delete recipeCategory
     const { data, error: deleteError } = await db.from('recipeCategories').update({ deleted: true }).match({ recipeCategoryID: options.recipeCategoryID });
 
@@ -91,10 +131,10 @@ module.exports = ({ db }) => {
       return { error: deleteError.message };
     }
 
-    global.logger.info(`Deleted recipeCategory`);
+    global.logger.info(`Deleted recipeCategory: ${options.recipeCategoryID}`);
     return data;
 
-    //db will nullify any recipe references to this category
+    //db will nullify any remaining recipe references to this category.
   }
 
   return {
