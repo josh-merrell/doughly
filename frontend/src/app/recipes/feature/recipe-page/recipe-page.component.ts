@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RecipesInfoComponent } from './ui/recipes-info/recipes-info.component';
 import { RecipeCategoryService } from '../../data/recipe-category.service';
@@ -42,6 +42,7 @@ export class RecipePageComponent {
   private recipeCategoriesSubscription?: Subscription;
 
   constructor(
+    private renderer: Renderer2,
     private recipeCategoryService: RecipeCategoryService,
     private store: Store,
     public dialog: MatDialog
@@ -57,6 +58,8 @@ export class RecipePageComponent {
   readyToMake = 3; //TODO: get this from the store
   modalActiveForRowID: number | null = null;
   categoryMenuOpen = { index: -1, open: false };
+  @ViewChild('categoryMenu') categoryMenu!: ElementRef;
+  globalClickListener: () => void = () => {};
   @ViewChild('categoryContainer', { static: false })
   categoryContainer!: ElementRef;
   @HostListener('window:scroll', ['$event'])
@@ -103,6 +106,19 @@ export class RecipePageComponent {
     // Show the down arrow if the total height of the children is greater than the height of the container
     this.showDownArrow =
       childHeight > this.categoryContainer.nativeElement.clientHeight;
+
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.categoryMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInside && this.categoryMenu) {
+          this.closeCategoryMenu();
+        }
+      }
+    );
   }
 
   openAddDialog() {
