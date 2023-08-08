@@ -100,27 +100,39 @@ module.exports = ({ db }) => {
         global.logger.info(`Error getting 'Other' recipeCategory. Backing out from Category delete: ${otherCategoryError.message}`);
         return { error: otherCategoryError.message };
       }
-      if (!otherCategory) {
+      if (!otherCategory.length) {
         //create a new recipeCategory with name 'Other'
-        const { data: newCategory, error: newCategoryError } = await axios.post(`${process.env.API_URL}/recipeCategories`, { userID: options.userID, name: 'Other' });
+        const { data: newCategory, error: newCategoryError } = await db.from('recipeCategories').insert({ userID: options.userID, name: 'Other' }).select().single();
         if (newCategoryError) {
           global.logger.info(`Error creating new 'Other' recipeCategory: ${newCategoryError.message}`);
           return { error: newCategoryError.message };
         }
         otherCategoryID = newCategory.recipeCategoryID;
       } else {
-        otherCategoryID = otherCategory.recipeCategoryID;
+        if (otherCategory[0].recipeCategoryID === options.recipeCategoryID) {
+          global.logger.info(`Cannot delete 'Other' category while it contains recipes. Backing out`);
+          return { error: `Cannot delete 'Other' category while it contains recipes. Backing out` };
+        }
+        otherCategoryID = otherCategory[0].recipeCategoryID;
       }
       //Move any recipes in category to delete to 'Other' category
       const promises = recipes.map((recipe) => {
-        return axios.patch(`${process.env.API_URL}/recipes/${recipe.recipeID}`, { recipeCategoryID: otherCategoryID });
+        return axios.patch(
+          `${process.env.NODE_HOST}:${process.env.PORT}/recipes/${recipe.recipeID}`,
+          { recipeCategoryID: otherCategoryID },
+          {
+            headers: {
+              Authorization: options.authorization,
+            },
+          },
+        );
       });
-      const { data: updatedRecipes, error: updateError } = await Promise.all(promises);
+      const { error: updateError } = await Promise.all(promises);
       if (updateError) {
         global.logger.info(`Error moving recipes from category to be deleted. Backing out: ${updateError.message}`);
         return { error: updateError.message };
       }
-      global.logger.info(`Moved ${updatedRecipes.length} recipes to 'Other' category to allow for deletion of Category: ${options.recipeCategoryID}`);
+      global.logger.info(`Moved ${recipes.length} recipes to 'Other' category to allow for deletion of Category: ${options.recipeCategoryID}`);
     }
 
     //delete recipeCategory
