@@ -1,9 +1,9 @@
 <div class="w-full">
-  <div class="justify-between mx-dl-5 mt-dl-6 flex">
-    <h1 class="text-dl-7 font-dl-2 ml-dl-6 leading-dl-2 text-dl-grey-2">Recipes</h1>
-    <div
-      class="mr-dl-3 flex max-w-7xl flex-col justify-around bg-white"
-    >
+  <div class="mx-dl-5 mt-dl-6 flex justify-between">
+    <h1 class="ml-dl-6 text-dl-7 font-dl-2 leading-dl-2 text-dl-grey-2">
+      Recipes
+    </h1>
+    <div class="mr-dl-3 flex max-w-7xl flex-col justify-around bg-white">
       <p class="text-dl-3 font-dl-2 text-dl-grey-6">
         Total: {{ totalRecipes }}
       </p>
@@ -16,30 +16,30 @@
     <div class="flex w-full">
       <!-- Recipes Info Section -->
     </div>
-    
+
     <!-- Recipe/Category Content -->
-    <div class="flex justify-around w-full mt-dl-5">
-      <div class="flex ml-dl-5">
-        <h1 
-          class="border-b-2 mr-dl-2 text-dl-4 mt-dl-6 font-dl-3 leading-dl-2 "
+    <div class="mt-dl-5 flex w-full justify-around">
+      <div class="ml-dl-5 flex">
+        <h1
+          class="mr-dl-2 mt-dl-6 border-b-2 text-dl-4 font-dl-3 leading-dl-2"
           [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1':
-                currentView === 'categories',
-              'border-transparent text-dl-grey-5 ':
-                currentView !== 'categories'
-            }"
+            'border-dl-blue-6 text-dl-grey-1': currentView === 'categories',
+            'border-transparent text-dl-grey-5 ': currentView !== 'categories'
+          }"
           (click)="updateView('categories')"
-        >Categories</h1>
-        <h1 
-          class="border-b-2 ml-dl-2 text-dl-4 mt-dl-6 font-dl-3 leading-dl-2 "
+        >
+          Categories
+        </h1>
+        <h1
+          class="ml-dl-2 mt-dl-6 border-b-2 text-dl-4 font-dl-3 leading-dl-2"
           [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1':
-                currentView === 'list',
-              'border-transparent text-dl-grey-5 ':
-                currentView !== 'list'
-            }"
+            'border-dl-blue-6 text-dl-grey-1': currentView === 'list',
+            'border-transparent text-dl-grey-5 ': currentView !== 'list'
+          }"
           (click)="updateView('list')"
-        >List</h1>
+        >
+          List
+        </h1>
       </div>
       <div class="mr-dl-6 mt-dl-4 pt-dl-2">
         <button
@@ -48,14 +48,17 @@
           class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-2 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="openAddDialog()"
         >
-          {{addButtonLabel}}
+          {{ addButtonLabel }}
         </button>
       </div>
     </div>
-    <div class="mt-dl-2 relative flex-grow">
-      <div class="absolute top-1  left-1/2 transform -translate-x-1/2 rotate-180" *ngIf="showUpArrow">
+    <div class="relative mt-dl-4 flex-grow">
+      <div
+        class="absolute left-1/2 top-1 -translate-x-1/2 rotate-180 transform"
+        *ngIf="showUpArrow"
+      >
         <svg
-          class="text-dl-blue-6 throb-icon transition-transform duration-300"
+          class="throb-icon text-dl-blue-6 transition-transform duration-300"
           width="45"
           height="45"
           viewBox="0 0 15 15"
@@ -69,36 +72,84 @@
             clip-rule="evenodd"
           ></path>
         </svg>
-      </div>      
+      </div>
       <!--Empty Div to give space for arrow icon-->
-      <div class="h-dl-2 mb-dl-5"></div>
+      <div class="mb-dl-5 h-dl-2"></div>
 
       <!-- Categories -->
       <div
         #categoryContainer
-        class="recipe-container overflow-auto scroll-smooth max-h-dl-18"
+        class="recipe-container max-h-dl-18 overflow-auto scroll-smooth"
         (scroll)="checkScroll($event.target)"
       >
         <div
-          class="recipe-card m-4 h-dl-7 w-dl-15 rounded-lg bg-white p-4 shadow-md"
+          class="recipe-card m-4 h-dl-7 w-dl-15 rounded-lg p-4 shadow-md"
           *ngFor="let category of recipeCategories$ | async; let i = index"
+          [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === i }"
         >
-          <div class="flex justify-between">
-            <div class="flex">
+          <div class="flex h-full">
+            <div
+              class="relative flex h-full w-full items-center justify-between"
+            >
               <p class="text-dl-6 font-dl-3 text-dl-grey-2">
                 {{ category.name }}
               </p>
+
+              <!-- Edit/Delete Menu-->
+              <button
+                (click)="toggleCategoryMenu($event, i)"
+                id="buttonToggleCategoryMenu"
+                class="relative pr-dl-3"
+              >
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z"
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+              <div
+                #categoryMenu
+                *ngIf="categoryMenuOpen.open && categoryMenuOpen.index === i"
+                class="focus:outling-none absolute right-4 top-12 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
+              >
+                <!-- <button
+                  (click)="openEditDialog(category.recipeCategoryID, i)"
+                  type="button"
+                  class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
+                >
+                  Edit
+                </button> -->
+                <button
+                  (click)="openDeleteDialog(category.recipeCategoryID, i)"
+                  type="button"
+                  class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <!--Empty Div to give space for arrow icon-->
-      <div class="h-dl-3 mt-dl-2"></div>
+      <div class="mt-dl-2 h-dl-3"></div>
 
-      <div class="absolute bottom-0  left-1/2 transform -translate-x-1/2" *ngIf="showDownArrow">
+      <div
+        class="absolute bottom-0 left-1/2 -translate-x-1/2 transform"
+        *ngIf="showDownArrow"
+      >
         <svg
-          class="text-dl-blue-6 throb-icon transition-transform duration-300"
+          class="throb-icon text-dl-blue-6 transition-transform duration-300"
           width="45"
           height="45"
           viewBox="0 0 15 15"

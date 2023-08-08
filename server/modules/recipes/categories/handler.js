@@ -36,7 +36,9 @@ async function deleteRecipeCategory(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeCategoryID } = req.params;
+  const { authorization } = req.headers;
   const returner = await p.delete({
+    authorization,
     userID: req.userID,
     recipeCategoryID,
   });
