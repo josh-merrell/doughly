@@ -20,6 +20,11 @@ import { UpdateRequestErrorModalComponent } from 'src/app/shared/ui/update-reque
 import { UpdateRequestConfirmationModalComponent } from 'src/app/shared/ui/update-request-confirmation/update-request-confirmation-modal.component';
 import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
 import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
+import {
+  selectView,
+} from '../../state/recipe-page-selectors';
+import { RecipePageActions } from '../../state/recipe-page-actions';
+import { FormsModule } from '@angular/forms';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -27,19 +32,22 @@ function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
 @Component({
   selector: 'dl-recipe-page',
   standalone: true,
-  imports: [CommonModule, RecipesInfoComponent],
+  imports: [CommonModule, RecipesInfoComponent, FormsModule],
   templateUrl: './recipe-page.component.html',
   styleUrls: ['./recipe-page.component.scss'],
 })
 export class RecipePageComponent {
+  view$: Observable<string> = this.store.select(selectView);
   showUpArrow = false;
   showDownArrow = false;
   addButtonLabel = 'Add Category';
-  currentView = 'categories';
   recipeCategories$: Observable<RecipeCategory[]> =
     this.recipeCategoryService.rows$;
   recipeCategories: RecipeCategory[] = [];
   private recipeCategoriesSubscription?: Subscription;
+  viewSubscription!: Subscription;
+  searchBarSubscription!: Subscription;
+  searchFilter: string = '';
 
   constructor(
     private renderer: Renderer2,
@@ -90,7 +98,31 @@ export class RecipePageComponent {
   }
 
   updateView(view: string) {
-    this.currentView = view;
+    this.store.dispatch(RecipePageActions.setView({ view }));
+  }
+
+  updateSearchFilter(search: string) {
+    this.searchFilter = search;
+  }
+
+  categoryCardClick(category: string) {
+    this.updateSearchFilter(category);
+    this.updateView('list');
+  }
+
+  categoriesClick() {
+    this.updateSearchFilter('');
+    this.updateView('categories');
+  }
+
+  categoryCardTouchStart(index: number) {
+    // Add the 'bg-dl-grey-9' class on touchstart
+    this.modalActiveForRowID = index;
+  }
+
+  categoryCardTouchEnd(index: number) {
+    // Remove the 'bg-dl-grey-9' class on touchend
+    this.modalActiveForRowID = null;
   }
 
   ngOnInit() {
@@ -98,27 +130,35 @@ export class RecipePageComponent {
   }
 
   ngAfterViewInit() {
-    // Get the total height of the child elements
-    const childHeight = Array.from(
-      this.categoryContainer.nativeElement.children as HTMLElement[]
-    ).reduce((height, child: HTMLElement) => height + child.clientHeight, 0);
-
-    // Show the down arrow if the total height of the children is greater than the height of the container
-    this.showDownArrow =
-      childHeight > this.categoryContainer.nativeElement.clientHeight;
-
-    this.globalClickListener = this.renderer.listen(
-      'document',
-      'click',
-      (event) => {
-        const clickedInside = this.categoryMenu?.nativeElement.contains(
-          event.target
+    // Subscribe to the view$ Observable
+    this.viewSubscription = this.view$.subscribe((view) => {
+      // Check if the current view is 'categories'
+      if (view === 'categories' && this.categoryContainer) {
+        const childHeight = Array.from(
+          this.categoryContainer.nativeElement.children as HTMLElement[]
+        ).reduce(
+          (height, child: HTMLElement) => height + child.clientHeight,
+          0
         );
-        if (!clickedInside && this.categoryMenu) {
-          this.closeCategoryMenu();
-        }
+
+        // Show the down arrow if the total height of the children is greater than the height of the container
+        this.showDownArrow =
+          childHeight > this.categoryContainer.nativeElement.clientHeight;
+
+        this.globalClickListener = this.renderer.listen(
+          'document',
+          'click',
+          (event) => {
+            const clickedInside = this.categoryMenu?.nativeElement.contains(
+              event.target
+            );
+            if (!clickedInside && this.categoryMenu) {
+              this.closeCategoryMenu();
+            }
+          }
+        );
       }
-    );
+    });
   }
 
   openAddDialog() {
@@ -183,7 +223,12 @@ export class RecipePageComponent {
     });
   }
 
-  openDeleteDialog(recipeCategoryID: number, rowIndex: number): void {
+  openDeleteDialog(
+    event: any,
+    recipeCategoryID: number,
+    rowIndex: number
+  ): void {
+    event.stopPropagation();
     this.activateModalForRow(rowIndex);
     const dialogRef = this.dialog.open(DeleteRecipeCategoryModalComponent, {
       data: {
@@ -213,6 +258,12 @@ export class RecipePageComponent {
   ngOnDestroy() {
     if (this.recipeCategoriesSubscription) {
       this.recipeCategoriesSubscription.unsubscribe();
+    }
+    if (this.viewSubscription) {
+      this.viewSubscription.unsubscribe();
+    }
+    if (this.searchBarSubscription) {
+      this.searchBarSubscription.unsubscribe();
     }
   }
 }

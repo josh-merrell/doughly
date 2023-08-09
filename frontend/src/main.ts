@@ -30,6 +30,7 @@ import { ToolReducer } from './app/kitchen/feature/tools/state/tool-reducers';
 import { ToolEffects } from './app/kitchen/feature/tools/state/tool-effects';
 import { recipeCategoryReducer } from './app/recipes/state/recipe-category-reducers';
 import { RecipeCategoryEffects } from './app/recipes/state/recipe-category-effects';
+import { recipePageReducer } from './app/recipes/state/recipe-page-reducers';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -42,6 +43,7 @@ bootstrapApplication(AppComponent, {
     provideState('employee', employeeReducer),
     provideState('tool', ToolReducer),
     provideState('recipeCategory', recipeCategoryReducer),
+    provideState('recipePage', recipePageReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
