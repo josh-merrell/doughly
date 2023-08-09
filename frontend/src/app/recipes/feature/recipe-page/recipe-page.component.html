@@ -4,10 +4,10 @@
       Recipes
     </h1>
     <div class="mr-dl-3 flex max-w-7xl flex-col justify-around bg-white">
-      <p class="text-dl-3 font-dl-2 text-dl-grey-6">
+      <p class="text-dl-4 font-dl-2 text-dl-grey-6">
         Total: {{ totalRecipes }}
       </p>
-      <p class="text-dl-3 font-dl-2 text-dl-grey-6">
+      <p class="text-dl-4 font-dl-2 text-dl-grey-6">
         Ready to Make: {{ readyToMake }}
       </p>
     </div>
@@ -17,24 +17,25 @@
       <!-- Recipes Info Section -->
     </div>
 
-    <!-- Recipe/Category Content -->
+    <!-- View Selection, Add Button -->
     <div class="mt-dl-5 flex w-full justify-around">
       <div class="ml-dl-5 flex">
         <h1
-          class="mr-dl-2 mt-dl-6 border-b-2 text-dl-4 font-dl-3 leading-dl-2"
+          class="mr-dl-2 mt-dl-6 border-b-2 text-dl-5 font-dl-3 leading-dl-2"
           [ngClass]="{
-            'border-dl-blue-6 text-dl-grey-1': currentView === 'categories',
-            'border-transparent text-dl-grey-5 ': currentView !== 'categories'
+            'border-dl-blue-6 text-dl-grey-1': (view$ | async) === 'categories',
+            'border-transparent text-dl-grey-5 ':
+              (view$ | async) !== 'categories'
           }"
-          (click)="updateView('categories')"
+          (click)="categoriesClick()"
         >
           Categories
         </h1>
         <h1
-          class="ml-dl-2 mt-dl-6 border-b-2 text-dl-4 font-dl-3 leading-dl-2"
+          class="ml-dl-2 mt-dl-6 border-b-2 text-dl-5 font-dl-3 leading-dl-2"
           [ngClass]="{
-            'border-dl-blue-6 text-dl-grey-1': currentView === 'list',
-            'border-transparent text-dl-grey-5 ': currentView !== 'list'
+            'border-dl-blue-6 text-dl-grey-1': (view$ | async) === 'list',
+            'border-transparent text-dl-grey-5 ': (view$ | async) !== 'list'
           }"
           (click)="updateView('list')"
         >
@@ -45,14 +46,56 @@
         <button
           id="test-button"
           type="button"
-          class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-2 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="openAddDialog()"
         >
           {{ addButtonLabel }}
         </button>
       </div>
     </div>
-    <div class="relative mt-dl-4 flex-grow">
+    <!-- List View -->
+    <div
+      class="relative mt-dl-4 w-11/12 flex-grow"
+      *ngIf="(view$ | async) === 'list'"
+    >
+      <div class="flex flex-col">
+        <div class="ml-dl-9 mt-dl-6 flex">
+          <svg
+            width="35"
+            height="35"
+            viewBox="0 0 15 15"
+            class="pt-dl-1 text-dl-grey-3"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          <input
+            #searchInput
+            type="text"
+            class="h-dl- ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent sm:w-dl-12"
+            [placeholder]="
+              searchFilter === ''
+                ? 'Search by Recipe or Category Name...'
+                : searchFilter
+            "
+            [(ngModel)]="searchFilter"
+            (input)="updateSearchFilter(searchInput.value)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories View -->
+    <div
+      class="relative mt-dl-4 flex-grow"
+      *ngIf="(view$ | async) === 'categories'"
+    >
       <div
         class="absolute left-1/2 top-1 -translate-x-1/2 rotate-180 transform"
         *ngIf="showUpArrow"
@@ -86,6 +129,9 @@
           class="recipe-card m-4 h-dl-7 w-dl-15 rounded-lg p-4 shadow-md"
           *ngFor="let category of recipeCategories$ | async; let i = index"
           [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === i }"
+          (click)="categoryCardClick(category.name)"
+          (touchstart)="categoryCardTouchStart(i)"
+          (touchend)="categoryCardTouchEnd(i)"
         >
           <div class="flex h-full">
             <div
@@ -129,7 +175,9 @@
                   Edit
                 </button> -->
                 <button
-                  (click)="openDeleteDialog(category.recipeCategoryID, i)"
+                  (click)="
+                    openDeleteDialog($event, category.recipeCategoryID, i)
+                  "
                   type="button"
                   class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
                 >
