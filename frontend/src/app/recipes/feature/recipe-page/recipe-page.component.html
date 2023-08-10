@@ -59,6 +59,7 @@
       *ngIf="(view$ | async) === 'list'"
     >
       <div class="flex flex-col">
+        <!-- Search Bar-->
         <div class="ml-dl-9 mt-dl-6 flex">
           <svg
             width="35"
@@ -88,6 +89,97 @@
             (input)="updateSearchFilter(searchInput.value)"
           />
         </div>
+
+        <!--Table-->
+        <table class="w-full flex flex-col">
+          <thead class="bg-dl-grey-10 flex">
+            <tr class="flex w-full">
+              <th
+                *ngFor="let column of columns; let i = index"
+                [ngClass]="getClass(column, i)"
+                scope="col"
+                class="whitespace-nowrap d-flex justify-content-between relative py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-dl-grey-2 sm:pl-dl-3 lg:pr-dl-3 flex-grow"
+              >
+                <div style="display: flex; align-items: center">
+                  {{ column.name }}
+                  <ng-container *ngIf="column.sort">
+                    <div class="relative pl-dl-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        xml:space="preserve"
+                        width="298"
+                        height="512"
+                        shape-rendering="geometricPrecision"
+                        text-rendering="geometricPrecision"
+                        image-rendering="optimizeQuality"
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        class="left-3 h-4 w-4 cursor-pointer fill-current transition-all duration-200"
+                        [ngClass]="{
+                          'text-dl-grey-6 hover:text-dl-grey-8':
+                            column.sortRotateState ===
+                            SortRotateStateEnum.default,
+                          'text-dl-blue-6 hover:text-dl-blue-8':
+                            column.sortRotateState !==
+                            SortRotateStateEnum.default
+                        }"
+                        viewBox="0 0 298 511.93"
+                        [@rotateState]="column.sortRotateState"
+                        (click)="onSortIconClick(i)"
+                      >
+                        <path
+                          fill-rule="nonzero"
+                          d="M70.77 499.85c-16.24 16.17-42.53 16.09-58.69-.15-16.17-16.25-16.09-42.54.15-58.7l185.5-185.03L12.23 70.93c-16.24-16.16-16.32-42.45-.15-58.7 16.16-16.24 42.45-16.32 58.69-.15l215.15 214.61c16.17 16.25 16.09 42.54-.15 58.7l-215 214.46z"
+                        />
+                      </svg>
+                      <ng-container
+                        *ngIf="column.sortRotateState !== SortRotateStateEnum.default"
+                      >
+                        <button
+                          type="button"
+                          class="absolute left-8 top-0 flex rounded-full bg-dl-grey-10 text-dl-2 text-dl-blue-6 focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
+                        >
+                          <span class="sr-only">Sort Order</span>
+                          <div>{{ column.sortOrderState! + 1 }}</div>
+                        </button>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                </div>
+              </th>
+              <th scope="col" class="relative" class="rounded-tr-dl-3">
+                <span class="sr-only">Edit</span>
+                <button
+                  type="button"
+                  class="bg-dl-grey-10 min-w-dl-3 shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap pt-dl-3 px-dl-3 text-dl-2 font-dl-3 sm:w-auto"
+                  [disabled]="!clearAllSortsEnabled"
+                  [ngClass]="{
+                    ' text-dl-grey-5 hover:text-dl-grey-7':
+                      clearAllSortsEnabled,
+                    ' text-dl-grey-10': !clearAllSortsEnabled
+                  }"
+                  (click)="clearAllSorts()"
+                >
+                  Clear All Sorts
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white h-full">
+            <tr
+              *ngFor="let row of displayedRows$ | async; let i = index"
+              class="even:white"
+            >
+              <td
+                *ngFor="let column of columns"
+                class="whitespace-nowrap py-dl-4 pl-dl-4 text-dl-2 font-dl-2 text-dl-grey-1 sm:pl-dl-3 lg:pr-dl-9"
+                [ngClass]="getClass(column, i)"
+              >
+                {{ row[column.prop] }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
