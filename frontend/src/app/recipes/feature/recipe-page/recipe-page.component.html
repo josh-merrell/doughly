@@ -5,7 +5,7 @@
     </h1>
     <div class="mr-dl-3 flex max-w-7xl flex-col justify-around bg-white">
       <p class="text-dl-4 font-dl-2 text-dl-grey-6">
-        Total: {{ totalRecipes }}
+        Total Recipies: {{ recipeRows.length }}
       </p>
       <p class="text-dl-4 font-dl-2 text-dl-grey-6">
         Ready to Make: {{ readyToMake }}
@@ -165,21 +165,16 @@
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white h-full">
-            <tr
-              *ngFor="let row of displayedRows$ | async; let i = index"
-              class="even:white"
-            >
-              <td
-                *ngFor="let column of columns"
-                class="whitespace-nowrap py-dl-4 pl-dl-4 text-dl-2 font-dl-2 text-dl-grey-1 sm:pl-dl-3 lg:pr-dl-9"
-                [ngClass]="getClass(column, i)"
-              >
-                {{ row[column.prop] }}
-              </td>
-            </tr>
-          </tbody>
         </table>
+        <div *ngFor="let row of displayedRecipeRows$ | async; let i = index" class=" my-dl-3 flex recipe-card m-4 h-dl-7 w-dl-15 rounded-lg shadow-md">
+          <div
+            *ngFor="let column of columns"
+            class="whitespace-nowrap py-dl-4 pl-dl-4 text-dl-2 font-dl-2 text-dl-grey-1 sm:pl-dl-3 lg:pr-dl-9"
+            [ngClass]="getClass(column, i)"
+          >
+            {{ row[column.prop] }}
+          </div>
+        </div>
       </div>
     </div>
 

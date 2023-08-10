@@ -8,6 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { RecipesInfoComponent } from './ui/recipes-info/recipes-info.component';
 import { RecipeCategoryService } from '../../data/recipe-category.service';
+import { RecipeService } from '../../data/recipe.service';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import {
   trigger,
@@ -44,6 +45,7 @@ import { selectView } from '../../state/recipe-page-selectors';
 import { RecipePageActions } from '../../state/recipe-page-actions';
 import { FormsModule } from '@angular/forms';
 import { SortingService } from 'src/app/shared/utils/sortingService';
+import { Recipe } from '../../state/recipe-state';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -94,14 +96,16 @@ export class RecipePageComponent {
   SortEnum = SortEnum;
   SortRotateStateEnum = SortRotateStateEnum;
   public clearAllSortsEnabled = false;
-  public rows$ = new BehaviorSubject<any[]>([]);
-  public filteredRows$ = new BehaviorSubject<any[]>([]);
-  public displayedRows$ = new BehaviorSubject<any[]>([]);
+  public recipeRows: Recipe[] = [];
+  recipeRows$: Observable<any[]> = this.recipeService.rows$;
+  public filteredRecipeRows$ = new BehaviorSubject<any[]>([]);
+  public displayedRecipeRows$ = new BehaviorSubject<any[]>([]);
   modalActiveForRowID: number | null = null;
 
   constructor(
     private renderer: Renderer2,
     private recipeCategoryService: RecipeCategoryService,
+    private recipeService: RecipeService,
     private store: Store,
     public dialog: MatDialog,
     private sortingService: SortingService
@@ -124,7 +128,7 @@ export class RecipePageComponent {
       },
       {
         name: 'Recipe',
-        prop: 'recipeName',
+        prop: 'title',
         cssClass: 'w-2/5',
         sort: SortEnum.alphabetical,
         sortRotateState: SortRotateStateEnum.default,
@@ -183,6 +187,10 @@ export class RecipePageComponent {
 
   updateSearchFilter(search: string) {
     this.searchFilter = search;
+    // update filteredRecipeRows$, then reapply sorting
+    const filtered = this.applyFilter(this.recipeRows, this.searchFilter);
+    this.filteredRecipeRows$.next(filtered)
+    this.updateSortedRows();
   }
 
   categoryCardClick(category: string) {
@@ -205,8 +213,34 @@ export class RecipePageComponent {
     this.modalActiveForRowID = null;
   }
 
+  applyFilter(rows: any[], filterString: string) {
+    // for each row, filter the row if the provided filterString is not found in the row values for 'recipeID', 'recipeName', or 'recipeCategoryName'
+    const filtered = rows.filter((row) => {
+      return (
+        row.recipeID.toString().includes(filterString) ||
+        row.title.toLowerCase().includes(filterString.toLowerCase()) ||
+        row.recipeCategoryName.toLowerCase().includes(filterString.toLowerCase())
+      );
+    });
+    return filtered;
+  }
+
   ngOnInit() {
     this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
+
+    this.recipeRows$.subscribe((rows) => {
+      this.recipeRows = rows;
+      const filteredRows = this.applyFilter(rows, this.searchFilter);
+      this.filteredRecipeRows$.next(filteredRows);
+    });
+
+    this.filteredRecipeRows$.subscribe((filteredRows) => {
+      const sortedRows = this.sortingService.applySorts(
+        filteredRows,
+        this.sorts
+      );
+      this.displayedRecipeRows$.next(sortedRows);
+    });
   }
 
   ngAfterViewInit() {
@@ -401,19 +435,19 @@ export class RecipePageComponent {
     this.columns[rowIndex].sortOrderState = newSort.sortOrderIndex;
     //Apply the sorts to rows, then emit the sorted rows
     const sortedRows = this.sortingService.applySorts(
-      this.filteredRows$.getValue(),
+      this.filteredRecipeRows$.getValue(),
       this.sorts
     );
-    this.displayedRows$.next(sortedRows);
+    this.displayedRecipeRows$.next(sortedRows);
     this.clearAllSortsEnabled = this.sorts.length > 0;
   }
 
   updateSortedRows(): void {
     const sortedRows = this.sortingService.applySorts(
-      this.filteredRows$.getValue(),
+      this.filteredRecipeRows$.getValue(),
       this.sorts
     );
-    this.displayedRows$.next(sortedRows);
+    this.displayedRecipeRows$.next(sortedRows);
   }
 
   clearSort(index: number): void {
@@ -428,11 +462,11 @@ export class RecipePageComponent {
     });
     //Apply the sorts to rows, then emit the sorted rows
     const sortedRows = this.sortingService.applySorts(
-      this.filteredRows$.getValue(),
+      this.filteredRecipeRows$.getValue(),
       this.sorts
     );
     this.clearAllSortsEnabled = this.sorts.length > 0;
-    this.displayedRows$.next(sortedRows);
+    this.displayedRecipeRows$.next(sortedRows);
   }
 
   clearAllSorts(): void {
@@ -444,7 +478,7 @@ export class RecipePageComponent {
       }
     });
     //Return sortedRows to default, matching rows
-    this.displayedRows$.next(this.filteredRows$.getValue());
+    this.displayedRecipeRows$.next(this.filteredRecipeRows$.getValue());
     this.clearAllSortsEnabled = false;
   }
 

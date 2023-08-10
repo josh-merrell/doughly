@@ -9,6 +9,7 @@ import { IngredientActions } from './kitchen/feature/ingredients/state/ingredien
 import { IngredientStockActions } from './kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 import { EmployeeActions } from './employees/state/employee-actions';
 import { ToolActions } from './kitchen/feature/tools/state/tool-actions';
+import { RecipeActions } from './recipes/state/recipe-actions';
 
 @Component({
   standalone: true,
@@ -27,10 +28,11 @@ export class AppComponent {
   constructor(private router: Router, private store: Store) {}
 
   ngOnInit() {
-    //hydrate ingredients, ingredient stocks, employees
+    //hydrate ingredients, ingredient stocks, employees, recipes
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());
     this.store.dispatch(EmployeeActions.loadEmployees());
     this.store.dispatch(ToolActions.loadTools());
+    this.store.dispatch(RecipeActions.loadRecipes());
   }
 }

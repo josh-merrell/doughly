@@ -31,6 +31,8 @@ import { ToolEffects } from './app/kitchen/feature/tools/state/tool-effects';
 import { recipeCategoryReducer } from './app/recipes/state/recipe-category-reducers';
 import { RecipeCategoryEffects } from './app/recipes/state/recipe-category-effects';
 import { recipePageReducer } from './app/recipes/state/recipe-page-reducers';
+import { RecipeEffects } from './app/recipes/state/recipe-effects';
+import { recipeReducer } from './app/recipes/state/recipe-reducers';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -44,12 +46,14 @@ bootstrapApplication(AppComponent, {
     provideState('tool', ToolReducer),
     provideState('recipeCategory', recipeCategoryReducer),
     provideState('recipePage', recipePageReducer),
+    provideState('recipe', recipeReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
       EmployeeEffects,
       ToolEffects,
       RecipeCategoryEffects,
+      RecipeEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({
