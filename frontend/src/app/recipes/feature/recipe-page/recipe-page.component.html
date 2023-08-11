@@ -5,7 +5,7 @@
     </h1>
     <div class="mr-dl-3 flex max-w-7xl flex-col justify-around bg-white">
       <p class="text-dl-4 font-dl-2 text-dl-grey-6">
-        Total: {{ totalRecipes }}
+        Total Recipies: {{ recipeRows.length }}
       </p>
       <p class="text-dl-4 font-dl-2 text-dl-grey-6">
         Ready to Make: {{ readyToMake }}
@@ -18,7 +18,7 @@
     </div>
 
     <!-- View Selection, Add Button -->
-    <div class="mt-dl-5 flex w-full justify-around">
+    <div class="mt-dl-5 flex w-2/3 justify-between">
       <div class="ml-dl-5 flex">
         <h1
           class="mr-dl-2 mt-dl-6 border-b-2 text-dl-5 font-dl-3 leading-dl-2"
@@ -53,13 +53,13 @@
         </button>
       </div>
     </div>
-    <!-- List View -->
     <div
-      class="relative mt-dl-4 w-11/12 flex-grow"
-      *ngIf="(view$ | async) === 'list'"
+    class="relative mt-dl-4 w-11/12 flex-grow"
     >
-      <div class="flex flex-col">
-        <div class="ml-dl-9 mt-dl-6 flex">
+      <!-- List View -->
+      <div class="flex flex-col items-center" *ngIf="(view$ | async) === 'list'">
+        <!-- Search Bar-->
+        <div class="mt-dl-6 mb-dl-4 flex">
           <svg
             width="35"
             height="35"
@@ -88,129 +88,300 @@
             (input)="updateSearchFilter(searchInput.value)"
           />
         </div>
-      </div>
-    </div>
 
-    <!-- Categories View -->
-    <div
-      class="relative mt-dl-4 flex-grow"
-      *ngIf="(view$ | async) === 'categories'"
-    >
-      <div
-        class="absolute left-1/2 top-1 -translate-x-1/2 rotate-180 transform"
-        *ngIf="showUpArrow"
-      >
-        <svg
-          class="throb-icon text-dl-blue-6 transition-transform duration-300"
-          width="45"
-          height="45"
-          viewBox="0 0 15 15"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
-            fill="currentColor"
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-          ></path>
-        </svg>
-      </div>
-      <!--Empty Div to give space for arrow icon-->
-      <div class="mb-dl-5 h-dl-2"></div>
+        <!--Sorting Bar-->
+        <table class="flex w-full flex-col">
+          <thead class="flex bg-dl-grey-10">
+            <tr class="flex w-full justify-around">
+              <th
+                *ngFor="let column of columns; let i = index"
+                scope="col"
+                class="rounded-tl-dl-3 d-flex justify-content-between relative flex-grow whitespace-nowrap py-dl-3 pl-dl-4 text-left text-dl-2 font-dl-3 text-dl-grey-2 sm:pl-dl-3 lg:pr-dl-3"
+              >
+                <div style="display: flex; align-items: center">
+                  {{ column.name }}
+                  <ng-container *ngIf="column.sort">
+                    <div class="relative pl-dl-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        xml:space="preserve"
+                        width="298"
+                        height="512"
+                        shape-rendering="geometricPrecision"
+                        text-rendering="geometricPrecision"
+                        image-rendering="optimizeQuality"
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        class="left-3 h-4 w-4 cursor-pointer fill-current transition-all duration-200"
+                        [ngClass]="{
+                          'text-dl-grey-6 hover:text-dl-grey-8':
+                            column.sortRotateState ===
+                            SortRotateStateEnum.default,
+                          'text-dl-blue-6 hover:text-dl-blue-8':
+                            column.sortRotateState !==
+                            SortRotateStateEnum.default
+                        }"
+                        viewBox="0 0 298 511.93"
+                        [@rotateState]="column.sortRotateState"
+                        (click)="onSortIconClick(i)"
+                      >
+                        <path
+                          fill-rule="nonzero"
+                          d="M70.77 499.85c-16.24 16.17-42.53 16.09-58.69-.15-16.17-16.25-16.09-42.54.15-58.7l185.5-185.03L12.23 70.93c-16.24-16.16-16.32-42.45-.15-58.7 16.16-16.24 42.45-16.32 58.69-.15l215.15 214.61c16.17 16.25 16.09 42.54-.15 58.7l-215 214.46z"
+                        />
+                      </svg>
+                      <ng-container
+                        *ngIf="
+                          column.sortRotateState !== SortRotateStateEnum.default
+                        "
+                      >
+                        <button
+                          type="button"
+                          class="absolute left-8 top-0 flex rounded-full bg-dl-grey-10 text-dl-2 text-dl-blue-6 focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
+                        >
+                          <span class="sr-only">Sort Order</span>
+                          <div>{{ column.sortOrderState! + 1 }}</div>
+                        </button>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                </div>
+              </th>
+              <th scope="col" class="relative" class="rounded-tr-dl-3">
+                <span class="sr-only">Edit</span>
+                <button
+                  type="button"
+                  class="min-w-dl-3 shadow-ssm:mt-0 inline-flex w-full whitespace-nowrap bg-dl-grey-10 px-dl-3 pt-dl-3 text-dl-2 font-dl-3 sm:w-auto"
+                  [disabled]="!clearAllSortsEnabled"
+                  [ngClass]="{
+                    ' text-dl-grey-5 hover:text-dl-grey-7':
+                      clearAllSortsEnabled,
+                    ' text-dl-grey-10': !clearAllSortsEnabled
+                  }"
+                  (click)="clearAllSorts()"
+                >
+                  Clear All Sorts
+                </button>
+              </th>
+            </tr>
+          </thead>
+        </table>
 
-      <!-- Categories -->
-      <div
-        #categoryContainer
-        class="recipe-container max-h-dl-18 overflow-auto scroll-smooth"
-        (scroll)="checkScroll($event.target)"
-      >
+        <!-- Recipe Cards -->
         <div
-          class="recipe-card m-4 h-dl-7 w-dl-15 rounded-lg p-4 shadow-md"
-          *ngFor="let category of recipeCategories$ | async; let i = index"
-          [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === i }"
-          (click)="categoryCardClick(category.name)"
-          (touchstart)="categoryCardTouchStart(i)"
-          (touchend)="categoryCardTouchEnd(i)"
+          class="absolute left-1/2 top-32 -translate-x-1/2 rotate-180 transform"
+          *ngIf="showRecipeUpArrow"
         >
-          <div class="flex h-full">
+          <svg
+            class="throb-icon text-dl-blue-6 transition-transform duration-300"
+            width="45"
+            height="45"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </div>
+        <!--Empty Div to give space for arrow icon-->
+        <div class="mb-dl-7 h-dl-2"></div>
+
+        <div
+          #recipeContainer
+          class="recipe-container max-h-dl-18 flex h-full w-full flex-col items-center overflow-auto scroll-smooth"
+          (scroll)="checkRecipeScroll($event.target)"
+        >
+          <div
+            *ngFor="let row of displayedRecipeRows$ | async"
+            class="recipe-card my-dl-3 flex h-dl-7 w-5/6 rounded-lg shadow-md"
+            [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === row.recipeID }"
+            (click)="recipeCardClick(row.recipeID)"
+            (touchstart)="recipeCardTouchStart(row.recipeID)"
+            (touchend)="recipeCardTouchEnd()"
+          >
             <div
               class="relative flex h-full w-full items-center justify-between"
             >
-              <p class="text-dl-6 font-dl-3 text-dl-grey-2">
-                {{ category.name }}
+              <div class="flex flex-col pl-dl-3">
+                <p class="text-dl-7 font-dl-3 text-dl-grey-2">
+                  {{ row.title }}
+                </p>
+                <p class="mt-dl-2 text-dl-4 font-dl-2 text-dl-grey-4">
+                  {{ row.recipeCategoryName }}
+                </p>
+              </div>
+              <p
+                *ngIf="row.isDraft === true"
+                class="absolute bottom-3 right-14 text-dl-3 text-dl-teal-7"
+              >
+                Ready to Make!
               </p>
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.23779 14.9023C3.95007 14.5651 3 13.3935 3 12C3 10.9133 3.57781 9.96153 4.44296 9.43519C4.77097 9.23564 5 8.88395 5 8.5C5 5.46243 7.46243 3 10.5 3C11.6319 3 12.684 3.34194 13.5585 3.92817C13.9304 4.17745 14.4138 4.20323 14.846 4.08641C15.0545 4.03006 15.2737 4 15.5 4C16.8807 4 18 5.11929 18 6.5C18 6.83774 18.1969 7.16713 18.5096 7.29468C19.9704 7.89045 21 9.32499 21 11C21 12.5603 20.1067 13.9119 18.8036 14.5713L18.1095 20.124C18.0469 20.6245 17.6215 21 17.1172 21H6.88278C6.37846 21 5.95306 20.6245 5.8905 20.124L5.23779 14.9023ZM7 8.5C7 9.68934 6.3092 10.6409 5.48246 11.1438C5.18886 11.3225 5 11.6401 5 12C5 12.5523 5.44772 13 6 13H17C18.1046 13 19 12.1046 19 11C19 10.1656 18.4885 9.44599 17.7544 9.14658C16.5999 8.67575 16 7.55001 16 6.5C16 6.22386 15.7761 6 15.5 6C15.4516 6 15.4078 6.00634 15.3679 6.01712C14.5571 6.23627 13.4331 6.25185 12.4449 5.58946C11.8895 5.21715 11.2231 5 10.5 5C8.567 5 7 6.567 7 8.5ZM7.26556 15L7.76556 19H9V15H7.26556ZM13 19V15H11V19H13ZM15 19H16.2344L16.7344 15H15V19Z"
+                  fill="black"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <!--Empty Div to give space for arrow icon-->
+        <div class="mt-dl-2 h-dl-3"></div>
 
-              <!-- Edit/Delete Menu-->
-              <button
-                (click)="toggleCategoryMenu($event, i)"
-                id="buttonToggleCategoryMenu"
-                class="relative pr-dl-3"
-              >
-                <svg
-                  width="30"
-                  height="30"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z"
-                    fill="currentColor"
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </button>
+        <div
+          class="absolute bottom-0 left-1/2 -translate-x-1/2 transform"
+          *ngIf="showRecipeDownArrow"
+        >
+          <svg
+            class="throb-icon text-dl-blue-6 transition-transform duration-300"
+            width="45"
+            height="45"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Categories View -->
+      <div
+        class="relative mt-dl-4 flex-grow flex flex-col items-center"
+        *ngIf="(view$ | async) === 'categories'"
+      >
+        <div
+          class="absolute left-1/2 top-1 -translate-x-1/2 rotate-180 transform"
+          *ngIf="showCatUpArrow"
+        >
+          <svg
+            class="throb-icon text-dl-blue-6 transition-transform duration-300"
+            width="45"
+            height="45"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </div>
+        <!--Empty Div to give space for arrow icon-->
+        <div class="mb-dl-5 h-dl-2"></div>
+
+        <!-- Categories -->
+        <div
+          #categoryContainer
+          class="recipe-container max-h-dl-18 overflow-auto scroll-smooth"
+          (scroll)="checkCatScroll($event.target)"
+        >
+          <div
+            class="recipe-card m-4 h-dl-7 w-dl-15 rounded-lg p-4 shadow-md"
+            *ngFor="let category of recipeCategories$ | async; let i = index"
+            [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === i }"
+            (click)="categoryCardClick(category.name)"
+            (touchstart)="categoryCardTouchStart(i)"
+            (touchend)="categoryCardTouchEnd()"
+          >
+            <div class="flex h-full">
               <div
-                #categoryMenu
-                *ngIf="categoryMenuOpen.open && categoryMenuOpen.index === i"
-                class="focus:outling-none absolute right-4 top-12 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
+                class="relative flex h-full w-full items-center justify-between"
               >
-                <!-- <button
+                <p class="text-dl-6 font-dl-3 text-dl-grey-2">
+                  {{ category.name }}
+                </p>
+
+                <!-- Edit/Delete Menu-->
+                <button
+                  (click)="toggleCategoryMenu($event, i)"
+                  id="buttonToggleCategoryMenu"
+                  class="relative pr-dl-3"
+                >
+                  <svg
+                    width="30"
+                    height="30"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </button>
+                <div
+                  #categoryMenu
+                  *ngIf="categoryMenuOpen.open && categoryMenuOpen.index === i"
+                  class="focus:outling-none absolute right-4 top-12 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
+                >
+                  <!-- <button
                   (click)="openEditDialog(category.recipeCategoryID, i)"
                   type="button"
                   class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
                 >
                   Edit
                 </button> -->
-                <button
-                  (click)="
-                    openDeleteDialog($event, category.recipeCategoryID, i)
-                  "
-                  type="button"
-                  class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
-                >
-                  Delete
-                </button>
+                  <button
+                    (click)="
+                      openDeleteDialog($event, category.recipeCategoryID, i)
+                    "
+                    type="button"
+                    class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!--Empty Div to give space for arrow icon-->
-      <div class="mt-dl-2 h-dl-3"></div>
+        <!--Empty Div to give space for arrow icon-->
+        <div class="mt-dl-2 h-dl-3"></div>
 
-      <div
-        class="absolute bottom-0 left-1/2 -translate-x-1/2 transform"
-        *ngIf="showDownArrow"
-      >
-        <svg
-          class="throb-icon text-dl-blue-6 transition-transform duration-300"
-          width="45"
-          height="45"
-          viewBox="0 0 15 15"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+        <div
+          class="absolute bottom-0 left-1/2 -translate-x-1/2 transform"
+          *ngIf="showCatDownArrow"
         >
-          <path
-            d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
-            fill="currentColor"
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-          ></path>
-        </svg>
+          <svg
+            class="throb-icon text-dl-blue-6 transition-transform duration-300"
+            width="45"
+            height="45"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </div>
       </div>
     </div>
   </div>
