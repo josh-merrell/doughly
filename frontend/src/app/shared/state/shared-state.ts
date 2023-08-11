@@ -20,7 +20,7 @@ export enum SortRotateStateEnum {
 }
 export interface TableFullColumn {
   name: string;
-  width: string;
+  cssClass?: string;
   prop: string;
   sort?: SortEnum;
   sortRotateState?: SortRotateStateEnum;

@@ -40,9 +40,7 @@ export class IngredientInventoryTableComponent {
   editModalComponent: Type<any> = EditIngredientStockModalComponent;
   deleteModalComponent: Type<any> = DeleteIngredientStockModalComponent;
 
-  constructor(
-    private ingredientStockService: IngredientStockService
-  ) {}
+  constructor(private ingredientStockService: IngredientStockService) {}
 
   title = 'Ingredient Inventory';
   headingPhrase = 'Multiple entries may exist for each Ingredient.';
@@ -60,7 +58,7 @@ export class IngredientInventoryTableComponent {
     {
       name: 'Ingredient',
       prop: 'name',
-      width: 'w-dl-5',
+      cssClass: 'w-dl-5',
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -69,7 +67,7 @@ export class IngredientInventoryTableComponent {
     {
       name: 'Brand',
       prop: 'brand',
-      width: 'w-dl-5',
+      cssClass: 'w-dl-5',
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -78,13 +76,13 @@ export class IngredientInventoryTableComponent {
     {
       name: 'Quantity',
       prop: 'quantity',
-      width: 'w-dl-6',
+      cssClass: 'w-dl-6',
       filterType: FilterTypeEnum.none,
     },
     {
       name: 'Expiration',
       prop: 'expiration',
-      width: 'w-dl-5',
+      cssClass: 'w-dl-5',
       sort: SortEnum.numerical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,

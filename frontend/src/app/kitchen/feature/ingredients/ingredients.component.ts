@@ -43,7 +43,7 @@ export class IngredientsComponent {
     {
       name: 'ID',
       prop: 'ingredientID',
-      width: 'w-dl-3',
+      cssClass: 'w-dl-3',
       sort: SortEnum.numerical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -52,7 +52,7 @@ export class IngredientsComponent {
     {
       name: 'Ingredient',
       prop: 'name',
-      width: 'w-dl-5',
+      cssClass: 'w-dl-5',
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -61,7 +61,7 @@ export class IngredientsComponent {
     {
       name: 'Brand',
       prop: 'brand',
-      width: 'w-dl-5',
+      cssClass: 'w-dl-5',
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -70,7 +70,7 @@ export class IngredientsComponent {
     {
       name: 'Lifespan (Days)',
       prop: 'lifespanDays',
-      width: 'w-dl-3',
+      cssClass: 'w-dl-3',
       sort: SortEnum.numerical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -79,7 +79,7 @@ export class IngredientsComponent {
     {
       name: 'Purchase Unit',
       prop: 'purchaseUnit',
-      width: 'w-dl-4',
+      cssClass: 'w-dl-4',
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -88,7 +88,7 @@ export class IngredientsComponent {
     {
       name: 'Gram Ratio',
       prop: 'gramRatio',
-      width: 'w-dl-3',
+      cssClass: 'w-dl-3',
       sort: SortEnum.numerical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,

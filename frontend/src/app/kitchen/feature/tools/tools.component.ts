@@ -12,10 +12,7 @@ import { DeleteToolModalComponent } from './ui/delete-tool-modal/delete-tool-mod
 @Component({
   selector: 'dl-tools',
   standalone: true,
-  imports: [
-    CommonModule,
-    TableFullComponent,
-  ],
+  imports: [CommonModule, TableFullComponent],
   templateUrl: './tools.component.html',
 })
 export class ToolsComponent {
@@ -41,7 +38,7 @@ export class ToolsComponent {
     {
       name: 'ID',
       prop: 'toolID',
-      width: 'w-dl-3',
+      cssClass: 'w-dl-3',
       sort: SortEnum.numerical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -50,7 +47,7 @@ export class ToolsComponent {
     {
       name: 'Tool',
       prop: 'name',
-      width: 'w-dl-5',
+      cssClass: 'w-dl-5',
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
@@ -59,14 +56,13 @@ export class ToolsComponent {
     {
       name: 'Brand',
       prop: 'brand',
-      width: 'w-dl-5',
+      cssClass: 'w-dl-5',
       sort: SortEnum.alphabetical,
       sortRotateState: SortRotateStateEnum.default,
       sortOrderState: null,
       filterType: FilterTypeEnum.search,
-    }
+    },
   ];
 
   rows$: Observable<Tool[]> = this.toolService.rows$;
-
 }
