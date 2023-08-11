@@ -55,6 +55,7 @@ function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   standalone: true,
   imports: [CommonModule, RecipesInfoComponent, FormsModule],
   templateUrl: './recipe-page.component.html',
+  styleUrls: ['./recipe-page.component.scss'],
   animations: [
     trigger('rotateState', [
       state(
@@ -80,10 +81,13 @@ function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   ],
 })
 export class RecipePageComponent {
+  view: string = '';
   view$: Observable<string> = this.store.select(selectView);
-  showUpArrow = false;
-  showDownArrow = false;
-  addButtonLabel = 'Add Category';
+  showCatUpArrow = false;
+  showCatDownArrow = false;
+  showRecipeUpArrow = false;
+  showRecipeDownArrow = false;
+  addButtonLabel = 'Add Recipe';
   recipeCategories$: Observable<RecipeCategory[]> =
     this.recipeCategoryService.rows$;
   recipeCategories: RecipeCategory[] = [];
@@ -120,7 +124,6 @@ export class RecipePageComponent {
       {
         name: 'ID',
         prop: 'recipeID',
-        cssClass: 'w-1/5',
         sort: SortEnum.numerical,
         sortRotateState: SortRotateStateEnum.default,
         sortOrderState: null,
@@ -129,7 +132,6 @@ export class RecipePageComponent {
       {
         name: 'Recipe',
         prop: 'title',
-        cssClass: 'w-2/5',
         sort: SortEnum.alphabetical,
         sortRotateState: SortRotateStateEnum.default,
         sortOrderState: null,
@@ -138,7 +140,6 @@ export class RecipePageComponent {
       {
         name: 'Category',
         prop: 'recipeCategoryName',
-        cssClass: 'w-2/5',
         sort: SortEnum.alphabetical,
         sortRotateState: SortRotateStateEnum.default,
         sortOrderState: null,
@@ -154,15 +155,30 @@ export class RecipePageComponent {
   globalClickListener: () => void = () => {};
   @ViewChild('categoryContainer', { static: false })
   categoryContainer!: ElementRef;
+
+  @ViewChild('recipeContainer', { static: false })
+  recipeContainer!: ElementRef;
   @HostListener('window:scroll', ['$event'])
-  checkScroll(target: EventTarget | null) {
+  checkCatScroll(target: EventTarget | null) {
     if (target) {
       let element = target as HTMLElement;
       // Show or hide the up arrow
-      this.showUpArrow = element.scrollTop > 0;
+      this.showCatUpArrow = element.scrollTop > 0;
 
       // Show or hide the down arrow
-      this.showDownArrow =
+      this.showCatDownArrow =
+        element.scrollHeight - element.scrollTop - element.clientHeight > 1;
+    }
+  }
+
+  checkRecipeScroll(target: EventTarget | null) {
+    if (target) {
+      let element = target as HTMLElement;
+      // Show or hide the up arrow
+      this.showRecipeUpArrow = element.scrollTop > 0;
+
+      // Show or hide the down arrow
+      this.showRecipeDownArrow =
         element.scrollHeight - element.scrollTop - element.clientHeight > 1;
     }
   }
@@ -183,14 +199,23 @@ export class RecipePageComponent {
 
   updateView(view: string) {
     this.store.dispatch(RecipePageActions.setView({ view }));
+    if (this.addButtonLabel === 'Add Recipe') {
+      this.addButtonLabel = 'Add Category';
+    } else {
+      this.addButtonLabel = 'Add Recipe';
+    }
   }
 
   updateSearchFilter(search: string) {
     this.searchFilter = search;
     // update filteredRecipeRows$, then reapply sorting
     const filtered = this.applyFilter(this.recipeRows, this.searchFilter);
-    this.filteredRecipeRows$.next(filtered)
+    this.filteredRecipeRows$.next(filtered);
     this.updateSortedRows();
+  }
+
+  recipeCardClick(recipeID: number) {
+    console.log('recipeCardClick: ' + recipeID);
   }
 
   categoryCardClick(category: string) {
@@ -204,12 +229,18 @@ export class RecipePageComponent {
   }
 
   categoryCardTouchStart(index: number) {
-    // Add the 'bg-dl-grey-9' class on touchstart
     this.modalActiveForRowID = index;
   }
 
-  categoryCardTouchEnd(index: number) {
-    // Remove the 'bg-dl-grey-9' class on touchend
+  categoryCardTouchEnd() {
+    this.modalActiveForRowID = null;
+  }
+
+  recipeCardTouchStart(recipeID: number) {
+    this.modalActiveForRowID = recipeID;
+  }
+
+  recipeCardTouchEnd() {
     this.modalActiveForRowID = null;
   }
 
@@ -219,13 +250,19 @@ export class RecipePageComponent {
       return (
         row.recipeID.toString().includes(filterString) ||
         row.title.toLowerCase().includes(filterString.toLowerCase()) ||
-        row.recipeCategoryName.toLowerCase().includes(filterString.toLowerCase())
+        row.recipeCategoryName
+          .toLowerCase()
+          .includes(filterString.toLowerCase())
       );
     });
     return filtered;
   }
 
   ngOnInit() {
+    this.view$.subscribe((view) => {
+      this.view = view;
+    });
+
     this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
 
     this.recipeRows$.subscribe((rows) => {
@@ -244,35 +281,60 @@ export class RecipePageComponent {
   }
 
   ngAfterViewInit() {
-    // Subscribe to the view$ Observable
-    this.viewSubscription = this.view$.subscribe((view) => {
-      // Check if the current view is 'categories'
-      if (view === 'categories' && this.categoryContainer) {
+    const checkCatHeight = () => {
+      if (this.categoryContainer) {
         const childHeight = Array.from(
           this.categoryContainer.nativeElement.children as HTMLElement[]
         ).reduce(
           (height, child: HTMLElement) => height + child.clientHeight,
           0
         );
-
         // Show the down arrow if the total height of the children is greater than the height of the container
-        this.showDownArrow =
+        this.showCatDownArrow =
           childHeight > this.categoryContainer.nativeElement.clientHeight;
+      }
+    };
 
-        this.globalClickListener = this.renderer.listen(
-          'document',
-          'click',
-          (event) => {
-            const clickedInside = this.categoryMenu?.nativeElement.contains(
-              event.target
-            );
-            if (!clickedInside && this.categoryMenu) {
-              this.closeCategoryMenu();
-            }
-          }
+    const checkRecipeHeight = () => {
+      if (this.recipeContainer) {
+        const childHeight = Array.from(
+          this.recipeContainer.nativeElement.children as HTMLElement[]
+        ).reduce(
+          (height, child: HTMLElement) => height + child.clientHeight,
+          0
         );
+        // Show the down arrow if the total height of the children is greater than the height of the container
+        this.showRecipeDownArrow =
+          childHeight > this.recipeContainer.nativeElement.clientHeight;
+      }
+    };
+
+    // Subscribe to the view$ Observable
+    this.viewSubscription = this.view$.subscribe((view) => {
+      // Check if the current view is 'categories'
+      if (view === 'categories') {
+        checkCatHeight();
+      } else if (view === 'list') {
+        checkRecipeHeight();
       }
     });
+
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.categoryMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInside && this.categoryMenu) {
+          this.closeCategoryMenu();
+        }
+      }
+    );
+
+    // Call the checkHeight method right away after the view has been initialized
+    if (this.view === 'categories') checkCatHeight();
+    if (this.view === 'list') checkRecipeHeight();
   }
 
   openAddDialog() {
@@ -367,20 +429,6 @@ export class RecipePageComponent {
         });
       }
     });
-  }
-
-  getClass(column: any, i: number) {
-    return {
-      'rounded-tl-dl-3': i === 0,
-      [column.cssClass]: column.cssClass,
-    };
-  }
-
-  getRowClass(column: any, i: number) {
-    return {
-      'bg-dl-grey-9': this.modalActiveForRowID === i,
-      [column.cssClass]: column.cssClass,
-    };
   }
 
   onSortIconClick(rowIndex: number): void {
