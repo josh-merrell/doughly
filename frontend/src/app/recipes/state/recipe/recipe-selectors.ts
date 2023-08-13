@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
 import { Recipe } from './recipe-state';
 
-export const selectRecipes = (state: any) => state.recipe.recipes; 
+export const selectRecipes = (state: any) => state.recipe.recipes;
 
 export const selectRecipeByID = (recipeID: number) => {
   return createSelector(selectRecipes, (recipes: Recipe[]) => {

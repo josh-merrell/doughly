@@ -39,6 +39,7 @@ module.exports = ({ db }) => {
 
   async function create(options) {
     const { userID, title, servings, lifespanDays, recipeCategoryID } = options;
+    const status = 'noIngredients';
 
     if (!title) {
       global.logger.info(`Title is required`);
@@ -65,7 +66,7 @@ module.exports = ({ db }) => {
         return { error: `Provided RecipeCategory ID:(${recipeCategoryID}) does not exist` };
       }
     }
-    const { data: recipe, error } = await db.from('recipes').insert({ userID, title, servings, lifespanDays, recipeCategoryID }).select('recipeID').single();
+    const { data: recipe, error } = await db.from('recipes').insert({ userID, title, servings, lifespanDays, recipeCategoryID, status }).select('recipeID').single();
 
     if (error) {
       global.logger.info(`Error creating recipe: ${error.message}`);
@@ -113,6 +114,13 @@ module.exports = ({ db }) => {
     }
 
     const updateFields = {};
+    if (options.status) {
+      //ensure provided status is valid value
+      if (options.status !== 'noIngredients' && options.status !== 'noTools' && options.status !== 'noSteps' && options.status !== 'published') {
+        global.logger.info(`Invalid status`);
+        return { error: `Invalid status` };
+      }
+    }
     for (let key in options) {
       if (key !== 'recipeID' && options[key] !== undefined) {
         updateFields[key] = options[key];

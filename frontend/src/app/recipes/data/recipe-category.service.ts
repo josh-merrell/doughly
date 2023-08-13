@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { RecipeCategory } from '../state/recipe-category-state';
+import { RecipeCategory } from '../state/recipe-category/recipe-category-state';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
-import { selectRecipeCategories } from '../state/recipe-category-selectors';
+import { selectRecipeCategories } from '../state/recipe-category/recipe-category-selectors';
 
 @Injectable({
   providedIn: 'root',

@@ -20,8 +20,8 @@ import {
 import {
   RecipeCategory,
   RecipeCategoryError,
-} from '../../state/recipe-category-state';
-import { RecipeCategoryActions } from '../../state/recipe-category-actions';
+} from '../../state/recipe-category/recipe-category-state';
+import { RecipeCategoryActions } from '../../state/recipe-category/recipe-category-actions';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { AddRecipeCategoryModalComponent } from './ui/add-recipe-category-modal/add-recipe-category-modal.component';
@@ -45,17 +45,24 @@ import { selectView } from '../../state/recipe-page-selectors';
 import { RecipePageActions } from '../../state/recipe-page-actions';
 import { FormsModule } from '@angular/forms';
 import { SortingService } from 'src/app/shared/utils/sortingService';
-import { Recipe } from '../../state/recipe-state';
+import { Recipe } from '../../state/recipe/recipe-state';
+import { RecipeIngredientActions } from '../../state/recipe-ingredient/recipe-ingredient-actions';
+import { RecipeToolActions } from '../../state/recipe-tool/recipe-tool-actions';
+import { RecipeIngredientsModalComponent } from './ui/recipe-ingredients-modal/recipe-ingredients-modal.component';
+import { RecipeIngredientError } from '../../state/recipe-ingredient/recipe-ingredient-state';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
+function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
+  return obj && obj.errorType !== undefined && obj.message !== undefined;
+}
 @Component({
-  selector: 'dl-recipe-page',
+  selector: 'dl-recipes-page',
   standalone: true,
   imports: [CommonModule, RecipesInfoComponent, FormsModule],
-  templateUrl: './recipe-page.component.html',
-  styleUrls: ['./recipe-page.component.scss'],
+  templateUrl: './recipes-page.component.html',
+  styleUrls: ['./recipes-page.component.scss'],
   animations: [
     trigger('rotateState', [
       state(
@@ -80,7 +87,7 @@ function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
     ]),
   ],
 })
-export class RecipePageComponent {
+export class RecipesPageComponent {
   view: string = '';
   view$: Observable<string> = this.store.select(selectView);
   showCatUpArrow = false;
@@ -214,8 +221,37 @@ export class RecipePageComponent {
     this.updateSortedRows();
   }
 
-  recipeCardClick(recipeID: number) {
-    console.log('recipeCardClick: ' + recipeID);
+  recipeCardClick(recipe: Recipe) {
+    console.log('recipeCardClick: ' + recipe.recipeID);
+    //if the recipe status of 'noIngredients', show the 'RecipeIngredients' modal
+    if (recipe.status === 'noIngredients') {
+      const dialogRef = this.dialog.open(RecipeIngredientsModalComponent, {
+        data: {
+          recipe,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialog.open(AddRequestConfirmationModalComponent, {
+            data: {
+              results: result,
+              addSuccessMessage: 'Recipe Ingredients added successfully!',
+            },
+          });
+        } else if (isRecipeIngredientError(result)) {
+          this.dialog.open(AddRequestErrorModalComponent, {
+            data: {
+              error: result,
+              addFailureMessage: 'Recipe Ingredients could not be added.',
+            },
+          });
+        }
+      });
+    }
+    //else if the recipe has status of 'noTools', show the 'addRecipeTools' modal
+    //else if the recipe has status of 'noSteps', show the 'addRecipeSteps' modal
+    //else show the 'recipeDetails' modal
   }
 
   categoryCardClick(category: string) {
@@ -259,6 +295,10 @@ export class RecipePageComponent {
   }
 
   ngOnInit() {
+    //hydrate data
+    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+    this.store.dispatch(RecipeToolActions.loadRecipeTools());
+
     this.view$.subscribe((view) => {
       this.view = view;
     });

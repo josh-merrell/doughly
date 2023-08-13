@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { RecipeCategoryService } from '../data/recipe-category.service';
+import { RecipeCategoryService } from '../../data/recipe-category.service';
 import { RecipeCategoryActions } from './recipe-category-actions';
 
 @Injectable()
@@ -50,12 +50,16 @@ export class RecipeCategoryEffects {
             })
           ),
           catchError((error) =>
-            of(RecipeCategoryActions.loadRecipeCategoriesFailure({ error: {
-              errorType: 'LOAD_RECIPE_CATEGORIES_FAILURE',
-              message: 'Failed to load recipe categories',
-              statusCode: error.status,
-              rawError: error,
-            } }))
+            of(
+              RecipeCategoryActions.loadRecipeCategoriesFailure({
+                error: {
+                  errorType: 'LOAD_RECIPE_CATEGORIES_FAILURE',
+                  message: 'Failed to load recipe categories',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -71,12 +75,16 @@ export class RecipeCategoryEffects {
             RecipeCategoryActions.loadRecipeCategorySuccess({ recipeCategory })
           ),
           catchError((error) =>
-            of(RecipeCategoryActions.loadRecipeCategoryFailure({ error: {
-              errorType: 'LOAD_RECIPE_CATEGORY_FAILURE',
-              message: 'Failed to load recipe category',
-              statusCode: error.status,
-              rawError: error,
-            } }))
+            of(
+              RecipeCategoryActions.loadRecipeCategoryFailure({
+                error: {
+                  errorType: 'LOAD_RECIPE_CATEGORY_FAILURE',
+                  message: 'Failed to load recipe category',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -94,12 +102,16 @@ export class RecipeCategoryEffects {
             })
           ),
           catchError((error) =>
-            of(RecipeCategoryActions.updateRecipeCategoryFailure({ error: {
-              errorType: 'UPDATE_RECIPE_CATEGORY_FAILURE',
-              message: 'Failed to update recipe category',
-              statusCode: error.status,
-              rawError: error,
-            } }))
+            of(
+              RecipeCategoryActions.updateRecipeCategoryFailure({
+                error: {
+                  errorType: 'UPDATE_RECIPE_CATEGORY_FAILURE',
+                  message: 'Failed to update recipe category',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -117,16 +129,19 @@ export class RecipeCategoryEffects {
             })
           ),
           catchError((error) =>
-            of(RecipeCategoryActions.deleteRecipeCategoryFailure({ error: {
-              errorType: 'DELETE_RECIPE_CATEGORY_FAILURE',
-              message: 'Failed to delete recipe category',
-              statusCode: error.status,
-              rawError: error,
-            } }))
+            of(
+              RecipeCategoryActions.deleteRecipeCategoryFailure({
+                error: {
+                  errorType: 'DELETE_RECIPE_CATEGORY_FAILURE',
+                  message: 'Failed to delete recipe category',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
     )
   );
 }
-

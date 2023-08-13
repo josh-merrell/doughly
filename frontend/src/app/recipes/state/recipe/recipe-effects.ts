@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { RecipeService } from '../data/recipe.service';
+import { RecipeService } from '../../data/recipe.service';
 import { RecipeActions } from './recipe-actions';
 
 @Injectable()
@@ -50,12 +50,16 @@ export class RecipeEffects {
             })
           ),
           catchError((error) =>
-            of(RecipeActions.loadRecipesFailure({ error: {
-              errorType: 'LOAD_RECIPES_FAILURE',
-              message: 'Failed to load recipes',
-              statusCode: error.status,
-              rawError: error,
-            } }))
+            of(
+              RecipeActions.loadRecipesFailure({
+                error: {
+                  errorType: 'LOAD_RECIPES_FAILURE',
+                  message: 'Failed to load recipes',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -73,19 +77,23 @@ export class RecipeEffects {
             })
           ),
           catchError((error) =>
-            of(RecipeActions.loadRecipeFailure({ error: {
-              errorType: 'LOAD_RECIPE_FAILURE',
-              message: 'Failed to load recipe',
-              statusCode: error.status,
-              rawError: error,
-            } }))
+            of(
+              RecipeActions.loadRecipeFailure({
+                error: {
+                  errorType: 'LOAD_RECIPE_FAILURE',
+                  message: 'Failed to load recipe',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
     )
   );
 
-  deleteRecipe$ = createEffect(() => 
+  deleteRecipe$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeActions.deleteRecipe),
       mergeMap((action) =>

@@ -12,8 +12,8 @@ export interface Recipe {
   title: string;
   servings: number;
   recipeCategoryID: number;
-  isDraft: boolean;
   lifespanDays: number;
+  status: RecipeStatus;
   recipeCategoryName?: string;
 }
 
@@ -23,3 +23,11 @@ export interface RecipeError {
   statusCode?: number;
   rawError?: any;
 }
+
+export enum RecipeStatus {
+  noIngredients = 'noIngredients',
+  noTools = 'noTools',
+  noSteps = 'noSteps',
+  published = 'Published',
+}
+

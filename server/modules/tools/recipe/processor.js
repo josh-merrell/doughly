@@ -89,6 +89,22 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating recipeTool: ${newRecipeToolError}`);
       return { error: newRecipeToolError };
     }
+
+    //if status of existingRecipe is 'noTools', update status to 'noSteps'
+    if (recipe[0].status === 'noTools') {
+      const { error: updateError } = await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeID);
+      if (updateError) {
+        global.logger.info(`Error updating recipe status: ${updateError}`);
+        //rollback recipeTool creation
+        const { error: rollbackError } = await db.from('recipeTools').delete().eq('recipeToolID', newRecipeTool.recipeToolID);
+        if (rollbackError) {
+          global.logger.info(`Error rolling back recipeTool: ${rollbackError}`);
+          return { error: rollbackError };
+        }
+        return { error: updateError };
+      }
+    }
+
     global.logger.info(`Created recipeTool ${newRecipeTool.recipeToolID}`);
     return newRecipeTool;
   }
@@ -151,6 +167,22 @@ module.exports = ({ db }) => {
       return { error: deleteError };
     }
     global.logger.info(`Deleted recipeTool ${recipeToolID}`);
+
+    //if existingRecipe has no more recipeTools, update status to 'noTools'
+    const { data: recipeTools, error: recipeToolsError } = await db.from('recipeTools').select().eq('recipeID', recipeTool[0].recipeID).eq('deleted', false);
+    if (recipeToolsError) {
+      global.logger.info(`Error getting remaining recipeTools for recipe: ${recipeToolsError}`);
+      return { error: recipeToolsError };
+    }
+    if (!recipeTools.length) {
+      const { error: updateError } = await db.from('recipes').update({ status: 'noTools' }).eq('recipeID', recipeTool[0].recipeID);
+      if (updateError) {
+        global.logger.info(`Error updating recipe status: ${updateError}`);
+        return { error: updateError };
+      }
+      global.logger.info(`Recipe now has no recipeTools, Updated recipe status to 'noTools'`);
+    }
+
     return { success: true };
   }
 
