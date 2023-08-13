@@ -70,7 +70,7 @@ module.exports = ({ db }) => {
     }
 
     //create the recipeIngredient
-    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ userID, recipeID, ingredientID, measurementUnit, measurement }).select('recipeIngredientID').single();
+    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ userID, recipeID, ingredientID, measurementUnit, measurement }).select().single();
 
     if (error3) {
       global.logger.info(`Error creating recipeIngredient: ${error3.message}`);
@@ -93,7 +93,13 @@ module.exports = ({ db }) => {
     }
 
     global.logger.info(`Created recipeIngredient ID: ${recipeIngredient.recipeIngredientID}`);
-    return recipeIngredient;
+    return {
+      recipeIngredientID: recipeIngredient.recipeIngredientID,
+      recipeID: recipeIngredient.recipeID,
+      ingredientID: recipeIngredient.ingredientID,
+      measurementUnit: recipeIngredient.measurementUnit,
+      measurement: recipeIngredient.measurement,
+    };
   }
 
   async function update(options) {

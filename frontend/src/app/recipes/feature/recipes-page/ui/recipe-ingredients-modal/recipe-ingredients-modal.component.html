@@ -14,22 +14,50 @@
     </div>
 
     <!--List of Recipe Ingredients-->
-    <div class="mx-dl-2 mb-dl-5 flex w-dl-15 flex-col items-start">
-      <ng-container *ngFor="let ingredient of displayedIngredients$ | async">
-        <div class="inline-block">
+    <div class="mb-dl-5 mx-dl-2 flex flex-col">
+      <div class="mb-dl-2 flex w-dl-15 flex-wrap items-start">
+        <ng-container *ngFor="let ingredient of displayedIngredients$ | async">
           <div
-            class="mt-dl-2 inline-flex whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 text-dl-4 text-dl-grey-4"
+            class="inline-block"
+            (click)="onDeleteClick(ingredient.recipeIngredientID, ingredient.ingredientID)"
           >
-            <span class="font-dl-3"
-              >Ingredient ID: {{ ingredient.ingredientID }}</span
+            <div
+              class="mr-dl-3 mt-dl-2 inline-flex whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-4 text-dl-grey-4"
             >
-            <span class="font-dl-2"
-              >Measurement: {{ ingredient.measurement }}
-              {{ ingredient.measurementUnit }}</span
-            >
+              <span class="font-dl-3"
+                >{{ ingredient.name }}&nbsp;&nbsp;&nbsp;</span
+              >
+              <span class="font-dl-2">
+                {{ ingredient.measurement }}&nbsp;{{
+                  ingredient.measurementUnit
+                }}</span
+              >
+              <span *ngIf="ingredient.toAdd" class="font-dl-2 text-dl-pink-5"
+                >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
+              >
+              <button
+                type="button"
+                class="ml-dl-2 rounded-dl-2 bg-dl-grey-10 text-dl-grey-3 hover:bg-dl-grey-9 focus:outline-none"
+              >
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
-      </ng-container>
+        </ng-container>
+      </div>
       <button
         type="button"
         class="relative mt-dl-2 flex h-8 w-8 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7"
@@ -59,7 +87,7 @@
     <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
       <button
         type="button"
-        class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white sm:ml-dl-4"
+        class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-white sm:ml-dl-4"
         [ngClass]="{
           'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
             ingredientsToAdd.length > 0,
@@ -68,11 +96,11 @@
         [disabled]="ingredientsToAdd.length === 0"
         (click)="onSubmit()"
       >
-        Submit
+        Submit Additions
       </button>
       <button
         type="button"
-        class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+        class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
         Cancel
