@@ -27,6 +27,9 @@ import { Store } from '@ngrx/store';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
 import { AddRecipeIngredientModalComponent } from '../add-recipe-ingredient-modal/add-recipe-ingredient-modal.component';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
+import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
+import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
+import { DeleteRecipeIngredientModalComponent } from '../delete-recipe-ingredient-modal/delete-recipe-ingredient-modal.component';
 
 @Component({
   selector: 'dl-recipe-ingredients-modal',
@@ -37,7 +40,6 @@ import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ing
 export class RecipeIngredientsModalComponent {
   recipe;
   recipeIngredients$!: Observable<any[]>;
-  recipeIngredients: any[] = [];
   ingredients$!: Observable<any[]>;
   ingredientsToAdd: any[] = [];
   private ingredientsToAddSubject = new BehaviorSubject<any[]>([]);
@@ -59,12 +61,22 @@ export class RecipeIngredientsModalComponent {
     this.recipeIngredients$ = this.store.select(
       selectRecipeIngredientsByRecipeID(this.data.recipe.recipeID)
     );
+
     this.displayedIngredients$ = combineLatest([
-      this.store.select(selectRecipeIngredientsByRecipeID(this.data.recipeID)),
+      this.store.select(
+        selectRecipeIngredientsByRecipeID(this.data.recipe.recipeID)
+      ),
+      this.store.select(selectIngredients),
       this.ingredientsToAddSubject.asObservable(),
     ]).pipe(
-      map(([recipeIngredients, ingredientsToAdd]) => {
-        return [...recipeIngredients, ...ingredientsToAdd];
+      map(([recipeIngredients, allIngredients, ingredientsToAdd]) => {
+        const enrichedRecipeIngredients = recipeIngredients.map((ri) => ({
+          ...ri,
+          name: allIngredients.find(
+            (ing: any) => ing.ingredientID === ri.ingredientID
+          )?.name,
+        }));
+        return [...enrichedRecipeIngredients, ...ingredientsToAdd];
       })
     );
   }
@@ -100,34 +112,86 @@ export class RecipeIngredientsModalComponent {
       });
   }
 
-  onAddClick() {
-    const ingredientsToExclude: any[] = [];
-    if (this.recipeIngredients.length > 0)
-      this.recipeIngredients.map(
-        (recipeIngredient) => recipeIngredient.ingredientID
-      );
-    //add the 'ingredientsToAdd' IDs to 'ingredientsToExclude'
-    this.ingredientsToAdd.forEach((ingredient) => {
-      ingredientsToExclude.push(ingredient.ingredientID);
-    });
-
-    const dialogRef = this.dialog.open(AddRecipeIngredientModalComponent, {
+  onDeleteClick(recipeIngredientID: number, ingredientID: number) {
+    const dialogRef = this.dialog.open(DeleteRecipeIngredientModalComponent, {
       data: {
-        ingredientsToExclude,
+        recipeIngredientID,
+        ingredientID, 
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      const addedRecipeIngredient = {
-        recipeID: this.data.recipeID,
-        ingredientID: result.ingredientID,
-        measurement: result.measurement,
-        measurementUnit: result.measurementUnit,
-      };
-      this.ingredientsToAdd.push(addedRecipeIngredient);
-
-      this.ingredientsToAddSubject.next(this.ingredientsToAdd);
+      if (result === 'success') {
+        this.dialog.open(DeleteRequestConfirmationModalComponent, {
+          data: {
+            deleteSuccessMessage: `Ingredient successfully removed from recipe!`
+          }
+        })
+      } else if (result) {
+        this.dialog.open(DeleteRequestErrorModalComponent, {
+          data: {
+            error: result,
+            deleteFailureMessage: `Ingredient could not be removed from recipe.`
+          },
+        });
+      }
     });
+  }
+
+  onAddClick() {
+    // Create a local variable for ingredients to exclude
+    const ingredientsToExclude: any[] = [];
+
+    // Retrieve the recipe ingredients using the selector
+    this.store
+      .select(selectRecipeIngredientsByRecipeID(this.data.recipe.recipeID))
+      .pipe(take(1))
+      .subscribe((recipeIngredients) => {
+        // Add the ingredient IDs from the selector to the ingredientsToExclude list
+        recipeIngredients.map((recipeIngredient) => {
+          ingredientsToExclude.push(recipeIngredient.ingredientID);
+        });
+
+        // Add the 'ingredientsToAdd' IDs to 'ingredientsToExclude'
+        this.ingredientsToAdd.forEach((ingredient) => {
+          ingredientsToExclude.push(ingredient.ingredientID);
+        });
+
+        const dialogRef = this.dialog.open(AddRecipeIngredientModalComponent, {
+          data: {
+            ingredientsToExclude,
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result?.ingredientID) {
+            this.ingredients$
+              .pipe(
+                map(
+                  (ingredients) =>
+                    ingredients.find(
+                      (ing) => ing.ingredientID === result.ingredientID
+                    )?.name
+                ),
+                take(1)
+              )
+              .subscribe((ingredientName) => {
+                const addedRecipeIngredient: any = {
+                  recipeID: this.recipe.recipeID,
+                  ingredientID: result.ingredientID,
+                  measurement: result.measurement,
+                  measurementUnit: result.measurementUnit,
+                  name: ingredientName,
+                  toAdd: true,
+                };
+
+                this.ingredientsToAdd.push(addedRecipeIngredient);
+
+                this.ingredientsToAddSubject.next(this.ingredientsToAdd);
+              });
+          }
+        });
+      });
   }
 
   onCancel() {
