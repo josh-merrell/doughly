@@ -222,9 +222,8 @@ export class RecipesPageComponent {
   }
 
   recipeCardClick(recipe: Recipe) {
-    console.log('recipeCardClick: ' + recipe.recipeID);
     //if the recipe status of 'noIngredients', show the 'RecipeIngredients' modal
-    if (recipe.status === 'noIngredients') {
+    if (recipe.status === 'noIngredients' || 2 > 1) {
       const dialogRef = this.dialog.open(RecipeIngredientsModalComponent, {
         data: {
           recipe,

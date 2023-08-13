@@ -15,10 +15,13 @@ import {
   selectLoading,
 } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
 import { Observable, Subscription } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
+import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
+import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
+import { AddIngredientModalComponent } from 'src/app/kitchen/feature/ingredients/ui/add-ingredient-modal/add-ingredient-modal.component';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -30,6 +33,7 @@ import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ing
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    AddIngredientModalComponent,
   ],
   templateUrl: './add-recipe-ingredient-modal.component.html',
 })
@@ -46,7 +50,8 @@ export class AddRecipeIngredientModalComponent {
     public dialogRef: MatDialogRef<AddRecipeIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
     this.ingredientsToExclude = this.data.ingredientsToExclude;
@@ -67,13 +72,41 @@ export class AddRecipeIngredientModalComponent {
     });
   }
 
+  onAddNewIngredient() {
+    const dialogRef = this.dialog.open(AddIngredientModalComponent, {
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'success') {
+        this.dialog.open(AddRequestConfirmationModalComponent, {
+          data: {
+            result: result,
+            addSuccessMessage: 'Ingredient added successfully!',
+          },
+        });
+      } else if (result) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            error: result,
+            addFailureMessage: 'Failed to add Ingredient.',
+          },
+        });
+      }
+    });
+  }
+
   onSubmit() {
-    const newRecipeIngredient = this.form.value;
+    const formValue = this.form.value;
+    const newRecipeIngredient = {
+      ...formValue,
+      measurement: parseFloat(formValue.measurement),
+    };
     this.dialogRef.close(newRecipeIngredient);
   }
 
   onCancel() {
-    this.dialogRef.close();
+    this.dialogRef.close('cancel');
   }
 
   ngOnDestroy() {
