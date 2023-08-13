@@ -9,7 +9,7 @@ import { IngredientActions } from './kitchen/feature/ingredients/state/ingredien
 import { IngredientStockActions } from './kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 import { EmployeeActions } from './employees/state/employee-actions';
 import { ToolActions } from './kitchen/feature/tools/state/tool-actions';
-import { RecipeActions } from './recipes/state/recipe-actions';
+import { RecipeActions } from './recipes/state/recipe/recipe-actions';
 
 @Component({
   standalone: true,

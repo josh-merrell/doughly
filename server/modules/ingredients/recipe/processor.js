@@ -42,7 +42,7 @@ module.exports = ({ db }) => {
     const { userID, recipeID, ingredientID, measurementUnit, measurement } = options;
 
     //verify that the provided recipeID exists, return error if not
-    const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID);
+    const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID).eq('deleted', false);
     if (error) {
       global.logger.info(`Error validating provided recipeID: ${error.message}`);
       return { error: error.message };
@@ -76,6 +76,22 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating recipeIngredient: ${error3.message}`);
       return { error: error3.message };
     }
+
+    //if status of existingRecipe is 'noIngredients', update status to 'noTools'
+    if (existingRecipe[0].status === 'noIngredients') {
+      const { error4 } = await db.from('recipes').update({ status: 'noTools' }).eq('recipeID', recipeID);
+      if (error4) {
+        global.logger.info(`Error updating recipe status: ${error4.message}`);
+        //rollback added recipeIngredient
+        const { error5 } = await db.from('recipeIngredients').delete().eq('recipeIngredientID', recipeIngredient.recipeIngredientID);
+        if (error5) {
+          global.logger.info(`Error rolling back recipeIngredient: ${error5.message}`);
+          return { error: error5.message };
+        }
+        return { error: error4.message };
+      }
+    }
+
     global.logger.info(`Created recipeIngredient ID: ${recipeIngredient.recipeIngredientID}`);
     return recipeIngredient;
   }
@@ -141,6 +157,22 @@ module.exports = ({ db }) => {
       return { error: error2.message };
     }
     global.logger.info(`Deleted recipeIngredient ID: ${recipeIngredientID}`);
+
+    //if existingRecipe has no more recipeIngredients, update status to 'noIngredients'
+    const { data: recipeIngredients, error: recipeIngredientsError } = await db.from('recipeIngredients').select().eq('recipeID', existingRecipeIngredient[0].recipeID).eq('deleted', false);
+    if (recipeIngredientsError) {
+      global.logger.info(`Error getting remaining recipeIngredients for recipe: ${recipeIngredientsError}`);
+      return { error: recipeIngredientsError };
+    }
+    if (!recipeIngredients.length) {
+      const { error: updateError } = await db.from('recipes').update({ status: 'noIngredients' }).eq('recipeID', existingRecipeIngredient[0].recipeID);
+      if (updateError) {
+        global.logger.info(`Error updating recipe status: ${updateError}`);
+        return { error: updateError };
+      }
+      global.logger.info(`Recipe now has no recipeIngredients, Updated recipe status to 'noIngredients'`);
+    }
+
     return { success: true };
   }
 

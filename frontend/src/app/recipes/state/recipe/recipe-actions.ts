@@ -24,10 +24,7 @@ const loadRecipeFailure = createAction(
   props<{ error: any }>()
 );
 
-const addRecipe = createAction(
-  '[Recipes] Add',
-  props<{ recipe: Recipe }>()
-);
+const addRecipe = createAction('[Recipes] Add', props<{ recipe: Recipe }>());
 const addRecipeSuccess = createAction(
   '[Recipes] Add Success',
   props<{ recipe: Recipe }>()

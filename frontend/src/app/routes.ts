@@ -3,7 +3,7 @@ import { HomeComponent } from './home/feature/home/home.component';
 import { IngredientsComponent } from './kitchen/feature/ingredients/ingredients.component';
 import { NotfoundComponent } from './shared/ui/app-notfound/app-notfound.component';
 import { KitchenPageComponent } from './kitchen/kitchen-page.component';
-import { RecipePageComponent } from './recipes/feature/recipe-page/recipe-page.component';
+import { RecipesPageComponent } from './recipes/feature/recipes-page/recipes-page.component';
 import { LoginPageComponent } from './account/feature/login/login-page.component';
 import { ProfileGuard } from './guards/profile.guard';
 import { PasswordResetPageComponent } from './account/feature/password/password-reset-page.component';
@@ -34,7 +34,7 @@ export const routes: Route[] = [
   },
   {
     path: 'recipes',
-    component: RecipePageComponent,
+    component: RecipesPageComponent,
   },
   {
     path: 'kitchen',
