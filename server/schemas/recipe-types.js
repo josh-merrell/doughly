@@ -35,6 +35,7 @@ const RecipeUpdateSchema_body = {
     servings: { type: 'integer' },
     lifespanDays: { type: 'integer' },
     recipeCategoryID: { type: 'integer' },
+    status: { type: 'string' },
   },
 };
 

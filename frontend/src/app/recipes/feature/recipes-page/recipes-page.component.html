@@ -200,7 +200,7 @@
             *ngFor="let row of displayedRecipeRows$ | async"
             class="recipe-card my-dl-3 flex h-dl-7 w-5/6 rounded-lg shadow-md"
             [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === row.recipeID }"
-            (click)="recipeCardClick(row.recipeID)"
+            (click)="recipeCardClick(row)"
             (touchstart)="recipeCardTouchStart(row.recipeID)"
             (touchend)="recipeCardTouchEnd()"
           >
@@ -216,7 +216,7 @@
                 </p>
               </div>
               <p
-                *ngIf="row.isDraft === true"
+                *ngIf="row.status === 'published'"
                 class="absolute bottom-3 right-14 text-dl-3 text-dl-teal-7"
               >
                 Ready to Make!

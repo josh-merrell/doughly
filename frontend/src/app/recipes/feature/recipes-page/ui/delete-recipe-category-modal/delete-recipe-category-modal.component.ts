@@ -2,9 +2,12 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { RecipeCategoryActions } from '../../../../state/recipe-category-actions';
+import { RecipeCategoryActions } from '../../../../state/recipe-category/recipe-category-actions';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { selectDeleting, selectError } from '../../../../state/recipe-category-selectors'
+import {
+  selectDeleting,
+  selectError,
+} from '../../../../state/recipe-category/recipe-category-selectors';
 import { Observable, Subscription, filter } from 'rxjs';
 
 @Component({

@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, combineLatest, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Store, select } from '@ngrx/store';
-import { selectRecipes } from '../state/recipe-selectors';
-import { Recipe } from '../state/recipe-state';
-import { selectRecipeCategories } from '../state/recipe-category-selectors';
-import { RecipeCategory } from '../state/recipe-category-state';
+import { selectRecipes } from '../state/recipe/recipe-selectors';
+import { Recipe, RecipeStatus } from '../state/recipe/recipe-state';
+import { selectRecipeCategories } from '../state/recipe-category/recipe-category-selectors';
+import { RecipeCategory } from '../state/recipe-category/recipe-category-state';
+import { RecipeEffects } from '../state/recipe/recipe-effects';
 
 @Injectable({
   providedIn: 'root',
@@ -16,56 +17,38 @@ export class RecipeService {
 
   constructor(private http: HttpClient, private store: Store) {}
 
-  // rows$: Observable<Recipe[]> = this.store
-  //   .select(selectRecipes)
-  //   .pipe(
-  //     map((recipes: Recipe[]) => {
-  //       return recipes.map((recipe: any) => {
-  //         return {
-  //           recipeID: recipe.recipeID,
-  //           title: recipe.title,
-  //           recipeCategoryID: recipe.recipeCategoryID,
-  //           servings: recipe.servings,
-  //           isDraft: recipe.isDraft,
-  //           lifespanDays: recipe.lifespanDays,
-  //         };
-  //       });
-  //     })
-  //   );
-
   rows$: Observable<Recipe[]> = combineLatest([
     this.store.pipe(select(selectRecipes)),
     this.store.pipe(select(selectRecipeCategories)),
   ]).pipe(
-    map(
-      ([recipes, recipeCategories]: [Recipe[], RecipeCategory[]]) => {
-        return recipes.map((recipe) => {
-          const recipeCategory = recipeCategories.find(
-            (rc) => rc.recipeCategoryID === recipe.recipeCategoryID
-          );
-          if (!recipeCategory) {
-            return {
-              recipeID: recipe.recipeID,
-              title: recipe.title,
-              recipeCategoryID: recipe.recipeCategoryID,
-              servings: recipe.servings,
-              isDraft: recipe.isDraft,
-              lifespanDays: recipe.lifespanDays,
-              recipeCategoryName: `RecipeCategoryID:${recipe.recipeCategoryID} missing, can't get details for RecipeID:${recipe.recipeID}`,
-            };
-          }
+    map(([recipes, recipeCategories]: [Recipe[], RecipeCategory[]]) => {
+      return recipes.map((recipe) => {
+        const recipeCategory = recipeCategories.find(
+          (rc) => rc.recipeCategoryID === recipe.recipeCategoryID
+        );
+        if (!recipeCategory) {
           return {
             recipeID: recipe.recipeID,
             title: recipe.title,
-            recipeCategoryID: recipe.recipeCategoryID,
+            recipeCategoryID: 0,
             servings: recipe.servings,
-            isDraft: recipe.isDraft,
             lifespanDays: recipe.lifespanDays,
-            recipeCategoryName: recipeCategory.name,
+            status: recipe.status,
+            recipeCategoryName: `RecipeCategoryID:${recipe.recipeCategoryID} missing, can't get details for RecipeID:${recipe.recipeID}`,
           };
-        });
-      }
-  ));
+        }
+        return {
+          recipeID: recipe.recipeID,
+          title: recipe.title,
+          recipeCategoryID: recipe.recipeCategoryID,
+          servings: recipe.servings,
+          lifespanDays: recipe.lifespanDays,
+          status: recipe.status,
+          recipeCategoryName: recipeCategory.name,
+        };
+      });
+    })
+  );
 
   getAll(): Observable<any[]> {
     return this.http.get<any[]>(this.API_URL);

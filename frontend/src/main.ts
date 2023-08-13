@@ -28,11 +28,15 @@ import { employeeReducer } from './app/employees/state/employee-reducers';
 import { EmployeeEffects } from './app/employees/state/employee-effects';
 import { ToolReducer } from './app/kitchen/feature/tools/state/tool-reducers';
 import { ToolEffects } from './app/kitchen/feature/tools/state/tool-effects';
-import { recipeCategoryReducer } from './app/recipes/state/recipe-category-reducers';
-import { RecipeCategoryEffects } from './app/recipes/state/recipe-category-effects';
+import { recipeCategoryReducer } from './app/recipes/state/recipe-category/recipe-category-reducers';
+import { RecipeCategoryEffects } from './app/recipes/state/recipe-category/recipe-category-effects';
 import { recipePageReducer } from './app/recipes/state/recipe-page-reducers';
-import { RecipeEffects } from './app/recipes/state/recipe-effects';
-import { recipeReducer } from './app/recipes/state/recipe-reducers';
+import { RecipeEffects } from './app/recipes/state/recipe/recipe-effects';
+import { recipeReducer } from './app/recipes/state/recipe/recipe-reducers';
+import { RecipeIngredientReducer } from './app/recipes/state/recipe-ingredient/recipe-ingredient-reducers';
+import { RecipeIngredientEffects } from './app/recipes/state/recipe-ingredient/recipe-ingredient-effects';
+import { RecipeToolEffects } from './app/recipes/state/recipe-tool/recipe-tool-effects';
+import { RecipeToolReducer } from './app/recipes/state/recipe-tool/recipe-tool-reducers';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -47,6 +51,8 @@ bootstrapApplication(AppComponent, {
     provideState('recipeCategory', recipeCategoryReducer),
     provideState('recipePage', recipePageReducer),
     provideState('recipe', recipeReducer),
+    provideState('recipeIngredient', RecipeIngredientReducer),
+    provideState('recipeTool', RecipeToolReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
@@ -54,6 +60,8 @@ bootstrapApplication(AppComponent, {
       ToolEffects,
       RecipeCategoryEffects,
       RecipeEffects,
+      RecipeIngredientEffects,
+      RecipeToolEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({

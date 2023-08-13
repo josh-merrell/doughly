@@ -3,13 +3,23 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Observable, Subscription } from 'rxjs';
-import { RecipeCategory } from 'src/app/recipes/state/recipe-category-state';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { selectAdding, selectError, selectLoading, selectRecipeCategories } from 'src/app/recipes/state/recipe-category-selectors';
+import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  selectAdding,
+  selectError,
+  selectLoading,
+  selectRecipeCategories,
+} from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { Store } from '@ngrx/store';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { nonDuplicateString } from 'src/app/shared/utils/formValidator';
-import { RecipeCategoryActions } from 'src/app/recipes/state/recipe-category-actions';
+import { RecipeCategoryActions } from 'src/app/recipes/state/recipe-category/recipe-category-actions';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';

@@ -114,6 +114,22 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating recipeStep: ${error.message}`);
       return { error: error.message };
     }
+
+    //if status of recipe is 'noSteps', update status to 'published'
+    if (recipe[0].status === 'noSteps') {
+      const { error: recipeUpdateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
+      if (recipeUpdateError) {
+        global.logger.info(`Error updating recipe status: ${recipeUpdateError.message}`);
+        //rollback recipeStep creation
+        const { error: rollbackError } = await db.from('recipeSteps').delete().eq('recipeStepID', newRecipeStep.recipeStepID);
+        if (rollbackError) {
+          global.logger.info(`Error rolling back recipeStep: ${rollbackError.message}`);
+          return { error: rollbackError.message };
+        }
+        return { error: recipeUpdateError.message };
+      }
+      global.logger.info(`Updated recipe status to published`);
+    }
     global.logger.info(`Created recipeStep ${newRecipeStep.recipeStepID}`);
     return newRecipeStep;
   }
@@ -199,8 +215,8 @@ module.exports = ({ db }) => {
       return { error: `Provided recipeStep ID: ${recipeStepID} does not exist, cannot delete recipeStep` };
     }
 
-    //get existing steps for recipeID of provided recipeStepID, order by sequence ascending
-    const { data: existingRecipeSteps, error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeStep[0].recipeID).order('sequence', { ascending: true });
+    //get existing steps for recipeID of provided recipeStepID, order by sequence ascending, only get undeleted steps
+    const { data: existingRecipeSteps, error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeStep[0].recipeID).eq('deleted', false).order('sequence', { ascending: true });
 
     if (existingRecipeStepsError) {
       global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while deleting recipeStep ${existingRecipeStepsError.message}`);
@@ -214,6 +230,16 @@ module.exports = ({ db }) => {
       return { error: deleteError.message };
     }
     global.logger.info(`Deleted recipeStep ${recipeStepID}`);
+
+    //if recipe has no remaining steps, update recipe status to 'noSteps'
+    if (existingRecipeSteps.length === 1) {
+      const { error: recipeUpdateError } = await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeStep[0].recipeID);
+      if (recipeUpdateError) {
+        global.logger.info(`Error updating recipe status: ${recipeUpdateError.message}`);
+        return { error: recipeUpdateError.message };
+      }
+      global.logger.info(`Recipe now has no Steps. Updated recipe status to noSteps`);
+    }
 
     //decrement the sequence of all recipeSteps with sequence > existing sequence
     for (let i = recipeStep[0].sequence; i < existingRecipeSteps.length; i++) {
