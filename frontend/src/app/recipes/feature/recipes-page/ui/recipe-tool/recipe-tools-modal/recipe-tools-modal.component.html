@@ -1,0 +1,108 @@
+<div
+  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+>
+  <mat-spinner
+    class="my-app-custom-spinner"
+    *ngIf="isAdding$ | async"
+  ></mat-spinner>
+  <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
+    <div class="flex w-full flex-col items-start">
+      <h3 class="text-dl-6 font-dl-3 text-dl-grey-4">
+        {{ recipe.title }}
+      </h3>
+      <p class="mb-dl-2 mt-dl-5 text-dl-5 text-dl-blue-5">Tools</p>
+    </div>
+
+    <!--List of Recipe Tools-->
+    <div class="mb-dl-5 mx-dl-2 flex flex-col">
+      <div class="mb-dl-2 flex w-dl-15 flex-wrap items-start">
+        <ng-container *ngFor="let tool of displayedTools$ | async">
+          <div
+            class="inline-block"
+            (click)="onDeleteClick(tool.recipeToolID, tool.toolID)"
+          >
+            <div
+              class="mr-dl-3 mt-dl-2 inline-flex whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-4 text-dl-grey-4"
+            >
+              <span class="font-dl-3"
+                >{{ tool.name }}&nbsp;&nbsp;&nbsp;</span
+              >
+              <span class="font-dl-2">
+                {{ tool.quantity }}</span
+              >
+              <span *ngIf="tool.toAdd" class="font-dl-2 text-dl-pink-5"
+                >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
+              >
+              <button
+                type="button"
+                class="ml-dl-2 rounded-dl-2 bg-dl-grey-10 text-dl-grey-3 hover:bg-dl-grey-9 focus:outline-none"
+              >
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <button
+        type="button"
+        class="relative mt-dl-2 flex h-8 w-8 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7"
+        (click)="onAddClick()"
+        id="addRecipeToolButton"
+      >
+        <span class="sr-only">Add Recipe Tool</span>
+        <svg
+          class="text-dl-grey-2"
+          width="22"
+          height="22"
+          viewBox="0 0 15 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 2.75C8 2.47386 7.77614 2.25 7.5 2.25C7.22386 2.25 7 2.47386 7 2.75V7H2.75C2.47386 7 2.25 7.22386 2.25 7.5C2.25 7.77614 2.47386 8 2.75 8H7V12.25C7 12.5261 7.22386 12.75 7.5 12.75C7.77614 12.75 8 12.5261 8 12.25V8H12.25C12.5261 8 12.75 7.77614 12.75 7.5C12.75 7.22386 12.5261 7 12.25 7H8V2.75Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Cancel, Submit Buttons-->
+    <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <button
+        type="button"
+        class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-white sm:ml-dl-4"
+        [ngClass]="{
+          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+            toolsToAdd.length > 0,
+          'bg-dl-grey-7': toolsToAdd.length === 0
+        }"
+        [disabled]="toolsToAdd.length === 0"
+        (click)="onSubmit()"
+      >
+        Submit Additions
+      </button>
+      <button
+        type="button"
+        class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+        (click)="onCancel()"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

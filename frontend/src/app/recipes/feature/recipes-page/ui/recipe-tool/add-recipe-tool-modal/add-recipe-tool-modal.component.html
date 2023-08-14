@@ -13,11 +13,11 @@
     <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
         <h3 class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4">
-          Add Recipe Ingredient
+          Add Recipe Tool
         </h3>
         <div class="mt-dl-2">
           <p class="text-dl-2 text-dl-grey-5">
-            Add a new Ingredient and its measurement to this recipe.
+            Add a new Tool and its required quantity to this recipe.
           </p>
         </div>
       </div>
@@ -47,47 +47,40 @@
 
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
-        <div id="form-ingredientName" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Ingredient</label>
+        <div id="form-toolName" class="relative flex flex-col">
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Tool</label>
           <mat-form-field>
-            <mat-select formControlName="ingredientID">
-              <ng-container *ngFor="let ingredient of ingredients$ | async">
+            <mat-select formControlName="toolID">
+              <ng-container *ngFor="let tool of tools$ | async">
                 <mat-option
-                  *ngIf="!isIngredientExcluded(ingredient.ingredientID)"
-                  [value]="ingredient.ingredientID"
+                  *ngIf="!isToolExcluded(tool.toolID)"
+                  [value]="tool.toolID"
                 >
-                  {{ ingredient.name }}
+                  {{ tool.name }}
                 </mat-option>
               </ng-container>
               <div
-                class="px-dl-4 py-dl-3 bg-dl-grey-10 text-dl-grey-2"
-                (click)="onAddNewIngredient()"
+                class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2"
+                (click)="onAddNewTool()"
               >
-                New Ingredient
-            </div>
+                New Tool
+              </div>
             </mat-select>
           </mat-form-field>
         </div>
-        <div id="form-measurement">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Measurement</label>
+        <div id="form-quantity">
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Quantity</label>
           <mat-form-field class="w-full">
             <input
               matInput
-              formControlName="measurement"
-              [disabled]="!form.get('ingredientID')?.value"
+              formControlName="quantity"
+              [disabled]="!form.get('toolID')?.value"
             />
-          </mat-form-field>
-        </div>
-        <div id="form-measurementUnit" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
-            >Measurement Unit</label
-          >
-          <mat-form-field>
-            <mat-select formControlName="measurementUnit">
-              <mat-option *ngFor="let unit of purchaseUnits" [value]="unit">
-                {{ unit }}
-              </mat-option>
-            </mat-select>
+            <mat-error
+              *ngIf="form.get('quantity')?.hasError('notPositiveInteger')"
+            >
+              Must be a positive integer
+            </mat-error>
           </mat-form-field>
         </div>
       </div>

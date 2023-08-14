@@ -22,6 +22,7 @@ import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ing
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddIngredientModalComponent } from 'src/app/kitchen/feature/ingredients/ui/add-ingredient-modal/add-ingredient-modal.component';
+import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -67,7 +68,7 @@ export class AddRecipeIngredientModalComponent {
   setForm() {
     this.form = this.fb.group({
       ingredientID: ['', Validators.required],
-      measurement: ['', Validators.required],
+      measurement: ['', [Validators.required, positiveIntegerValidator()]],
       measurementUnit: ['', Validators.required],
     });
   }

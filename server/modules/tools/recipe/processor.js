@@ -106,7 +106,12 @@ module.exports = ({ db }) => {
     }
 
     global.logger.info(`Created recipeTool ${newRecipeTool.recipeToolID}`);
-    return newRecipeTool;
+    return {
+      recipeToolID: newRecipeTool.recipeToolID,
+      recipeID: newRecipeTool.recipeID,
+      toolID: newRecipeTool.toolID,
+      quantity: newRecipeTool.quantity,
+    };
   }
 
   async function update(options) {
