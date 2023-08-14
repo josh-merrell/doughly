@@ -9,6 +9,12 @@ export const selectRecipeToolByID = (recipeToolID: number) => {
   });
 }
 
+export const selectRecipeToolsByRecipeID = (recipeID: number) => {
+  return createSelector(selectRecipeTools, (recipeTools: RecipeTool[]) => {
+    return recipeTools.filter((recipeTool: RecipeTool) => recipeTool.recipeID === recipeID);
+  });
+}
+
 export const selectDeleting = (state: any) => state.recipeTool.deleting;
 
 export const selectAdding = (state: any) => state.recipeTool.adding;

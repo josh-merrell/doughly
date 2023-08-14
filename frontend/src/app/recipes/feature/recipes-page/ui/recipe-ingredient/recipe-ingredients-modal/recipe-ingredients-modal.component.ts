@@ -116,7 +116,7 @@ export class RecipeIngredientsModalComponent {
     const dialogRef = this.dialog.open(DeleteRecipeIngredientModalComponent, {
       data: {
         recipeIngredientID,
-        ingredientID, 
+        ingredientID,
       },
     });
 
@@ -124,14 +124,14 @@ export class RecipeIngredientsModalComponent {
       if (result === 'success') {
         this.dialog.open(DeleteRequestConfirmationModalComponent, {
           data: {
-            deleteSuccessMessage: `Ingredient successfully removed from recipe!`
-          }
-        })
+            deleteSuccessMessage: `Ingredient successfully removed from recipe!`,
+          },
+        });
       } else if (result) {
         this.dialog.open(DeleteRequestErrorModalComponent, {
           data: {
             error: result,
-            deleteFailureMessage: `Ingredient could not be removed from recipe.`
+            deleteFailureMessage: `Ingredient could not be removed from recipe.`,
           },
         });
       }

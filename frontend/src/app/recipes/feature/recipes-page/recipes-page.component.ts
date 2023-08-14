@@ -24,9 +24,9 @@ import {
 import { RecipeCategoryActions } from '../../state/recipe-category/recipe-category-actions';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
-import { AddRecipeCategoryModalComponent } from './ui/add-recipe-category-modal/add-recipe-category-modal.component';
-import { EditRecipeCategoryModalComponent } from './ui/edit-recipe-category-modal/edit-recipe-category-modal.component';
-import { DeleteRecipeCategoryModalComponent } from './ui/delete-recipe-category-modal/delete-recipe-category-modal.component';
+import { AddRecipeCategoryModalComponent } from './ui/recipe-category/add-recipe-category-modal/add-recipe-category-modal.component';
+import { EditRecipeCategoryModalComponent } from './ui/recipe-category/edit-recipe-category-modal/edit-recipe-category-modal.component';
+import { DeleteRecipeCategoryModalComponent } from './ui/recipe-category/delete-recipe-category-modal/delete-recipe-category-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -48,13 +48,17 @@ import { SortingService } from 'src/app/shared/utils/sortingService';
 import { Recipe } from '../../state/recipe/recipe-state';
 import { RecipeIngredientActions } from '../../state/recipe-ingredient/recipe-ingredient-actions';
 import { RecipeToolActions } from '../../state/recipe-tool/recipe-tool-actions';
-import { RecipeIngredientsModalComponent } from './ui/recipe-ingredients-modal/recipe-ingredients-modal.component';
+import { RecipeIngredientsModalComponent } from './ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
 import { RecipeIngredientError } from '../../state/recipe-ingredient/recipe-ingredient-state';
+import { RecipeToolsModalComponent } from './ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
 function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
+  return obj && obj.errorType !== undefined && obj.message !== undefined;
+}
+function isRecipeToolError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
 @Component({
@@ -223,7 +227,7 @@ export class RecipesPageComponent {
 
   recipeCardClick(recipe: Recipe) {
     //if the recipe status of 'noIngredients', show the 'RecipeIngredients' modal
-    if (recipe.status === 'noIngredients' || 2 > 1) {
+    if (recipe.status === 'noIngredients') {
       const dialogRef = this.dialog.open(RecipeIngredientsModalComponent, {
         data: {
           recipe,
@@ -247,8 +251,32 @@ export class RecipesPageComponent {
           });
         }
       });
+    } else if (recipe.status === 'noTools' || 2 > 1) {
+      //else if the recipe has status of 'noTools', show the 'addRecipeTools' modal
+      const dialogRef = this.dialog.open(RecipeToolsModalComponent, {
+        data: {
+          recipe,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialog.open(AddRequestConfirmationModalComponent, {
+            data: {
+              results: result,
+              addSuccessMessage: 'Recipe Tools added successfully!',
+            },
+          });
+        } else if (isRecipeToolError(result)) {
+          this.dialog.open(AddRequestErrorModalComponent, {
+            data: {
+              error: result,
+              addFailureMessage: 'Recipe Tools could not be added.',
+            },
+          });
+        }
+      });
     }
-    //else if the recipe has status of 'noTools', show the 'addRecipeTools' modal
     //else if the recipe has status of 'noSteps', show the 'addRecipeSteps' modal
     //else show the 'recipeDetails' modal
   }
