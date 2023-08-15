@@ -51,6 +51,10 @@ import { RecipeToolActions } from '../../state/recipe-tool/recipe-tool-actions';
 import { RecipeIngredientsModalComponent } from './ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
 import { RecipeIngredientError } from '../../state/recipe-ingredient/recipe-ingredient-state';
 import { RecipeToolsModalComponent } from './ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
+import { RecipeStepsModalComponent } from './ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
+import { AddRecipeModalComponent } from './ui/recipe/add-recipe-modal/add-recipe-modal.component';
+import { StepActions } from '../../state/step/step-actions';
+import { RecipeStepActions } from '../../state/recipe-step/recipe-step-actions';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -59,6 +63,9 @@ function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
 function isRecipeToolError(obj: any): obj is RecipeIngredientError {
+  return obj && obj.errorType !== undefined && obj.message !== undefined;
+}
+function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
 @Component({
@@ -226,8 +233,8 @@ export class RecipesPageComponent {
   }
 
   recipeCardClick(recipe: Recipe) {
-    //if the recipe status of 'noIngredients', show the 'RecipeIngredients' modal
     if (recipe.status === 'noIngredients') {
+      //if the recipe status of 'noIngredients', show the 'RecipeIngredients' modal
       const dialogRef = this.dialog.open(RecipeIngredientsModalComponent, {
         data: {
           recipe,
@@ -251,7 +258,7 @@ export class RecipesPageComponent {
           });
         }
       });
-    } else if (recipe.status === 'noTools' || 2 > 1) {
+    } else if (recipe.status === 'noTools') {
       //else if the recipe has status of 'noTools', show the 'addRecipeTools' modal
       const dialogRef = this.dialog.open(RecipeToolsModalComponent, {
         data: {
@@ -276,9 +283,35 @@ export class RecipesPageComponent {
           });
         }
       });
+    } else if (recipe.status === 'noSteps' || 2 > 1) {
+      //else if the recipe has status of 'noSteps', show the 'addRecipeSteps' modal
+      const dialogRef = this.dialog.open(RecipeStepsModalComponent, {
+        data: {
+          recipe,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialog.open(AddRequestConfirmationModalComponent, {
+            data: {
+              results: result,
+              addSuccessMessage: 'Recipe Steps added successfully!',
+            },
+          });
+        } else if (isRecipeStepError(result)) {
+          this.dialog.open(AddRequestErrorModalComponent, {
+            data: {
+              error: result,
+              addFailureMessage: 'Recipe Steps could not be added.',
+            },
+          });
+        }
+      });
+
+    } else {
+      //else show the 'recipeDetails' modal
     }
-    //else if the recipe has status of 'noSteps', show the 'addRecipeSteps' modal
-    //else show the 'recipeDetails' modal
   }
 
   categoryCardClick(category: string) {
@@ -325,6 +358,8 @@ export class RecipesPageComponent {
     //hydrate data
     this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
     this.store.dispatch(RecipeToolActions.loadRecipeTools());
+    this.store.dispatch(StepActions.loadSteps());
+    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
 
     this.view$.subscribe((view) => {
       this.view = view;
@@ -405,13 +440,25 @@ export class RecipesPageComponent {
   }
 
   openAddDialog() {
-    const dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
-      data: {
-        recipeCategories: this.recipeCategories,
-      },
-    });
+    // const dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
+    //   data: {
+    //     recipeCategories: this.recipeCategories,
+    //   },
+    // });
+    let dialogRef: any;
+    if (this.view === 'categories') {
+      dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
+        data: {
+          recipeCategories: this.recipeCategories,
+        },
+      });
+    } else if (this.view === 'list') {
+      dialogRef = this.dialog.open(AddRecipeModalComponent, {
+        data: {},
+      })
+    }
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {

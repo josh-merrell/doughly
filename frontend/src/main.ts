@@ -37,6 +37,10 @@ import { RecipeIngredientReducer } from './app/recipes/state/recipe-ingredient/r
 import { RecipeIngredientEffects } from './app/recipes/state/recipe-ingredient/recipe-ingredient-effects';
 import { RecipeToolEffects } from './app/recipes/state/recipe-tool/recipe-tool-effects';
 import { RecipeToolReducer } from './app/recipes/state/recipe-tool/recipe-tool-reducers';
+import { StepReducer } from './app/recipes/state/step/step-reducers';
+import { StepEffects } from './app/recipes/state/step/step-effects';
+import { RecipeStepReducer } from './app/recipes/state/recipe-step/recipe-step-reducers';
+import { RecipeStepEffects } from './app/recipes/state/recipe-step/recipe-step-effects';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -53,6 +57,8 @@ bootstrapApplication(AppComponent, {
     provideState('recipe', recipeReducer),
     provideState('recipeIngredient', RecipeIngredientReducer),
     provideState('recipeTool', RecipeToolReducer),
+    provideState('step', StepReducer),
+    provideState('recipeStep', RecipeStepReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
@@ -62,6 +68,8 @@ bootstrapApplication(AppComponent, {
       RecipeEffects,
       RecipeIngredientEffects,
       RecipeToolEffects,
+      StepEffects,
+      RecipeStepEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({
