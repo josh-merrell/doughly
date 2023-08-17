@@ -88,25 +88,23 @@ module.exports = ({ db }) => {
       global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeID} while creating recipeStep ${existingRecipeStepsError.message}`);
       return { error: existingRecipeStepsError.message };
     }
-    //validate that provided sequence is positive integer, and is less than the number of steps in the recipe + 1
+    //validate that provided sequence is positive integer
     if (sequence < 1) {
       global.logger.info(`Provided sequence: ${sequence} is less than 1, cannot create recipeStep`);
       return { error: `Provided sequence: ${sequence} is less than 1, cannot create recipeStep` };
     }
-    if (sequence > existingRecipeSteps.length + 1) {
-      global.logger.info(`Provided sequence: ${sequence} is greater than the number of steps in the recipe + 1, cannot create recipeStep`);
-      return { error: `Provided sequence: ${sequence} is greater than the number of steps in the recipe + 1, cannot create recipeStep` };
-    }
 
+    /** FOR NOW WE ARE NOT USING THIS SMART SEQUENCE SHIFTING LOGIC, THE FRONTEND WILL CALL EACH NEEDED SHIFT DIRECTLY
     //if sequence is less than number of steps in recipe + 1, increment the sequence of all recipeSteps with sequence >= provided sequence
-    for (let i = existingRecipeSteps.length - 1; i >= sequence - 1; i--) {
-      const { error: sequenceShiftError } = await updater('recipeStepID', existingRecipeSteps[i].recipeStepID, 'recipeSteps', { sequence: existingRecipeSteps[i].sequence + 1 });
-      if (sequenceShiftError) {
-        global.logger.info(`Error shifting sequence of recipeStep ID: ${existingRecipeSteps[i].recipeStepID} while creating recipeStep ${sequenceShiftError.message}`);
-        return { error: sequenceShiftError.message };
-      }
-      global.logger.info(`Shifted sequence of recipeStep ID: ${existingRecipeSteps[i].recipeStepID} to ${existingRecipeSteps[i].sequence + 1}`);
-    }
+    // for (let i = existingRecipeSteps.length - 1; i >= sequence - 1; i--) {
+    //   const { error: sequenceShiftError } = await updater('recipeStepID', existingRecipeSteps[i].recipeStepID, 'recipeSteps', { sequence: existingRecipeSteps[i].sequence + 1 });
+    //   if (sequenceShiftError) {
+    //     global.logger.info(`Error shifting sequence of recipeStep ID: ${existingRecipeSteps[i].recipeStepID} while creating recipeStep ${sequenceShiftError.message}`);
+    //     return { error: sequenceShiftError.message };
+    //   }
+    //   global.logger.info(`Shifted sequence of recipeStep ID: ${existingRecipeSteps[i].recipeStepID} to ${existingRecipeSteps[i].sequence + 1}`);
+    // }
+    **/
 
     const { data: newRecipeStep, error } = await db.from('recipeSteps').insert({ userID, recipeID, stepID, sequence }).select().single();
 
@@ -153,7 +151,7 @@ module.exports = ({ db }) => {
       return recipeStep[0];
     }
 
-    //validate that provided sequence is positive integer, and is less than the number of steps in the recipe
+    //validate that provided sequence is positive integer
     if (sequence < 1) {
       global.logger.info(`Provided sequence: ${sequence} is less than 1, cannot update recipeStep`);
       return { error: `Provided sequence: ${sequence} is less than 1, cannot update recipeStep` };
@@ -165,31 +163,28 @@ module.exports = ({ db }) => {
       global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while updating recipeStep ${existingRecipeStepsError.message}`);
       return { error: existingRecipeStepsError.message };
     }
-    if (sequence > existingRecipeSteps.length) {
-      global.logger.info(`Provided sequence: ${sequence} is greater than the number of steps in the recipe, cannot update recipeStep`);
-      return { error: `Provided sequence: ${sequence} is greater than the number of steps in the recipe, cannot update recipeStep` };
-    }
 
+    /** FOR NOW WE ARE NOT USING THIS SMART SEQUENCE SHIFTING LOGIC, THE FRONTEND WILL CALL EACH NEEDED SHIFT DIRECTLY
     //if provided sequence is less than existing sequence, increment the sequence of all recipeSteps with sequence >= provided sequence and < existing sequence
-    if (sequence < recipeStep[0].sequence) {
-      for (let i = recipeStep[0].sequence - 1; i >= sequence - 1; i--) {
-        const { error: sequenceShiftError } = await sequenceShifter(existingRecipeSteps[i].recipeStepID, existingRecipeSteps[i].sequence + 1);
-        if (sequenceShiftError) {
-          return { error: sequenceShiftError.message };
-        }
-      }
-    }
+    // if (sequence < recipeStep[0].sequence) {
+    //   for (let i = recipeStep[0].sequence - 1; i >= sequence - 1; i--) {
+    //     const { error: sequenceShiftError } = await sequenceShifter(existingRecipeSteps[i].recipeStepID, existingRecipeSteps[i].sequence + 1);
+    //     if (sequenceShiftError) {
+    //       return { error: sequenceShiftError.message };
+    //     }
+    //   }
+    // }
 
     //if provided sequence is greater than existing sequence, decrement the sequence of all recipeSteps with sequence <= provided sequence and > existing sequence
-    if (sequence > recipeStep[0].sequence) {
-      for (let i = recipeStep[0].sequence; i <= sequence - 1; i++) {
-        const { error: sequenceShiftError } = await sequenceShifter(existingRecipeSteps[i].recipeStepID, existingRecipeSteps[i].sequence - 1);
-        if (sequenceShiftError) {
-          return { error: sequenceShiftError.message };
-        }
-      }
-    }
-
+    // if (sequence > recipeStep[0].sequence) {
+    //   for (let i = recipeStep[0].sequence; i <= sequence - 1; i++) {
+    //     const { error: sequenceShiftError } = await sequenceShifter(existingRecipeSteps[i].recipeStepID, existingRecipeSteps[i].sequence - 1);
+    //     if (sequenceShiftError) {
+    //       return { error: sequenceShiftError.message };
+    //     }
+    //   }
+    // }
+    **/
     const updateFields = { sequence: sequence };
 
     try {

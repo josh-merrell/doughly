@@ -8,7 +8,7 @@ export interface StepState {
 }
 
 export interface Step {
-  stepID: number;
+  stepID?: number;
   title: string;
   description: string;
 }

@@ -9,6 +9,14 @@ export const selectStepByID = (stepID: number) => {
   });
 };
 
+export const selectStepByTitle = (title: string) => {
+  return createSelector(selectSteps, (steps: Step[]) => {
+    return steps.find((step: Step) => step.title === title)
+  });
+};
+
+export const selectLatestAddedStep = (state: any) => state.step.latestAddedStep;
+
 export const selectDeleting = (state: any) => state.step.deleting;
 
 export const selectAdding = (state: any) => state.step.adding;

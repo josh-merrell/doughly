@@ -8,7 +8,7 @@ export interface RecipeStepState {
 }
 
 export interface RecipeStep {
-  recipeStepID: number;
+  recipeStepID?: number;
   recipeID: number;
   stepID: number;
   sequence: number;

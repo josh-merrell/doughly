@@ -308,7 +308,6 @@ export class RecipesPageComponent {
           });
         }
       });
-
     } else {
       //else show the 'recipeDetails' modal
     }
@@ -455,7 +454,7 @@ export class RecipesPageComponent {
     } else if (this.view === 'list') {
       dialogRef = this.dialog.open(AddRecipeModalComponent, {
         data: {},
-      })
+      });
     }
 
     dialogRef!.afterClosed().subscribe((result: any) => {

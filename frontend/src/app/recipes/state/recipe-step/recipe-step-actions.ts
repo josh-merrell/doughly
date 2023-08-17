@@ -9,7 +9,7 @@ const loadRecipeStep = createAction(`[RecipeStep] Load Single`, props<{ recipeSt
 const loadRecipeStepSuccess = createAction(`[RecipeStep] Load Single Success`, props<{ recipeStep: RecipeStep }>());
 const loadRecipeStepFailure = createAction(`[RecipeStep] Load Single Failure`, props<{ error: any }>());
 
-const addRecipeStep = createAction(`[RecipeStep] Add`, props<{ recipeStep: RecipeStep }>());
+const addRecipeStep = createAction(`[RecipeStep] Add`, props<{ recipeStep: any }>());
 const addRecipeStepSuccess = createAction(`[RecipeStep] Add Success`, props<{ recipeStep: RecipeStep }>());
 const addRecipeStepFailure = createAction(`[RecipeStep] Add Failure`, props<{ error: any }>());
 

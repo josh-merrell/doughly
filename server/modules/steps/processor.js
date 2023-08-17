@@ -54,7 +54,12 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
     global.logger.info(`Created step ${data.stepID}`);
-    return data;
+    // return data;
+    return {
+      stepID: data.stepID,
+      title: data.title,
+      description: data.description,
+    };
   }
 
   async function update(options) {

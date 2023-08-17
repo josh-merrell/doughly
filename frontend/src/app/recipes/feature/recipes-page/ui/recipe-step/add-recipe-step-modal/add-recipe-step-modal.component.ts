@@ -19,8 +19,14 @@ import {
 import { Store } from '@ngrx/store';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
-import { selectAdding, selectLoading } from 'src/app/recipes/state/step/step-selectors';
-import { selectAddingRecipeStep, selectLoadingRecipeStep } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
+import {
+  selectAdding,
+  selectLoading,
+} from 'src/app/recipes/state/step/step-selectors';
+import {
+  selectAddingRecipeStep,
+  selectLoadingRecipeStep,
+} from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
 
 @Component({
   selector: 'dl-add-recipe-step-modal',
@@ -48,7 +54,7 @@ export class AddRecipeStepModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private store: Store,
+    private store: Store
   ) {
     this.isAddingStep$ = this.store.select(selectAdding);
     this.isAddingRecipeStep$ = this.store.select(selectAddingRecipeStep);
@@ -61,7 +67,7 @@ export class AddRecipeStepModalComponent {
     this.form = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
-    })
+    });
   }
 
   onSubmit() {
