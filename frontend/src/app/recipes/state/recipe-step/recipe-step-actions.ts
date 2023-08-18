@@ -21,6 +21,8 @@ const deleteRecipeStep = createAction(`[RecipeStep] Delete`, props<{ recipeStepI
 const deleteRecipeStepSuccess = createAction(`[RecipeStep] Delete Success`, props<{ recipeStepID: number }>());
 const deleteRecipeStepFailure = createAction(`[RecipeStep] Delete Failure`, props<{ error: any }>());
 
+const updateRecipeStepSequence = createAction(`[RecipeStep] Update Sequence`, props<{ recipeStep: RecipeStep, newSequence: number }>());
+
 export const RecipeStepActions = {
   loadRecipeSteps,
   loadRecipeStepsSuccess,
@@ -36,5 +38,6 @@ export const RecipeStepActions = {
   updateRecipeStepFailure,
   deleteRecipeStep,
   deleteRecipeStepSuccess,
-  deleteRecipeStepFailure
+  deleteRecipeStepFailure,
+  updateRecipeStepSequence,
 };

@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
     const { userID, title, description } = options;
 
     //verify that no steps exist with provided title
-    const { data: steps, error: error2 } = await db.from('steps').select('title').eq('title', title);
+    const { data: steps, error: error2 } = await db.from('steps').select('title').eq('title', title).eq('deleted', false);
     if (error2) {
       global.logger.info(`Error validating title: ${title} while creating step ${error2.message}`);
       return { error: error2.message };
@@ -46,6 +46,25 @@ module.exports = ({ db }) => {
     if (steps.length > 0) {
       global.logger.info(`Step with title ${title} already exists, can't use this title`);
       return { error: `Step with title ${title} already exists, can't use this title` };
+    }
+
+    //if step with provided title exists but is deleted, undelete it and return it
+    const { data: deletedSteps, error: error3 } = await db.from('steps').select().eq('title', title).eq('deleted', true);
+    if (error3) {
+      global.logger.info(`Error validating title: ${title} while creating step ${error3.message}`);
+      return { error: error3.message };
+    }
+    if (deletedSteps.length > 0) {
+      const { error: error4 } = await db.from('steps').update({ deleted: false }).eq('stepID', deletedSteps[0].stepID).single();
+      if (error4) {
+        global.logger.info(`Error undeleting step: ${error4.message}`);
+        return { error: error4.message };
+      }
+      return {
+        stepID: deletedSteps[0].stepID,
+        title: deletedSteps[0].title,
+        description: deletedSteps[0].description,
+      };
     }
 
     const { data, error } = await db.from('steps').insert({ userID, title, description }).select().single();

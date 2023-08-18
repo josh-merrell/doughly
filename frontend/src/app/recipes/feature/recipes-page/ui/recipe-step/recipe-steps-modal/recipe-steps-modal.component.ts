@@ -1,4 +1,4 @@
-import { Component, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   CdkDragDrop,
@@ -10,18 +10,12 @@ import {
   BehaviorSubject,
   EMPTY,
   Observable,
-  Subscription,
   catchError,
-  combineLatest,
   concatMap,
   filter,
-  finalize,
-  forkJoin,
   from,
   map,
-  switchMap,
   take,
-  tap,
 } from 'rxjs';
 import {
   MAT_DIALOG_DATA,
@@ -40,11 +34,7 @@ import {
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
 import { Step } from 'src/app/recipes/state/step/step-state';
 import {
-  selectSteps,
-  selectAdding,
-  selectLoading,
-  selectStepByTitle,
-  selectLatestAddedStep,
+  selectSteps
 } from 'src/app/recipes/state/step/step-selectors';
 import { AddRecipeStepModalComponent } from '../add-recipe-step-modal/add-recipe-step-modal.component';
 import { StepActions } from 'src/app/recipes/state/step/step-actions';
@@ -76,7 +66,6 @@ export class RecipeStepsModalComponent {
     public dialog: MatDialog,
     private store: Store,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private changeDetectorRef: ChangeDetectorRef,
     private actions$: Actions
   ) {
     this.recipe = this.data.recipe;
@@ -90,25 +79,6 @@ export class RecipeStepsModalComponent {
     this.stepsToReorder = false;
   }
 
-  // ngOnInit() {
-  //   //enhance recipeSteps with step.title into displayRecipeSteps
-  //   this.recipeSteps$.pipe(take(1)).subscribe((recipeSteps) => {
-  //     this.steps$.pipe(take(1)).subscribe((steps) => {
-  //       recipeSteps.forEach((recipeStep) => {
-  //         const step = steps.find((step) => step.stepID === recipeStep.stepID);
-  //         this.displayRecipeSteps.push({
-  //           ...recipeStep,
-  //           title: step!.title,
-  //           description: step!.description,
-  //           toAdd: false,
-  //           sequenceChanged: false,
-  //         });
-  //       });
-  //     });
-  //   });
-  //   //sort displayRecipeSteps by sequence
-  //   this.displayRecipeSteps.sort((a, b) => a.sequence - b.sequence);
-  // }
   ngOnInit() {
     // enhance recipeSteps with step.title into displayRecipeSteps
     this.recipeSteps$.pipe(take(1)).subscribe((recipeSteps) => {
@@ -155,25 +125,6 @@ export class RecipeStepsModalComponent {
     );
   }
 
-  // onAddClick() {
-  //   const dialogRef = this.dialog.open(AddRecipeStepModalComponent, {
-  //     data: {},
-  //   });
-
-  //   dialogRef.afterClosed().subscribe((result) => {
-  //     if (result?.title) {
-  //       const addedRecipeStep: any = {
-  //         title: result.title,
-  //         description: result.description,
-  //         sequence: this.displayRecipeSteps.length + 1,
-  //         toAdd: true,
-  //         sequenceChanged: false,
-  //       };
-
-  //       this.displayRecipeSteps.push(addedRecipeStep);
-  //     }
-  //   });
-  // }
   onAddClick() {
     const dialogRef = this.dialog.open(AddRecipeStepModalComponent, {
       data: {},
@@ -203,23 +154,6 @@ export class RecipeStepsModalComponent {
     });
   }
 
-  // checkSequence() {
-  //   //iterate through each step in displayRecipeSteps. If recipeStepID is not found in recipeSteps, skip it. If sequence is different compared with recipeSteps, set sequenceChanged to true
-  //   this.displayRecipeSteps.forEach((recipeStep) => {
-  //     const recipeStepID = recipeStep.recipeStepID;
-  //     this.recipeSteps$.pipe(take(1)).subscribe((originalRecipeSteps) => {
-  //       const originalRecipeStep = originalRecipeSteps.find(
-  //         (originalRecipeStep) =>
-  //           originalRecipeStep.recipeStepID === recipeStepID
-  //       );
-  //       if (originalRecipeStep) {
-  //         if (originalRecipeStep.sequence !== recipeStep.sequence) {
-  //           recipeStep.sequenceChanged = true;
-  //         } else recipeStep.sequenceChanged = false;
-  //       }
-  //     });
-  //   });
-  // }
   checkSequence() {
     // Get the current value of displayRecipeSteps from the BehaviorSubject
     this.displayRecipeStepsSubject
@@ -246,18 +180,7 @@ export class RecipeStepsModalComponent {
         });
       });
   }
-  // onDrop(event: CdkDragDrop<string[]>) {
-  //   const prevIndex = event.previousIndex;
-  //   const currIndex = event.currentIndex;
 
-  //   // Move the item in the array for display purposes
-  //   moveItemInArray(this.displayRecipeSteps, prevIndex, currIndex);
-
-  //   for (let i = 0; i < this.displayRecipeSteps.length; i++) {
-  //     this.displayRecipeSteps[i].sequence = i + 1;
-  //   }
-  //   this.checkSequence();
-  // }
   onDrop(event: CdkDragDrop<string[]>) {
     const prevIndex = event.previousIndex;
     const currIndex = event.currentIndex;
@@ -281,37 +204,6 @@ export class RecipeStepsModalComponent {
     this.checkSequence();
   }
 
-  // onDeleteClick(recipeStep: any) {
-  //   // console.log(`DELETING RECIPE STEP: ${recipeStepID}`);
-  //   if (recipeStep.recipeStepID) {
-  //     const dialogRef = this.dialog.open(DeleteRecipeStepModalComponent, {
-  //       data: {
-  //         recipeStep: recipeStep,
-  //       },
-  //     });
-
-  //     dialogRef.afterClosed().subscribe((result) => {
-  //       if (result === 'success') {
-  //         this.dialog.open(DeleteRequestConfirmationModalComponent, {
-  //           data: {
-  //             deleteSuccessMessage: 'Step successfully removed from recipe!',
-  //           },
-  //         });
-  //       } else if (result) {
-  //         this.dialog.open(DeleteRequestErrorModalComponent, {
-  //           data: {
-  //             error: result,
-  //             deleteFailureMessage: 'Step could not be removed from recipe.',
-  //           },
-  //         });
-  //       }
-  //     });
-  //   } else {
-  //     this.displayRecipeSteps = this.displayRecipeSteps.filter(
-  //       (recipeStep) => recipeStep.title !== recipeStep.title
-  //     );
-  //   }
-  // }
   onDeleteClick(recipeStep: any) {
     if (recipeStep.recipeStepID) {
       const dialogRef = this.dialog.open(DeleteRecipeStepModalComponent, {
@@ -328,11 +220,47 @@ export class RecipeStepsModalComponent {
             },
           });
 
-          // Update the steps in the BehaviorSubject
-          this.displayRecipeSteps$.pipe(take(1)).subscribe((steps) => {
-            const updatedSteps = steps.filter((step) => step !== recipeStep);
-            this.displayRecipeStepsSubject.next(updatedSteps);
-          });
+          // Compose a new 'updatedDisplayRecipeSteps' list
+          this.displayRecipeSteps$
+            .pipe(take(1))
+            .subscribe((displayRecipeSteps) => {
+              let updatedDisplayRecipeSteps = [...displayRecipeSteps];
+
+              // Retrieve the latest recipe steps from the store
+              this.store
+                .select(selectRecipeStepsByID(this.recipe.recipeID))
+                .pipe(take(1))
+                .subscribe((recipeSteps) => {
+                  recipeSteps.forEach((freshStep) => {
+                    const correspondingStep = updatedDisplayRecipeSteps.find(
+                      (step) => step.recipeStepID === freshStep.recipeStepID
+                    );
+                    if (correspondingStep) {
+                      correspondingStep.sequence = freshStep.sequence;
+                    }
+                  });
+
+                  // Remove the deleted recipe step
+                  updatedDisplayRecipeSteps = updatedDisplayRecipeSteps.filter(
+                    (step) => step.recipeStepID !== recipeStep.recipeStepID
+                  );
+
+                  // Decrement the sequence for 'toAdd' === true or 'sequenceChanged' === true
+                  updatedDisplayRecipeSteps.forEach((step) => {
+                    if (
+                      step.toAdd === true || step.sequenceChanged === true &&
+                      step.sequence > recipeStep.sequence
+                    ) {
+                      step.sequence--;
+                    }
+                  });
+
+                  // Update the displayRecipeStepsSubject
+                  this.displayRecipeStepsSubject.next(
+                    updatedDisplayRecipeSteps
+                  );
+                });
+            });
         } else if (result) {
           this.dialog.open(DeleteRequestErrorModalComponent, {
             data: {
@@ -353,67 +281,6 @@ export class RecipeStepsModalComponent {
     }
   }
 
-  // onSubmit() {
-  //   const stepsToAdd = this.displayRecipeSteps.filter(
-  //     (recipeStep) => recipeStep.toAdd
-  //   );
-
-  //   from(stepsToAdd)
-  //     .pipe(
-  //       concatMap((recipeStep, index) => {
-  //         const step = {
-  //           title: recipeStep.title,
-  //           description: recipeStep.description,
-  //         };
-  //         this.store.dispatch(StepActions.addStep({ step }));
-
-  //         return this.actions$.pipe(
-  //           ofType(StepActions.addStepSuccess),
-  //           take(1),
-  //           concatMap((action) => {
-  //             const addedStep = action.step;
-  //             const recipeStepToAdd = {
-  //               recipeID: this.recipe.recipeID,
-  //               sequence: recipeStep.sequence,
-  //               stepID: addedStep.stepID,
-  //             };
-  //             this.store.dispatch(
-  //               RecipeStepActions.addRecipeStep({ recipeStep: recipeStepToAdd })
-  //             );
-
-  //             return this.store.select(selectAddingRecipeStep).pipe(
-  //               filter((addingRecipeStep) => !addingRecipeStep),
-  //               take(1)
-  //             );
-  //           }),
-  //           catchError((error) => {
-  //             console.error(
-  //               `PROCESSING RECIPE STEP ${index}: An error occurred while processing the step:`,
-  //               error
-  //             );
-  //             return EMPTY;
-  //           })
-  //         );
-  //       })
-  //     )
-  //     .subscribe({
-  //       next: () => this.dialogRef.close('success'),
-  //       error: (error) => {
-  //         this.dialogRef.close();
-  //         console.error('An unexpected error occurred:', error);
-  //       },
-  //     });
-
-  //   // Second part: Update sequence for any existing recipe steps that have been reordered. Add this later.
-  //   const stepsToResequence = this.displayRecipeSteps.filter(
-  //     (recipeStep) => recipeStep.sequenceChanged
-  //   );
-
-  //   this.updateSequences(stepsToResequence).subscribe(() => {
-  //     // Close the dialog with a 'success' result
-  //     this.dialogRef.close('success');
-  //   });
-  // }
   onSubmit() {
     this.displayRecipeStepsSubject
       .pipe(take(1))
@@ -476,12 +343,8 @@ export class RecipeStepsModalComponent {
         );
 
         this.updateSequences(stepsToResequence).subscribe(() => {
-          // Close the dialog with a 'success' result
           this.dialogRef.close('success');
         });
-
-        // If needed, you can update the BehaviorSubject with the new value of displayRecipeSteps
-        // this.displayRecipeStepsSubject.next(newDisplayRecipeSteps);
       });
   }
 

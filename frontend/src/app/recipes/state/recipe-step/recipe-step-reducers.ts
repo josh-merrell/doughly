@@ -92,4 +92,9 @@ export const RecipeStepReducer = createReducer(
     error,
     deleting: false,
   })),
+  on(RecipeStepActions.updateRecipeStepSequence, (state, { recipeStep, newSequence }) => ({
+    ...state,
+    error: null,
+    recipeSteps: state.recipeSteps.map((existingRecipeStep) => existingRecipeStep.recipeStepID === recipeStep.recipeStepID ? { ...recipeStep, sequence: newSequence } : existingRecipeStep),
+  }))
 )

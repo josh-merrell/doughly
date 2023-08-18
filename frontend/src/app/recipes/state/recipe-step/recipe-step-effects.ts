@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeAll, mergeMap, switchMap, take } from 'rxjs/operators';
+import { catchError, map, mergeAll, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { RecipeStepActions } from './recipe-step-actions';
 import { RecipeActions } from '../recipe/recipe-actions';
@@ -9,7 +9,7 @@ import { RecipeStepService } from '../../data/recipe-step.service';
 import { RecipeService } from '../../data/recipe.service';
 import { Recipe } from '../recipe/recipe-state';
 import { Store, select } from '@ngrx/store';
-import { selectRecipeStepByID } from './recipe-step-selectors';
+import { selectRecipeStepByID, selectRecipeStepsByID } from './recipe-step-selectors';
 
 @Injectable()
 export class RecipeStepEffects {
@@ -132,29 +132,99 @@ export class RecipeStepEffects {
     )
   );
 
+  // deleteRecipeStep$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(RecipeStepActions.deleteRecipeStep),
+  //     switchMap((action) =>
+  //       this.store.pipe(
+  //         select((state) => selectRecipeStepByID(action.recipeStepID)(state)),
+  //         take(1),
+  //         mergeMap((recipeStep) =>
+  //           this.recipeStepService.delete(action.recipeStepID).pipe(
+  //             switchMap(() =>
+  //               this.recipeService.getByID(recipeStep!.recipeID).pipe(
+  //                 mergeMap((response: Recipe[]) => {
+  //                   const recipe = response[0]; // Access the first element of the response array
+  //                   return [
+  //                     RecipeStepActions.deleteRecipeStepSuccess({
+  //                       recipeStepID: action.recipeStepID,
+  //                     }),
+  //                     RecipeActions.updateRecipeStatus({
+  //                       recipeID: recipe.recipeID,
+  //                       status: recipe.status,
+  //                     }),
+  //                   ];
+  //                 })
+  //               )
+  //             ),
+  //             catchError((error) =>
+  //               of(
+  //                 RecipeStepActions.deleteRecipeStepFailure({
+  //                   error: {
+  //                     errorType: 'DELETE_RECIPE_STEP_FAILURE',
+  //                     message: 'Failed to delete Recipe Step',
+  //                     statusCode: error.status,
+  //                     rawError: error,
+  //                   },
+  //                 })
+  //               )
+  //             )
+  //           )
+  //         )
+  //       )
+  //     )
+  //   )
+  // );
+
   deleteRecipeStep$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeStepActions.deleteRecipeStep),
       switchMap((action) =>
         this.store.pipe(
-          select((state) => selectRecipeStepByID(action.recipeStepID)(state)),
+          select(selectRecipeStepByID(action.recipeStepID)),
           take(1),
-          mergeMap((recipeStep) =>
+          mergeMap((deletedRecipeStep) =>
             this.recipeStepService.delete(action.recipeStepID).pipe(
               switchMap(() =>
-                this.recipeService.getByID(recipeStep!.recipeID).pipe(
-                  mergeMap((response: Recipe[]) => {
-                    const recipe = response[0]; // Access the first element of the response array
-                    return [
-                      RecipeStepActions.deleteRecipeStepSuccess({
-                        recipeStepID: action.recipeStepID,
-                      }),
-                      RecipeActions.updateRecipeStatus({
-                        recipeID: recipe.recipeID,
-                        status: recipe.status,
-                      }),
-                    ];
-                  })
+                this.store.pipe(
+                  select(selectRecipeStepsByID(deletedRecipeStep!.recipeID)),
+                  take(1),
+                  tap((remainingSteps) => {
+                    // Sort the remaining steps by sequence.
+                    const sortedSteps = [...remainingSteps].sort(
+                      (a, b) => a.sequence - b.sequence
+                    );
+
+                    // Dispatch an action to update the sequence for each displaced step.
+                    sortedSteps.forEach((step) => {
+                      if (step.sequence > deletedRecipeStep!.sequence) {
+                        this.store.dispatch(
+                          RecipeStepActions.updateRecipeStepSequence({
+                            recipeStep: step,
+                            newSequence: step.sequence - 1,
+                          })
+                        );
+                      }
+                    });
+                  }),
+                  switchMap(() =>
+                    this.recipeService
+                      .getByID(deletedRecipeStep!.recipeID)
+                      .pipe(
+                        mergeMap((response: Recipe[]) => {
+                          const recipe = response[0];
+                          return [
+                            RecipeStepActions.deleteRecipeStepSuccess({
+                              recipeStepID: action.recipeStepID,
+                            }),
+                            RecipeActions.updateRecipeStatus({
+                              recipeID: recipe.recipeID,
+                              status: recipe.status,
+                            }),
+                          ];
+                        })
+                      )
+                  )
                 )
               ),
               catchError((error) =>
