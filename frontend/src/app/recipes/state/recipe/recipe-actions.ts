@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Recipe } from './recipe-state';
+import { Recipe, RecipeStatus } from './recipe-state';
 
 const loadRecipes = createAction('[Recipes] Load');
 const loadRecipesSuccess = createAction(
@@ -60,6 +60,11 @@ const updateRecipeFailure = createAction(
   props<{ error: any }>()
 );
 
+const updateRecipeStatus = createAction(
+  '[Recipes] Update Status',
+  props<{ recipeID: number; status: RecipeStatus }>()
+);
+
 export const RecipeActions = {
   loadRecipes,
   loadRecipesSuccess,
@@ -76,4 +81,5 @@ export const RecipeActions = {
   updateRecipe,
   updateRecipeSuccess,
   updateRecipeFailure,
+  updateRecipeStatus
 };

@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { RecipeActions } from './recipe-actions';
-import { RecipeState } from './recipe-state';
+import { RecipeState, RecipeStatus } from './recipe-state';
 
 export const initialState: RecipeState = {
   recipes: [],
@@ -94,5 +94,13 @@ export const recipeReducer = createReducer(
     ...state,
     error,
     deleting: false,
+  })),
+  on(RecipeActions.updateRecipeStatus, (state, { recipeID, status }) => ({
+    ...state,
+    recipes: state.recipes.map((recipe) =>
+      recipe.recipeID === recipeID
+        ? { ...recipe, status: status as RecipeStatus }
+        : recipe
+    ),
   }))
 );

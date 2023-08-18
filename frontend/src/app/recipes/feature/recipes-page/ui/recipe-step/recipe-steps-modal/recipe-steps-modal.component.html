@@ -10,29 +10,28 @@
       <h3 class="text-dl-6 font-dl-3 text-dl-grey-4">
         {{ recipe.title }}
       </h3>
-      <p class="mb-dl-2 mt-dl-5 text-dl-5 text-dl-blue-5">Tools</p>
+      <p class="mb-dl-2 mt-dl-5 text-dl-5 text-dl-blue-5">Steps</p>
     </div>
 
-    <!--List of Recipe Tools-->
+    <!--List of Recipe Steps-->
     <div class="mb-dl-5 mx-dl-2 flex flex-col">
-      <div class="mb-dl-2 flex w-dl-15 flex-wrap items-start">
-        <ng-container *ngFor="let tool of displayedTools$ | async">
+      <div cdkDropList (cdkDropListDropped)="onDrop($event)" class="mb-dl-2 flex w-dl-15 flex-col items-start">
+        <ng-container *ngFor="let step of displayRecipeSteps$ | async">
           <div
+            cdkDrag
             class="inline-block"
-            (click)="onDeleteClick(tool.recipeToolID, tool.toolID)"
+            (click)="onDeleteClick(step)"
           >
             <div
               class="mr-dl-3 mt-dl-2 inline-flex whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-4 text-dl-grey-4"
             >
               <span class="font-dl-3"
-                >{{ tool.name }}&nbsp;&nbsp;&nbsp;</span
+                >{{step.sequence}}:&nbsp;{{ step.title }}&nbsp;&nbsp;&nbsp;</span
               >
-              <span class="font-dl-2">
-                {{ tool.quantity }}</span
-              >
-              <span *ngIf="tool.toAdd" class="font-dl-2 italic text-dl-grey-5"
+              <span *ngIf="step.toAdd" class="font-dl-2 text-dl-grey-5 italic"
                 >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
               >
+              <span *ngIf="step.sequenceChanged" class="font-dl-2 text-dl-grey-5 italic">&nbsp;&nbsp;&nbsp;pending move</span>
               <button
                 type="button"
                 class="ml-dl-2 rounded-dl-2 bg-dl-grey-10 text-dl-grey-3 hover:bg-dl-grey-9 focus:outline-none"
@@ -60,9 +59,9 @@
         type="button"
         class="relative mt-dl-2 flex h-8 w-8 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7"
         (click)="onAddClick()"
-        id="addRecipeToolButton"
+        id="addRecipeStepButton"
       >
-        <span class="sr-only">Add Recipe Tool</span>
+        <span class="sr-only">Add Recipe Step</span>
         <svg
           class="text-dl-grey-2"
           width="22"
@@ -88,13 +87,13 @@
         class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-white sm:ml-dl-4"
         [ngClass]="{
           'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
-            toolsToAdd.length > 0,
-          'bg-dl-grey-7': toolsToAdd.length === 0
+            (stepsToAdd === true) || (stepsToReorder === true),
+          'bg-dl-grey-7': (stepsToAdd === false) && (stepsToReorder === false)
         }"
-        [disabled]="toolsToAdd.length === 0"
+        [disabled]="(stepsToAdd === false) && (stepsToReorder === false)"
         (click)="onSubmit()"
       >
-        Submit Additions
+        Submit Changes
       </button>
       <button
         type="button"

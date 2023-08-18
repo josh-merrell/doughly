@@ -5,6 +5,7 @@ import { RecipeIngredient } from '../state/recipe-ingredient/recipe-ingredient-s
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { selectRecipeIngredients } from '../state/recipe-ingredient/recipe-ingredient-selectors';
+import { Recipe, RecipeStatus } from '../state/recipe/recipe-state';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,9 @@ export class RecipeIngredientService {
   }
 
   getByID(recipeIngredientID: number): Observable<RecipeIngredient> {
-    return this.http.get<RecipeIngredient>(`${this.API_URL}/${recipeIngredientID}`);
+    return this.http.get<RecipeIngredient>(
+      `${this.API_URL}/${recipeIngredientID}`
+    );
   }
 
   add(recipeIngredient: RecipeIngredient): Observable<RecipeIngredient> {
