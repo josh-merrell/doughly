@@ -113,29 +113,36 @@ export class RecipeIngredientsModalComponent {
   }
 
   onDeleteClick(recipeIngredientID: number, ingredientID: number) {
-    const dialogRef = this.dialog.open(DeleteRecipeIngredientModalComponent, {
-      data: {
-        recipeIngredientID,
-        ingredientID,
-      },
-    });
+    if (recipeIngredientID) {
+      const dialogRef = this.dialog.open(DeleteRecipeIngredientModalComponent, {
+        data: {
+          recipeIngredientID,
+          ingredientID,
+        },
+      });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(DeleteRequestConfirmationModalComponent, {
-          data: {
-            deleteSuccessMessage: `Ingredient successfully removed from recipe!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(DeleteRequestErrorModalComponent, {
-          data: {
-            error: result,
-            deleteFailureMessage: `Ingredient could not be removed from recipe.`,
-          },
-        });
-      }
-    });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialog.open(DeleteRequestConfirmationModalComponent, {
+            data: {
+              deleteSuccessMessage: `Ingredient successfully removed from recipe!`,
+            },
+          });
+        } else if (result) {
+          this.dialog.open(DeleteRequestErrorModalComponent, {
+            data: {
+              error: result,
+              deleteFailureMessage: `Ingredient could not be removed from recipe.`,
+            },
+          });
+        }
+      });
+    } else {
+      this.ingredientsToAdd = this.ingredientsToAdd.filter(
+        (ingredient) => ingredient.ingredientID !== ingredientID
+      );
+      this.ingredientsToAddSubject.next(this.ingredientsToAdd);
+    }
   }
 
   onAddClick() {

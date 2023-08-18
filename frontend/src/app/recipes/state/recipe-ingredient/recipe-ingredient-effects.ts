@@ -1,16 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import {
+  catchError,
+  map,
+  mergeAll,
+  mergeMap,
+  switchMap,
+  take,
+} from 'rxjs/operators';
 import { of } from 'rxjs';
 import { RecipeIngredientService } from '../../data/recipe-ingredients.service';
 import { RecipeIngredientActions } from './recipe-ingredient-actions';
 import { RecipeIngredient } from './recipe-ingredient-state';
+import { RecipeActions } from '../recipe/recipe-actions';
+import { Recipe } from '../recipe/recipe-state';
+import { RecipeService } from '../../data/recipe.service';
+import { Store, select } from '@ngrx/store';
+import { selectRecipeIngredientByID } from './recipe-ingredient-selectors';
 
 @Injectable()
 export class RecipeIngredientEffects {
   constructor(
     private actions$: Actions,
-    private recipeIngredientService: RecipeIngredientService
+    private recipeIngredientService: RecipeIngredientService,
+    private recipeService: RecipeService,
+    private store: Store
   ) {}
 
   addRecipeIngredient$ = createEffect(() => {
@@ -18,10 +32,22 @@ export class RecipeIngredientEffects {
       ofType(RecipeIngredientActions.addRecipeIngredient),
       mergeMap((action) =>
         this.recipeIngredientService.add(action.recipeIngredient).pipe(
-          map((recipeIngredient: RecipeIngredient) =>
-            RecipeIngredientActions.addRecipeIngredientSuccess({
-              recipeIngredient,
-            })
+          switchMap((recipeIngredient: RecipeIngredient) =>
+            this.recipeService.getByID(recipeIngredient.recipeID).pipe(
+              map((response: Recipe[]) => {
+                const recipe = response[0];
+                return [
+                  RecipeIngredientActions.addRecipeIngredientSuccess({
+                    recipeIngredient,
+                  }),
+                  RecipeActions.updateRecipeStatus({
+                    recipeID: recipe.recipeID,
+                    status: recipe.status,
+                  }),
+                ];
+              }),
+              mergeAll()
+            )
           ),
           catchError((error) =>
             of(
@@ -67,7 +93,7 @@ export class RecipeIngredientEffects {
     )
   );
 
-  loadRecipeIngredient$ = createEffect(() => 
+  loadRecipeIngredient$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeIngredientActions.loadRecipeIngredient),
       mergeMap((action) =>
@@ -97,23 +123,42 @@ export class RecipeIngredientEffects {
   deleteRecipeIngredient$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeIngredientActions.deleteRecipeIngredient),
-      mergeMap((action) =>
-        this.recipeIngredientService.delete(action.recipeIngredientID).pipe(
-          map(() =>
-            RecipeIngredientActions.deleteRecipeIngredientSuccess({
-              recipeIngredientID: action.recipeIngredientID,
-            })
+      switchMap((action) =>
+        this.store.pipe(
+          select((state) =>
+            selectRecipeIngredientByID(action.recipeIngredientID)(state)
           ),
-          catchError((error) =>
-            of(
-              RecipeIngredientActions.deleteRecipeIngredientFailure({
-                error: {
-                  errorType: 'DELETE_RECIPE_INGREDIENT_FAILURE',
-                  message: 'Failed to delete recipe ingredient',
-                  statusCode: error.status,
-                  rawError: error,
-                },
-              })
+          take(1),
+          mergeMap((recipeIngredient) =>
+            this.recipeIngredientService.delete(action.recipeIngredientID).pipe(
+              switchMap(() =>
+                this.recipeService.getByID(recipeIngredient!.recipeID).pipe(
+                  mergeMap((response: Recipe[]) => {
+                    const recipe = response[0]; // Access the first element of the response array
+                    return [
+                      RecipeIngredientActions.deleteRecipeIngredientSuccess({
+                        recipeIngredientID: action.recipeIngredientID,
+                      }),
+                      RecipeActions.updateRecipeStatus({
+                        recipeID: recipe.recipeID,
+                        status: recipe.status,
+                      }),
+                    ];
+                  })
+                )
+              ),
+              catchError((error) =>
+                of(
+                  RecipeIngredientActions.deleteRecipeIngredientFailure({
+                    error: {
+                      errorType: 'DELETE_RECIPE_INGREDIENT_FAILURE',
+                      message: 'Failed to delete recipe ingredient',
+                      statusCode: error.status,
+                      rawError: error,
+                    },
+                  })
+                )
+              )
             )
           )
         )
@@ -147,5 +192,4 @@ export class RecipeIngredientEffects {
       )
     )
   );
-
 }

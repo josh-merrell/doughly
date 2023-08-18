@@ -83,11 +83,6 @@ export class RecipeToolsModalComponent {
 
   ngOnInit(): void {
     this.tools$ = this.store.select(selectTools);
-
-    //get all tools for recipe and print them in a console log
-    this.recipeToolsSubscription = this.recipeTools$.subscribe((recipeTools) =>
-      console.log("recipeTools: ", recipeTools)
-    );
   }
 
   onSubmit() {
