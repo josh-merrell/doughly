@@ -43,6 +43,7 @@ module.exports = ({ db }) => {
 
   async function create(options) {
     const { userID, recipeID, toolID, quantity } = options;
+
     //validate that provided recipeID exists
     const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (recipeError) {
@@ -52,6 +53,38 @@ module.exports = ({ db }) => {
     if (!recipe.length) {
       global.logger.info(`Provided recipe ID: ${recipeID} does not exist, cannot create recipeTool`);
       return { error: `Provided recipe ID: ${recipeID} does not exist, cannot create recipeTool` };
+    }
+
+    //accept case of dummy recipeTool
+    if (quantity === -1) {
+      let dummyRecipeTool;
+      //check for existing dummy recipeTool
+      const { data: existingDummyRecipeTool, error: existingDummyRecipeToolError } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('quantity', -1);
+      if (existingDummyRecipeToolError) {
+        global.logger.info(`Error checking for existing dummy recipeTool: ${existingDummyRecipeToolError}`);
+        return { error: existingDummyRecipeToolError };
+      }
+      if (!existingDummyRecipeTool.length) {
+        //create dummy recipeTool
+        const { data: newDummyRecipeTool, error: newDummyRecipeToolError } = await db.from('recipeTools').insert({ userID, recipeID, quantity }).select().single();
+        if (newDummyRecipeToolError) {
+          global.logger.info(`Error creating dummy recipeTool: ${newDummyRecipeToolError}`);
+          return { error: newDummyRecipeToolError };
+        }
+        dummyRecipeTool = newDummyRecipeTool;
+      }
+      //if status of existingRecipe is 'noTools', update status to 'noSteps'
+      if (recipe[0].status === 'noTools') {
+        await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeID);
+      }
+      if (!dummyRecipeTool) dummyRecipeTool = existingDummyRecipeTool[0];
+      global.logger.info(`Created dummy recipeTool ${dummyRecipeTool.recipeToolID}`);
+      return {
+        recipeToolID: dummyRecipeTool.recipeToolID,
+        recipeID: dummyRecipeTool.recipeID,
+        toolID: -1,
+        quantity: dummyRecipeTool.quantity,
+      };
     }
 
     //validate that provided toolID exists
@@ -152,7 +185,7 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function deleteRecipeStep(options) {
+  async function deleteRecipeTool(options) {
     const { recipeToolID } = options;
     //validate that provided recipeToolID exists
     const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID).eq('deleted', false);
@@ -198,6 +231,6 @@ module.exports = ({ db }) => {
     },
     create,
     update,
-    delete: deleteRecipeStep,
+    delete: deleteRecipeTool,
   };
 };
