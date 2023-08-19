@@ -26,7 +26,7 @@ const loadRecipeToolFailure = createAction(
 
 const addRecipeTool = createAction(
   '[RecipeTools] Add',
-  props<{ recipeTool: RecipeTool }>()
+  props<{ recipeTool: any }>()
 );
 const addRecipeToolSuccess = createAction(
   '[RecipeTools] Add Success',

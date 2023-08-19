@@ -23,8 +23,11 @@
         <p class="leading-dl-4 text-dl-4 font-dl-3 text-dl-yellow-2">
           Delete Recipe Tool
         </p>
-        <div class="space-x-1">
+        <div *ngIf="this.tool.name !== 'dummy'" class="space-x-1">
           <span class="mt-dl-1 text-dl-2 text-dl-grey-5">Are you sure you want to remove</span><span class="mt-dl-1 text-dl-2 text-dl-grey-2 font-dl-3">{{this.tool.name}}</span><span class="mt-dl-1 text-dl-2 text-dl-grey-5">from the recipe?</span>
+        </div>
+        <div *ngIf="this.tool.name === 'dummy'" class="space-x-1">
+          <span class="mt-dl-1 text-dl-2 text-dl-grey-5">Would you like this recipe to require tools?</span>
         </div>
       </div>
       <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">

@@ -32,11 +32,11 @@ export class DeleteRecipeToolModalComponent {
     private store: Store
   ) {
     this.isDeleting$ = this.store.select(selectDeleting);
-    this.store.select(
-      selectToolByID(this.data.toolID)).subscribe((tool) => {
-        this.tool = tool;
-      }
-    );
+    if (this.data.toolID) {
+      this.store.select(selectToolByID(this.data.toolID)).subscribe((tool) => this.tool = tool);
+    } else {
+      this.tool = { name: 'dummy'}
+    }
   }
 
   onSubmit(): void {
