@@ -48,6 +48,7 @@ export class RecipeToolsModalComponent {
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   private recipeToolsSubscription: Subscription = new Subscription();
+  submitMessage = 'No tools needed';
 
   constructor(
     public dialog: MatDialog,
@@ -63,18 +64,15 @@ export class RecipeToolsModalComponent {
     );
 
     this.displayedTools$ = combineLatest([
-      this.store.select(
-        selectRecipeToolsByRecipeID(this.recipe.recipeID)
-      ),
+      this.store.select(selectRecipeToolsByRecipeID(this.recipe.recipeID)),
       this.store.select(selectTools),
       this.toolsToAddSubject.asObservable(),
     ]).pipe(
       map(([recipeTools, tools, toolsToAdd]) => {
         const enrichedRecipeTools = recipeTools.map((recipeTool) => ({
           ...recipeTool,
-          name: tools.find(
-            (tool: any) => tool.toolID === recipeTool.toolID
-          )?.name,
+          name: tools.find((tool: any) => tool.toolID === recipeTool.toolID)
+            ?.name,
         }));
         return [...enrichedRecipeTools, ...toolsToAdd];
       })
@@ -86,56 +84,93 @@ export class RecipeToolsModalComponent {
   }
 
   onSubmit() {
-    // Submit all added tools. Wait for each to process before calling next.
-    from(this.toolsToAdd)
-      .pipe(
-        concatMap((tool) => {
-          this.store.dispatch(
-            RecipeToolActions.addRecipeTool({
-              recipeTool: tool,
-            })
-          );
-
-          return this.store.select(selectAdding).pipe(
-            filter((adding) => !adding),
-            take(1),
-            concatMap(() => this.store.select(selectError).pipe(take(1)))
-          );
+    if (this.toolsToAdd.length === 0) {
+      this.store.dispatch(
+        RecipeToolActions.addRecipeTool({
+          recipeTool: {
+            recipeID: this.recipe.recipeID,
+            toolID: -1,
+            quantity: -1,
+          },
         })
-      )
-      .subscribe((error) => {
-        if (!error) {
-          this.dialogRef.close('success');
-        } else {
-          this.dialogRef.close();
-        }
-      });
+      );
+
+      //wait for the adding to complete before closing the modal
+      this.addingSubscription = this.store
+        .select(selectAdding)
+        .subscribe((adding: boolean) => {
+          if (!adding) {
+            this.store.select(selectError).subscribe((error) => {
+              if (error) {
+                this.dialogRef.close(error);
+              } else {
+                this.dialogRef.close('success');
+              }
+            });
+          }
+        });
+    } else {
+      // Submit all added tools. Wait for each to process before calling next.
+      from(this.toolsToAdd)
+        .pipe(
+          concatMap((tool) => {
+            this.store.dispatch(
+              RecipeToolActions.addRecipeTool({
+                recipeTool: tool,
+              })
+            );
+
+            return this.store.select(selectAdding).pipe(
+              filter((adding) => !adding),
+              take(1),
+              concatMap(() => this.store.select(selectError).pipe(take(1)))
+            );
+          })
+        )
+        .subscribe((error) => {
+          if (!error) {
+            this.dialogRef.close('success');
+          } else {
+            this.dialogRef.close();
+          }
+        });
+    }
   }
 
-  onDeleteClick(recipeToolID: number, toolID: number) {
-    const dialogRef = this.dialog.open(DeleteRecipeToolModalComponent, {
-      data: {
-        recipeToolID,
-        toolID,
-      },
-    });
+  onDeleteClick(toolID: number, recipeToolID: number) {
+    if (recipeToolID) {
+      const dialogRef = this.dialog.open(DeleteRecipeToolModalComponent, {
+        data: {
+          recipeToolID,
+          toolID,
+        },
+      });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(DeleteRequestConfirmationModalComponent, {
-          data: {
-            deleteSuccessMessage: `Tool successfully removed from recipe!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(DeleteRequestErrorModalComponent, {
-          data: {
-            error: result,
-            deleteErrorMessage: `Error: ${result}`,
-          },
-        });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialog.open(DeleteRequestConfirmationModalComponent, {
+            data: {
+              deleteSuccessMessage: `Tool successfully removed from recipe!`,
+            },
+          });
+        } else if (result) {
+          this.dialog.open(DeleteRequestErrorModalComponent, {
+            data: {
+              error: result,
+              deleteErrorMessage: `Error: ${result}`,
+            },
+          });
+        }
+      });
+    } else {
+      this.toolsToAdd = this.toolsToAdd.filter(
+        (tool) => tool.toolID !== toolID
+      );
+      this.toolsToAddSubject.next(this.toolsToAdd);
+      if (this.toolsToAdd.length === 0) {
+        this.submitMessage = 'No tools needed';
       }
-    });
+    }
   }
 
   onAddClick() {
@@ -159,35 +194,33 @@ export class RecipeToolsModalComponent {
           },
         });
 
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result?.toolID) {
-          this.tools$
-            .pipe(
-              map(
-                (tools) =>
-                  tools.find(
-                    (tool) => tool.toolID === result.toolID
-                  )?.name
-              ),
-              take(1)
-            )
-            .subscribe((toolName) => {
-              const addedRecipeTool: any = {
-                recipeID: this.recipe.recipeID,
-                toolID: result.toolID,
-                quantity: result.quantity,
-                name: toolName,
-                toAdd: true,
-              };
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result?.toolID) {
+            this.tools$
+              .pipe(
+                map(
+                  (tools) =>
+                    tools.find((tool) => tool.toolID === result.toolID)?.name
+                ),
+                take(1)
+              )
+              .subscribe((toolName) => {
+                const addedRecipeTool: any = {
+                  recipeID: this.recipe.recipeID,
+                  toolID: result.toolID,
+                  quantity: result.quantity,
+                  name: toolName,
+                  toAdd: true,
+                };
 
-              this.toolsToAdd.push(addedRecipeTool);
-
-              this.toolsToAddSubject.next(this.toolsToAdd);
-            });
-        }
+                this.toolsToAdd.push(addedRecipeTool);
+                this.submitMessage = 'Submit Additions';
+                this.toolsToAddSubject.next(this.toolsToAdd);
+              });
+          }
+        });
       });
-    });
-  };
+  }
 
   onCancel() {
     this.dialogRef.close();

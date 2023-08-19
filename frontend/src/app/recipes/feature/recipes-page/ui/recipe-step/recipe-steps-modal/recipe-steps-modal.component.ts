@@ -128,6 +128,7 @@ export class RecipeStepsModalComponent {
   onAddClick() {
     const dialogRef = this.dialog.open(AddRecipeStepModalComponent, {
       data: {},
+      width: '75%',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
