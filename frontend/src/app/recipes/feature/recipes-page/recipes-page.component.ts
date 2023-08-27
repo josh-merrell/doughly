@@ -1,10 +1,12 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
   Renderer2,
   ViewChild,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RecipesInfoComponent } from './ui/recipes-info/recipes-info.component';
 import { RecipeCategoryService } from '../../data/recipe-category.service';
@@ -55,6 +57,8 @@ import { RecipeStepsModalComponent } from './ui/recipe-step/recipe-steps-modal/r
 import { AddRecipeModalComponent } from './ui/recipe/add-recipe-modal/add-recipe-modal.component';
 import { StepActions } from '../../state/step/step-actions';
 import { RecipeStepActions } from '../../state/recipe-step/recipe-step-actions';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { RecipeComponent } from '../recipe/recipe.component';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -71,7 +75,13 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
 @Component({
   selector: 'dl-recipes-page',
   standalone: true,
-  imports: [CommonModule, RecipesInfoComponent, FormsModule],
+  imports: [
+    CommonModule,
+    RecipesInfoComponent,
+    RouterOutlet,
+    FormsModule,
+    RecipeComponent,
+  ],
   templateUrl: './recipes-page.component.html',
   styleUrls: ['./recipes-page.component.scss'],
   animations: [
@@ -130,7 +140,11 @@ export class RecipesPageComponent {
     private recipeService: RecipeService,
     private store: Store,
     public dialog: MatDialog,
-    private sortingService: SortingService
+    private sortingService: SortingService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    private cdRef: ChangeDetectorRef
   ) {
     this.recipeCategoriesSubscription = this.recipeCategories$.subscribe(
       (categories) => {
@@ -177,13 +191,13 @@ export class RecipesPageComponent {
   @ViewChild('recipeContainer', { static: false })
   recipeContainer!: ElementRef;
   @HostListener('window:scroll', ['$event'])
+  recipeOpen(): boolean {
+    return this.route.firstChild?.snapshot?.params['recipeID'] !== undefined;
+  }
   checkCatScroll(target: EventTarget | null) {
     if (target) {
       let element = target as HTMLElement;
-      // Show or hide the up arrow
       this.showCatUpArrow = element.scrollTop > 0;
-
-      // Show or hide the down arrow
       this.showCatDownArrow =
         element.scrollHeight - element.scrollTop - element.clientHeight > 1;
     }
@@ -192,10 +206,7 @@ export class RecipesPageComponent {
   checkRecipeScroll(target: EventTarget | null) {
     if (target) {
       let element = target as HTMLElement;
-      // Show or hide the up arrow
       this.showRecipeUpArrow = element.scrollTop > 0;
-
-      // Show or hide the down arrow
       this.showRecipeDownArrow =
         element.scrollHeight - element.scrollTop - element.clientHeight > 1;
     }
@@ -283,7 +294,7 @@ export class RecipesPageComponent {
           });
         }
       });
-    } else if (recipe.status === 'noSteps' || 2 > 1) {
+    } else if (recipe.status === 'noSteps') {
       //else if the recipe has status of 'noSteps', show the 'addRecipeSteps' modal
       const dialogRef = this.dialog.open(RecipeStepsModalComponent, {
         data: {
@@ -309,7 +320,8 @@ export class RecipesPageComponent {
         }
       });
     } else {
-      //else show the 'recipeDetails' modal
+      //else route to recipe details page
+      this.router.navigate(['/recipes', recipe.recipeID]);
     }
   }
 
@@ -367,7 +379,19 @@ export class RecipesPageComponent {
     this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
 
     this.recipeRows$.subscribe((rows) => {
-      this.recipeRows = rows;
+      const rawRows = [...rows];
+      rawRows.forEach((rawRow) => {
+        if (rawRow.photoURL) {
+          fetch(rawRow.photoURL)
+            .then((response) => response.blob())
+            .then((blob) => {
+              const objectURL = URL.createObjectURL(blob);
+              rawRow.photo = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+              this.cdRef.detectChanges();
+            });
+        }
+      });
+      this.recipeRows = rawRows;
       const filteredRows = this.applyFilter(rows, this.searchFilter);
       this.filteredRecipeRows$.next(filteredRows);
     });
@@ -439,11 +463,6 @@ export class RecipesPageComponent {
   }
 
   openAddDialog() {
-    // const dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
-    //   data: {
-    //     recipeCategories: this.recipeCategories,
-    //   },
-    // });
     let dialogRef: any;
     if (this.view === 'categories') {
       dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
@@ -458,18 +477,19 @@ export class RecipesPageComponent {
     }
 
     dialogRef!.afterClosed().subscribe((result: any) => {
+      const message = this.view === 'categories' ? 'Category' : 'Recipe';
       if (result === 'success') {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             results: result,
-            addSuccessMessage: 'Category added successfully!',
+            addSuccessMessage: `${message} added successfully!`,
           },
         });
       } else if (isRecipeCategoryError(result)) {
         this.dialog.open(AddRequestErrorModalComponent, {
           data: {
             error: result,
-            addFailureMessage: 'Category could not be added.',
+            addFailureMessage: `${message} could not be added.`,
           },
         });
       }

@@ -34,7 +34,10 @@ export class RecipeService {
             servings: recipe.servings,
             lifespanDays: recipe.lifespanDays,
             status: recipe.status,
+            timePrep: recipe.timePrep,
+            timeBake: recipe.timeBake,
             recipeCategoryName: `RecipeCategoryID:${recipe.recipeCategoryID} missing, can't get details for RecipeID:${recipe.recipeID}`,
+            photoURL: recipe.photoURL,
           };
         }
         return {
@@ -44,7 +47,10 @@ export class RecipeService {
           servings: recipe.servings,
           lifespanDays: recipe.lifespanDays,
           status: recipe.status,
+          timePrep: recipe.timePrep,
+          timeBake: recipe.timeBake,
           recipeCategoryName: recipeCategory.name,
+          photoURL: recipe.photoURL,
         };
       });
     })
