@@ -4,9 +4,12 @@ import { Recipe } from './recipe-state';
 export const selectRecipes = (state: any) => state.recipe.recipes;
 
 export const selectRecipeByID = (recipeID: number) => {
-  return createSelector(selectRecipes, (recipes: Recipe[]) => {
-    return recipes.find((recipe: Recipe) => recipe.recipeID === recipeID);
-  });
+  return createSelector(
+    selectRecipes,
+    (recipes: Recipe[]): Recipe | undefined => {
+      return recipes.find((recipe: Recipe) => recipe.recipeID === recipeID);
+    }
+  );
 };
 
 export const selectDeleting = (state: any) => state.recipe.deleting;

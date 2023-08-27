@@ -1,4 +1,4 @@
-<div class="w-full">
+<div class="w-full" *ngIf="!recipeOpen()">
   <div class="mx-dl-5 mt-dl-6 flex justify-between">
     <h1 class="ml-dl-6 text-dl-7 font-dl-2 leading-dl-2 text-dl-grey-2">
       Recipes
@@ -221,7 +221,9 @@
               >
                 Ready to Make!
               </p>
+              <img *ngIf="row.photo" [src]="row.photo" alt="Recipe Photo" class="w-1/3 object-cover rounded-r-lg">
               <svg
+                *ngIf="!row.photo"
                 width="48"
                 height="48"
                 viewBox="0 0 24 24"
@@ -386,3 +388,4 @@
     </div>
   </div>
 </div>
+<router-outlet></router-outlet>
