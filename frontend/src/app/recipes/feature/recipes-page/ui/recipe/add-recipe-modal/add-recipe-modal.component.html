@@ -85,7 +85,9 @@
           </mat-form-field>
         </div>
         <div id="form-lifespanDays">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Lifespan Days</label>
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
+            >Lifespan Days</label
+          >
           <mat-form-field class="w-full">
             <input
               matInput
@@ -98,6 +100,44 @@
               Must be a positive integer
             </mat-error>
           </mat-form-field>
+        </div>
+        <div id="form-timePrep">
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
+            >Prep time in minutes</label
+          >
+          <mat-form-field class="w-full">
+            <input
+              matInput
+              formControlName="timePrep"
+              [disabled]="!form.get('timePrep')?.value"
+            />
+            <mat-error
+              *ngIf="form.get('timePrep')?.hasError('notPositiveInteger')"
+            >
+              Must be a positive integer
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div id="form-timeBake">
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
+            >Bake time in minutes</label
+          >
+          <mat-form-field class="w-full">
+            <input
+              matInput
+              formControlName="timeBake"
+              [disabled]="!form.get('timeBake')?.value"
+            />
+            <mat-error
+              *ngIf="form.get('timeBake')?.hasError('notPositiveInteger')"
+            >
+              Must be a positive integer
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div id="form-photo">
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Recipe Photo</label>
+          <input type="file" (change)="onFileSelected($event)" />
         </div>
       </div>
       <!---->

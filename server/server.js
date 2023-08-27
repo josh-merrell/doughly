@@ -47,6 +47,7 @@ const employeesRouter = require('./modules/employees/router');
 const ingredientsRouter = require('./modules/ingredients/router');
 const ingredientStocksRouter = require('./modules/ingredientStocks/router');
 const productStocksRouter = require('./modules/productStocks/router');
+const uploadsRouter = require('./modules/uploads/router');
 
 app.use(express.json());
 
@@ -64,6 +65,7 @@ app.use(queryArrayParser);
 app.use('/ping', (req, res) => {
   res.send('pong');
 });
+app.use('/uploads', uploadsRouter);
 app.use('/clients', clientsRouter);
 app.use('/persons', personsRouter);
 app.use('/employees', employeesRouter);
