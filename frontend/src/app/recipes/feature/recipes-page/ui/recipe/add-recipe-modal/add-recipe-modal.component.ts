@@ -10,19 +10,27 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { nonDuplicateString, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import {
+  nonDuplicateString,
+  positiveIntegerValidator,
+} from 'src/app/shared/utils/formValidator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 
-import { selectAdding, selectError, selectLoading, selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
+import {
+  selectAdding,
+  selectError,
+  selectLoading,
+  selectRecipes,
+} from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { AddRecipeCategoryModalComponent } from '../../recipe-category/add-recipe-category-modal/add-recipe-category-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
-
+import { PhotoUploadService } from 'src/app/shared/utils/photoUploadService';
 
 @Component({
   selector: 'dl-add-recipe-modal',
@@ -45,12 +53,14 @@ export class AddRecipeModalComponent {
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   dialog: any;
+  photoURL!: string;
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private photoUploadService: PhotoUploadService
   ) {
     this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
@@ -73,7 +83,36 @@ export class AddRecipeModalComponent {
       servings: ['', [Validators.required, positiveIntegerValidator()]],
       recipeCategoryID: ['', [Validators.required]],
       lifespanDays: ['', [Validators.required, positiveIntegerValidator()]],
+      timePrep: ['', [Validators.required, positiveIntegerValidator()]],
+      timeBake: ['', [positiveIntegerValidator()]],
+      photoURL: [null],
     });
+  }
+
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    console.log(
+      `FILE NAME: ${file?.name}, FILE TYPE: ${file?.type}, SIZE: ${file?.size}`
+    );
+    if (file) {
+      this.photoUploadService.getPreSignedUrl(file.name, file.type).subscribe(
+        (url: string) => {
+          console.log('Received URL from backend:', url);
+          this.photoUploadService.uploadFileToS3(url, file).then(
+            (uploadResponse) => {
+              console.log('Upload Successful:', uploadResponse.url);
+              this.photoURL = uploadResponse.url.split('?')[0];
+            },
+            (error) => {
+              console.log('Upload Failed:', error);
+            }
+          );
+        },
+        (error) => {
+          console.log('Failed to get URL:', error);
+        }
+      );
+    }
   }
 
   onAddNewCategory() {
@@ -97,7 +136,7 @@ export class AddRecipeModalComponent {
           },
         });
       }
-    })
+    });
   }
 
   onSubmit() {
@@ -106,7 +145,10 @@ export class AddRecipeModalComponent {
       ...formValue,
       servings: parseInt(formValue.servings),
       lifespanDays: parseInt(formValue.lifespanDays),
-    }
+      timePrep: parseInt(formValue.timePrep),
+      timeBake: parseInt(formValue.timeBake),
+      photoURL: this.photoURL,
+    };
     this.store.dispatch(RecipeActions.addRecipe({ recipe: newRecipe }));
 
     this.addingSubscription = this.isAdding$.subscribe((isAdding) => {

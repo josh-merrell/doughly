@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, title, servings, lifespanDays, recipeCategoryID } = options;
+    const { userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL } = options;
     const status = 'noIngredients';
 
     if (!title) {
@@ -53,6 +53,14 @@ module.exports = ({ db }) => {
       global.logger.info(`positive LifespanDays integer is required`);
       return { error: `positive LifespanDays integer is required` };
     }
+    if (!timePrep || timePrep < 0) {
+      global.logger.info(`positive TimePrep integer is required`);
+      return { error: `positive TimePrep integer is required` };
+    }
+    if (!timeBake && timeBake < 1) {
+      global.logger.info(`positive TimeBake integer is required`);
+      return { error: `positive TimeBake integer is required` };
+    }
 
     //verify that the provided recipeCategoryID exists, return error if not
     if (recipeCategoryID) {
@@ -66,7 +74,7 @@ module.exports = ({ db }) => {
         return { error: `Provided RecipeCategory ID:(${recipeCategoryID}) does not exist` };
       }
     }
-    const { data: recipe, error } = await db.from('recipes').insert({ userID, title, servings, lifespanDays, recipeCategoryID, status }).select().single();
+    const { data: recipe, error } = await db.from('recipes').insert({ userID, title, servings, lifespanDays, recipeCategoryID, status, timePrep, timeBake, photoURL }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipe: ${error.message}`);
@@ -81,11 +89,14 @@ module.exports = ({ db }) => {
       lifespanDays: recipe.lifespanDays,
       recipeCategoryID: recipe.recipeCategoryID,
       status: recipe.status,
+      timePrep: recipe.timePrep,
+      timeBake: recipe.timeBake,
+      photoURL: recipe.photoURL,
     };
   }
 
   async function update(options) {
-    const { recipeID, recipeCategoryID } = options;
+    const { recipeID, recipeCategoryID, timePrep, timeBake } = options;
     //verify that the provided recipeID exists, return error if not
     const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
 
@@ -111,7 +122,7 @@ module.exports = ({ db }) => {
       }
     }
 
-    //verify that servings and lifespanDays are positive integers, if provided. Return error if not
+    //verify that servings, lifespanDays, timePrep, and timeBake are positive integers, if provided. Return error if not
     if (options.servings && options.servings < 1) {
       global.logger.info(`Servings should be positive integer`);
       return { error: `Servings should be positive integer` };
@@ -119,6 +130,14 @@ module.exports = ({ db }) => {
     if (options.lifespanDays && options.lifespanDays < 1) {
       global.logger.info(`LifespanDays should be positive integer`);
       return { error: `LifespanDays should be positive integer` };
+    }
+    if (timePrep && timePrep < 1) {
+      global.logger.info(`TimePrep should be positive integer`);
+      return { error: `TimePrep should be positive integer` };
+    }
+    if (timeBake && timeBake < 1) {
+      global.logger.info(`TimeBake should be positive integer`);
+      return { error: `TimeBake should be positive integer` };
     }
 
     const updateFields = {};

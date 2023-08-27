@@ -13,7 +13,10 @@ export interface Recipe {
   servings: number;
   recipeCategoryID: number;
   lifespanDays: number;
+  timePrep?: number;
+  timeBake?: number;
   status: RecipeStatus;
+  photoURL?: string;
   recipeCategoryName?: string;
 }
 
