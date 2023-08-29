@@ -29,6 +29,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "aws-sdk": "^2.1415.0",
     "dayjs": "^1.11.9",
+    "ngx-image-cropper": "^7.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.6.0",
     "zone.js": "~0.13.0"

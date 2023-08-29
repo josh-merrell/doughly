@@ -22,7 +22,7 @@ export class RecipeCategoryService {
           return {
             recipeCategoryID: recipeCategory.recipeCategoryID,
             name: recipeCategory.name,
-            imageUrl: recipeCategory.imageUrl,
+            photoURL: recipeCategory.photoURL,
           };
         });
       })

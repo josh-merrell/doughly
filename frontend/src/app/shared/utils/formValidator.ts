@@ -22,3 +22,12 @@ export function nonDuplicateString(stringArray: string[]): ValidatorFn {
       : null;
   };
 }
+
+export function twoByteInteger(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const value = Number(control.value);
+    return value >= 0 && value < 32767 && Number.isInteger(value)
+      ? null
+      : { notTwoByteInteger: { value: control.value } };
+  }
+}

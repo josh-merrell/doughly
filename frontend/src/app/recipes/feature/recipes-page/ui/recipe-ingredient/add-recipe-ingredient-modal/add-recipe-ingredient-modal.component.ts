@@ -75,7 +75,9 @@ export class AddRecipeIngredientModalComponent {
 
   onAddNewIngredient() {
     const dialogRef = this.dialog.open(AddIngredientModalComponent, {
-      data: {},
+      data: {
+        recipeCategories: this.data.recipeCategories,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

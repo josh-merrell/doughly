@@ -36,7 +36,7 @@ export class RecipeService {
             status: recipe.status,
             timePrep: recipe.timePrep,
             timeBake: recipe.timeBake,
-            recipeCategoryName: `RecipeCategoryID:${recipe.recipeCategoryID} missing, can't get details for RecipeID:${recipe.recipeID}`,
+            recipeCategoryName: `Other`,
             photoURL: recipe.photoURL,
           };
         }

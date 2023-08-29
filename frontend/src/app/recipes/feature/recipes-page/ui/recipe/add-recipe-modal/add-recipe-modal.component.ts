@@ -9,10 +9,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   nonDuplicateString,
   positiveIntegerValidator,
+  twoByteInteger,
 } from 'src/app/shared/utils/formValidator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -31,6 +32,8 @@ import { AddRecipeCategoryModalComponent } from '../../recipe-category/add-recip
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { PhotoUploadService } from 'src/app/shared/utils/photoUploadService';
+import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
+import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 
 @Component({
   selector: 'dl-add-recipe-modal',
@@ -42,6 +45,7 @@ import { PhotoUploadService } from 'src/app/shared/utils/photoUploadService';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    ImageCropperModule,
   ],
   templateUrl: './add-recipe-modal.component.html',
 })
@@ -52,15 +56,24 @@ export class AddRecipeModalComponent {
   isAdding$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
-  dialog: any;
+  recipeCategories: RecipeCategory[] = [];
+
+  //photo upload
   photoURL!: string;
+  public imageChangedEvent: any = '';
+  public croppedImage: any = '';
+  public selectedFile: File | null = null;
+  public isImageLoaded: boolean = false;
+  public isCropperReady: boolean = false;
+  public imageLoadFailed: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    private photoUploadService: PhotoUploadService
+    private photoUploadService: PhotoUploadService,
+    public dialog: MatDialog
   ) {
     this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
@@ -69,6 +82,7 @@ export class AddRecipeModalComponent {
       this.setForm();
     });
     this.categories$ = this.store.select(selectRecipeCategories);
+    this.recipeCategories = this.data.recipeCategories;
   }
 
   setForm() {
@@ -80,44 +94,70 @@ export class AddRecipeModalComponent {
           nonDuplicateString(this.recipes.map((recipe) => recipe.title)),
         ],
       ],
-      servings: ['', [Validators.required, positiveIntegerValidator()]],
+      servings: [
+        '',
+        [Validators.required, positiveIntegerValidator(), twoByteInteger()],
+      ],
       recipeCategoryID: ['', [Validators.required]],
-      lifespanDays: ['', [Validators.required, positiveIntegerValidator()]],
-      timePrep: ['', [Validators.required, positiveIntegerValidator()]],
-      timeBake: ['', [positiveIntegerValidator()]],
-      photoURL: [null],
+      lifespanDays: [
+        '',
+        [Validators.required, positiveIntegerValidator(), twoByteInteger()],
+      ],
+      timePrep: [
+        '',
+        [Validators.required, positiveIntegerValidator(), twoByteInteger()],
+      ],
+      timeBake: ['', [positiveIntegerValidator(), twoByteInteger()]],
+      photoURL: [null, [Validators.required]],
     });
   }
 
   onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    console.log(
-      `FILE NAME: ${file?.name}, FILE TYPE: ${file?.type}, SIZE: ${file?.size}`
-    );
-    if (file) {
-      this.photoUploadService.getPreSignedUrl(file.name, file.type).subscribe(
-        (url: string) => {
-          console.log('Received URL from backend:', url);
-          this.photoUploadService.uploadFileToS3(url, file).then(
-            (uploadResponse) => {
-              console.log('Upload Successful:', uploadResponse.url);
-              this.photoURL = uploadResponse.url.split('?')[0];
-            },
-            (error) => {
-              console.log('Upload Failed:', error);
-            }
-          );
-        },
-        (error) => {
-          console.log('Failed to get URL:', error);
-        }
-      );
+    this.imageChangedEvent = event; // For the cropping UI
+    this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
+  }
+
+  imageCropped(event: ImageCroppedEvent) {
+    this.croppedImage = event.blob;
+  }
+
+  imageLoaded() {
+    this.isImageLoaded = true;
+  }
+
+  cropperReady() {
+    this.isCropperReady = true;
+  }
+
+  loadImageFailed() {
+    this.imageLoadFailed = true;
+  }
+
+  async uploadCroppedImage() {
+    if (this.croppedImage && this.selectedFile) {
+      try {
+        const url: string = await this.photoUploadService
+          .getPreSignedUrl(this.selectedFile.name, this.selectedFile.type)
+          .toPromise();
+
+        const uploadResponse = await this.photoUploadService.uploadFileToS3(
+          url,
+          this.croppedImage
+        );
+        console.log('Upload Successful:', uploadResponse.url);
+
+        this.photoURL = uploadResponse.url.split('?')[0];
+      } catch (error) {
+        console.log('An error occurred:', error);
+      }
     }
   }
 
   onAddNewCategory() {
     const dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
-      data: {},
+      data: {
+        recipeCategories: this.recipeCategories,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -139,7 +179,10 @@ export class AddRecipeModalComponent {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
+    //first upload the cropped image
+    await this.uploadCroppedImage();
+
     const formValue = this.form.value;
     const newRecipe = {
       ...formValue,
