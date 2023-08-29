@@ -74,6 +74,7 @@ const newRecipeCategorySchema_body = {
   required: ['name'],
   properties: {
     name: { type: 'string' },
+    photoURL: { type: 'string' },
   },
 };
 

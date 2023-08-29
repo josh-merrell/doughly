@@ -1,5 +1,5 @@
 <div
-  class="sm:max-w-dl-13 relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:p-dl-6"
+  class="relative transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-3 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -12,12 +12,10 @@
   >
     <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
-        <h3
-          class="leading-dl-4 text-dl-5 font-dl-3 text-dl-blue-4"
-        >
+        <h3 class="leading-dl-4 text-dl-5 font-dl-3 text-dl-blue-4">
           Add Recipe Category
         </h3>
-        <div class="mt-dl-2">
+        <div class="mt-dl-3">
           <p class="text-dl-4 text-dl-grey-5">
             Add a new Category with which to organize your recipes.
           </p>
@@ -48,25 +46,50 @@
       </div>
 
       <!--FORM FIELDS-->
-      <div class="mt-dl-6">
+      <div class="mt-dl-7">
         <div id="form-ingredientName" class="relative flex flex-col">
           <label class="text-dl-2 font-dl-3 text-dl-grey-4">Name</label>
           <mat-form-field class="w-full">
             <input matInput formControlName="name" />
-            <mat-error
-              *ngIf="form.get('name')?.hasError('duplicateString')"
-            >
+            <mat-error *ngIf="form.get('name')?.hasError('duplicateString')">
               Cannot reuse an existing Category name
             </mat-error>
           </mat-form-field>
         </div>
+        <div id="form-photo">
+          <div class="relative inline-block w-64">
+            <input
+              type="file"
+              class="hidden"
+              id="fileInput"
+              (change)="onFileSelected($event)"
+              accept="image/png, image/jpeg"
+            />
+            <label
+              for="fileInput"
+              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-white text-dl-3 hover:bg-dl-blue-5"
+            >
+              Choose Photo
+            </label>
+          </div>
+
+          <image-cropper
+            [imageChangedEvent]="imageChangedEvent"
+            [maintainAspectRatio]="true"
+            [aspectRatio]="5 / 3"
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded()"
+            (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()"
+          ></image-cropper>
+        </div>
       </div>
       <!---->
 
-      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <div class="mt-dl-6 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white sm:ml-dl-4"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-white sm:ml-dl-4"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
             'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
