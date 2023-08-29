@@ -10,7 +10,7 @@ export interface RecipeCategoryState {
 export interface RecipeCategory {
   recipeCategoryID: number;
   name: string;
-  imageUrl: string;
+  photoURL: string;
 }
 
 export interface RecipeCategoryError {
