@@ -22,7 +22,6 @@ module.exports = () => {
       const url = await getSignedUrl(s3Client, command, {
         expiresIn: 3600,
       });
-      console.log(`BACKEND GOT URL: ${url}`)
       return url;
     } catch (err) {
       throw err;

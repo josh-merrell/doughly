@@ -11,15 +11,12 @@ export class PhotoUploadService {
 
   constructor(private http: HttpClient) {}
 
-  getPreSignedUrl(
-    fileName: string,
-    fileType: string
-  ): Observable<any>{
+  getPreSignedUrl(fileName: string, fileType: string): Observable<any> {
     const body = { fileName, fileType };
     return this.http.post<{ url: string }>(`${this.API_URL}/presigned`, body);
   }
 
-  uploadFileToS3(url: string, file: File): Promise<Response> {
+  uploadFileToS3(url: string, file: File | Blob): Promise<Response> {
     return fetch(url, { method: 'PUT', body: file });
   }
 }

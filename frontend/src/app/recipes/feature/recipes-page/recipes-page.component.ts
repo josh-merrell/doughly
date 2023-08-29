@@ -11,7 +11,13 @@ import { CommonModule } from '@angular/common';
 import { RecipesInfoComponent } from './ui/recipes-info/recipes-info.component';
 import { RecipeCategoryService } from '../../data/recipe-category.service';
 import { RecipeService } from '../../data/recipe.service';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  map,
+  switchMap,
+} from 'rxjs';
 import {
   trigger,
   state,
@@ -116,10 +122,6 @@ export class RecipesPageComponent {
   showRecipeUpArrow = false;
   showRecipeDownArrow = false;
   addButtonLabel = 'Add Recipe';
-  recipeCategories$: Observable<RecipeCategory[]> =
-    this.recipeCategoryService.rows$;
-  recipeCategories: RecipeCategory[] = [];
-  private recipeCategoriesSubscription?: Subscription;
   viewSubscription!: Subscription;
   searchBarSubscription!: Subscription;
   columns: TableFullColumn[] = [];
@@ -128,11 +130,16 @@ export class RecipesPageComponent {
   SortEnum = SortEnum;
   SortRotateStateEnum = SortRotateStateEnum;
   public clearAllSortsEnabled = false;
+  modalActiveForRowID: number | null = null;
+
+  categoryRows: RecipeCategory[] = [];
+  categoryRows$: Observable<any[]> = this.recipeCategoryService.rows$;
+  public displayedCategoryRows$ = new BehaviorSubject<any[]>([]);
+
   public recipeRows: Recipe[] = [];
   recipeRows$: Observable<any[]> = this.recipeService.rows$;
   public filteredRecipeRows$ = new BehaviorSubject<any[]>([]);
   public displayedRecipeRows$ = new BehaviorSubject<any[]>([]);
-  modalActiveForRowID: number | null = null;
 
   constructor(
     private renderer: Renderer2,
@@ -146,12 +153,6 @@ export class RecipesPageComponent {
     private sanitizer: DomSanitizer,
     private cdRef: ChangeDetectorRef
   ) {
-    this.recipeCategoriesSubscription = this.recipeCategories$.subscribe(
-      (categories) => {
-        this.recipeCategories = categories;
-      }
-    );
-
     this.columns = [
       {
         name: 'ID',
@@ -187,13 +188,89 @@ export class RecipesPageComponent {
   globalClickListener: () => void = () => {};
   @ViewChild('categoryContainer', { static: false })
   categoryContainer!: ElementRef;
-
   @ViewChild('recipeContainer', { static: false })
   recipeContainer!: ElementRef;
   @HostListener('window:scroll', ['$event'])
+  ngOnInit() {
+    //hydrate data
+    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+    this.store.dispatch(RecipeToolActions.loadRecipeTools());
+    this.store.dispatch(StepActions.loadSteps());
+    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
+    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
+
+    this.view$.subscribe((view) => {
+      this.view = view;
+    });
+
+    this.categoryRows$
+      .pipe(
+        map((categories) => {
+          return categories.map((category) => {
+            if (category.photoURL) {
+              return fetch(category.photoURL)
+                .then((res) => res.blob())
+                .then((blob) => {
+                  const objectURL = URL.createObjectURL(blob);
+                  return {
+                    ...category,
+                    photo: this.sanitizer.bypassSecurityTrustUrl(objectURL),
+                  };
+                });
+            }
+            return Promise.resolve(category);
+          });
+        }),
+        switchMap((promises) => Promise.all(promises))
+      )
+      .subscribe((resolvedCategories) => {
+        this.categoryRows = resolvedCategories;
+        this.displayedCategoryRows$.next(this.categoryRows);
+      });
+
+    this.recipeRows$
+      .pipe(
+        map((rows) => {
+          return rows.map((row) => {
+            if (row.photoURL) {
+              return fetch(row.photoURL)
+                .then((res) => res.blob())
+                .then((blob) => {
+                  const objectURL = URL.createObjectURL(blob);
+                  return {
+                    ...row,
+                    photo: this.sanitizer.bypassSecurityTrustUrl(objectURL),
+                  };
+                });
+            }
+            return Promise.resolve(row);
+          });
+        }),
+        switchMap((promises) => Promise.all(promises))
+      )
+      .subscribe((resolvedRows) => {
+        this.recipeRows = resolvedRows;
+        const filteredRows = this.applyFilter(resolvedRows, this.searchFilter);
+        this.filteredRecipeRows$.next(filteredRows);
+      });
+
+    this.categoryRows$.subscribe((categories) => {
+      this.displayedCategoryRows$.next(categories);
+    });
+
+    this.filteredRecipeRows$.subscribe((filteredRows) => {
+      const sortedRows = this.sortingService.applySorts(
+        filteredRows,
+        this.sorts
+      );
+      this.displayedRecipeRows$.next(sortedRows);
+    });
+  }
+
   recipeOpen(): boolean {
     return this.route.firstChild?.snapshot?.params['recipeID'] !== undefined;
   }
+
   checkCatScroll(target: EventTarget | null) {
     if (target) {
       let element = target as HTMLElement;
@@ -365,46 +442,6 @@ export class RecipesPageComponent {
     return filtered;
   }
 
-  ngOnInit() {
-    //hydrate data
-    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
-    this.store.dispatch(RecipeToolActions.loadRecipeTools());
-    this.store.dispatch(StepActions.loadSteps());
-    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
-
-    this.view$.subscribe((view) => {
-      this.view = view;
-    });
-
-    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
-
-    this.recipeRows$.subscribe((rows) => {
-      const rawRows = [...rows];
-      rawRows.forEach((rawRow) => {
-        if (rawRow.photoURL) {
-          fetch(rawRow.photoURL)
-            .then((response) => response.blob())
-            .then((blob) => {
-              const objectURL = URL.createObjectURL(blob);
-              rawRow.photo = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-              this.cdRef.detectChanges();
-            });
-        }
-      });
-      this.recipeRows = rawRows;
-      const filteredRows = this.applyFilter(rows, this.searchFilter);
-      this.filteredRecipeRows$.next(filteredRows);
-    });
-
-    this.filteredRecipeRows$.subscribe((filteredRows) => {
-      const sortedRows = this.sortingService.applySorts(
-        filteredRows,
-        this.sorts
-      );
-      this.displayedRecipeRows$.next(sortedRows);
-    });
-  }
-
   ngAfterViewInit() {
     const checkCatHeight = () => {
       if (this.categoryContainer) {
@@ -467,12 +504,14 @@ export class RecipesPageComponent {
     if (this.view === 'categories') {
       dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
         data: {
-          recipeCategories: this.recipeCategories,
+          recipeCategories: this.categoryRows,
         },
       });
     } else if (this.view === 'list') {
       dialogRef = this.dialog.open(AddRecipeModalComponent, {
-        data: {},
+        data: {
+          recipeCategories: this.categoryRows,
+        },
       });
     }
 
@@ -664,9 +703,6 @@ export class RecipesPageComponent {
   }
 
   ngOnDestroy() {
-    if (this.recipeCategoriesSubscription) {
-      this.recipeCategoriesSubscription.unsubscribe();
-    }
     if (this.viewSubscription) {
       this.viewSubscription.unsubscribe();
     }
