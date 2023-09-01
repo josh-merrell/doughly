@@ -1,5 +1,5 @@
 <div
-  class="w-full relative transform overflow-hidden bg-white px-dl-6 pb-dl-4 pt-dl-3 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+  class="relative w-full transform overflow-hidden bg-white px-dl-6 pb-dl-4 pt-dl-3 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -10,7 +10,7 @@
     (ngSubmit)="onSubmit()"
     *ngIf="(isAddingRecipeStep$ | async) === false"
   >
-    <div class="relative flex w-full max-w-full flex-col">  
+    <div class="relative flex w-full max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
         <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-blue-4">
           Add Recipe Step
@@ -53,9 +53,41 @@
         </div>
         <div id="form-description" class="my-dl-4">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Description</label>
-          <mat-form-field class="text-dl-4 w-full">
-            <textarea matInput formControlName="description" rows="9" class="border-0 focus:ring-0"></textarea>
+          <mat-form-field class="w-full text-dl-4">
+            <textarea
+              matInput
+              formControlName="description"
+              rows="9"
+              class="border-0 focus:ring-0"
+            ></textarea>
           </mat-form-field>
+        </div>
+        <div id="form-photo-recipe-step" class="mt-dl-1">
+          <div class="relative inline-block w-64">
+            <input
+              type="file"
+              class="hidden"
+              id="fileInputRecipeStep"
+              (change)="stepOnFileSelected($event)"
+              accept="image/png, image/jpeg"
+            />
+            <label
+              for="fileInputRecipeStep"
+              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-3 text-white hover:bg-dl-blue-5"
+            >
+              Choose Photo
+            </label>
+          </div>
+
+          <image-cropper
+            [imageChangedEvent]="stepImageChangedEvent"
+            [maintainAspectRatio]="true"
+            [aspectRatio]="4 / 5"
+            (imageCropped)="stepImageCropped($event)"
+            (imageLoaded)="stepImageLoaded()"
+            (cropperReady)="stepCropperReady()"
+            (loadImageFailed)="stepLoadImageFailed()"
+          ></image-cropper>
         </div>
       </div>
       <!---->
@@ -64,13 +96,13 @@
         <button
           type="button"
           class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
-          [class.cursor-pointer]="form.valid && !form.pristine"
+          [class.cursor-pointer]="form.valid && !form.pristine && imagePresent"
           [ngClass]="{
             'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
-              form.valid && !form.pristine,
-            'bg-dl-grey-7': !form.valid || form.pristine
+              form.valid && !form.pristine && imagePresent,
+            'bg-dl-grey-7': !form.valid || form.pristine || !imagePresent
           }"
-          [disabled]="!form.valid || form.pristine"
+          [disabled]="!form.valid || form.pristine || !imagePresent"
           (click)="onSubmit()"
         >
           Submit

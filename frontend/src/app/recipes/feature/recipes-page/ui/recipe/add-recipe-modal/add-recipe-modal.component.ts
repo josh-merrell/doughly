@@ -3,13 +3,19 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, Subscription } from 'rxjs';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import {
   nonDuplicateString,
   positiveIntegerValidator,
@@ -31,7 +37,7 @@ import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/re
 import { AddRecipeCategoryModalComponent } from '../../recipe-category/add-recipe-category-modal/add-recipe-category-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
-import { PhotoUploadService } from 'src/app/shared/utils/photoUploadService';
+import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 
@@ -60,19 +66,20 @@ export class AddRecipeModalComponent {
 
   //photo upload
   photoURL!: string;
-  public imageChangedEvent: any = '';
+  public recipeImageChangedEvent: any = '';
   public croppedImage: any = '';
   public selectedFile: File | null = null;
   public isImageLoaded: boolean = false;
   public isCropperReady: boolean = false;
   public imageLoadFailed: boolean = false;
+  public imagePresent: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    private photoUploadService: PhotoUploadService,
+    private photoUploadService: PhotoService,
     public dialog: MatDialog
   ) {
     this.isAdding$ = this.store.select(selectAdding);
@@ -107,29 +114,30 @@ export class AddRecipeModalComponent {
         '',
         [Validators.required, positiveIntegerValidator(), twoByteInteger()],
       ],
-      timeBake: ['', [positiveIntegerValidator(), twoByteInteger()]],
-      photoURL: [null, [Validators.required]],
+      timeBake: [null, [positiveIntegerValidator(), twoByteInteger()]],
+      photoURL: [null],
     });
   }
 
-  onFileSelected(event: Event): void {
-    this.imageChangedEvent = event; // For the cropping UI
+  recipeOnFileSelected(event: Event): void {
+    this.recipeImageChangedEvent = event; // For the cropping UI
     this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
   }
 
-  imageCropped(event: ImageCroppedEvent) {
+  recipeImageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.blob;
+    this.imagePresent = true;
   }
 
-  imageLoaded() {
+  recipeImageLoaded() {
     this.isImageLoaded = true;
   }
 
-  cropperReady() {
+  recipeCropperReady() {
     this.isCropperReady = true;
   }
 
-  loadImageFailed() {
+  recipeLoadImageFailed() {
     this.imageLoadFailed = true;
   }
 
@@ -184,14 +192,18 @@ export class AddRecipeModalComponent {
     await this.uploadCroppedImage();
 
     const formValue = this.form.value;
-    const newRecipe = {
-      ...formValue,
+    const newRecipe: any = {
+      title: formValue.title,
+      recipeCategoryID: formValue.recipeCategoryID,
       servings: parseInt(formValue.servings),
       lifespanDays: parseInt(formValue.lifespanDays),
       timePrep: parseInt(formValue.timePrep),
-      timeBake: parseInt(formValue.timeBake),
       photoURL: this.photoURL,
     };
+    if (formValue.timeBake) {
+      newRecipe['timeBake'] = parseInt(formValue.timeBake);
+    }
+
     this.store.dispatch(RecipeActions.addRecipe({ recipe: newRecipe }));
 
     this.addingSubscription = this.isAdding$.subscribe((isAdding) => {

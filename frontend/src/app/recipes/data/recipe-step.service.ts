@@ -22,6 +22,7 @@ export class RecipeStepService {
           recipeID: recipeStep.recipeID,
           stepID: recipeStep.stepID,
           sequence: recipeStep.sequence,
+          photoURL: recipeStep.photoURL,
         };
       });
     })

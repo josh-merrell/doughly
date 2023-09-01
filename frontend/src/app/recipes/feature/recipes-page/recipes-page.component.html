@@ -212,23 +212,29 @@
                 <p class="text-dl-7 font-dl-3 text-dl-grey-2">
                   {{ row.title }}
                 </p>
-                <div class="flex mt-dl-2">
-                <p *ngIf="row.recipeCategoryName" class="text-dl-4 font-dl-2 text-dl-grey-4">
-                  {{ row.recipeCategoryName }}
-                </p>
-                <p
-                  *ngIf="row.status === 'published'"
-                  class="text-dl-4 ml-dl-4 text-dl-teal-7"
-                >
-                  Ready to Make!
-                </p>
+                <div class="mt-dl-2 flex">
+                  <p
+                    *ngIf="row.recipeCategoryName"
+                    class="text-dl-4 font-dl-2 text-dl-grey-4"
+                  >
+                    {{ row.recipeCategoryName }}
+                  </p>
+                  <p
+                    *ngIf="row.status === 'published'"
+                    class="italic ml-dl-4 text-dl-4 text-dl-teal-7"
+                  >
+                    Ready to Make!
+                  </p>
+                  <p *ngIf="row.status !== 'published'" class="italic ml-dl-4 text-dl-4 text-dl-yellow-4">
+                    Draft
+                  </p>
                 </div>
               </div>
               <img
                 *ngIf="row.photo"
                 [src]="row.photo"
                 alt="Recipe Photo"
-                class="w-1/3 h-full rounded-r-lg object-cover"
+                class="h-full w-1/3 rounded-r-lg object-cover"
               />
               <svg
                 *ngIf="!row.photo"
@@ -307,7 +313,10 @@
         >
           <div
             class="recipe-card m-dl-3 h-dl-7 w-dl-17 rounded-lg shadow-md"
-            *ngFor="let category of displayedCategoryRows$ | async; let i = index"
+            *ngFor="
+              let category of displayedCategoryRows$ | async;
+              let i = index
+            "
             [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === i }"
             (click)="categoryCardClick(category.name)"
             (touchstart)="categoryCardTouchStart(i)"
@@ -317,58 +326,63 @@
               <div
                 class="relative flex h-full w-full items-center justify-between"
               >
-                <p class="text-dl-6 font-dl-3 text-dl-grey-2">
-                  {{ category.name }}
-                </p>
+                <div class="flex pl-dl-3">
+                  <p class="text-dl-7 font-dl-3 text-dl-grey-2">
+                    {{ category.name }}
+                  </p>
 
-                <!-- Edit/Delete Menu-->
-                <button
-                  (click)="toggleCategoryMenu($event, i)"
-                  id="buttonToggleCategoryMenu"
-                  class="relative"
-                >
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z"
-                      fill="currentColor"
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                </button>
-                <div
-                  #categoryMenu
-                  *ngIf="categoryMenuOpen.open && categoryMenuOpen.index === i"
-                  class="focus:outling-none absolute right-4 top-12 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
-                >
-                  <!-- <button
-                  (click)="openEditDialog(category.recipeCategoryID, i)"
-                  type="button"
-                  class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
-                >
-                  Edit
-                </button> -->
-                  <button
-                    (click)="
-                      openDeleteDialog($event, category.recipeCategoryID, i)
-                    "
-                    type="button"
-                    class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
-                  >
-                    Delete
-                  </button>
+                  <div class="relative ml-dl-5 flex flex-col">
+                    <div class="flex">
+                    <span class="text-dl-4 text-dl-grey-6">
+                      Recipes:
+                    </span>
+                    <span class="ml-dl-2 text-dl-4 text-dl-blue-4">
+                      {{ category.recipeCount }}
+                    </span>
+                    </div>  
+                    <!-- Edit/Delete Menu-->
+                    <button
+                      (click)="toggleCategoryMenu($event, i)"
+                      id="buttonToggleCategoryMenu"
+                      class="relative mt-dl-2"
+                    >
+                      <svg
+                        width="30"
+                        height="30"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                      <div
+                        #categoryMenu
+                        *ngIf="categoryMenuOpen.open && categoryMenuOpen.index === i"
+                        class="focus:outling-none absolute right-4 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
+                      >
+                        <button
+                          (click)="
+                            openDeleteDialog($event, category.recipeCategoryID, i)
+                          "
+                          type="button"
+                          class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </button>
+                  </div>
                 </div>
                 <img
                   *ngIf="category.photo"
                   [src]="category.photo"
                   alt="Category Photo"
-                  class="w-1/3 h-full rounded-r-lg object-cover"
+                  class="h-full w-1/3 rounded-r-lg object-cover"
                 />
                 <svg
                   *ngIf="!category.photo"

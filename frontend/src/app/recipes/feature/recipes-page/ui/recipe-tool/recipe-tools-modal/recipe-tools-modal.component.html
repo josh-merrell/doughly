@@ -83,8 +83,12 @@
     <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
       <button
         type="button"
-        class="cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-white sm:ml-dl-4"
+        class="cursor-pointer shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-white sm:ml-dl-4"
+        [ngClass]="{
+          'bg-dl-blue-4 hover:bg-dl-blue-5': toolsToAdd.length > 0 || (submitMessage === 'No tools needed'), 'bg-dl-grey-7': (submitMessage === 'Submit Additions') && !toolsToAdd.length
+        }"
         (click)="onSubmit()"
+        [disabled]="submitMessage === 'Submit Additions' && !toolsToAdd.length"
       >
         {{submitMessage}}
       </button>

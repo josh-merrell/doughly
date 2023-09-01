@@ -57,7 +57,7 @@ module.exports = ({ db }) => {
       global.logger.info(`positive TimePrep integer is required`);
       return { error: `positive TimePrep integer is required` };
     }
-    if (!timeBake && timeBake < 1) {
+    if (timeBake && timeBake < 1) {
       global.logger.info(`positive TimeBake integer is required`);
       return { error: `positive TimeBake integer is required` };
     }
@@ -74,6 +74,8 @@ module.exports = ({ db }) => {
         return { error: `Provided RecipeCategory ID:(${recipeCategoryID}) does not exist` };
       }
     }
+
+    //create recipe
     const { data: recipe, error } = await db.from('recipes').insert({ userID, title, servings, lifespanDays, recipeCategoryID, status, timePrep, timeBake, photoURL }).select().single();
 
     if (error) {

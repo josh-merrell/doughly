@@ -17,12 +17,13 @@ async function getStepByID(req, res) {
 async function createStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { recipeID, stepID, sequence } = req.body;
+  const { recipeID, stepID, sequence, photoURL } = req.body;
   const returner = await p.create({
     userID: req.userID,
     recipeID,
     stepID,
     sequence,
+    photoURL,
   });
   return res.json(returner);
 }

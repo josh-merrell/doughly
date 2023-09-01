@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, recipeID, stepID, sequence } = options;
+    const { userID, recipeID, stepID, sequence, photoURL } = options;
     //validate that provided recipeID exists
     const { data: recipe, validationError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (validationError) {
@@ -128,7 +128,8 @@ module.exports = ({ db }) => {
     // }
     **/
 
-    const { data: newRecipeStep, error } = await db.from('recipeSteps').insert({ userID, recipeID, stepID, sequence }).select().single();
+    //create recipeStep
+    const { data: newRecipeStep, error } = await db.from('recipeSteps').insert({ userID, recipeID, stepID, sequence, photoURL }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipeStep: ${error.message}`);
@@ -151,7 +152,14 @@ module.exports = ({ db }) => {
       global.logger.info(`Updated recipe status to published`);
     }
     global.logger.info(`Created recipeStep ${newRecipeStep.recipeStepID}`);
-    return newRecipeStep;
+    // return newRecipeStep;
+    return {
+      recipeStepID: newRecipeStep.recipeStepID,
+      recipeID: newRecipeStep.recipeID,
+      stepID: newRecipeStep.stepID,
+      sequence: newRecipeStep.sequence,
+      photoURL: newRecipeStep.photoURL,
+    };
   }
 
   async function update(options) {

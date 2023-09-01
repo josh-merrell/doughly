@@ -81,6 +81,11 @@ export class RecipeToolsModalComponent {
 
   ngOnInit(): void {
     this.tools$ = this.store.select(selectTools);
+    this.displayedTools$.subscribe((tools) => {
+      if (tools.length > 0) {
+        this.submitMessage = 'Submit Additions';
+      }
+    });
   }
 
   onSubmit() {
