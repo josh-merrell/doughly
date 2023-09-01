@@ -73,6 +73,7 @@ const newRecipeStepSchema_body = {
     recipeID: { type: 'integer' },
     sequence: { type: 'integer' },
     stepID: { type: 'integer' },
+    photoURL: { type: 'string' },
   },
 };
 
@@ -80,6 +81,7 @@ const RecipeStepUpdateSchema_body = {
   type: 'object',
   properties: {
     sequence: { type: 'integer' },
+    photoURL: { type: 'string' },
   },
 };
 

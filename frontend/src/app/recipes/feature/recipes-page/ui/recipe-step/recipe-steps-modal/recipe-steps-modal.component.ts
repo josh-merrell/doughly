@@ -141,6 +141,7 @@ export class RecipeStepsModalComponent {
               title: result.title,
               description: result.description,
               sequence: displayRecipeSteps.length + 1,
+              photoURL: result.photoURL,
               toAdd: true,
               sequenceChanged: false,
             };
@@ -308,6 +309,7 @@ export class RecipeStepsModalComponent {
                     recipeID: this.recipe.recipeID,
                     sequence: recipeStep.sequence,
                     stepID: addedStep.stepID,
+                    photoURL: recipeStep.photoURL,
                   };
                   this.store.dispatch(
                     RecipeStepActions.addRecipeStep({

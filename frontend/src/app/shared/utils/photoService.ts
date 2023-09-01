@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, catchError, from, of } from 'rxjs';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PhotoUploadService {
+export class PhotoService {
   private readonly API_URL = `${environment.BACKEND}/uploads`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
   getPreSignedUrl(fileName: string, fileType: string): Observable<any> {
     const body = { fileName, fileType };

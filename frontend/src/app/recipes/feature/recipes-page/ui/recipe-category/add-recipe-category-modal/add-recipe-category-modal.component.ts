@@ -23,7 +23,7 @@ import { RecipeCategoryActions } from 'src/app/recipes/state/recipe-category/rec
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { PhotoUploadService } from 'src/app/shared/utils/photoUploadService';
+import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCroppedEvent, ImageCropperModule } from 'ngx-image-cropper';
 
 @Component({
@@ -56,13 +56,14 @@ export class AddRecipeCategoryModalComponent {
   public isImageLoaded: boolean = false;
   public isCropperReady: boolean = false;
   public imageLoadFailed: boolean = false;
+  public imagePresent: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeCategoryModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    private photoUploadService: PhotoUploadService
+    private photoUploadService: PhotoService
   ) {
     this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
@@ -81,7 +82,7 @@ export class AddRecipeCategoryModalComponent {
           ),
         ],
       ],
-      photoURL: [null, [Validators.required]],
+      photoURL: [null],
     });
   }
 
@@ -92,6 +93,7 @@ export class AddRecipeCategoryModalComponent {
 
   imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.blob;
+    this.imagePresent = true;
   }
 
   imageLoaded() {
@@ -131,8 +133,8 @@ export class AddRecipeCategoryModalComponent {
     await this.uploadCroppedImage();
 
     const formValue = this.form.value;
-    const payload = {
-      ...formValue,
+    const payload: any = {
+      name: formValue.name,
       photoURL: this.photoURL,
     };
 

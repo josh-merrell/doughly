@@ -12,6 +12,7 @@ export interface RecipeStep {
   recipeID: number;
   stepID: number;
   sequence: number;
+  photoURL?: string;
 }
 
 export interface RecipeStepError {

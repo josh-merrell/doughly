@@ -191,6 +191,7 @@ export class RecipesPageComponent {
   @ViewChild('recipeContainer', { static: false })
   recipeContainer!: ElementRef;
   @HostListener('window:scroll', ['$event'])
+  
   ngOnInit() {
     //hydrate data
     this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
@@ -207,6 +208,7 @@ export class RecipesPageComponent {
       .pipe(
         map((categories) => {
           return categories.map((category) => {
+            // retrieve the image for each category
             if (category.photoURL) {
               return fetch(category.photoURL)
                 .then((res) => res.blob())
@@ -221,7 +223,23 @@ export class RecipesPageComponent {
             return Promise.resolve(category);
           });
         }),
-        switchMap((promises) => Promise.all(promises))
+        switchMap((promises) => Promise.all(promises)),
+        switchMap((resolvedCategories) => {
+        // Count the recipes for each category
+        return this.recipeRows$.pipe(
+          map((recipes) => {
+            return resolvedCategories.map((category) => {
+              const recipeCount = recipes.filter(
+                (recipe) => recipe.recipeCategoryID === category.recipeCategoryID
+              ).length;
+              return {
+                ...category,
+                recipeCount,
+              };
+            });
+          })
+        );
+      })
       )
       .subscribe((resolvedCategories) => {
         this.categoryRows = resolvedCategories;
@@ -232,6 +250,7 @@ export class RecipesPageComponent {
       .pipe(
         map((rows) => {
           return rows.map((row) => {
+            // retrieve the image for each recipe
             if (row.photoURL) {
               return fetch(row.photoURL)
                 .then((res) => res.blob())
