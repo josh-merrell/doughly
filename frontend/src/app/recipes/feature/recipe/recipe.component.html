@@ -1,5 +1,5 @@
 <div class="w-full">
-  <div *ngIf="(displayRecipe$ | async)">
+  <div *ngIf="displayRecipe$ | async">
     <img
       *ngIf="(displayRecipe$ | async).photo"
       [src]="(displayRecipe$ | async).photo"
@@ -60,7 +60,12 @@
         class="text-dl-6 font-dl-3 text-dl-grey-3"
       >
         Total:
-        {{ timeString((displayRecipe$ | async).timeBake + (displayRecipe$ | async).timePrep) }}
+        {{
+          timeString(
+            (displayRecipe$ | async).timeBake +
+              (displayRecipe$ | async).timePrep
+          )
+        }}
       </p>
     </div>
 
@@ -112,7 +117,10 @@
         <span class="text-dl-5 font-dl-2 text-dl-grey-3">
           {{ tool.name }}
         </span>
-        <span *ngIf="tool.quantity > 0" class="ml-dl-3 text-dl-5 font-dl-2 text-dl-blue-3">
+        <span
+          *ngIf="tool.quantity > 0"
+          class="ml-dl-3 text-dl-5 font-dl-2 text-dl-blue-3"
+        >
           {{ tool.quantity }}
         </span>
       </div>
@@ -121,33 +129,38 @@
     <!-- Steps -->
     <div
       *ngIf="displayStepsWithPhoto$ | async"
-      class="mx-dl-5 mt-dl-5 flex flex-col border-b border-dl-grey-6 pb-dl-5"
+      class="mx-dl-5 mt-dl-5 flex flex-col items-center border-b border-dl-grey-6 pb-dl-5"
     >
-      <div class="mb-dl-6 flex justify-between">
+      <div class="mb-dl-6 flex w-full justify-between">
         <p class="mb-dl-3 text-dl-6 font-dl-3 text-dl-grey-2">Steps</p>
         <button
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-7 block w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          class="mr-dl-7 block w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="editRecipeTools()"
         >
           Edit
         </button>
       </div>
       <div
-        *ngFor="let step of displayStepsWithPhoto$ | async; i"
-        class="mt-dl-2 flex flex-col"
+        *ngFor="let step of displayStepsWithPhoto$ | async; let i = index"
+        class="mb-dl-6 flex w-full flex-col items-center justify-center"
       >
-        <span class="text-dl-5 font-dl-3 text-dl-grey-2">
-          {{ step.title }}
-        </span>
-        <p class="text-dl-5 font-dl-2 text-dl-grey-3">
-          &nbsp;&nbsp;&nbsp;&nbsp;{{ step.description }}
-        </p>
+        <div class="flex w-full mb-dl-2 items-start">
+          <!-- Step number with consistent width and padding -->
+          <div class="text-dl-5 w-dl-4 ml-dl-3 text-dl-grey-2 mr-dl-1 px-dl-3">{{ i + 1 }}.</div>
+          <!-- Description taking the remaining width -->
+          <div class="flex-1">
+            <p class="whitespace-normal mr-dl-6 text-dl-5 font-dl-2 text-dl-grey-2">
+              {{ step.description }}
+            </p>
+          </div>
+        </div>
+        <!-- Step photo -->
         <img
           *ngIf="step.photo"
           [src]="step.photo"
-          class="w-full object-cover"
+          class="mt-dl-2 w-4/5 object-cover"
         />
       </div>
     </div>

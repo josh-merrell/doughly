@@ -6,6 +6,7 @@ import {
   Observable,
   Subject,
   Subscription,
+  catchError,
   combineLatest,
   filter,
   forkJoin,
@@ -131,25 +132,29 @@ export class RecipeComponent {
           return combineLatest([
             this.recipeIngredients$,
             this.recipeTools$,
-            this.recipeSteps$,
             this.ingredients$,
             this.tools$,
+            this.recipeSteps$,
             this.steps$,
           ]);
+        }),
+        catchError(err => {
+          console.error(`Error loading recipe and related state: ${err}`);
+          return of([]);
         }),
         map(
           ([
             recipeIngredients,
             recipeTools,
-            recipeSteps,
             ingredients,
             tools,
+            recipeSteps,
             steps,
           ]) => {
-            const displayIngredients = (recipeIngredients && ingredients) ? this.mapRecipeIngredients(
-              recipeIngredients,
-              ingredients
-            ) : recipeIngredients;
+            const displayIngredients =
+              recipeIngredients && ingredients
+                ? this.mapRecipeIngredients(recipeIngredients, ingredients)
+                : recipeIngredients;
             const displayTools = this.mapRecipeTools(recipeTools, tools);
             const displaySteps = this.mapRecipeSteps(recipeSteps, steps);
             return {
@@ -204,7 +209,7 @@ export class RecipeComponent {
 
     this.displaySteps$
       .pipe(
-        take(1),
+        tap((steps) => console.log(`steps: ${steps}`)),
         switchMap((steps) => {
           return from(steps).pipe(
             mergeMap((step) => {
@@ -226,10 +231,10 @@ export class RecipeComponent {
             toArray()
           );
         }),
-        takeUntil(this.onDestroy$) // Assuming you have a Subject that emits when the component is destroyed.
+        takeUntil(this.onDestroy$)
       )
       .subscribe((stepsWithPhotos) => {
-        this.displayStepsWithPhoto$.next(stepsWithPhotos)
+        this.displayStepsWithPhoto$.next(stepsWithPhotos);
       });
   }
 
