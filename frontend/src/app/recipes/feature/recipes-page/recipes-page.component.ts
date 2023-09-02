@@ -190,16 +190,8 @@ export class RecipesPageComponent {
   categoryContainer!: ElementRef;
   @ViewChild('recipeContainer', { static: false })
   recipeContainer!: ElementRef;
-  @HostListener('window:scroll', ['$event'])
-  
-  ngOnInit() {
-    //hydrate data
-    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
-    this.store.dispatch(RecipeToolActions.loadRecipeTools());
-    this.store.dispatch(StepActions.loadSteps());
-    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
-    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
 
+  ngOnInit() {
     this.view$.subscribe((view) => {
       this.view = view;
     });
@@ -225,21 +217,22 @@ export class RecipesPageComponent {
         }),
         switchMap((promises) => Promise.all(promises)),
         switchMap((resolvedCategories) => {
-        // Count the recipes for each category
-        return this.recipeRows$.pipe(
-          map((recipes) => {
-            return resolvedCategories.map((category) => {
-              const recipeCount = recipes.filter(
-                (recipe) => recipe.recipeCategoryID === category.recipeCategoryID
-              ).length;
-              return {
-                ...category,
-                recipeCount,
-              };
-            });
-          })
-        );
-      })
+          // Count the recipes for each category
+          return this.recipeRows$.pipe(
+            map((recipes) => {
+              return resolvedCategories.map((category) => {
+                const recipeCount = recipes.filter(
+                  (recipe) =>
+                    recipe.recipeCategoryID === category.recipeCategoryID
+                ).length;
+                return {
+                  ...category,
+                  recipeCount,
+                };
+              });
+            })
+          );
+        })
       )
       .subscribe((resolvedCategories) => {
         this.categoryRows = resolvedCategories;
