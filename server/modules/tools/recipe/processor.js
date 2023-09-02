@@ -206,19 +206,27 @@ module.exports = ({ db }) => {
     }
     global.logger.info(`Deleted recipeTool ${recipeToolID}`);
 
-    //if existingRecipe has no more recipeTools, update status to 'noTools'
+    //if existingRecipe has no more recipeTools, check whether it has any recipeSteps
     const { data: recipeTools, error: recipeToolsError } = await db.from('recipeTools').select().eq('recipeID', recipeTool[0].recipeID).eq('deleted', false);
     if (recipeToolsError) {
       global.logger.info(`Error getting remaining recipeTools for recipe: ${recipeToolsError}`);
       return { error: recipeToolsError };
     }
     if (!recipeTools.length) {
-      const { error: updateError } = await db.from('recipes').update({ status: 'noTools' }).eq('recipeID', recipeTool[0].recipeID);
-      if (updateError) {
-        global.logger.info(`Error updating recipe status: ${updateError}`);
-        return { error: updateError };
+      //if no recipeTools, check whether recipe has any recipeSteps
+      const { data: recipeSteps, error: recipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeTool[0].recipeID).eq('deleted', false);
+      if (recipeStepsError) {
+        global.logger.info(`Error getting remaining recipeSteps for recipe: ${recipeStepsError}`);
+        return { error: recipeStepsError };
       }
-      global.logger.info(`Recipe now has no recipeTools, Updated recipe status to 'noTools'`);
+      if (!recipeSteps.length) {
+        //if no recipeSteps, set recipe status to 'noSteps'
+        const { error: updateError } = await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeTool[0].recipeID);
+        if (updateError) {
+          global.logger.info(`Error updating recipe status: ${updateError}`);
+          return { error: updateError };
+        }
+      }
     }
 
     return { success: true };

@@ -10,6 +10,11 @@ import { IngredientStockActions } from './kitchen/feature/Inventory/feature/ingr
 import { EmployeeActions } from './employees/state/employee-actions';
 import { ToolActions } from './kitchen/feature/tools/state/tool-actions';
 import { RecipeActions } from './recipes/state/recipe/recipe-actions';
+import { RecipeIngredientActions } from './recipes/state/recipe-ingredient/recipe-ingredient-actions';
+import { RecipeToolActions } from './recipes/state/recipe-tool/recipe-tool-actions';
+import { StepActions } from './recipes/state/step/step-actions';
+import { RecipeStepActions } from './recipes/state/recipe-step/recipe-step-actions';
+import { RecipeCategoryActions } from './recipes/state/recipe-category/recipe-category-actions';
 
 @Component({
   standalone: true,
@@ -28,11 +33,19 @@ export class AppComponent {
   constructor(private router: Router, private store: Store) {}
 
   ngOnInit() {
-    //hydrate ingredients, ingredient stocks, employees, recipes
+    //hydrate stuff
+    this.store.dispatch(EmployeeActions.loadEmployees());
+
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-    this.store.dispatch(EmployeeActions.loadEmployees());
     this.store.dispatch(ToolActions.loadTools());
+    //this.store.dispatch(ToolStockActions.loadToolStocks());
+    this.store.dispatch(StepActions.loadSteps());
+
     this.store.dispatch(RecipeActions.loadRecipes());
+    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
+    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+    this.store.dispatch(RecipeToolActions.loadRecipeTools());
+    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
   }
 }
