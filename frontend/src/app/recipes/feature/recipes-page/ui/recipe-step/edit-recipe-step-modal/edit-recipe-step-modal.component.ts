@@ -6,36 +6,31 @@ import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { Observable, Subject, Subscription, first, forkJoin, map, switchMap, takeUntil } from 'rxjs';
 import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef,
-} from '@angular/material/dialog';
+  Observable,
+  Subject,
+  combineLatest,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { selectStepByID } from 'src/app/recipes/state/step/step-selectors';
 import {
-  selectAdding,
-  selectLoading,
-  selectStepByID,
-  selectSteps,
-} from 'src/app/recipes/state/step/step-selectors';
-import {
-  selectAddingRecipeStep,
-  selectLoadingRecipeStep,
+  selectRecipeStepByID,
   selectRecipeStepsByID,
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
-  selector: 'dl-add-recipe-step-modal',
+  selector: 'dl-edit-recipe-step-modal',
   standalone: true,
   imports: [
     CommonModule,
@@ -46,22 +41,15 @@ import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
     MatInputModule,
     ImageCropperModule,
   ],
-  templateUrl: './add-recipe-step-modal.component.html',
+  templateUrl: './edit-recipe-step-modal.component.html',
 })
-export class AddRecipeStepModalComponent {
+export class EditRecipeStepModalComponent {
   form!: FormGroup;
-  isAddingStep$: Observable<boolean>;
-  isAddingRecipeStep$: Observable<boolean>;
-  isLoadingStep$: Observable<boolean>;
-  isLoadingRecipeStep$: Observable<boolean>;
-  private addingSubscription!: Subscription;
-
-  private unsubscribe$ = new Subject<void>();
-
+  isUploadingPhoto: boolean = false;
   private steps: any[] = [];
 
+  private unsubscribe$ = new Subject<void>();
   //photo upload
-  photoURL!: string;
   public stepImageChangedEvent: any = '';
   public croppedImage: any = '';
   public selectedFile: File | null = null;
@@ -69,52 +57,71 @@ export class AddRecipeStepModalComponent {
   public isCropperReady: boolean = false;
   public imageLoadFailed: boolean = false;
   public imagePresent: boolean = false;
+  public photoURL?: string = '';
+  public photo: any;
+  newPhotoURL!: string;
 
   constructor(
-    public dialogRef: MatDialogRef<AddRecipeStepModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private store: Store,
-    private photoUploadService: PhotoService
+    private photoService: PhotoService,
+    public dialogRef: MatDialogRef<EditRecipeStepModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.isAddingStep$ = this.store.select(selectAdding);
-    this.isAddingRecipeStep$ = this.store.select(selectAddingRecipeStep);
-    this.isLoadingStep$ = this.store.select(selectLoading);
-    this.isLoadingRecipeStep$ = this.store.select(selectLoadingRecipeStep);
     this.setForm();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.store
       .select(selectRecipeStepsByID(this.data.recipeID))
       .pipe(
+        takeUntil(this.unsubscribe$),
         switchMap((recipeSteps) => {
           const stepObservables = recipeSteps.map((recipeStep) =>
             this.store.select(selectStepByID(recipeStep.stepID))
           );
-          return forkJoin(stepObservables);
-        }),
-        takeUntil(this.unsubscribe$)
+          return combineLatest(stepObservables);
+        })
       )
       .subscribe((stepsForRecipe) => {
         this.steps = stepsForRecipe;
+      });
+
+    //retrieve recipeStep from store to get 'photoURL'
+    const storeRecipeStep = this.store.select(
+      selectRecipeStepByID(this.data.recipeStepID)
+    );
+    storeRecipeStep
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((recipeStep) => {
+        if (recipeStep) {
+          this.photoURL = recipeStep.photoURL;
+        }
       });
   }
 
   setForm() {
     this.form = this.fb.group({
-      title: ['', [Validators.required, this.titleValidator()]],
-      description: ['', Validators.required],
-      photoURL: [null],
+      title: [this.data.title, [Validators.required, this.titleValidator()]],
+      description: [this.data.description, Validators.required],
+      // newPhotoURL: [null],
     });
   }
 
   titleValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const title = control.value;
+
+      // Check if the title is the same as the original title
+      if (title === this.data.title) {
+        return null;
+      }
+
       if (this.steps && this.steps.length > 0) {
-        const step = this.steps.find((step) => step.title === title);
-        return step ? { titleExists: true } : null;
+        const titleExists = this.steps.some((step) => step.title === title);
+        if (titleExists) {
+          return { titleExists: true };
+        }
       }
       return null;
     };
@@ -142,42 +149,72 @@ export class AddRecipeStepModalComponent {
     this.imageLoadFailed = true;
   }
 
+  deleteImage(): Observable<any> {
+    console.log(`TRYING TO DELETE PHOTO: ${this.photoURL}`)
+    return this.photoService.deleteFileFromS3(this.photoURL!);
+  }
+
+  async replaceImage() {
+    if (this.croppedImage && this.selectedFile) {
+      this.isUploadingPhoto = true; // set the flag to true at the start
+
+      try {
+        if (this.photoURL) {
+          // wait for delete operation to complete
+          await this.deleteImage().toPromise();
+        }
+
+        // proceed with upload
+        await this.uploadCroppedImage();
+      } catch (error) {
+        console.log('Error replacing image:', error);
+      } finally {
+        // reset the flag in either case (success/failure)
+        this.isUploadingPhoto = false;
+      }
+    }
+  }
+
   async uploadCroppedImage() {
     if (this.croppedImage && this.selectedFile) {
       try {
-        const url: string = await this.photoUploadService
+        const url: string = await this.photoService
           .getPreSignedPostUrl(this.selectedFile.name, this.selectedFile.type)
           .toPromise();
 
-        const uploadResponse = await this.photoUploadService.uploadFileToS3(
+        const uploadResponse = await this.photoService.uploadFileToS3(
           url,
           this.croppedImage
         );
-        console.log('Upload Successful:', uploadResponse.url);
 
-        this.photoURL = uploadResponse.url.split('?')[0];
+        this.newPhotoURL = uploadResponse.url.split('?')[0];
+        this.isUploadingPhoto = false;
       } catch (error) {
-        console.log('An error occurred:', error);
+        console.log('Error Uploading new image:', error);
       }
     }
   }
 
   async onSubmit() {
-    //first upload the cropped image
-    await this.uploadCroppedImage();
+    console.log('onSubmit');
     const newRecipeStep = {
       ...this.form.value,
-      photoURL: this.photoURL,
+      photoURL: this.data.photoURL,
     };
+    //first replace the image if necessary
+    if (this.croppedImage && this.selectedFile) {
+      await this.replaceImage();
+      newRecipeStep.photoURL = this.newPhotoURL;
+    }
     this.dialogRef.close(newRecipeStep);
-  }
-
-  onCancel() {
-    this.dialogRef.close('cancel');
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  onCancel() {
+    this.dialogRef.close('cancel');
   }
 }

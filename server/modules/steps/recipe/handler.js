@@ -32,11 +32,12 @@ async function updateStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeStepID } = req.params;
-  const { sequence } = req.body;
+  const { sequence, photoURL } = req.body;
   const returner = await p.update({
     userID: req.userID,
     recipeStepID,
     sequence,
+    photoURL,
   });
   return res.json(returner);
 }
@@ -45,7 +46,8 @@ async function deleteStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeStepID } = req.params;
-  const returner = await p.delete({ userID: req.userID, recipeStepID });
+  const { authorization } = req.headers;
+  const returner = await p.delete({ userID: req.userID, recipeStepID, authorization });
   return res.json(returner);
 }
 

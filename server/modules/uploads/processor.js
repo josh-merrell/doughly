@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 ('use strict');
@@ -17,18 +17,43 @@ module.exports = () => {
       ContentType: contentType,
     });
 
-    // eslint-disable-next-line no-useless-catch
+    const url = await getSignedUrl(s3Client, command, {
+      expiresIn: 3600,
+    });
+
+    return url;
+  }
+
+  async function remove(options) {
+    const { userID, photoURL } = options;
+
+    const urlParts = photoURL.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+    const key = `${userID}/${fileName}`;
+
+    const decodedKey = decodeURIComponent(key);
+
+    const s3Client = new S3Client({ region: 'us-west-2' });
+
+    const deleteParams = {
+      Bucket: process.env.AWS_RECIPE_PHOTO_BUCKET_NAME,
+      Key: decodedKey,
+    };
+
+    const deleteCommand = new DeleteObjectCommand(deleteParams);
+
     try {
-      const url = await getSignedUrl(s3Client, command, {
-        expiresIn: 3600,
-      });
-      return url;
+      await s3Client.send(deleteCommand);
+      global.logger.info(`Successfully deleted file ${decodedKey}`);
+      return { message: 'Successfully deleted file' };
     } catch (err) {
+      global.error(`Error deleting file ${decodedKey}:`, err);
       throw err;
     }
   }
 
   return {
     create,
+    remove,
   };
 };

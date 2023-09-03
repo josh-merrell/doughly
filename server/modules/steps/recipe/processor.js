@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 ('use strict');
 
 const { updater } = require('../../../db');
@@ -94,8 +96,11 @@ module.exports = ({ db }) => {
         global.logger.info(`Error undeleting recipeStep: ${undeleteError.message}`);
         return { error: undeleteError.message };
       }
+      if (recipe[0].status === 'noSteps') {
+        await publish(recipeID, deletedRecipeStep[0].recipeStepID);
+      }
       global.logger.info(`Undeleted recipeStep ${deletedRecipeStep[0].recipeStepID}`);
-      // return deletedRecipeStep[0];
+
       return {
         recipeStepID: deletedRecipeStep[0].recipeStepID,
         recipeID: deletedRecipeStep[0].recipeID,
@@ -136,20 +141,8 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
 
-    //if status of recipe is 'noSteps', update status to 'published'
     if (recipe[0].status === 'noSteps') {
-      const { error: recipeUpdateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
-      if (recipeUpdateError) {
-        global.logger.info(`Error updating recipe status: ${recipeUpdateError.message}`);
-        //rollback recipeStep creation
-        const { error: rollbackError } = await db.from('recipeSteps').delete().eq('recipeStepID', newRecipeStep.recipeStepID);
-        if (rollbackError) {
-          global.logger.info(`Error rolling back recipeStep: ${rollbackError.message}`);
-          return { error: rollbackError.message };
-        }
-        return { error: recipeUpdateError.message };
-      }
-      global.logger.info(`Updated recipe status to published`);
+      await publish(recipeID, newRecipeStep.recipeStepID);
     }
     global.logger.info(`Created recipeStep ${newRecipeStep.recipeStepID}`);
     // return newRecipeStep;
@@ -162,8 +155,23 @@ module.exports = ({ db }) => {
     };
   }
 
+  async function publish(recipeID, recipeStepID) {
+    const { error: recipeUpdateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
+    if (recipeUpdateError) {
+      global.logger.info(`Error updating recipe status: ${recipeUpdateError.message}`);
+      //rollback recipeStep creation
+      const { error: rollbackError } = await db.from('recipeSteps').delete().eq('recipeStepID', recipeStepID);
+      if (rollbackError) {
+        global.logger.info(`Error rolling back recipeStep: ${rollbackError.message}`);
+        return { error: rollbackError.message };
+      }
+      return { error: recipeUpdateError.message };
+    }
+    global.logger.info(`Updated recipe status to published`);
+  }
+
   async function update(options) {
-    const { recipeStepID, sequence } = options;
+    const { recipeStepID, sequence, photoURL } = options;
 
     //validate that provided recipeStepID exists
     const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID);
@@ -175,23 +183,25 @@ module.exports = ({ db }) => {
       global.logger.info(`Provided recipeStep ID: ${recipeStepID} does not exist, cannot update recipeStep`);
       return { error: `Provided recipeStep ID: ${recipeStepID} does not exist, cannot update recipeStep` };
     }
-    //if provided sequence is same as existing sequence, do nothing
-    if (sequence === recipeStep[0].sequence) {
-      global.logger.info(`Provided sequence: ${sequence} is the same as existing sequence, no update needed`);
-      return recipeStep[0];
-    }
 
-    //validate that provided sequence is positive integer
-    if (sequence < 1) {
-      global.logger.info(`Provided sequence: ${sequence} is less than 1, cannot update recipeStep`);
-      return { error: `Provided sequence: ${sequence} is less than 1, cannot update recipeStep` };
-    }
+    if (sequence) {
+      //if provided sequence is same as existing sequence and no photoURL provided, do nothing
+      if (sequence === recipeStep[0].sequence && !photoURL) {
+        global.logger.info(`Provided sequence: ${sequence} is the same as existing sequence, no update needed`);
+        return recipeStep[0];
+      }
+      //validate that provided sequence is positive integer
+      if (sequence < 1) {
+        global.logger.info(`Provided sequence: ${sequence} is less than 1, cannot update recipeStep`);
+        return { error: `Provided sequence: ${sequence} is less than 1, cannot update recipeStep` };
+      }
 
-    //get existing steps, order by sequence ascending
-    const { error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeStep[0].recipeID).order('sequence', { ascending: true });
-    if (existingRecipeStepsError) {
-      global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while updating recipeStep ${existingRecipeStepsError.message}`);
-      return { error: existingRecipeStepsError.message };
+      //get existing steps, order by sequence ascending
+      const { error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeStep[0].recipeID).order('sequence', { ascending: true });
+      if (existingRecipeStepsError) {
+        global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while updating recipeStep ${existingRecipeStepsError.message}`);
+        return { error: existingRecipeStepsError.message };
+      }
     }
 
     /** FOR NOW WE ARE NOT USING THIS SMART SEQUENCE SHIFTING LOGIC, THE FRONTEND WILL CALL EACH NEEDED SHIFT DIRECTLY
@@ -215,7 +225,7 @@ module.exports = ({ db }) => {
     //   }
     // }
     **/
-    const updateFields = { sequence: sequence };
+    const updateFields = { sequence: sequence, photoURL: photoURL };
 
     try {
       const updatedRecipeStep = await updater('recipeStepID', recipeStepID, 'recipeSteps', updateFields);
@@ -228,7 +238,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteStep(options) {
-    const { recipeStepID } = options;
+    const { recipeStepID, authorization } = options;
     //validate that provided recipeStepID exists
     const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID).eq('deleted', false);
     if (validationError) {
@@ -238,6 +248,26 @@ module.exports = ({ db }) => {
     if (!recipeStep.length) {
       global.logger.info(`Provided recipeStep ID: ${recipeStepID} does not exist, cannot delete recipeStep`);
       return { error: `Provided recipeStep ID: ${recipeStepID} does not exist, cannot delete recipeStep` };
+    }
+
+    //if recipeStep has photoURL, delete the photo first by calling router.delete('/uploads/image', routeValidator(deleteImageSchema_body, 'body'), errorCatcher(h.deleteS3Photo));
+    if (recipeStep[0].photoURL) {
+      global.logger.info(`recipeStep has photoURL: ${recipeStep[0].photoURL}, TRYING TO DELETE FIRST`);
+      global.logger.info(`PATH: ${process.env.NODE_HOST}:${process.env.PORT}/uploads/image`);
+      try {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/uploads/image`, {
+          data: {
+            photoURL: recipeStep[0].photoURL,
+          },
+          headers: {
+            authorization: authorization,
+          },
+        });
+        global.logger.info(`Deleted photo for recipeStep ${recipeStepID}`);
+      } catch (err) {
+        global.logger.info(`Error deleting photo for recipeStep ${recipeStepID}: ${err.message}`);
+        return { error: err.message };
+      }
     }
 
     //get existing steps for recipeID of provided recipeStepID, order by sequence ascending, only get undeleted steps

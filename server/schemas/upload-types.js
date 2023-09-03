@@ -7,6 +7,15 @@ const newPhotoURLSchema_body = {
   },
 };
 
+const deleteImageSchema_body = {
+  type: 'object',
+  required: ['photoURL'],
+  properties: {
+    photoURL: { type: 'string' },
+  },
+};
+
 module.exports = {
   newPhotoURLSchema_body,
+  deleteImageSchema_body,
 };
