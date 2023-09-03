@@ -28,6 +28,7 @@ import {
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
+import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
 
 @Component({
   selector: 'dl-edit-recipe-step-modal',
@@ -150,8 +151,7 @@ export class EditRecipeStepModalComponent {
   }
 
   deleteImage(): Observable<any> {
-    console.log(`TRYING TO DELETE PHOTO: ${this.photoURL}`)
-    return this.photoService.deleteFileFromS3(this.photoURL!);
+    return this.photoService.deleteFileFromS3(this.photoURL!, 'recipeStep', this.data.recipeStepID);
   }
 
   async replaceImage() {
@@ -161,7 +161,11 @@ export class EditRecipeStepModalComponent {
       try {
         if (this.photoURL) {
           // wait for delete operation to complete
-          await this.deleteImage().toPromise();
+          const result = await this.deleteImage().toPromise();
+          if (result.data) {
+            this.store.dispatch(RecipeStepActions.loadRecipeStep(this.data.recipeStepID));
+          }
+          
         }
 
         // proceed with upload

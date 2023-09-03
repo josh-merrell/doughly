@@ -21,8 +21,8 @@ export class PhotoService {
     return fetch(url, { method: 'PUT', body: file });
   }
 
-  deleteFileFromS3(photoURL: string): Observable<any> {
-    console.log('photoURL', photoURL)
-    return this.http.delete(`${this.API_URL}/image`, { body: { photoURL } });
+  deleteFileFromS3(photoURL: string, type: string, id: number): Observable<any> {
+    const body = { photoURL, type, id };
+    return this.http.delete(`${this.API_URL}/image`, {body} );
   }
 }

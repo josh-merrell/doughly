@@ -3,7 +3,7 @@ const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 ('use strict');
 
-module.exports = () => {
+module.exports = ({ db }) => {
   async function create(options) {
     const { userID, fileName, fileType } = options;
 
@@ -25,7 +25,7 @@ module.exports = () => {
   }
 
   async function remove(options) {
-    const { userID, photoURL } = options;
+    const { userID, photoURL, type, id } = options;
 
     const urlParts = photoURL.split('/');
     const fileName = urlParts[urlParts.length - 1];
@@ -44,10 +44,20 @@ module.exports = () => {
 
     try {
       await s3Client.send(deleteCommand);
-      global.logger.info(`Successfully deleted file ${decodedKey}`);
-      return { message: 'Successfully deleted file' };
+      let data;
+      if (type === 'recipeStep') {
+        // delete photo from recipeStep
+        const { data: updatedRecipeStep, error } = await db.from('recipeSteps').update({ photoURL: null }).match({ recipeStepID: id }).select('*');
+        if (error) {
+          global.logger.error(`Error updating recipeStep ${id} with null photoURL:`, error);
+          throw error;
+        } else {
+          data = updatedRecipeStep[0];
+        }
+      }
+      return { message: 'Successfully deleted file', data };
     } catch (err) {
-      global.error(`Error deleting file ${decodedKey}:`, err);
+      global.logger.error(`Error deleting file ${decodedKey}:`, err);
       throw err;
     }
   }
