@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable, catchError, from, of } from 'rxjs';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Observable, switchMap } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root',
@@ -12,12 +12,17 @@ export class PhotoService {
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
-  getPreSignedUrl(fileName: string, fileType: string): Observable<any> {
+  getPreSignedPostUrl(fileName: string, fileType: string): Observable<any> {
     const body = { fileName, fileType };
     return this.http.post<{ url: string }>(`${this.API_URL}/presigned`, body);
   }
 
   uploadFileToS3(url: string, file: File | Blob): Promise<Response> {
     return fetch(url, { method: 'PUT', body: file });
+  }
+
+  deleteFileFromS3(photoURL: string): Observable<any> {
+    console.log('photoURL', photoURL)
+    return this.http.delete(`${this.API_URL}/image`, { body: { photoURL } });
   }
 }

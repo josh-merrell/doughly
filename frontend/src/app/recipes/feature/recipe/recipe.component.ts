@@ -38,8 +38,12 @@ import { RecipeToolsModalComponent } from '../recipes-page/ui/recipe-tool/recipe
 import { selectSteps } from '../../state/step/step-selectors';
 import { selectRecipeStepsByID } from '../../state/recipe-step/recipe-step-selectors';
 import { PhotoService } from 'src/app/shared/utils/photoService';
+import { RecipeStepsModalComponent } from '../recipes-page/ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
 
 function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
+  return obj && obj.errorType !== undefined && obj.message !== undefined;
+}
+function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
 @Component({
@@ -65,7 +69,9 @@ export class RecipeComponent {
   recipeSteps$!: Observable<any[]>;
   steps$!: Observable<any[]>;
   displaySteps$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-  displayStepsWithPhoto$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+  displayStepsWithPhoto$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(
+    []
+  );
 
   private onDestroy$ = new Subject<void>();
 
@@ -73,7 +79,7 @@ export class RecipeComponent {
     private route: ActivatedRoute,
     private store: Store,
     private sanitizer: DomSanitizer,
-    public dialog: MatDialog,
+    public dialog: MatDialog
   ) {}
 
   private mapRecipeIngredients(recipeIngredients: any[], ingredients: any[]) {
@@ -138,7 +144,7 @@ export class RecipeComponent {
             this.steps$,
           ]);
         }),
-        catchError(err => {
+        catchError((err) => {
           console.error(`Error loading recipe and related state: ${err}`);
           return of([]);
         }),
@@ -209,7 +215,6 @@ export class RecipeComponent {
 
     this.displaySteps$
       .pipe(
-        tap((steps) => console.log(`steps: ${steps}`)),
         switchMap((steps) => {
           return from(steps).pipe(
             mergeMap((step) => {
@@ -234,7 +239,8 @@ export class RecipeComponent {
         takeUntil(this.onDestroy$)
       )
       .subscribe((stepsWithPhotos) => {
-        this.displayStepsWithPhoto$.next(stepsWithPhotos);
+        const sorted = stepsWithPhotos.sort((a, b) => a.sequence - b.sequence);
+        this.displayStepsWithPhoto$.next(sorted);
       });
   }
 
@@ -306,7 +312,31 @@ export class RecipeComponent {
   }
 
   editRecipeSteps() {
-    console.log('edit recipe steps');
+    const dialogRef = this.dialog.open(RecipeStepsModalComponent, {
+      data: {
+        recipe: {
+          recipeID: this.recipeID,
+        },
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'success') {
+        this.dialog.open(AddRequestConfirmationModalComponent, {
+          data: {
+            results: result,
+            addSuccessMessage: 'Recipe Steps edited successfully!',
+          },
+        });
+      } else if (isRecipeStepError(result)) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            error: result,
+            addFailureMessage: 'Recipe Steps could not be edited.',
+          },
+        });
+      }
+    });
   }
 
   ngOnDestroy() {

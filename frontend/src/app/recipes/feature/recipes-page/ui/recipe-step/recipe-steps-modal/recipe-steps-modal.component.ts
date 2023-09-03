@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   CdkDragDrop,
@@ -11,10 +11,13 @@ import {
   EMPTY,
   Observable,
   catchError,
+  concat,
+  concatAll,
   concatMap,
   filter,
   from,
   map,
+  of,
   take,
 } from 'rxjs';
 import {
@@ -33,15 +36,14 @@ import {
   selectUpdatingRecipeStep,
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
 import { Step } from 'src/app/recipes/state/step/step-state';
-import {
-  selectSteps
-} from 'src/app/recipes/state/step/step-selectors';
+import { selectSteps } from 'src/app/recipes/state/step/step-selectors';
 import { AddRecipeStepModalComponent } from '../add-recipe-step-modal/add-recipe-step-modal.component';
 import { StepActions } from 'src/app/recipes/state/step/step-actions';
 import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { RecipeStep } from 'src/app/recipes/state/recipe-step/recipe-step-state';
 import { DeleteRecipeStepModalComponent } from '../delete-recipe-step-modal/delete-recipe-step-modal.component';
+import { EditRecipeStepModalComponent } from '../edit-recipe-step-modal/edit-recipe-step-modal.component';
 
 @Component({
   selector: 'dl-recipe-steps-modal',
@@ -55,13 +57,46 @@ export class RecipeStepsModalComponent {
   isLoading$: Observable<boolean>;
   stepsToAdd!: boolean;
   stepsToReorder!: boolean;
+  stepsToUpdate!: boolean;
   recipeSteps$!: Observable<any[]>;
   steps$!: Observable<Step[]>;
   displayRecipeSteps: any[] = [];
   private displayRecipeStepsSubject = new BehaviorSubject<any[]>([]);
   displayRecipeSteps$ = this.displayRecipeStepsSubject.asObservable();
 
+  itemMenuOpen = { index: -1, open: false };
+  @ViewChild('itemMenu') rowItemMenu!: ElementRef;
+  globalClickListener: () => void = () => {};
+  toggleItemMenu(event: any, index: number) {
+    event.stopPropagation();
+    if (this.itemMenuOpen.index === index) {
+      this.itemMenuOpen.open = !this.itemMenuOpen.open;
+    } else {
+      this.itemMenuOpen.index = index;
+      this.itemMenuOpen.open = true;
+    }
+  }
+  closeitemMenu() {
+    this.itemMenuOpen = { index: -1, open: false };
+  }
+
+  ngAfterViewInit() {
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.rowItemMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInside && this.rowItemMenu) {
+          this.closeitemMenu();
+        }
+      }
+    );
+  }
+
   constructor(
+    private renderer: Renderer2,
     public dialogRef: MatDialogRef<RecipeStepsModalComponent>,
     public dialog: MatDialog,
     private store: Store,
@@ -77,6 +112,7 @@ export class RecipeStepsModalComponent {
     this.steps$ = this.store.select(selectSteps);
     this.stepsToAdd = false;
     this.stepsToReorder = false;
+    this.stepsToUpdate = false;
   }
 
   ngOnInit() {
@@ -91,6 +127,7 @@ export class RecipeStepsModalComponent {
             title: step!.title,
             description: step!.description,
             toAdd: false,
+            toUpdate: false,
             sequenceChanged: false,
           });
         });
@@ -106,6 +143,9 @@ export class RecipeStepsModalComponent {
     });
     this.checkStepsToReorder().subscribe((stepsToReorder) => {
       this.stepsToReorder = stepsToReorder;
+    });
+    this.checkStepsToUpdate().subscribe((stepsToUpdate) => {
+      this.stepsToUpdate = stepsToUpdate;
     });
   }
 
@@ -125,9 +165,17 @@ export class RecipeStepsModalComponent {
     );
   }
 
+  checkStepsToUpdate(): Observable<boolean> {
+    return this.displayRecipeStepsSubject.pipe(
+      map((displayRecipeSteps) =>
+        displayRecipeSteps.some((recipeStep) => recipeStep.toUpdate)
+      )
+    );
+  }
+
   onAddClick() {
     const dialogRef = this.dialog.open(AddRecipeStepModalComponent, {
-      data: {},
+      data: { recipeID: this.recipe.recipeID },
       width: '75%',
     });
 
@@ -148,6 +196,42 @@ export class RecipeStepsModalComponent {
 
             // Add the new step to the local copy of the array
             displayRecipeSteps.push(addedRecipeStep);
+
+            // Push the updated steps back into the BehaviorSubject
+            this.displayRecipeStepsSubject.next(displayRecipeSteps);
+          });
+      }
+    });
+  }
+
+  onUpdateClick(displayRecipeStep: any) {
+    const dialogRef = this.dialog.open(EditRecipeStepModalComponent, {
+      data: displayRecipeStep,
+      width: '75%',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.title) {
+        // Get the current value of displayRecipeSteps from the BehaviorSubject
+        this.displayRecipeStepsSubject
+          .pipe(take(1))
+          .subscribe((displayRecipeSteps) => {
+            const updatedRecipeStep: any = {
+              title: result.title,
+              description: result.description,
+              sequence: displayRecipeStep.sequence,
+              photoURL: result.photoURL,
+              toUpdate: true,
+              stepID: displayRecipeStep.stepID,
+              recipeStepID: displayRecipeStep.recipeStepID,
+              recipeID: displayRecipeStep.recipeID,
+            };
+
+            // Replace the displayRecipeSteps entry matching the recipeStepID with the updatedRecipeStep
+            const index = displayRecipeSteps.findIndex(
+              (step) => step.recipeStepID === displayRecipeStep.recipeStepID
+            );
+            displayRecipeSteps[index] = updatedRecipeStep;
 
             // Push the updated steps back into the BehaviorSubject
             this.displayRecipeStepsSubject.next(displayRecipeSteps);
@@ -206,11 +290,11 @@ export class RecipeStepsModalComponent {
     this.checkSequence();
   }
 
-  onDeleteClick(recipeStep: any) {
-    if (recipeStep.recipeStepID) {
+  onDeleteClick(displayRecipeStep: any) {
+    if (displayRecipeStep.recipeStepID) {
       const dialogRef = this.dialog.open(DeleteRecipeStepModalComponent, {
         data: {
-          recipeStep: recipeStep,
+          recipeStep: displayRecipeStep,
         },
       });
 
@@ -244,14 +328,16 @@ export class RecipeStepsModalComponent {
 
                   // Remove the deleted recipe step
                   updatedDisplayRecipeSteps = updatedDisplayRecipeSteps.filter(
-                    (step) => step.recipeStepID !== recipeStep.recipeStepID
+                    (step) =>
+                      step.recipeStepID !== displayRecipeStep.recipeStepID
                   );
 
                   // Decrement the sequence for 'toAdd' === true or 'sequenceChanged' === true
                   updatedDisplayRecipeSteps.forEach((step) => {
                     if (
-                      step.toAdd === true || step.sequenceChanged === true &&
-                      step.sequence > recipeStep.sequence
+                      step.toAdd === true ||
+                      (step.sequenceChanged === true &&
+                        step.sequence > displayRecipeStep.sequence)
                     ) {
                       step.sequence--;
                     }
@@ -276,7 +362,7 @@ export class RecipeStepsModalComponent {
       // Update the steps in the BehaviorSubject for local removal
       this.displayRecipeSteps$.pipe(take(1)).subscribe((steps) => {
         const updatedSteps = steps.filter(
-          (step) => step.title !== recipeStep.title
+          (step) => step.title !== displayRecipeStep.title
         );
         this.displayRecipeStepsSubject.next(updatedSteps);
       });
@@ -285,70 +371,140 @@ export class RecipeStepsModalComponent {
 
   onSubmit() {
     this.displayRecipeStepsSubject
-      .pipe(take(1))
-      .subscribe((displayRecipeSteps) => {
-        const stepsToAdd = displayRecipeSteps.filter(
-          (recipeStep) => recipeStep.toAdd
-        );
-
-        from(stepsToAdd)
-          .pipe(
-            concatMap((recipeStep, index) => {
-              const step = {
-                title: recipeStep.title,
-                description: recipeStep.description,
-              };
-              this.store.dispatch(StepActions.addStep({ step }));
-
-              return this.actions$.pipe(
-                ofType(StepActions.addStepSuccess),
-                take(1),
-                concatMap((action) => {
-                  const addedStep = action.step;
-                  const recipeStepToAdd = {
-                    recipeID: this.recipe.recipeID,
-                    sequence: recipeStep.sequence,
-                    stepID: addedStep.stepID,
-                    photoURL: recipeStep.photoURL,
-                  };
-                  this.store.dispatch(
-                    RecipeStepActions.addRecipeStep({
-                      recipeStep: recipeStepToAdd,
-                    })
-                  );
-
-                  return this.store.select(selectAddingRecipeStep).pipe(
-                    filter((addingRecipeStep) => !addingRecipeStep),
-                    take(1)
-                  );
-                }),
-                catchError((error) => {
-                  console.error(
-                    `PROCESSING RECIPE STEP ${index}: An error occurred while processing the step:`,
-                    error
-                  );
-                  return EMPTY;
-                })
-              );
-            })
-          )
-          .subscribe({
-            next: () => this.dialogRef.close('success'),
-            error: (error) => {
-              this.dialogRef.close();
-              console.error('An unexpected error occurred:', error);
-            },
-          });
-
-        // Second part: Update sequence for any existing recipe steps that have been reordered
-        const stepsToResequence = displayRecipeSteps.filter(
-          (recipeStep) => recipeStep.sequenceChanged
-        );
-
-        this.updateSequences(stepsToResequence).subscribe(() => {
-          this.dialogRef.close('success');
-        });
+      .pipe(
+        take(1),
+        concatMap((displayRecipeSteps) => {
+          // Perform each part sequentially
+          return concat(
+            this.updateSteps(displayRecipeSteps), // First part: Update any edited steps (and related recipeSteps)
+            this.addSteps(displayRecipeSteps), //Second part: Add any new steps (and related recipeSteps)
+            this.resequenceSteps(displayRecipeSteps) // Third part: Update sequence for any existing recipe steps that have been reordered
+          );
+        })
+      )
+      .subscribe({
+        next: () => this.dialogRef.close('success'),
+        error: (error) => {
+          this.dialogRef.close();
+          console.error('An unexpected error occurred:', error);
+        },
       });
+  }
+
+  updateSteps(displayRecipeSteps: any[]): Observable<any> {
+    const stepsToUpdate = displayRecipeSteps.filter(
+      (recipeStep) => recipeStep.toUpdate
+    );
+
+    const updateObservables = stepsToUpdate.map((recipeStep, index) => {
+      return this.updateStepAndRecipeStep(recipeStep, index);
+    });
+
+    return from(updateObservables).pipe(
+      concatAll(),
+      catchError((error) => {
+        console.error('An error occurred while updating the steps:', error);
+        return EMPTY;
+      })
+    );
+  }
+
+  updateStepAndRecipeStep(recipeStep: any, index: number): Observable<any> {
+    const stepToUpdate = {
+      stepID: recipeStep.stepID,
+      title: recipeStep.title,
+      description: recipeStep.description,
+    };
+
+    this.store.dispatch(StepActions.updateStep({ step: stepToUpdate }));
+
+    return this.actions$.pipe(
+      ofType(StepActions.updateStepSuccess),
+      take(1),
+      concatMap((action) => {
+        const updatedStep = action.step;
+        const recipeStepToUpdate = {
+          recipeStepID: recipeStep.recipeStepID,
+          recipeID: this.recipe.recipeID,
+          sequence: recipeStep.sequence,
+          stepID: updatedStep.stepID!,
+          photoURL: recipeStep.photoURL,
+        };
+        this.store.dispatch(
+          RecipeStepActions.updateRecipeStep({ recipeStep: recipeStepToUpdate })
+        );
+        return this.store.select(selectUpdatingRecipeStep).pipe(
+          filter((updating) => !updating),
+          take(1)
+        );
+      }),
+      catchError((error) => {
+        console.error(
+          `PROCESSING RECIPE STEP ${index}: An error occurred while processing the step:`,
+          error
+        );
+        return EMPTY;
+      })
+    );
+  }
+
+  addSteps(displayRecipeSteps: any[]): Observable<any> {
+    const stepsToAdd = displayRecipeSteps.filter(
+      (recipeStep) => recipeStep.toAdd
+    );
+
+    return from(stepsToAdd).pipe(
+      concatMap((recipeStep, index) => {
+        const step = {
+          title: recipeStep.title,
+          description: recipeStep.description,
+        };
+        this.store.dispatch(StepActions.addStep({ step }));
+
+        return this.actions$.pipe(
+          ofType(StepActions.addStepSuccess),
+          take(1),
+          concatMap((action) => {
+            const addedStep = action.step;
+            const recipeStepToAdd = {
+              recipeID: this.recipe.recipeID,
+              sequence: recipeStep.sequence,
+              stepID: addedStep.stepID,
+              photoURL: recipeStep.photoURL,
+            };
+            this.store.dispatch(
+              RecipeStepActions.addRecipeStep({ recipeStep: recipeStepToAdd })
+            );
+
+            return this.store.select(selectAddingRecipeStep).pipe(
+              filter((adding) => !adding),
+              take(1)
+            );
+          }),
+          catchError((error) => {
+            console.error(
+              `PROCESSING RECIPE STEP ${index}: An error occurred while processing the step:`,
+              error
+            );
+            return EMPTY;
+          })
+        );
+      })
+    );
+  }
+
+  resequenceSteps(displayRecipeSteps: any[]): Observable<any> {
+    const stepsToResequence = displayRecipeSteps.filter(
+      (recipeStep) => recipeStep.sequenceChanged
+    );
+
+    // Directly call your existing updateSequences function
+    return this.updateSequences(stepsToResequence).pipe(
+      catchError((error) => {
+        console.error('An error occurred while resequencing the steps:', error);
+        return EMPTY;
+      })
+    );
   }
 
   updateSequences(stepsToResequence: RecipeStep[]): Observable<void> {
