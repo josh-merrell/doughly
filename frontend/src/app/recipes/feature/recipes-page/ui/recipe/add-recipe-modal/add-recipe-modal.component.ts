@@ -145,7 +145,7 @@ export class AddRecipeModalComponent {
     if (this.croppedImage && this.selectedFile) {
       try {
         const url: string = await this.photoUploadService
-          .getPreSignedUrl(this.selectedFile.name, this.selectedFile.type)
+          .getPreSignedPostUrl(this.selectedFile.name, this.selectedFile.type)
           .toPromise();
 
         const uploadResponse = await this.photoUploadService.uploadFileToS3(
