@@ -28,6 +28,7 @@ import {
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
+import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
 
 @Component({
   selector: 'dl-edit-recipe-step-modal',
@@ -127,43 +128,45 @@ export class EditRecipeStepModalComponent {
     };
   }
 
+  //photo selection/cropping
   stepOnFileSelected(event: Event): void {
     this.stepImageChangedEvent = event; // For the cropping UI
     this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
   }
-
   stepImageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.blob;
     this.imagePresent = true;
   }
-
   stepImageLoaded() {
     this.isImageLoaded = true;
   }
-
   stepCropperReady() {
     this.isCropperReady = true;
   }
-
   stepLoadImageFailed() {
     this.imageLoadFailed = true;
   }
-
   deleteImage(): Observable<any> {
-    console.log(`TRYING TO DELETE PHOTO: ${this.photoURL}`)
-    return this.photoService.deleteFileFromS3(this.photoURL!);
+    return this.photoService.deleteFileFromS3(
+      this.photoURL!,
+      'recipeStep',
+      this.data.recipeStepID
+    );
   }
 
   async replaceImage() {
     if (this.croppedImage && this.selectedFile) {
       this.isUploadingPhoto = true; // set the flag to true at the start
-
       try {
         if (this.photoURL) {
           // wait for delete operation to complete
-          await this.deleteImage().toPromise();
+          const result = await this.deleteImage().toPromise();
+          if (result.data) {
+            this.store.dispatch(
+              RecipeStepActions.loadRecipeStep(this.data.recipeStepID)
+            );
+          }
         }
-
         // proceed with upload
         await this.uploadCroppedImage();
       } catch (error) {
@@ -196,7 +199,6 @@ export class EditRecipeStepModalComponent {
   }
 
   async onSubmit() {
-    console.log('onSubmit');
     const newRecipeStep = {
       ...this.form.value,
       photoURL: this.data.photoURL,

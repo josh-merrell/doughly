@@ -9,7 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import {
-  selecteDeletingRecipeStep,
+  selectDeletingRecipeStep,
   selectErrorRecipeStep,
   selectRecipeStepByID,
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
@@ -32,7 +32,7 @@ export class DeleteRecipeStepModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
   ) {
-    this.isDeleting$ = this.store.select(selecteDeletingRecipeStep);
+    this.isDeleting$ = this.store.select(selectDeletingRecipeStep);
     this.step = this.data.recipeStep;
   }
 
@@ -45,7 +45,7 @@ export class DeleteRecipeStepModalComponent {
 
     // Initiate the subscription after dispatching the action
     this.deletingSubscription = this.store
-      .select(selecteDeletingRecipeStep)
+      .select(selectDeletingRecipeStep)
       .subscribe((deleting) => {
         if (!deleting) {
           this.store.select(selectErrorRecipeStep).subscribe((error) => {
