@@ -1,4 +1,7 @@
-<div class="border-dl-yellow-5 bg-white p-4" [ngClass]="{'border-l-4 border-r-4': (isDeleting$ | async) === false}">
+<div
+  class="border-dl-yellow-5 bg-white p-4"
+  [ngClass]="{ 'border-l-4 border-r-4': (isDeleting$ | async) === false }"
+>
   <mat-spinner
     class="my-app-custom-spinner"
     *ngIf="isDeleting$ | async"
@@ -20,24 +23,25 @@
     </div>
     <div class="relative flex w-dl-15 max-w-full flex-col">
       <div class="ml-dl-3 flex flex-col">
-        <p class="leading-dl-4 text-dl-4 font-dl-3 text-dl-yellow-2">
-          Delete Category
+        <p class="leading-dl-4 text-dl-6 font-dl-3 text-dl-yellow-2">
+          Delete Category?
         </p>
-        <div class="space-x-1">
-          <span class="mt-dl-1 text-dl-2 text-dl-grey-5">Are you sure you want to delete this Category? All children recipes will be moved to 'Other'.</span>
+        <div class="space-x-1 mt-dl-4">
+          <span class="mt-dl-1 text-dl-5 text-dl-grey-5">Are you sure you want to delete</span><span class="mt-dl-1 text-dl-5 text-dl-grey-2 font-dl-3">{{this.categoryName}}</span><span class="mt-dl-1 text-dl-5 text-dl-grey-5">? All children recipes
+            will be moved to 'Other'.</span>
         </div>
       </div>
-      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <div class="mt-dl-5 flex flex-row-reverse">
         <button
           type="button"
-          class="shadow-s inline-flex mx-dl-2 w-dl-6 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 sm:ml-dl-4"
+          class="shadow-sinline-flex ml-dl-4 w-dl-6 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1"
           (click)="onSubmit()"
         >
           Delete
         </button>
         <button
           type="button"
-          class="mt-dl-3 inline-flex mx-dl-2 w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1 sm:mt-0 sm:w-auto"
+          class="inline-flex w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1"
           (click)="onCancel()"
         >
           Cancel
