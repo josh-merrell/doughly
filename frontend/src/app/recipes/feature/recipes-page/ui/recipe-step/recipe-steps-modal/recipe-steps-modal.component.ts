@@ -63,6 +63,7 @@ export class RecipeStepsModalComponent {
   displayRecipeSteps: any[] = [];
   private displayRecipeStepsSubject = new BehaviorSubject<any[]>([]);
   displayRecipeSteps$ = this.displayRecipeStepsSubject.asObservable();
+  modalActiveForRowID: number | null = null;
 
   itemMenuOpen = { index: -1, open: false };
   @ViewChild('itemMenu') rowItemMenu!: ElementRef;
@@ -78,6 +79,30 @@ export class RecipeStepsModalComponent {
   }
   closeitemMenu() {
     this.itemMenuOpen = { index: -1, open: false };
+  }
+
+  activateModalForRow(index: number) {
+    this.modalActiveForRowID = index;
+  }
+
+  deactivateModalForRow() {
+    this.modalActiveForRowID = null;
+  }
+
+  categoryCardTouchStart(index: number) {
+    this.modalActiveForRowID = index;
+  }
+
+  categoryCardTouchEnd() {
+    this.modalActiveForRowID = null;
+  }
+
+  recipeCardTouchStart(recipeID: number) {
+    this.modalActiveForRowID = recipeID;
+  }
+
+  recipeCardTouchEnd() {
+    this.modalActiveForRowID = null;
   }
 
   ngAfterViewInit() {
@@ -204,13 +229,15 @@ export class RecipeStepsModalComponent {
     });
   }
 
-  onUpdateClick(displayRecipeStep: any) {
+  onUpdateClick(displayRecipeStep: any, index: number) {
+    this.activateModalForRow(index);
     const dialogRef = this.dialog.open(EditRecipeStepModalComponent, {
       data: displayRecipeStep,
       width: '75%',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      this.deactivateModalForRow();
       if (result?.title) {
         // Get the current value of displayRecipeSteps from the BehaviorSubject
         this.displayRecipeStepsSubject
@@ -290,7 +317,8 @@ export class RecipeStepsModalComponent {
     this.checkSequence();
   }
 
-  onDeleteClick(displayRecipeStep: any) {
+  onDeleteClick(displayRecipeStep: any, index: number) {
+    this.activateModalForRow(index);
     if (displayRecipeStep.recipeStepID) {
       const dialogRef = this.dialog.open(DeleteRecipeStepModalComponent, {
         data: {
@@ -299,6 +327,7 @@ export class RecipeStepsModalComponent {
       });
 
       dialogRef.afterClosed().subscribe((result) => {
+        this.deactivateModalForRow();
         if (result === 'success') {
           this.dialog.open(DeleteRequestConfirmationModalComponent, {
             data: {
