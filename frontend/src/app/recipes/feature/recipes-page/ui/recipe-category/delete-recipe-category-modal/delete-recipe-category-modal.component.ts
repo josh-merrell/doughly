@@ -19,6 +19,7 @@ import { Observable, Subscription, filter } from 'rxjs';
 export class DeleteRecipeCategoryModalComponent {
   isDeleting$: Observable<boolean>;
   private deletingSubscription!: Subscription;
+  categoryName: any;
 
   constructor(
     public dialogRef: MatDialogRef<DeleteRecipeCategoryModalComponent>,
@@ -26,6 +27,7 @@ export class DeleteRecipeCategoryModalComponent {
     private store: Store
   ) {
     this.isDeleting$ = this.store.select(selectDeleting);
+    this.categoryName = this.data.categoryName;
   }
 
   onSubmit(): void {

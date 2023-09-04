@@ -221,11 +221,14 @@
                   </p>
                   <p
                     *ngIf="row.status === 'published'"
-                    class="italic ml-dl-4 text-dl-4 text-dl-teal-7"
+                    class="ml-dl-4 text-dl-4 italic text-dl-teal-7"
                   >
                     Ready to Make!
                   </p>
-                  <p *ngIf="row.status !== 'published'" class="italic ml-dl-4 text-dl-4 text-dl-yellow-4">
+                  <p
+                    *ngIf="row.status !== 'published'"
+                    class="ml-dl-4 text-dl-4 italic text-dl-yellow-4"
+                  >
                     Draft
                   </p>
                 </div>
@@ -326,20 +329,18 @@
               <div
                 class="relative flex h-full w-full items-center justify-between"
               >
-                <div class="flex pl-dl-3">
+                <div class="relative flex flex-grow justify-between pl-dl-3">
                   <p class="text-dl-7 font-dl-3 text-dl-grey-2">
                     {{ category.name }}
                   </p>
 
-                  <div class="relative ml-dl-5 flex flex-col">
-                    <div class="flex">
-                    <span class="text-dl-4 text-dl-grey-6">
-                      Recipes:
-                    </span>
-                    <span class="ml-dl-2 text-dl-4 text-dl-blue-4">
-                      {{ category.recipeCount }}
-                    </span>
-                    </div>  
+                  <div class="flex flex-col">
+                    <div class="flex mr-dl-5 ">
+                      <span class="text-dl-4 text-dl-grey-6"> Recipes: </span>
+                      <span class="ml-dl-2 text-dl-4 text-dl-blue-4">
+                        {{ category.recipeCount }}
+                      </span>
+                    </div>
                     <!-- Edit/Delete Menu-->
                     <button
                       (click)="toggleCategoryMenu($event, i)"
@@ -347,8 +348,8 @@
                       class="relative mt-dl-2"
                     >
                       <svg
-                        width="30"
-                        height="30"
+                        width="40"
+                        height="40"
                         viewBox="0 0 20 20"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -367,12 +368,23 @@
                       >
                         <button
                           (click)="
-                            openDeleteDialog($event, category.recipeCategoryID, i)
+                            openDeleteDialog(
+                              $event,
+                              category.name,
+                              i
+                            )
                           "
                           type="button"
-                          class="block cursor-pointer px-dl-3 py-dl-2 text-dl-4 text-dl-grey-3 hover:bg-dl-grey-10"
+                          class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
                         >
                           Delete
+                        </button>
+                        <button
+                          (click)="openEditDialog($event,category,i)"
+                          type="button"
+                          class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+                        >
+                          Edit
                         </button>
                       </div>
                     </button>
@@ -382,7 +394,7 @@
                   *ngIf="category.photo"
                   [src]="category.photo"
                   alt="Category Photo"
-                  class="h-full w-1/3 rounded-r-lg object-cover"
+                  class="h-full w-1/3 flex-grow-0 rounded-r-lg object-cover"
                 />
                 <svg
                   *ngIf="!category.photo"

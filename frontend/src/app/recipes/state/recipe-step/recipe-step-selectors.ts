@@ -15,7 +15,7 @@ export const selectRecipeStepByID = (recipeStepID: number) => {
   });
 };
 
-export const selecteDeletingRecipeStep = (state: any) => state.recipeStep.deleting;
+export const selectDeletingRecipeStep = (state: any) => state.recipeStep.deleting;
 
 export const selectAddingRecipeStep = (state: any) => state.recipeStep.adding;
 

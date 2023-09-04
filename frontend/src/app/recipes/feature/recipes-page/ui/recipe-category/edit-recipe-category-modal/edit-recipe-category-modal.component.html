@@ -1,1 +1,91 @@
-<p>edit-recipe-category-modal works!</p>
+<div
+  class="relative w-full  transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+>
+  <mat-spinner
+    class="my-app-custom-spinner"
+    *ngIf="isUploadingPhoto"
+  ></mat-spinner>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    *ngIf="isUploadingPhoto === false"
+  >
+    <div class="flex w-full max-w-full flex-col">
+      <div class="text-center ">
+        <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-blue-4">
+          Edit Recipe Category
+        </h3>
+      </div>
+
+      <!--FORM FIELDS-->
+      <div class="mt-dl-6">
+        <div id="form-recipe-category-name" class="mb-dl-3 relative flex flex-col">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Name</label>
+          <mat-form-field class="text-dl-4">
+            <input matInput formControlName="name" />
+            <mat-error
+              *ngIf="form.get('name')?.hasError('nameExists')">
+              This name already exists.
+            </mat-error>
+            <mat-error
+              *ngIf="form.get('name')?.hasError('required')">
+              Name is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div id="form-photo-recipe-category" class="mt-dl-1">
+          <div class="relative inline-block w-64">
+            <input
+              type="file"
+              class="hidden"
+              id="fileInputRecipeCategory"
+              (change)="categoryOnFileSelected($event)"
+              accept="image/png, image/jpeg"
+            />
+            <label
+              for="fileInputRecipeCategory"
+              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-3 text-white hover:bg-dl-blue-5"
+            >
+              Choose New Photo
+            </label>
+          </div>
+
+          <image-cropper
+            [imageChangedEvent]="categoryImageChangedEvent"
+            [maintainAspectRatio]="true"
+            [aspectRatio]="4 / 5"
+            (imageCropped)="categoryImageCropped($event)"
+            (imageLoaded)="categoryImageLoaded()"
+            (cropperReady)="categoryCropperReady()"
+            (loadImageFailed)="categoryLoadImageFailed()"
+          ></image-cropper>
+        </div>
+      </div>
+      <!---->
+
+      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+        <button
+          type="button"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          [class.cursor-pointer]="form.valid && !form.pristine"
+          [ngClass]="{
+            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+              form.valid && !form.pristine || this.croppedImage,
+            'bg-dl-grey-7': !form.valid || form.pristine && !this.croppedImage
+          }"
+          [disabled]="!form.valid || form.pristine && !this.croppedImage"
+          (click)="onSubmit()"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

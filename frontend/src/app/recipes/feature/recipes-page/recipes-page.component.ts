@@ -555,12 +555,11 @@ export class RecipesPageComponent {
     this.modalActiveForRowID = null;
   }
 
-  openEditDialog(recipeCategoryID: number, rowIndex: number): void {
+  openEditDialog(event: any, recipeCategory: any, rowIndex: number): void {
     this.activateModalForRow(rowIndex);
     const dialogRef = this.dialog.open(EditRecipeCategoryModalComponent, {
-      data: {
-        recipeCategoryID: recipeCategoryID,
-      },
+      data: recipeCategory,
+      width: '75%',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -576,23 +575,19 @@ export class RecipesPageComponent {
         this.dialog.open(UpdateRequestConfirmationModalComponent, {
           data: {
             result: result,
-            updateSuccessMessage: `Category with ID: ${recipeCategoryID} updated successfully!`,
+            updateSuccessMessage: `Category with name "${recipeCategory.name}" updated successfully!`,
           },
         });
       }
     });
   }
 
-  openDeleteDialog(
-    event: any,
-    recipeCategoryID: number,
-    rowIndex: number
-  ): void {
+  openDeleteDialog(event: any, categoryName: string, rowIndex: number): void {
     event.stopPropagation();
     this.activateModalForRow(rowIndex);
     const dialogRef = this.dialog.open(DeleteRecipeCategoryModalComponent, {
       data: {
-        recipeCategoryID: recipeCategoryID,
+        categoryName,
       },
     });
 
@@ -608,7 +603,7 @@ export class RecipesPageComponent {
       } else if (result === 'success') {
         this.dialog.open(DeleteRequestConfirmationModalComponent, {
           data: {
-            deleteSuccessMessage: `Category with ID: ${recipeCategoryID} deleted successfully!`,
+            deleteSuccessMessage: `Category "${categoryName}" deleted successfully!`,
           },
         });
       }
