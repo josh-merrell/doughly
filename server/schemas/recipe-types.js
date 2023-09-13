@@ -40,7 +40,7 @@ const RecipeUpdateSchema_body = {
     recipeCategoryID: { type: 'integer' },
     status: { type: 'string' },
     timePrep: { type: 'integer' },
-    timeBake: { type: 'integer' },
+    timeBake: { type: ['integer', 'null'], nullable: true },
     photoURL: { type: 'string' },
   },
 };
