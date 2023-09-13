@@ -21,13 +21,13 @@ import {
 } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { PhotoService } from 'src/app/shared/utils/photoService';
+import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { selectStepByID } from 'src/app/recipes/state/step/step-selectors';
 import {
   selectRecipeStepByID,
   selectRecipeStepsByID,
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
-import { PhotoService } from 'src/app/shared/utils/photoService';
-import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
 
 @Component({
@@ -153,7 +153,6 @@ export class EditRecipeStepModalComponent {
       this.data.recipeStepID
     );
   }
-
   async replaceImage() {
     if (this.croppedImage && this.selectedFile) {
       this.isUploadingPhoto = true; // set the flag to true at the start
@@ -177,7 +176,6 @@ export class EditRecipeStepModalComponent {
       }
     }
   }
-
   async uploadCroppedImage() {
     if (this.croppedImage && this.selectedFile) {
       try {
