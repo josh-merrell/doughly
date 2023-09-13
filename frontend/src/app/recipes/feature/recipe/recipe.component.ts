@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
   Observable,
@@ -39,6 +39,13 @@ import { selectSteps } from '../../state/step/step-selectors';
 import { selectRecipeStepsByID } from '../../state/recipe-step/recipe-step-selectors';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { RecipeStepsModalComponent } from '../recipes-page/ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
+import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
+import { DeleteRecipeModalComponent } from './ui/delete-recipe-modal/delete-recipe-modal.component';
+import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
+import { EditRecipeModalComponent } from './ui/edit-recipe-modal/edit-recipe-modal.component';
+import { UpdateRequestErrorModalComponent } from 'src/app/shared/ui/update-request-error/update-request-error-modal.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { UpdateRequestConfirmationModalComponent } from 'src/app/shared/ui/update-request-confirmation/update-request-confirmation-modal.component';
 
 function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -75,12 +82,93 @@ export class RecipeComponent {
 
   private onDestroy$ = new Subject<void>();
 
+  menuOpen: boolean = false;
+  @ViewChild('menu') rowItemMenu!: ElementRef;
+  globalClickListener: () => void = () => {};
+
   constructor(
+    private renderer: Renderer2,
     private route: ActivatedRoute,
     private store: Store,
     private sanitizer: DomSanitizer,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private router: Router
   ) {}
+
+  toggleMenu(event: any) {
+    event.stopPropagation();
+    this.menuOpen = !this.menuOpen;
+  }
+  closeMenu() {
+    this.menuOpen = false;
+  }
+
+  ngAfterViewInit() {
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.rowItemMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInside && this.rowItemMenu) {
+          this.closeMenu();
+        }
+      }
+    );
+  }
+
+  onUpdateClick() {
+    const dialogRef = this.dialog.open(EditRecipeModalComponent, {
+      data: this.displayRecipe$.value,
+      width: '75%',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result instanceof HttpErrorResponse) {
+        this.dialog.open(UpdateRequestErrorModalComponent, {
+          data: {
+            error: result,
+            updateFailureMessage: `Recipe could not be updated. Try again later.`,
+          },
+        });
+      } else if (result === 'success') {
+        this.dialog.open(UpdateRequestConfirmationModalComponent,{
+          data: {
+            result: result,
+            updateSuccessMessage: `Recipe with ID of ${this.recipeID} updated successfully!`,
+          }
+        });
+      }
+    });
+  }
+
+  onDeleteClick() {
+    const dialogRef = this.dialog.open(DeleteRecipeModalComponent, {
+      data: {
+        recipeID: this.recipeID,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'error') {
+        this.dialog.open(DeleteRequestErrorModalComponent, {
+          data: {
+            error: result,
+            deleteFailureMessage: `Recipe could not be deleted. Try again later.`
+          },
+        });
+      } else if (result === 'success') {
+        this.dialog.open(DeleteRequestConfirmationModalComponent, {
+          data: {
+            deleteSuccessMessage: 'Recipe deleted successfully!',
+          },
+        });
+        //navigate to recipes page
+        this.router.navigate(['/recipes']);
+      }
+    });
+  }
 
   private mapRecipeIngredients(recipeIngredients: any[], ingredients: any[]) {
     return recipeIngredients.map((recipeIngredient: any) => {
