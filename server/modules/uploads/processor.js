@@ -63,6 +63,15 @@ module.exports = ({ db }) => {
         } else {
           data = updatedRecipeCategory[0];
         }
+      } else if (type === 'recipe') {
+        // delete photo from recipe
+        const { data: updatedRecipe, error } = await db.from('recipes').update({ photoURL: null }).match({ recipeID: id }).select('*');
+        if (error) {
+          global.logger.error(`Error updating recipe ${id} with null photoURL:`, error);
+          throw error;
+        } else {
+          data = updatedRecipe[0];
+        }
       }
       return { message: 'Successfully deleted file', data };
     } catch (err) {
