@@ -1,5 +1,6 @@
 ('use strict');
 
+const { default: axios } = require('axios');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -177,6 +178,17 @@ module.exports = ({ db }) => {
     if (!recipe.length) {
       global.logger.info(`Recipe with provided ID (${options.recipeID}) does not exist`);
       return { error: `Recipe with provided ID (${options.recipeID}) does not exist` };
+    }
+
+    //if recipe has photoURL, delete photo from s3
+    if (recipe[0].photoURL) {
+      try {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/uploads/image`, { data: { userID: options.userID, photoURL: recipe[0].photoURL, type: 'recipe', id: options.recipeID }, headers: { authorization: options.authorization } });
+        global.logger.info(`Deleted photo for recipeID ${options.recipeID}`);
+      } catch (error) {
+        global.logger.info(`Error deleting recipe photo: ${error.message}`);
+        return { error: error.message };
+      }
     }
 
     //delete recipe

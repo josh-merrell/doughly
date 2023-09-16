@@ -238,7 +238,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteStep(options) {
-    const { recipeStepID, authorization } = options;
+    const { recipeStepID, authorization, userID } = options;
     //validate that provided recipeStepID exists
     const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID).eq('deleted', false);
     if (validationError) {
@@ -252,18 +252,19 @@ module.exports = ({ db }) => {
 
     //if recipeStep has photoURL, delete the photo first by calling router.delete('/uploads/image', routeValidator(deleteImageSchema_body, 'body'), errorCatcher(h.deleteS3Photo));
     if (recipeStep[0].photoURL) {
-      global.logger.info(`recipeStep has photoURL: ${recipeStep[0].photoURL}, TRYING TO DELETE FIRST`);
-      global.logger.info(`PATH: ${process.env.NODE_HOST}:${process.env.PORT}/uploads/image`);
       try {
         await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/uploads/image`, {
           data: {
+            userId: userID,
             photoURL: recipeStep[0].photoURL,
+            type: 'recipeStep',
+            id: recipeStepID,
           },
           headers: {
             authorization: authorization,
           },
         });
-        global.logger.info(`Deleted photo for recipeStep ${recipeStepID}`);
+        global.logger.info(`Deleted photo for recipeStepID ${recipeStepID}`);
       } catch (err) {
         global.logger.info(`Error deleting photo for recipeStep ${recipeStepID}: ${err.message}`);
         return { error: err.message };
