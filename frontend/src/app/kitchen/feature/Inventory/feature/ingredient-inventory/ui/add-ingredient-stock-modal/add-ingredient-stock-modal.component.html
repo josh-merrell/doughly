@@ -1,9 +1,16 @@
 <div
   class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
 >
-  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding$ | async"></mat-spinner>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="(isAdding$ | async) === false">
-    <div class="relative flex flex-col w-dl-13 max-w-full">
+  <mat-spinner
+    class="my-app-custom-spinner"
+    *ngIf="isAdding$ | async"
+  ></mat-spinner>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    *ngIf="(isAdding$ | async) === false"
+  >
+    <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
         <h3
           class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4"
@@ -44,7 +51,7 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-ingredientID" class="relative flex flex-col">
-          <label class="text-dl-2 text-dl-grey-4 font-dl-3">Ingredient</label>
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Ingredient</label>
           <mat-form-field>
             <mat-select formControlName="ingredientID">
               <mat-option
@@ -58,7 +65,7 @@
         </div>
 
         <div id="form-purchasedBy" class="relative flex flex-col">
-          <label class="text-dl-2 text-dl-grey-4 font-dl-3">Purchased By</label>
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Purchased By</label>
           <mat-form-field>
             <mat-select formControlName="purchasedBy">
               <mat-option
@@ -72,7 +79,9 @@
         </div>
 
         <div id="form-purchasedDate">
-          <label class="text-dl-2 text-dl-grey-4 font-dl-3">Purchased Date</label>
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
+            >Purchased Date</label
+          >
           <mat-form-field class="w-full">
             <input
               matInput
@@ -80,23 +89,36 @@
               formControlName="purchasedDate"
               placeholder="Choose a date"
             />
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
-            <mat-error *ngIf="form.get('purchasedDate')?.hasError('dateInvalid')">
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('purchasedDate')?.hasError('dateInvalid')"
+            >
               Date must be after selected employee's hire date.
             </mat-error>
           </mat-form-field>
         </div>
 
         <div id="form-measurement">
-          <label class="text-dl-2 text-dl-grey-4 font-dl-3">Measurement <ng-container *ngIf="ingredient$ | async as ingredient">in {{
-                ingredient?.purchaseUnit
-              }}s</ng-container></label>
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
+            >Measurement
+            <ng-container *ngIf="ingredient$ | async as ingredient"
+              >in {{ ingredient?.purchaseUnit }}s</ng-container
+            ></label
+          >
           <mat-form-field class="w-full">
-            <input matInput formControlName="measurement" [disabled]="!form.get('ingredientID')?.value" />
+            <input
+              matInput
+              formControlName="measurement"
+              [disabled]="!form.get('ingredientID')?.value"
+            />
           </mat-form-field>
         </div>
-      </div>  
+      </div>
       <!---->
 
       <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">

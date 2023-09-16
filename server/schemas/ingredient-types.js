@@ -1,4 +1,4 @@
-const unitEnum = ['gram', 'kilogram', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'pint', 'quart', 'gallon', 'milliliter', 'liter', 'bags', 'boxes', 'cartons', 'pallets', 'bottles', 'containers', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen'];
+const unitEnum = ['gram', 'kilogram', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'pint', 'quart', 'gallon', 'milliliter', 'liter', 'bag', 'box', 'carton', 'pallet', 'bottle', 'container', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen'];
 
 // INGREDIENTS
 const getIngredientsSchema_query = {
@@ -88,6 +88,7 @@ const newRecipeIngredientSchema_body = {
     ingredientID: { type: 'integer' },
     measurementUnit: { type: 'string', enum: unitEnum },
     measurement: { type: 'integer' },
+    purchaseUnitRatio: { type: 'number' },
   },
 };
 
@@ -96,6 +97,7 @@ const RecipeIngredientUpdateSchema_body = {
   properties: {
     measurementUnit: { type: 'string' },
     measurement: { type: 'integer' },
+    purchaseUnitRatio: { type: 'number' },
   },
 };
 

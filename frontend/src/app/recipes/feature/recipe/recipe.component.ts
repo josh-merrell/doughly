@@ -178,6 +178,7 @@ export class RecipeComponent {
       return {
         ...recipeIngredient,
         name: ingredient ? ingredient.name : 'Unknown',
+        measurementUnit: (recipeIngredient.measurementUnit === 'box' || recipeIngredient.measurementUnit === 'bunch' || recipeIngredient.measurementUnit === 'pinch' || recipeIngredient.measurementUnit === 'dash') ? recipeIngredient.measurementUnit + 'es' : recipeIngredient.measurementUnit + 's',
       };
     });
   }

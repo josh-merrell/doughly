@@ -18,11 +18,11 @@ import { Observable, Subscription } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
-import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
+import { selectIngredientByID, selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddIngredientModalComponent } from 'src/app/kitchen/feature/ingredients/ui/add-ingredient-modal/add-ingredient-modal.component';
-import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import { positiveFloatValidator, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -47,6 +47,12 @@ export class AddRecipeIngredientModalComponent {
   private addingSubscription!: Subscription;
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
 
+  public mUnit!: string;
+  public pUnit!: string;
+
+  //used for getting ingredient details to update pUnit when ingredientID form value changes
+  private subscriptions: Subscription[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<AddRecipeIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -70,7 +76,36 @@ export class AddRecipeIngredientModalComponent {
       ingredientID: ['', Validators.required],
       measurement: ['', [Validators.required, positiveIntegerValidator()]],
       measurementUnit: ['', Validators.required],
+      purchaseUnitRatio: ['', [Validators.required, positiveFloatValidator()]],
     });
+
+    // Update mUnit whenever measurementUnit value changes
+    this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
+      // if value is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
+      if (
+        value === 'box' || value === 'bunch' || value === 'pinch' || value === 'dash'
+      ) {
+        value += 'es';
+      } else {
+        value += 's';
+      }
+      this.mUnit = value;
+    });
+
+    // Update pUnit whenever ingredientID value changes
+    this.subscriptions.push(
+      this.form.get('ingredientID')!.valueChanges.subscribe((value) => {
+        if (value) {
+          this.store
+            .select(selectIngredientByID(value))
+            .subscribe((ingredientDetails) => {
+              if (ingredientDetails) {
+                this.pUnit = ingredientDetails.purchaseUnit;
+              }
+            });
+        }
+      })
+    );
   }
 
   onAddNewIngredient() {
@@ -104,6 +139,7 @@ export class AddRecipeIngredientModalComponent {
     const newRecipeIngredient = {
       ...formValue,
       measurement: parseFloat(formValue.measurement),
+      purchaseUnitRatio: parseFloat(formValue.purchaseUnitRatio),
     };
     this.dialogRef.close(newRecipeIngredient);
   }
@@ -116,5 +152,6 @@ export class AddRecipeIngredientModalComponent {
     if (this.addingSubscription) {
       this.addingSubscription.unsubscribe();
     }
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 }

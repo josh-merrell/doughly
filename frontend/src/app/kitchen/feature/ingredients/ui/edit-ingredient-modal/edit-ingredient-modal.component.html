@@ -66,6 +66,7 @@
           <mat-form-field class="w-full">
             <input matInput formControlName="lifespanDays" />
             <mat-error
+              class="text-dl-3"
               *ngIf="form.get('lifespanDays')?.hasError('notPositiveInteger')"
             >
               Must be a positive whole number
@@ -91,6 +92,7 @@
           <mat-form-field class="w-full">
             <input matInput formControlName="gramRatio" />
             <mat-error
+              class="text-dl-3"
               *ngIf="form.get('gramRatio')?.hasError('notPositiveInteger')"
             >
               Must be a positive whole number
