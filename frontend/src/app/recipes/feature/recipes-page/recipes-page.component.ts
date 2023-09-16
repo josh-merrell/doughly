@@ -192,8 +192,7 @@ export class RecipesPageComponent {
     ];
   }
 
-  totalRecipes = 5; //TODO: get this from the store
-  readyToMake = 3; //TODO: get this from the store
+  readyToMake = 0;
   categoryMenuOpen = { index: -1, open: false };
   @ViewChild('categoryMenu') categoryMenu!: ElementRef;
   globalClickListener: () => void = () => {};
@@ -201,7 +200,7 @@ export class RecipesPageComponent {
   categoryContainer!: ElementRef;
   @ViewChild('recipeContainer', { static: false })
   recipeContainer!: ElementRef;
-  
+
   ngOnInit() {
     this.view$.subscribe((view) => {
       this.view = view;
@@ -267,9 +266,10 @@ export class RecipesPageComponent {
               const shoppingList$ = this.recipeService
                 .getShoppingList(row.recipeID)
                 .pipe(
-                  take(1), // Wait for the observable to complete
+                  take(1) // Wait for the observable to complete
                 );
-              return forkJoin([ //wait for each of them to complete
+              return forkJoin([
+                //wait for each of them to complete
                 of(row), // Keep the original row data
                 from(photoPromise), // Wrap the photo promise in an observable
                 shoppingList$, // Shopping list observable
@@ -285,19 +285,18 @@ export class RecipesPageComponent {
               shoppingList,
             };
           });
-        }),
+        })
       )
       .subscribe((resolvedRows) => {
         this.refinedRecipeRows$.next(resolvedRows);
       });
 
-    this.refinedRecipeRows$
-      .subscribe((resolvedRows) => {
-        this.recipeRows = resolvedRows;
-        const filteredRows = this.applyFilter(resolvedRows, this.searchFilter);
-        this.filteredRecipeRows$.next(filteredRows);
-      });
-
+    this.refinedRecipeRows$.subscribe((resolvedRows) => {
+      this.calculateTotals(resolvedRows);
+      this.recipeRows = resolvedRows;
+      const filteredRows = this.applyFilter(resolvedRows, this.searchFilter);
+      this.filteredRecipeRows$.next(filteredRows);
+    });
 
     this.categoryRows$.subscribe((categories) => {
       this.displayedCategoryRows$.next(categories);
@@ -310,6 +309,12 @@ export class RecipesPageComponent {
       );
       this.displayedRecipeRows$.next(sortedRows);
     });
+  }
+
+  calculateTotals(resolvedRecipes: any) {
+    this.readyToMake = resolvedRecipes.filter(
+      (recipe: any) => recipe.shoppingList?.ingredients.length === 0
+    ).length;
   }
 
   recipeOpen(): boolean {
