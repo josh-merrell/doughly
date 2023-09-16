@@ -20,6 +20,7 @@ import { selectRecipeIngredientByID } from './recipe-ingredient-selectors';
 
 @Injectable()
 export class RecipeIngredientEffects {
+  RecipeActions: any;
   constructor(
     private actions$: Actions,
     private recipeIngredientService: RecipeIngredientService,
@@ -163,6 +164,13 @@ export class RecipeIngredientEffects {
           )
         )
       )
+    )
+  );
+
+  loadRecipeAfterDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeIngredientActions.deleteRecipeIngredientSuccess),
+      map(() => RecipeActions.loadRecipes())
     )
   );
 
