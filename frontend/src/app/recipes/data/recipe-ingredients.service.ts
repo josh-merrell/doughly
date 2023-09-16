@@ -26,6 +26,7 @@ export class RecipeIngredientService {
             ingredientID: recipeIngredient.ingredientID,
             measurement: recipeIngredient.measurement,
             measurementUnit: recipeIngredient.measurementUnit,
+            purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
           };
         });
       })

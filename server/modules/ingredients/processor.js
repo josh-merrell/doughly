@@ -155,6 +155,56 @@ module.exports = ({ db }) => {
       return { error: `Ingredient ID does not exist, cannot delete ingredient` };
     }
 
+    //get list of related stock entries
+    try {
+      const { data: relatedStockEntries, error: stockError } = await db.from('ingredientStocks').select().eq('ingredientID', ingredientID).eq('deleted', false);
+      if (stockError) {
+        global.logger.info(`Error getting related stock entries after deleting ingredient ID: ${ingredientID} : ${stockError.message}`);
+        return { error: stockError.message };
+      }
+
+      //delete any associated ingredient stock entries;
+      for (let i = 0; i < relatedStockEntries.length; i++) {
+        const { data: ingredientStockDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks/${relatedStockEntries[i].ingredientStockID}`, {
+          headers: {
+            authorization: options.authorization,
+          },
+        });
+        if (ingredientStockDeleteResult.error) {
+          global.logger.info(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} after deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
+          return { error: ingredientStockDeleteResult.error };
+        }
+      }
+    } catch (error) {
+      global.logger.info(`Error deleting related stock entries: ${error.message}`);
+      return { error: error.message };
+    }
+
+    //get list of related recipeIngredients
+    try {
+      const { data: recipeIngredients, error: recipeError } = await db.from('recipeIngredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
+      if (recipeError) {
+        global.logger.info(`Error getting related recipeIngredients after deleting ingredient ID: ${ingredientID} : ${recipeError.message}`);
+        return { error: recipeError.message };
+      }
+
+      //delete any associated recipeIngredients;
+      for (let i = 0; i < recipeIngredients.length; i++) {
+        const { data: recipeIngredientDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/recipe/${recipeIngredients[i].recipeIngredientID}`, {
+          headers: {
+            authorization: options.authorization,
+          },
+        });
+        if (recipeIngredientDeleteResult.error) {
+          global.logger.info(`Error deleting recipeIngredientID: ${recipeIngredients[i].recipeIngredientID} after deleting ingredient ID: ${ingredientID} : ${recipeIngredientDeleteResult.error}`);
+          return { error: recipeIngredientDeleteResult.error };
+        }
+      }
+    } catch (error) {
+      global.logger.info(`Error deleting related recipeIngredients: ${error.message}`);
+      return { error: error.message };
+    }
+
     //delete the ingredient;
     const { error: deleteError } = await db.from('ingredients').update({ deleted: true }).eq('ingredientID', ingredientID).single();
     if (deleteError) {
@@ -162,26 +212,6 @@ module.exports = ({ db }) => {
       return { error: deleteError.message };
     }
     global.logger.info(`Deleted ingredient ID: ${ingredientID}`);
-
-    //get list of related stock entries
-    const { data: relatedStockEntries, error: stockError } = await db.from('ingredientStocks').select().eq('ingredientID', ingredientID).eq('deleted', false);
-    if (stockError) {
-      global.logger.info(`Error getting related stock entries after deleting ingredient ID: ${ingredientID} : ${stockError.message}`);
-      return { error: stockError.message };
-    }
-
-    //delete any associated ingredient stock entries;
-    for (let i = 0; i < relatedStockEntries.length; i++) {
-      const { data: ingredientStockDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks/${relatedStockEntries[i].ingredientStockID}`, {
-        headers: {
-          authorization: options.authorization,
-        },
-      });
-      if (ingredientStockDeleteResult.error) {
-        global.logger.info(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} after deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
-        return { error: ingredientStockDeleteResult.error };
-      }
-    }
 
     return { success: true };
   }

@@ -1,5 +1,5 @@
 <div
-  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+  class="relative w-full transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -10,13 +10,13 @@
     (ngSubmit)="onSubmit()"
     *ngIf="(isAdding$ | async) === false"
   >
-    <div class="relative flex w-dl-13 max-w-full flex-col">
-      <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
-        <h3 class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4">
+    <div class="flex w-full max-w-full flex-col">
+      <div class="text-center">
+        <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-blue-4">
           Add Recipe Ingredient
         </h3>
         <div class="mt-dl-2">
-          <p class="text-dl-2 text-dl-grey-5">
+          <p class="text-dl-5 text-dl-grey-5">
             Add a new Ingredient and its required measurement to this recipe.
           </p>
         </div>
@@ -48,35 +48,38 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-ingredientName" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Ingredient</label>
-          <mat-form-field>
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Ingredient</label>
+          <mat-form-field class="text-dl-4">
             <mat-select formControlName="ingredientID">
               <ng-container *ngFor="let ingredient of ingredients$ | async">
                 <mat-option
                   *ngIf="!isIngredientExcluded(ingredient.ingredientID)"
                   [value]="ingredient.ingredientID"
+                  class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
                 >
                   {{ ingredient.name }}
                 </mat-option>
               </ng-container>
-              <div
-                class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2"
+              <mat-option
+                class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
                 (click)="onAddNewIngredient()"
               >
                 New Ingredient
-              </div>
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
         <div id="form-measurement">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Measurement</label>
-          <mat-form-field class="w-full">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Measurement</label>
+          <mat-form-field class="w-full text-dl-4">
             <input
               matInput
               formControlName="measurement"
               [disabled]="!form.get('ingredientID')?.value"
+              placeholder="ex: 2"
             />
             <mat-error
+              class="text-dl-3"
               *ngIf="form.get('measurement')?.hasError('notPositiveInteger')"
             >
               Must be a positive integer
@@ -84,15 +87,47 @@
           </mat-form-field>
         </div>
         <div id="form-measurementUnit" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
             >Measurement Unit</label
           >
-          <mat-form-field>
+          <mat-form-field class="text-dl-4">
             <mat-select formControlName="measurementUnit">
-              <mat-option *ngFor="let unit of purchaseUnits" [value]="unit">
+              <mat-option
+                class="text-dl-4"
+                *ngFor="let unit of purchaseUnits"
+                [value]="unit"
+              >
                 {{ unit }}
               </mat-option>
             </mat-select>
+          </mat-form-field>
+        </div>
+        <div id="form-purchaseUnitRatio">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+            >Purchase Unit Ratio</label
+          >
+          <mat-form-field class="w-full text-dl-4">
+            <input
+              matInput
+              formControlName="purchaseUnitRatio"
+              [disabled]="
+                !form.get('ingredientID')?.value ||
+                !form.get('measurementUnit')?.value
+              "
+              [placeholder]="
+                mUnit && pUnit
+                  ? 'How many ' + mUnit + ' per ' + pUnit + '? ex: 1.45'
+                  : 'Add other fields first'
+              "
+            />
+            <mat-error
+              class="text-dl-3"
+              *ngIf="
+                form.get('purchaseUnitRatio')?.hasError('notPositiveFloat')
+              "
+            >
+              Must be a positive number, ex "1.45"
+            </mat-error>
           </mat-form-field>
         </div>
       </div>

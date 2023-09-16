@@ -81,7 +81,7 @@ module.exports = ({ db }) => {
     return {
       ingredientStockID: newIngredientStock.ingredientStockID,
       ingredientID: newIngredientStock.ingredientID,
-      measurement: newIngredientStock.measurement,
+      grams: newIngredientStock.grams,
       purchasedBy: newIngredientStock.purchasedBy,
       purchasedDate: newIngredientStock.purchasedDate,
     };

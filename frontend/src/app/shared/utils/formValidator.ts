@@ -11,6 +11,17 @@ export function positiveIntegerValidator(): ValidatorFn {
   };
 }
 
+export function positiveFloatValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    if (!control.value) return null;
+
+    const value = Number(control.value);
+    return value > 0 && !Number.isNaN(value)
+      ? null
+      : { notPositiveFloat: { value: control.value } };
+  };
+}
+
 export function enumValidator(enumValues: any): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
     return enumValues[control.value]

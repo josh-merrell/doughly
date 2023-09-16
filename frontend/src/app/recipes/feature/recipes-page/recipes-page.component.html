@@ -220,11 +220,19 @@
                     {{ row.recipeCategoryName }}
                   </p>
                   <p
-                    *ngIf="row.status === 'published'"
+                    *ngIf="row.shoppingList.ingredients.length === 0"
                     class="ml-dl-4 text-dl-4 italic text-dl-teal-7"
                   >
                     Ready to Make!
                   </p>
+                  <p *ngIf="!row.shoppingList">NO SHOPPING LIST</p>
+                  <div *ngIf="row.shoppingList.ingredients.length > 0">
+                    <div *ngFor="let item of row.shoppingList.ingredients">
+                      <p>
+                        {{ item.ingredientName }}: {{ item.quantity }} {{ item.unit }}
+                      </p>
+                    </div>
+                  </div>
                   <p
                     *ngIf="row.status !== 'published'"
                     class="ml-dl-4 text-dl-4 italic text-dl-yellow-4"
