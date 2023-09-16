@@ -136,6 +136,17 @@ module.exports = ({ db }) => {
       global.logger.info(`Moved ${recipes.length} recipes to 'Other' category to allow for deletion of Category: ${options.recipeCategoryID}`);
     }
 
+    //if category has photoURL, delete the photo in s3
+    if (recipeCategory[0].photoURL) {
+      try {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/uploads/image`, { data: { userID: options.userID, photoURL: recipeCategory[0].photoURL, type: 'recipeCategory', id: options.recipeCategoryID }, headers: { authorization: options.authorization } });
+        global.logger.info(`Deleted photo for recipeCategoryID ${options.recipeCategoryID}`);
+      } catch (error) {
+        global.logger.info(`Error deleting recipeCategory photo: ${error.message}`);
+        return { error: error.message };
+      }
+    }
+
     //delete recipeCategory
     const { data, error: deleteError } = await db.from('recipeCategories').update({ deleted: true }).match({ recipeCategoryID: options.recipeCategoryID });
 
