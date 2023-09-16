@@ -1,5 +1,5 @@
 <div
-  class="sm:max-w-dl-13 relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:p-dl-6"
+  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -12,9 +12,7 @@
   >
     <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
-        <h3
-          class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4"
-        >
+        <h3 class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4">
           Add Tool
         </h3>
         <div class="mt-dl-2">
@@ -54,6 +52,7 @@
           <mat-form-field class="w-full">
             <input matInput formControlName="name" />
             <mat-error
+              class="text-dl-3"
               *ngIf="form.get('name')?.hasError('duplicateString')"
             >
               Cannot reuse an existing tool name

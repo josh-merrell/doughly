@@ -39,7 +39,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, recipeID, ingredientID, measurementUnit, measurement } = options;
+    const { userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = options;
 
     //verify that the provided recipeID exists, return error if not
     const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID).eq('deleted', false);
@@ -69,8 +69,14 @@ module.exports = ({ db }) => {
       return { error: `positive measurement number is required` };
     }
 
+    //verify that the provided purchaseUnitRatio is a positive number, return error if not
+    if (purchaseUnitRatio && purchaseUnitRatio <= 0) {
+      global.logger.info(`positive purchaseUnitRatio number is required`);
+      return { error: `positive purchaseUnitRatio number is required` };
+    }
+
     //create the recipeIngredient
-    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ userID, recipeID, ingredientID, measurementUnit, measurement }).select().single();
+    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio }).select().single();
 
     if (error3) {
       global.logger.info(`Error creating recipeIngredient: ${error3.message}`);
@@ -99,11 +105,12 @@ module.exports = ({ db }) => {
       ingredientID: recipeIngredient.ingredientID,
       measurementUnit: recipeIngredient.measurementUnit,
       measurement: recipeIngredient.measurement,
+      purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
     };
   }
 
   async function update(options) {
-    const { userID, recipeIngredientID, measurement } = options;
+    const { userID, recipeIngredientID, measurement, purchaseUnitRatio } = options;
 
     //verify that the provided recipeIngredientID exists, return error if not
     const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().filter('userID', 'eq', userID).filter('recipeIngredientID', 'eq', recipeIngredientID);
@@ -120,6 +127,12 @@ module.exports = ({ db }) => {
     if (measurement && measurement <= 0) {
       global.logger.info(`positive measurement number is required`);
       return { error: `positive measurement number is required` };
+    }
+
+    //if provided, verify that the provided purchaseUnitRatio is a positive number, return error if not
+    if (purchaseUnitRatio && purchaseUnitRatio <= 0) {
+      global.logger.info(`positive purchaseUnitRatio number is required`);
+      return { error: `positive purchaseUnitRatio number is required` };
     }
 
     //update the recipeIngredient

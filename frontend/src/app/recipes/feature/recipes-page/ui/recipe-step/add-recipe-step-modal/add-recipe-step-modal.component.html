@@ -49,10 +49,16 @@
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Title</label>
           <mat-form-field class="text-dl-4">
             <input matInput formControlName="title" />
-            <mat-error *ngIf="form.get('title')?.hasError('titleExists')">
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('title')?.hasError('titleExists')"
+            >
               This title already exists.
             </mat-error>
-            <mat-error *ngIf="form.get('title')?.hasError('required')">
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('title')?.hasError('required')"
+            >
               Title is required.
             </mat-error>
           </mat-form-field>
@@ -66,7 +72,10 @@
               rows="9"
               class="border-0 focus:ring-0"
             ></textarea>
-            <mat-error *ngIf="form.get('title')?.hasError('required')">
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('title')?.hasError('required')"
+            >
               Title is required.
             </mat-error>
           </mat-form-field>

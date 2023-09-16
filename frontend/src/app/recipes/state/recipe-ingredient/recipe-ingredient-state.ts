@@ -13,6 +13,7 @@ export interface RecipeIngredient {
   ingredientID: number;
   measurement: number;
   measurementUnit: string;
+  purchaseUnitRatio: number;
 }
 
 export interface RecipeIngredientError {

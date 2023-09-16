@@ -1,5 +1,5 @@
 <div
-  class="max-w-dl-14 sm:max-w-dl-14 relative my-dl-0 transform overflow-hidden bg-white px-dl-4 text-left transition-all sm:w-dl-12 sm:p-dl-6"
+  class="relative my-dl-0 max-w-dl-14 transform overflow-hidden bg-white px-dl-4 text-left transition-all sm:w-dl-12 sm:max-w-dl-14 sm:p-dl-6"
 >
   <h3
     class="leading-dl-4 mb-dl-3 text-dl-4 font-dl-2 text-dl-blue-4"
@@ -72,7 +72,7 @@
             [for]="picker2"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker2></mat-datepicker>
-          <mat-error *ngIf="form.hasError('dateRange')">
+          <mat-error class="text-dl-3" *ngIf="form.hasError('dateRange')">
             Dates must be in order.
           </mat-error>
         </mat-form-field>
