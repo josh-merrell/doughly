@@ -77,6 +77,7 @@
               [disabled]="!form.get('toolID')?.value"
             />
             <mat-error
+              class="text-dl-3"
               *ngIf="form.get('quantity')?.hasError('notPositiveInteger')"
             >
               Must be a positive integer

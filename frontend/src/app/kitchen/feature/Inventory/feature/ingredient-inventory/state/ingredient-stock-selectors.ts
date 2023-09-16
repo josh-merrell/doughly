@@ -12,6 +12,14 @@ export const selectIngredientStockByID = (ingredientStockID: number) => {
   });
 };
 
+export const selectIngredientStocksByIngredientID = (ingredientID: number) => {
+  return createSelector(selectIngredientStocks, (ingredientStocks) => {
+    return ingredientStocks.filter(
+      (ingredientStock: IngredientStock) => ingredientStock.ingredientID === ingredientID
+    );
+  });
+};
+
 export const selectDeleting = (state: any) => state.ingredientStock.deleting;
 
 export const selectAdding = (state: any) => state.ingredientStock.adding;

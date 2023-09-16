@@ -76,6 +76,20 @@ export class RecipeIngredientsModalComponent {
             (ing: any) => ing.ingredientID === ri.ingredientID
           )?.name,
         }));
+        enrichedRecipeIngredients.forEach((ri) => {
+          // if the ingredient measurementUnit is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
+          if (
+            ri.measurementUnit === 'box' ||
+            ri.measurementUnit === 'bunch' ||
+            ri.measurementUnit === 'pinch' ||
+            ri.measurementUnit === 'dash'
+          ) {
+            ri.measurementUnit = ri.measurementUnit + 'es';
+          } else {
+            ri.measurementUnit = ri.measurementUnit + 's';
+          }
+          
+        });
         return [...enrichedRecipeIngredients, ...ingredientsToAdd];
       })
     );
@@ -168,6 +182,7 @@ export class RecipeIngredientsModalComponent {
           data: {
             ingredientsToExclude,
           },
+          width: '75%',
         });
 
         dialogRef.afterClosed().subscribe((result) => {
@@ -188,6 +203,7 @@ export class RecipeIngredientsModalComponent {
                   ingredientID: result.ingredientID,
                   measurement: result.measurement,
                   measurementUnit: result.measurementUnit,
+                  purchaseUnitRatio: result.purchaseUnitRatio,
                   name: ingredientName,
                   toAdd: true,
                 };

@@ -51,7 +51,10 @@
           <label class="text-dl-2 font-dl-3 text-dl-grey-4">Name</label>
           <mat-form-field class="w-full">
             <input matInput formControlName="name" />
-            <mat-error *ngIf="form.get('name')?.hasError('duplicateString')">
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('name')?.hasError('duplicateString')"
+            >
               Cannot reuse an existing Category name
             </mat-error>
           </mat-form-field>
@@ -67,7 +70,7 @@
             />
             <label
               for="fileInput"
-              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-white text-dl-3 hover:bg-dl-blue-5"
+              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-3 text-white hover:bg-dl-blue-5"
             >
               Choose Photo
             </label>

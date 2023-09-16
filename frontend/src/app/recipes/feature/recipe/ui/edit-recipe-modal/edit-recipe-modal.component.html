@@ -23,16 +23,22 @@
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Title</label>
           <mat-form-field class="text-dl-4">
             <input matInput formControlName="title" />
-            <mat-error *ngIf="form.get('title')?.hasError('titleExists')">
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('title')?.hasError('titleExists')"
+            >
               This title is already in use
             </mat-error>
-            <mat-error *ngIf="form.get('title')?.hasError('required')">
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('title')?.hasError('required')"
+            >
               Title is required
             </mat-error>
           </mat-form-field>
         </div>
         <div id="form-recipeCategoryID" class="relative mt-dl-2 flex flex-col">
-          <label class="text-dl-3 font-dl-3 text-dl-grey-4">Category</label>
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Category</label>
           <mat-form-field>
             <mat-select formControlName="recipeCategoryID">
               <ng-container *ngFor="let category of categories$ | async">
@@ -51,15 +57,17 @@
         </div>
         <div class="mt-dl-2 flex">
           <div id="form-servings" class="mr-dl-4">
-            <label class="text-dl-3 font-dl-3 text-dl-grey-4">Servings</label>
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Servings</label>
             <mat-form-field class="w-full">
               <input matInput formControlName="servings" />
               <mat-error
+                class="text-dl-3"
                 *ngIf="form.get('servings')?.hasError('notPositiveInteger')"
               >
                 Must be a positive integer
               </mat-error>
               <mat-error
+                class="text-dl-3"
                 *ngIf="
                   form.get('servings')?.hasError('notTwoByteInteger') &&
                   !form.get('servings')?.hasError('notPositiveInteger')
@@ -70,17 +78,19 @@
             </mat-form-field>
           </div>
           <div id="form-lifespanDays" class="ml-dl-1">
-            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Lifespan Days</label
             >
             <mat-form-field class="w-full">
               <input matInput formControlName="lifespanDays" />
               <mat-error
+                class="text-dl-3"
                 *ngIf="form.get('lifespanDays')?.hasError('notPositiveInteger')"
               >
                 Must be a positive integer
               </mat-error>
               <mat-error
+                class="text-dl-3"
                 *ngIf="
                   form.get('lifespanDays')?.hasError('notTwoByteInteger') &&
                   !form.get('lifespanDays')?.hasError('notPositiveInteger')
@@ -93,17 +103,19 @@
         </div>
         <div class="mt-dl-2 flex">
           <div id="form-timePrep" class="mr-dl-4">
-            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Prep time in minutes</label
             >
             <mat-form-field class="w-full">
               <input matInput formControlName="timePrep" />
               <mat-error
+                class="text-dl-3"
                 *ngIf="form.get('timePrep')?.hasError('notPositiveInteger')"
               >
                 Must be a positive integer
               </mat-error>
               <mat-error
+                class="text-dl-3"
                 *ngIf="
                   form.get('timePrep')?.hasError('notTwoByteInteger') &&
                   !form.get('timePrep')?.hasError('notPositiveInteger')
@@ -114,17 +126,19 @@
             </mat-form-field>
           </div>
           <div id="form-timeBake" class="ml-dl-1">
-            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Bake time in minutes</label
             >
             <mat-form-field class="w-full">
               <input matInput formControlName="timeBake" />
               <mat-error
+                class="text-dl-3"
                 *ngIf="form.get('timeBake')?.hasError('notPositiveInteger')"
               >
                 Must be a positive integer
               </mat-error>
               <mat-error
+                class="text-dl-3"
                 *ngIf="
                   form.get('timeBake')?.hasError('notTwoByteInteger') &&
                   !form.get('timeBake')?.hasError('notPositiveInteger')
@@ -146,7 +160,7 @@
             />
             <label
               for="fileInputRecipe"
-              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-3 text-white hover:bg-dl-blue-5"
+              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-5 text-white hover:bg-dl-blue-5"
             >
               Choose New Photo
             </label>
@@ -172,10 +186,10 @@
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
             'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
-              form.valid && !form.pristine || this.croppedImage,
-            'bg-dl-grey-7': !form.valid || form.pristine && !this.croppedImage
+              (form.valid && !form.pristine) || this.croppedImage,
+            'bg-dl-grey-7': !form.valid || (form.pristine && !this.croppedImage)
           }"
-          [disabled]="!form.valid || form.pristine && !this.croppedImage"
+          [disabled]="!form.valid || (form.pristine && !this.croppedImage)"
           (click)="onSubmit()"
         >
           Submit

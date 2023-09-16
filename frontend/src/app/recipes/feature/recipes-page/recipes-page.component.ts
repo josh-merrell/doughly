@@ -6,7 +6,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RecipesInfoComponent } from './ui/recipes-info/recipes-info.component';
 import { RecipeCategoryService } from '../../data/recipe-category.service';
@@ -14,9 +14,17 @@ import { RecipeService } from '../../data/recipe.service';
 import {
   BehaviorSubject,
   Observable,
+  Subject,
   Subscription,
+  catchError,
+  firstValueFrom,
+  forkJoin,
+  from,
   map,
+  of,
   switchMap,
+  take,
+  tap,
 } from 'rxjs';
 import {
   trigger,
@@ -53,7 +61,7 @@ import { selectView } from '../../state/recipe-page-selectors';
 import { RecipePageActions } from '../../state/recipe-page-actions';
 import { FormsModule } from '@angular/forms';
 import { SortingService } from 'src/app/shared/utils/sortingService';
-import { Recipe } from '../../state/recipe/recipe-state';
+import { Recipe, ShoppingList } from '../../state/recipe/recipe-state';
 import { RecipeIngredientActions } from '../../state/recipe-ingredient/recipe-ingredient-actions';
 import { RecipeToolActions } from '../../state/recipe-tool/recipe-tool-actions';
 import { RecipeIngredientsModalComponent } from './ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
@@ -65,6 +73,7 @@ import { StepActions } from '../../state/step/step-actions';
 import { RecipeStepActions } from '../../state/recipe-step/recipe-step-actions';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { RecipeComponent } from '../recipe/recipe.component';
+import { resolve } from 'path';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -138,6 +147,8 @@ export class RecipesPageComponent {
 
   public recipeRows: Recipe[] = [];
   recipeRows$: Observable<any[]> = this.recipeService.rows$;
+
+  public refinedRecipeRows$ = new Subject<any[]>();
   public filteredRecipeRows$ = new BehaviorSubject<any[]>([]);
   public displayedRecipeRows$ = new BehaviorSubject<any[]>([]);
 
@@ -190,7 +201,7 @@ export class RecipesPageComponent {
   categoryContainer!: ElementRef;
   @ViewChild('recipeContainer', { static: false })
   recipeContainer!: ElementRef;
-
+  
   ngOnInit() {
     this.view$.subscribe((view) => {
       this.view = view;
@@ -241,30 +252,52 @@ export class RecipesPageComponent {
 
     this.recipeRows$
       .pipe(
-        map((rows) => {
-          return rows.map((row) => {
-            // retrieve the image for each recipe
-            if (row.photoURL) {
-              return fetch(row.photoURL)
-                .then((res) => res.blob())
-                .then((blob) => {
-                  const objectURL = URL.createObjectURL(blob);
-                  return {
-                    ...row,
-                    photo: this.sanitizer.bypassSecurityTrustUrl(objectURL),
-                  };
-                });
-            }
-            return Promise.resolve(row);
+        switchMap((rows) =>
+          forkJoin(
+            rows.map((row) => {
+              const photoPromise = row.photoURL
+                ? fetch(row.photoURL)
+                    .then((res) => res.blob())
+                    .then((blob) => {
+                      const objectURL = URL.createObjectURL(blob);
+                      return this.sanitizer.bypassSecurityTrustUrl(objectURL);
+                    })
+                : Promise.resolve(null);
+
+              const shoppingList$ = this.recipeService
+                .getShoppingList(row.recipeID)
+                .pipe(
+                  take(1), // Wait for the observable to complete
+                );
+              return forkJoin([ //wait for each of them to complete
+                of(row), // Keep the original row data
+                from(photoPromise), // Wrap the photo promise in an observable
+                shoppingList$, // Shopping list observable
+              ]);
+            })
+          )
+        ),
+        map((resolvedData) => {
+          return resolvedData.map(([row, photo, shoppingList]) => {
+            return {
+              ...row,
+              photo,
+              shoppingList,
+            };
           });
         }),
-        switchMap((promises) => Promise.all(promises))
       )
+      .subscribe((resolvedRows) => {
+        this.refinedRecipeRows$.next(resolvedRows);
+      });
+
+    this.refinedRecipeRows$
       .subscribe((resolvedRows) => {
         this.recipeRows = resolvedRows;
         const filteredRows = this.applyFilter(resolvedRows, this.searchFilter);
         this.filteredRecipeRows$.next(filteredRows);
       });
+
 
     this.categoryRows$.subscribe((categories) => {
       this.displayedCategoryRows$.next(categories);

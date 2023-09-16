@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { IngredientService } from '../data/ingredient.service';
 import { IngredientActions } from './ingredient-actions';
 import { IngredientStockActions } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
+import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
 
 @Injectable()
 export class IngredientEffects {
@@ -92,6 +93,13 @@ export class IngredientEffects {
     this.actions$.pipe(
       ofType(IngredientActions.deleteIngredientSuccess),
       map(() => IngredientStockActions.loadIngredientStocks())
+    )
+  );
+
+  loadRecipeIngredientsAfterDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientActions.deleteIngredientSuccess),
+      map(() => RecipeIngredientActions.loadRecipeIngredients())
     )
   );
 

@@ -17,13 +17,14 @@ async function getRecipeIngredientByID(req, res) {
 async function createRecipeIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { recipeID, ingredientID, measurementUnit, measurement } = req.body;
+  const { recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = req.body;
   const returner = await p.create({
     userID: req.userID,
     recipeID,
     ingredientID,
     measurementUnit,
     measurement,
+    purchaseUnitRatio,
   });
   return res.json(returner);
 }
@@ -32,12 +33,13 @@ async function updateRecipeIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeIngredientID } = req.params;
-  const { measurementUnit, measurement } = req.body;
+  const { measurementUnit, measurement, purchaseUnitRatio } = req.body;
   const returner = await p.update({
     userID: req.userID,
     recipeIngredientID,
     measurementUnit,
     measurement,
+    purchaseUnitRatio,
   });
   return res.json(returner);
 }

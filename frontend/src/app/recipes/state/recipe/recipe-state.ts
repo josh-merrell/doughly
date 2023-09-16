@@ -1,3 +1,6 @@
+import { Tool } from "src/app/kitchen/feature/tools/state/tool-state";
+import { Ingredient } from "src/app/kitchen/state/kitchen-interfaces";
+
 export interface RecipeState {
   recipes: Recipe[];
   loading: boolean;
@@ -27,10 +30,29 @@ export interface RecipeError {
   rawError?: any;
 }
 
+export interface ShoppingListIngredient {
+  type: 'ingredient',
+  ingredientName: string,
+  quantity: number,
+  unit: string,
+}
+
+export interface ShoppingListTool {
+  type: 'tool',
+  tool: Tool,
+  quantity: number,
+}
+
+export interface ShoppingList {
+  ingredients: ShoppingListIngredient[] | null;
+  // tools: ShoppingListTool[] | null;
+}
+
 export enum RecipeStatus {
   noIngredients = 'noIngredients',
   noTools = 'noTools',
   noSteps = 'noSteps',
   published = 'Published',
 }
+
 
