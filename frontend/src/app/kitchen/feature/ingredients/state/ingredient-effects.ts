@@ -6,6 +6,7 @@ import { IngredientService } from '../data/ingredient.service';
 import { IngredientActions } from './ingredient-actions';
 import { IngredientStockActions } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
+import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 
 @Injectable()
 export class IngredientEffects {
@@ -100,6 +101,13 @@ export class IngredientEffects {
     this.actions$.pipe(
       ofType(IngredientActions.deleteIngredientSuccess),
       map(() => RecipeIngredientActions.loadRecipeIngredients())
+    )
+  );
+
+  loadRecipesAfterDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientActions.deleteIngredientSuccess),
+      map(() => RecipeActions.loadRecipes())
     )
   );
 
