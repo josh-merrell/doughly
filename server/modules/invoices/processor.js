@@ -36,7 +36,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, type, status, subtotal } = options;
+    const { customID, userID, type, status, subtotal } = options;
 
     //if subtotal is 0 or negative, return an error
     if (subtotal <= 0) {
@@ -49,6 +49,7 @@ module.exports = ({ db }) => {
     const { data, error } = await db
       .from('invoices')
       .insert({
+        invoiceID: customID,
         userID,
         createdTime: new Date().toISOString(),
         type,

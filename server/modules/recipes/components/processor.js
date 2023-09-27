@@ -25,7 +25,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, recipeID, componentID, componentAdvanceDays } = options;
+    const { customID, userID, recipeID, componentID, componentAdvanceDays } = options;
 
     //if params are not present, return error
     if (!recipeID || !componentID || !componentAdvanceDays) {
@@ -58,7 +58,7 @@ module.exports = ({ db }) => {
       return { error: `Component Recipe with provided ID (${componentID}) does not exist` };
     }
 
-    const { data, errorInsert } = await db.from('recipeComponents').insert({ userID, recipeID, componentID, componentAdvanceDays }).select('recipeComponentID');
+    const { data, errorInsert } = await db.from('recipeComponents').insert({ recipeComponentID: customID, userID, recipeID, componentID, componentAdvanceDays }).select('recipeComponentID');
 
     if (error) {
       global.logger.info(`Error creating recipeComponent: ${errorInsert.message}`);

@@ -50,7 +50,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, recipeID, stepID, sequence, photoURL } = options;
+    const { customID, userID, recipeID, stepID, sequence, photoURL } = options;
     //validate that provided recipeID exists
     const { data: recipe, validationError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (validationError) {
@@ -134,7 +134,7 @@ module.exports = ({ db }) => {
     **/
 
     //create recipeStep
-    const { data: newRecipeStep, error } = await db.from('recipeSteps').insert({ userID, recipeID, stepID, sequence, photoURL }).select().single();
+    const { data: newRecipeStep, error } = await db.from('recipeSteps').insert({ recipeStepID: customID, userID, recipeID, stepID, sequence, photoURL }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipeStep: ${error.message}`);

@@ -123,7 +123,6 @@ const getIngredientStocksSchema_query = {
   properties: {
     ingredientStockIDs: { type: 'array', items: { type: 'integer' } },
     ingredientID: { type: 'string' },
-    purchasedBy: { type: 'string' },
   },
 };
 
@@ -137,10 +136,9 @@ const getIngredientStockSchema_params = {
 
 const newIngredientStockSchema_body = {
   type: 'object',
-  required: ['ingredientID', 'purchasedBy', 'measurement', 'purchasedDate'],
+  required: ['ingredientID', 'measurement', 'purchasedDate'],
   properties: {
     ingredientID: { type: 'integer' },
-    purchasedBy: { type: 'integer' },
     measurement: { type: 'number' },
     purchasedDate: { type: 'string' },
   },
@@ -151,7 +149,6 @@ const IngredientStockUpdateSchema_body = {
   properties: {
     measurement: { type: 'number' },
     purchasedDate: { type: 'string' },
-    purchasedBy: { type: 'integer' },
   },
 };
 

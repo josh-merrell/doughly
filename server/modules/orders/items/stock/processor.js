@@ -42,7 +42,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, orderID, stockProductID, quantity, unitIncome } = options;
+    const { customID, userID, orderID, stockProductID, quantity, unitIncome } = options;
 
     //validate that provided orderID exists
     const { data: order, error } = await db.from('orders').select().filter('userID', 'eq', userID).filter('orderID', 'eq', orderID);
@@ -83,7 +83,7 @@ module.exports = ({ db }) => {
     const stockStatus = await supplyCheckMoreDemand(quantity, order[0].orderID, stockProductID, scheduledDeliveryTime);
 
     //create orderStockItem
-    const { data: orderStockItem, error: orderStockItemError } = await db.from('orderStockItems').insert({ userID, orderID, stockProductID, quantity, unitIncome, stockStatus }).select('stockItemID').single();
+    const { data: orderStockItem, error: orderStockItemError } = await db.from('orderStockItems').insert({ stockItemID: customID, userID, orderID, stockProductID, quantity, unitIncome, stockStatus }).select('stockItemID').single();
 
     if (orderStockItemError) {
       global.logger.info(`Error creating orderStockItem: ${orderStockItemError.message}`);

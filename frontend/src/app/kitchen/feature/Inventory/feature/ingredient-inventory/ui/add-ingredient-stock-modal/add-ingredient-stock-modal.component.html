@@ -64,20 +64,6 @@
           </mat-form-field>
         </div>
 
-        <div id="form-purchasedBy" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Purchased By</label>
-          <mat-form-field>
-            <mat-select formControlName="purchasedBy">
-              <mat-option
-                *ngFor="let employee of employees$ | async"
-                [value]="employee.employeeID"
-              >
-                {{ employee.nameFirst }} {{ employee.nameLast }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
         <div id="form-purchasedDate">
           <label class="text-dl-2 font-dl-3 text-dl-grey-4"
             >Purchased Date</label

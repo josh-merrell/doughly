@@ -2,11 +2,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener,
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RecipesInfoComponent } from './ui/recipes-info/recipes-info.component';
 import { RecipeCategoryService } from '../../data/recipe-category.service';
@@ -16,15 +15,12 @@ import {
   Observable,
   Subject,
   Subscription,
-  catchError,
-  firstValueFrom,
   forkJoin,
   from,
   map,
   of,
   switchMap,
   take,
-  tap,
 } from 'rxjs';
 import {
   trigger,
@@ -37,7 +33,6 @@ import {
   RecipeCategory,
   RecipeCategoryError,
 } from '../../state/recipe-category/recipe-category-state';
-import { RecipeCategoryActions } from '../../state/recipe-category/recipe-category-actions';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { AddRecipeCategoryModalComponent } from './ui/recipe-category/add-recipe-category-modal/add-recipe-category-modal.component';
@@ -61,19 +56,14 @@ import { selectView } from '../../state/recipe-page-selectors';
 import { RecipePageActions } from '../../state/recipe-page-actions';
 import { FormsModule } from '@angular/forms';
 import { SortingService } from 'src/app/shared/utils/sortingService';
-import { Recipe, ShoppingList } from '../../state/recipe/recipe-state';
-import { RecipeIngredientActions } from '../../state/recipe-ingredient/recipe-ingredient-actions';
-import { RecipeToolActions } from '../../state/recipe-tool/recipe-tool-actions';
+import { Recipe } from '../../state/recipe/recipe-state';
 import { RecipeIngredientsModalComponent } from './ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
 import { RecipeIngredientError } from '../../state/recipe-ingredient/recipe-ingredient-state';
 import { RecipeToolsModalComponent } from './ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
 import { RecipeStepsModalComponent } from './ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
 import { AddRecipeModalComponent } from './ui/recipe/add-recipe-modal/add-recipe-modal.component';
-import { StepActions } from '../../state/step/step-actions';
-import { RecipeStepActions } from '../../state/recipe-step/recipe-step-actions';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { RecipeComponent } from '../recipe/recipe.component';
-import { resolve } from 'path';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;

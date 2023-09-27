@@ -20,7 +20,9 @@ async function createTaskItem(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { orderID, recipeID, quantity, unitIncome } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     orderID,
     recipeID,

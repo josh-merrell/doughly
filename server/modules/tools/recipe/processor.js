@@ -42,7 +42,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, recipeID, toolID, quantity } = options;
+    const { customID, userID, recipeID, toolID, quantity } = options;
 
     //validate that provided recipeID exists
     const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID);
@@ -116,7 +116,7 @@ module.exports = ({ db }) => {
     }
 
     //create recipeTool
-    const { data: newRecipeTool, error: newRecipeToolError } = await db.from('recipeTools').insert({ userID, recipeID, toolID, quantity }).select().single();
+    const { data: newRecipeTool, error: newRecipeToolError } = await db.from('recipeTools').insert({ recipeToolID: customID, userID, recipeID, toolID, quantity }).select().single();
 
     if (newRecipeToolError) {
       global.logger.info(`Error creating recipeTool: ${newRecipeToolError}`);

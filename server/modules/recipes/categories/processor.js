@@ -19,7 +19,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, name, photoURL } = options;
+    const { customID, userID, name, photoURL } = options;
 
     //if name is not provided, return error
     if (!name) {
@@ -27,7 +27,7 @@ module.exports = ({ db }) => {
       return { error: `Name is required` };
     }
 
-    const { data: newRecipeCategory, error } = await db.from('recipeCategories').insert({ userID, name, photoURL }).select().single();
+    const { data: newRecipeCategory, error } = await db.from('recipeCategories').insert({ recipeCategoryID: customID, userID, name, photoURL }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipeCategory: ${error.message}`);

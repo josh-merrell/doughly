@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, ingredientID, measurement, purchasedBy, purchasedDate } = options;
+    const { customID, userID, ingredientID, measurement, purchasedDate } = options;
 
     //verify that the provided ingredientID is valid, return error if not
     const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
@@ -57,22 +57,11 @@ module.exports = ({ db }) => {
       return { error: `positive measurement integer is required` };
     }
 
-    //verify that provided purchasedBy is valid, return error if not
-    const { data: existingEmployee, error: employeeError } = await db.from('employees').select().filter('userID', 'eq', userID).filter('employeeID', 'eq', purchasedBy);
-    if (employeeError) {
-      global.logger.info(`Error validating provided employeeID: ${purchasedBy}: ${employeeError.message}`);
-      return { error: employeeError.message };
-    }
-    if (existingEmployee.length === 0) {
-      global.logger.info(`Employee ID does not exist, cannot create ingredientStock`);
-      return { error: `Employee ID does not exist, cannot create ingredientStock` };
-    }
-
     //calculate grams for new stock using gramRatio for the ingredient
     const grams = measurement * existingIngredient[0].gramRatio;
 
     //create the ingredientStock
-    const { data: newIngredientStock, error: newIngredientStockError } = await db.from('ingredientStocks').insert({ userID, ingredientID, purchasedBy, purchasedDate, grams }).select().single();
+    const { data: newIngredientStock, error: newIngredientStockError } = await db.from('ingredientStocks').insert({ ingredientStockID: customID, userID, ingredientID, purchasedDate, grams }).select().single();
     if (newIngredientStockError) {
       global.logger.info(`Error creating ingredientStock: ${newIngredientStockError.message}`);
       return { error: newIngredientStockError.message };
@@ -82,13 +71,12 @@ module.exports = ({ db }) => {
       ingredientStockID: newIngredientStock.ingredientStockID,
       ingredientID: newIngredientStock.ingredientID,
       grams: newIngredientStock.grams,
-      purchasedBy: newIngredientStock.purchasedBy,
       purchasedDate: newIngredientStock.purchasedDate,
     };
   }
 
   async function update(options) {
-    const { userID, ingredientStockID, measurement, purchasedBy } = options;
+    const { userID, ingredientStockID, measurement } = options;
 
     //verify that the provided ingredientStockID is valid, return error if not
     const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().filter('userID', 'eq', userID).filter('ingredientStockID', 'eq', ingredientStockID);
@@ -105,19 +93,6 @@ module.exports = ({ db }) => {
     if (measurement && measurement < 1) {
       global.logger.info(`positive measurement integer is required`);
       return { error: `positive measurement integer is required` };
-    }
-
-    //verify that provided purchasedBy is valid, return error if not
-    if (purchasedBy) {
-      const { data: existingEmployee, error: employeeError } = await db.from('employees').select().filter('userID', 'eq', userID).filter('employeeID', 'eq', purchasedBy);
-      if (employeeError) {
-        global.logger.info(`Error validating provided employeeID: ${purchasedBy}: ${employeeError.message}`);
-        return { error: employeeError.message };
-      }
-      if (existingEmployee.length === 0) {
-        global.logger.info(`Employee ID does not exist, cannot update ingredientStock`);
-        return { error: `Employee ID does not exist, cannot update ingredientStock` };
-      }
     }
 
     //update the ingredientStock
