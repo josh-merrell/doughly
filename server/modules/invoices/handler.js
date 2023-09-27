@@ -22,7 +22,9 @@ async function createInvoice(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { type, status, subtotal } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     type,
     status,

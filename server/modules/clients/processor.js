@@ -75,6 +75,12 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
+    //verify that 'customID' exists on the request
+    if (!options.customID) {
+      global.logger.info(`Error creating client: customID is missing`);
+      return { error: 'customID is missing' };
+    }
+
     //attempt to create a new person
     let person = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/persons`, options, {
       headers: {
@@ -88,6 +94,7 @@ module.exports = ({ db }) => {
       const { data, error } = await db
         .from('clients')
         .insert({
+          clientID: options.customID,
           userID: options.userID,
           personID: person.personID,
           createdTime: new Date().toISOString(),

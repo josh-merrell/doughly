@@ -24,7 +24,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, invoiceID, note } = options;
+    const { customID, userID, invoiceID, note } = options;
     //verify that the provided invoiceID exists, return error if not
     const invoice = await db.from('invoices').select().filter('userID', 'eq', userID).filter('invoiceID', 'eq', invoiceID);
     if (!invoice) {
@@ -33,7 +33,7 @@ module.exports = ({ db }) => {
     }
 
     //add note to invoice
-    const { data, error } = await db.from('invoiceNotes').insert({ userID, invoiceID, note, time: new Date().toISOString() }).select('invoiceNoteID');
+    const { data, error } = await db.from('invoiceNotes').insert({ invoiceNoteID: customID, userID, invoiceID, note, time: new Date().toISOString() }).select('invoiceNoteID');
 
     if (error) {
       global.logger.info(`Error creating invoiceNote: ${error.message}`);

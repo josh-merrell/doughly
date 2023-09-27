@@ -17,11 +17,12 @@ async function getIngredientStockByID(req, res) {
 async function createIngredientStock(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { ingredientID, purchasedBy, purchasedDate, measurement } = req.body;
+  const { ingredientID, purchasedDate, measurement } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     ingredientID,
-    purchasedBy,
     purchasedDate,
     measurement,
   });
@@ -32,11 +33,10 @@ async function updateIngredientStock(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { ingredientStockID } = req.params;
-  const { purchasedBy, purchasedDate, measurement } = req.body;
+  const { purchasedDate, measurement } = req.body;
   const returner = await p.update({
     userID: req.userID,
     ingredientStockID,
-    purchasedBy,
     purchasedDate,
     measurement,
   });

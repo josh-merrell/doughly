@@ -20,7 +20,9 @@ async function createTag(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { name } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     name,
   });

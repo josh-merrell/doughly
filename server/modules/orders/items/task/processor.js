@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, orderID, recipeID, quantity, unitIncome } = options;
+    const { customID, userID, orderID, recipeID, quantity, unitIncome } = options;
 
     //verify that provided orderID exists
     const { data: order, error } = await db.from('orders').select().eq('orderID', orderID);
@@ -78,7 +78,7 @@ module.exports = ({ db }) => {
     }
 
     //create orderTaskItem
-    const { data: orderTaskItem, error: orderTaskItemError } = await db.from('orderTaskItems').insert({ userID, orderID, recipeID, quantity, unitIncome, status: 'created' }).select('taskItemID');
+    const { data: orderTaskItem, error: orderTaskItemError } = await db.from('orderTaskItems').insert({ taskItemID: customID, userID, orderID, recipeID, quantity, unitIncome, status: 'created' }).select('taskItemID');
     if (orderTaskItemError) {
       global.logger.info(`Error creating orderTaskItem ${orderTaskItemError.message}`);
       return { error: orderTaskItemError.message };

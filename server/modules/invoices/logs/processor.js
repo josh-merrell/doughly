@@ -2,9 +2,9 @@
 
 module.exports = ({ db }) => {
   async function create(options) {
-    const { userID, invoiceID, log, type } = options;
+    const { customID, userID, invoiceID, log, type } = options;
 
-    const { data: invoice, error } = await db.from('invoiceLogs').insert({ userID, invoiceID, log, type, createdTime: new Date().toISOString() }).select('invoiceLogID').single();
+    const { data: invoice, error } = await db.from('invoiceLogs').insert({ invoiceLogID: customID, userID, invoiceID, log, type, createdTime: new Date().toISOString() }).select('invoiceLogID').single();
 
     if (error) {
       global.logger.info(`Error creating invoice log: ${error.message}`);

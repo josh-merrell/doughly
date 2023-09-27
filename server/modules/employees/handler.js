@@ -6,7 +6,9 @@ async function getEmployees(req, res) {
   const { cursor, limit } = req.query;
   const { employeeIDs, personID, hireDateRange, payPerHourRange, position, status, email, nameFirst, nameLast, phone, city, state, zip } = req.query;
   const { authorization } = req.headers;
+  const { customID } = req;
   const returner = await p.get.all({
+    customID,
     authorization,
     userID: req.userID,
     cursor,

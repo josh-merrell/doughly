@@ -18,7 +18,9 @@ async function createStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { title, description } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     title,
     description,

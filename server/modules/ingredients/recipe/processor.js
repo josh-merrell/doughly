@@ -39,7 +39,13 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = options;
+    const { customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = options;
+
+    //verify that 'customID' exists on the request
+    if (!customID) {
+      global.logger.info(`Error creating recipeIngredient: customID is missing`);
+      return { error: 'customID is missing' };
+    }
 
     //verify that the provided recipeID exists, return error if not
     const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID).eq('deleted', false);
@@ -76,7 +82,7 @@ module.exports = ({ db }) => {
     }
 
     //create the recipeIngredient
-    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio }).select().single();
+    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio }).select().single();
 
     if (error3) {
       global.logger.info(`Error creating recipeIngredient: ${error3.message}`);

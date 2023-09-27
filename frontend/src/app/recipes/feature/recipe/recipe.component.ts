@@ -9,13 +9,11 @@ import {
   catchError,
   combineLatest,
   filter,
-  forkJoin,
   from,
   map,
   mergeMap,
   of,
   switchMap,
-  take,
   takeUntil,
   tap,
   toArray,
@@ -25,7 +23,6 @@ import { selectRecipeByID } from '../../state/recipe/recipe-selectors';
 import { selectRecipeIngredientsByRecipeID } from '../../state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectRecipeToolsByRecipeID } from '../../state/recipe-tool/recipe-tool-selectors';
-import { Recipe } from '../../state/recipe/recipe-state';
 import { selectRecipeCategoryByID } from '../../state/recipe-category/recipe-category-selectors';
 import { DomSanitizer } from '@angular/platform-browser';
 import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
@@ -37,7 +34,6 @@ import { RecipeIngredientError } from '../../state/recipe-ingredient/recipe-ingr
 import { RecipeToolsModalComponent } from '../recipes-page/ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
 import { selectSteps } from '../../state/step/step-selectors';
 import { selectRecipeStepsByID } from '../../state/recipe-step/recipe-step-selectors';
-import { PhotoService } from 'src/app/shared/utils/photoService';
 import { RecipeStepsModalComponent } from '../recipes-page/ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
 import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
 import { DeleteRecipeModalComponent } from './ui/delete-recipe-modal/delete-recipe-modal.component';
@@ -46,6 +42,12 @@ import { EditRecipeModalComponent } from './ui/edit-recipe-modal/edit-recipe-mod
 import { UpdateRequestErrorModalComponent } from 'src/app/shared/ui/update-request-error/update-request-error-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UpdateRequestConfirmationModalComponent } from 'src/app/shared/ui/update-request-confirmation/update-request-confirmation-modal.component';
+import { RecipeService } from '../../data/recipe.service';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ShoppingList } from '../../state/recipe/recipe-state';
+import { RecipeShoppingListModalComponent } from './ui/recipe-shopping-list-modal/recipe-shopping-list-modal.component';
 
 function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -56,7 +58,7 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
 @Component({
   selector: 'dl-recipe',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatDatepickerModule, MatNativeDateModule],
   templateUrl: './recipe.component.html',
 })
 export class RecipeComponent {
@@ -66,11 +68,9 @@ export class RecipeComponent {
   displayRecipe$ = new BehaviorSubject<any>(null);
   recipeCategory$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   recipeIngredients$!: Observable<any[]>;
-  private recipeIngredientsSubscription: Subscription = new Subscription();
   displayIngredients$ = new BehaviorSubject<any[]>([]);
   ingredients$!: Observable<any[]>;
   recipeTools$!: Observable<any[]>;
-  private recipeToolsSubscription: Subscription = new Subscription();
   tools$!: Observable<any[]>;
   displayTools$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   recipeSteps$!: Observable<any[]>;
@@ -79,6 +79,20 @@ export class RecipeComponent {
   displayStepsWithPhoto$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(
     []
   );
+  private shoppingListSubject$ = new BehaviorSubject<any>({ ingredients: [] });
+  shoppingList$: Observable<ShoppingList> =
+    this.shoppingListSubject$.asObservable();
+  shoppingList!: ShoppingList;
+
+  private subscription: Subscription = new Subscription();
+
+  // initialized to today's date in format of "Jan 1, 2023"
+  usageDate: string = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+  public displayUsageDate!: string;
 
   private onDestroy$ = new Subject<void>();
 
@@ -92,7 +106,8 @@ export class RecipeComponent {
     private store: Store,
     private sanitizer: DomSanitizer,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private recipeService: RecipeService
   ) {}
 
   toggleMenu(event: any) {
@@ -133,11 +148,11 @@ export class RecipeComponent {
           },
         });
       } else if (result === 'success') {
-        this.dialog.open(UpdateRequestConfirmationModalComponent,{
+        this.dialog.open(UpdateRequestConfirmationModalComponent, {
           data: {
             result: result,
             updateSuccessMessage: `Recipe with ID of ${this.recipeID} updated successfully!`,
-          }
+          },
         });
       }
     });
@@ -155,7 +170,7 @@ export class RecipeComponent {
         this.dialog.open(DeleteRequestErrorModalComponent, {
           data: {
             error: result,
-            deleteFailureMessage: `Recipe could not be deleted. Try again later.`
+            deleteFailureMessage: `Recipe could not be deleted. Try again later.`,
           },
         });
       } else if (result === 'success') {
@@ -178,7 +193,13 @@ export class RecipeComponent {
       return {
         ...recipeIngredient,
         name: ingredient ? ingredient.name : 'Unknown',
-        measurementUnit: (recipeIngredient.measurementUnit === 'box' || recipeIngredient.measurementUnit === 'bunch' || recipeIngredient.measurementUnit === 'pinch' || recipeIngredient.measurementUnit === 'dash') ? recipeIngredient.measurementUnit + 'es' : recipeIngredient.measurementUnit + 's',
+        measurementUnit:
+          recipeIngredient.measurementUnit === 'box' ||
+          recipeIngredient.measurementUnit === 'bunch' ||
+          recipeIngredient.measurementUnit === 'pinch' ||
+          recipeIngredient.measurementUnit === 'dash'
+            ? recipeIngredient.measurementUnit + 'es'
+            : recipeIngredient.measurementUnit + 's',
       };
     });
   }
@@ -205,6 +226,7 @@ export class RecipeComponent {
   }
 
   ngOnInit() {
+    this.displayUsageDate = this.updateDisplayUsageData(this.usageDate);
     this.ingredients$ = this.store.select(selectIngredients);
     this.tools$ = this.store.select(selectTools);
     this.steps$ = this.store.select(selectSteps);
@@ -224,6 +246,7 @@ export class RecipeComponent {
           this.recipeSteps$ = this.store.select(
             selectRecipeStepsByID(recipeID)
           );
+          this.shoppingList$ = this.recipeService.getShoppingList(recipeID); // Set the observable here
           return combineLatest([
             this.recipeIngredients$,
             this.recipeTools$,
@@ -231,6 +254,7 @@ export class RecipeComponent {
             this.tools$,
             this.recipeSteps$,
             this.steps$,
+            this.shoppingList$, // Use the observable here
           ]);
         }),
         catchError((err) => {
@@ -245,6 +269,7 @@ export class RecipeComponent {
             tools,
             recipeSteps,
             steps,
+            shoppingList, // You'll get the current value of the shoppingList$ observable here
           ]) => {
             const displayIngredients =
               recipeIngredients && ingredients
@@ -256,16 +281,20 @@ export class RecipeComponent {
               displayIngredients,
               displayTools,
               displaySteps,
+              shoppingList, // Include shoppingList in the return value
             };
           }
         ),
         takeUntil(this.onDestroy$)
       )
-      .subscribe(({ displayIngredients, displayTools, displaySteps }) => {
-        this.displayIngredients$.next(displayIngredients);
-        this.displayTools$.next(displayTools);
-        this.displaySteps$.next(displaySteps);
-      });
+      .subscribe(
+        ({ displayIngredients, displayTools, displaySteps, shoppingList }) => {
+          this.displayIngredients$.next(displayIngredients);
+          this.displayTools$.next(displayTools);
+          this.displaySteps$.next(displaySteps);
+          this.shoppingList = shoppingList; // Set the component property here
+        }
+      );
 
     this.recipe$
       .pipe(
@@ -331,6 +360,61 @@ export class RecipeComponent {
         const sorted = stepsWithPhotos.sort((a, b) => a.sequence - b.sequence);
         this.displayStepsWithPhoto$.next(sorted);
       });
+  }
+
+  filterPastDates(date: Date | null): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (date) {
+      const dateWithoutTime = new Date(date);
+      dateWithoutTime.setHours(0, 0, 0, 0);
+      return dateWithoutTime >= today;
+    }
+    return true;
+  }
+
+  updateUsageDate(event: MatDatepickerInputEvent<Date>) {
+    const date = event.value;
+    if (date) {
+      this.usageDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      this.displayUsageDate = this.updateDisplayUsageData(this.usageDate);
+
+      // Update shoppingList$ observable with the new date
+      this.recipeService
+        .getShoppingList(this.recipeID, new Date(this.usageDate))
+        .subscribe((shoppingList) => {
+          this.shoppingListSubject$.next(shoppingList);
+          this.shoppingList = shoppingList;
+        });
+    }
+  }
+
+  updateDisplayUsageData(usageDate: string) {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const todayString = today.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+    const tomorrowString = tomorrow.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+    if (usageDate === todayString) {
+      return 'Today';
+    } else if (usageDate === tomorrowString) {
+      return 'Tomorrow';
+    } else {
+      return usageDate;
+    }
   }
 
   timeString(minutes: number) {
@@ -400,6 +484,20 @@ export class RecipeComponent {
     });
   }
 
+  viewShoppingList() {
+    this.dialog.open(RecipeShoppingListModalComponent, {
+      data: {
+        shoppingList: this.shoppingList,
+        usageDate: this.usageDate,
+        recipeName: this.displayRecipe$.value.title,
+      },
+    });
+  }
+
+  makeRecipe() {
+    console.log(`make recipe`)
+  }
+
   editRecipeSteps() {
     const dialogRef = this.dialog.open(RecipeStepsModalComponent, {
       data: {
@@ -431,5 +529,6 @@ export class RecipeComponent {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.subscription.unsubscribe();
   }
 }

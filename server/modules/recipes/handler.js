@@ -20,7 +20,9 @@ async function createRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     title,
     servings,

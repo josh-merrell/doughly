@@ -124,8 +124,13 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { authorization, userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
+    const { customID, authorization, userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip, hireDate, position, status, payPerHour } = options;
 
+    //validate that customID exists on request
+    if (!customID) {
+      global.logger.info(`Error creating employee: customID is missing`);
+      return { error: 'customID is missing' };
+    }
     //validate that provided payPerHour is a positive number
     if (payPerHour <= 0) {
       global.logger.info(`Error creating employee: payPerHour must be a positive number`);
@@ -145,6 +150,7 @@ module.exports = ({ db }) => {
     let person = await axios.post(
       `${process.env.NODE_HOST}:${process.env.PORT}/persons`,
       {
+        customID,
         userID,
         nameFirst,
         nameLast,
@@ -169,6 +175,7 @@ module.exports = ({ db }) => {
       const { data, error } = await db
         .from('employees')
         .insert({
+          employeeID: customID,
           userID,
           personID: person.personID,
           hireDate,

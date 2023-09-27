@@ -33,14 +33,14 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { name } = options;
+    const { customID, name } = options;
 
     if (!name) {
       global.logger.info(`Name is required`);
       return { error: `Name is required` };
     }
 
-    const { data: tag, error } = await db.from('tags').insert({ name }).select().single();
+    const { data: tag, error } = await db.from('tags').insert({ tagID: customID, name }).select().single();
 
     if (error) {
       global.logger.info(`Error creating tag: ${error.message}`);

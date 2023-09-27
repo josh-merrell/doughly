@@ -20,7 +20,9 @@ async function createRecipeTag(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeID, tagID } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     recipeID,
     tagID,

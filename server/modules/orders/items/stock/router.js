@@ -3,6 +3,7 @@ const express = require('express');
 const { routeValidator } = require('../../../../middleware/validating');
 const { errorCatcher } = require('../../../../middleware/errorHandling');
 const { authenticateJWT } = require('../../../../middleware/auth');
+const { generateID } = require('../../../../middleware/ID');
 const handler = require('./handler');
 const { getStockItemsSchema_query, getStockItemSchema_params, newStockItemsSchema_body, StockItemsUpdateSchema_body, StockItemsUpdateSchema_params, StockItemsDeleteSchema_params } = require('../../../../schemas/stockItem-types');
 
@@ -15,6 +16,6 @@ router.get('/:stockItemID', routeValidator(getStockItemSchema_params, 'params'),
 router.patch('/:stockItemID', routeValidator(StockItemsUpdateSchema_body, 'body'), routeValidator(StockItemsUpdateSchema_params, 'params'), errorCatcher(h.updateStockItem));
 router.delete('/:stockItemID', routeValidator(StockItemsDeleteSchema_params, 'params'), errorCatcher(h.deleteStockItem));
 router.get('/', routeValidator(getStockItemsSchema_query, 'query'), errorCatcher(h.getStockItems));
-router.post('/', routeValidator(newStockItemsSchema_body, 'body'), errorCatcher(h.createStockItem));
+router.post('/', generateID, routeValidator(newStockItemsSchema_body, 'body'), errorCatcher(h.createStockItem));
 
 module.exports = router;

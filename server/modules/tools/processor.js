@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, name, brand } = options;
+    const { customID, userID, name, brand } = options;
 
     //validate that the provided name is not already used by another tool
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('name', name).filter('deleted', 'eq', false);
@@ -52,7 +52,7 @@ module.exports = ({ db }) => {
     }
 
     //create the tool
-    const { data: tool, error } = await db.from('tools').insert({ userID, name, brand }).select('*').single();
+    const { data: tool, error } = await db.from('tools').insert({ toolID: customID, userID, name, brand }).select('*').single();
 
     if (error) {
       global.logger.info(`Error creating tool: ${error.message}`);

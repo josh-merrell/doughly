@@ -20,7 +20,9 @@ async function createToolStock(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolID, purchasedBy, purchaseDate, quantity } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     toolID,
     purchasedBy,

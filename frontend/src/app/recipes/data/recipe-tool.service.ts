@@ -5,6 +5,7 @@ import { RecipeTool } from '../state/recipe-tool/recipe-tool-state';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { selectRecipeTools } from '../state/recipe-tool/recipe-tool-selectors';
+import { IDService } from 'src/app/shared/utils/ID';
 
 @Injectable({
   providedIn: 'root',
@@ -12,22 +13,23 @@ import { selectRecipeTools } from '../state/recipe-tool/recipe-tool-selectors';
 export class RecipeToolService {
   private API_URL = `${environment.BACKEND}/tools/recipe`;
 
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store,
+    private idService: IDService
+  ) {}
 
-  rows$: Observable<RecipeTool[]> = this.store
-    .select(selectRecipeTools)
-    .pipe(
-      map((recipeTools: RecipeTool[]) => {
-        return recipeTools.map((recipeTool: RecipeTool) => {
-          return {
-            recipeToolID: recipeTool.recipeToolID,
-            recipeID: recipeTool.recipeID,
-            toolID: recipeTool.toolID,
-            quantity: recipeTool.quantity,
-          };
-        });
-      }
-    )
+  rows$: Observable<RecipeTool[]> = this.store.select(selectRecipeTools).pipe(
+    map((recipeTools: RecipeTool[]) => {
+      return recipeTools.map((recipeTool: RecipeTool) => {
+        return {
+          recipeToolID: recipeTool.recipeToolID,
+          recipeID: recipeTool.recipeID,
+          toolID: recipeTool.toolID,
+          quantity: recipeTool.quantity,
+        };
+      });
+    })
   );
 
   getAll(): Observable<RecipeTool[]> {
@@ -39,13 +41,17 @@ export class RecipeToolService {
   }
 
   add(recipeTool: RecipeTool): Observable<RecipeTool> {
-    return this.http.post<RecipeTool>(this.API_URL, recipeTool);
+    const body = {
+      IDtype: this.idService.getIDtype('recipeTool'),
+      recipeID: recipeTool.recipeID,
+      toolID: recipeTool.toolID,
+      quantity: recipeTool.quantity,
+    };
+    return this.http.post<RecipeTool>(this.API_URL, body);
   }
 
   delete(recipeToolID: number): Observable<RecipeTool> {
-    return this.http.delete<RecipeTool>(
-      `${this.API_URL}/${recipeToolID}`
-    );
+    return this.http.delete<RecipeTool>(`${this.API_URL}/${recipeToolID}`);
   }
 
   update(recipeTool: RecipeTool): Observable<RecipeTool> {

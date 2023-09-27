@@ -35,6 +35,7 @@ export interface ShoppingListIngredient {
   ingredientName: string,
   quantity: number,
   unit: string,
+  purchaseAfter: string | null,
 }
 
 export interface ShoppingListTool {

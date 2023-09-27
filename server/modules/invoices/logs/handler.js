@@ -22,7 +22,9 @@ async function createInvoiceLog(req, res) {
   const p = require('./processor')({ db });
   const { invoiceID } = req.params;
   const { log, type } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     invoiceID,
     log,

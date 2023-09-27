@@ -21,7 +21,9 @@ async function createPayment(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { method, invoiceID, amount, receivedTime } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     method,
     invoiceID,

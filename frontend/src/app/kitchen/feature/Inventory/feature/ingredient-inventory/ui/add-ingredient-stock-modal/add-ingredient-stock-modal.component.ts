@@ -27,10 +27,8 @@ import {
   selectIngredientByID,
   selectIngredients,
 } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
-import { selectEmployees } from 'src/app/employees/state/employee-selectors';
-import { Employee } from 'src/app/employees/state/employee-state';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
-import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
 
 @Component({
   selector: 'dl-add-ingredient-stock-modal',
@@ -59,7 +57,6 @@ export class AddIngredientStockModalComponent {
   private ingredientIDSubscription!: Subscription;
   private addingSubscription!: Subscription;
   private purchasedDateSubscription!: Subscription;
-  private purchasedBySubscription!: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<AddIngredientStockModalComponent>,
@@ -72,19 +69,14 @@ export class AddIngredientStockModalComponent {
   setForm() {
     this.form = this.fb.group({
       ingredientID: ['', Validators.required],
-      purchasedBy: ['', Validators.required],
       purchasedDate: ['', Validators.required],
-      measurement: ['', [Validators.required, positiveIntegerValidator()]],
+      measurement: ['', [Validators.required, positiveFloatValidator()]],
     });
   }
 
   ngOnInit(): void {
     this.ingredients$ = this.store.select(selectIngredients);
-    this.employees$ = this.store.select(selectEmployees);
     this.setForm();
-
-    const purchasedByControl = this.form.get('purchasedBy')!;
-    const purchasedDateControl = this.form.get('purchasedDate')!;
 
     this.form.get('measurement')!.disable();
 
@@ -102,56 +94,6 @@ export class AddIngredientStockModalComponent {
         }
       });
 
-    //handle changes made to 'purchasedBy' field
-    this.purchasedBySubscription = this.form
-      .get('purchasedBy')!
-      .valueChanges.subscribe((selectedEmployeeID) => {
-        this.employees$
-          .pipe(
-            map((employees: Employee[]) =>
-              employees.find(
-                (employee: any) => employee.employeeID === selectedEmployeeID
-              )
-            )
-          )
-          .subscribe((employee) => {
-            const hireDate = new Date(employee?.hireDate || '');
-            this.form
-              .get('purchasedDate')!
-              .setValidators([
-                Validators.required,
-                this.dateValidator(hireDate),
-              ]);
-            this.form.get('purchasedDate')!.updateValueAndValidity();
-          });
-      });
-
-    //handle changes made to 'purchasedDate' field
-    this.purchasedDateSubscription = this.form
-      .get('purchasedDate')!
-      .valueChanges.subscribe((selectedDate) => {
-        const selectedDateTime = new Date(selectedDate).getTime();
-        const selectedEmployeeID = purchasedByControl.value;
-
-        this.employees$
-          .pipe(
-            map((employees: Employee[]) =>
-              employees.find(
-                (employee) => employee.employeeID === selectedEmployeeID
-              )
-            )
-          )
-          .subscribe((employee) => {
-            if (employee) {
-              const hireDate = new Date(employee.hireDate).getTime();
-              if (selectedDateTime < hireDate) {
-                purchasedDateControl.setErrors({ dateInvalid: true });
-              } else {
-                purchasedDateControl.setErrors(null);
-              }
-            }
-          });
-      });
   }
 
   ngOnDestroy(): void {
@@ -160,9 +102,6 @@ export class AddIngredientStockModalComponent {
     }
     if (this.purchasedDateSubscription) {
       this.purchasedDateSubscription.unsubscribe();
-    }
-    if (this.purchasedBySubscription) {
-      this.purchasedBySubscription.unsubscribe();
     }
     if (this.addingSubscription) {
       this.addingSubscription.unsubscribe();
@@ -184,7 +123,6 @@ export class AddIngredientStockModalComponent {
     const payload = {
       ...this.form.value,
       ingredientID: parseInt(this.form.value.ingredientID, 10),
-      purchasedBy: parseInt(this.form.value.purchasedBy, 10),
       measurement: parseFloat(this.form.value.measurement),
       purchasedDate: date.toISOString(),
     }
