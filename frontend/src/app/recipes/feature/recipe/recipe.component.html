@@ -54,9 +54,6 @@
           <p class="ml-dl-4 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-6">
             {{ (recipeCategory$ | async)?.name }}
           </p>
-          <p class="ml-dl-6 pt-dl-1 text-dl-5 italic text-dl-teal-7">
-            Ready to Make!
-          </p>
         </div>
         <span class="ml-dl-6 text-dl-6 font-dl-3 text-dl-grey-6"
           >Servings: {{ (displayRecipe$ | async).servings }}</span
@@ -106,6 +103,66 @@
           }}
         </p>
       </div>
+      <div
+        class="mx-dl-4 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
+      >
+        <div
+          class="mx-dl-4 mb-dl-1 flex w-full items-center justify-between px-dl-1 pt-dl-1"
+        >
+          <p *ngIf=""></p>
+          <div class="flex">
+            <p class="text-dl-5 font-dl-2 text-dl-grey-4">Making it</p>
+            <div
+              style="position: relative"
+              class="ml-dl-2 text-dl-5 font-dl-2 text-dl-blue-6"
+            >
+              <div (click)="picker.open()">
+                {{ displayUsageDate }}
+              </div>
+              <input
+                matInput
+                [matDatepicker]="picker"
+                [matDatepickerFilter]="filterPastDates"
+                style="
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  opacity: 0;
+                  pointer-events: none;
+                "
+                (dateChange)="updateUsageDate($event)"
+              />
+              <mat-datepicker #picker></mat-datepicker>
+            </div>
+          </div>
+          <button
+            *ngIf="
+              shoppingList?.ingredients?.length === 0 &&
+              displayUsageDate === 'Today'
+            "
+            type="button"
+            class="mr-dl-1 block w-dl-8 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            (click)="makeRecipe()"
+          >
+            Make it Now
+          </button>
+          <button
+            *ngIf="
+              shoppingList?.ingredients?.length !== 0"
+            type="button"
+            class="mr-dl-1 block w-dl-10 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            (click)="viewShoppingList()"
+          >
+            View Shopping List
+          </button>
+          <p
+            *ngIf="shoppingList?.ingredients?.length === 0 && displayUsageDate !== 'Today'"
+            class="ml-dl-4 text-dl-4 italic text-dl-teal-7"
+          >
+            Current inventory is sufficient!
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- Ingredients -->
@@ -117,7 +174,7 @@
         <button
           id="edit-recipe-ingredients-button"
           type="button"
-          class="mr-dl-7 block w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="editReciptIngredients()"
         >
           Edit
@@ -130,7 +187,7 @@
         <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
           {{ ingredient.name }}
         </span>
-        <span class="ml-dl-3 text-dl-5 font-dl-2 text-dl-blue-3">
+        <span class="ml-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
           {{ ingredient.measurement }} {{ ingredient.measurementUnit }}
         </span>
       </div>
@@ -148,7 +205,7 @@
         <button
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-7 block w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="editRecipeTools()"
         >
           Edit
@@ -179,7 +236,7 @@
         <button
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-7 block w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="editRecipeSteps()"
         >
           Edit

@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { selectRecipeSteps } from '../state/recipe-step/recipe-step-selectors';
 import { RecipeStep } from '../state/recipe-step/recipe-step-state';
+import { IDService } from 'src/app/shared/utils/ID';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,11 @@ import { RecipeStep } from '../state/recipe-step/recipe-step-state';
 export class RecipeStepService {
   private API_URL = `${environment.BACKEND}/steps/recipe`;
 
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store,
+    private idService: IDService
+  ) {}
 
   rows$: Observable<RecipeStep[]> = this.store.select(selectRecipeSteps).pipe(
     map((recipeSteps: RecipeStep[]) => {
@@ -37,7 +42,14 @@ export class RecipeStepService {
   }
 
   add(recipeStep: RecipeStep): Observable<RecipeStep> {
-    return this.http.post<RecipeStep>(this.API_URL, recipeStep);
+    const body = {
+      IDtype: this.idService.getIDtype('recipeStep'),
+      recipeID: recipeStep.recipeID,
+      stepID: recipeStep.stepID,
+      sequence: recipeStep.sequence,
+      photoURL: recipeStep.photoURL,
+    };
+    return this.http.post<RecipeStep>(this.API_URL, body);
   }
 
   update(recipeStep: RecipeStep): Observable<RecipeStep> {

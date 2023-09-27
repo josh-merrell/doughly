@@ -12,6 +12,7 @@ import {
   IngredientStockRow,
 } from '../state/ingredient-stock-state';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
+import { IDService } from 'src/app/shared/utils/ID';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,11 @@ import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient
 export class IngredientStockService {
   private API_URL = `${environment.BACKEND}/ingredientStocks`;
 
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store,
+    private idService: IDService
+  ) {}
 
   rows$: Observable<IngredientStockRow[]> = combineLatest([
     this.store.pipe(select(selectIngredientStocks)),
@@ -70,6 +75,12 @@ export class IngredientStockService {
   }
 
   add(ingredientStock: IngredientStock): Observable<IngredientStock> {
+    // copy ingredientStock object into new 'body' object, then add IDtype to it
+    const IDtype = this.idService.getIDtype('ingredientStock');
+    ingredientStock = {
+      IDtype,
+      ...ingredientStock,
+    };
     return this.http.post<IngredientStock>(this.API_URL, ingredientStock);
   }
 

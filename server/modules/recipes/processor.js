@@ -39,7 +39,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL } = options;
+    const { customID, userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL } = options;
     const status = 'noIngredients';
 
     if (!title) {
@@ -77,7 +77,7 @@ module.exports = ({ db }) => {
     }
 
     //create recipe
-    const { data: recipe, error } = await db.from('recipes').insert({ userID, title, servings, lifespanDays, recipeCategoryID, status, timePrep, timeBake, photoURL }).select().single();
+    const { data: recipe, error } = await db.from('recipes').insert({ recipeID: customID, userID, title, servings, lifespanDays, recipeCategoryID, status, timePrep, timeBake, photoURL }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipe: ${error.message}`);

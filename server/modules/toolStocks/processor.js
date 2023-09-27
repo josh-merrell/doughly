@@ -39,7 +39,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, toolID, purchasedBy, purchaseDate, quantity } = options;
+    const { customID, userID, toolID, purchasedBy, purchaseDate, quantity } = options;
 
     //validate that the provided toolID is valid
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID);
@@ -73,10 +73,13 @@ module.exports = ({ db }) => {
     const toolStockIDs = [];
 
     for (let i = 0; i < quantity; i++) {
+      // take number of digits in quantity and replace that number of digits from the end of customID with i padded with 0s
+      const toolStockID = customID.slice(0, -quantity.toString().length) + i.toString().padStart(quantity.toString().length, '0');
       toolStockPromises.push(
         db
           .from('toolStocks')
           .insert({
+            toolStockID,
             userID,
             toolID,
             purchasedBy,
