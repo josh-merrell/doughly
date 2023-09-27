@@ -4,15 +4,23 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-
     {
       "type": "node",
       "request": "launch",
       "name": "doughleap server",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}\\server\\server.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "lambda - resetSequencesForIDs",
+      "skipFiles": ["<node_internals>\\**"],
+      "cwd": "${workspaceFolder}\\server\\services\\lambda\\resetSequencesForIDs",
+      "envFile": "${workspaceFolder}\\server\\.env",
+      "program": "${workspaceFolder}\\server\\services\\lambda\\resetSequencesForIDs\\debug_bridge.js",
+      "outFiles": ["${workspaceFolder}\\server\\services\\lambda\\resetSequencesForIDs\\**\\*.js"],
+      "console": "integratedTerminal"
     }
   ]
 }

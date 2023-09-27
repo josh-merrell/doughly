@@ -24,6 +24,7 @@ import { selectRecipeIngredientsByRecipeID } from '../state/recipe-ingredient/re
 import { selectRecipeToolsByRecipeID } from '../state/recipe-tool/recipe-tool-selectors';
 import { selectIngredientByID } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectIngredientStocksByIngredientID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
+import { IDService } from 'src/app/shared/utils/ID';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,11 @@ import { selectIngredientStocksByIngredientID } from 'src/app/kitchen/feature/In
 export class RecipeService {
   private API_URL = `${environment.BACKEND}/recipes`;
 
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store,
+    private idService: IDService
+  ) {}
 
   rows$: Observable<Recipe[]> = combineLatest([
     this.store.pipe(select(selectRecipes)),
@@ -81,7 +86,18 @@ export class RecipeService {
   }
 
   add(recipe: Recipe): Observable<Recipe> {
-    return this.http.post<Recipe>(this.API_URL, recipe);
+    const body = {
+      IDtype: this.idService.getIDtype('recipe'),
+      title: recipe.title,
+      recipeCategoryID: recipe.recipeCategoryID,
+      servings: recipe.servings,
+      lifespanDays: recipe.lifespanDays,
+      status: recipe.status,
+      timePrep: recipe.timePrep,
+      timeBake: recipe.timeBake,
+      photoURL: recipe.photoURL,
+    };
+    return this.http.post<Recipe>(this.API_URL, body);
   }
 
   delete(recipeID: number): Observable<Recipe> {
@@ -95,7 +111,10 @@ export class RecipeService {
     );
   }
 
-  getShoppingList(recipeID: number): Observable<ShoppingList> {
+  getShoppingList(
+    recipeID: number,
+    date = new Date()
+  ): Observable<ShoppingList> {
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
       switchMap((recipeIngredients) => {
@@ -135,9 +154,16 @@ export class RecipeService {
         ] of ingredientsData) {
           let neededGrams =
             (recipeIngredient.measurement /
-            recipeIngredient.purchaseUnitRatio) *
+              recipeIngredient.purchaseUnitRatio) *
             ingredient.gramRatio;
           for (const stock of ingredientStocks) {
+            const expirationDate = new Date(stock.purchasedDate);
+            expirationDate.setDate(
+              expirationDate.getDate() + ingredient.lifespanDays
+            );
+            if (expirationDate < date) {
+              continue;
+            }
             neededGrams -= stock.grams;
             if (neededGrams <= 0) {
               break;
@@ -146,11 +172,30 @@ export class RecipeService {
           if (neededGrams > 0) {
             const quantity =
               Math.ceil((neededGrams / ingredient.gramRatio) * 100) / 100;
+            // if 'date' is later than current day plus the lifespan of the ingredient, then purchaseAfter is 'date' minus lifespan days of ingredient, otherwise purchaseAfter is null
+            let purchaseAfter =
+              date >
+              new Date(
+                new Date().setDate(
+                  new Date().getDate() + ingredient.lifespanDays
+                )
+              )
+                ? new Date(
+                    new Date(date).setDate(
+                      date.getDate() - ingredient.lifespanDays
+                    )
+                  ).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                  })
+                : null;
+
             shoppingList.push({
               type: 'ingredient',
               ingredientName: ingredient.name,
               quantity,
               unit: ingredient.purchaseUnit,
+              purchaseAfter: purchaseAfter,
             });
           }
         }

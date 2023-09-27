@@ -7,9 +7,9 @@ export interface IngredientStockState {
   error: IngredientStockError | null;
 }
 export interface IngredientStock {
+  IDtype?: number;
   ingredientStockID: number;
   ingredientID: number;
-  purchasedBy: string;
   purchasedDate: string;
   grams: number;
   userID: string;

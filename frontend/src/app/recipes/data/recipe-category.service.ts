@@ -5,6 +5,7 @@ import { RecipeCategory } from '../state/recipe-category/recipe-category-state';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { selectRecipeCategories } from '../state/recipe-category/recipe-category-selectors';
+import { IDService } from 'src/app/shared/utils/ID';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,11 @@ import { selectRecipeCategories } from '../state/recipe-category/recipe-category
 export class RecipeCategoryService {
   private API_URL = `${environment.BACKEND}/recipes/categories`;
 
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store,
+    private idService: IDService
+  ) {}
 
   rows$: Observable<RecipeCategory[]> = this.store
     .select(selectRecipeCategories)
@@ -37,7 +42,12 @@ export class RecipeCategoryService {
   }
 
   add(recipeCategory: RecipeCategory): Observable<RecipeCategory> {
-    return this.http.post<RecipeCategory>(this.API_URL, recipeCategory);
+    const body = {
+      IDtype: this.idService.getIDtype('recipeCategory'),
+      name: recipeCategory.name,
+      photoURL: recipeCategory.photoURL,
+    };
+    return this.http.post<RecipeCategory>(this.API_URL, body);
   }
 
   delete(recipeCategoryID: number): Observable<RecipeCategory> {

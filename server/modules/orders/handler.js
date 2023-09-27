@@ -34,7 +34,9 @@ async function createOrder(req, res) {
   const p = require('./processor')({ db });
   const { name, clientID, scheduledDeliveryTime, fulfillment, description } = req.body;
   const { authorization } = req.headers;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     authorization,
     userID: req.userID,
     name,

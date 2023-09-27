@@ -57,7 +57,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, clientID, name, scheduledDeliveryTime, fulfillment, description } = options;
+    const { customID, userID, clientID, name, scheduledDeliveryTime, fulfillment, description } = options;
 
     //validate client, return error if they don't exist
     const { data: client, error } = await db.from('clients').select().eq('clientID', clientID);
@@ -89,7 +89,7 @@ module.exports = ({ db }) => {
       },
     );
     //create an order
-    const { data: order, error: orderError } = await db.from('orders').insert({ userID, clientID, name, scheduledDeliveryTime, fulfillment, status, fulfilledTime, invoiceID: invoice.data[0].invoiceID, description, createdTime: new Date() }).select('orderID');
+    const { data: order, error: orderError } = await db.from('orders').insert({ orderID: customID, userID, clientID, name, scheduledDeliveryTime, fulfillment, status, fulfilledTime, invoiceID: invoice.data[0].invoiceID, description, createdTime: new Date() }).select('orderID');
 
     if (orderError) {
       global.logger.info(`Error creating order: ${orderError.message}`);

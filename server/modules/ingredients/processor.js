@@ -21,6 +21,7 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
     global.logger.info(`Got ${ingredients.length} ingredients`);
+    global.logger.info(`INGREDIENTS: ${JSON.stringify(ingredients)}`);
     return ingredients;
   }
 
@@ -37,7 +38,13 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, name, lifespanDays, brand, purchaseUnit, gramRatio } = options;
+    const { customID, userID, name, lifespanDays, brand, purchaseUnit, gramRatio } = options;
+
+    //verify that 'customID' exists on the request
+    if (!customID) {
+      global.logger.info(`Error creating ingredient: customID is missing`);
+      return { error: 'customID is missing' };
+    }
 
     //verify that the provided lifespanDays is a positive integer, return error if not
     if (!lifespanDays || lifespanDays < 0) {
@@ -63,7 +70,7 @@ module.exports = ({ db }) => {
     }
 
     //create the ingredient
-    const { data: ingredient, error: createError } = await db.from('ingredients').insert({ userID, name, lifespanDays, brand, purchaseUnit, gramRatio }).select().single();
+    const { data: ingredient, error: createError } = await db.from('ingredients').insert({ ingredientID: customID, userID, name, lifespanDays, brand, purchaseUnit, gramRatio }).select().single();
     if (createError) {
       global.logger.info(`Error creating ingredient: ${createError.message}`);
       return { error: createError.message };
