@@ -35,7 +35,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, title, description } = options;
+    const { customID, userID, title, description } = options;
 
     //verify that no steps exist with provided title
     // const { data: steps, error: error2 } = await db.from('steps').select('title').eq('title', title).eq('deleted', false);
@@ -67,7 +67,7 @@ module.exports = ({ db }) => {
       };
     }
 
-    const { data, error } = await db.from('steps').insert({ userID, title, description }).select().single();
+    const { data, error } = await db.from('steps').insert({ stepID: customID, userID, title, description }).select().single();
     if (error) {
       global.logger.info(`Error creating step: ${error.message}`);
       return { error: error.message };

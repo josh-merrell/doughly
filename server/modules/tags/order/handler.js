@@ -20,7 +20,9 @@ async function createOrderTag(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { orderID, tagID } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     orderID,
     tagID,

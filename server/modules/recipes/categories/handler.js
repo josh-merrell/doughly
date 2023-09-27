@@ -12,7 +12,9 @@ async function createRecipeCategory(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { name, photoURL } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     name,
     photoURL,

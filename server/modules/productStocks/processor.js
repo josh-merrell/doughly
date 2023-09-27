@@ -44,7 +44,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, stockProductID, producedDate } = options;
+    const { customID, userID, stockProductID, producedDate } = options;
 
     //validate that the provided stockProductID is valid
     const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').select().eq('stockProductID', stockProductID);
@@ -78,10 +78,12 @@ module.exports = ({ db }) => {
     const productStockIDs = [];
 
     for (let i = 0; i < stockProduct[0].yield; i++) {
+      //take number of digits in stockProduct.yield and replace that number of digits from the end of customID with i padded with 0s
+      const productStockID = customID.slice(0, -stockProduct[0].yield.toString().length) + i.toString().padStart(stockProduct[0].yield.toString().length, '0');
       productStockPromises.push(
         db
           .from('productStocks')
-          .insert({ userID, stockProductID, producedDate, daysRemaining, status: daysRemaining ? 'fresh' : 'expired' })
+          .insert({ productStockID, userID, stockProductID, producedDate, daysRemaining, status: daysRemaining ? 'fresh' : 'expired' })
           .select('productStockID'),
       );
     }

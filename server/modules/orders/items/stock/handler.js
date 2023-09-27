@@ -20,7 +20,9 @@ async function createStockItem(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { orderID, stockProductID, quantity, unitIncome } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     orderID,
     stockProductID,

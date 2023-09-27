@@ -38,7 +38,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, recipeID, productName, recipeYield } = options;
+    const { customID, userID, recipeID, productName, recipeYield } = options;
 
     //validate that there are no other stockProducts with the same recipeID
     const { data: existingStockProducts, error: existingStockProductsError } = await db.from('stockProducts').select().eq('recipeID', recipeID);
@@ -68,7 +68,7 @@ module.exports = ({ db }) => {
       return { error: `provided recipeYield: ${recipeYield} is not a positive integer. Cannot create stockProduct` };
     }
 
-    const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').insert({ userID, recipeID, productName, yield: recipeYield }).select().single();
+    const { data: stockProduct, error: stockProductError } = await db.from('stockProducts').insert({ stockProductID: customID, userID, recipeID, productName, yield: recipeYield }).select().single();
 
     if (stockProductError) {
       global.logger.info(`Error creating stockProduct: ${stockProductError.message}`);

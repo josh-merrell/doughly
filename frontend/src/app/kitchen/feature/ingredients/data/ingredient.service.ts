@@ -5,6 +5,7 @@ import { Ingredient } from '../state/ingredient-state';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { selectIngredients } from '../state/ingredient-selectors';
+import { IDService } from 'src/app/shared/utils/ID';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,11 @@ import { selectIngredients } from '../state/ingredient-selectors';
 export class IngredientService {
   private API_URL = `${environment.BACKEND}/ingredients`;
 
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store,
+    private idService: IDService
+  ) {}
 
   rows$: Observable<Ingredient[]> = this.store.select(selectIngredients).pipe(
     map((ingredients: Ingredient[]) => {
@@ -27,7 +32,7 @@ export class IngredientService {
         };
       });
     })
-  )
+  );
 
   getAll(): Observable<Ingredient[]> {
     return this.http.get<Ingredient[]>(this.API_URL);
@@ -38,7 +43,16 @@ export class IngredientService {
   }
 
   add(ingredient: Ingredient): Observable<Ingredient> {
-    return this.http.post<Ingredient>(this.API_URL, ingredient);
+    const IDtype = this.idService.getIDtype('ingredient');
+    const body = {
+      IDtype,
+      name: ingredient.name,
+      brand: ingredient.brand,
+      gramRatio: ingredient.gramRatio,
+      purchaseUnit: ingredient.purchaseUnit,
+      lifespanDays: ingredient.lifespanDays,
+    };
+    return this.http.post<Ingredient>(this.API_URL, body);
   }
 
   delete(ingredientID: number): Observable<Ingredient> {

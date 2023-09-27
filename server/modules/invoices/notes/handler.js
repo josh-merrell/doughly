@@ -20,7 +20,9 @@ async function createInvoiceNote(req, res) {
   const p = require('./processor')({ db });
   const { invoiceID } = req.params;
   const { note } = req.body;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
     userID: req.userID,
     invoiceID,
     note,

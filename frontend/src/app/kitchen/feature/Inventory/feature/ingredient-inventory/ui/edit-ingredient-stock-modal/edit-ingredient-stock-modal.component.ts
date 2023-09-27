@@ -22,14 +22,12 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { selectEmployees } from 'src/app/employees/state/employee-selectors';
-import { Employee } from 'src/app/employees/state/employee-state';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
-import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
 
 @Component({
   selector: 'dl-edit-ingredient-stock-modal',
@@ -49,7 +47,6 @@ import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 export class EditIngredientStockModalComponent {
   ingredientStock$!: Observable<IngredientStock>;
   form!: FormGroup;
-  employees$!: Observable<Employee[]>;
   submittingChanges: boolean = false;
   ingredient$!: Observable<Ingredient>;
   originalIngredientStock!: any;
@@ -71,13 +68,12 @@ export class EditIngredientStockModalComponent {
     this.form = this.fb.group({
       purchasedBy: ['', Validators.required],
       purchasedDate: ['', Validators.required],
-      measurement: ['', [Validators.required, positiveIntegerValidator()]],
+      measurement: ['', [Validators.required, positiveFloatValidator()]],
     });
   }
 
   ngOnInit(): void {
     this.setForm();
-    this.employees$ = this.store.pipe(select(selectEmployees));
     this.ingredientStock$ = this.store.pipe(
       select(selectIngredientStockByID(this.data.itemID))
     );
@@ -85,7 +81,6 @@ export class EditIngredientStockModalComponent {
     this.ingredientStock$.subscribe((ingredientStock) => {
       this.originalIngredientStock = ingredientStock;
       this.form.patchValue({
-        purchasedBy: ingredientStock.purchasedBy,
         purchasedDate: ingredientStock.purchasedDate,
         measurement: ingredientStock.grams,
       });
@@ -109,58 +104,10 @@ export class EditIngredientStockModalComponent {
         ).toFixed(2);
 
         this.form.patchValue({
-          purchasedBy: ingredientStock.purchasedBy,
           purchasedDate: ingredientStock.purchasedDate,
           measurement: newMeasurement,
         });
       });
-
-    this.form
-      .get('purchasedBy')!
-      .valueChanges.subscribe((selectedEmployeeId) => {
-        this.employees$
-          .pipe(
-            map((employees) =>
-              employees.find(
-                (employee) => employee.employeeID === selectedEmployeeId
-              )
-            )
-          )
-          .subscribe((employee) => {
-            const hireDate = new Date(employee?.hireDate || '');
-            this.form
-              .get('purchasedDate')!
-              .setValidators([
-                Validators.required,
-                this.dateValidator(hireDate),
-              ]);
-            this.form.get('purchasedDate')!.updateValueAndValidity();
-          });
-      });
-
-    this.form.get('purchasedDate')!.valueChanges.subscribe((selectedDate) => {
-      const selectedDateTime = new Date(selectedDate).getTime();
-      const selectedEmployeeId = purchasedByControl.value;
-
-      this.employees$
-        .pipe(
-          map((employees) =>
-            employees.find(
-              (employee) => employee.employeeID === selectedEmployeeId
-            )
-          )
-        )
-        .subscribe((employee) => {
-          if (employee) {
-            const hireDate = new Date(employee.hireDate).getTime();
-            if (selectedDateTime < hireDate) {
-              purchasedDateControl.setErrors({ dateInvalid: true });
-            } else {
-              purchasedDateControl.setErrors(null);
-            }
-          }
-        });
-    });
   }
 
   dateValidator(minDate: Date): ValidatorFn {

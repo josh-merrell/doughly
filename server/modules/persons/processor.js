@@ -47,7 +47,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
+    const { customID, userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
 
     //make sure the email is not already in use. If so, return an error.
     const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').eq('email', email);
@@ -64,6 +64,7 @@ module.exports = ({ db }) => {
     const { data, error } = await db
       .from('persons')
       .insert({
+        personID: customID,
         userID,
         nameFirst,
         nameLast,

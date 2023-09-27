@@ -6,11 +6,8 @@
     *ngIf="isAdding$ | async"
   ></mat-spinner>
   <div *ngIf="!(isAdding$ | async)" class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
-    <div class="flex w-full flex-col items-start">
-      <h3 class="text-dl-6 font-dl-3 text-dl-grey-4">
-        {{ recipe.title }}
-      </h3>
-      <p class="mb-dl-2 mt-dl-5 text-dl-5 text-dl-blue-5">Tools</p>
+    <div class="mb-dl-4 text-center">
+      <p class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4">Tools</p>
     </div>
 
     <!--List of Recipe Tools-->
