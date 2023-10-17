@@ -9,6 +9,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -39,6 +40,7 @@ import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-err
     MatSelectModule,
     MatInputModule,
     ImageCropperModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './edit-recipe-modal.component.html',
 })
@@ -62,6 +64,7 @@ export class EditRecipeModalComponent {
   public imagePresent: boolean = false;
   public photoURL?: string = '';
   public photo: any;
+  public isChecked!: boolean;
   newPhotoURL!: string;
 
   constructor(
@@ -76,6 +79,7 @@ export class EditRecipeModalComponent {
   }
 
   ngOnInit(): void {
+    this.isChecked = this.data.type === 'public' ? true : false;
     this.store
       .select(selectRecipes)
       .pipe(takeUntil(this.unsubscribe$))
@@ -96,6 +100,7 @@ export class EditRecipeModalComponent {
     this.form = this.fb.group({
       title: [this.data.title, [Validators.required, this.titleValidator()]],
       recipeCategoryID: [this.data.recipeCategoryID, [Validators.required]],
+      isPublicRecipe: [this.data.type === 'public' ? true : false],
       servings: [
         this.data.servings,
         [Validators.required, positiveIntegerValidator(), twoByteInteger()],
@@ -234,10 +239,14 @@ export class EditRecipeModalComponent {
       servings: parseInt(this.form.value.servings),
       lifespanDays: parseInt(this.form.value.lifespanDays),
       timePrep: parseInt(this.form.value.timePrep),
-      timeBake: this.form.value.timeBake? parseInt(this.form.value.timeBake) : null,
+      timeBake: this.form.value.timeBake
+        ? parseInt(this.form.value.timeBake)
+        : null,
+      type: this.form.value.isPublicRecipe ? 'public' : 'private',
       photoURL: this.photoURL,
       recipeID: this.data.recipeID,
     };
+    console.log(`UPDATING RECIPE TYPE: ${newRecipe.type}`)
     //first replace the image if necessary
     if (this.croppedImage && this.selectedFile) {
       await this.replaceImage();
@@ -246,7 +255,8 @@ export class EditRecipeModalComponent {
 
     this.store.dispatch(RecipeActions.updateRecipe({ recipe: newRecipe }));
 
-    this.updatingSubscription = this.store.select(selectUpdating)
+    this.updatingSubscription = this.store
+      .select(selectUpdating)
       .subscribe((updating) => {
         if (!updating) {
           this.store.select(selectError).subscribe((error) => {

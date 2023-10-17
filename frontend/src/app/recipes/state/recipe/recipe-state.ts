@@ -10,11 +10,18 @@ export interface RecipeState {
   error: RecipeError | null;
 }
 
+export enum RecipeType {
+  public = 'public',
+  private = 'private',
+  subscription = 'subscription',
+}
+
 export interface Recipe {
   recipeID: number;
   title: string;
   servings: number;
   recipeCategoryID: number;
+  type: RecipeType;
   lifespanDays: number;
   timePrep?: number;
   timeBake?: number;

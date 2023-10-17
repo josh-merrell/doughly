@@ -19,12 +19,13 @@ const getRecipeSchema_params = {
 
 const newRecipeSchema_body = {
   type: 'object',
-  required: ['title', 'servings', 'lifespanDays', 'timePrep'],
+  required: ['title', 'servings', 'lifespanDays', 'timePrep', 'type'],
   properties: {
     title: { type: 'string' },
     servings: { type: 'integer' },
     lifespanDays: { type: 'integer' },
     recipeCategoryID: { type: 'integer' },
+    type: { type: 'string' },
     timePrep: { type: 'integer' },
     timeBake: { type: 'integer' },
     photoURL: { type: 'string' },
@@ -38,6 +39,7 @@ const RecipeUpdateSchema_body = {
     servings: { type: 'integer' },
     lifespanDays: { type: 'integer' },
     recipeCategoryID: { type: 'integer' },
+    type: { type: 'string' },
     status: { type: 'string' },
     timePrep: { type: 'integer' },
     timeBake: { type: ['integer', 'null'], nullable: true },
