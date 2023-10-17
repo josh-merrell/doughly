@@ -7,8 +7,17 @@ const cors = require('cors');
 require('dotenv').config();
 const logger = winston.createLogger({
   level: 'info',
-  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
-  defaultMeta: { service: 'routing-service' },
+  format: winston.format.combine(
+    winston.format.timestamp({
+      format: 'YYYY-MM-DDTHH:mm:ss',
+    }),
+    winston.format.json(),
+    winston.format.printf((info) => {
+      // If you want to exclude the 'service' attribute
+      delete info.service;
+      return `${info.timestamp} [${info.level}]: ${info.message}`;
+    }),
+  ),
   transports: [new winston.transports.Console({ format: winston.format.simple() }), new winston.transports.File({ filename: 'logger.log', level: 'info' })],
 });
 

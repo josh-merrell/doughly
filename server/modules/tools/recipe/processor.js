@@ -66,7 +66,8 @@ module.exports = ({ db }) => {
       }
       if (!existingDummyRecipeTool.length) {
         //create dummy recipeTool
-        const { data: newDummyRecipeTool, error: newDummyRecipeToolError } = await db.from('recipeTools').insert({ userID, recipeID, quantity }).select().single();
+        console.log(`USERID: ${userID}, RECIPEID: ${recipeID}, QUANTITY: ${quantity}`)
+        const { data: newDummyRecipeTool, error: newDummyRecipeToolError } = await db.from('recipeTools').insert({ recipeToolID: customID, userID, recipeID, quantity }).select().single();
         if (newDummyRecipeToolError) {
           global.logger.info(`Error creating dummy recipeTool: ${newDummyRecipeToolError}`);
           return { error: newDummyRecipeToolError };

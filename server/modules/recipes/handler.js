@@ -19,7 +19,7 @@ async function getRecipeByID(req, res) {
 async function createRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL } = req.body;
+  const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = req.body;
   const { customID } = req;
   const returner = await p.create({
     customID,
@@ -28,6 +28,7 @@ async function createRecipe(req, res) {
     servings,
     lifespanDays,
     recipeCategoryID,
+    type,
     timePrep,
     timeBake,
     photoURL,
@@ -39,12 +40,13 @@ async function updateRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeID } = req.params;
-  const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL } = req.body;
+  const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = req.body;
   const returner = await p.update({
     userID: req.userID,
     recipeID,
     recipeCategoryID,
     title,
+    type,
     servings,
     lifespanDays,
     timePrep,

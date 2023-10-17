@@ -55,6 +55,19 @@
             </mat-select>
           </mat-form-field>
         </div>
+        <div
+          id="form-isPublicRecipe"
+          class="relative mt-dl-2 flex flex-row items-center"
+        >
+          <mat-slide-toggle
+            [(ngModel)]="isChecked"
+            formControlName="isPublicRecipe"
+            class="select-slider"
+          ></mat-slide-toggle>
+          <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
+            >Make public and track subscriber count</span
+          >
+        </div>
         <div class="mt-dl-2 flex">
           <div id="form-servings" class="mr-dl-4">
             <label class="text-dl-5 font-dl-3 text-dl-grey-4">Servings</label>

@@ -16,6 +16,7 @@ import {
   MatDialog,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {
   nonDuplicateString,
   positiveIntegerValidator,
@@ -52,6 +53,7 @@ import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-cat
     MatSelectModule,
     MatInputModule,
     ImageCropperModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './add-recipe-modal.component.html',
 })
@@ -73,6 +75,7 @@ export class AddRecipeModalComponent {
   public isCropperReady: boolean = false;
   public imageLoadFailed: boolean = false;
   public imagePresent: boolean = false;
+  public isChecked = true;
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeModalComponent>,
@@ -101,6 +104,7 @@ export class AddRecipeModalComponent {
           nonDuplicateString(this.recipes.map((recipe) => recipe.title)),
         ],
       ],
+      isPublicRecipe: [true],
       servings: [
         '',
         [Validators.required, positiveIntegerValidator(), twoByteInteger()],
@@ -195,6 +199,7 @@ export class AddRecipeModalComponent {
     const newRecipe: any = {
       title: formValue.title,
       recipeCategoryID: formValue.recipeCategoryID,
+      type: formValue.isPublicRecipe ? 'public' : 'private',
       servings: parseInt(formValue.servings),
       lifespanDays: parseInt(formValue.lifespanDays),
       timePrep: parseInt(formValue.timePrep),
