@@ -8,13 +8,13 @@
 
     <!--List of Ingredients and needed quantities-->
     <div class="mb-dl-5 mx-dl-2 flex flex-col">
-      <div class="mb-dl-2 flex w-dl-15 items-start">
+      <div class="mb-dl-2 flex w-dl-15 flex-wrap items-start">
         <ng-container *ngFor="let item of shoppingList.ingredients">
           <div
             class="inline-block"
           >
             <div
-              class="mr-dl-3 mt-dl-2 inline-flex rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-4 text-dl-grey-2"
+              class="mr-dl-3 mt-dl-2 inline-flex whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-4 text-dl-grey-2"
             >
               <span class="font-dl-3"
                 >{{ item.ingredientName }}&nbsp;&nbsp;&nbsp;</span
