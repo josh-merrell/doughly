@@ -41,11 +41,10 @@ async function generateID(req, res, next) {
 
   This value is stored in req.dataID, and is used by the POST processors to insert the new row into the db as a bigInt (8Byte integer)
   **/
-
   let type = req.body.IDtype;
 
   if (!type) {
-    return res.status(410).send('Type parameter is missing');
+    return res.status(410).send('Type parameter is missing, cannot generate custom ID');
   }
   if (type === 0) {
     return res.status(411).send('Default Type of "0" is not allowed');

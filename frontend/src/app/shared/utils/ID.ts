@@ -31,6 +31,8 @@ export class IDService {
         return 21;
       case 'person':
         return 22;
+      case 'log':
+        return 23;
       default:
         return 0;
     }
