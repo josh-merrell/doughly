@@ -57,6 +57,7 @@ const ingredientsRouter = require('./modules/ingredients/router');
 const ingredientStocksRouter = require('./modules/ingredientStocks/router');
 const productStocksRouter = require('./modules/productStocks/router');
 const uploadsRouter = require('./modules/uploads/router');
+const logsRouter = require('./modules/logs/router');
 
 app.use(express.json());
 
@@ -90,6 +91,7 @@ app.use('/toolStocks', toolStocksRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/ingredientStocks', ingredientStocksRouter);
 app.use('/productStocks', productStocksRouter);
+app.use('/logs', logsRouter);
 
 // Start the server
 const port = 3000;
