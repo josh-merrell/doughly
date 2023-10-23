@@ -35,9 +35,11 @@ async function createPerson(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = req.body;
+  const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
+    authorization,
     userID: req.userID,
     nameFirst,
     nameLast,

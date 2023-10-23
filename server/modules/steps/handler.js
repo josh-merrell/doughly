@@ -18,9 +18,11 @@ async function createStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { title, description } = req.body;
+  const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
+    authorization,
     userID: req.userID,
     title,
     description,
@@ -46,7 +48,8 @@ async function deleteStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { stepID } = req.params;
-  const returner = await p.delete({ userID: req.userID, stepID });
+  const { authorization } = req.headers;
+  const returner = await p.delete({ authorization, userID: req.userID, stepID });
   return res.json(returner);
 }
 

@@ -1,6 +1,7 @@
 ('use strict');
 
 const { updater } = require('../../db');
+const { loggerCreate } = require('../../services/dbLogger');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -39,7 +40,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, toolID, purchasedBy, purchaseDate, quantity } = options;
+    const { customID, authorization, userID, toolID, purchasedBy, purchaseDate, quantity } = options;
 
     //validate that the provided toolID is valid
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID);
@@ -85,7 +86,8 @@ module.exports = ({ db }) => {
             purchasedBy,
             purchaseDate,
           })
-          .select('toolStockID'),
+          .select('toolStockID')
+          .single(),
       );
     }
 
@@ -96,7 +98,10 @@ module.exports = ({ db }) => {
         if (result.error) {
           throw new Error(result.error.message);
         } else {
-          toolStockIDs.push(result.data[0].toolStockID);
+          //add a 'created' log entry
+          loggerCreate(userID, result.data.toolStockID, 'toolStocks', 'created', authorization);
+
+          toolStockIDs.push(result.data.toolStockID);
         }
       });
 
@@ -152,7 +157,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteToolStock(options) {
-    const { toolStockID } = options;
+    const { userID, authorization, toolStockID } = options;
 
     //validate that the provided toolStockID exists
     const { data: existingToolStock, error: existingToolStockError } = await db.from('toolStocks').select().eq('toolStockID', toolStockID).eq('deleted', false);
@@ -172,6 +177,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting toolStock ID: ${toolStockID}: ${error.message}`);
       return { error: error.message };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(toolStockID), 'toolStocks', 'deleted', authorization);
     global.logger.info(`Deleted toolStock ID: ${toolStockID}`);
     return { success: true };
   }

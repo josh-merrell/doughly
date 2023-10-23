@@ -1,7 +1,7 @@
 ('use strict');
 
 const axios = require('axios');
-
+const { loggerCreate } = require('../../services/dbLogger');
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
@@ -19,7 +19,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, name, photoURL } = options;
+    const { authorization, customID, userID, name, photoURL } = options;
 
     //if name is not provided, return error
     if (!name) {
@@ -33,6 +33,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating recipeCategory: ${error.message}`);
       return { error: error.message };
     }
+
+    //add a 'created' log entry
+    loggerCreate(userID, newRecipeCategory.recipeCategoryID, 'recipeCategories', 'created', authorization);
 
     global.logger.info(`Created recipeCategory ID ${newRecipeCategory.recipeCategoryID}`);
     return {
@@ -154,6 +157,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting recipeCategory: ${deleteError.message}`);
       return { error: deleteError.message };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(options.userID, Number(options.recipeCategoryID), 'recipeCategories', 'deleted', options.authorization);
 
     global.logger.info(`Deleted recipeCategory: ${options.recipeCategoryID}`);
     return data;

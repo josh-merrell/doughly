@@ -1,6 +1,7 @@
 ('use strict');
 
 const { default: axios } = require('axios');
+const { loggerCreate } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -38,7 +39,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, name, lifespanDays, brand, purchaseUnit, gramRatio } = options;
+    const { customID, authorization, userID, name, lifespanDays, brand, purchaseUnit, gramRatio } = options;
 
     //verify that 'customID' exists on the request
     if (!customID) {
@@ -76,6 +77,10 @@ module.exports = ({ db }) => {
       return { error: createError.message };
     }
     global.logger.info(`Created ingredient ID: ${ingredient.ingredientID}`);
+
+    //add a 'created' log entry
+    loggerCreate(userID, ingredient.ingredientID, 'ingredients', 'created', authorization, ingredient.name);
+
     return {
       ingredientID: ingredient.ingredientID,
       name: ingredient.name,
@@ -150,7 +155,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteIngredient(options) {
-    const { ingredientID } = options;
+    const { userID, authorization, ingredientID } = options;
     //verify that the provided ingredientID exists, return error if not
     const { data: existingIngredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
     if (error) {
@@ -166,7 +171,7 @@ module.exports = ({ db }) => {
     try {
       const { data: relatedStockEntries, error: stockError } = await db.from('ingredientStocks').select().eq('ingredientID', ingredientID).eq('deleted', false);
       if (stockError) {
-        global.logger.info(`Error getting related stock entries after deleting ingredient ID: ${ingredientID} : ${stockError.message}`);
+        global.logger.info(`Error getting related stock entries prior to deleting ingredient ID: ${ingredientID} : ${stockError.message}`);
         return { error: stockError.message };
       }
 
@@ -178,9 +183,12 @@ module.exports = ({ db }) => {
           },
         });
         if (ingredientStockDeleteResult.error) {
-          global.logger.info(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} after deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
+          global.logger.info(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
           return { error: ingredientStockDeleteResult.error };
         }
+
+        //add a 'deleted' log entry
+        loggerCreate(userID, Number(relatedStockEntries[i].ingredientStockID), 'ingredientStocks', 'deleted', authorization);
       }
     } catch (error) {
       global.logger.info(`Error deleting related stock entries: ${error.message}`);
@@ -191,7 +199,7 @@ module.exports = ({ db }) => {
     try {
       const { data: recipeIngredients, error: recipeError } = await db.from('recipeIngredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
       if (recipeError) {
-        global.logger.info(`Error getting related recipeIngredients after deleting ingredient ID: ${ingredientID} : ${recipeError.message}`);
+        global.logger.info(`Error getting related recipeIngredients prior to deleting ingredient ID: ${ingredientID} : ${recipeError.message}`);
         return { error: recipeError.message };
       }
 
@@ -203,9 +211,12 @@ module.exports = ({ db }) => {
           },
         });
         if (recipeIngredientDeleteResult.error) {
-          global.logger.info(`Error deleting recipeIngredientID: ${recipeIngredients[i].recipeIngredientID} after deleting ingredient ID: ${ingredientID} : ${recipeIngredientDeleteResult.error}`);
+          global.logger.info(`Error deleting recipeIngredientID: ${recipeIngredients[i].recipeIngredientID} prior to deleting ingredient ID: ${ingredientID} : ${recipeIngredientDeleteResult.error}`);
           return { error: recipeIngredientDeleteResult.error };
         }
+
+        //add a 'deleted' log entry
+        loggerCreate(userID, Number(recipeIngredients[i].recipeIngredientID), 'recipeIngredients', 'deleted', authorization);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeIngredients: ${error.message}`);
@@ -218,6 +229,10 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting ingredient: ${deleteError.message}`);
       return { error: deleteError.message };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(ingredientID), 'ingredients', 'deleted', authorization);
+
     global.logger.info(`Deleted ingredient ID: ${ingredientID}`);
 
     return { success: true };

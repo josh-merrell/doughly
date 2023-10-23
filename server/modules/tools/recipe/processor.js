@@ -1,6 +1,7 @@
 ('use strict');
 
 const { updater } = require('../../../db');
+const { loggerCreate } = require('../../services/dbLogger');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -42,7 +43,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, recipeID, toolID, quantity } = options;
+    const { customID, authorization, userID, recipeID, toolID, quantity } = options;
 
     //validate that provided recipeID exists
     const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID);
@@ -66,7 +67,7 @@ module.exports = ({ db }) => {
       }
       if (!existingDummyRecipeTool.length) {
         //create dummy recipeTool
-        console.log(`USERID: ${userID}, RECIPEID: ${recipeID}, QUANTITY: ${quantity}`)
+        console.log(`USERID: ${userID}, RECIPEID: ${recipeID}, QUANTITY: ${quantity}`);
         const { data: newDummyRecipeTool, error: newDummyRecipeToolError } = await db.from('recipeTools').insert({ recipeToolID: customID, userID, recipeID, quantity }).select().single();
         if (newDummyRecipeToolError) {
           global.logger.info(`Error creating dummy recipeTool: ${newDummyRecipeToolError}`);
@@ -123,6 +124,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating recipeTool: ${newRecipeToolError}`);
       return { error: newRecipeToolError };
     }
+
+    //add a 'created' log entry
+    loggerCreate(userID, newRecipeTool.recipeToolID, 'recipeTools', 'created', authorization);
 
     //if status of existingRecipe is 'noTools', update status to 'noSteps'
     if (recipe[0].status === 'noTools') {
@@ -187,7 +191,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteRecipeTool(options) {
-    const { recipeToolID } = options;
+    const { userID, authorization, recipeToolID } = options;
     //validate that provided recipeToolID exists
     const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID).eq('deleted', false);
     if (recipeToolError) {
@@ -205,6 +209,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting recipeTool: ${deleteError}`);
       return { error: deleteError };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(recipeToolID), 'recipeTools', 'deleted', authorization);
     global.logger.info(`Deleted recipeTool ${recipeToolID}`);
 
     //if existingRecipe has no more recipeTools, check whether it has any recipeSteps
