@@ -1,6 +1,8 @@
 ('use strict');
 
 const { updater } = require('../../db');
+const axios = require('axios');
+const { loggerCreate } = require('../../services/dbLogger');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -38,7 +40,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, name, brand } = options;
+    const { customID, authorization, userID, name, brand } = options;
 
     //validate that the provided name is not already used by another tool
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('name', name).filter('deleted', 'eq', false);
@@ -58,6 +60,10 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating tool: ${error.message}`);
       return { error: error.message };
     }
+
+    //add a 'created' log entry
+    loggerCreate(userID, tool.toolID, 'tools', 'created', authorization, tool.name);
+
     global.logger.info(`Created tool ID ${tool.toolID}`);
     return {
       toolID: tool.toolID,
@@ -114,7 +120,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteTool(options) {
-    const { toolID } = options;
+    const { userID, authorization, toolID } = options;
 
     //validate that the provided toolID exists
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID).eq('deleted', false);
@@ -127,6 +133,62 @@ module.exports = ({ db }) => {
       return { error: `Tool with ID ${toolID} does not exist, cannot delete tool` };
     }
 
+    //get list of related recipeTools
+    try {
+      const { data: relatedRecipeTools, error: toolError } = await db.from('recipeTools').select().eq('toolID', toolID).eq('deleted', false);
+      if (toolError) {
+        global.logger.info(`Error getting related recipeTools for tool to delete: ${toolID} : ${toolError.message}`);
+        return { error: toolError.message };
+      }
+
+      //delete any associated recipeTools entries;
+      for (let i = 0; i < relatedRecipeTools.length; i++) {
+        const { data: recipeToolDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipeTools/${relatedRecipeTools[i].recipeToolID}`, {
+          headers: {
+            authorization: options.authorization,
+          },
+        });
+        if (recipeToolDeleteResult.error) {
+          global.logger.info(`Error deleting recipeToolID: ${relatedRecipeTools[i].recipeToolID} prior to deleting tool ID: ${toolID} : ${recipeToolDeleteResult.error}`);
+          return { error: recipeToolDeleteResult.error };
+        }
+
+        //add a 'deleted' log entry
+        loggerCreate(options.userID, Number(relatedRecipeTools[i].recipeToolID), 'recipeTools', 'deleted', options.authorization);
+      }
+    } catch (error) {
+      global.logger.info(`Error deleting related recipeTools: ${error.message}`);
+      return { error: error.message };
+    }
+
+    //get list of related toolStocks
+    try {
+      const { data: relatedToolStocks, error: toolStockError } = await db.from('recipeTools').select().eq('toolID', toolID).eq('deleted', false);
+      if (toolStockError) {
+        global.logger.info(`Error getting related recipeTools for tool to delete: ${toolID} : ${toolStockError.message}`);
+        return { error: toolStockError.message };
+      }
+
+      //delete any associated toolStocks entries;
+      for (let i = 0; i < relatedToolStocks.length; i++) {
+        const { data: toolStockDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/toolStocks/${relatedToolStocks[i].recipeToolID}`, {
+          headers: {
+            authorization: options.authorization,
+          },
+        });
+        if (toolStockDeleteResult.error) {
+          global.logger.info(`Error deleting toolStockID: ${relatedToolStocks[i].toolStockID} prior to deleting tool ID: ${toolID} : ${toolStockDeleteResult.error}`);
+          return { error: toolStockDeleteResult.error };
+        }
+
+        //add a 'deleted' log entry
+        loggerCreate(options.userID, Number(relatedToolStocks[i].toolStcckID), 'toolStocks', 'deleted', options.authorization);
+      }
+    } catch (error) {
+      global.logger.info(`Error deleting related toolStocks: ${error.message}`);
+      return { error: error.message };
+    }
+
     //delete the tool
     const { error } = await db.from('tools').update({ deleted: true }).eq('toolID', toolID);
 
@@ -134,6 +196,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting tool: ${error.message}`);
       return { error: error.message };
     }
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(toolID), 'tools', 'deleted', authorization);
+
     global.logger.info(`Deleted tool ID ${toolID}`);
     return { success: true };
   }

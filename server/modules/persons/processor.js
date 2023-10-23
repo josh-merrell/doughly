@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 
+const { loggerCreate } = require('../../services/dbLogger');
 const axios = require('axios');
 
 ('use strict');
@@ -47,7 +48,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
+    const { customID, authorization, userID, nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = options;
 
     //make sure the email is not already in use. If so, return an error.
     const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').eq('email', email);
@@ -76,14 +77,18 @@ module.exports = ({ db }) => {
         state,
         zip,
       })
-      .select('personID');
+      .select()
+      .single();
 
     if (error) {
       global.logger.info(`Error creating person ${nameFirst} ${nameLast}: ${error.message}`);
       return { error: error.message };
     } else {
-      global.logger.info(`Created person ${nameFirst} ${nameLast}, ID ${data[0].personID}`);
-      return data[0];
+      //add a 'created' log entry
+      loggerCreate(userID, data.personID, 'persons', 'created', authorization, `${data.nameFirst} ${data.nameLast}`);
+
+      global.logger.info(`Created person ${nameFirst} ${nameLast}, ID ${data.personID}`);
+      return data;
     }
   }
 
@@ -135,12 +140,15 @@ module.exports = ({ db }) => {
     }
 
     //if the person exists, delete the person from the 'persons' table,
-    // let { data, error } = await db.from('persons').delete().eq('personID', options.personID);
     let { data, error } = await db.from('persons').update({ deleted: true }).eq('personID', options.personID);
     if (error) {
       global.logger.info(`Error deleting personID: ${options.personID}: ${error.message}`);
       return { error: error.message };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(options.userID, Number(options.personID), 'persons', 'deleted', options.authorization);
+
     global.logger.info(`Deleted personID: ${options.personID}`);
     return data;
   }

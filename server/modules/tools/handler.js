@@ -20,9 +20,11 @@ async function createTool(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { name, brand } = req.body;
+  const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
+    authorization,
     userID: req.userID,
     name,
     brand,
@@ -48,9 +50,11 @@ async function deleteTool(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolID } = req.params;
+  const { authorization } = req.headers;
   const returner = await p.delete({
     userID: req.userID,
     toolID,
+    authorization,
   });
   return res.json(returner);
 }

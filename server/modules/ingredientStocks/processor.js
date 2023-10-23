@@ -1,5 +1,6 @@
 ('use strict');
 
+const { loggerCreate } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -38,7 +39,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, ingredientID, measurement, purchasedDate } = options;
+    const { authorization, customID, userID, ingredientID, measurement, purchasedDate } = options;
 
     //verify that the provided ingredientID is valid, return error if not
     const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
@@ -67,6 +68,10 @@ module.exports = ({ db }) => {
       return { error: newIngredientStockError.message };
     }
     global.logger.info(`Created ingredientStock ID: ${newIngredientStock.ingredientStockID}`);
+
+    //add a 'created' log entry
+    loggerCreate(userID, newIngredientStock.ingredientStockID, 'ingredientStocks', 'created', authorization);
+
     return {
       ingredientStockID: newIngredientStock.ingredientStockID,
       ingredientID: newIngredientStock.ingredientID,
@@ -128,7 +133,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteIngredientStock(options) {
-    const { ingredientStockID } = options;
+    const { userID, ingredientStockID, authorization } = options;
 
     //verify that the provided ingredientStockID is valid, return error if not
     const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false);
@@ -147,6 +152,10 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting ingredientStock: ${deleteError.message}`);
       return { error: deleteError.message };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(ingredientStockID), 'ingredientStocks', 'deleted', authorization);
+
     global.logger.info(`Deleted ingredientStock ID: ${ingredientStockID}`);
     return { success: true };
   }

@@ -20,9 +20,11 @@ async function createToolStock(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolID, purchasedBy, purchaseDate, quantity } = req.body;
+  const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
+    authorization,
     userID: req.userID,
     toolID,
     purchasedBy,
@@ -50,9 +52,11 @@ async function deleteToolStock(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolStockID } = req.params;
+  const { authorization } = req.headers;
   const returner = await p.delete({
     userID: req.userID,
     toolStockID,
+    authorization,
   });
   return res.json(returner);
 }
