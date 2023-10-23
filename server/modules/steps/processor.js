@@ -1,5 +1,7 @@
 ('use strict');
 
+const axios = require('axios');
+const { loggerCreate } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -35,7 +37,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, title, description } = options;
+    const { authorization, customID, userID, title, description } = options;
 
     //verify that no steps exist with provided title
     // const { data: steps, error: error2 } = await db.from('steps').select('title').eq('title', title).eq('deleted', false);
@@ -72,6 +74,10 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating step: ${error.message}`);
       return { error: error.message };
     }
+
+    //add a 'created' log entry
+    loggerCreate(userID, data.stepID, 'steps', 'created', authorization, data.title);
+
     global.logger.info(`Created step ${data.stepID}`);
     // return data;
     return {
@@ -123,7 +129,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteStep(options) {
-    const { stepID } = options;
+    const { stepID, userID, authorization } = options;
     //verify that provided stepID exists
     const { data: step, error } = await db.from('steps').select().eq('stepID', stepID).eq('deleted', false);
     if (error) {
@@ -135,11 +141,44 @@ module.exports = ({ db }) => {
       return { error: `Provided step ID: ${stepID} does not exist, can't delete` };
     }
 
+    //get list of related recipeSteps
+    try {
+      const { data: relatedRecipeSteps, error: stepError } = await db.from('recipeSteps').select().eq('stepID', stepID).eq('deleted', false);
+      if (stepError) {
+        global.logger.info(`Error getting related recipeSteps for step to delete: ${stepID} : ${stepError.message}`);
+        return { error: stepError.message };
+      }
+
+      //delete any associated recipeSteps entries;
+      for (let i = 0; i < relatedRecipeSteps.length; i++) {
+        const { data: recipeStepDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipeSteps/${relatedRecipeSteps[i].recipeStepID}`, {
+          headers: {
+            authorization: options.authorization,
+          },
+        });
+        if (recipeStepDeleteResult.error) {
+          global.logger.info(`Error deleting recipeStepID: ${relatedRecipeSteps[i].recipeStepID} prior to deleting step ID: ${stepID} : ${recipeStepDeleteResult.error}`);
+          return { error: recipeStepDeleteResult.error };
+        }
+
+        //add a 'deleted' log entry
+        loggerCreate(options.userID, Number(relatedRecipeSteps[i].recipeStepID), 'recipeSteps', 'deleted', options.authorization);
+      }
+    } catch (error) {
+      global.logger.info(`Error deleting related recipeSteps: ${error.message}`);
+      return { error: error.message };
+    }
+
+    //delete step
     const { data, error: deleteError } = await db.from('steps').update({ deleted: true }).eq('stepID', stepID);
     if (deleteError) {
       global.logger.info(`Error deleting step: ${deleteError.message}`);
       return { error: deleteError.message };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(stepID), 'steps', 'deleted', authorization);
+
     global.logger.info(`Deleted step ${stepID}`);
     return data;
   }

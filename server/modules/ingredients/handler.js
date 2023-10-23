@@ -18,9 +18,11 @@ async function createIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { name, lifespanDays, brand, purchaseUnit, gramRatio } = req.body;
+  const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
+    authorization,
     userID: req.userID,
     name,
     lifespanDays,

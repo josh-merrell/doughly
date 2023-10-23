@@ -1,5 +1,7 @@
 ('use strict');
 
+const { default: axios } = require('axios');
+const { loggerCreate } = require('../../services/dbLogger');
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
@@ -25,7 +27,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, recipeID, componentID, componentAdvanceDays } = options;
+    const { customID, authorization, userID, recipeID, componentID, componentAdvanceDays } = options;
 
     //if params are not present, return error
     if (!recipeID || !componentID || !componentAdvanceDays) {
@@ -58,12 +60,15 @@ module.exports = ({ db }) => {
       return { error: `Component Recipe with provided ID (${componentID}) does not exist` };
     }
 
-    const { data, errorInsert } = await db.from('recipeComponents').insert({ recipeComponentID: customID, userID, recipeID, componentID, componentAdvanceDays }).select('recipeComponentID');
+    const { data, errorInsert } = await db.from('recipeComponents').insert({ recipeComponentID: customID, userID, recipeID, componentID, componentAdvanceDays }).select().single();
 
     if (error) {
       global.logger.info(`Error creating recipeComponent: ${errorInsert.message}`);
       return { error: errorInsert.message };
     }
+
+    //add a 'created' log entry
+    loggerCreate(userID, data.recipeComponentID, 'recipeComponents', 'created', authorization);
 
     global.logger.info(`Created recipeComponent`);
     return data;
@@ -120,6 +125,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting recipeComponent: ${deleteError.message}`);
       return { error: deleteError.message };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(options.userID, Number(options.recipeComponentID), 'recipeComponents', 'deleted', options.authorization);
 
     global.logger.info(`Deleted recipeComponent`);
     return data;

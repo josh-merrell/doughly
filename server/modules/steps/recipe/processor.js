@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 ('use strict');
-
+const { loggerCreate } = require('../../services/dbLogger');
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
@@ -50,7 +50,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, recipeID, stepID, sequence, photoURL } = options;
+    const { customID, authorization, userID, recipeID, stepID, sequence, photoURL } = options;
     //validate that provided recipeID exists
     const { data: recipe, validationError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (validationError) {
@@ -140,6 +140,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating recipeStep: ${error.message}`);
       return { error: error.message };
     }
+
+    //add a 'created' log entry
+    loggerCreate(userID, newRecipeStep.recipeStepID, 'recipeSteps', 'created', authorization);
 
     if (recipe[0].status === 'noSteps') {
       await publish(recipeID, newRecipeStep.recipeStepID);
@@ -285,6 +288,8 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting recipeStep ${recipeStepID}: ${deleteError.message}`);
       return { error: deleteError.message };
     }
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(recipeStepID), 'recipeSteps', 'deleted', authorization);
     global.logger.info(`Deleted recipeStep ${recipeStepID}`);
 
     //delete step associated with recipeStep
@@ -293,6 +298,8 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting associated step ${recipeStep[0].stepID}: ${deleteStepError.message}`);
       return { error: deleteStepError.message };
     }
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(recipeStep[0].stepID), 'steps', 'deleted', authorization);
     global.logger.info(`Deleted step ${recipeStep[0].stepID}`);
 
     //if recipe has no remaining steps, update recipe status to 'noSteps'

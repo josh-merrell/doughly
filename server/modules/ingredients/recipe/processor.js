@@ -1,5 +1,7 @@
 ('use strict');
 
+const { default: axios } = require('axios');
+const { loggerCreate } = require('../../services/dbLogger');
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
@@ -39,7 +41,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = options;
+    const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = options;
 
     //verify that 'customID' exists on the request
     if (!customID) {
@@ -88,6 +90,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating recipeIngredient: ${error3.message}`);
       return { error: error3.message };
     }
+
+    //add a 'created' log entry
+    loggerCreate(userID, recipeIngredient.recipeIngredientID, 'recipeIngredients', 'created', authorization);
 
     //if status of existingRecipe is 'noIngredients', update status to 'noTools'
     if (existingRecipe[0].status === 'noIngredients') {
@@ -161,7 +166,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteRecipeIngredient(options) {
-    const { recipeIngredientID } = options;
+    const { userID, authorization, recipeIngredientID } = options;
 
     //verify that the provided recipeIngredientID exists, return error if not
     const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID).eq('deleted', false);
@@ -181,6 +186,10 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting recipeIngredient ID: ${recipeIngredientID}: ${error2.message}`);
       return { error: error2.message };
     }
+
+    //add a 'deleted' log entry
+    loggerCreate(userID, Number(recipeIngredientID), 'recipeIngredients', 'deleted', authorization);
+
     global.logger.info(`Deleted recipeIngredient ID: ${recipeIngredientID}`);
 
     //if existingRecipe has no more recipeIngredients, update status to 'noIngredients'

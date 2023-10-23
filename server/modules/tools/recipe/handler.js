@@ -20,9 +20,11 @@ async function createRecipeTool(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeID, toolID, quantity } = req.body;
+  const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
+    authorization,
     userID: req.userID,
     recipeID,
     toolID,
@@ -48,9 +50,11 @@ async function deleteRecipeTool(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeToolID } = req.params;
+  const { authorization } = req.headers;
   const returner = await p.delete({
     userID: req.userID,
     recipeToolID,
+    authorization,
   });
   return res.json(returner);
 }

@@ -18,9 +18,11 @@ async function createRecipeIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = req.body;
+  const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
+    authorization,
     userID: req.userID,
     recipeID,
     ingredientID,
@@ -50,7 +52,8 @@ async function deleteRecipeIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeIngredientID } = req.params;
-  const returner = await p.delete({ userID: req.userID, recipeIngredientID });
+  const { authorization } = req.headers;
+  const returner = await p.delete({ userID: req.userID, recipeIngredientID, authorization });
   return res.json(returner);
 }
 

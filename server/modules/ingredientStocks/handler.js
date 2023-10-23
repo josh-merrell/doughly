@@ -18,9 +18,11 @@ async function createIngredientStock(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { ingredientID, purchasedDate, measurement } = req.body;
+  const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
+    authorization,
     userID: req.userID,
     ingredientID,
     purchasedDate,
@@ -47,7 +49,8 @@ async function deleteIngredientStock(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { ingredientStockID } = req.params;
-  const returner = await p.delete({ userID: req.userID, ingredientStockID });
+  const { authorization } = req.headers;
+  const returner = await p.delete({ authorization, userID: req.userID, ingredientStockID });
   return res.json(returner);
 }
 
