@@ -1,6 +1,6 @@
 ('use strict');
 
-const { loggerCreate } = require('../../services/dbLogger');
+const { createKitchenLog } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -70,7 +70,7 @@ module.exports = ({ db }) => {
     global.logger.info(`Created ingredientStock ID: ${newIngredientStock.ingredientStockID}`);
 
     //add a 'created' log entry
-    loggerCreate(userID, newIngredientStock.ingredientStockID, 'ingredientStocks', 'created', authorization);
+    createKitchenLog(userID, authorization, 'createdIngredientStock', Number(newIngredientStock.ingredientStockID), ingredientID, null, null, `Created ingredientStock ID: ${newIngredientStock.ingredientStockID}`);
 
     return {
       ingredientStockID: newIngredientStock.ingredientStockID,
@@ -154,7 +154,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(userID, Number(ingredientStockID), 'ingredientStocks', 'deleted', authorization);
+    createKitchenLog(userID, authorization, 'deletedIngredientStock', Number(ingredientStockID), Number(existingIngredientStock.ingredientID), null, null, `Deleted ingredientStock ID: ${ingredientStockID}`);
 
     global.logger.info(`Deleted ingredientStock ID: ${ingredientStockID}`);
     return { success: true };

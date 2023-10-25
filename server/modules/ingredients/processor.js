@@ -1,7 +1,7 @@
 ('use strict');
 
 const { default: axios } = require('axios');
-const { loggerCreate } = require('../../services/dbLogger');
+const { createKitchenLog, createRecipeLog } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -79,7 +79,7 @@ module.exports = ({ db }) => {
     global.logger.info(`Created ingredient ID: ${ingredient.ingredientID}`);
 
     //add a 'created' log entry
-    loggerCreate(userID, ingredient.ingredientID, 'ingredients', 'created', authorization, ingredient.name);
+    createKitchenLog(userID, authorization, 'ingredientCreated', ingredient.ingredientID, null, null, null, `Ingredient created: ${ingredient.name}`);
 
     return {
       ingredientID: ingredient.ingredientID,
@@ -188,7 +188,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(userID, Number(relatedStockEntries[i].ingredientStockID), 'ingredientStocks', 'deleted', authorization);
+        createKitchenLog(userID, authorization, 'ingredientStockDeleted', Number(relatedStockEntries[i].ingredientStockID), ingredientID, null, null, `Ingredient stock deleted: ${relatedStockEntries[i].ingredientStockID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related stock entries: ${error.message}`);
@@ -216,7 +216,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(userID, Number(recipeIngredients[i].recipeIngredientID), 'recipeIngredients', 'deleted', authorization);
+        createRecipeLog(userID, authorization, 'recipeIngredientDeleted', Number(recipeIngredients[i].recipeIngredientID), Number(recipeIngredients[i].recipeID), null, null, `Recipe ingredient deleted: ${recipeIngredients[i].recipeIngredientID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeIngredients: ${error.message}`);
@@ -231,7 +231,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(userID, Number(ingredientID), 'ingredients', 'deleted', authorization);
+    createKitchenLog(userID, authorization, 'ingredientDeleted', Number(ingredientID), null, null, null, `Ingredient deleted: ${ingredientID}`);
 
     global.logger.info(`Deleted ingredient ID: ${ingredientID}`);
 

@@ -1,7 +1,7 @@
 ('use strict');
 
 const { updater } = require('../../db');
-const { loggerCreate } = require('../../services/dbLogger');
+const { createKitchenLog } = require('../../services/dbLogger');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -99,7 +99,7 @@ module.exports = ({ db }) => {
           throw new Error(result.error.message);
         } else {
           //add a 'created' log entry
-          loggerCreate(userID, result.data.toolStockID, 'toolStocks', 'created', authorization);
+          createKitchenLog(userID, authorization, 'createToolStock', Number(result.data.toolStockID), Number(toolID), null, null, `created toolStock with ID: ${result.data.toolStockID}`);
 
           toolStockIDs.push(result.data.toolStockID);
         }
@@ -179,7 +179,8 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(userID, Number(toolStockID), 'toolStocks', 'deleted', authorization);
+    createKitchenLog(userID, authorization, 'deleteToolStock', Number(toolStockID), Number(existingToolStock[0].toolID), null, null, `deleted toolStock with ID: ${toolStockID}`);
+
     global.logger.info(`Deleted toolStock ID: ${toolStockID}`);
     return { success: true };
   }

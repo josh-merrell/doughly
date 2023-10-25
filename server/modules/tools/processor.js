@@ -2,7 +2,7 @@
 
 const { updater } = require('../../db');
 const axios = require('axios');
-const { loggerCreate } = require('../../services/dbLogger');
+const { createKitchenLog, createRecipeLog } = require('../../services/dbLogger');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -62,7 +62,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    loggerCreate(userID, tool.toolID, 'tools', 'created', authorization, tool.name);
+    createKitchenLog(userID, authorization, 'createTool', tool.toolID, null, null, null, `created tool with ID: ${tool.toolID}`);
 
     global.logger.info(`Created tool ID ${tool.toolID}`);
     return {
@@ -154,7 +154,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(options.userID, Number(relatedRecipeTools[i].recipeToolID), 'recipeTools', 'deleted', options.authorization);
+        createRecipeLog(userID, authorization, 'deletedRecipeTool', Number(relatedRecipeTools[i].recipeToolID), Number(relatedRecipeTools[i].recipeID), null, null, `deleted recipeTool with ID: ${relatedRecipeTools[i].recipeToolID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeTools: ${error.message}`);
@@ -182,7 +182,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(options.userID, Number(relatedToolStocks[i].toolStcckID), 'toolStocks', 'deleted', options.authorization);
+        createKitchenLog(userID, authorization, 'deleteToolStock', Number(relatedToolStocks[i].toolStockID), Number(relatedToolStocks[i].toolID), null, null, `deleted toolStock with ID: ${relatedToolStocks[i].toolStockID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related toolStocks: ${error.message}`);
@@ -197,7 +197,7 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
     //add a 'deleted' log entry
-    loggerCreate(userID, Number(toolID), 'tools', 'deleted', authorization);
+    createKitchenLog(userID, authorization, 'deleteTool', Number(toolID), null, null, null, `deleted tool with ID: ${toolID}`);
 
     global.logger.info(`Deleted tool ID ${toolID}`);
     return { success: true };

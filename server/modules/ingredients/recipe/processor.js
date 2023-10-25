@@ -1,7 +1,6 @@
 ('use strict');
 
-const { default: axios } = require('axios');
-const { loggerCreate } = require('../../services/dbLogger');
+const { createRecipeLog } = require('../../services/dbLogger');
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
@@ -92,7 +91,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    loggerCreate(userID, recipeIngredient.recipeIngredientID, 'recipeIngredients', 'created', authorization);
+    createRecipeLog(userID, authorization, 'createdRecipeIngredient', recipeIngredient.recipeIngredientID, recipeIngredient.recipeID, null, null, `Created recipeIngredient ${recipeIngredient.recipeIngredientID}`);
 
     //if status of existingRecipe is 'noIngredients', update status to 'noTools'
     if (existingRecipe[0].status === 'noIngredients') {
@@ -188,7 +187,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(userID, Number(recipeIngredientID), 'recipeIngredients', 'deleted', authorization);
+    createRecipeLog(userID, authorization, 'deletedRecipeIngredient', Number(recipeIngredientID), Number(existingRecipeIngredient[0].recipeID), null, null, `Deleted recipeIngredient ${recipeIngredientID}`);
 
     global.logger.info(`Deleted recipeIngredient ID: ${recipeIngredientID}`);
 
