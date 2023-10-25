@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-const { loggerCreate } = require('../../services/dbLogger');
+const { createUserLog } = require('../../services/dbLogger');
 const axios = require('axios');
 
 ('use strict');
@@ -85,7 +85,7 @@ module.exports = ({ db }) => {
       return { error: error.message };
     } else {
       //add a 'created' log entry
-      loggerCreate(userID, data.personID, 'persons', 'created', authorization, `${data.nameFirst} ${data.nameLast}`);
+      createUserLog(userID, authorization, 'createdPerson', data.personID, null, null, null, `Created Person: ${data.nameFirst} ${data.nameLast}, email: ${data.email}}`);
 
       global.logger.info(`Created person ${nameFirst} ${nameLast}, ID ${data.personID}`);
       return data;
@@ -147,7 +147,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(options.userID, Number(options.personID), 'persons', 'deleted', options.authorization);
+    createUserLog(options.userID, options.authorization, 'deletedPerson', options.personID, null, null, null, `Deleted Person, ID: ${options.personID}`);
 
     global.logger.info(`Deleted personID: ${options.personID}`);
     return data;

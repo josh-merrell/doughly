@@ -1,7 +1,7 @@
 ('use strict');
 
 const axios = require('axios');
-const { loggerCreate } = require('../../services/dbLogger');
+const { createRecipeLog } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -76,7 +76,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    loggerCreate(userID, data.stepID, 'steps', 'created', authorization, data.title);
+    createRecipeLog(userID, authorization, 'createdStep', data.stepID, null, null, null, `created step with ID: ${data.stepID}`);
 
     global.logger.info(`Created step ${data.stepID}`);
     // return data;
@@ -162,7 +162,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(options.userID, Number(relatedRecipeSteps[i].recipeStepID), 'recipeSteps', 'deleted', options.authorization);
+        createRecipeLog(userID, authorization, 'deletedRecipeStep', Number(relatedRecipeSteps[i].recipeStepID), Number(relatedRecipeSteps[i].recipeID), null, null, `deleted recipeStep with ID: ${relatedRecipeSteps[i].recipeStepID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeSteps: ${error.message}`);
@@ -177,7 +177,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(userID, Number(stepID), 'steps', 'deleted', authorization);
+    createRecipeLog(userID, authorization, 'deletedStep', Number(stepID), null, null, null, `deleted step with ID: ${stepID}`);
 
     global.logger.info(`Deleted step ${stepID}`);
     return data;

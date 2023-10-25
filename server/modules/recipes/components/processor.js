@@ -1,7 +1,6 @@
 ('use strict');
 
-const { default: axios } = require('axios');
-const { loggerCreate } = require('../../services/dbLogger');
+const { createRecipeLog } = require('../../services/dbLogger');
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
@@ -68,7 +67,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    loggerCreate(userID, data.recipeComponentID, 'recipeComponents', 'created', authorization);
+    createRecipeLog(userID, authorization, 'createdRecipeComponent', data.recipeComponentID, Number(recipeID), null, null, `createdRecipeComponent with ID: ${data.recipeComponentID}`);
 
     global.logger.info(`Created recipeComponent`);
     return data;
@@ -127,7 +126,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(options.userID, Number(options.recipeComponentID), 'recipeComponents', 'deleted', options.authorization);
+    createRecipeLog(options.userID, options.authorization, 'deletedRecipeComponent', Number(options.recipeComponentID), Number(recipeComponent.recipeID), null, null, `deleted recipeComponent with ID: ${options.recipeComponentID}`);
 
     global.logger.info(`Deleted recipeComponent`);
     return data;

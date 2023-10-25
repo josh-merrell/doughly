@@ -11,7 +11,6 @@ const getLogsSchema_query = {
   properties: {
     logIDs: { type: 'array', items: { type: 'integer' } },
     subjectID: { type: 'integer' },
-    category: { type: 'string' },
     eventType: { type: 'string' },
     createdAfter: { type: 'string' },
     createdBefore: { type: 'string' },
@@ -20,12 +19,14 @@ const getLogsSchema_query = {
 
 const newLogSchema_body = {
   type: 'object',
-  required: ['subjectID', 'category', 'eventType'],
+  required: ['subjectID', 'eventType'],
   properties: {
     subjectID: { type: 'integer' },
-    category: { type: 'string' },
+    associatedID: { type: 'integer' },
     eventType: { type: 'string' },
-    resultValue: { type: 'string' },
+    oldValue: { type: 'string' },
+    newValue: { type: 'string' },
+    message: { type: 'string' },
   },
 };
 

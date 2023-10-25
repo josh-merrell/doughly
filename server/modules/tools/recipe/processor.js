@@ -1,7 +1,7 @@
 ('use strict');
 
 const { updater } = require('../../../db');
-const { loggerCreate } = require('../../services/dbLogger');
+const { createRecipeLog } = require('../../services/dbLogger');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -126,7 +126,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    loggerCreate(userID, newRecipeTool.recipeToolID, 'recipeTools', 'created', authorization);
+    createRecipeLog(userID, authorization, 'createdRecipeTool', Number(newRecipeTool.recipeToolID), Number(recipeID), null, null, `created recipeTool with ID: ${newRecipeTool.recipeToolID}`);
 
     //if status of existingRecipe is 'noTools', update status to 'noSteps'
     if (recipe[0].status === 'noTools') {
@@ -211,7 +211,8 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(userID, Number(recipeToolID), 'recipeTools', 'deleted', authorization);
+    createRecipeLog(userID, authorization, 'deleteRecipeTool', Number(recipeToolID), Number(recipeTool[0].recipeID), null, null, `deleted recipeTool with ID: ${recipeToolID}`);
+
     global.logger.info(`Deleted recipeTool ${recipeToolID}`);
 
     //if existingRecipe has no more recipeTools, check whether it has any recipeSteps

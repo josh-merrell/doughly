@@ -1,7 +1,7 @@
 ('use strict');
 
 const { default: axios } = require('axios');
-const { loggerCreate } = require('../../services/dbLogger');
+const { loggerCreate, createRecipeLog } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
@@ -86,7 +86,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    loggerCreate(userID, recipe.recipeID, 'recipes', 'created', authorization, recipe.title);
+    createRecipeLog(userID, authorization, 'createdRecipe', recipe.recipeID, null, null, null, 'Created Recipe ${recipe.title}, ID: ${recipe.recipeID}');
 
     global.logger.info(`Created recipe ID:${recipe.recipeID}`);
     // return recipe;
@@ -217,7 +217,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(options.userID, Number(relatedRecipeComponents[i].recipeComponentID), 'recipeComponents', 'deleted', options.authorization);
+        createRecipeLog(options.userID, options.authorization, 'deletedRecipeComponent', Number(relatedRecipeComponents[i].recipeComponentID), Number(relatedRecipeComponents[i].recipeID), null, null, `Deleted recipeComponent ID: ${relatedRecipeComponents[i].recipeComponentID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeComponents: ${error.message}`);
@@ -245,7 +245,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(options.userID, Number(relatedRecipeSteps[i].recipeStepID), 'recipeSteps', 'deleted', options.authorization);
+        createRecipeLog(options.userID, options.authorization, 'deletedRecipeStep', Number(relatedRecipeSteps[i].recipeStepID), Number(relatedRecipeSteps[i].recipeID), null, null, `Deleted recipeStep ID: ${relatedRecipeSteps[i].recipeStepID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeSteps: ${error.message}`);
@@ -273,7 +273,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(options.userID, Number(relatedRecipeTools[i].recipeToolID), 'recipeTools', 'deleted', options.authorization);
+        createRecipeLog(options.userID, options.authorization, 'deletedRecipeTool', Number(relatedRecipeTools[i].recipeToolID), Number(relatedRecipeTools[i].recipeID), null, null, `Deleted recipeTool ID: ${relatedRecipeTools[i].recipeToolID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeTools: ${error.message}`);
@@ -301,7 +301,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        loggerCreate(options.userID, Number(relatedRecipeIngredients[i].recipeIngredientID), 'recipeIngredients', 'deleted', options.authorization);
+        createRecipeLog(options.userID, options.authorization, 'deletedRecipeIngredient', Number(relatedRecipeIngredients[i].recipeIngredientID), Number(relatedRecipeIngredients[i].recipeID), null, null, `Deleted recipeIngredient ID: ${relatedRecipeIngredients[i].recipeIngredientID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeIngredients: ${error.message}`);
@@ -317,7 +317,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    loggerCreate(options.userID, Number(options.recipeID), 'recipes', 'deleted', options.authorization);
+    createRecipeLog(options.userID, options.authorization, 'deletedRecipe', options.recipeID, null, null, null, `Deleted recipe ID: ${options.recipeID}`);
   }
 
   return {
