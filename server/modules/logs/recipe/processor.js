@@ -51,9 +51,8 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating recipeLog: ${error.message}`);
       return { error: error.message };
     }
-    global.logger.info(`Created recipeLog`);
     return {
-      logID: log.recipeLogID,
+      recipeLogID: log.recipeLogID,
     };
   }
 

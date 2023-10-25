@@ -1,8 +1,8 @@
 ('use strict');
 
 const { default: axios } = require('axios');
-const { loggerCreate, createRecipeLog } = require('../../services/dbLogger');
-const { updater } = require('../../db');
+const { createRecipeLog } = require('../../services/dbLogger');
+const { updater, incrementVersion } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -100,11 +100,12 @@ module.exports = ({ db }) => {
       timePrep: recipe.timePrep,
       timeBake: recipe.timeBake,
       photoURL: recipe.photoURL,
+      version: 1,
     };
   }
 
   async function update(options) {
-    const { recipeID, recipeCategoryID, timePrep, timeBake, type } = options;
+    const { recipeID, authorization, recipeCategoryID, timePrep, timeBake, type } = options;
     //verify that the provided recipeID exists, return error if not
     const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
 
@@ -157,14 +158,17 @@ module.exports = ({ db }) => {
       }
     }
     for (let key in options) {
-      if (key !== 'recipeID' && options[key] !== undefined) {
+      if (key !== 'recipeID' && options[key] !== undefined && key !== 'authorization') {
         updateFields[key] = options[key];
       }
     }
 
     try {
       const updatedRecipe = await updater('recipeID', recipeID, 'recipes', updateFields);
-      global.logger.info(`Updated recipe ID:${recipeID}`);
+      //increment version
+      const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, updatedRecipe.version);
+      //add an 'updated' log entry
+      createRecipeLog(options.userID, authorization, 'updatedRecipeVersion', Number(recipeID), null, String(updatedRecipe.version), String(newVersion), `Updated Recipe, ID: ${recipeID}, new version: ${newVersion}`);
       return updatedRecipe;
     } catch (error) {
       global.logger.info(`Error updating recipe: ${error.message}`);

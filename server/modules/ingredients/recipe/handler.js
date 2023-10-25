@@ -38,8 +38,10 @@ async function updateRecipeIngredient(req, res) {
   const p = require('./processor')({ db });
   const { recipeIngredientID } = req.params;
   const { measurementUnit, measurement, purchaseUnitRatio } = req.body;
+  const { authorization } = req.headers;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     recipeIngredientID,
     measurementUnit,
     measurement,

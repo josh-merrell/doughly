@@ -37,9 +37,11 @@ async function updateRecipeTool(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeToolID } = req.params;
+  const { authorization } = req.headers;
   const { quantity } = req.body;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     recipeToolID,
     quantity,
   });
