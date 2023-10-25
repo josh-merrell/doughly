@@ -43,8 +43,10 @@ async function updateRecipe(req, res) {
   const p = require('./processor')({ db });
   const { recipeID } = req.params;
   const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = req.body;
+  const { authorization } = req.headers;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     recipeID,
     recipeCategoryID,
     title,

@@ -17,8 +17,8 @@ const authenticateJWT = async (req, res, next) => {
     next();
   } else {
     // The JWT token is invalid or missing.
-    global.logger.info(`Error authenticating JWT for request made to :${req.path}. Provided auth header: ${req.headers.authorization}`);
-    res.sendStatus(401);
+    global.logger.info(`Error authenticating JWT for request made to: ${req.path}. Provided auth header: ${req.headers.authorization}`);
+    res.status(401).send(`Error authenticating JWT for request made to: ${req.path}. Provided auth header: ${req.headers.authorization}`);
   }
 };
 

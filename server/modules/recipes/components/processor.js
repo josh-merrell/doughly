@@ -1,7 +1,7 @@
 ('use strict');
 
 const { createRecipeLog } = require('../../services/dbLogger');
-const { updater } = require('../../../db');
+const { updater, incrementVersion } = require('../../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -67,9 +67,11 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    createRecipeLog(userID, authorization, 'createdRecipeComponent', data.recipeComponentID, Number(recipeID), null, null, `createdRecipeComponent with ID: ${data.recipeComponentID}`);
+    const logID1 = createRecipeLog(userID, authorization, 'addedComponentToRecipe', Number(recipeID), Number(data.recipeComponentID), null, null, `added recipeComponent with ID: ${data.recipeComponentID} to recipe ${recipeID}`);
 
-    global.logger.info(`Created recipeComponent`);
+    //increment recipe version and add a 'recipeComponentAdded' log entry to the component recipe
+    const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+    createRecipeLog(userID, authorization, 'updatedRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion), `Updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
     return data;
   }
 
