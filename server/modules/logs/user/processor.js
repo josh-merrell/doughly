@@ -43,17 +43,16 @@ module.exports = ({ db }) => {
 
   async function create(options) {
     const { customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message } = options;
-    const createdTime = new Date().toISOString();
+    const logTime = new Date().toISOString();
 
-    const { data: log, error } = await db.from('userLogs').insert({ userLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, createdTime }).select('*').single();
+    const { data: log, error } = await db.from('userLogs').insert({ userLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
     if (error) {
       global.logger.info(`Error creating userLog: ${error.message}`);
       return { error: error.message };
     }
-    global.logger.info(`Created userLog`);
     return {
-      logID: log.userLogID,
+      userLogID: log.userLogID,
     };
   }
 

@@ -2,7 +2,7 @@
 
 const axios = require('axios');
 const { createRecipeLog } = require('../../services/dbLogger');
-const { updater } = require('../../db');
+const { updater, incrementVersion } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -50,14 +50,14 @@ module.exports = ({ db }) => {
     //   return { error: `Step with title ${title} already exists, can't use this title` };
     // }
 
-    //if step with provided title exists but is deleted, undelete it and return it
+    //if step with provided title exists but is deleted, undelete it, reset versioning and return it
     const { data: deletedSteps, error: error3 } = await db.from('steps').select().eq('title', title).eq('deleted', true);
     if (error3) {
       global.logger.info(`Error validating title: ${title} while creating step ${error3.message}`);
       return { error: error3.message };
     }
     if (deletedSteps.length > 0) {
-      const { error: error4 } = await db.from('steps').update({ deleted: false }).eq('stepID', deletedSteps[0].stepID).single();
+      const { error: error4 } = await db.from('steps').update({ deleted: false, version: 1 }).eq('stepID', deletedSteps[0].stepID).single();
       if (error4) {
         global.logger.info(`Error undeleting step: ${error4.message}`);
         return { error: error4.message };
@@ -66,10 +66,11 @@ module.exports = ({ db }) => {
         stepID: deletedSteps[0].stepID,
         title: deletedSteps[0].title,
         description: deletedSteps[0].description,
+        version: 1,
       };
     }
 
-    const { data, error } = await db.from('steps').insert({ stepID: customID, userID, title, description }).select().single();
+    const { data, error } = await db.from('steps').insert({ stepID: customID, userID, title, description, version: 1 }).select().single();
     if (error) {
       global.logger.info(`Error creating step: ${error.message}`);
       return { error: error.message };
@@ -84,11 +85,12 @@ module.exports = ({ db }) => {
       stepID: data.stepID,
       title: data.title,
       description: data.description,
+      version: 1,
     };
   }
 
   async function update(options) {
-    const { stepID, title } = options;
+    const { authorization, stepID, title } = options;
     //verify that provided stepID exists
     const { data: step, error } = await db.from('steps').select().eq('stepID', stepID);
     if (error) {
@@ -113,14 +115,17 @@ module.exports = ({ db }) => {
 
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'stepID' && options[key] !== undefined) {
+      if (key !== 'stepID' && options[key] !== undefined && key !== 'authorization') {
         updateFields[key] = options[key];
       }
     }
 
     try {
       const updatedStep = await updater('stepID', options.stepID, 'steps', updateFields);
-      global.logger.info(`Updated steps ID ${stepID}`);
+      //increment version
+      const newVersion = await incrementVersion('steps', 'stepID', options.stepID, updatedStep.version);
+      //add an 'updated' log entry
+      createRecipeLog(options.userID, authorization, 'updatedStepVersion', Number(options.stepID), null, String(updatedStep.version), String(newVersion), `updated step with ID: ${options.stepID}, new version: ${newVersion}`);
       return updatedStep;
     } catch (err) {
       global.logger.info(`Error updating step: ${err.message}`);

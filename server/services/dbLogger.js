@@ -19,7 +19,8 @@ async function createKitchenLog(userID, authorization, eventType, subjectID, ass
       },
     },
   );
-  global.logger.info(`**KITCHEN LOG ENTRY ID: ${log.data.kitchenLogID}** eventType:${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
+  global.logger.info(`**KITCHEN LOG ENTRY ID: ${log.data.kitchenLogID}** ${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
+  return log.data.kitchenLogID;
 }
 
 async function createRecipeLog(userID, authorization, eventType, subjectID, associatedID = null, oldValue = null, newValue = null, message = null) {
@@ -41,7 +42,8 @@ async function createRecipeLog(userID, authorization, eventType, subjectID, asso
       },
     },
   );
-  global.logger.info(`**RECIPE LOG ENTRY ID: ${log.data.recipeLogID}** eventType:${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
+  global.logger.info(`**RECIPE LOG ENTRY ID: ${log.data.recipeLogID}** ${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
+  return log.data.recipeLogID;
 }
 
 //same for createUserLog
@@ -64,7 +66,8 @@ async function createUserLog(userID, authorization, eventType, subjectID, associ
       },
     },
   );
-  global.logger.info(`**USER LOG ENTRY ID: ${log.data.userLogID}** eventType:${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
+  global.logger.info(`**USER LOG ENTRY ID: ${log.data.userLogID}** ${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
+  return log.data.userLogID;
 }
 
 module.exports = {

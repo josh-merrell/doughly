@@ -2,7 +2,7 @@ const axios = require('axios');
 
 ('use strict');
 const { createRecipeLog } = require('../../services/dbLogger');
-const { updater } = require('../../../db');
+const { updater, incrementVersion } = require('../../../db');
 
 module.exports = ({ db }) => {
   const sequenceShifter = async (recipeStepID, newSeq) => {
@@ -97,9 +97,12 @@ module.exports = ({ db }) => {
         return { error: undeleteError.message };
       }
       if (recipe[0].status === 'noSteps') {
-        await publish(recipeID, deletedRecipeStep[0].recipeStepID);
+        await publish(recipeID, deletedRecipeStep[0].recipeStepID, userID, authorization);
       }
-      global.logger.info(`Undeleted recipeStep ${deletedRecipeStep[0].recipeStepID}`);
+      const logID1 = createRecipeLog(userID, authorization, 'undeleteRecipeStep', Number(deletedRecipeStep[0].recipeStepID), Number(recipeID), null, null, `undeleted recipeStep with ID: ${deletedRecipeStep[0].recipeStepID} for recipe ID: ${recipeID} and step ID: ${stepID}`);
+      //increment recipe version and add a 'recipeStepAdded' log entry to the recipe
+      const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+      createRecipeLog(userID, authorization, 'updatedRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion), `Updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
 
       return {
         recipeStepID: deletedRecipeStep[0].recipeStepID,
@@ -142,10 +145,13 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    createRecipeLog(userID, authorization, 'createdRecipeStep', newRecipeStep.recipeStepID, Number(recipeID), null, null, `created recipeStep with ID: ${newRecipeStep.recipeStepID}`);
+    const logID2 = createRecipeLog(userID, authorization, 'createdRecipeStep', newRecipeStep.recipeStepID, Number(recipeID), null, null, `created recipeStep with ID: ${newRecipeStep.recipeStepID}`);
+    //increment recipe version and add a 'recipeStepAdded' log entry to the recipe
+    const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+    createRecipeLog(userID, authorization, 'updatedRecipeVersion', Number(recipeID), Number(logID2), String(recipe[0].version), String(newVersion), `Updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
 
     if (recipe[0].status === 'noSteps') {
-      await publish(recipeID, newRecipeStep.recipeStepID);
+      await publish(recipeID, newRecipeStep.recipeStepID, userID, authorization);
     }
     global.logger.info(`Created recipeStep ${newRecipeStep.recipeStepID}`);
     // return newRecipeStep;
@@ -158,7 +164,7 @@ module.exports = ({ db }) => {
     };
   }
 
-  async function publish(recipeID, recipeStepID) {
+  async function publish(recipeID, recipeStepID, userID, authorization) {
     const { error: recipeUpdateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
     if (recipeUpdateError) {
       global.logger.info(`Error updating recipe status: ${recipeUpdateError.message}`);
@@ -170,7 +176,8 @@ module.exports = ({ db }) => {
       }
       return { error: recipeUpdateError.message };
     }
-    global.logger.info(`Updated recipe status to published`);
+    //add 'recipePublished' log entry
+    createRecipeLog(userID, authorization, 'updatedRecipeStatus', Number(recipeID), null, null, 'published', `updated recipe status to published`);
   }
 
   async function update(options) {

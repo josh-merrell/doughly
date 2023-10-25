@@ -5,7 +5,7 @@ const axios = require('axios');
 
 ('use strict');
 
-const { updater } = require('../../db');
+const { updater, incrementVersion } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -76,6 +76,7 @@ module.exports = ({ db }) => {
         city,
         state,
         zip,
+        version: 1,
       })
       .select()
       .single();
@@ -95,13 +96,13 @@ module.exports = ({ db }) => {
   async function update(options) {
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'personID' && options[key] !== undefined) {
+      if (key !== 'personID' && options[key] !== undefined && key !== 'authorization') {
         updateFields[key] = options[key];
       }
     }
     //if email is being updated, make sure the new email is not already in use. If so, return an error.
     if (updateFields.email) {
-      const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').match({ email: updateFields.email });
+      const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email', 'version').match({ email: updateFields.email });
 
       if (emailExistsError) {
         global.logger.info(`Error checking whether email ${updateFields.email} exists: ${emailExistsError.message}`);
@@ -115,7 +116,10 @@ module.exports = ({ db }) => {
     //if the email is unique, update provided fields in the 'persons' table,
     try {
       const updatedPerson = await updater('personID', options.personID, 'persons', updateFields);
-      global.logger.info(`Updated person with ID:${options.personID}`);
+      //increment version of person
+      const newVersion = await incrementVersion('persons', 'personID', options.personID, updatedPerson.version);
+      //add an 'updated' log entry
+      createUserLog(options.userID, options.authorization, 'updatedPersonVersion', Number(options.personID), null, String(updatedPerson.version), String(newVersion), `Updated Person, ID: ${options.personID}, new version: ${newVersion}`);
       return updatedPerson;
     } catch (error) {
       global.logger.info(`Error updating persons ID:${options.personID}: ${error.message}`);

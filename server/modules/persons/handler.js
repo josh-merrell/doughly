@@ -59,8 +59,10 @@ async function updatePerson(req, res) {
   const p = require('./processor')({ db });
   const { personID } = req.params;
   const { nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = req.body;
+  const { authorization } = req.headers;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     personID,
     nameFirst,
     nameLast,
