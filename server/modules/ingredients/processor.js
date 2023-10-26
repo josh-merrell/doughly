@@ -76,10 +76,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating ingredient: ${createError.message}`);
       return { error: createError.message };
     }
-    global.logger.info(`Created ingredient ID: ${ingredient.ingredientID}`);
 
     //add a 'created' log entry
-    createKitchenLog(userID, authorization, 'ingredientCreated', ingredient.ingredientID, null, null, null, `Ingredient created: ${ingredient.name}`);
+    createKitchenLog(userID, authorization, 'createIngredient', ingredient.ingredientID, null, null, null, `created ingredient: ${ingredient.name}`);
 
     return {
       ingredientID: ingredient.ingredientID,
@@ -92,7 +91,7 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { userID, ingredientID, name, lifespanDays, gramRatio } = options;
+    const { userID, authorization, ingredientID, name, lifespanDays, gramRatio } = options;
     //verify that the provided ingredientID exists, return error if not
     const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
     if (error) {
@@ -129,17 +128,14 @@ module.exports = ({ db }) => {
 
     //update the ingredient
     const updateFields = {};
-
     for (let key in options) {
-      if (key !== 'ingredientID' && options[key] !== undefined) {
+      if (key !== 'ingredientID' && options[key] !== undefined && key !== 'authorization') {
         updateFields[key] = options[key];
       }
     }
 
     try {
-      console.log(`FIELDS TO UPDATE: ${JSON.stringify(updateFields)}`);
-      const updatedIngredient = await updater('ingredientID', ingredientID, 'ingredients', updateFields);
-      global.logger.info(`Updated ingredient ID: ${ingredientID}`);
+      const updatedIngredient = await updater(userID, authorization, 'ingredientID', ingredientID, 'ingredients', updateFields);
       return {
         ingredientID: updatedIngredient.ingredientID,
         name: updatedIngredient.name,
@@ -188,7 +184,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        createKitchenLog(userID, authorization, 'ingredientStockDeleted', Number(relatedStockEntries[i].ingredientStockID), ingredientID, null, null, `Ingredient stock deleted: ${relatedStockEntries[i].ingredientStockID}`);
+        createKitchenLog(userID, authorization, 'deleteIngredient', Number(relatedStockEntries[i].ingredientStockID), ingredientID, null, null, `Ingredient stock deleted: ${relatedStockEntries[i].name}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related stock entries: ${error.message}`);

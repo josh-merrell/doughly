@@ -1,7 +1,7 @@
 ('use strict');
 
 const axios = require('axios');
-const { createRecipeLog } = require('../../services/dbLogger');
+const { createRecipeLog } = require('../../../services/dbLogger');
 const { updater } = require('../../../db');
 
 module.exports = ({ db }) => {
@@ -35,9 +35,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    createRecipeLog(userID, authorization, 'createdRecipeCategory', newRecipeCategory.recipeCategoryID, null, null, null, `createdRecipeCategory with ID: ${newRecipeCategory.recipeCategoryID}`);
-
-    global.logger.info(`Created recipeCategory ID ${newRecipeCategory.recipeCategoryID}`);
+    createRecipeLog(userID, authorization, 'createRecipeCategory', newRecipeCategory.recipeCategoryID, null, null, null, `created recipeCategory: ${name}`);
     return {
       recipeCategoryID: newRecipeCategory.recipeCategoryID,
       name: newRecipeCategory.name,
@@ -61,14 +59,13 @@ module.exports = ({ db }) => {
     //update recipeCategory
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'recipeCategoryID' && options[key] !== undefined) {
+      if (key !== 'recipeCategoryID' && options[key] !== undefined && key !== 'authorization') {
         updateFields[key] = options[key];
       }
     }
 
     try {
-      const updatedRecipeCategory = await updater('recipeCategoryID', options.recipeCategoryID, 'recipeCategories', updateFields);
-      global.logger.info(`Updated recipeCategory`);
+      const updatedRecipeCategory = await updater(options.userID, options.authorization, 'recipeCategoryID', options.recipeCategoryID, 'recipeCategories', updateFields);
       return updatedRecipeCategory;
     } catch (error) {
       global.logger.info(`Error updating recipeCategory ID: ${options.recipeCategoryID}: ${error.message}`);
@@ -85,8 +82,8 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
     if (!recipeCategory.length) {
-      global.logger.info(`RecipeCategory with provided ID (${options.recipeCategoryID}) does not exist`);
-      return { error: `RecipeCategory with provided ID (${options.recipeCategoryID}) does not exist` };
+      global.logger.info(`RecipeCategory with provided ID ${options.recipeCategoryID} does not exist`);
+      return { error: `RecipeCategory with provided ID ${options.recipeCategoryID} does not exist` };
     }
 
     //collect list of recipes that reference this category
@@ -159,9 +156,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    createRecipeLog(options.userID, options.authorization, 'deletedRecipeCategory', Number(options.recipeCategoryID), null, null, null, `Deleted RecipeCategory, ID: ${options.recipeCategoryID}`);
-
-    global.logger.info(`Deleted recipeCategory: ${options.recipeCategoryID}`);
+    createRecipeLog(options.userID, options.authorization, 'deleteRecipeCategory', Number(options.recipeCategoryID), null, null, null, `deleted recipeCategory: ${recipeCategory[0].name}`);
     return data;
 
     //db will nullify any remaining recipe references to this category.

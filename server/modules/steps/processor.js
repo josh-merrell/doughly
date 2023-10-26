@@ -2,7 +2,7 @@
 
 const axios = require('axios');
 const { createRecipeLog } = require('../../services/dbLogger');
-const { updater, incrementVersion } = require('../../db');
+const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -39,17 +39,6 @@ module.exports = ({ db }) => {
   async function create(options) {
     const { authorization, customID, userID, title, description } = options;
 
-    //verify that no steps exist with provided title
-    // const { data: steps, error: error2 } = await db.from('steps').select('title').eq('title', title).eq('deleted', false);
-    // if (error2) {
-    //   global.logger.info(`Error validating title: ${title} while creating step ${error2.message}`);
-    //   return { error: error2.message };
-    // }
-    // if (steps.length > 0) {
-    //   global.logger.info(`Step with title ${title} already exists, can't use this title`);
-    //   return { error: `Step with title ${title} already exists, can't use this title` };
-    // }
-
     //if step with provided title exists but is deleted, undelete it, reset versioning and return it
     const { data: deletedSteps, error: error3 } = await db.from('steps').select().eq('title', title).eq('deleted', true);
     if (error3) {
@@ -62,6 +51,7 @@ module.exports = ({ db }) => {
         global.logger.info(`Error undeleting step: ${error4.message}`);
         return { error: error4.message };
       }
+      await createRecipeLog(userID, authorization, 'createStep', deletedSteps[0].stepID, null, null, null, `created step: ${deletedSteps[0].title}`);
       return {
         stepID: deletedSteps[0].stepID,
         title: deletedSteps[0].title,
@@ -75,12 +65,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating step: ${error.message}`);
       return { error: error.message };
     }
-
-    //add a 'created' log entry
-    createRecipeLog(userID, authorization, 'createdStep', data.stepID, null, null, null, `created step with ID: ${data.stepID}`);
-
-    global.logger.info(`Created step ${data.stepID}`);
-    // return data;
+    createRecipeLog(userID, authorization, 'createdStep', data.stepID, null, null, null, `created step: ${data.title}`);
     return {
       stepID: data.stepID,
       title: data.title,
@@ -121,11 +106,7 @@ module.exports = ({ db }) => {
     }
 
     try {
-      const updatedStep = await updater('stepID', options.stepID, 'steps', updateFields);
-      //increment version
-      const newVersion = await incrementVersion('steps', 'stepID', options.stepID, updatedStep.version);
-      //add an 'updated' log entry
-      createRecipeLog(options.userID, authorization, 'updatedStepVersion', Number(options.stepID), null, String(updatedStep.version), String(newVersion), `updated step with ID: ${options.stepID}, new version: ${newVersion}`);
+      const updatedStep = await updater(options.userID, authorization, 'stepID', options.stepID, 'steps', updateFields);
       return updatedStep;
     } catch (err) {
       global.logger.info(`Error updating step: ${err.message}`);
@@ -154,7 +135,7 @@ module.exports = ({ db }) => {
         return { error: stepError.message };
       }
 
-      //delete any associated recipeSteps entries;
+      //delete any associated recipeSteps entries. The version update to the recipe will be handled by the DEL /recipeSteps/:recipeStepID endpoint
       for (let i = 0; i < relatedRecipeSteps.length; i++) {
         const { data: recipeStepDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipeSteps/${relatedRecipeSteps[i].recipeStepID}`, {
           headers: {
@@ -165,9 +146,6 @@ module.exports = ({ db }) => {
           global.logger.info(`Error deleting recipeStepID: ${relatedRecipeSteps[i].recipeStepID} prior to deleting step ID: ${stepID} : ${recipeStepDeleteResult.error}`);
           return { error: recipeStepDeleteResult.error };
         }
-
-        //add a 'deleted' log entry
-        createRecipeLog(userID, authorization, 'deletedRecipeStep', Number(relatedRecipeSteps[i].recipeStepID), Number(relatedRecipeSteps[i].recipeID), null, null, `deleted recipeStep with ID: ${relatedRecipeSteps[i].recipeStepID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeSteps: ${error.message}`);
@@ -180,11 +158,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting step: ${deleteError.message}`);
       return { error: deleteError.message };
     }
-
-    //add a 'deleted' log entry
-    createRecipeLog(userID, authorization, 'deletedStep', Number(stepID), null, null, null, `deleted step with ID: ${stepID}`);
-
-    global.logger.info(`Deleted step ${stepID}`);
+    createRecipeLog(userID, authorization, 'deleteStep', Number(stepID), null, null, null, `deleted step: ${step[0].title}`);
     return data;
   }
 

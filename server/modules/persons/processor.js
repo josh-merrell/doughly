@@ -1,11 +1,10 @@
 /* eslint-disable prettier/prettier */
 
 const { createUserLog } = require('../../services/dbLogger');
-const axios = require('axios');
 
 ('use strict');
 
-const { updater, incrementVersion } = require('../../db');
+const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -86,9 +85,7 @@ module.exports = ({ db }) => {
       return { error: error.message };
     } else {
       //add a 'created' log entry
-      createUserLog(userID, authorization, 'createdPerson', data.personID, null, null, null, `Created Person: ${data.nameFirst} ${data.nameLast}, email: ${data.email}}`);
-
-      global.logger.info(`Created person ${nameFirst} ${nameLast}, ID ${data.personID}`);
+      createUserLog(userID, authorization, 'createPerson', data.personID, null, null, null, `created Person: ${data.nameFirst} ${data.nameLast}, ${data.email}`);
       return data;
     }
   }
@@ -115,11 +112,11 @@ module.exports = ({ db }) => {
 
     //if the email is unique, update provided fields in the 'persons' table,
     try {
-      const updatedPerson = await updater('personID', options.personID, 'persons', updateFields);
-      //increment version of person
-      const newVersion = await incrementVersion('persons', 'personID', options.personID, updatedPerson.version);
-      //add an 'updated' log entry
-      createUserLog(options.userID, options.authorization, 'updatedPersonVersion', Number(options.personID), null, String(updatedPerson.version), String(newVersion), `Updated Person, ID: ${options.personID}, new version: ${newVersion}`);
+      const updatedPerson = await updater(options.userID, options.authorization, 'personID', options.personID, 'persons', updateFields);
+      // //increment version of person
+      // const newVersion = await incrementVersion('persons', 'personID', options.personID, updatedPerson.version);
+      // //add an 'updated' log entry
+      // createUserLog(options.userID, options.authorization, 'updatedPersonVersion', Number(options.personID), null, String(updatedPerson.version), String(newVersion), `Updated Person, ID: ${options.personID}, new version: ${newVersion}`);
       return updatedPerson;
     } catch (error) {
       global.logger.info(`Error updating persons ID:${options.personID}: ${error.message}`);
@@ -129,11 +126,7 @@ module.exports = ({ db }) => {
 
   async function deletePerson(options) {
     //verify that the person to delete exists
-    let { data: personExists, error: personExistsError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/persons/${options.personID}`, options, {
-      headers: {
-        authorization: options.authorization,
-      },
-    });
+    const { data: personExists, error: personExistsError } = await db.from('persons').select().match({ personID: options.personID }).single();
 
     if (personExistsError) {
       global.logger.info(`Error checking whether personID to del: ${options.personID} exists: ${personExistsError.message}`);
@@ -151,9 +144,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    createUserLog(options.userID, options.authorization, 'deletedPerson', options.personID, null, null, null, `Deleted Person, ID: ${options.personID}`);
-
-    global.logger.info(`Deleted personID: ${options.personID}`);
+    createUserLog(options.userID, options.authorization, 'deletePerson', Number(options.personID), null, null, null, `deleted Person, ${personExists.nameFirst} ${personExists.nameLast}, ${personExists.email}`);
     return data;
   }
 
