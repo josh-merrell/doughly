@@ -1,17 +1,16 @@
 const axios = require('axios');
 
 ('use strict');
-const { createRecipeLog } = require('../../services/dbLogger');
-const { updater, incrementVersion } = require('../../../db');
+const { createRecipeLog } = require('../../../services/dbLogger');
+const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 
 module.exports = ({ db }) => {
-  const sequenceShifter = async (recipeStepID, newSeq) => {
-    const { err } = await updater('recipeStepID', recipeStepID, 'recipeSteps', { sequence: newSeq });
+  const sequenceShifter = async (userID, authorization, recipeStepID, newSeq) => {
+    const { err } = await updater(userID, authorization, 'recipeStepID', recipeStepID, 'recipeSteps', { sequence: newSeq });
     if (err) {
       global.logger.info(`Error shifting sequence of recipeStep ID: ${recipeStepID} while updating recipeStep ${err.message}`);
       return { error: err.message };
     }
-    global.logger.info(`Shifted sequence of recipeStep ID: ${recipeStepID} to ${newSeq}`);
   };
 
   async function getAll(options) {
@@ -99,7 +98,7 @@ module.exports = ({ db }) => {
       if (recipe[0].status === 'noSteps') {
         await publish(recipeID, deletedRecipeStep[0].recipeStepID, userID, authorization);
       }
-      const logID1 = createRecipeLog(userID, authorization, 'undeleteRecipeStep', Number(deletedRecipeStep[0].recipeStepID), Number(recipeID), null, null, `undeleted recipeStep with ID: ${deletedRecipeStep[0].recipeStepID} for recipe ID: ${recipeID} and step ID: ${stepID}`);
+      const logID1 = await createRecipeLog(userID, authorization, 'undeleteRecipeStep', Number(deletedRecipeStep[0].recipeStepID), Number(recipeID), null, null, `undeleted recipeStep with ID: ${deletedRecipeStep[0].recipeStepID} for recipe ID: ${recipeID} and step ID: ${stepID}`);
       //increment recipe version and add a 'recipeStepAdded' log entry to the recipe
       const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
       createRecipeLog(userID, authorization, 'updatedRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion), `Updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
@@ -127,7 +126,7 @@ module.exports = ({ db }) => {
     /** FOR NOW WE ARE NOT USING THIS SMART SEQUENCE SHIFTING LOGIC, THE FRONTEND WILL CALL EACH NEEDED SHIFT DIRECTLY
     //if sequence is less than number of steps in recipe + 1, increment the sequence of all recipeSteps with sequence >= provided sequence
     // for (let i = existingRecipeSteps.length - 1; i >= sequence - 1; i--) {
-    //   const { error: sequenceShiftError } = await updater('recipeStepID', existingRecipeSteps[i].recipeStepID, 'recipeSteps', { sequence: existingRecipeSteps[i].sequence + 1 });
+    //   const { error: sequenceShiftError } = await updater(userID, authorization, 'recipeStepID', existingRecipeSteps[i].recipeStepID, 'recipeSteps', { sequence: existingRecipeSteps[i].sequence + 1 });
     //   if (sequenceShiftError) {
     //     global.logger.info(`Error shifting sequence of recipeStep ID: ${existingRecipeSteps[i].recipeStepID} while creating recipeStep ${sequenceShiftError.message}`);
     //     return { error: sequenceShiftError.message };
@@ -145,10 +144,10 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    const logID2 = createRecipeLog(userID, authorization, 'createdRecipeStep', newRecipeStep.recipeStepID, Number(recipeID), null, null, `created recipeStep with ID: ${newRecipeStep.recipeStepID}`);
+    const logID2 = await createRecipeLog(userID, authorization, 'createdRecipeStep', newRecipeStep.recipeStepID, Number(recipeID), null, null, `created recipeStep with ID: ${newRecipeStep.recipeStepID}`);
     //increment recipe version and add a 'recipeStepAdded' log entry to the recipe
     const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
-    createRecipeLog(userID, authorization, 'updatedRecipeVersion', Number(recipeID), Number(logID2), String(recipe[0].version), String(newVersion), `Updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
+    createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID2), String(recipe[0].version), String(newVersion), `updated recipe, ID: ${recipeID} version from ${recipe[0].version} to ${newVersion}`);
 
     if (recipe[0].status === 'noSteps') {
       await publish(recipeID, newRecipeStep.recipeStepID, userID, authorization);
@@ -181,7 +180,7 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { recipeStepID, sequence, photoURL } = options;
+    const { authorization, recipeStepID, sequence, photoURL } = options;
 
     //validate that provided recipeStepID exists
     const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID);
@@ -235,11 +234,16 @@ module.exports = ({ db }) => {
     //   }
     // }
     **/
-    const updateFields = { sequence: sequence, photoURL: photoURL };
+    const updateFields = {};
+    if (sequence) {
+      updateFields.sequence = sequence;
+    }
+    if (photoURL) {
+      updateFields.photoURL = photoURL;
+    }
 
     try {
-      const updatedRecipeStep = await updater('recipeStepID', recipeStepID, 'recipeSteps', updateFields);
-      global.logger.info(`Updated recipeStep ${recipeStepID}`);
+      const updatedRecipeStep = await updater(options.userID, authorization, 'recipeStepID', recipeStepID, 'recipeSteps', updateFields);
       return updatedRecipeStep;
     } catch (err) {
       global.logger.info(`Error updating recipeStep ${recipeStepID}: ${err.message}`);
@@ -296,9 +300,12 @@ module.exports = ({ db }) => {
       return { error: deleteError.message };
     }
     //add a 'deleted' log entry
-    createRecipeLog(userID, authorization, 'deleteRecipeStep', Number(recipeStepID), Number(recipeStep[0].recipeID), null, null, `deleted recipeStep with ID: ${recipeStepID}`);
-
-    global.logger.info(`Deleted recipeStep ${recipeStepID}`);
+    const logID1 = await createRecipeLog(userID, authorization, 'deleteRecipeStep', Number(recipeStepID), Number(recipeStep[0].recipeID), null, null, `deleted recipeStep with ID: ${recipeStepID}`);
+    //update version of associated recipe and log the change
+    //get recipe version
+    const version = await getRecipeVersion(recipeStep[0].recipeID);
+    const newVersion = await incrementVersion('recipes', 'recipeID', recipeStep[0].recipeID, version);
+    createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeStep[0].recipeID), Number(logID1), String(version), String(newVersion), `updated version of recipe ID:${recipeStep[0].recipeID} from ${version} to ${newVersion}`);
 
     //delete step associated with recipeStep
     const { error: deleteStepError } = await db.from('steps').update({ deleted: true }).eq('stepID', recipeStep[0].stepID);
@@ -308,8 +315,6 @@ module.exports = ({ db }) => {
     }
     //add a 'deleted' log entry
     createRecipeLog(userID, authorization, 'deleteStep', Number(recipeStep[0].stepID), null, null, null, `deleted step with ID: ${recipeStep[0].stepID}`);
-
-    global.logger.info(`Deleted step ${recipeStep[0].stepID}`);
 
     //if recipe has no remaining steps, update recipe status to 'noSteps'
     if (existingRecipeSteps.length === 1) {
@@ -323,7 +328,7 @@ module.exports = ({ db }) => {
 
     //decrement the sequence of all recipeSteps with sequence > existing sequence
     for (let i = recipeStep[0].sequence; i < existingRecipeSteps.length; i++) {
-      await sequenceShifter(existingRecipeSteps[i].recipeStepID, existingRecipeSteps[i].sequence - 1);
+      await sequenceShifter(userID, authorization, existingRecipeSteps[i].recipeStepID, existingRecipeSteps[i].sequence - 1);
     }
     global.logger.info(`Decremented sequence of all recipeSteps with sequence greater than deleted recipeStep ID ${recipeStepID}`);
   }

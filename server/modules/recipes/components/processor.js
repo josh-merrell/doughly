@@ -1,7 +1,7 @@
 ('use strict');
 
-const { createRecipeLog } = require('../../services/dbLogger');
-const { updater, incrementVersion } = require('../../../db');
+const { createRecipeLog } = require('../../../services/dbLogger');
+const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -67,11 +67,11 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    const logID1 = createRecipeLog(userID, authorization, 'addedComponentToRecipe', Number(recipeID), Number(data.recipeComponentID), null, null, `added recipeComponent with ID: ${data.recipeComponentID} to recipe ${recipeID}`);
+    const logID1 = await createRecipeLog(userID, authorization, 'createRecipeComponent', Number(recipeID), Number(data.recipeComponentID), null, null, `created recipeComponent with ID: ${data.recipeComponentID} to recipe ${recipeID}`);
 
     //increment recipe version and add a 'recipeComponentAdded' log entry to the component recipe
     const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
-    createRecipeLog(userID, authorization, 'updatedRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion), `Updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
+    createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion), `updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
     return data;
   }
 
@@ -91,14 +91,13 @@ module.exports = ({ db }) => {
     //update recipeComponent
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'recipeComponentID' && options[key] !== undefined) {
+      if (key !== 'recipeComponentID' && options[key] !== undefined && key !== 'authorization') {
         updateFields[key] = options[key];
       }
     }
 
     try {
-      const updatedRecipeComponent = await updater('recipeComponentID', options.recipeComponentID, 'recipeComponents', updateFields);
-      global.logger.info(`Updated recipeComponent`);
+      const updatedRecipeComponent = await updater(options.userID, options.authorization, 'recipeComponentID', options.recipeComponentID, 'recipeComponents', updateFields);
       return updatedRecipeComponent;
     } catch (error) {
       global.logger.info(`Error updating recipeComponent ID: ${options.recipeComponentID}: ${error.message}`);
@@ -126,11 +125,14 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting recipeComponent: ${deleteError.message}`);
       return { error: deleteError.message };
     }
-
     //add a 'deleted' log entry
-    createRecipeLog(options.userID, options.authorization, 'deletedRecipeComponent', Number(options.recipeComponentID), Number(recipeComponent.recipeID), null, null, `deleted recipeComponent with ID: ${options.recipeComponentID}`);
+    const logID1 = await createRecipeLog(options.userID, options.authorization, 'deleteRecipeComponent', Number(options.recipeComponentID), Number(recipeComponent[0].recipeID), null, null, `deleted recipeComponent with ID: ${options.recipeComponentID}`);
 
-    global.logger.info(`Deleted recipeComponent`);
+    //update version of associated recipe and log the change
+    const recipeVersion = await getRecipeVersion(recipeComponent[0].recipeID);
+    const newVersion = await incrementVersion('recipes', 'recipeID', recipeComponent[0].recipeID, recipeVersion);
+    createRecipeLog(options.userID, options.authorization, 'updateRecipeVersion', Number(recipeComponent[0].recipeID), Number(logID1), String(recipeVersion), String(newVersion), `updated version of recipe ID:${recipeComponent[0].recipeID} from ${recipeVersion} to ${newVersion}`);
+
     return data;
   }
 

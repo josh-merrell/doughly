@@ -67,10 +67,9 @@ module.exports = ({ db }) => {
       global.logger.info(`Error creating ingredientStock: ${newIngredientStockError.message}`);
       return { error: newIngredientStockError.message };
     }
-    global.logger.info(`Created ingredientStock ID: ${newIngredientStock.ingredientStockID}`);
 
     //add a 'created' log entry
-    createKitchenLog(userID, authorization, 'createdIngredientStock', Number(newIngredientStock.ingredientStockID), ingredientID, null, null, `Created ingredientStock ID: ${newIngredientStock.ingredientStockID}`);
+    createKitchenLog(userID, authorization, 'createIngredientStock', Number(newIngredientStock.ingredientStockID), ingredientID, null, null, `created ingredientStock: ${newIngredientStock.grams} grams of ${existingIngredient[0].name}`);
 
     return {
       ingredientStockID: newIngredientStock.ingredientStockID,
@@ -81,7 +80,7 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { userID, ingredientStockID, measurement } = options;
+    const { authorization, userID, ingredientStockID, measurement } = options;
 
     //verify that the provided ingredientStockID is valid, return error if not
     const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().filter('userID', 'eq', userID).filter('ingredientStockID', 'eq', ingredientStockID);
@@ -103,7 +102,7 @@ module.exports = ({ db }) => {
     //update the ingredientStock
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'ingredientStockID' && key !== 'measurement' && options[key] !== undefined) {
+      if (key !== 'ingredientStockID' && key !== 'measurement' && options[key] !== undefined && key !== 'authorization') {
         updateFields[key] = options[key];
       }
     }
@@ -123,8 +122,7 @@ module.exports = ({ db }) => {
     }
 
     try {
-      const updatedIngredientStock = await updater('ingredientStockID', ingredientStockID, 'ingredientStocks', updateFields);
-      global.logger.info(`Updated ingredientStock ID: ${updatedIngredientStock.ingredientStockID}`);
+      const updatedIngredientStock = await updater(userID, authorization, 'ingredientStockID', ingredientStockID, 'ingredientStocks', updateFields);
       return updatedIngredientStock;
     } catch (error) {
       global.logger.info(`Error updating ingredientStock: ${error.message}`);
@@ -136,7 +134,7 @@ module.exports = ({ db }) => {
     const { userID, ingredientStockID, authorization } = options;
 
     //verify that the provided ingredientStockID is valid, return error if not
-    const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false);
+    const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false).single();
     if (error) {
       global.logger.info(`Error validating provided ingredientStockID: ${error.message}`);
       return { error: error.message };
@@ -146,6 +144,9 @@ module.exports = ({ db }) => {
       return { error: `IngredientStock ID does not exist, cannot delete ingredientStock` };
     }
 
+    //get name of the associated ingredients
+    const { data: ingredient } = await db.from('ingredients').select('name').eq('ingredientID', existingIngredientStock.ingredientID).single();
+
     //delete the ingredientStock
     const { error: deleteError } = await db.from('ingredientStocks').update({ deleted: true }).eq('ingredientStockID', ingredientStockID);
     if (deleteError) {
@@ -154,9 +155,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    createKitchenLog(userID, authorization, 'deletedIngredientStock', Number(ingredientStockID), Number(existingIngredientStock.ingredientID), null, null, `Deleted ingredientStock ID: ${ingredientStockID}`);
-
-    global.logger.info(`Deleted ingredientStock ID: ${ingredientStockID}`);
+    createKitchenLog(userID, authorization, 'deleteIngredientStock', Number(ingredientStockID), Number(existingIngredientStock.ingredientID), null, null, `deleted ingredientStock: ${existingIngredientStock.grams} grams of ${ingredient.name}`);
     return { success: true };
   }
 

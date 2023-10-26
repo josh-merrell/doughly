@@ -62,9 +62,8 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    createKitchenLog(userID, authorization, 'createTool', tool.toolID, null, null, null, `created tool with ID: ${tool.toolID}`);
+    createKitchenLog(userID, authorization, 'createTool', Number(tool.toolID), null, null, null, `created tool: ${name}`);
 
-    global.logger.info(`Created tool ID ${tool.toolID}`);
     return {
       toolID: tool.toolID,
       name: tool.name,
@@ -73,7 +72,7 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { toolID, name } = options;
+    const { userID, authorization, toolID, name } = options;
 
     //validate that the provided toolID exists
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID);
@@ -100,14 +99,13 @@ module.exports = ({ db }) => {
     //update the tool
     const updateFields = {};
     for (let key in options) {
-      if (key !== 'toolID') {
+      if (key !== 'toolID' && key !== 'authorization' && options[key] !== undefined) {
         updateFields[key] = options[key];
       }
     }
 
     try {
-      const updatedTool = await updater('toolID', toolID, 'tools', updateFields);
-      global.logger.info(`Updated tool ID ${toolID}`);
+      const updatedTool = await updater(userID, authorization, 'toolID', toolID, 'tools', updateFields);
       return {
         toolID: updatedTool.toolID,
         name: updatedTool.name,
@@ -154,7 +152,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        createRecipeLog(userID, authorization, 'deletedRecipeTool', Number(relatedRecipeTools[i].recipeToolID), Number(relatedRecipeTools[i].recipeID), null, null, `deleted recipeTool with ID: ${relatedRecipeTools[i].recipeToolID}`);
+        createRecipeLog(userID, authorization, 'deleteRecipeTool', Number(relatedRecipeTools[i].recipeToolID), Number(relatedRecipeTools[i].recipeID), null, null, `deleted recipeTool with ID: ${relatedRecipeTools[i].recipeToolID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeTools: ${error.message}`);
@@ -197,9 +195,7 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
     //add a 'deleted' log entry
-    createKitchenLog(userID, authorization, 'deleteTool', Number(toolID), null, null, null, `deleted tool with ID: ${toolID}`);
-
-    global.logger.info(`Deleted tool ID ${toolID}`);
+    createKitchenLog(userID, authorization, 'deleteTool', Number(toolID), null, null, null, `deleted tool: ${existingTool[0].name}`);
     return { success: true };
   }
 

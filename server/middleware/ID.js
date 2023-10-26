@@ -64,6 +64,9 @@ async function generateID(req, res, next) {
 
   const id = `${type}${year}${month}${day}${sequence}`;
 
+  if (next === 'handlerCall') {
+    return id;
+  }
   req.customID = id;
   next();
 }

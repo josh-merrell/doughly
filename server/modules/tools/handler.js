@@ -36,9 +36,11 @@ async function updateTool(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolID } = req.params;
+  const { authorization } = req.headers;
   const { name, brand } = req.body;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     toolID,
     name,
     brand,

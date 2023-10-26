@@ -37,9 +37,11 @@ async function updateRecipeComponent(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeComponentID } = req.params;
+  const { authorization } = req.headers;
   const { componentAdvanceDays } = req.body;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     recipeComponentID,
     componentAdvanceDays,
   });

@@ -36,8 +36,10 @@ async function updateIngredientStock(req, res) {
   const p = require('./processor')({ db });
   const { ingredientStockID } = req.params;
   const { purchasedDate, measurement } = req.body;
+  const { authorization } = req.headers;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     ingredientStockID,
     purchasedDate,
     measurement,

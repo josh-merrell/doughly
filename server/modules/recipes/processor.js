@@ -2,7 +2,7 @@
 
 const { default: axios } = require('axios');
 const { createRecipeLog } = require('../../services/dbLogger');
-const { updater, incrementVersion } = require('../../db');
+const { updater } = require('../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -86,7 +86,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    createRecipeLog(userID, authorization, 'createdRecipe', recipe.recipeID, null, null, null, 'Created Recipe ${recipe.title}, ID: ${recipe.recipeID}');
+    createRecipeLog(userID, authorization, 'createRecipe', recipe.recipeID, null, null, null, `created recipe ${recipe.title}, ID: ${recipe.recipeID}`);
 
     global.logger.info(`Created recipe ID:${recipe.recipeID}`);
     // return recipe;
@@ -105,7 +105,7 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { recipeID, authorization, recipeCategoryID, timePrep, timeBake, type } = options;
+    const { recipeID, authorization, recipeCategoryID, timePrep, timeBake } = options;
     //verify that the provided recipeID exists, return error if not
     const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
 
@@ -164,11 +164,7 @@ module.exports = ({ db }) => {
     }
 
     try {
-      const updatedRecipe = await updater('recipeID', recipeID, 'recipes', updateFields);
-      //increment version
-      const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, updatedRecipe.version);
-      //add an 'updated' log entry
-      createRecipeLog(options.userID, authorization, 'updatedRecipeVersion', Number(recipeID), null, String(updatedRecipe.version), String(newVersion), `Updated Recipe, ID: ${recipeID}, new version: ${newVersion}`);
+      const updatedRecipe = await updater(options.userID, authorization, 'recipeID', recipeID, 'recipes', updateFields);
       return updatedRecipe;
     } catch (error) {
       global.logger.info(`Error updating recipe: ${error.message}`);
@@ -221,7 +217,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        createRecipeLog(options.userID, options.authorization, 'deletedRecipeComponent', Number(relatedRecipeComponents[i].recipeComponentID), Number(relatedRecipeComponents[i].recipeID), null, null, `Deleted recipeComponent ID: ${relatedRecipeComponents[i].recipeComponentID}`);
+        createRecipeLog(options.userID, options.authorization, 'deleteRecipeComponent', Number(relatedRecipeComponents[i].recipeComponentID), Number(relatedRecipeComponents[i].recipeID), null, null, `deleted recipeComponent ID: ${relatedRecipeComponents[i].recipeComponentID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeComponents: ${error.message}`);
@@ -249,7 +245,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        createRecipeLog(options.userID, options.authorization, 'deletedRecipeStep', Number(relatedRecipeSteps[i].recipeStepID), Number(relatedRecipeSteps[i].recipeID), null, null, `Deleted recipeStep ID: ${relatedRecipeSteps[i].recipeStepID}`);
+        createRecipeLog(options.userID, options.authorization, 'deleteRecipeStep', Number(relatedRecipeSteps[i].recipeStepID), Number(relatedRecipeSteps[i].recipeID), null, null, `deleted recipeStep ID: ${relatedRecipeSteps[i].recipeStepID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeSteps: ${error.message}`);
@@ -277,7 +273,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        createRecipeLog(options.userID, options.authorization, 'deletedRecipeTool', Number(relatedRecipeTools[i].recipeToolID), Number(relatedRecipeTools[i].recipeID), null, null, `Deleted recipeTool ID: ${relatedRecipeTools[i].recipeToolID}`);
+        createRecipeLog(options.userID, options.authorization, 'deleteRecipeTool', Number(relatedRecipeTools[i].recipeToolID), Number(relatedRecipeTools[i].recipeID), null, null, `deleted recipeTool ID: ${relatedRecipeTools[i].recipeToolID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeTools: ${error.message}`);
@@ -305,7 +301,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        createRecipeLog(options.userID, options.authorization, 'deletedRecipeIngredient', Number(relatedRecipeIngredients[i].recipeIngredientID), Number(relatedRecipeIngredients[i].recipeID), null, null, `Deleted recipeIngredient ID: ${relatedRecipeIngredients[i].recipeIngredientID}`);
+        createRecipeLog(options.userID, options.authorization, 'deleteRecipeIngredient', Number(relatedRecipeIngredients[i].recipeIngredientID), Number(relatedRecipeIngredients[i].recipeID), null, null, `deleted recipeIngredient ID: ${relatedRecipeIngredients[i].recipeIngredientID}`);
       }
     } catch (error) {
       global.logger.info(`Error deleting related recipeIngredients: ${error.message}`);
@@ -321,7 +317,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    createRecipeLog(options.userID, options.authorization, 'deletedRecipe', options.recipeID, null, null, null, `Deleted recipe ID: ${options.recipeID}`);
+    createRecipeLog(options.userID, options.authorization, 'deleteRecipe', Number(options.recipeID), null, null, null, `deleted recipe: ${recipe[0].title}, ID: ${options.recipeID}`);
   }
 
   return {

@@ -12,11 +12,11 @@ const h = handler;
 
 router.use(authenticateJWT);
 
-router.get('/:personID', routeValidator(getPersonSchema_params, 'query'), errorCatcher(h.getPersonByID));
+router.get('/:personID', routeValidator(getPersonSchema_params, 'params'), errorCatcher(h.getPersonByID));
 router.get('/', routeValidator(getPersonsSchema_query, 'query'), errorCatcher(h.getPersons));
 router.post('/', generateID, routeValidator(newPersonSchema_body, 'body'), errorCatcher(h.createPerson));
 
 router.patch('/:personID', routeValidator(personUpdateSchema_body, 'body'), routeValidator(personUpdateSchema_params, 'params'), errorCatcher(h.updatePerson));
-router.delete('/:personID', routeValidator(personDeleteSchema_params, 'query'), errorCatcher(h.deletePerson));
+router.delete('/:personID', routeValidator(personDeleteSchema_params, 'params'), errorCatcher(h.deletePerson));
 
 module.exports = router;

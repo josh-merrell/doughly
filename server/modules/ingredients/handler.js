@@ -38,8 +38,10 @@ async function updateIngredient(req, res) {
   const p = require('./processor')({ db });
   const { ingredientID } = req.params;
   const { name, brand, lifespanDays, purchaseUnit, gramRatio } = req.body;
+  const { authorization } = req.headers;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     ingredientID,
     name,
     brand,
