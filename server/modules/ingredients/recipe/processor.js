@@ -1,7 +1,7 @@
 ('use strict');
 
-const { createRecipeLog } = require('../../services/dbLogger');
-const { updater, incrementVersion } = require('../../../db');
+const { createRecipeLog } = require('../../../services/dbLogger');
+const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -77,7 +77,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that the provided purchaseUnitRatio is a positive number, return error if not
-    if (purchaseUnitRatio && purchaseUnitRatio <= 0) {
+    if (!purchaseUnitRatio || purchaseUnitRatio <= 0) {
       global.logger.info(`positive purchaseUnitRatio number is required`);
       return { error: `positive purchaseUnitRatio number is required` };
     }
@@ -91,7 +91,7 @@ module.exports = ({ db }) => {
     }
 
     //if status of existingRecipe is 'noIngredients', update status to 'noTools'
-    if (existingRecipe[0].status === 'noIngredients') {
+    if (existingRecipe[0].status === 'noIngredients' && recipeIngredient.recipeIngredientID) {
       const { error4 } = await db.from('recipes').update({ status: 'noTools' }).eq('recipeID', recipeID);
       if (error4) {
         global.logger.info(`Error updating recipe status: ${error4.message}`);
@@ -106,10 +106,10 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    const logID1 = createRecipeLog(userID, authorization, 'createdRecipeIngredient', recipeIngredient.recipeIngredientID, recipeIngredient.recipeID, null, null, `Created recipeIngredient ${recipeIngredient.recipeIngredientID}`);
+    const logID1 = await createRecipeLog(userID, authorization, 'createRecipeIngredient', recipeIngredient.recipeIngredientID, recipeIngredient.recipeID, null, null, `created recipeIngredient: ${measurement} ${measurementUnit} of ${existingIngredient[0].name}`);
     //increment recipe version and add a 'recipeIngredientAdded' log entry to the recipe
     const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, existingRecipe[0].version);
-    createRecipeLog(userID, authorization, 'updatedRecipeVersion', Number(recipeID), Number(logID1), String(existingRecipe[0].version), String(newVersion), `Updated recipe, ID: ${recipeID} to version: ${newVersion}`);
+    createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID1), String(existingRecipe[0].version), String(newVersion), `updated recipe, ID: ${recipeID} to version: ${newVersion}`);
 
     return {
       recipeIngredientID: recipeIngredient.recipeIngredientID,
@@ -157,11 +157,7 @@ module.exports = ({ db }) => {
     }
 
     try {
-      const updatedRecipeIngredient = await updater('recipeIngredientID', recipeIngredientID, 'recipeIngredients', updateFields);
-      //increment version of recipeIngredient
-      const newVersion = await incrementVersion('recipeIngredients', 'recipeIngredientID', recipeIngredientID, updatedRecipeIngredient.version);
-      //add an 'updated' log entry
-      createRecipeLog(userID, authorization, 'updatedRecipeIngredientVersion', Number(recipeIngredientID), Number(updatedRecipeIngredient.recipeID), String(updatedRecipeIngredient.version), String(newVersion), `Updated recipeIngredient, ID: ${recipeIngredientID}, new version: ${newVersion}`);
+      const updatedRecipeIngredient = await updater(userID, authorization, 'recipeIngredientID', recipeIngredientID, 'recipeIngredients', updateFields);
       return updatedRecipeIngredient;
     } catch (error) {
       global.logger.info(`Error updating recipeIngredient ID: ${recipeIngredientID}: ${error.message}`);
@@ -192,9 +188,12 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    createRecipeLog(userID, authorization, 'deletedRecipeIngredient', Number(recipeIngredientID), Number(existingRecipeIngredient[0].recipeID), null, null, `Deleted recipeIngredient ${recipeIngredientID}`);
+    const logID1 = createRecipeLog(userID, authorization, 'deleteRecipeIngredient', Number(recipeIngredientID), Number(existingRecipeIngredient[0].recipeID), null, null, `deleted recipeIngredient ${recipeIngredientID}`);
 
-    global.logger.info(`Deleted recipeIngredient ID: ${recipeIngredientID}`);
+    //increment version of associated recipe and add a log entry
+    const recipeVersion = await getRecipeVersion(existingRecipeIngredient[0].recipeID);
+    const newVersion = await incrementVersion('recipes', 'recipeID', existingRecipeIngredient[0].recipeID, recipeVersion);
+    createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(existingRecipeIngredient[0].recipeID), Number(logID1), String(recipeVersion), String(newVersion), `updated version of recipe ID:${existingRecipeIngredient[0].recipeID} from ${recipeVersion} to ${newVersion}`);
 
     //if existingRecipe has no more recipeIngredients, update status to 'noIngredients'
     const { data: recipeIngredients, error: recipeIngredientsError } = await db.from('recipeIngredients').select().eq('recipeID', existingRecipeIngredient[0].recipeID).eq('deleted', false);
@@ -203,12 +202,15 @@ module.exports = ({ db }) => {
       return { error: recipeIngredientsError };
     }
     if (!recipeIngredients.length) {
+      //get current recipe status
+      const { data: existingRecipe } = await db.from('recipes').select().eq('recipeID', existingRecipeIngredient[0].recipeID).single();
       const { error: updateError } = await db.from('recipes').update({ status: 'noIngredients' }).eq('recipeID', existingRecipeIngredient[0].recipeID);
       if (updateError) {
         global.logger.info(`Error updating recipe status: ${updateError}`);
         return { error: updateError };
       }
-      global.logger.info(`Recipe now has no recipeIngredients, Updated recipe status to 'noIngredients'`);
+      //log the change
+      createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(existingRecipeIngredient[0].recipeID), Number(logID1), `${existingRecipe.status}`, 'noIngredients', `updated recipe status to 'noIngredients'`);
     }
 
     return { success: true };

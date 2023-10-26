@@ -28,9 +28,11 @@ async function updateRecipeCategory(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeCategoryID } = req.params;
+  const { authorization } = req.headers;
   const { name, photoURL } = req.body;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     recipeCategoryID,
     name,
     photoURL,

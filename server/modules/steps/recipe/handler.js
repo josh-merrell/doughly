@@ -36,9 +36,11 @@ async function updateStep(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeStepID } = req.params;
+  const { authorization } = req.headers;
   const { sequence, photoURL } = req.body;
   const returner = await p.update({
     userID: req.userID,
+    authorization,
     recipeStepID,
     sequence,
     photoURL,
