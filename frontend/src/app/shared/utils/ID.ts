@@ -37,6 +37,8 @@ export class IDService {
         return 71;
       case 'userLog':
         return 72;
+      case 'recipeFeedback':
+        return 73;
       default:
         return 0;
     }

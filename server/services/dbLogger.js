@@ -70,8 +70,30 @@ async function createUserLog(userID, authorization, eventType, subjectID, associ
   return log.data.userLogID;
 }
 
+async function createRecipeFeedbackLog(userID, authorization, recipeID, satisfaction, difficulty, note) {
+  let log = await axios.post(
+    `${process.env.NODE_HOST}:${process.env.PORT}/logs/recipeFeedback`,
+    {
+      userID,
+      IDtype: 73, // needed for API to generate custom ID for new recipeFeedbackLog entry
+      recipeID,
+      satisfaction,
+      difficulty,
+      note,
+    },
+    {
+      headers: {
+        authorization: authorization,
+      },
+    },
+  );
+  global.logger.info(`**RECIPE FEEDBACK LOG ENTRY ID: ${log.data.recipeFeedbackID}** recipeID:${recipeID}|satisfaction:${satisfaction}|difficulty:${difficulty}`);
+  return log.data.recipeFeedbackID;
+}
+
 module.exports = {
   createKitchenLog,
   createRecipeLog,
   createUserLog,
+  createRecipeFeedbackLog,
 };

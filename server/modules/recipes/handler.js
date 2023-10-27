@@ -73,10 +73,28 @@ async function deleteRecipe(req, res) {
   return res.json(returner);
 }
 
+async function useRecipe(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { recipeID } = req.params;
+  const { satisfaction, difficulty, note } = req.body;
+  const { authorization } = req.headers;
+  const returner = await p.use({
+    authorization,
+    userID: req.userID,
+    recipeID,
+    satisfaction: parseInt(satisfaction),
+    difficulty: parseInt(difficulty),
+    note,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   getRecipes,
   getRecipeByID,
   createRecipe,
   updateRecipe,
   deleteRecipe,
+  useRecipe,
 };
