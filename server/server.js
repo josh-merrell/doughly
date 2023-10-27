@@ -37,7 +37,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   }),
 );
-app.use(morgan('combined')); //send request logs to console
+// app.use(morgan('combined')); //send request logs to console
 app.use(morgan('combined', { stream: requestLogStream })); //also send request logs to file
 const { queryArrayParser } = require('./middleware/queryParsing');
 
