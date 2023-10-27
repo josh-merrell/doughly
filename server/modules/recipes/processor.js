@@ -1,8 +1,9 @@
 ('use strict');
 
 const { default: axios } = require('axios');
-const { createRecipeLog } = require('../../services/dbLogger');
+const { createRecipeLog, createRecipeFeedbackLog } = require('../../services/dbLogger');
 const { updater } = require('../../db');
+const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -320,6 +321,84 @@ module.exports = ({ db }) => {
     createRecipeLog(options.userID, options.authorization, 'deleteRecipe', Number(options.recipeID), null, null, null, `deleted recipe: ${recipe[0].title}, ID: ${options.recipeID}`);
   }
 
+  async function useRecipe(options) {
+    const { recipeID, authorization, satisfaction, difficulty, note } = options;
+    //ensure provided satisfaction is valid number one through ten
+    if (!satisfaction || satisfaction < 1 || satisfaction > 10) {
+      global.logger.info(`Satisfaction should be integer between 1 and 10`);
+      return { error: `Satisfaction should be integer between 1 and 10` };
+    }
+
+    //ensure provided difficulty is valid number one through ten
+    if (!difficulty || difficulty < 1 || difficulty > 10) {
+      global.logger.info(`Difficulty should be integer between 1 and 10`);
+      return { error: `Difficulty should be integer between 1 and 10` };
+    }
+
+    //ensure provided recipeID exists
+    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
+    if (error) {
+      global.logger.info(`Error getting recipe: ${error.message}`);
+      return { error: error.message };
+    }
+    if (!recipe.length) {
+      global.logger.info(`Error using recipe. Recipe with provided ID (${recipeID}) does not exist`);
+      return { error: `Error using recipe. Recipe with provided ID (${recipeID}) does not exist` };
+    }
+
+    //make call to supply service to check whether there is sufficient stock to make this recipe
+    const { data: supplyCheckResult, error: supplyCheckError } = await supplyCheckRecipe(options.userID, authorization, recipeID);
+    if (supplyCheckError) {
+      global.logger.info(`Error checking supply for recipeID: ${recipeID} : ${supplyCheckError.message}`);
+      return { error: supplyCheckError.message };
+    }
+    if (supplyCheckResult.status === 'insufficient') {
+      global.logger.info(`Insufficient stock to make recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`);
+      return {
+        error: `Insufficient stock to make recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`,
+        shoppingList: { ingredients: supplyCheckResult.insufficientIngredients, tools: supplyCheckResult.insufficientTools },
+      };
+    }
+
+    //get list of related recipeComponents and use each
+    try {
+      const { data: relatedRecipeComponents, error: componentError } = await db.from('recipeComponents').select().eq('recipeID', recipeID).eq('deleted', false);
+      if (componentError) {
+        global.logger.info(`Error getting related recipeComponents for recipe to use: ${recipeID} : ${componentError.message}`);
+        return { error: componentError.message };
+      }
+
+      //use any associated recipeComponent entries;
+      for (let i = 0; i < relatedRecipeComponents.length; i++) {
+        const { data: recipeComponentUseResult } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/use/${relatedRecipeComponents[i].recipeComponentID}`, {
+          authorization,
+          userID: options.userID,
+        });
+        if (recipeComponentUseResult.error) {
+          global.logger.info(`Error using recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} prior to using recipe ID: ${recipeID} : ${recipeComponentUseResult.error}`);
+          return { error: recipeComponentUseResult.error };
+        }
+
+        //add a 'used' log entry
+        createRecipeLog(options.userID, authorization, 'useRecipeComponent', Number(relatedRecipeComponents[i].recipeComponentID), Number(relatedRecipeComponents[i].recipeID), null, null, `used recipeComponent: ${relatedRecipeComponents[i].title}`);
+      }
+    } catch (error) {
+      global.logger.info(`Error using related recipeComponents: ${error.message}`);
+      return { error: error.message };
+    }
+
+    //use stock of each recipeIngredient
+    const useIngredientsResult = await useRecipeIngredients(options.userID, authorization, recipeID);
+    // console.log(`RESULT: ${JSON.stringify(useIngredientsResult)}`);
+    if (useIngredientsResult.error) {
+      global.logger.info(`Error using recipeIngredients for recipeID: ${recipeID} :. Rollback of inventory state was successful: ${useIngredientsResult.error.rollbackSuccess}`);
+      return { error: useIngredientsResult.error.message };
+    }
+
+    //log use of recipe
+    await createRecipeFeedbackLog(options.userID, authorization, Number(recipeID), String(satisfaction), String(difficulty), note);
+  }
+
   return {
     get: {
       all: getAll,
@@ -328,5 +407,6 @@ module.exports = ({ db }) => {
     create,
     update,
     delete: deleteRecipe,
+    use: useRecipe,
   };
 };

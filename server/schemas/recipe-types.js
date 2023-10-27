@@ -152,6 +152,25 @@ const RecipeComponentDeleteSchema_params = {
   },
 };
 
+// Use Recipe
+const useRecipeSchema_params = {
+  type: 'object',
+  required: ['recipeID'],
+  properties: {
+    recipeID: { type: 'string' },
+  },
+};
+
+const useRecipeSchema_body = {
+  type: 'object',
+  required: ['satisfaction', 'difficulty'],
+  properties: {
+    satisfaction: { type: 'string' },
+    difficulty: { type: 'string' },
+    note: { type: 'string' },
+  },
+};
+
 module.exports = {
   getRecipesSchema_query,
   getRecipeSchema_params,
@@ -170,4 +189,6 @@ module.exports = {
   RecipeComponentUpdateSchema_body,
   RecipeComponentUpdateSchema_params,
   RecipeComponentDeleteSchema_params,
+  useRecipeSchema_params,
+  useRecipeSchema_body,
 };
