@@ -2,8 +2,12 @@
 
 module.exports = ({ db }) => {
   async function getAll(options) {
-    const { userID, logIDs, satisfaction, recipeID, difficulty, createdAfter, createdBefore } = options;
-    let q = db.from('recipeFeedbacks').select().filter('userID', 'eq', userID).order('recipeFeedbackID', { ascending: true });
+    const { onlyMe, userID, logIDs, satisfaction, recipeID, difficulty, createdAfter, createdBefore } = options;
+    let q = db.from('recipeFeedbacks').select().order('recipeFeedbackID', { ascending: true });
+    console.log(`onlyMe: ${onlyMe}`)
+    if (onlyMe === 'true') {
+      q = q.filter('userID', 'eq', userID);
+    }
     if (logIDs) {
       q = q.in('recipeFeedbackID', logIDs);
     }
@@ -17,10 +21,10 @@ module.exports = ({ db }) => {
       q = q.filter('recipeID', 'eq', recipeID);
     }
     if (createdAfter) {
-      q = q.gte('createdTime', createdAfter);
+      q = q.gte('logTime', createdAfter);
     }
     if (createdBefore) {
-      q = q.lte('createdTime', createdBefore);
+      q = q.lte('logTime', createdBefore);
     }
     const { data: logs, error } = await q;
 
