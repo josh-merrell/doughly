@@ -61,7 +61,10 @@
       </div>
       <!--Public/Private-->
       <div class="mx-dl-5 mt-dl-5 flex justify-between">
-        <div *ngIf="(displayRecipe$ | async).type === 'public'" class="flex justify-between">
+        <div
+          *ngIf="(displayRecipe$ | async).type === 'public'"
+          class="flex justify-between"
+        >
           <svg
             class="ml-dl-4 text-dl-grey-4"
             width="50"
@@ -95,9 +98,14 @@
               clip-rule="evenodd"
             ></path>
           </svg>
-          <span class="text-dl-5 font-dl-2 text-dl-grey-4">This Recipe is Publicly visible</span>
+          <span class="text-dl-5 font-dl-2 text-dl-grey-4"
+            >This Recipe is Publicly visible</span
+          >
         </div>
-        <div *ngIf="(displayRecipe$ | async).type === 'private'" class="flex justify-between">
+        <div
+          *ngIf="(displayRecipe$ | async).type === 'private'"
+          class="flex justify-between"
+        >
           <svg
             class="ml-dl-4 text-dl-grey-4"
             width="50"
@@ -113,7 +121,9 @@
               clip-rule="evenodd"
             ></path>
           </svg>
-          <span class="text-dl-5 font-dl-2 text-dl-grey-4">This Recipe is Private and visible only to friends</span>
+          <span class="text-dl-5 font-dl-2 text-dl-grey-4"
+            >This Recipe is Private and visible only to friends</span
+          >
         </div>
       </div>
 
@@ -166,7 +176,7 @@
         class="mx-dl-4 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
         <div
-          class="mx-dl-4 mb-dl-1 flex w-full items-center justify-between px-dl-1 pt-dl-1"
+          class="ml-dl-4 mb-dl-1 flex w-full items-center justify-between px-dl-1 pt-dl-1"
         >
           <p *ngIf=""></p>
           <div class="flex">
@@ -200,7 +210,7 @@
               displayUsageDate === 'Today'
             "
             type="button"
-            class="mr-dl-1 block w-dl-8 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            class="block w-dl-8 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
             (click)="makeRecipe()"
           >
             Make it Now
@@ -208,7 +218,7 @@
           <button
             *ngIf="shoppingList?.ingredients?.length !== 0"
             type="button"
-            class="mr-dl-1 block w-dl-10 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            class="block w-dl-10 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
             (click)="viewShoppingList()"
           >
             View Shopping List
@@ -220,8 +230,112 @@
             "
             class="ml-dl-4 text-dl-4 italic text-dl-teal-7"
           >
-            Current inventory is sufficient!
+            Ready to Make!
           </p>
+        </div>
+      </div>
+
+      <!-- Past Uses-->
+      <div
+        class="ml-dl-6 mr-dl-2 mt-dl-1 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
+      >
+        <div class="flex">
+          <!-- Single Person-->
+          <svg
+            (click)="selectPersonIcon('true')"
+            version="1.1"
+            id="fi_456212"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 -100 512 612"
+            style="enable-background: new 0 0 512 512"
+            xml:space="preserve"
+            height="29"
+            width="29"
+            class=" text-dl-grey-4"
+          >
+            <g>
+              <g>
+                <path
+                  [attr.fill]="singlePersonIconColor"
+                  d="M256,0c-74.439,0-135,60.561-135,135s60.561,135,135,135s135-60.561,135-135S330.439,0,256,0z"
+                ></path>
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  [attr.fill]="singlePersonIconColor"
+                  d="M423.966,358.195C387.006,320.667,338.009,300,286,300h-60c-52.008,0-101.006,20.667-137.966,58.195
+			C51.255,395.539,31,444.833,31,497c0,8.284,6.716,15,15,15h420c8.284,0,15-6.716,15-15
+			C481,444.833,460.745,395.539,423.966,358.195z"
+                ></path>
+              </g>
+            </g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+          </svg>
+
+          <!-- Multiple Persons -->
+          <svg
+            (click)="selectPersonIcon('false')"
+            height="512"
+            viewBox="0 0 24 24"
+            width="512"
+            xmlns="http://www.w3.org/2000/svg"
+            id="fi_2118701"
+            height="36"
+            width="36"
+            class="ml-dl-2"
+            
+          >
+            <path
+              [attr.fill]="multiplePersonIconColor"
+              d="m23 19a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1-1 6 6 0 0 1 6-6h2a6 6 0 0 1 6 6zm-7-15a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm-9 0a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm0 15a7.94 7.94 0 0 1 2.35-5.65 5.43 5.43 0 0 0 -1.91-.35h-.88a5.57 5.57 0 0 0 -5.56 5.56v.44a1 1 0 0 0 1 1h5.18a3 3 0 0 1 -.18-1z"
+            ></path>
+          </svg>
+        </div>
+        <div class="flex px-dl-2">
+          <span class="text-dl-5 font-dl-2 text-dl-grey-4"
+            >Used {{ usesSince$ | async }} times since
+          </span>
+          <div
+            style="position: relative"
+            class="ml-dl-2 text-dl-5 font-dl-2 text-dl-blue-6"
+          >
+            <div (click)="logsDatePicker.open()">
+              {{ logsAfterDate }}
+            </div>
+            <input
+              matInput
+              [matDatepicker]="logsDatePicker"
+              [matDatepickerFilter]="filterFutureDates"
+              style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                pointer-events: none;
+              "
+              (dateChange)="updateLogsAfterDate($event)"
+            />
+            <mat-datepicker #logsDatePicker></mat-datepicker>
+          </div>
         </div>
       </div>
     </div>

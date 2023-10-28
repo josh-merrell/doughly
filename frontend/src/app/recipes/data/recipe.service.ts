@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   Observable,
   combineLatest,
@@ -31,6 +31,7 @@ import { IDService } from 'src/app/shared/utils/ID';
 })
 export class RecipeService {
   private API_URL = `${environment.BACKEND}/recipes`;
+  private API_LOGS_URL = `${environment.BACKEND}/logs`;
 
   constructor(
     private http: HttpClient,
@@ -205,5 +206,16 @@ export class RecipeService {
         return { ingredients: shoppingList };
       })
     );
+  }
+
+  getUses(recipeID: number, datestring: string, onlyMe = 'false'): Observable<number> {
+    let params = new HttpParams()
+      .set('recipeID', recipeID.toString())
+      .set('createdAfter', datestring)
+      .set('onlyMe', onlyMe);
+
+    return this.http
+      .get<any>(`${this.API_LOGS_URL}/recipeFeedback`, { params })
+      .pipe(map((logs) => logs.length));
   }
 }

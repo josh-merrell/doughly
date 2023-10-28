@@ -41,8 +41,9 @@ const getRecipeFeedbackSchema_params = {
 const getRecipeFeedbacksSchema_query = {
   type: 'object',
   properties: {
-    logIDs: { type: 'array', items: { type: 'integer' } },
-    recipeID: { type: 'integer' },
+    logIDs: { type: 'array', items: { type: 'string' } },
+    onlyMe: { type: 'string' },
+    recipeID: { type: 'string' },
     satisfaction: { type: 'string' },
     difficulty: { type: 'string' },
     createdAfter: { type: 'string' },

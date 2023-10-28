@@ -11,8 +11,8 @@ async function getLogByID(req, res) {
 async function getLogs(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { logIDs, recipeID, satisfaction, difficulty, createdAfter, createdBefore } = req.query;
-  const returner = await p.get.all({ userID: req.userID, recipeID, logIDs, satisfaction, difficulty, createdAfter, createdBefore });
+  const { logIDs, recipeID, satisfaction, difficulty, createdAfter, createdBefore, onlyMe } = req.query;
+  const returner = await p.get.all({ userID: req.userID, onlyMe, recipeID, logIDs, satisfaction, difficulty, createdAfter, createdBefore });
   return res.json(returner);
 }
 

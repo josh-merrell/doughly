@@ -83,6 +83,14 @@ export class RecipeComponent {
   shoppingList$: Observable<ShoppingList> =
     this.shoppingListSubject$.asObservable();
   shoppingList!: ShoppingList;
+  public logsAfterDate: string = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+  public displayLogsAfterDate!: string;
+  public usesSince$!: Observable<Number>;
+  public onlyMe: string = 'true'; //set this to 'false' to see uses by all users
 
   private subscription: Subscription = new Subscription();
 
@@ -109,6 +117,27 @@ export class RecipeComponent {
     private router: Router,
     private recipeService: RecipeService
   ) {}
+
+  get singlePersonIconColor() {
+    return this.onlyMe === 'true'
+      ? 'hsl(209, 14%, 37%)'
+      : 'hsl(210, 16%, 82%)';
+  }
+
+  get multiplePersonIconColor() {
+    return this.onlyMe === 'true'
+      ? 'hsl(210, 16%, 82%)'
+      : 'hsl(209, 14%, 37%)';
+  }
+
+  selectPersonIcon(selection: string) {
+    this.onlyMe = selection;
+    this.usesSince$ = this.recipeService.getUses(
+      this.recipeID,
+      this.logsAfterDate,
+      this.onlyMe
+    );
+  }
 
   toggleMenu(event: any) {
     event.stopPropagation();
@@ -360,6 +389,12 @@ export class RecipeComponent {
         const sorted = stepsWithPhotos.sort((a, b) => a.sequence - b.sequence);
         this.displayStepsWithPhoto$.next(sorted);
       });
+
+    this.usesSince$ = this.recipeService.getUses(
+      this.recipeID,
+      this.logsAfterDate,
+      this.onlyMe
+    );
   }
 
   filterPastDates(date: Date | null): boolean {
@@ -370,6 +405,18 @@ export class RecipeComponent {
       const dateWithoutTime = new Date(date);
       dateWithoutTime.setHours(0, 0, 0, 0);
       return dateWithoutTime >= today;
+    }
+    return true;
+  }
+
+  filterFutureDates(date: Date | null): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (date) {
+      const dateWithoutTime = new Date(date);
+      dateWithoutTime.setHours(0, 0, 0, 0);
+      return dateWithoutTime <= today;
     }
     return true;
   }
@@ -414,6 +461,23 @@ export class RecipeComponent {
       return 'Tomorrow';
     } else {
       return usageDate;
+    }
+  }
+
+  updateLogsAfterDate(event: MatDatepickerInputEvent<Date>) {
+    const date = event.value;
+    if (date) {
+      this.logsAfterDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+
+      this.usesSince$ = this.recipeService.getUses(
+        this.recipeID,
+        this.logsAfterDate,
+        this.onlyMe
+      );
     }
   }
 
@@ -495,7 +559,7 @@ export class RecipeComponent {
   }
 
   makeRecipe() {
-    console.log(`make recipe`)
+    console.log(`make recipe`);
   }
 
   editRecipeSteps() {
