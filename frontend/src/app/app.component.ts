@@ -34,8 +34,8 @@ export class AppComponent {
 
   ngOnInit() {
     //hydrate stuff
-    this.store.dispatch(EmployeeActions.loadEmployees());
-
+    // this.store.dispatch(EmployeeActions.loadEmployees());  // currently unused, table doesn't exist 10/20/23
+ 
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());
     this.store.dispatch(ToolActions.loadTools());

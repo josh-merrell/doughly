@@ -259,7 +259,7 @@
             <g>
               <g>
                 <path
-                  [attr.fill]="singlePersonIconColor"
+                  [attr.fill]="onlyMe() === 'true' ? 'hsl(209, 14%, 37%)' : 'hsl(210, 16%, 82%)'"
                   d="M256,0c-74.439,0-135,60.561-135,135s60.561,135,135,135s135-60.561,135-135S330.439,0,256,0z"
                 ></path>
               </g>
@@ -267,7 +267,7 @@
             <g>
               <g>
                 <path
-                  [attr.fill]="singlePersonIconColor"
+                  [attr.fill]="onlyMe() === 'true' ? 'hsl(209, 14%, 37%)' : 'hsl(210, 16%, 82%)'"
                   d="M423.966,358.195C387.006,320.667,338.009,300,286,300h-60c-52.008,0-101.006,20.667-137.966,58.195
 			C51.255,395.539,31,444.833,31,497c0,8.284,6.716,15,15,15h420c8.284,0,15-6.716,15-15
 			C481,444.833,460.745,395.539,423.966,358.195z"
@@ -305,21 +305,21 @@
             
           >
             <path
-              [attr.fill]="multiplePersonIconColor"
+              [attr.fill]="onlyMe() === 'true' ? 'hsl(210, 16%, 82%)' : 'hsl(209, 14%, 37%)'"
               d="m23 19a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1-1 6 6 0 0 1 6-6h2a6 6 0 0 1 6 6zm-7-15a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm-9 0a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm0 15a7.94 7.94 0 0 1 2.35-5.65 5.43 5.43 0 0 0 -1.91-.35h-.88a5.57 5.57 0 0 0 -5.56 5.56v.44a1 1 0 0 0 1 1h5.18a3 3 0 0 1 -.18-1z"
             ></path>
           </svg>
         </div>
         <div class="flex px-dl-2">
           <span class="text-dl-5 font-dl-2 text-dl-grey-4"
-            >Used {{ usesSince$ | async }} times since
+            >Used {{ relevantUses() }} times since
           </span>
           <div
             style="position: relative"
             class="ml-dl-2 text-dl-5 font-dl-2 text-dl-blue-6"
           >
             <div (click)="logsDatePicker.open()">
-              {{ logsAfterDate }}
+              {{ logsAfterDate() }}
             </div>
             <input
               matInput
