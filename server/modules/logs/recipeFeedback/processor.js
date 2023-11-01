@@ -4,7 +4,6 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { onlyMe, userID, logIDs, satisfaction, recipeID, difficulty, createdAfter, createdBefore } = options;
     let q = db.from('recipeFeedbacks').select().order('recipeFeedbackID', { ascending: true });
-    console.log(`onlyMe: ${onlyMe}`)
     if (onlyMe === 'true') {
       q = q.filter('userID', 'eq', userID);
     }

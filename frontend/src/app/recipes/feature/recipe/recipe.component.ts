@@ -1,4 +1,14 @@
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Renderer2,
+  Signal,
+  ViewChild,
+  WritableSignal,
+  computed,
+  effect,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -83,14 +93,19 @@ export class RecipeComponent {
   shoppingList$: Observable<ShoppingList> =
     this.shoppingListSubject$.asObservable();
   shoppingList!: ShoppingList;
-  public logsAfterDate: string = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+
+  //****** Usage Logs ******/
+  //default datstring 30 days prior
+  defaultDateStr = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
+  logsAfterDate: WritableSignal<string> = signal(this.defaultDateStr);
+  public onlyMe: WritableSignal<string> = signal('true');
+  relevantUses: Signal<any> = computed(() => {
+    return this.onlyMe() === 'true'
+      ? this.recipeService.myUses().length
+      : this.recipeService.allUses().length;
   });
-  public displayLogsAfterDate!: string;
-  public usesSince$!: Observable<Number>;
-  public onlyMe: string = 'true'; //set this to 'false' to see uses by all users
 
   private subscription: Subscription = new Subscription();
 
@@ -116,149 +131,27 @@ export class RecipeComponent {
     public dialog: MatDialog,
     private router: Router,
     private recipeService: RecipeService
-  ) {}
-
-  get singlePersonIconColor() {
-    return this.onlyMe === 'true'
-      ? 'hsl(209, 14%, 37%)'
-      : 'hsl(210, 16%, 82%)';
-  }
-
-  get multiplePersonIconColor() {
-    return this.onlyMe === 'true'
-      ? 'hsl(210, 16%, 82%)'
-      : 'hsl(209, 14%, 37%)';
-  }
-
-  selectPersonIcon(selection: string) {
-    this.onlyMe = selection;
-    this.usesSince$ = this.recipeService.getUses(
-      this.recipeID,
-      this.logsAfterDate,
-      this.onlyMe
-    );
-  }
-
-  toggleMenu(event: any) {
-    event.stopPropagation();
-    this.menuOpen = !this.menuOpen;
-  }
-  closeMenu() {
-    this.menuOpen = false;
-  }
-
-  ngAfterViewInit() {
-    this.globalClickListener = this.renderer.listen(
-      'document',
-      'click',
-      (event) => {
-        const clickedInside = this.rowItemMenu?.nativeElement.contains(
-          event.target
-        );
-        if (!clickedInside && this.rowItemMenu) {
-          this.closeMenu();
-        }
-      }
-    );
-  }
-
-  onUpdateClick() {
-    const dialogRef = this.dialog.open(EditRecipeModalComponent, {
-      data: this.displayRecipe$.value,
-      width: '75%',
+  ) {
+    effect(() => {
+      const relevantUses =
+        this.onlyMe() === 'true'
+          ? this.recipeService.myUses().length
+          : this.recipeService.allUses().length;
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result instanceof HttpErrorResponse) {
-        this.dialog.open(UpdateRequestErrorModalComponent, {
-          data: {
-            error: result,
-            updateFailureMessage: `Recipe could not be updated. Try again later.`,
-          },
-        });
-      } else if (result === 'success') {
-        this.dialog.open(UpdateRequestConfirmationModalComponent, {
-          data: {
-            result: result,
-            updateSuccessMessage: `Recipe with ID of ${this.recipeID} updated successfully!`,
-          },
-        });
-      }
+    effect(() => {
+      this.recipeService.loadUses(this.recipeID, this.logsAfterDate());
     });
   }
-
-  onDeleteClick() {
-    const dialogRef = this.dialog.open(DeleteRecipeModalComponent, {
-      data: {
-        recipeID: this.recipeID,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'error') {
-        this.dialog.open(DeleteRequestErrorModalComponent, {
-          data: {
-            error: result,
-            deleteFailureMessage: `Recipe could not be deleted. Try again later.`,
-          },
-        });
-      } else if (result === 'success') {
-        this.dialog.open(DeleteRequestConfirmationModalComponent, {
-          data: {
-            deleteSuccessMessage: 'Recipe deleted successfully!',
-          },
-        });
-        //navigate to recipes page
-        this.router.navigate(['/recipes']);
-      }
-    });
-  }
-
-  private mapRecipeIngredients(recipeIngredients: any[], ingredients: any[]) {
-    return recipeIngredients.map((recipeIngredient: any) => {
-      const ingredient = ingredients.find(
-        (ing: any) => ing.ingredientID === recipeIngredient.ingredientID
-      );
-      return {
-        ...recipeIngredient,
-        name: ingredient ? ingredient.name : 'Unknown',
-        measurementUnit:
-          recipeIngredient.measurementUnit === 'box' ||
-          recipeIngredient.measurementUnit === 'bunch' ||
-          recipeIngredient.measurementUnit === 'pinch' ||
-          recipeIngredient.measurementUnit === 'dash'
-            ? recipeIngredient.measurementUnit + 'es'
-            : recipeIngredient.measurementUnit + 's',
-      };
-    });
-  }
-
-  private mapRecipeTools(recipeTools: any, tools: any) {
-    return recipeTools.map((recipeTool: any) => {
-      const tool = tools.find((tool: any) => tool.toolID === recipeTool.toolID);
-      return {
-        ...recipeTool,
-        name: tool ? tool.name : null,
-      };
-    });
-  }
-
-  private mapRecipeSteps(recipeSteps: any, steps: any) {
-    return recipeSteps.map((recipeStep: any) => {
-      const step = steps.find((step: any) => step.stepID === recipeStep.stepID);
-      return {
-        ...recipeStep,
-        title: step ? step.title : 'Unknown',
-        description: step ? step.description : 'Unknown',
-      };
-    });
-  }
-
   ngOnInit() {
     this.displayUsageDate = this.updateDisplayUsageData(this.usageDate);
     this.ingredients$ = this.store.select(selectIngredients);
     this.tools$ = this.store.select(selectTools);
     this.steps$ = this.store.select(selectSteps);
+
+    this.route.paramMap.subscribe((params) => {
+      this.recipeID = +params.get('recipeID')!;
+    });
 
     this.route.params
       .pipe(
@@ -390,12 +283,128 @@ export class RecipeComponent {
         this.displayStepsWithPhoto$.next(sorted);
       });
 
-    this.usesSince$ = this.recipeService.getUses(
-      this.recipeID,
-      this.logsAfterDate,
-      this.onlyMe
+    this.recipeService.loadUses(this.recipeID, this.logsAfterDate());
+  }
+
+  selectPersonIcon(selection: string) {
+    this.onlyMe.set(selection);
+  }
+
+  toggleMenu(event: any) {
+    event.stopPropagation();
+    this.menuOpen = !this.menuOpen;
+  }
+  closeMenu() {
+    this.menuOpen = false;
+  }
+
+  ngAfterViewInit() {
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.rowItemMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInside && this.rowItemMenu) {
+          this.closeMenu();
+        }
+      }
     );
   }
+
+  onUpdateClick() {
+    const dialogRef = this.dialog.open(EditRecipeModalComponent, {
+      data: this.displayRecipe$.value,
+      width: '75%',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result instanceof HttpErrorResponse) {
+        this.dialog.open(UpdateRequestErrorModalComponent, {
+          data: {
+            error: result,
+            updateFailureMessage: `Recipe could not be updated. Try again later.`,
+          },
+        });
+      } else if (result === 'success') {
+        this.dialog.open(UpdateRequestConfirmationModalComponent, {
+          data: {
+            result: result,
+            updateSuccessMessage: `Recipe with ID of ${this.recipeID} updated successfully!`,
+          },
+        });
+      }
+    });
+  }
+
+  onDeleteClick() {
+    const dialogRef = this.dialog.open(DeleteRecipeModalComponent, {
+      data: {
+        recipeID: this.recipeID,
+      },
+    });
+    
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'error') {
+        this.dialog.open(DeleteRequestErrorModalComponent, {
+          data: {
+            error: result,
+            deleteFailureMessage: `Recipe could not be deleted. Try again later.`,
+          },
+        });
+      } else if (result === 'success') {
+        this.dialog.open(DeleteRequestConfirmationModalComponent, {
+          data: {
+            deleteSuccessMessage: 'Recipe deleted successfully!',
+          },
+        });
+        //navigate to recipes page
+        this.router.navigate(['/recipes']);
+      }
+    });
+  }
+
+  private mapRecipeIngredients(recipeIngredients: any[], ingredients: any[]) {
+    return recipeIngredients.map((recipeIngredient: any) => {
+      const ingredient = ingredients.find(
+        (ing: any) => ing.ingredientID === recipeIngredient.ingredientID
+      );
+      return {
+        ...recipeIngredient,
+        name: ingredient ? ingredient.name : 'Unknown',
+        measurementUnit:
+          recipeIngredient.measurementUnit === 'box' ||
+          recipeIngredient.measurementUnit === 'bunch' ||
+          recipeIngredient.measurementUnit === 'pinch' ||
+          recipeIngredient.measurementUnit === 'dash'
+            ? recipeIngredient.measurementUnit + 'es'
+            : recipeIngredient.measurementUnit + 's',
+      };
+    });
+  }
+
+  private mapRecipeTools(recipeTools: any, tools: any) {
+    return recipeTools.map((recipeTool: any) => {
+      const tool = tools.find((tool: any) => tool.toolID === recipeTool.toolID);
+      return {
+        ...recipeTool,
+        name: tool ? tool.name : null,
+      };
+    });
+  }
+
+  private mapRecipeSteps(recipeSteps: any, steps: any) {
+    return recipeSteps.map((recipeStep: any) => {
+      const step = steps.find((step: any) => step.stepID === recipeStep.stepID);
+      return {
+        ...recipeStep,
+        title: step ? step.title : 'Unknown',
+        description: step ? step.description : 'Unknown',
+      };
+    });
+  }
+
 
   filterPastDates(date: Date | null): boolean {
     const today = new Date();
@@ -467,16 +476,12 @@ export class RecipeComponent {
   updateLogsAfterDate(event: MatDatepickerInputEvent<Date>) {
     const date = event.value;
     if (date) {
-      this.logsAfterDate = date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      });
-
-      this.usesSince$ = this.recipeService.getUses(
-        this.recipeID,
-        this.logsAfterDate,
-        this.onlyMe
+      this.logsAfterDate.set(
+        date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        })
       );
     }
   }

@@ -1,14 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, WritableSignal, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   Observable,
   combineLatest,
-  defaultIfEmpty,
   map,
   of,
   switchMap,
-  take,
-  tap,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Store, select } from '@ngrx/store';
@@ -32,6 +29,9 @@ import { IDService } from 'src/app/shared/utils/ID';
 export class RecipeService {
   private API_URL = `${environment.BACKEND}/recipes`;
   private API_LOGS_URL = `${environment.BACKEND}/logs`;
+
+  myUses: WritableSignal<any[]> = signal([]);
+  allUses: WritableSignal<any[]> = signal([]);
 
   constructor(
     private http: HttpClient,
@@ -208,14 +208,28 @@ export class RecipeService {
     );
   }
 
-  getUses(recipeID: number, datestring: string, onlyMe = 'false'): Observable<number> {
+  loadUses(recipeID: number, datestring: string): void {
+    this.retrieveUsesFromDB(recipeID, datestring, 'true');
+    this.retrieveUsesFromDB(recipeID, datestring, 'false');
+  }
+
+  retrieveUsesFromDB(recipeID: number, datestring: string, onlyMe: string) {
+    if (!recipeID) return;
     let params = new HttpParams()
-      .set('recipeID', recipeID.toString())
+      .set('recipeID', recipeID)
       .set('createdAfter', datestring)
       .set('onlyMe', onlyMe);
 
-    return this.http
+    this.http
       .get<any>(`${this.API_LOGS_URL}/recipeFeedback`, { params })
-      .pipe(map((logs) => logs.length));
+      .subscribe((logs) => {
+        if (onlyMe === 'true') this.myUses.set(logs);
+        if (onlyMe === 'false') this.allUses.set(logs);
+      });
+  }
+
+  getUses(onlyMe = 'false'): number {
+    const usageLogs = onlyMe === 'true' ? this.myUses : this.allUses;
+    return usageLogs ? usageLogs.length : 0;
   }
 }
