@@ -8,11 +8,13 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'dl-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLinkWithHref],
+  imports: [CommonModule, ReactiveFormsModule, RouterLinkWithHref, MatFormFieldModule, MatSelectModule, MatInputModule],
   templateUrl: './login-page.component.html',
 })
 export class LoginPageComponent {

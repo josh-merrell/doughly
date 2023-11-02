@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
 import { RealtimeChannel, Session, User } from '@supabase/supabase-js';
-import { BehaviorSubject, first, Observable, skipWhile, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  first,
+  from,
+  Observable,
+  skipWhile,
+  tap,
+} from 'rxjs';
 import { SupabaseService } from './supabase.service';
 
 export interface Profile {
   user_id: string;
-  photo_url: string;
+  username: string;
   email: string;
-  name_first: string;
-  name_last: string;
+  name_first?: string;
+  name_last?: string;
 }
 
 @Injectable({
@@ -20,7 +28,7 @@ export class AuthService {
   $user = this._$user.pipe(
     skipWhile((_) => typeof _ === 'undefined')
   ) as Observable<User | null>;
-  private user_id?: string;
+  public user_id?: string;
 
   // Profile state
   private _$profile = new BehaviorSubject<Profile | null | undefined>(
@@ -33,9 +41,7 @@ export class AuthService {
 
   isProfile(obj: any): obj is Profile {
     return (
-      obj &&
-      typeof obj.user_id === 'string' &&
-      typeof obj.email === 'string'
+      obj && typeof obj.user_id === 'string' && typeof obj.email === 'string'
     );
   }
 
@@ -43,13 +49,13 @@ export class AuthService {
     // console.trace(`AUTHSERVICE INVOKED`)
 
     // Check the current session on initialization
-    this.supabase.client.auth.getSession().then(({ data, error }) => {
+    this.supabase.supabase.auth.getSession().then(({ data, error }) => {
       if (data && data.session && !error) {
         this.handleAuthStateChange('SIGNED_IN', data.session);
       }
     });
     // Listen for future auth state changes
-    this.supabase.client.auth.onAuthStateChange(
+    this.supabase.supabase.auth.onAuthStateChange(
       this.handleAuthStateChange.bind(this)
     );
 
@@ -63,7 +69,7 @@ export class AuthService {
           this.user_id = user_id;
 
           // One-time API call to Supabase to get the user's profile
-          this.supabase.client
+          this.supabase.supabase
             .from('profiles')
             .select('*')
             .match({ user_id: user_id })
@@ -73,7 +79,7 @@ export class AuthService {
               this._$profile.next(this.isProfile(res.data) ? res.data : null);
 
               // Listen to any changes to our user's profile using Supabase Realtime
-              this.profile_subscription = this.supabase.client
+              this.profile_subscription = this.supabase.supabase
                 .channel('public:profiles')
                 .on(
                   'postgres_changes',
@@ -96,8 +102,7 @@ export class AuthService {
         this._$profile.next(null);
         delete this.user_id;
         if (this.profile_subscription) {
-          this.supabase.client
-            .removeChannel(this.profile_subscription)
+          this.supabase.supabase.removeChannel(this.profile_subscription);
         }
       }
     });
@@ -119,7 +124,7 @@ export class AuthService {
   }
 
   private async getUserFromSession(session: Session): Promise<User | null> {
-    const { data, error } = await this.supabase.client.auth.getUser(
+    const { data, error } = await this.supabase.supabase.auth.getUser(
       session.access_token
     );
     if (error || !data) return null;
@@ -128,7 +133,7 @@ export class AuthService {
 
   private getUserProfile(user_id: string, session: Session) {
     // One-time API call to Supabase to get the user's profile
-    this.supabase.client
+    this.supabase.supabase
       .from('profiles')
       .select('*')
       .match({ user_id: user_id })
@@ -139,7 +144,7 @@ export class AuthService {
           this._$profile.next(res.data);
 
           // Initialize profile_subscription
-          this.profile_subscription = this.supabase.client
+          this.profile_subscription = this.supabase.supabase
             .channel('public:profiles')
             .on(
               'postgres_changes',
@@ -167,12 +172,11 @@ export class AuthService {
     const newUser = await this.getUserFromSession(session);
 
     if (!newUser) {
-      console.error('Error getting user details from session');
       return;
     }
 
     // check whether the user_id exists in the profiles table
-    const { data, error } = await this.supabase.client
+    const { data, error } = await this.supabase.supabase
       .from('profiles')
       .select('*')
       .match({ user_id: user_id })
@@ -186,19 +190,27 @@ export class AuthService {
 
     // Insert the new profile into the profiles table if it the user_id is not yet present
     if (error || !data) {
-      this.supabase.client
+      this.supabase.supabase
         .from('profiles')
         .insert(newProfile)
+        .select('*')
         .then(({ data, error }) => {
           if (error && error.code !== '406') {
             console.error('Error creating new profile:', error);
             return;
           }
-          this._$profile.next(data);
+          console.log(`NEW PROFILE: ${JSON.stringify(data)}`)
+          if (data && data.length > 0) {
+            this._$profile.next({
+              user_id: data[0].user_id,
+              email: data[0].email,
+              username: data[0].username,
+            });
+          }
         });
     }
     // Initialize profile_subscription
-    this.profile_subscription = this.supabase.client
+    this.profile_subscription = this.supabase.supabase
       .channel('public:profiles')
       .on(
         'postgres_changes',
@@ -222,7 +234,7 @@ export class AuthService {
     delete this.user_id;
 
     if (this.profile_subscription) {
-      this.supabase.client
+      this.supabase.supabase
         .removeChannel(this.profile_subscription)
         .then((res) => {
           console.log(
@@ -237,7 +249,7 @@ export class AuthService {
     return new Promise<void>((resolve, reject) => {
       // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
       this._$profile.next(undefined);
-      this.supabase.client.auth
+      this.supabase.supabase.auth
         .signInWithPassword({ email, password })
         .then(({ data, error }) => {
           if (error || !data) reject('Invalid email/password combination');
@@ -251,20 +263,68 @@ export class AuthService {
     });
   }
 
-  signUp(email: string, password: string) {
+  signUp(email: string, password: string, username: string) {
     return new Promise<void>((resolve, reject) => {
       // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
       this._$profile.next(undefined);
-      this.supabase.client.auth
+
+      this.supabase.supabase.auth
         .signUp({ email, password })
         .then(({ data, error }) => {
-          if (error || !data) reject('Invalid email/password combination');
-          resolve();
+          if (error || !data) {
+            reject('Error. Try again later');
+            return;
+          }
+
+          // Wait for $profile to be set again after being created. Wait for a valid profile emission
+          this.$profile
+            .pipe(
+              filter((profile) => profile !== null && profile !== undefined),
+              first()
+            )
+            .subscribe((profile) => {
+              // Update the profile with the username
+              this.updateProfile({ ...profile, username: username });
+              resolve();
+            });
         });
     });
   }
 
+  updateProfile(profile: any): void {
+    const update = {
+      ...profile,
+      updated_at: new Date(),
+    };
+    // upsert the update into the 'profiles' table, then update the profile BehaviorSubject with the new profile
+    this.supabase.supabase
+      .from('profiles')
+      .upsert(update)
+      .then(({ data, error }) => {
+        if (error) console.error('Error updating profile:', error);
+        this._$profile.next(data);
+      });
+  }
+
   logout() {
-    return this.supabase.client.auth.signOut();
+    return this.supabase.supabase.auth.signOut();
+  }
+
+  isUsernameUnique(username: string): Observable<boolean> {
+    return from(
+      this.supabase.supabase
+        .from('profiles')
+        .select('*')
+        .match({ username: username })
+        .then(({ data, error }) => {
+          if (error) throw error;
+          return data?.length === 0;
+        })
+    );
+  }
+
+  isUsernameValid(username: string): boolean {
+    //should require that the username is at least 5 characters long and contains only letters, numbers, and underscores.
+    return /^[a-zA-Z0-9_]{5,}$/.test(username);
   }
 }
