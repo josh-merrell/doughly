@@ -17,6 +17,8 @@ export interface Profile {
   email: string;
   name_first?: string;
   name_last?: string;
+  photo_url?: string;
+  joined_at?: Date;
 }
 
 @Injectable({
@@ -186,6 +188,7 @@ export class AuthService {
     const newProfile = {
       user_id: newUser.id,
       email: newUser.email,
+      joined_at: new Date(),
     };
 
     // Insert the new profile into the profiles table if it the user_id is not yet present
@@ -326,5 +329,36 @@ export class AuthService {
   isUsernameValid(username: string): boolean {
     //should require that the username is at least 5 characters long and contains only letters, numbers, and underscores.
     return /^[a-zA-Z0-9_]{5,}$/.test(username);
+  }
+
+  updateField(field: string, value: string) {
+    const update = {
+      [field]: value,
+      updated_at: new Date()
+    };
+    return from(
+      this.supabase.supabase
+        .from('profiles')
+        .update(update)
+        .eq('user_id', this.user_id)
+        .select('*')
+        .then(({ data, error }) => {
+          if (error) throw error;
+
+          const newProfile = {
+            user_id: data[0].user_id,
+            email: data[0].email,
+            username: data[0].username,
+            name_first: data[0].name_first,
+            name_last: data[0].name_last,
+            photo_url: data[0].photo_url,
+            joined_at: data[0].joined_at,
+            city: data[0].city,
+            state: data[0].state,
+          }
+          this._$profile.next(newProfile);
+          return data;
+        })
+    );
   }
 }
