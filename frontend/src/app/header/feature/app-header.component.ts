@@ -27,6 +27,9 @@ export class AppHeaderComponent {
   showMobileMenu = false;
   currentUrl$: Observable<string> = this.store.select(selectCurrentUrl);
   private destroy$ = new Subject<void>();
+  public profileImageLink: string | undefined;
+  public initials: string = '';
+  public profile: object | any = {};
 
   options: any = { exact: false };
 
@@ -38,6 +41,11 @@ export class AppHeaderComponent {
   ) {}
 
   ngOnInit() {
+    this.authService.$profile.subscribe((profile) => {
+      this.profile = profile;
+      this.profileImageLink = profile?.photo_url;
+      this.initials = (profile?.name_first?.charAt(0) || '') + (profile?.name_last?.charAt(0) || '');
+    });
     this.router.events
       .pipe(
         takeUntil(this.destroy$),
