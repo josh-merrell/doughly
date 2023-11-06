@@ -1,0 +1,140 @@
+<div class="w-full">
+  <!-- Header with Profile Photo and name-->
+  <div *ngIf="!expanded" class="mx-dl-5 pb-dl-4 mt-dl-3 flex h-dl-9 border-b-4 border-dl-grey-9 items-center">
+    <button
+      type="button"
+      (click)="toggleExpand()"
+      class="flex rounded-full bg-dl-grey-10 text-sm focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
+      id="user-profile-image"
+      aria-expanded="false"
+      aria-haspopup="true"
+    >
+      <span class="sr-only">Expand Profile Image</span>
+      <img
+        *ngIf="profileImageLink"
+        class="h-dl-6 w-dl-6 rounded-full"
+        src="profileImageLink"
+        alt="profile image"
+      />
+      <span
+        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
+        *ngIf="!profileImageLink && initials"
+      >
+        <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
+          initials
+        }}</span>
+      </span>
+      <span
+        *ngIf="!profileImageLink && !initials"
+        class="inline-block h-dl-6 w-dl-6 overflow-hidden rounded-full bg-dl-grey-9"
+      >
+        <svg
+          class="h-full w-full text-dl-grey-7"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      </span>
+    </button>
+    <div *ngIf="profile.name_first || profile.name_last" class="flex flex-col">
+      <span class="ml-dl-4 text-dl-8 font-dl-3 text-dl-grey-2">
+        {{ profile.name_first }} {{ profile.name_last }}
+      </span>
+      <span
+        *ngIf="profile.joined_at"
+        class="ml-dl-4 text-dl-6 font-dl-1 text-dl-grey-4"
+        >Member since {{ profile.joined_at | date: 'MMM y' }}</span
+      >
+    </div>
+  </div>
+  <div *ngIf="expanded">
+    <img
+      *ngIf="profileImageLink"
+      class="w-full object-cover"
+      src="profileImageLink"
+      alt="profile image"
+    />
+    <span
+      class="inline-flex w-full items-center justify-center bg-dl-grey-9 object-cover"
+      *ngIf="!profileImageLink && initials"
+    >
+      <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
+        initials
+      }}</span>
+    </span>
+    EXPANDED VIEW
+  </div>
+
+  <!-- Account Details inc username, email, city, state-->
+  <div class="mt-dl-3 flex flex-col pb-dl-3 items-left bg-white">
+    <span class="text-dl-7 ml-dl-5 mt-dl-5 font-dl-2 text-dl-blue-5">Account</span>
+
+    <!--First Name-->
+    <div (click)="update('name_first')" *ngIf="profile.name_first" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{profile.name_first}}</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">First Name</span>
+    </div>
+    <div (click)="update('name_first')" *ngIf="!profile.name_first" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-6">First Name</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Tap to add First Name</span>
+    </div>
+
+    <!--Last Name-->
+    <div (click)="update('name_last')" *ngIf="profile.name_last" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{profile.name_last}}</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Last Name</span>
+    </div>
+    <div (click)="update('name_last')" *ngIf="!profile.name_last" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-6">Last Name</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Tap to add Last Name</span>
+    </div>
+
+    <!--Email-->
+    <div *ngIf="profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{profile.email}}</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Email</span>
+    </div>
+    <div *ngIf="!profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-6">Email</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Tap to add Email</span>
+    </div>
+
+    <!--Username-->
+    <div *ngIf="profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{profile.username}}</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Username</span>
+    </div>
+    <div *ngIf="!profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-6">Username</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Tap to add Username</span>
+    </div>
+
+    <!--City-->
+    <div (click)="update('city')" *ngIf="profile.city" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{profile.city}}</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">City</span>
+    </div>
+    <div (click)="update('city')" *ngIf="!profile.city" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-6">City</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Tap to add City</span>
+    </div>
+
+    <!--State-->
+    <div (click)="update('state')"*ngIf="profile.city" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{profile.state}}</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">State</span>
+    </div>
+    <div (click)="update('state')" *ngIf="!profile.city" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-6">State</span>
+      <span class="text-dl-5 font-dl-1 mt-dl-1 text-dl-grey-7">Tap to add State</span>
+    </div>
+  </div>
+
+  <!-- Settings-->
+  <div class="mt-dl-3 flex flex-col pb-dl-3 items-left bg-white">
+    <span class="text-dl-7 ml-dl-5 mt-dl-5 font-dl-2 text-dl-blue-5">Settings</span>
+  </div>
+</div>
