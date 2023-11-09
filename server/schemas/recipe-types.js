@@ -165,8 +165,8 @@ const useRecipeSchema_body = {
   type: 'object',
   required: ['satisfaction', 'difficulty'],
   properties: {
-    satisfaction: { type: 'string' },
-    difficulty: { type: 'string' },
+    satisfaction: { type: 'integer' },
+    difficulty: { type: 'integer' },
     note: { type: 'string' },
   },
 };
