@@ -50,6 +50,7 @@ export class EditRecipeStepModalComponent {
   private steps: any[] = [];
 
   private unsubscribe$ = new Subject<void>();
+  
   //photo upload
   public stepImageChangedEvent: any = '';
   public croppedImage: any = '';

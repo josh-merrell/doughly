@@ -68,17 +68,17 @@ export class EditProfileModalComponent {
       .updateField(this.data.property, formValues[this.data.property])
       .subscribe({
         next: (result) => {
-          this.dialogRef.close(result);
+          this.dialogRef.close('success');
           this.isEditing = false;
         },
         error: (error) => {
-          this.dialogRef.close(false);
+          this.dialogRef.close({error: error});
           this.isEditing = false;
         },
       });
   }
 
   onCancel() {
-    this.dialogRef.close();
+    this.dialogRef.close('cancel');
   }
 }
