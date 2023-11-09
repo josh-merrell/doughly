@@ -5,11 +5,16 @@ import { AddRequestConfirmationModalComponent } from '../shared/ui/add-request-c
 import { MatDialog } from '@angular/material/dialog';
 import { AddRequestErrorModalComponent } from '../shared/ui/add-request-error/add-request-error-modal.component';
 import { EditProfileModalComponent } from './ui/edit-profile-modal/edit-profile-modal.component';
+import { PhotoService } from '../shared/utils/photoService';
+import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { EditPhotoModalComponent } from './ui/edit-photo-modal/edit-photo-modal.component';
 
 @Component({
   selector: 'dl-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImageCropperModule],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent {
@@ -19,10 +24,26 @@ export class ProfileComponent {
   public profile: object | any = {};
   public displayDate: string = '';
 
+  //photo upload
+  isUploadingPhoto: boolean = false;
+  public profileImageChangedEvent: any = '';
+  public croppedImage: any = '';
+  public selectedFile: File | null = null;
+  public isImageLoaded: boolean = false;
+  public isCropperReady: boolean = false;
+  public imageLoadFailed: boolean = false;
+  public imagePresent: boolean = false;
+  public photoURL?: string = '';
+  public photo: any;
+  public isChecked!: boolean;
+  newPhotoURL!: string;
+
   constructor(
     private cd: ChangeDetectorRef,
+    private store: Store,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private photoService: PhotoService
   ) {}
 
   ngOnInit() {
@@ -46,7 +67,7 @@ export class ProfileComponent {
     console.log('select image');
   }
 
-  update(property: string) {
+  updateProfile(property: string) {
     const dialogRef = this.dialog.open(EditProfileModalComponent, {
       data: {
         property,
@@ -55,21 +76,50 @@ export class ProfileComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+      if (result === 'cancel' || !result) return;
+      if (result?.error) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            results: result,
+            addFailureMessage: `Error updating Profile: ${result.error}`,
+          },
+        });
+      } else if (result === 'success') {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             results: result,
             addSuccessMessage: 'Profile updated successfully!',
           },
         });
-      } else if (result === false) {
+      }
+    });
+  }
+
+  updatePhoto() {
+    const dialogRef = this.dialog.open(EditPhotoModalComponent, {
+      data: {
+        currentPhotoURL: this.profile.photo_url,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'cancel' || !result)
+      if (result?.error) {
         this.dialog.open(AddRequestErrorModalComponent, {
           data: {
             results: result,
-            addFailureMessage: 'Error updating Profile.',
+            addFailureMessage: `Error updating Profile photo: ${result.error}`,
+          },
+        });
+      } else if (result === 'success') {
+        this.dialog.open(AddRequestConfirmationModalComponent, {
+          data: {
+            results: result,
+            addSuccessMessage: 'Profile photo updated successfully!',
           },
         });
       }
     });
   }
+
 }

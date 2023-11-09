@@ -6,6 +6,8 @@ const key = process.env.SUPABASE_DOUGHLEAP_KEY;
 
 const supabase = createClient(url, key, { db: { schema: 'bakery' } });
 
+const supabaseDefault = createClient(url, key);
+
 const updater = async (userID, authorization, IDfield, ID, table, updateFields) => {
   //get existing values of updateFields from supabase
   const { data: existingRow, error: existingRowError } = await supabase
@@ -117,4 +119,4 @@ const incrementVersion = async (table, IDfield, ID, currentVersion) => {
   }
 };
 
-module.exports = { supabase, updater, incrementVersion, getRecipeVersion };
+module.exports = { supabase, supabaseDefault, updater, incrementVersion, getRecipeVersion };
