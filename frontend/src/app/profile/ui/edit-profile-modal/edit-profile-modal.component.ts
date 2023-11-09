@@ -5,6 +5,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
+import { States } from 'src/app/shared/utils/types';
+import { isState } from 'src/app/shared/utils/formValidator';
 
 @Component({
   selector: 'dl-edit-profile-modal',
@@ -47,18 +49,22 @@ export class EditProfileModalComponent {
     if (this.data.property in this.profileProperties) {
       const propertyKey = this.data.property as ProfilePropertyKeys;
       this.field = this.profileProperties[propertyKey];
+      this.currVal = this.data.value;
+      this.setForm(propertyKey);
     } else {
       console.error(`Invalid property key: ${this.data.property}`);
-      this.field = 'Unknown Field'; // Or however you wish to handle this case
+      this.field = 'Unknown Field';
     }
-    this.currVal = this.data.value;
-    this.setForm();
   }
 
-  setForm() {
-    this.form = this.fb.group({
+  setForm(propertyKey: string) {  
+    const formControls = {
       [this.data.property]: [this.data.value],
-    });
+    };
+    if (propertyKey === 'state') {
+      formControls[this.data.property].push(isState());
+    }
+    this.form = this.fb.group(formControls);
   }
 
   onSubmit() {
@@ -68,17 +74,17 @@ export class EditProfileModalComponent {
       .updateField(this.data.property, formValues[this.data.property])
       .subscribe({
         next: (result) => {
-          this.dialogRef.close(result);
+          this.dialogRef.close('success');
           this.isEditing = false;
         },
         error: (error) => {
-          this.dialogRef.close(false);
+          this.dialogRef.close({ error: error });
           this.isEditing = false;
         },
       });
   }
 
   onCancel() {
-    this.dialogRef.close();
+    this.dialogRef.close('cancel');
   }
 }

@@ -331,7 +331,7 @@ export class AuthService {
     return /^[a-zA-Z0-9_]{5,}$/.test(username);
   }
 
-  updateField(field: string, value: string) {
+  updateField(field: string, value: string | null) {
     const update = {
       [field]: value,
       updated_at: new Date()

@@ -21,7 +21,7 @@ const logger = winston.createLogger({
   transports: [new winston.transports.Console({ format: winston.format.simple() }), new winston.transports.File({ filename: 'logger.log', level: 'info' })],
 });
 
-const { supabase, verifyUser } = require('./db');
+const { supabase, supabaseDefault, verifyUser } = require('./db');
 
 // Instantiate an express application
 const app = express();
@@ -60,6 +60,7 @@ if (process.env.NODE_ENV !== 'development') {
 // Add the supabase client to the request object
 app.use((req, res, next) => {
   req.client = { db: supabase };
+  req.defaultClient = { db: supabaseDefault };
   next();
 });
 app.use(queryArrayParser);

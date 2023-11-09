@@ -1,15 +1,8 @@
 <div
   class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-lg sm:p-dl-6"
 >
-  <mat-spinner
-    class="my-app-custom-spinner"
-    *ngIf="isEditing"
-  ></mat-spinner>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    *ngIf="isEditing === false"
-  >
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isEditing"></mat-spinner>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="isEditing === false">
     <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
         <h3
@@ -20,7 +13,7 @@
         </h3>
         <div class="mt-dl-2 space-x-1 whitespace-nowrap">
           <span class="text-dl-2 text-dl-grey-5"
-            >Change the value of {{field}}</span
+            >Change the value of {{ field }}</span
           >
         </div>
       </div>
@@ -51,9 +44,14 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-first-field" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">{{field}}</label>
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4">{{ field }}</label>
           <mat-form-field class="w-full">
-            <input matInput formControlName="{{this.data.property}}" />
+            <input matInput formControlName="{{ this.data.property }}" />
+            <mat-error
+              *ngIf="form.get(this.data.property)?.errors?.['notState']"
+            >
+              Invalid state. Please select a valid state.
+            </mat-error>
           </mat-form-field>
         </div>
       </div>

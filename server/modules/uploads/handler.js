@@ -14,13 +14,14 @@ async function createPresignedURL(req, res) {
 
 async function deleteS3Photo(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
   const { photoURL, type, id } = req.body;
   const returner = await p.remove({
     userID: req.userID,
     photoURL,
     type,
-    id,
+    id, //optional
   });
   return res.json(returner);
 }
