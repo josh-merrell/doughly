@@ -10,6 +10,12 @@ export interface RecipeState {
   error: RecipeError | null;
 }
 
+export interface RecipeUse {
+  satisfaction: number;
+  difficulty: number;
+  note: string;
+}
+
 export enum RecipeType {
   public = 'public',
   private = 'private',

@@ -389,14 +389,19 @@ module.exports = ({ db }) => {
 
     //use stock of each recipeIngredient
     const useIngredientsResult = await useRecipeIngredients(options.userID, authorization, recipeID);
-    // console.log(`RESULT: ${JSON.stringify(useIngredientsResult)}`);
     if (useIngredientsResult.error) {
       global.logger.info(`Error using recipeIngredients for recipeID: ${recipeID} :. Rollback of inventory state was successful: ${useIngredientsResult.error.rollbackSuccess}`);
       return { error: useIngredientsResult.error.message };
     }
 
     //log use of recipe
-    await createRecipeFeedbackLog(options.userID, authorization, Number(recipeID), String(satisfaction), String(difficulty), note);
+    const { log, createLogError } = await createRecipeFeedbackLog(options.userID, authorization, Number(recipeID), String(satisfaction), String(difficulty), note);
+    if (createLogError) {
+      global.logger.info(`Error logging recipe use: ${createLogError.message}`);
+      return { error: createLogError.message };
+    }
+    //return the log entry
+    return log;
   }
 
   return {
