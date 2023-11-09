@@ -58,6 +58,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ShoppingList } from '../../state/recipe/recipe-state';
 import { RecipeShoppingListModalComponent } from './ui/recipe-shopping-list-modal/recipe-shopping-list-modal.component';
+import { UseRecipeModalComponent } from './ui/use-recipe-modal/use-recipe-modal.component';
 
 function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -563,8 +564,31 @@ export class RecipeComponent {
     });
   }
 
-  makeRecipe() {
-    console.log(`make recipe`);
+  useRecipe() {
+    const dialogRef = this.dialog.open(UseRecipeModalComponent, {
+      data: {
+        recipeName: this.displayRecipe$.value.title,
+        recipeID: this.recipeID,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'cancel') return;
+      if (result === 'success') {
+        this.dialog.open(AddRequestConfirmationModalComponent, {
+          data: {
+            results: result,
+            addSuccessMessage: 'Recipe used successfully!',
+          },
+        });
+      } else if (result === false) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            error: result,
+            addFailureMessage: 'Error using recipe.',
+          },
+        });
+      }
+    });
   }
 
   editRecipeSteps() {

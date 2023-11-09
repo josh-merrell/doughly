@@ -22,6 +22,7 @@ import { selectRecipeToolsByRecipeID } from '../state/recipe-tool/recipe-tool-se
 import { selectIngredientByID } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectIngredientStocksByIngredientID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { IDService } from 'src/app/shared/utils/ID';
+import { RecipeUse } from '../state/recipe/recipe-state';
 
 @Injectable({
   providedIn: 'root',
@@ -231,5 +232,19 @@ export class RecipeService {
   getUses(onlyMe = 'false'): number {
     const usageLogs = onlyMe === 'true' ? this.myUses : this.allUses;
     return usageLogs ? usageLogs.length : 0;
+  }
+  useRecipe(
+    recipeID: number,
+    satisfaction: number,
+    difficulty: number,
+    note: string
+  ): Observable<RecipeUse> {
+    const body: any = {
+      satisfaction: satisfaction,
+      difficulty: difficulty,
+    };
+    if (note) body['note'] = note;
+
+    return this.http.post<RecipeUse>(`${this.API_URL}/use/${recipeID}`, body);
   }
 }
