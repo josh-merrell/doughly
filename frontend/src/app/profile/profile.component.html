@@ -99,7 +99,7 @@
   </div>
 
   <!-- Expanded View-->
-  <div *ngIf="expanded">
+  <div class="relative" *ngIf="expanded">
     <img
       *ngIf="profileImageLink"
       class="w-full object-cover"
@@ -107,6 +107,20 @@
       alt="profile image"
       (click)="toggleExpand()"
     />
+    <!-- Name -->
+    <div
+      *ngIf="profile.name_first || profile.name_last"
+      class="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-between z-15 h-dl-4 w-3/4 bg-white border-2 rounded-full "
+    >
+      <span class="ml-dl-6 text-dl-5 font-dl-3 text-dl-grey-2">
+        {{ profile.name_first }} {{ profile.name_last }}
+      </span>
+      <span
+        *ngIf="profile.joined_at"
+        class="text-dl-5 mr-dl-6 font-dl-1 text-dl-grey-4"
+        >Joined {{ profile.joined_at | date : "MMM y" }}</span
+      >
+    </div>
   </div>
 
   <!-- Account Details inc username, email, city, state-->
