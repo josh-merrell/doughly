@@ -569,6 +569,7 @@ export class RecipeComponent {
       data: {
         recipeName: this.displayRecipe$.value.title,
         recipeID: this.recipeID,
+        logsAfterDate: this.logsAfterDate(),
       },
     });
     dialogRef.afterClosed().subscribe((result) => {

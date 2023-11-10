@@ -20,6 +20,12 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
+import { Store } from '@ngrx/store';
+import { IngredientStockActions } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
+import { selectError, selectLoading } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
+import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
+import { concatMap, filter, switchMap, take, tap } from 'rxjs';
+
 
 
 @Component({
@@ -44,6 +50,7 @@ export class UseRecipeModalComponent {
 
   constructor(
     private fb: FormBuilder,
+    private store: Store,
     private recipeService: RecipeService,
     private dialogRef: MatDialogRef<UseRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -70,14 +77,37 @@ export class UseRecipeModalComponent {
 
     this.recipeService
       .useRecipe(this.data.recipeID, satisfaction, difficulty, note)
+      .pipe(
+        tap(() => {
+          // Update uses
+          this.recipeService.loadUses(
+            this.data.recipeID,
+            this.data.logsAfterDate
+          );
+        }),
+        tap(() => {
+          // Dispatch action to update ingredient stocks
+          this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+        }),
+        switchMap(() =>
+          // Wait for ingredient stocks loading to finish
+          this.store.select(selectLoading).pipe(
+            filter((loading) => !loading),
+            take(1)
+          )
+        ),
+        tap(() => {
+          // After stocks are updated, dispatch action to reload recipe state
+          this.store.dispatch(RecipeActions.loadRecipe({ recipeID: this.data.recipeID }));
+        }),
+        take(1)
+      )
       .subscribe(
-        (response) => {
-          console.log('Recipe used successfully', response);
+        () => {
           this.isSubmitting = false;
           this.dialogRef.close('success');
         },
         (err) => {
-          console.error(`ERROR MAKING RECIPE: ${err}`);
           this.isSubmitting = false;
           this.dialogRef.close(false);
         }
