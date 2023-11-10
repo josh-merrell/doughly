@@ -33,19 +33,5 @@ export class AppComponent {
   constructor(private router: Router, private store: Store) {}
 
   ngOnInit() {
-    //hydrate stuff
-    // this.store.dispatch(EmployeeActions.loadEmployees());  // currently unused, table doesn't exist 10/20/23
- 
-    this.store.dispatch(IngredientActions.loadIngredients());
-    this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-    this.store.dispatch(ToolActions.loadTools());
-    //this.store.dispatch(ToolStockActions.loadToolStocks());
-    this.store.dispatch(StepActions.loadSteps());
-
-    this.store.dispatch(RecipeActions.loadRecipes());
-    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
-    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
-    this.store.dispatch(RecipeToolActions.loadRecipeTools());
-    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
   }
 }
