@@ -11,14 +11,35 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { Store } from '@ngrx/store';
+
+// State Hydration Imports
+import { IngredientActions } from '../../../kitchen/feature/ingredients/state/ingredient-actions';
+import { IngredientStockActions } from '../../../kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
+import { EmployeeActions } from '../../../employees/state/employee-actions';
+import { ToolActions } from '../../../kitchen/feature/tools/state/tool-actions';
+import { RecipeActions } from '../../../recipes/state/recipe/recipe-actions';
+import { RecipeIngredientActions } from '../../../recipes/state/recipe-ingredient/recipe-ingredient-actions';
+import { RecipeToolActions } from '../../../recipes/state/recipe-tool/recipe-tool-actions';
+import { StepActions } from '../../../recipes/state/step/step-actions';
+import { RecipeStepActions } from '../../../recipes/state/recipe-step/recipe-step-actions';
+import { RecipeCategoryActions } from '../../../recipes/state/recipe-category/recipe-category-actions';
+
 @Component({
   selector: 'dl-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLinkWithHref, MatFormFieldModule, MatSelectModule, MatInputModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLinkWithHref,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+  ],
   templateUrl: './login-page.component.html',
 })
 export class LoginPageComponent {
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private store: Store, private router: Router, private authService: AuthService) {}
 
   login_form = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -35,6 +56,18 @@ export class LoginPageComponent {
       this.authService
         .signIn(email!, password!)
         .then(() => {
+          //hydrate data, then redirect
+          this.store.dispatch(IngredientActions.loadIngredients());
+          this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+          this.store.dispatch(ToolActions.loadTools());
+          //this.store.dispatch(ToolStockActions.loadToolStocks());
+          this.store.dispatch(StepActions.loadSteps());
+
+          this.store.dispatch(RecipeActions.loadRecipes());
+          this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
+          this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+          this.store.dispatch(RecipeToolActions.loadRecipeTools());
+          this.store.dispatch(RecipeStepActions.loadRecipeSteps());
           this.router.navigate(['/kitchen']);
         })
         .catch((error) => {
