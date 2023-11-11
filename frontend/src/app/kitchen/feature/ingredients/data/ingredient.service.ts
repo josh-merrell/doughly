@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, withLatestFrom } from 'rxjs';
 import { Ingredient } from '../state/ingredient-state';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { selectIngredients } from '../state/ingredient-selectors';
 import { IDService } from 'src/app/shared/utils/ID';
+import { selectIngredientStocks } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -63,6 +64,21 @@ export class IngredientService {
     return this.http.patch<Ingredient>(
       `${this.API_URL}/${ingredient.ingredientID}`,
       ingredient
+    );
+  }
+
+  getTotalInStock(): Observable<number> {
+    return this.store.select(selectIngredientStocks).pipe(
+      withLatestFrom(this.rows$),
+      map(([ingredientStocks, ingredients]) => {
+        const inStock = ingredients.filter((ingredient) =>
+          ingredientStocks.some(
+            (stock: any) => stock.ingredientID === ingredient.ingredientID
+          )
+        ).length;
+
+        return inStock;
+      })
     );
   }
 }
