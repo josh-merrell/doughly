@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs';
 import { Ingredient } from '../state/ingredient-state';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
@@ -13,6 +13,7 @@ import { selectIngredientStocks } from '../../Inventory/feature/ingredient-inven
 })
 export class IngredientService {
   private API_URL = `${environment.BACKEND}/ingredients`;
+  public enhancedRows$ = new BehaviorSubject<Ingredient[]>([]);
 
   constructor(
     private http: HttpClient,
@@ -34,6 +35,27 @@ export class IngredientService {
       });
     })
   );
+
+  addStockTotals(ingredients: Ingredient[]): void {
+    this.store.select(selectIngredientStocks).subscribe((ingredientStocks) => {
+      const updatedIngredients = ingredients.map((ingredient) => {
+        const matchingStocks = ingredientStocks.filter(
+          (stock: any) => stock.ingredientID === ingredient.ingredientID
+        );
+        const totalGrams = matchingStocks.reduce(
+          (sum: number, stock: any) => sum + stock.grams,
+          0
+        );
+        const totalStock = totalGrams / ingredient.gramRatio;
+
+        return {
+          ...ingredient,
+          totalStock: totalStock,
+        };
+      });
+      this.enhancedRows$.next(updatedIngredients);
+    });
+  }
 
   getAll(): Observable<Ingredient[]> {
     return this.http.get<Ingredient[]>(this.API_URL);

@@ -20,6 +20,9 @@ import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-err
 import { AddIngredientStockModalComponent } from '../Inventory/feature/ingredient-inventory/ui/add-ingredient-stock-modal/add-ingredient-stock-modal.component';
 import { SortingService } from 'src/app/shared/utils/sortingService';
 import { FilterService } from 'src/app/shared/utils/filterService';
+import { Store } from '@ngrx/store';
+import { IngredientActions } from './state/ingredient-actions';
+import { IngredientStockActions } from '../Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 
 @Component({
   selector: 'dl-ingredients',
@@ -34,13 +37,16 @@ import { FilterService } from 'src/app/shared/utils/filterService';
 })
 export class IngredientsComponent {
   constructor(
+    private store: Store,
     private dialog: MatDialog,
     private ingredientService: IngredientService,
     private sortingService: SortingService,
     private filterService: FilterService
   ) {}
 
-  //ingredient behaviorSubject
+  public ingredients$: Observable<Ingredient[]> = this.ingredientService.rows$;
+  public enhancedIngredients$: Observable<Ingredient[]> =
+    this.ingredientService.enhancedRows$;
   public rows: any[] = [];
   public rows$!: Observable<any[]>;
   public filters: Filter[] = [];
@@ -49,7 +55,6 @@ export class IngredientsComponent {
   public displayedRows$ = new BehaviorSubject<any[]>([]);
 
   ingredientsPerRow: number = 2;
-  public ingredients$: Observable<Ingredient[]> = this.ingredientService.rows$;
   public totalInStock$!: Observable<Number>;
   public searchFilters: Filter[] = [];
   showIngredientUpArrow: boolean = false;
@@ -57,34 +62,68 @@ export class IngredientsComponent {
   modalActiveForIngredientID: number | null = null;
 
   ngOnInit(): void {
-    this.totalInStock$ = this.ingredientService.getTotalInStock();
+    this.store.dispatch(IngredientActions.loadIngredients());
+    this.store.dispatch(IngredientStockActions.loadIngredientStocks());
 
-    //use ingredientsPerRow to build rows$ observable
-    this.rows$ = this.ingredients$.pipe(
-      map((ingredients: Ingredient[]) => {
-        return ingredients.reduce((rows: Ingredient[][], ingredient, index) => {
-          const rowIndex = Math.floor(index / this.ingredientsPerRow);
-          if (!rows[rowIndex]) {
-            rows[rowIndex] = [];
-          }
-          rows[rowIndex].push(ingredient);
-          return rows;
-        }, []);
+    this.ingredients$.subscribe((ingredients) => {
+      this.ingredientService.addStockTotals(ingredients);
+    });
+
+    this.rows$ = this.enhancedIngredients$.pipe(
+      map((enhancedIngredients: Ingredient[]) => {
+        return enhancedIngredients.reduce(
+          (rows: Ingredient[][], ingredient, index) => {
+            const rowIndex = Math.floor(index / this.ingredientsPerRow);
+            if (!rows[rowIndex]) {
+              rows[rowIndex] = [];
+            }
+            rows[rowIndex].push(ingredient);
+            return rows;
+          },
+          []
+        );
+      })
+    );
+
+    this.totalInStock$ = this.enhancedIngredients$.pipe(
+      map((enhancedIngredients: Ingredient[]) => {
+        return enhancedIngredients.filter(
+          (ingredient) => ingredient.totalStock && ingredient.totalStock > 0
+        ).length;
       })
     );
 
     this.rows$.subscribe((rows) => {
-      this.rows = rows;
       const filteredRows = this.filterService.applyFilters(rows, this.filters);
       this.filteredRows$.next(filteredRows);
     });
 
     this.filteredRows$.subscribe((filteredRows) => {
-      const sortedRows = this.sortingService.applySorts(
-        filteredRows,
-        this.sorts
-      );
-      this.displayedRows$.next(sortedRows);
+      // Check if filteredRows is defined and not empty
+      if (filteredRows && filteredRows.length > 0) {
+        const sortedRows = this.sortingService.applySorts(
+          filteredRows,
+          this.sorts
+        );
+        if (
+          sortedRows &&
+          sortedRows.length > 0 &&
+          sortedRows[sortedRows.length - 1]
+        ) {
+          // Check if the last row's length is 1
+          if (sortedRows[sortedRows.length - 1].length === 1) {
+            sortedRows[sortedRows.length - 1].push({ isEnd: true });
+          } else {
+            sortedRows.push([{ isEnd: true }]);
+          }
+        }
+
+        this.displayedRows$.next(sortedRows);
+      } else {
+        // Handle the case where filteredRows is undefined or empty
+        // For example, you might want to clear displayedRows or set it to a default value
+        this.displayedRows$.next([]);
+      }
     });
   }
 

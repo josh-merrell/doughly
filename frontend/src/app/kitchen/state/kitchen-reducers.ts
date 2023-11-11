@@ -5,7 +5,7 @@ import { setView, setInventoryView } from './kitchen-actions';
 import { KitchenState } from './kitchen-state';
 
 export const initialState: KitchenState = {
-  view: 'inventory',
+  view: 'ingredients',
   inventoryView: 'ingredients',
 };
 
