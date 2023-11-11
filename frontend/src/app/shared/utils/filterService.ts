@@ -31,6 +31,13 @@ export class FilterService {
 
   private passesSearchFilter(row: any, filter: Filter): boolean {
     let value = row[filter.subject];
+    //convert value to compare and filter.operand1 to lowercase strings
+    if (typeof value === 'string') {
+      value = value.toLowerCase();
+    }
+    if (typeof filter.operand1 === 'string') {
+      filter.operand1 = filter.operand1.toLowerCase();
+    }
     //switch case for different filter.operator values
     switch (filter.operator) {
       case FilterOperatorEnum.is:

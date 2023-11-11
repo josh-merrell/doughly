@@ -7,7 +7,7 @@ import {
   FilterTypeEnum,
   Sort,
 } from 'src/app/shared/state/shared-state';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { IngredientService } from './data/ingredient.service';
 import { AddIngredientModalComponent } from './ui/add-ingredient-modal/add-ingredient-modal.component';
 import { EditIngredientModalComponent } from './ui/edit-ingredient-modal/edit-ingredient-modal.component';
@@ -23,6 +23,9 @@ import { FilterService } from 'src/app/shared/utils/filterService';
 import { Store } from '@ngrx/store';
 import { IngredientActions } from './state/ingredient-actions';
 import { IngredientStockActions } from '../Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
+import { IngredientDetailsModalComponent } from './ui/ingredient-details-modal/ingredient-details-modal.component';
+import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
+import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
 
 @Component({
   selector: 'dl-ingredients',
@@ -47,10 +50,11 @@ export class IngredientsComponent {
   public ingredients$: Observable<Ingredient[]> = this.ingredientService.rows$;
   public enhancedIngredients$: Observable<Ingredient[]> =
     this.ingredientService.enhancedRows$;
-  public rows: any[] = [];
+  public enhancedIngredients: any[] = [];
   public rows$!: Observable<any[]>;
+  public filters$ = new BehaviorSubject<Filter[]>([]);
   public filters: Filter[] = [];
-  public filteredRows$ = new BehaviorSubject<any[]>([]);
+  public filteredIngredients$ = new BehaviorSubject<any[]>([]);
   sorts: Sort[] = [];
   public displayedRows$ = new BehaviorSubject<any[]>([]);
 
@@ -64,26 +68,12 @@ export class IngredientsComponent {
   ngOnInit(): void {
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+    this.store.dispatch(RecipeActions.loadRecipes());
+    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
 
     this.ingredients$.subscribe((ingredients) => {
       this.ingredientService.addStockTotals(ingredients);
     });
-
-    this.rows$ = this.enhancedIngredients$.pipe(
-      map((enhancedIngredients: Ingredient[]) => {
-        return enhancedIngredients.reduce(
-          (rows: Ingredient[][], ingredient, index) => {
-            const rowIndex = Math.floor(index / this.ingredientsPerRow);
-            if (!rows[rowIndex]) {
-              rows[rowIndex] = [];
-            }
-            rows[rowIndex].push(ingredient);
-            return rows;
-          },
-          []
-        );
-      })
-    );
 
     this.totalInStock$ = this.enhancedIngredients$.pipe(
       map((enhancedIngredients: Ingredient[]) => {
@@ -93,38 +83,52 @@ export class IngredientsComponent {
       })
     );
 
-    this.rows$.subscribe((rows) => {
-      const filteredRows = this.filterService.applyFilters(rows, this.filters);
-      this.filteredRows$.next(filteredRows);
+    this.enhancedIngredients$.subscribe((enhancedIngredients) => {
+      this.enhancedIngredients = enhancedIngredients;
     });
 
-    this.filteredRows$.subscribe((filteredRows) => {
-      // Check if filteredRows is defined and not empty
-      if (filteredRows && filteredRows.length > 0) {
-        const sortedRows = this.sortingService.applySorts(
-          filteredRows,
-          this.sorts
+    combineLatest([this.filters$, this.enhancedIngredients$]).subscribe(
+      ([filters, enhancedIngredients]) => {
+        this.filters = filters;
+
+        const filteredIngredients = this.filterService.applyFilters(
+          enhancedIngredients,
+          filters
         );
-        if (
-          sortedRows &&
-          sortedRows.length > 0 &&
-          sortedRows[sortedRows.length - 1]
-        ) {
-          // Check if the last row's length is 1
-          if (sortedRows[sortedRows.length - 1].length === 1) {
-            sortedRows[sortedRows.length - 1].push({ isEnd: true });
-          } else {
-            sortedRows.push([{ isEnd: true }]);
-          }
-        }
+
+        this.filteredIngredients$.next(filteredIngredients);
+      }
+    );
+
+    this.filteredIngredients$.subscribe((filteredIngredients) => {
+      // Check if filteredRows is defined and not empty
+      if (filteredIngredients && filteredIngredients.length > 0) {
+        const sortedIngredients = this.sortingService.applySorts(
+          filteredIngredients,
+          [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
+        );
+        const sortedRows = this.arrangeInRows(sortedIngredients);
 
         this.displayedRows$.next(sortedRows);
       } else {
-        // Handle the case where filteredRows is undefined or empty
-        // For example, you might want to clear displayedRows or set it to a default value
         this.displayedRows$.next([]);
       }
     });
+  }
+
+  arrangeInRows(sortedIngredients: Ingredient[]) {
+    const rows: Ingredient[][] = [];
+    if (sortedIngredients.length > 0) {
+      sortedIngredients.forEach((ingredient, index) => {
+        const rowIndex = Math.floor(index / this.ingredientsPerRow);
+        if (!rows[rowIndex]) {
+          rows[rowIndex] = [];
+        }
+        rows[rowIndex].push(ingredient);
+      });
+    }
+
+    return rows;
   }
 
   onAddIngredient(): void {
@@ -182,13 +186,15 @@ export class IngredientsComponent {
       filterType: FilterTypeEnum.search,
       operand1: value,
     };
-    this.searchFilters = [newFilter];
+    if (value === '') {
+      this.searchFilters = [];
+    } else this.searchFilters = [newFilter];
     // const filtered = this.applyFilter(this.rows$, this.searchFilter);
-    const filteredRows = this.filterService.applyFilters(
-      this.rows,
+    const filteredIngredients = this.filterService.applyFilters(
+      this.enhancedIngredients,
       this.searchFilters
     );
-    this.filteredRows$.next(filteredRows);
+    this.filteredIngredients$.next(filteredIngredients);
   }
 
   checkIngredientScroll(target: EventTarget | null) {
@@ -201,7 +207,13 @@ export class IngredientsComponent {
   }
 
   ingredientCardClick(ingredient: any) {
-    console.log(`CLICKED INGREDIENT: ${ingredient.name}`);
+    this.dialog.open(IngredientDetailsModalComponent, {
+      data: {
+        ingredient: ingredient,
+      },
+      width: '75%'
+
+    });
   }
 
   ingredientCardTouchStart(ingredientID: number) {

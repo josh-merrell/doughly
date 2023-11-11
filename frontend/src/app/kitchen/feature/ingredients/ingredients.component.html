@@ -1,41 +1,30 @@
-<div class="w-full">
+<div class="relative w-full">
   <!-- header -->
   <div class="mx-dl-5 mt-dl-6 flex justify-between">
-    <div class="flex flex-col">
-      <h1 class="ml-dl-6 text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
+    <div class="flex flex-col ml-dl-2 ">
+      <h1 class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
         Ingredients
       </h1>
-      <p>
-        Total: {{ (ingredients$ | async)?.length }} In Stock:
-        {{ totalInStock$ | async }}
+      <p class="mt-dl-2 text-dl-6 font-dl-2 text-dl-grey-4">
+        {{ totalInStock$ | async }} of {{ (ingredients$ | async)?.length }} In Stock
       </p>
     </div>
 
-    <!-- Add Buttons -->
-    <div class="flex flex-col">
-      <button
-        id="test-button"
-        type="button"
-        class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
-        (click)="onAddIngredient()"
-      >
-        Add Ingredient
-      </button>
-      <button
-        id="test-button"
-        type="button"
-        class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
-        (click)="onAddStock()"
-      >
-        Add Stock
-      </button>
-    </div>
+    <!-- Add Button -->
+    <button
+      id="test-button"
+      type="button"
+      class="block whitespace-nowrap rounded-dl-1 mt-dl-5 h-dl-4 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      (click)="onAddIngredient()"
+    >
+      Add Ingredient
+    </button>
   </div>
 
   <!-- Search -->
   <div class="flex flex-col items-center">
     <!-- Search Bar -->
-    <div class="mb-dl-4 mt-dl-6 flex">
+    <div class="mb-dl-4 mt-dl-7 flex">
       <svg
         width="35"
         height="35"
@@ -67,7 +56,7 @@
 
   <!-- Up Arrow for Ingredient Card Scrolling -->
   <div
-    class="absolute left-1/2 top-32 -translate-x-1/2 rotate-180 transform"
+    class="absolute left-1/2 top-36 -translate-x-1/2 rotate-180 transform"
     *ngIf="showIngredientUpArrow"
   >
     <svg
@@ -86,47 +75,45 @@
       ></path>
     </svg>
   </div>
-  <div class="mb-dl-7 h-dl-2"></div>
+  <div class="mb-dl-4 h-dl-2"></div>
 
-  <!-- Ingredient Cards -->
+  <!-- Ingredient Rows -->
   <div
     #recipeContainer
-    class="ingredient-container flex h-full max-h-dl-18 w-full flex-col items-center overflow-auto scroll-smooth"
+    class="ingredient-container mb-dl-3 flex h-full max-h-dl-20 w-full flex-col items-center overflow-auto scroll-smooth"
     (scroll)="checkIngredientScroll($event.target)"
   >
-    <div *ngFor="let row of displayedRows$ | async" class="flex px-dl-5 justify-between w-full">
+    <div
+      *ngFor="let row of displayedRows$ | async"
+      class="flex w-full justify-between px-dl-5"
+    >
+      <!-- Ingredient Card -->
       <div
         *ngFor="let ingredient of row"
-        class="ingredient-card my-dl-3 flex h-dl-8 w-dl-12 rounded-lg shadow-md"
+        class="ingredient-card relative my-dl-3 flex h-dl-8 w-dl-12 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
         [ngClass]="{
-          'bg-dl-grey-9': modalActiveForIngredientID === ingredient.ingredientID
+          'bg-dl-red-10 ': ingredient.totalStock === 0,
+          'bg-dl-grey-10': ingredient.totalStock > 0
         }"
         (click)="ingredientCardClick(ingredient)"
         (touchstart)="ingredientCardTouchStart(ingredient.ingredientID)"
         (touchend)="ingredientCardTouchEnd()"
       >
-        <!-- Ingredient Card -->
-        <div 
-          *ngIf="!ingredient.isEnd" 
-          class="relative px-dl-4 py-dl-3 flex h-full w-full flex-col justify-between items-start"
-          [ngClass]="{
-            'bg-dl-red-9 ': ingredient.totalStock === 0, 'bg-dl-teal-9': ingredient.totalStock > 0
-          }"
+        <p class="text-dl-7 font-dl-3 text-dl-grey-2">
+          {{ ingredient.name }}
+        </p>
+        <p
+          *ngIf="ingredient.totalStock > 0"
+          class="text-dl-6 font-dl-2 text-dl-grey-2"
         >
-          <p class="text-dl-7 font-dl-3 text-dl-grey-2">
-            {{ ingredient.name }}
-          </p>
-          <p *ngIf="ingredient.totalStock > 0" class="text-dl-6 font-dl-2 text-dl-grey-2">
-            {{ ingredient.totalStock }} {{ ingredient.purchaseUnit }}
-          </p>
-          <p *ngIf="ingredient.totalStock === 0" class="italic text-dl-5 font-dl-2 text-dl-grey-1">
-            Out of Stock
-          </p>
-        </div>
-        <!-- End Card, Add New Ingredient -->
-        <div *ngIf="ingredient.isEnd" class="relative p-dl-4 h-dl-5 w-dl-5">
-          END CARD
-        </div>
+          {{ ingredient.totalStock }} {{ ingredient.purchaseUnit }}
+        </p>
+        <p
+          *ngIf="ingredient.totalStock === 0"
+          class="text-dl-5 font-dl-2 italic text-dl-grey-1"
+        >
+          Out of Stock
+        </p>
       </div>
     </div>
   </div>
