@@ -58,6 +58,10 @@ module.exports = {
         "dl-16": "460px",
         "dl-17": "520px",
         "dl-18": "580px",
+        "dl-19": "640px",
+        "dl-20": "700px",
+        "dl-21": "760px",
+        "dl-22": "820px",
       },
       maxHeight: {
         "dl-0": "0px",
@@ -80,6 +84,10 @@ module.exports = {
         "dl-16": "460px",
         "dl-17": "520px",
         "dl-18": "580px",
+        "dl-19": "640px",
+        "dl-20": "700px",
+        "dl-21": "760px",
+        "dl-22": "820px",
       },
       width: {
         "dl-0": "0px",
@@ -101,6 +109,7 @@ module.exports = {
         "dl-15": "400px",
         "dl-16": "460px",
         "dl-17": "520px",
+        "dl-18": "580px",
       },
       maxWidth: {
         "dl-0": "0px",
@@ -122,6 +131,7 @@ module.exports = {
         "dl-15": "400px",
         "dl-16": "460px",
         "dl-17": "520px",
+        "dl-18": "580px",
       },
       borderRadius: {
         "dl-0": "0px",

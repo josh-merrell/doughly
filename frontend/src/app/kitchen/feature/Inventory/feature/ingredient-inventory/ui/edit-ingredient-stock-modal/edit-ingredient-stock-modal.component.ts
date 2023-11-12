@@ -66,7 +66,6 @@ export class EditIngredientStockModalComponent {
 
   setForm() {
     this.form = this.fb.group({
-      purchasedBy: ['', Validators.required],
       purchasedDate: ['', Validators.required],
       measurement: ['', [Validators.required, positiveFloatValidator()]],
     });

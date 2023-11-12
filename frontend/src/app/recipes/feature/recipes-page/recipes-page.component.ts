@@ -64,6 +64,11 @@ import { RecipeStepsModalComponent } from './ui/recipe-step/recipe-steps-modal/r
 import { AddRecipeModalComponent } from './ui/recipe/add-recipe-modal/add-recipe-modal.component';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { RecipeComponent } from '../recipe/recipe.component';
+import { RecipeActions } from '../../state/recipe/recipe-actions';
+import { RecipeCategoryActions } from '../../state/recipe-category/recipe-category-actions';
+import { RecipeIngredientActions } from '../../state/recipe-ingredient/recipe-ingredient-actions';
+import { RecipeToolActions } from '../../state/recipe-tool/recipe-tool-actions';
+import { RecipeStepActions } from '../../state/recipe-step/recipe-step-actions';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -192,6 +197,12 @@ export class RecipesPageComponent {
   recipeContainer!: ElementRef;
 
   ngOnInit() {
+    this.store.dispatch(RecipeActions.loadRecipes());
+    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
+    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+    this.store.dispatch(RecipeToolActions.loadRecipeTools());
+    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
+    
     this.view$.subscribe((view) => {
       this.view = view;
     });

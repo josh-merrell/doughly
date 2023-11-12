@@ -15,6 +15,19 @@ export const selectRecipeIngredientsByRecipeID = (recipeID: number) => {
   });
 }
 
+export const selectRecipeIDsByIngredientID = (ingredientID: number) => {
+  return createSelector(selectRecipeIngredients, (recipeIngredients: RecipeIngredient[]) => {
+    const filtered = recipeIngredients.filter((recipeIngredient: RecipeIngredient) => recipeIngredient.ingredientID === ingredientID);
+    //return list of recipeIDs without duplicates
+    return filtered
+      .map((recipeIngredient: RecipeIngredient) => recipeIngredient.recipeID)
+      .filter(
+        (recipeID: number, index: number, self: number[]) =>
+          self.indexOf(recipeID) === index
+      );
+  });
+};
+
 export const selectDeleting = (state: any) => state.recipeIngredient.deleting;
 
 export const selectAdding = (state: any) => state.recipeIngredient.adding;
