@@ -1,16 +1,16 @@
 <div
   class="border-dl-yellow-5 bg-white p-4"
-  [ngClass]="{ 'border-l-4 border-r-4': !submittingChanges }"
+  [ngClass]="{ 'border-l-4 border-r-4': (isDeleting$ | async) === false }"
 >
   <mat-spinner
     class="my-app-custom-spinner"
     *ngIf="isDeleting$ | async"
   ></mat-spinner>
   <div class="flex" *ngIf="(isDeleting$ | async) === false">
-    <div class="flex-shrink-0 pt-dl-2">
+    <div class="flex-shrink-0 pr-dl-4">
       <svg
-        class="h-5 w-5 text-dl-yellow-5"
-        viewBox="0 0 20 20"
+        class="h-12 w-12 text-dl-yellow-5"
+        viewBox="0 0 18 18"
         fill="currentColor"
         aria-hidden="true"
       >
@@ -23,29 +23,26 @@
     </div>
     <div class="relative flex w-dl-15 max-w-full flex-col">
       <div class="ml-dl-3 flex flex-col">
-        <p class="leading-dl-4 text-dl-4 font-dl-3 text-dl-yellow-2">
-          Delete Ingredient Stock
+        <p class="leading-dl-4 text-dl-7 font-dl-3 text-dl-yellow-2">
+          Delete {{ data.ingredientName }} Inventory
         </p>
-        <div class="space-x-1 whitespace-nowrap">
-          <span class="mt-dl-1 text-dl-2 text-dl-grey-5"
-            >Are you sure you want to delete this</span
-          ><span class="mt-dl-1 text-dl-2 font-dl-3 text-dl-grey-2">{{
-            this.data.itemName
-          }}</span
-          ><span class="mt-dl-1 text-dl-2 text-dl-grey-5">stock?</span>
+        <div class="space-x-1">
+          <span class="mt-dl-1 text-dl-4 text-dl-grey-5"
+            >Are you sure you want to delete this inventory item?</span
+          >
         </div>
       </div>
-      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <div class="mt-dl-5 flex flex-row-reverse">
         <button
           type="button"
-          class="shadow-s mx-dl-2 inline-flex w-dl-6 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 sm:ml-dl-4"
+          class="shadow-s ml-dl-4 inline-flex w-dl-6 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-4 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1"
           (click)="onSubmit()"
         >
           Delete
         </button>
         <button
           type="button"
-          class="mx-dl-2 mt-dl-3 inline-flex w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1 sm:mt-0 sm:w-auto"
+          class="inline-flex w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-4 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1"
           (click)="onCancel()"
         >
           Cancel

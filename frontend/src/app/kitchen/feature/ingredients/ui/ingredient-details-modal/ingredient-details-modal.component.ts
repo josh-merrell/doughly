@@ -1,4 +1,4 @@
-import { Inject, Component } from '@angular/core';
+import { Inject, Component, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, combineLatest, forkJoin, map, switchMap, take, tap } from 'rxjs';
 import { IngredientStock } from '../../../Inventory/feature/ingredient-inventory/state/ingredient-stock-state';
@@ -12,6 +12,10 @@ import { Router } from '@angular/router';
 import { AddIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/add-ingredient-stock-modal/add-ingredient-stock-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
+import { EditIngredientModalComponent } from '../edit-ingredient-modal/edit-ingredient-modal.component';
+import { DeleteIngredientModalComponent } from '../delete-ingredient-modal/delete-ingredient-modal.component';
+import { EditIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/edit-ingredient-stock-modal/edit-ingredient-stock-modal.component';
+import { DeleteIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/delete-ingredient-stock-modal/delete-ingredient-stock-modal.component';
 
 
 @Component({
@@ -21,14 +25,19 @@ import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-err
   templateUrl: './ingredient-details-modal.component.html',
 })
 export class IngredientDetailsModalComponent {
+  globalClickListener: () => void = () => {};
+  @ViewChild('stockDropdownMenu') stockDropdownMenu!: ElementRef;
+  @ViewChild('dropdownMenu') dropdownMenu!: ElementRef;
   ingredientStocks$!: any;
   recipeIDs$!: Observable<number[]>;
   ingredientRecipes$!: Observable<any>;
   displayRecipes$!: Observable<any>;
   menuOpen: boolean = false;
   ingredient: any;
+  menuOpenForIndex: number = -1;
 
   constructor(
+    private renderer: Renderer2,
     public dialogRef: MatDialogRef<IngredientDetailsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
@@ -37,7 +46,34 @@ export class IngredientDetailsModalComponent {
     public dialog: MatDialog
   ) {}
 
+  ngAfterViewInit() {
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInsideStock =
+          this.stockDropdownMenu?.nativeElement.contains(event.target);
+        if (!clickedInsideStock && this.menuOpenForIndex !== -1) {
+          this.menuOpenForIndex = -1;
+        }
+
+        const clickedInsideIngredient =
+          this.dropdownMenu?.nativeElement.contains(event.target);
+        if (!clickedInsideIngredient && this.menuOpen) {
+          this.menuOpen = false;
+        }
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.globalClickListener) {
+      this.globalClickListener();
+    }
+  }
+
   ngOnInit(): void {
+    console.log(`INGREDIENT: `, this.data.ingredient);
     this.ingredient = this.data.ingredient;
     this.ingredientStocks$ = this.store.pipe(
       select(selectIngredientStocksByIngredientID(this.ingredient.ingredientID))
@@ -75,6 +111,20 @@ export class IngredientDetailsModalComponent {
     );
   }
 
+  getExpirationDate(purchasedDate: string, lifespanDays: number): Date {
+    const date = new Date(purchasedDate);
+    date.setDate(date.getDate() + lifespanDays);
+    return date; // return the Date object
+  }
+
+  updateMenuOpenForIndex(index: number) {
+    if (this.menuOpenForIndex === index) {
+      this.menuOpenForIndex = -1;
+    } else {
+      this.menuOpenForIndex = index;
+    }
+  }
+
   onRecipeClick(recipeID: number): void {
     this.router.navigate(['/recipes', recipeID]);
     this.dialogRef.close();
@@ -83,6 +133,11 @@ export class IngredientDetailsModalComponent {
   toggleMenu(event: any) {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;
+  }
+
+  toggleStockMenu(event: any, index: number) {
+    event.stopPropagation();
+    this.menuOpenForIndex = this.menuOpenForIndex === index ? -1 : index;
   }
 
   onAddStock() {
@@ -104,6 +159,112 @@ export class IngredientDetailsModalComponent {
           data: {
             error: result,
             addFailureMessage: `Ingredient Stock could not be added.`,
+          },
+        });
+      }
+    });
+  }
+
+  openEditStockDialog(ingredientStockID: number) {
+    const dialogRef = this.dialog.open(EditIngredientStockModalComponent, {
+      data: {
+        itemID: ingredientStockID,
+      },
+    });
+
+    dialogRef!.afterClosed().subscribe((result: any) => {
+      if (result === 'success') {
+        this.dialog.open(AddRequestConfirmationModalComponent, {
+          data: {
+            results: result,
+            addSuccessMessage: `Ingredient Stock edited successfully!`,
+          },
+        });
+      } else if (result) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            error: result,
+            addFailureMessage: `Ingredient Stock failed to update.`,
+          },
+        });
+      }
+    });
+  }
+
+  openEditIngredientDialog() {
+    const dialogRef = this.dialog.open(EditIngredientModalComponent, {
+      data: {
+        itemID: this.ingredient.ingredientID,
+      },
+    });
+
+    dialogRef!.afterClosed().subscribe((result: any) => {
+      if (result === 'success') {
+        this.dialog.open(AddRequestConfirmationModalComponent, {
+          data: {
+            results: result,
+            addSuccessMessage: `Ingredient: ${this.ingredient.name} edited successfully!`,
+          },
+        });
+      } else if (result) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            error: result,
+            addFailureMessage: `Ingredient: ${this.ingredient.name} failed to update.`,
+          },
+        });
+      }
+    });
+  }
+
+  openDeleteStockDialog(ingredientStockID: number) {
+    const dialogRef = this.dialog.open(DeleteIngredientStockModalComponent, {
+      data: {
+        itemID: ingredientStockID,
+        ingredientName: this.ingredient.name,
+      },
+    });
+
+    dialogRef!.afterClosed().subscribe((result: any) => {
+      if (result === 'success') {
+        this.dialog.open(AddRequestConfirmationModalComponent, {
+          data: {
+            results: result,
+            addSuccessMessage: `Ingredient Stock deleted successfully!`,
+          },
+        });
+      } else if (result) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            error: result,
+            addFailureMessage: `Ingredient Stock failed to delete.`,
+          },
+        });
+      }
+    });
+  }
+
+  openDeleteIngredientDialog() {
+    const dialogRef = this.dialog.open(DeleteIngredientModalComponent, {
+      data: {
+        itemID: this.ingredient.ingredientID,
+        itemName: this.ingredient.name,
+      },
+    });
+
+    dialogRef!.afterClosed().subscribe((result: any) => {
+      if (result === 'success') {
+        this.dialog.open(AddRequestConfirmationModalComponent, {
+          data: {
+            results: result,
+            addSuccessMessage: `Ingredient: ${this.ingredient.name} deleted successfully!`,
+          },
+        });
+      } else if (result) {
+        this.dialog.open(AddRequestErrorModalComponent, {
+          data: {
+            error: result,
+            addFailureMessage: `Ingredient: ${this.ingredient.name} failed to delete.`,
           },
         });
       }

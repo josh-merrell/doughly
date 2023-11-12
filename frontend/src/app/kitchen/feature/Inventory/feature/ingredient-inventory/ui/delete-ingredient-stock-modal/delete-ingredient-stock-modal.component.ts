@@ -15,7 +15,6 @@ import { Observable, Subscription } from 'rxjs';
   templateUrl: './delete-ingredient-stock-modal.component.html',
 })
 export class DeleteIngredientStockModalComponent {
-  submittingChanges: boolean = false;
   isDeleting$: Observable<boolean>;
   private deleteSubscription!: Subscription;
 
