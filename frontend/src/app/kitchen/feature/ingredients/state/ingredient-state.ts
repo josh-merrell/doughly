@@ -5,6 +5,7 @@ export interface Ingredient {
   brand?: string;
   gramRatio: number;
   purchaseUnit: string;
+  totalStock?: number;
 }
 
 export interface IngredientState {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,7 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { Observable, Subscription, map } from 'rxjs';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
@@ -60,6 +60,7 @@ export class AddIngredientStockModalComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AddIngredientStockModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder
   ) {
@@ -77,8 +78,13 @@ export class AddIngredientStockModalComponent {
   ngOnInit(): void {
     this.ingredients$ = this.store.select(selectIngredients);
     this.setForm();
-
-    this.form.get('measurement')!.disable();
+    if (this.data.ingredientID) {
+      this.form.get('ingredientID')!.setValue(this.data.ingredientID);
+      this.form.get('measurement')!.enable();
+      this.ingredient$ = this.store.pipe(
+        select(selectIngredientByID(this.data.ingredientID))
+      );
+    }
 
     //handle changes made to 'ingredientID' field
     this.ingredientIDSubscription = this.form
@@ -93,7 +99,6 @@ export class AddIngredientStockModalComponent {
           this.form.get('measurement')!.disable();
         }
       });
-
   }
 
   ngOnDestroy(): void {
@@ -125,21 +130,25 @@ export class AddIngredientStockModalComponent {
       ingredientID: parseInt(this.form.value.ingredientID, 10),
       measurement: parseFloat(this.form.value.measurement),
       purchasedDate: date.toISOString(),
-    }
+    };
 
-    this.store.dispatch(IngredientStockActions.addIngredientStock({ ingredientStock: payload }));
+    this.store.dispatch(
+      IngredientStockActions.addIngredientStock({ ingredientStock: payload })
+    );
 
-    this.addingSubscription = this.store.select(selectAdding).subscribe((adding:boolean) => {
-      if (!adding) {
-        this.store.select(selectError).subscribe((error) => {
-          if (error) {
-            this.dialogRef.close(error);
-          } else {
-            this.dialogRef.close('success');
-          }
-        })
-      }
-    })
+    this.addingSubscription = this.store
+      .select(selectAdding)
+      .subscribe((adding: boolean) => {
+        if (!adding) {
+          this.store.select(selectError).subscribe((error) => {
+            if (error) {
+              this.dialogRef.close(error);
+            } else {
+              this.dialogRef.close('success');
+            }
+          });
+        }
+      });
   }
 
   onCancel(): void {

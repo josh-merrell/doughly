@@ -100,7 +100,6 @@
             <input
               matInput
               formControlName="measurement"
-              [disabled]="!form.get('ingredientID')?.value"
             />
           </mat-form-field>
         </div>
@@ -114,10 +113,10 @@
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
             'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
-              form.valid && !form.pristine,
-            'bg-dl-grey-7': !form.valid || form.pristine
+              form.valid && (!form.pristine || data.ingredientID),
+            'bg-dl-grey-7': !form.valid || (!data.ingredientID && form.pristine)
           }"
-          [disabled]="!form.valid || form.pristine"
+          [disabled]="!form.valid || (!data.ingredientID && form.pristine)"
           (click)="onSubmit()"
         >
           Submit

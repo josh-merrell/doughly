@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs';
 import { Ingredient } from '../state/ingredient-state';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { selectIngredients } from '../state/ingredient-selectors';
 import { IDService } from 'src/app/shared/utils/ID';
+import { selectIngredientStocks } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IngredientService {
   private API_URL = `${environment.BACKEND}/ingredients`;
+  public enhancedRows$ = new BehaviorSubject<Ingredient[]>([]);
 
   constructor(
     private http: HttpClient,
@@ -33,6 +35,27 @@ export class IngredientService {
       });
     })
   );
+
+  addStockTotals(ingredients: Ingredient[]): void {
+    this.store.select(selectIngredientStocks).subscribe((ingredientStocks) => {
+      const updatedIngredients = ingredients.map((ingredient) => {
+        const matchingStocks = ingredientStocks.filter(
+          (stock: any) => stock.ingredientID === ingredient.ingredientID
+        );
+        const totalGrams = matchingStocks.reduce(
+          (sum: number, stock: any) => sum + stock.grams,
+          0
+        );
+        const totalStock = totalGrams / ingredient.gramRatio;
+
+        return {
+          ...ingredient,
+          totalStock: totalStock,
+        };
+      });
+      this.enhancedRows$.next(updatedIngredients);
+    });
+  }
 
   getAll(): Observable<Ingredient[]> {
     return this.http.get<Ingredient[]>(this.API_URL);
@@ -63,6 +86,21 @@ export class IngredientService {
     return this.http.patch<Ingredient>(
       `${this.API_URL}/${ingredient.ingredientID}`,
       ingredient
+    );
+  }
+
+  getTotalInStock(): Observable<number> {
+    return this.store.select(selectIngredientStocks).pipe(
+      withLatestFrom(this.rows$),
+      map(([ingredientStocks, ingredients]) => {
+        const inStock = ingredients.filter((ingredient) =>
+          ingredientStocks.some(
+            (stock: any) => stock.ingredientID === ingredient.ingredientID
+          )
+        ).length;
+
+        return inStock;
+      })
     );
   }
 }
