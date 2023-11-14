@@ -11,10 +11,16 @@ import { PasswordResetPageComponent } from './account/feature/password/password-
 import { SignupPageComponent } from './account/feature/signup/signup-page.component';
 import { VerifyComponent } from './account/feature/verify/verify.component';
 import { ProfileComponent } from './profile/profile.component'
+import { SocialPageComponent } from './social/social-page.component';
 
 export const routes: Route[] = [
   {
     path: '',
+    component: SocialPageComponent,
+    canActivate: [ProfileGuard],
+  },
+  {
+    path: 'home',
     component: HomeComponent,
     canActivate: [ProfileGuard],
   },
