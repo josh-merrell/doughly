@@ -92,6 +92,7 @@ const RecipeToolUpdateSchema_params = {
   required: ['recipeToolID'],
   properties: {
     recipeToolID: { type: 'string' },
+    quantity: { type: 'string' },
   },
 };
 

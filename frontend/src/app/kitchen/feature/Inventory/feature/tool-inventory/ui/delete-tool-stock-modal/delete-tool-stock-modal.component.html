@@ -1,0 +1,53 @@
+<div
+  class="border-dl-yellow-5 bg-white p-4"
+  [ngClass]="{ 'border-l-4 border-r-4': (isDeleting$ | async) === false }"
+>
+  <mat-spinner
+    class="my-app-custom-spinner"
+    *ngIf="isDeleting$ | async"
+  ></mat-spinner>
+  <div class="flex" *ngIf="(isDeleting$ | async) === false">
+    <div class="flex-shrink-0 pr-dl-4">
+      <svg
+        class="h-12 w-12 text-dl-yellow-5"
+        viewBox="0 0 18 18"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </div>
+    <div class="relative flex w-dl-15 max-w-full flex-col">
+      <div class="ml-dl-3 flex flex-col">
+        <p class="leading-dl-4 text-dl-7 font-dl-3 text-dl-yellow-2">
+          Delete {{ data.toolName }} Inventory
+        </p>
+        <div class="space-x-1">
+          <span class="mt-dl-1 text-dl-4 text-dl-grey-5"
+            >Are you sure you want to delete this inventory item?</span
+          >
+        </div>
+      </div>
+      <div class="mt-dl-5 flex flex-row-reverse">
+        <button
+          type="button"
+          class="shadow-s ml-dl-4 inline-flex w-dl-6 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-4 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1"
+          (click)="onSubmit()"
+        >
+          Delete
+        </button>
+        <button
+          type="button"
+          class="inline-flex w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-4 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

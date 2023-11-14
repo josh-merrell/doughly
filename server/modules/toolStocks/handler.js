@@ -49,6 +49,7 @@ async function createToolStock(req, res) {
         toolID,
         purchasedBy,
         purchaseDate,
+        quantity,
       }),
     );
   }
@@ -72,13 +73,14 @@ async function updateToolStock(req, res) {
   const p = require('./processor')({ db });
   const { toolStockID } = req.params;
   const { authorization } = req.headers;
-  const { purchasedBy, purchaseDate } = req.body;
+  const { purchasedBy, purchaseDate, quantity } = req.body;
   const returner = await p.update({
     userID: req.userID,
     authorization,
     toolStockID,
     purchasedBy,
     purchaseDate,
+    quantity,
   });
   return res.json(returner);
 }
