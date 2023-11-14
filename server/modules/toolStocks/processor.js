@@ -40,7 +40,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, authorization, userID, toolID, purchasedBy, purchaseDate, quantity = 1 } = options;
+    const { customID, authorization, userID, toolID, quantity = 1 } = options;
 
     //validate that the provided quantity is valid integer
     if (quantity < 1 || !Number.isInteger(quantity)) {
@@ -59,7 +59,7 @@ module.exports = ({ db }) => {
       return { error: `Tool ID ${toolID} does not exist, cannot create toolStock` };
     }
 
-    const { data: toolStock, error } = await db.from('toolStocks').insert({ toolStockID: customID, userID, toolID, purchasedBy, purchaseDate, quantity }).select('toolStockID').single();
+    const { data: toolStock, error } = await db.from('toolStocks').insert({ toolStockID: customID, userID, toolID, quantity }).select().single();
     if (error) {
       global.logger.info(`Error creating toolStock: ${error.message}`);
       return { error: error.message };
@@ -68,8 +68,6 @@ module.exports = ({ db }) => {
     return {
       toolStockID: toolStock.toolStockID,
       toolID: toolID,
-      purchasedBy: purchasedBy,
-      purchaseDate: purchaseDate,
       quantity: quantity,
     };
   }

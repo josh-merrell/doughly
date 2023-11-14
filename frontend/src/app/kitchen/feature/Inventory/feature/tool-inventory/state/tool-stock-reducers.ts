@@ -11,7 +11,7 @@ export const initialState: ToolStockState = {
   deleting: false,
 };
 
-export const toolStockReducer = createReducer(
+export const ToolStockReducer = createReducer(
   initialState,
   on(ToolStockActions.loadToolStocks, (state) => ({
     ...state,

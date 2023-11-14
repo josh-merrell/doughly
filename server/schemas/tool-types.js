@@ -125,20 +125,17 @@ const getToolStockSchema_params = {
 
 const newToolStockSchema_body = {
   type: 'object',
-  required: ['toolID', 'purchasedBy', 'quantity', 'purchaseDate'],
+  required: ['toolID', 'quantity'],
   properties: {
     toolID: { type: 'integer' },
-    purchasedBy: { type: 'string' },
-    quantity: { type: 'integer' },
-    purchaseDate: { type: 'string' },
+    quantity: { type: 'number' },
   },
 };
 
 const ToolStockUpdateSchema_body = {
   type: 'object',
   properties: {
-    purchasedBy: { type: 'string' },
-    purchaseDate: { type: 'string' },
+    quantity: { type: 'string' },
   },
 };
 
