@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InventoryComponent } from './feature/Inventory/inventory.component';
 import { ToolsComponent } from './feature/tools/tools.component';
 import { selectView, selectInventoryView } from './state/kitchen-selectors';
 import { Observable } from 'rxjs';
@@ -13,7 +12,7 @@ import { IngredientsComponent } from './feature/ingredients/ingredients.componen
 @Component({
   selector: 'dl-kitchen-page',
   standalone: true,
-  imports: [CommonModule, InventoryComponent, ToolsComponent, IngredientsComponent],
+  imports: [CommonModule, ToolsComponent, IngredientsComponent],
   templateUrl: './kitchen-page.component.html',
 })
 export class KitchenPageComponent {
