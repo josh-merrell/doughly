@@ -1,100 +1,27 @@
 <div
-  class="mx-auto h-full max-w-7xl bg-white pt-dl-6 sm:flex sm:gap-x-16 sm:px-8"
+  class="relative mx-auto h-full max-w-7xl bg-white pt-dl-5"
 >
   <!-- Side Menu -->
-  <aside
-    class="sm:border-dl-0 flex border-b border-dl-grey-6 py-dl-4 sm:block sm:w-dl-6 sm:flex-none sm:py-dl-7"
+  <div
+    class="flex border-b border-dl-grey-6 h-full"
   >
-    <nav class="flex-none px-dl-3 sm:px-dl-3 lg:px-dl-0">
-      <div class="flex gap-x-3 gap-y-1 whitespace-nowrap sm:flex-col">
-        <div>
-          <button
-            type="button"
-            (click)="updateView('ingredients')"
-            [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                (view$ | async) === 'ingredients',
-              'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                (view$ | async) !== 'ingredients'
-            }"
-            class="group flex gap-x-3 border-b-2 bg-white py-2 pl-2 pr-3 text-dl-4 font-dl-3 leading-6 text-dl-grey-3 transition-all duration-200 ease-in-out"
-          >
-            Ingredients
-          </button>
-        </div>
-        <div>
-          <button
-            type="button"
-            (click)="updateView('materials')"
-            [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                (view$ | async) === 'materials',
-              'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                (view$ | async) !== 'materials'
-            }"
-            class="group flex gap-x-3 border-b-2 bg-white py-2 pl-2 pr-3 text-dl-4 font-dl-3 leading-6 text-dl-grey-3 transition-all duration-200 ease-in-out"
-          >
-            Materials
-          </button>
-        </div>
-        <div>
-          <button
-            type="button"
-            (click)="updateView('tools')"
-            [ngClass]="{
-              'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                (view$ | async) === 'tools',
-              'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                (view$ | async) !== 'tools'
-            }"
-            class="group flex gap-x-3 border-b-2 bg-white py-2 pl-2 pr-3 text-dl-4 font-dl-3 leading-6 text-dl-grey-3 transition-all duration-200 ease-in-out"
-          >
-            Tools
-          </button>
-        </div>
-        <div>
-          <p
-            class="group flex gap-x-3 rounded-md bg-white py-2 pl-2 pr-3 text-dl-4 leading-6 text-dl-grey-3"
-          >
-            Inventory
-          </p>
-          <div class="ml-dl-4 text-dl-2 font-dl-3 text-dl-grey-3">
-            <div flex items-center>
-              <button
-                [ngClass]="{
-                  'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                    (inventoryView$ | async) === 'ingredients',
-                  'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                    (inventoryView$ | async) !== 'ingredients'
-                }"
-                class="flex items-center justify-items-center gap-2 transition-all duration-200 ease-in-out"
-                role="menuitem"
-                (click)="updateView('inventory')"
-                (click)="updateInventoryView('ingredients')"
-                class="border-b-2 pb-dl-2"
-              >
-                Ingredient
-              </button>
-            </div>
-            <button
-              [ngClass]="{
-                'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                  (inventoryView$ | async) === 'materials',
-                'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                  (inventoryView$ | async) !== 'materials'
-              }"
-              class="block border-b-2 pb-dl-2 transition-all duration-200 ease-in-out"
-              role="menuitem"
-              (click)="updateView('inventory')"
-              (click)="updateInventoryView('materials')"
-            >
-              Material
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
-  </aside>
+    <!-- Ingredients View -->
+    <div class="absolute flex items-center ml-dl-5" *ngIf="(view$ | async) === 'ingredients'">
+      <h1 (click)="updateView('ingredients')" class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
+          Ingredients
+      </h1>
+      <h2 (click)="updateView('tools')" class="ml-dl-4 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-4">
+          Tools
+      </h2>
+    </div>
+    <div class="absolute flex items-center ml-dl-5" *ngIf="(view$ | async) === 'tools'">
+      <h1 (click)="updateView('tools')" class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
+          Tools
+      </h1>
+      <h2 (click)="updateView('ingredients')" class="ml-dl-4 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-4">
+          Ingredients
+      </h2>
+    </div>
 
   <!-- Main content -->
   <main class="w-full">
