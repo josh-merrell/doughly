@@ -92,7 +92,7 @@
         *ngFor="let ingredient of row"
         class="ingredient-card relative my-dl-3 flex h-dl-8 w-dl-12 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
         [ngClass]="{
-          'bg-dl-red-10 ': ingredient.totalStock === 0,
+          'bg-dl-grey-8 ': ingredient.totalStock === 0,
           'bg-dl-grey-10': ingredient.totalStock > 0
         }"
         (click)="ingredientCardClick(ingredient)"

@@ -41,6 +41,8 @@ import { StepReducer } from './app/recipes/state/step/step-reducers';
 import { StepEffects } from './app/recipes/state/step/step-effects';
 import { RecipeStepReducer } from './app/recipes/state/recipe-step/recipe-step-reducers';
 import { RecipeStepEffects } from './app/recipes/state/recipe-step/recipe-step-effects';
+import { ToolStockEffects } from './app/kitchen/feature/Inventory/feature/tool-inventory/state/tool-stock-effects';
+import { ToolStockReducer } from './app/kitchen/feature/Inventory/feature/tool-inventory/state/tool-stock-reducers';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -52,6 +54,7 @@ bootstrapApplication(AppComponent, {
     provideState('ingredientStock', ingredientStockReducer),
     provideState('employee', employeeReducer),
     provideState('tool', ToolReducer),
+    provideState('toolStock', ToolStockReducer),
     provideState('recipeCategory', recipeCategoryReducer),
     provideState('recipePage', recipePageReducer),
     provideState('recipe', recipeReducer),
@@ -64,6 +67,7 @@ bootstrapApplication(AppComponent, {
       IngredientStockEffects,
       EmployeeEffects,
       ToolEffects,
+      ToolStockEffects,
       RecipeCategoryEffects,
       RecipeEffects,
       RecipeIngredientEffects,

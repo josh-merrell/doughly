@@ -22,7 +22,6 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
     global.logger.info(`Got ${ingredients.length} ingredients`);
-    global.logger.info(`INGREDIENTS: ${JSON.stringify(ingredients)}`);
     return ingredients;
   }
 
