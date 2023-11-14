@@ -1,11 +1,8 @@
 <div class="relative w-full">
   <!-- header -->
-  <div class="mx-dl-5 mt-dl-6 flex justify-between">
+  <div class="mx-dl-5 mt-dl-7 flex justify-between">
     <div class="flex flex-col ml-dl-2 ">
-      <h1 class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
-        Tools
-      </h1>
-      <p class="mt-dl-2 text-dl-6 font-dl-2 text-dl-grey-4">
+      <p class="mt-dl-3 text-dl-6 font-dl-2 text-dl-grey-4">
         {{ totalInStock$ | async }} of {{ (tools$ | async)?.length }} In Stock
       </p>
     </div>
@@ -43,7 +40,7 @@
       <input
         #searchInput
         type="text"
-        class="h-dl- ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent sm:w-dl-12"
+        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
         [placeholder]="
           !searchFilters.length
             ? 'Search by Tool Name...'
