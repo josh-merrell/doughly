@@ -15,6 +15,24 @@ export const selectRecipeToolsByRecipeID = (recipeID: number) => {
   });
 }
 
+export const selectRecipeIDsByToolID = (toolID: number) => {
+  return createSelector(
+    selectRecipeTools,
+    (recipeTools: RecipeTool[]) => {
+      const filtered = recipeTools.filter(
+        (recipeTool: RecipeTool) => recipeTool.toolID === toolID
+      );
+      //return list of recipeIDs without duplicates
+      return filtered
+        .map((recipeTool: RecipeTool) => recipeTool.recipeID)
+        .filter(
+          (recipeID: number, index: number, self: number[]) =>
+            self.indexOf(recipeID) === index
+        );
+    }
+  );
+};
+
 export const selectDeleting = (state: any) => state.recipeTool.deleting;
 
 export const selectAdding = (state: any) => state.recipeTool.adding;

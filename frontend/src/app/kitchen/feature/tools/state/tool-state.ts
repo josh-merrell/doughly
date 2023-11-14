@@ -2,6 +2,7 @@ export interface Tool {
   toolID: number;
   name: string;
   brand?: string;
+  totalStock?: number;
 }
 
 export interface ToolState {

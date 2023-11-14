@@ -40,7 +40,13 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, authorization, userID, toolID, purchasedBy, purchaseDate } = options;
+    const { customID, authorization, userID, toolID, quantity = 1 } = options;
+
+    //validate that the provided quantity is valid integer
+    if (quantity < 1 || !Number.isInteger(quantity)) {
+      global.logger.info(`Invalid quantity for new Tool Stock: ${quantity}`);
+      return { error: `Invalid quantity for new Tool Stock: ${quantity}` };
+    }
 
     //validate that the provided toolID is valid
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID);
@@ -53,7 +59,7 @@ module.exports = ({ db }) => {
       return { error: `Tool ID ${toolID} does not exist, cannot create toolStock` };
     }
 
-    const { data: toolStock, error } = await db.from('toolStocks').insert({ toolStockID: customID, userID, toolID, purchasedBy, purchaseDate }).select('toolStockID').single();
+    const { data: toolStock, error } = await db.from('toolStocks').insert({ toolStockID: customID, userID, toolID, quantity }).select().single();
     if (error) {
       global.logger.info(`Error creating toolStock: ${error.message}`);
       return { error: error.message };
@@ -62,13 +68,18 @@ module.exports = ({ db }) => {
     return {
       toolStockID: toolStock.toolStockID,
       toolID: toolID,
-      purchasedBy: purchasedBy,
-      purchaseDate: purchaseDate,
+      quantity: quantity,
     };
   }
 
   async function update(options) {
-    const { userID, authorization, toolStockID } = options;
+    const { userID, authorization, toolStockID, quantity } = options;
+
+    //validate that the provided quantity is valid integer
+    if (quantity < 1 || !Number.isInteger(quantity)) {
+      global.logger.info(`Invalid quantity for Tool Stock. Can't Update: ${quantity}`);
+      return { error: `Invalid quantity for new Tool Stock. Can't Update: ${quantity}` };
+    }
 
     //validate that the provided toolStockID exists
     const { data: existingToolStock, error: existingToolStockError } = await db.from('toolStocks').select().eq('toolStockID', toolStockID);

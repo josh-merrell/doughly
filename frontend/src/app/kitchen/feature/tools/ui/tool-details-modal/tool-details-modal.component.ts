@@ -1,44 +1,45 @@
-import { Inject, Component, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Component, ElementRef, Inject, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, combineLatest, forkJoin, map, switchMap, take, tap } from 'rxjs';
-import { IngredientStock } from '../../../Inventory/feature/ingredient-inventory/state/ingredient-stock-state';
+import { Observable, combineLatest, forkJoin, map, switchMap, take } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { selectIngredientStocksByIngredientID } from '../../../Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
-import { selectRecipeIDsByIngredientID } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
-import { selectRecipeByID } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { Router } from '@angular/router';
-import { AddIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/add-ingredient-stock-modal/add-ingredient-stock-modal.component';
+import { selectToolStocksByToolID } from '../../../Inventory/feature/tool-inventory/state/tool-stock-selectors';
+
+import { selectRecipeByID } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
+import { AddToolStockModalComponent } from '../../../Inventory/feature/tool-inventory/ui/add-tool-stock-modal/add-tool-stock-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
-import { EditIngredientModalComponent } from '../edit-ingredient-modal/edit-ingredient-modal.component';
-import { DeleteIngredientModalComponent } from '../delete-ingredient-modal/delete-ingredient-modal.component';
-import { EditIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/edit-ingredient-stock-modal/edit-ingredient-stock-modal.component';
-import { DeleteIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/delete-ingredient-stock-modal/delete-ingredient-stock-modal.component';
+import { EditToolStockModalComponent } from '../../../Inventory/feature/tool-inventory/ui/edit-tool-stock-modal/edit-tool-stock-modal.component';
+import { EditToolModalComponent } from '../edit-tool-modal/edit-tool-modal.component';
+import { DeleteToolStockModalComponent } from '../../../Inventory/feature/tool-inventory/ui/delete-tool-stock-modal/delete-tool-stock-modal.component';
+import { DeleteToolModalComponent } from '../delete-tool-modal/delete-tool-modal.component';
+import { selectRecipeIDsByToolID } from 'src/app/recipes/state/recipe-tool/recipe-tool-selectors';
+
 
 
 @Component({
-  selector: 'dl-ingredient-details-modal',
+  selector: 'dl-tool-details-modal',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './ingredient-details-modal.component.html',
+  templateUrl: './tool-details-modal.component.html',
 })
-export class IngredientDetailsModalComponent {
+export class ToolDetailsModalComponent {
   globalClickListener: () => void = () => {};
   @ViewChild('stockDropdownMenu') stockDropdownMenu!: ElementRef;
   @ViewChild('dropdownMenu') dropdownMenu!: ElementRef;
-  ingredientStocks$!: any;
+  toolStocks$!: any;
   recipeIDs$!: Observable<number[]>;
-  ingredientRecipes$!: Observable<any>;
+  toolRecipes$!: Observable<any>;
   displayRecipes$!: Observable<any>;
   menuOpen: boolean = false;
-  ingredient: any;
+  tool: any;
   menuOpenForIndex: number = -1;
 
   constructor(
     private renderer: Renderer2,
-    public dialogRef: MatDialogRef<IngredientDetailsModalComponent>,
+    public dialogRef: MatDialogRef<ToolDetailsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private recipeService: RecipeService,
@@ -57,9 +58,10 @@ export class IngredientDetailsModalComponent {
           this.menuOpenForIndex = -1;
         }
 
-        const clickedInsideIngredient =
-          this.dropdownMenu?.nativeElement.contains(event.target);
-        if (!clickedInsideIngredient && this.menuOpen) {
+        const clickedInsideTool = this.dropdownMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInsideTool && this.menuOpen) {
           this.menuOpen = false;
         }
       }
@@ -73,15 +75,15 @@ export class IngredientDetailsModalComponent {
   }
 
   ngOnInit(): void {
-    this.ingredient = this.data.ingredient;
-    this.ingredientStocks$ = this.store.pipe(
-      select(selectIngredientStocksByIngredientID(this.ingredient.ingredientID))
+    this.tool = this.data.tool;
+    this.toolStocks$ = this.store.pipe(
+      select(selectToolStocksByToolID(this.tool.toolID))
     );
     this.recipeIDs$ = this.store.pipe(
-      select(selectRecipeIDsByIngredientID(this.ingredient.ingredientID))
+      select(selectRecipeIDsByToolID(this.tool.toolID))
     );
 
-    this.ingredientRecipes$ = this.recipeIDs$.pipe(
+    this.toolRecipes$ = this.recipeIDs$.pipe(
       switchMap((recipeIDs: number[]) => {
         // Transform each recipeID into an observable of its corresponding recipe
         const recipeObservables = recipeIDs.map((recipeID) =>
@@ -91,7 +93,7 @@ export class IngredientDetailsModalComponent {
       })
     );
 
-    this.displayRecipes$ = this.ingredientRecipes$.pipe(
+    this.displayRecipes$ = this.toolRecipes$.pipe(
       switchMap((recipes: any[]) => {
         // Map each recipe to an observable fetching its shopping list
         const shoppingListObservables = recipes.map((recipe) =>
@@ -108,13 +110,7 @@ export class IngredientDetailsModalComponent {
       })
     );
   }
-
-  getExpirationDate(purchasedDate: string, lifespanDays: number): Date {
-    const date = new Date(purchasedDate);
-    date.setDate(date.getDate() + lifespanDays);
-    return date; // return the Date object
-  }
-
+  
   updateMenuOpenForIndex(index: number) {
     if (this.menuOpenForIndex === index) {
       this.menuOpenForIndex = -1;
@@ -139,9 +135,9 @@ export class IngredientDetailsModalComponent {
   }
 
   onAddStock() {
-    const dialogRef = this.dialog.open(AddIngredientStockModalComponent, {
+    const dialogRef = this.dialog.open(AddToolStockModalComponent, {
       data: {
-        ingredientID: this.ingredient.ingredientID,
+        toolID: this.tool.toolID,
       },
     });
     dialogRef!.afterClosed().subscribe((result: any) => {
@@ -149,24 +145,24 @@ export class IngredientDetailsModalComponent {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             results: result,
-            addSuccessMessage: `Ingredient Stock added successfully!`,
+            addSuccessMessage: `Tool Stock added successfully!`,
           },
         });
       } else if (result === 'error') {
         this.dialog.open(AddRequestErrorModalComponent, {
           data: {
             error: result,
-            addFailureMessage: `Ingredient Stock could not be added.`,
+            addFailureMessage: `Tool Stock could not be added.`,
           },
         });
       }
     });
   }
 
-  openEditStockDialog(ingredientStockID: number) {
-    const dialogRef = this.dialog.open(EditIngredientStockModalComponent, {
+  openEditStockDialog(toolStockID: number) {
+    const dialogRef = this.dialog.open(EditToolStockModalComponent, {
       data: {
-        itemID: ingredientStockID,
+        itemID: toolStockID,
       },
     });
 
@@ -175,24 +171,24 @@ export class IngredientDetailsModalComponent {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             results: result,
-            addSuccessMessage: `Ingredient Stock edited successfully!`,
+            addSuccessMessage: `Tool Stock edited successfully!`,
           },
         });
       } else if (result) {
         this.dialog.open(AddRequestErrorModalComponent, {
           data: {
             error: result,
-            addFailureMessage: `Ingredient Stock failed to update.`,
+            addFailureMessage: `Tool Stock failed to update.`,
           },
         });
       }
     });
   }
 
-  openEditIngredientDialog() {
-    const dialogRef = this.dialog.open(EditIngredientModalComponent, {
+  openEditToolDialog() {
+    const dialogRef = this.dialog.open(EditToolModalComponent, {
       data: {
-        itemID: this.ingredient.ingredientID,
+        itemID: this.tool.toolID,
       },
     });
 
@@ -201,25 +197,25 @@ export class IngredientDetailsModalComponent {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             results: result,
-            addSuccessMessage: `Ingredient: ${this.ingredient.name} edited successfully!`,
+            addSuccessMessage: `Tool: ${this.tool.name} edited successfully!`,
           },
         });
       } else if (result) {
         this.dialog.open(AddRequestErrorModalComponent, {
           data: {
             error: result,
-            addFailureMessage: `Ingredient: ${this.ingredient.name} failed to update.`,
+            addFailureMessage: `Tool: ${this.tool.name} failed to update.`,
           },
         });
       }
     });
   }
 
-  openDeleteStockDialog(ingredientStockID: number) {
-    const dialogRef = this.dialog.open(DeleteIngredientStockModalComponent, {
+  openDeleteStockDialog(toolStockID: number) {
+    const dialogRef = this.dialog.open(DeleteToolStockModalComponent, {
       data: {
-        itemID: ingredientStockID,
-        ingredientName: this.ingredient.name,
+        itemID: toolStockID,
+        toolName: this.tool.name,
       },
     });
 
@@ -228,25 +224,25 @@ export class IngredientDetailsModalComponent {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             results: result,
-            addSuccessMessage: `Ingredient Stock deleted successfully!`,
+            addSuccessMessage: `Tool Stock deleted successfully!`,
           },
         });
       } else if (result) {
         this.dialog.open(AddRequestErrorModalComponent, {
           data: {
             error: result,
-            addFailureMessage: `Ingredient Stock failed to delete.`,
+            addFailureMessage: `Tool Stock failed to delete.`,
           },
         });
       }
     });
   }
 
-  openDeleteIngredientDialog() {
-    const dialogRef = this.dialog.open(DeleteIngredientModalComponent, {
+  openDeleteToolDialog() {
+    const dialogRef = this.dialog.open(DeleteToolModalComponent, {
       data: {
-        itemID: this.ingredient.ingredientID,
-        itemName: this.ingredient.name,
+        itemID: this.tool.toolID,
+        itemName: this.tool.name,
       },
     });
 
@@ -255,14 +251,14 @@ export class IngredientDetailsModalComponent {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             results: result,
-            addSuccessMessage: `Ingredient: ${this.ingredient.name} deleted successfully!`,
+            addSuccessMessage: `Tool: ${this.tool.name} deleted successfully!`,
           },
         });
       } else if (result) {
         this.dialog.open(AddRequestErrorModalComponent, {
           data: {
             error: result,
-            addFailureMessage: `Ingredient: ${this.ingredient.name} failed to delete.`,
+            addFailureMessage: `Tool: ${this.tool.name} failed to delete.`,
           },
         });
       }
