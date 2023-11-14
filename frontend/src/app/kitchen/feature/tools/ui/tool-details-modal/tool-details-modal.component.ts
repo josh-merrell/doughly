@@ -110,6 +110,7 @@ export class ToolDetailsModalComponent {
       })
     );
   }
+  
   updateMenuOpenForIndex(index: number) {
     if (this.menuOpenForIndex === index) {
       this.menuOpenForIndex = -1;

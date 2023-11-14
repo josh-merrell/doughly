@@ -108,7 +108,7 @@ export class AddToolStockModalComponent {
     const payload = {
       ...this.form.value,
       toolID: parseInt(this.form.value.toolID, 10),
-      measurement: parseInt(this.form.value.measurement)
+      quantity: parseInt(this.form.value.quantity)
     };
 
     this.store.dispatch(

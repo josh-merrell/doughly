@@ -59,8 +59,7 @@ export class EditToolStockModalComponent {
 
   setForm() {
     this.form = this.fb.group({
-      purchasedDate: ['', Validators.required],
-      measurement: ['', [Validators.required, positiveIntegerValidator()]],
+      quantity: ['', [Validators.required, positiveIntegerValidator()]],
     });
   }
 
