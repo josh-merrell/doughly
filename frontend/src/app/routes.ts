@@ -16,6 +16,11 @@ import { SocialPageComponent } from './social/social-page.component';
 export const routes: Route[] = [
   {
     path: '',
+    component: HomeComponent,
+    canActivate: [ProfileGuard],
+  },
+  {
+    path: 'social',
     component: SocialPageComponent,
     canActivate: [ProfileGuard],
   },
@@ -31,6 +36,7 @@ export const routes: Route[] = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [ProfileGuard],
   },
   {
     path: 'register',
@@ -50,17 +56,19 @@ export const routes: Route[] = [
     children: [
       {
         path: ':recipeID',
-        component: RecipeComponent
-      }
-    ]
+        component: RecipeComponent,
+      },
+    ],
   },
   {
     path: 'kitchen',
     component: KitchenPageComponent,
+    canActivate: [ProfileGuard],
   },
   {
     path: 'ingredients',
     component: IngredientsComponent,
+    canActivate: [ProfileGuard],
   },
   {
     path: '**',
