@@ -11,10 +11,21 @@ import { PasswordResetPageComponent } from './account/feature/password/password-
 import { SignupPageComponent } from './account/feature/signup/signup-page.component';
 import { VerifyComponent } from './account/feature/verify/verify.component';
 import { ProfileComponent } from './profile/profile.component'
+import { SocialPageComponent } from './social/social-page.component';
 
 export const routes: Route[] = [
   {
     path: '',
+    component: HomeComponent,
+    canActivate: [ProfileGuard],
+  },
+  {
+    path: 'social',
+    component: SocialPageComponent,
+    canActivate: [ProfileGuard],
+  },
+  {
+    path: 'home',
     component: HomeComponent,
     canActivate: [ProfileGuard],
   },
@@ -25,6 +36,7 @@ export const routes: Route[] = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [ProfileGuard],
   },
   {
     path: 'register',
@@ -44,17 +56,19 @@ export const routes: Route[] = [
     children: [
       {
         path: ':recipeID',
-        component: RecipeComponent
-      }
-    ]
+        component: RecipeComponent,
+      },
+    ],
   },
   {
     path: 'kitchen',
     component: KitchenPageComponent,
+    canActivate: [ProfileGuard],
   },
   {
     path: 'ingredients',
     component: IngredientsComponent,
+    canActivate: [ProfileGuard],
   },
   {
     path: '**',

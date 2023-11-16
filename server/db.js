@@ -59,7 +59,7 @@ const updater = async (userID, authorization, IDfield, ID, table, updateFields) 
         //reference logID1 as associatedID in the 'updatedRecipeVersion' log entry
         createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(existingRow.recipeID), logID1, String(recipeVersion), String(newVersion), `updated version of recipe ID:${existingRow.recipeID} from ${recipeVersion} to ${newVersion}`);
       }
-      if (['steps', 'recipes', 'recipeTools', 'recipeIngredients', 'persons'].includes(table)) {
+      if (['steps', 'recipes', 'recipeTools', 'recipeIngredients', 'persons', 'friendships'].includes(table)) {
         //update version of table and log the change
         const newVersion = await incrementVersion(table, `${table.slice(0, -1)}ID`, ID, existingRow.version);
         let logID2;
