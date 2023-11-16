@@ -215,6 +215,20 @@
             Kitchen
           </a>
         </ng-container>
+        <ng-container *ngIf="authService.$profile | async as profile">
+          <a
+            routerLink="/social"
+            [ngClass]="{
+              'border-dl-blue-6 text-dl-grey-1':
+                (currentUrl$ | async) === '/social',
+              'border-transparent text-dl-grey-5 ':
+                (currentUrl$ | async) !== '/social'
+            }"
+            class="inline-flex items-center border-b-2 px-1 pt-1 text-dl-4 font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
+          >
+            Social
+          </a>
+        </ng-container>
       </div>
     </div>
   </nav>
