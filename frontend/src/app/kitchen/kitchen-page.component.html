@@ -26,7 +26,6 @@
   <!-- Main content -->
   <main class="w-full">
     <ng-container [ngSwitch]="view$ | async">
-      <dl-inventory *ngSwitchCase="'inventory'"></dl-inventory>
       <dl-tools *ngSwitchCase="'tools'"></dl-tools>
       <dl-ingredients *ngSwitchCase="'ingredients'"></dl-ingredients>
     </ng-container>
