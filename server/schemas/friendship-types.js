@@ -21,6 +21,7 @@ const newFriendshipSchema_body = {
   required: ['friend'],
   properties: {
     friend: { type: 'string' },
+    status: { type: 'string' },
   },
 };
 

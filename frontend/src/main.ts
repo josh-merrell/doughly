@@ -43,6 +43,8 @@ import { RecipeStepReducer } from './app/recipes/state/recipe-step/recipe-step-r
 import { RecipeStepEffects } from './app/recipes/state/recipe-step/recipe-step-effects';
 import { ToolStockEffects } from './app/kitchen/feature/Inventory/feature/tool-inventory/state/tool-stock-effects';
 import { ToolStockReducer } from './app/kitchen/feature/Inventory/feature/tool-inventory/state/tool-stock-reducers';
+import { FriendshipReducer } from './app/social/state/friendship-reducers';
+import { FriendshipEffects } from './app/social/state/friendship-effects';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -62,6 +64,7 @@ bootstrapApplication(AppComponent, {
     provideState('recipeTool', RecipeToolReducer),
     provideState('step', StepReducer),
     provideState('recipeStep', RecipeStepReducer),
+    provideState('social', FriendshipReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
@@ -74,6 +77,7 @@ bootstrapApplication(AppComponent, {
       RecipeToolEffects,
       StepEffects,
       RecipeStepEffects,
+      FriendshipEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({
