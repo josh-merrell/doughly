@@ -31,6 +31,12 @@ export class IDService {
         return 21;
       case 'person':
         return 22;
+      case 'friendship':
+        return 23;
+      case 'followship':
+        return 24;
+      case 'recipeSubscription':
+        return 25;
       case 'kitchenLog':
         return 70;
       case 'recipeLog':

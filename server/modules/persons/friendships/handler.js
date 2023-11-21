@@ -2,7 +2,8 @@
 
 async function getFriendships(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { cursor, limit } = req.query;
   const { friendIDs, name } = req.query;
   const returner = await p.get.all({
@@ -17,7 +18,8 @@ async function getFriendships(req, res) {
 
 async function getFriendshipByID(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { friendID } = req.params;
   const returner = await p.get.by.ID({
     userID: req.userID,
@@ -28,8 +30,9 @@ async function getFriendshipByID(req, res) {
 
 async function createFriendship(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
-  const { friend } = req.body;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { friend, status } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
@@ -37,20 +40,22 @@ async function createFriendship(req, res) {
     authorization,
     userID: req.userID,
     friend,
+    status,
   });
   return res.json(returner);
 }
 
 async function updateFriendship(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
-  const { friendID } = req.params;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { friendshipID } = req.params;
   const { status } = req.body;
   const { authorization } = req.headers;
   const returner = await p.update({
     userID: req.userID,
     authorization,
-    friendID,
+    friendshipID,
     status,
   });
   return res.json(returner);
@@ -58,13 +63,14 @@ async function updateFriendship(req, res) {
 
 async function deleteFriendship(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
-  const { friendID } = req.params;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { friendshipID } = req.params;
   const { authorization } = req.headers;
   const returner = await p.delete({
     userID: req.userID,
     authorization,
-    friendID,
+    friendshipID,
   });
   return res.json(returner);
 }
