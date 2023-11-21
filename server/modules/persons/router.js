@@ -7,7 +7,7 @@ const { generateID } = require('../../middleware/ID');
 const handler = require('./handler');
 const { getPersonsSchema_query, getPersonSchema_params, newPersonSchema_body, personUpdateSchema_body, personUpdateSchema_params, personDeleteSchema_params } = require('../../schemas/person-types');
 const friendshipsRouter = require('./friendships/router');
-const followersRouter = require('./followers/router');
+// const followersRouter = require('./followers/router');
 
 const router = express.Router();
 const h = handler;
@@ -15,7 +15,7 @@ const h = handler;
 router.use(authenticateJWT);
 
 router.use('/friendships', friendshipsRouter);
-router.use('/followers', followersRouter);
+// router.use('/followers', followersRouter);
 
 router.get('/:personID', routeValidator(getPersonSchema_params, 'params'), errorCatcher(h.getPersonByID));
 router.get('/', routeValidator(getPersonsSchema_query, 'query'), errorCatcher(h.getPersons));
