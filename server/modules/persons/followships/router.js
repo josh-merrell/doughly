@@ -10,6 +10,7 @@ const router = express.Router();
 const h = handler;
 router.use(authenticateJWT);
 
+router.get('/:followers', errorCatcher(h.getFollowers));
 router.get('/:followshipID', routeValidator(getFollowshipSchema_params, 'params'), errorCatcher(h.getFollowshipByID));
 router.get('/', routeValidator(getFollowshipsSchema_query, 'query'), errorCatcher(h.getFollowships));
 router.post('/', generateID, routeValidator(newFollowshipSchema_body, 'body'), errorCatcher(h.createFollowship));
