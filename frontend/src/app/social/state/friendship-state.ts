@@ -1,7 +1,7 @@
 export interface Friendship {
   friendshipID: number;
   status: string;
-  friend: number;
+  friend: string;
   version?: number;
   userID?: number;
 }

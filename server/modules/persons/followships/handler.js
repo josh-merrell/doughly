@@ -16,6 +16,19 @@ async function getFollowships(req, res) {
   return res.json(returner);
 }
 
+async function getFollowers(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { cursor, limit } = req.query;
+  const returner = await p.get.followers({
+    userID: req.userID,
+    cursor,
+    limit,
+  });
+  return res.json(returner);
+}
+
 async function getFollowshipByID(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
@@ -63,4 +76,5 @@ module.exports = {
   getFollowshipByID,
   createFollowship,
   deleteFollowship,
+  getFollowers,
 };
