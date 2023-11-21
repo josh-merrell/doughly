@@ -42,6 +42,25 @@ module.exports = ({ db, dbPublic }) => {
     return result;
   }
 
+  async function getAllFollowers(options) {
+    const { userID, limit } = options;
+
+    let q = db.from('followships').select().filter('following', 'eq', userID).eq('deleted', false).order('followshipID', { ascending: true });
+
+    if (limit) {
+      q = q.limit(limit);
+    }
+
+    const { data: followships, error } = await q;
+    if (error) {
+      global.logger.info(`Error getting follower followships: ${error.message}`);
+      return { error: error.message };
+    }
+
+    global.logger.info(`Got ${followships.length} follower followships`);
+    return followships;
+  }
+
   async function getFollowshipByID(options) {
     const { data, error } = await db.from('followships').select().eq('followshipID', options.followshipID).single();
 
@@ -126,6 +145,7 @@ module.exports = ({ db, dbPublic }) => {
     create,
     delete: deleteFollowship,
     get: {
+      followers: getAllFollowers,
       all: getAll,
       by: {
         ID: getFollowshipByID,
