@@ -1,1 +1,40 @@
-<p>social-page works!</p>
+<div class="relative mx-auto h-full max-w-7xl bg-white pt-dl-5">
+  <!-- View Header -->
+  <div class="flex w-full justify-around mb-dl-6">
+    <span
+      (click)="setView('timeline')"
+      class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
+      [ngClass]="{
+        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
+          view() === 'timeline',
+        'text-dl-5 text-dl-grey-4 font-dl-2': view() !== 'timeline'
+      }"
+    >
+      Timeline
+    </span>
+    <span
+      (click)="setView('friends')"
+      class="inline-flex items-center py-1 font-dl-2 transition-all duration-200 ease-in-out"
+      [ngClass]="{
+        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
+          view() === 'friends',
+        'text-dl-5 text-dl-grey-4 font-dl-2': view() !== 'friends'
+      }"
+    >
+      Friends
+    </span>
+    <span
+      (click)="setView('followers')"
+      class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
+      [ngClass]="{
+        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
+          view() === 'followers',
+        'text-dl-5 text-dl-grey-4 font-dl-2': view() !== 'followers'
+      }"
+    >
+      Followers
+    </span>
+  </div>
+
+  <!-- Main Content -->
+</div>

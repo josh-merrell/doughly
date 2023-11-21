@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
 import { Friendship } from './friendship-state';
 
-export const selectFriendships = (state: any) => state.social.friendships;
+export const selectFriendships = (state: any) => state.friendships;
 
 export const selectFriendshipByID = (friendshipID: number) =>
   createSelector(selectFriendships, (friendships) => {
@@ -10,12 +10,12 @@ export const selectFriendshipByID = (friendshipID: number) =>
     );
   });
 
-export const selectDeleting = (state: any) => state.social.deleting;
+export const selectDeleting = (state: any) => state.friendships.deleting;
 
-export const selectAdding = (state: any) => state.social.adding;
+export const selectAdding = (state: any) => state.friendships.adding;
 
-export const selectUpdating = (state: any) => state.social.updating;
+export const selectUpdating = (state: any) => state.friendships.updating;
 
-export const selectError = (state: any) => state.social.error;
+export const selectError = (state: any) => state.friendships.error;
 
-export const selectLoading = (state: any) => state.social.loading;
+export const selectLoading = (state: any) => state.friendships.loading;
