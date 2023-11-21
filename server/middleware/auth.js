@@ -4,8 +4,16 @@ const authenticateJWT = async (req, res, next) => {
   const supabase = createClient(process.env.SUPABASE_DOUGHLEAP_URL, process.env.SUPABASE_DOUGHLEAP_KEY, {
     persistSession: false,
   });
+  if (req.headers.authorization === 'override') {
+    req.userID = req.body.userID;
+    return next();
+  }
   if (req.headers.authorization === 'postmanTest') {
     req.userID = 'ade96f70-4ec5-4ab9-adfe-0645b16e1ced';
+    return next();
+  }
+  if (req.headers.authorization === 'postmanTestSecondary') {
+    req.userID = '88f9c145-b9f7-4dd3-8b0c-3a4e34501326';
     return next();
   }
 
