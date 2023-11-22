@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SocialService } from '../../data/social.service';
 import { selectFriendships } from '../../state/friendship-selectors';
 import { FriendCardComponent } from './ui/friend-card/friend-card.component';
+import { FriendModalComponent } from './ui/friend-modal/friend-modal.component';
 
 @Component({
   selector: 'dl-friends',
@@ -22,7 +23,7 @@ export class FriendsComponent {
   constructor(
     private store: Store,
     public dialog: MatDialog,
-    private socialService: SocialService
+    private socialService: SocialService,
   ) {
     this.friends = computed(() => {
         return this.friendships().filter((friendship) => {
@@ -52,5 +53,12 @@ export class FriendsComponent {
 
   onAddFriend(): void {
     console.log('onAddFriend');
+  }
+
+  onFriendClick(friend: any): void {
+    this.dialog.open(FriendModalComponent, {
+      data: friend,
+      width: '75%',
+    });
   }
 }

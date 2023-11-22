@@ -47,13 +47,14 @@
     <span
       class="ml-dl-2 text-dl-5 font-dl-2 text-dl-blue-6"
       (click)="onRequestsClick()"
-      >{{ requests().length }} pending request</span><span class="text-dl-5 font-dl-2 text-dl-blue-6" *ngIf="requests().length > 1">s</span>
+      >{{ requests().length }} friend request</span><span class="text-dl-5 font-dl-2 text-dl-blue-6" *ngIf="requests().length > 1">s</span>
   </div>
 
   <!-- Friend List -->
   <div class="relative mb-dl-3 flex flex-col items-center">
     <div class="h-dl-21 flex flex-col items-center">
       <dl-friend-card
+        (click)="onFriendClick(friend)"
         *ngFor="let friend of friends()"
         class="w-dl-16 py-dl-3 border-b-2 border-dl-grey-9"
         [friend]="friend"

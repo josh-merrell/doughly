@@ -7,9 +7,15 @@ const { default: axios } = require('axios');
 
 module.exports = ({ db, dbPublic }) => {
   async function getAll(options) {
-    const { userID, friendshipIDs, name } = options;
+    const { userID, sourceUserID, friendshipIDs, name } = options;
 
-    let q = db.from('friendships').select().filter('userID', 'eq', userID).eq('deleted', false).order('friendshipID', { ascending: true });
+    let q;
+    // if sourceUserID is not provided, get all of querying user's friendships
+    if (!sourceUserID) {
+      q = db.from('friendships').select().filter('userID', 'eq', userID).eq('deleted', false).order('friendshipID', { ascending: true });
+    } else {
+      q = db.from('friendships').select().filter('userID', 'eq', sourceUserID).eq('deleted', false).order('friendshipID', { ascending: true });
+    }
 
     if (friendshipIDs) {
       q = q.in('friendshipID', friendshipIDs);
