@@ -1,0 +1,115 @@
+import { Injectable } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { catchError, map, mergeMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { ProfileService } from '../data/profile.service';
+import { ProfileActions } from './profile-actions';
+
+@Injectable()
+export class ProfileEffects {
+  constructor(
+    private actions$: Actions,
+    private profileService: ProfileService
+  ) {}
+
+  loadProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.loadProfile),
+      mergeMap(() =>
+        this.profileService.getProfile().pipe(
+          map((profile) =>
+            ProfileActions.loadProfileSuccess({ profile })
+          ),
+          catchError((error) =>
+            of(ProfileActions.loadProfileFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  loadFriends$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.loadFriends),
+      mergeMap(() =>
+        this.profileService.getFriends().pipe(
+          map((friends) =>
+            ProfileActions.loadFriendsSuccess({ friends })
+          ),
+          catchError((error) =>
+            of(ProfileActions.loadFriendsFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  loadFollowers$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.loadFollowers),
+      mergeMap(() =>
+        this.profileService.getFollowers().pipe(
+          map((followers) =>
+            ProfileActions.loadFollowersSuccess({ followers })
+          ),
+          catchError((error) =>
+            of(ProfileActions.loadFollowersFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  loadFriend$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.loadFriend),
+      mergeMap((action) =>
+        this.profileService.getFriendByID(action.friendUserID).pipe(
+          map((friend) =>
+            ProfileActions.loadFriendSuccess({ friend })
+          ),
+          catchError((error) =>
+            of(ProfileActions.loadFriendFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  // deleteFriend$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(ProfileActions.deleteFriend),
+  //     mergeMap((action) =>
+  //       this.profileService.deleteFriend(action.friendUserID).pipe(
+  //         map(() =>
+  //           ProfileActions.deleteFriendSuccess({
+  //             friendUserID: action.friendUserID,
+  //           })
+  //         ),
+  //         catchError((error) =>
+  //           of(ProfileActions.deleteFriendFailure({ error }))
+  //         )
+  //       )
+  //     )
+  //   )
+  // );
+
+  // deleteFollower$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(ProfileActions.deleteFollower),
+  //     mergeMap((action) =>
+  //       this.profileService.deleteFollower(action.followerUserID).pipe(
+  //         map(() =>
+  //           ProfileActions.deleteFollowerSuccess({
+  //             followerUserID: action.followerUserID,
+  //           })
+  //         ),
+  //         catchError((error) =>
+  //           of(ProfileActions.deleteFollowerFailure({ error }))
+  //         )
+  //       )
+  //     )
+  //   )
+  // );
+
+}

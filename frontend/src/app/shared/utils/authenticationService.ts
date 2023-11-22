@@ -37,7 +37,7 @@ export class AuthService {
     undefined
   );
   $profile = this._$profile.pipe(
-    skipWhile((_) => typeof _ === 'undefined' || !_)
+    skipWhile((_) => typeof _ === 'undefined')
   ) as Observable<Profile | null>;
   private profile_subscription?: RealtimeChannel;
 
