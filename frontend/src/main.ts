@@ -68,6 +68,7 @@ bootstrapApplication(AppComponent, {
     provideState('recipeStep', RecipeStepReducer),
     provideState('friendship', FriendshipReducer),
     provideState('followship', FollowshipReducer),
+    provideState('profile', ProfileReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
@@ -82,6 +83,7 @@ bootstrapApplication(AppComponent, {
       RecipeStepEffects,
       FriendshipEffects,
       FollowshipEffects,
+      ProfileEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({
