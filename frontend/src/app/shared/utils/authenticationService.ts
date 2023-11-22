@@ -37,7 +37,7 @@ export class AuthService {
     undefined
   );
   $profile = this._$profile.pipe(
-    skipWhile((_) => typeof _ === 'undefined')
+    skipWhile((_) => typeof _ === 'undefined' || !_)
   ) as Observable<Profile | null>;
   private profile_subscription?: RealtimeChannel;
 
@@ -48,8 +48,6 @@ export class AuthService {
   }
 
   constructor(private supabase: SupabaseService) {
-    // console.trace(`AUTHSERVICE INVOKED`)
-
     // Check the current session on initialization
     this.supabase.supabase.auth.getSession().then(({ data, error }) => {
       if (data && data.session && !error) {
@@ -202,7 +200,6 @@ export class AuthService {
             console.error('Error creating new profile:', error);
             return;
           }
-          console.log(`NEW PROFILE: ${JSON.stringify(data)}`)
           if (data && data.length > 0) {
             this._$profile.next({
               user_id: data[0].user_id,
@@ -305,7 +302,9 @@ export class AuthService {
       .upsert(update)
       .then(({ data, error }) => {
         if (error) console.error('Error updating profile:', error);
-        this._$profile.next(data);
+        if (data !== null && data !== undefined) {
+          this._$profile.next(data);
+        }
       });
   }
 
