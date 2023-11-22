@@ -1,6 +1,6 @@
-<div class="relative mx-auto h-full max-w-7xl bg-white pt-dl-5">
+<div class="relative mx-auto h-full w-full bg-white pt-dl-5">
   <!-- View Header -->
-  <div class="flex w-full justify-around mb-dl-6">
+  <div class="flex w-full justify-around h-dl-4 mb-dl-6">
     <span
       (click)="setView('timeline')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
@@ -37,4 +37,9 @@
   </div>
 
   <!-- Main Content -->
+  <div class="h-full">
+    <dl-timeline *ngIf="view() === 'timeline'"></dl-timeline>
+    <dl-friends *ngIf="view() === 'friends'"></dl-friends>
+    <dl-followers *ngIf="view() === 'followers'"></dl-followers>
+  </div>
 </div>
