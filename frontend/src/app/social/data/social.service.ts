@@ -25,23 +25,29 @@ export class SocialService {
           friendshipID: friendship.friendshipID,
           status: friendship.status,
           friend: friendship.friend,
+          friendNameFirst: friendship.friendNameFirst,
+          friendNameLast: friendship.friendNameLast,
+          friendUsername: friendship.friendUsername,
+          friendRecipeCount: friendship.friendRecipeCount,
+          friendJoinDate: friendship.friendJoinDate,
+          friendPhotoURL: friendship.friendPhotoURL,
         };
       });
     })
     );
-    followshipRows$: Observable<Followship[]> = this.store
-    .select(selectFollowships)
-    .pipe(
-      map((followships: Followship[]) => {
-        return followships.map((followship: Followship) => {
-          return {
-            followshipID: followship.followshipID,
-            following: followship.following,
-            userID: followship.userID,
-          };
-        });
-      })
-    );
+  followshipRows$: Observable<Followship[]> = this.store
+  .select(selectFollowships)
+  .pipe(
+    map((followships: Followship[]) => {
+      return followships.map((followship: Followship) => {
+        return {
+          followshipID: followship.followshipID,
+          following: followship.following,
+          userID: followship.userID,
+        };
+      });
+    })
+  );
     
   constructor(
     private http: HttpClient,

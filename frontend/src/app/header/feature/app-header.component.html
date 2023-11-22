@@ -18,7 +18,7 @@
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
             <a
-              routerLink="/"
+              (click)="closeHeaderMenu('/')"
               [ngClass]="{
                 'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
                   (currentUrl$ | async) === '/',
@@ -31,7 +31,7 @@
             </a>
             <ng-container *ngIf="authService.$profile | async as profile">
               <a
-                routerLink="/recipes"
+                (click)="closeHeaderMenu('/recipes')"
                 [ngClass]="{
                   'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
                     (currentUrl$ | async) === '/recipes',
@@ -45,7 +45,7 @@
             </ng-container>
             <ng-container *ngIf="authService.$profile | async as profile">
               <a
-                routerLink="/kitchen"
+                (click)="closeHeaderMenu('/kitchen')"
                 [ngClass]="{
                   'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
                     (currentUrl$ | async) === '/kitchen',
@@ -178,7 +178,7 @@
     >
       <div class="space-y-1 px-dl-2 pb-4 pt-2">
         <a
-          routerLink="/"
+          (click)="closeHeaderMenu('/')"
           [ngClass]="{
             'border-dl-blue-6 text-dl-grey-1': (currentUrl$ | async) === '/',
             'border-transparent text-dl-grey-5 ': (currentUrl$ | async) !== '/'
@@ -189,7 +189,7 @@
         </a>
         <ng-container *ngIf="authService.$profile | async as profile">
           <a
-            routerLink="/recipes"
+            (click)="closeHeaderMenu('/recipes')"
             [ngClass]="{
               'border-dl-blue-6 text-dl-grey-1':
                 (currentUrl$ | async) === '/recipes',
@@ -203,7 +203,7 @@
         </ng-container>
         <ng-container *ngIf="authService.$profile | async as profile">
           <a
-            routerLink="/kitchen"
+            (click)="closeHeaderMenu('/kitchen')"
             [ngClass]="{
               'border-dl-blue-6 text-dl-grey-1':
                 (currentUrl$ | async) === '/kitchen',
@@ -217,7 +217,7 @@
         </ng-container>
         <ng-container *ngIf="authService.$profile | async as profile">
           <a
-            routerLink="/social"
+            (click)="closeHeaderMenu('/social')"
             [ngClass]="{
               'border-dl-blue-6 text-dl-grey-1':
                 (currentUrl$ | async) === '/social',
