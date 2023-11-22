@@ -1,7 +1,7 @@
 ('use strict');
 
 module.exports = ({ db, dbPublic }) => {
-  async function retrieveProfile(userID) {
+  async function retrieveProfile(userID, friendStatus = 'confirmed') {
     // get all columns from dbPublic.profiles where userID = userID
     const { data: profile, error } = await dbPublic.from('profiles').select('*').eq('user_id', userID).single();
     if (error) {
@@ -14,7 +14,7 @@ module.exports = ({ db, dbPublic }) => {
     }
 
     // get count of rows from db.friendships where userID = userID, deleted = false and status = 'confirmed'
-    const { data: friendshipIDs, error: errorFriendCount } = await db.from('friendships').select('friendshipID').eq('userID', userID).eq('deleted', false).eq('status', 'confirmed');
+    const { data: friendshipIDs, error: errorFriendCount } = await db.from('friendships').select('friendshipID').eq('userID', userID).eq('deleted', false).eq('status', friendStatus);
     if (errorFriendCount) {
       global.logger.info(`Error getting friend count for userID ${userID}: ${errorFriendCount.message}`);
       return { error: errorFriendCount };
@@ -59,10 +59,10 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function getFriends(options) {
-    const { userID } = options;
+    const { userID, friendStatus } = options;
 
-    //get friendshipIDs of userID where deleted = false and status = 'confirmed'
-    const { data: friendshipIDs, error } = await db.from('friendships').select('friend').eq('userID', userID).eq('deleted', false).eq('status', 'confirmed');
+    //get friendshipIDs of userID where deleted = false and status as requested
+    const { data: friendshipIDs, error } = await db.from('friendships').select('friend').eq('userID', userID).eq('deleted', false).eq('status', friendStatus);
     if (error) {
       global.logger.info(`Error getting friendshipIDs for userID ${userID}: ${error.message}`);
       return { error };
@@ -85,14 +85,14 @@ module.exports = ({ db, dbPublic }) => {
     const friendProfiles = await Promise.all(promises);
     const validFriendProfiles = friendProfiles.filter((profile) => profile !== null);
 
-    global.logger.info(`Successfully retrieved ${validFriendProfiles.length} friends for userID ${userID}`);
+    global.logger.info(`Successfully retrieved ${validFriendProfiles.length} friends with status: ${friendStatus} for userID ${userID}`);
     return validFriendProfiles;
   }
 
   async function getFriend(options) {
     const { userID, friendUserID } = options;
 
-    //get friendshipID of userID and friendUserID where deleted = false and status = 'confirmed'
+    //get friendshipID of userID and friendUserID where deleted = false and status as 'confirmed'
     const { data: friendshipID, error } = await db.from('friendships').select('friendshipID').eq('userID', userID).eq('friend', friendUserID).eq('deleted', false).eq('status', 'confirmed').single();
     if (error) {
       global.logger.info(`Error getting friendshipID for userID ${userID} and friendUserID ${friendUserID}: ${error.message}`);

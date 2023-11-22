@@ -21,6 +21,26 @@ const loadFriendsFailure = createAction(
   props<{ error: any }>()
 );
 
+const loadFriendRequests = createAction('[Profile] Load Friend Requests');
+const loadFriendRequestsSuccess = createAction(
+  '[Profile] Load Friend Requests Success',
+  props<{ friendRequestProfiles: Profile[] }>()
+);
+const loadFriendRequestsFailure = createAction(
+  '[Profile] Load Friend Requests Failure',
+  props<{ error: any }>()
+);
+
+const loadFriendRequestsSent = createAction('[Profile] Load Friend Requests Sent');
+const loadFriendRequestsSentSuccess = createAction(
+  '[Profile] Load Friend Requests Sent Success',
+  props<{ friendRequestSentProfiles: Profile[] }>()
+);
+const loadFriendRequestsSentFailure = createAction(
+  '[Profile] Load Friend Requests Sent Failure',
+  props<{ error: any }>()
+);
+
 const loadFriend = createAction('[Profile] Load Friend', props<{ friendUserID: string }>());
 const loadFriendSuccess = createAction(
   '[Profile] Load Friend Success',
@@ -68,6 +88,12 @@ export const ProfileActions = {
   loadFriends,
   loadFriendsSuccess,
   loadFriendsFailure,
+  loadFriendRequests,
+  loadFriendRequestsSuccess,
+  loadFriendRequestsFailure,
+  loadFriendRequestsSent,
+  loadFriendRequestsSentSuccess,
+  loadFriendRequestsSentFailure,
   loadFriend,
   loadFriendSuccess,
   loadFriendFailure,

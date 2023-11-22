@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { IDService } from 'src/app/shared/utils/ID';
 
-import { Profile } from '../state/profile-state';
+import { Profile } from './profile-state';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,21 @@ export class ProfileService {
   }
 
   getFriends(): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.API_URL}/friends`);
+    return this.http.get<Profile[]>(
+      `${this.API_URL}/friends?friendStatus=confirmed`
+    );
+  }
+
+  getFriendRequests(): Observable<Profile[]> {
+    return this.http.get<Profile[]>(
+      `${this.API_URL}/friends?friendStatus=receivedRequest`
+    );
+  }
+
+  getFriendRequestsSent(): Observable<Profile[]> {
+    return this.http.get<Profile[]>(
+      `${this.API_URL}/friends?friendStatus=requesting`
+    );
   }
 
   getFriendByID(friendUserID: string): Observable<Profile> {
@@ -36,14 +50,8 @@ export class ProfileService {
   }
 
   getFollowerByID(followerUserID: string): Observable<Profile> {
-    return this.http.get<Profile>(`${this.API_URL}/followers/${followerUserID}`);
+    return this.http.get<Profile>(
+      `${this.API_URL}/followers/${followerUserID}`
+    );
   }
-
-  // deleteFriend(friendUserID: string): Observable<String> {
-  //   return this.http.delete<String>(`${this.API_URL}/friends/${friendUserID}`);
-  // }
-
-  // deleteFollower(followerUserID: string): Observable<String> {
-  //   return this.http.delete<String>(`${this.API_URL}/followers/${followerUserID}`);
-  // }
 }

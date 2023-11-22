@@ -17,6 +17,12 @@ export const selectFollowerByUserID = (userID: string) =>
     return followers.find((follower: Profile) => follower.userID === userID);
   });
 
+export const selectFriendRequests = (state: any) =>
+  state.profile.friendRequestProfiles;
+
+export const selectFriendRequestsSent = (state: any) =>
+  state.profile.friendRequestSentProfiles;
+
 export const selectLoading = (state: any) => state.profile.loading;
 
 export const selectDeleting = (state: any) => state.profile.deleting;

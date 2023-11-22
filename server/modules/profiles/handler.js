@@ -14,8 +14,13 @@ async function getFriends(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
+  let { friendStatus } = req.query;
+  if (!friendStatus) {
+    friendStatus = 'confirmed';
+  }
   const returner = await p.getFriends({
     userID: req.userID,
+    friendStatus,
   });
   return res.json(returner);
 }

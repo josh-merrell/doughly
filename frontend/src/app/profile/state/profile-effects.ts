@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { ProfileService } from '../data/profile.service';
+import { ProfileService } from './profile.service';
 import { ProfileActions } from './profile-actions';
 
 @Injectable()
@@ -17,9 +17,7 @@ export class ProfileEffects {
       ofType(ProfileActions.loadProfile),
       mergeMap(() =>
         this.profileService.getProfile().pipe(
-          map((profile) =>
-            ProfileActions.loadProfileSuccess({ profile })
-          ),
+          map((profile) => ProfileActions.loadProfileSuccess({ profile })),
           catchError((error) =>
             of(ProfileActions.loadProfileFailure({ error }))
           )
@@ -33,11 +31,43 @@ export class ProfileEffects {
       ofType(ProfileActions.loadFriends),
       mergeMap(() =>
         this.profileService.getFriends().pipe(
-          map((friends) =>
-            ProfileActions.loadFriendsSuccess({ friends })
-          ),
+          map((friends) => ProfileActions.loadFriendsSuccess({ friends })),
           catchError((error) =>
             of(ProfileActions.loadFriendsFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  loadFriendRequests$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.loadFriendRequests),
+      mergeMap(() =>
+        this.profileService.getFriendRequests().pipe(
+          map((friendRequestProfiles) =>
+            ProfileActions.loadFriendRequestsSuccess({ friendRequestProfiles })
+          ),
+          catchError((error) =>
+            of(ProfileActions.loadFriendRequestsFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  loadFriendRequestsSent$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.loadFriendRequestsSent),
+      mergeMap(() =>
+        this.profileService.getFriendRequestsSent().pipe(
+          map((friendRequestSentProfiles) =>
+            ProfileActions.loadFriendRequestsSentSuccess({
+              friendRequestSentProfiles,
+            })
+          ),
+          catchError((error) =>
+            of(ProfileActions.loadFriendRequestsSentFailure({ error }))
           )
         )
       )
@@ -65,12 +95,8 @@ export class ProfileEffects {
       ofType(ProfileActions.loadFriend),
       mergeMap((action) =>
         this.profileService.getFriendByID(action.friendUserID).pipe(
-          map((friend) =>
-            ProfileActions.loadFriendSuccess({ friend })
-          ),
-          catchError((error) =>
-            of(ProfileActions.loadFriendFailure({ error }))
-          )
+          map((friend) => ProfileActions.loadFriendSuccess({ friend })),
+          catchError((error) => of(ProfileActions.loadFriendFailure({ error })))
         )
       )
     )
@@ -111,5 +137,4 @@ export class ProfileEffects {
   //     )
   //   )
   // );
-
 }

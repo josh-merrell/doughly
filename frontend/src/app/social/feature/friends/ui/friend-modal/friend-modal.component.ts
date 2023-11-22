@@ -4,6 +4,7 @@ import { Friendship } from 'src/app/social/state/friendship-state';
 import { Store } from '@ngrx/store';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SocialService } from 'src/app/social/data/social.service';
+import { Profile } from 'src/app/profile/state/profile-state';
 
 @Component({
   selector: 'dl-friend-modal',
@@ -12,8 +13,7 @@ import { SocialService } from 'src/app/social/data/social.service';
   templateUrl: './friend-modal.component.html',
 })
 export class FriendModalComponent {
-  public friend!: Friendship;
-  public friendFriendships: WritableSignal<Friendship[]> = signal([]);
+  public friend!: Profile;
   public initials: string = '';
 
 
@@ -26,11 +26,7 @@ export class FriendModalComponent {
 
   ngOnInit(): void {
     this.friend = this.data;
-    console.log(`FRIEND: `, this.friend)
-    this.initials = this.friend.friendNameFirst[0] + this.friend.friendNameLast[0];
-    this.socialService.getAllFriendships(this.friend.friend).subscribe((friendships) => {
-      this.friendFriendships.set(friendships);
-    });
+    this.initials = this.friend.nameFirst[0] + this.friend.nameLast[0];
   }
 
 }

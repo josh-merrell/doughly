@@ -6,6 +6,8 @@ export const initialState: ProfileState = {
   profile: null,
   friends: [],
   followers: [],
+  friendRequestProfiles: [],
+  friendRequestSentProfiles: [],
   loading: false,
   deleting: false,
   adding: false,
@@ -41,6 +43,36 @@ export const ProfileReducer = createReducer(
     loading: false,
   })),
   on(ProfileActions.loadFriendsFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+  on(ProfileActions.loadFriendRequests, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(ProfileActions.loadFriendRequestsSuccess, (state, { friendRequestProfiles }) => ({
+    ...state,
+    friendRequestProfiles,
+    loading: false,
+  })),
+  on(ProfileActions.loadFriendRequestsFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+  on(ProfileActions.loadFriendRequestsSent, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(ProfileActions.loadFriendRequestsSentSuccess, (state, { friendRequestSentProfiles }) => ({
+    ...state,
+    friendRequestSentProfiles,
+    loading: false,
+  })),
+  on(ProfileActions.loadFriendRequestsSentFailure, (state, { error }) => ({
     ...state,
     error,
     loading: false,

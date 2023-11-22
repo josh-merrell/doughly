@@ -14,7 +14,15 @@ const getFollowerSchema_params = {
   },
 };
 
+const getFriendSchema_query = {
+  type: 'object',
+  properties: {
+    friendStatus: { type: 'string' },
+  },
+};
+
 module.exports = {
   getFriendSchema_params,
   getFollowerSchema_params,
+  getFriendSchema_query,
 };
