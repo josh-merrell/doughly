@@ -3,7 +3,7 @@ import { Followship } from './followship-state';
 
 export const selectFollowships = (state: any) => state.followships.followships;
 
-export const selectFollowers = (state: any) => state.followships.followers;
+export const selectFollowers = (state: any) => state.followship.followers;
 
 export const selectFollowshipByID = (followshipID: number) =>
   createSelector(selectFollowships, (followships) => {
@@ -12,13 +12,13 @@ export const selectFollowshipByID = (followshipID: number) =>
     );
   });
 
-export const selectDeleting = (state: any) => state.followships.deleting;
+export const selectDeleting = (state: any) => state.followship.deleting;
 
-export const selectAdding = (state: any) => state.followships.adding;
+export const selectAdding = (state: any) => state.followship.adding;
 
-export const selectUpdating = (state: any) => state.followships.updating;
+export const selectUpdating = (state: any) => state.followship.updating;
 
-export const selectError = (state: any) => state.followships.error;
+export const selectError = (state: any) => state.followship.error;
 
-export const selectLoading = (state: any) => state.followships.loading;
+export const selectLoading = (state: any) => state.followship.loading;
 

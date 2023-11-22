@@ -1,0 +1,32 @@
+<div class="flex items-top justify-between py-dl-2">
+  <!-- Image, Name, Username -->
+  <div class="flex items-center">
+    <div>
+      <img
+        *ngIf="friend.friendPhotoURL"
+        class="h-dl-6 w-dl-6 rounded-full"
+        [src]="friend.friendPhotoURL"
+        alt="friend profile image"
+      />
+      <span
+        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
+        *ngIf="!friend.friendPhotoURL && friend.friendNameFirst && friend.friendNameLast"
+      >
+        <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{initials}}</span>
+      </span>
+    </div>
+    <div class="flex flex-col items-left justify-between ml-dl-4">
+      <!-- Name -->
+      <div class="flex text-dl-6 text-dl-grey-2 font-dl-3">
+        <span>{{friend.friendNameFirst}}</span>
+        <span class="ml-dl-1 mb-dl-2">{{friend.friendNameLast}}</span>
+      </div>
+
+      <!-- Username -->
+      <span class="text-dl-4 text-dl-grey-6 font-dl-2">{{friend.friendUsername}}</span>
+    </div>
+  </div>
+
+  <!-- Recipe Count -->
+  <span class="text-dl-5 text-dl-grey-4 font-dl-2">{{ friend.friendRecipeCount }} recipes</span>
+</div>
