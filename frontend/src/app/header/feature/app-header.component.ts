@@ -88,8 +88,12 @@ export class AppHeaderComponent {
   }
 
   closeHeaderMenu(link: string) {
-    console.log('closeHeaderMenu');
     this.showMobileMenu = false;
+    this.router.navigate([link]);
+  }
+
+  profileNavigate(link: string) {
+    this.closeMenu();
     this.router.navigate([link]);
   }
 

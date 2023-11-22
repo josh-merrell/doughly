@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { IDService } from 'src/app/shared/utils/ID';
@@ -25,12 +25,6 @@ export class SocialService {
           friendshipID: friendship.friendshipID,
           status: friendship.status,
           friend: friendship.friend,
-          friendNameFirst: friendship.friendNameFirst,
-          friendNameLast: friendship.friendNameLast,
-          friendUsername: friendship.friendUsername,
-          friendRecipeCount: friendship.friendRecipeCount,
-          friendJoinDate: friendship.friendJoinDate,
-          friendPhotoURL: friendship.friendPhotoURL,
         };
       });
     })
@@ -119,15 +113,15 @@ export class SocialService {
     );
   }
 
-  getTotalUserFriendships(): number {
-    //get all friendships, then filter by status = 'confirmed'
-    let totalFriendships = 0;
-    this.store.select(selectFriendships).subscribe((friendships) => {
-      const userFriendships = friendships.filter(
-        (friendship: Friendship) => friendship.status === 'confirmed'
-      );
-      totalFriendships = userFriendships.length;
-    });
-    return totalFriendships;
-  }
+  // getTotalUserFriendships(): number {
+  //   //get all friendships, then filter by status = 'confirmed'
+  //   let totalFriendships = 0;
+  //   this.store.select(selectFriendships).subscribe((friendships) => {
+  //     const userFriendships = friendships.filter(
+  //       (friendship: Friendship) => friendship.status === 'confirmed'
+  //     );
+  //     totalFriendships = userFriendships.length;
+  //   });
+  //   return totalFriendships;
+  // }
 }

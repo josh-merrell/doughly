@@ -5,8 +5,11 @@ import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { SocialService } from '../../data/social.service';
 import { selectFriendships } from '../../state/friendship-selectors';
+import { selectFriendRequests, selectFriends } from 'src/app/profile/state/profile-selectors';
 import { FriendCardComponent } from './ui/friend-card/friend-card.component';
 import { FriendModalComponent } from './ui/friend-modal/friend-modal.component';
+import { Profile } from 'src/app/profile/state/profile-state';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
 
 @Component({
   selector: 'dl-friends',
@@ -16,35 +19,35 @@ import { FriendModalComponent } from './ui/friend-modal/friend-modal.component';
 })
 export class FriendsComponent {
   public friendships: WritableSignal<Friendship[]> = signal([]);
-  public friends: Signal<Friendship[]>;
-  public requests: Signal<Friendship[]>;
+  public friends: WritableSignal<Profile[]> = signal([]);
+  public requests: WritableSignal<Profile[]> = signal([]);
   public searchFilter: WritableSignal<string> = signal('');
 
   constructor(
     private store: Store,
     public dialog: MatDialog,
     private socialService: SocialService,
-  ) {
-    this.friends = computed(() => {
-        return this.friendships().filter((friendship) => {
-          return friendship.status === 'confirmed';
-        })
-      }
-    );
-
-    this.requests = computed(() =>
-      this.friendships().filter(
-        (friendship) => {
-          return friendship.status === 'receivedRequest'
-        }
-      )
-    );
-  }
+  ) {}
 
   ngOnInit(): void {
+    this.store.dispatch(ProfileActions.loadProfile());
+    this.store.dispatch(ProfileActions.loadFriends());
+    this.store.dispatch(ProfileActions.loadFollowers());
+    this.store.dispatch(ProfileActions.loadFriendRequests());
+    this.store.dispatch(ProfileActions.loadFriendRequestsSent());
+
     this.store.select(selectFriendships).subscribe((friendships) => {
       this.friendships.set(friendships);
     });
+
+    this.store.select(selectFriends).subscribe((friends) => {
+      this.friends.set(friends);
+    });
+
+    this.store.select(selectFriendRequests).subscribe((friendRequests) => {
+      this.requests.set(friendRequests);
+    });
+
   }
 
   onRequestsClick(): void {

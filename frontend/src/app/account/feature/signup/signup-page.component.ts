@@ -87,7 +87,7 @@ export class SignupPageComponent {
       this.authService
         .signUp(email!, password!, username!)
         .then(() => {
-          this.router.navigate(['/kitchen']);
+          this.router.navigate(['/home']);
         })
         .catch((error) => {
           this.error = error.message;

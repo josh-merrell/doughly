@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { HomeComponent } from './home/feature/home/home.component';
+import { HomeComponent } from './home/home.component';
 import { IngredientsComponent } from './kitchen/feature/ingredients/ingredients.component';
 import { NotfoundComponent } from './shared/ui/app-notfound/app-notfound.component';
 import { KitchenPageComponent } from './kitchen/kitchen-page.component';

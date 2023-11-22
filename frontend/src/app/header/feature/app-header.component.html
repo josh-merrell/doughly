@@ -1,4 +1,4 @@
-<div class="overflow-auto">
+<div class="overflow-visible">
   <nav class="border-b-2 border-dl-grey-8 bg-white shadow">
     <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
       <div class="relative flex h-dl-5 justify-between">
@@ -15,48 +15,6 @@
               alt="doughleap"
               (click)="showMobileMenu = !showMobileMenu"
             />
-          </div>
-          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-            <a
-              (click)="closeHeaderMenu('/')"
-              [ngClass]="{
-                'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                  (currentUrl$ | async) === '/',
-                'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                  (currentUrl$ | async) !== '/'
-              }"
-              class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
-            >
-              Home
-            </a>
-            <ng-container *ngIf="authService.$profile | async as profile">
-              <a
-                (click)="closeHeaderMenu('/recipes')"
-                [ngClass]="{
-                  'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                    (currentUrl$ | async) === '/recipes',
-                  'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                    (currentUrl$ | async) !== '/recipes'
-                }"
-                class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
-              >
-                Recipes
-              </a>
-            </ng-container>
-            <ng-container *ngIf="authService.$profile | async as profile">
-              <a
-                (click)="closeHeaderMenu('/kitchen')"
-                [ngClass]="{
-                  'border-dl-blue-6 text-dl-grey-1 hover:border-dl-blue-8':
-                    (currentUrl$ | async) === '/kitchen',
-                  'border-transparent text-dl-grey-3 hover:border-dl-grey-8':
-                    (currentUrl$ | async) !== '/kitchen'
-                }"
-                class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-all duration-200 ease-in-out hover:text-dl-grey-3"
-              >
-                Kitchen
-              </a>
-            </ng-container>
           </div>
         </div>
         <div
@@ -130,24 +88,24 @@
                 'scale-100 opacity-100 duration-200': isMenuOpen,
                 'scale-95 opacity-0 duration-75': !isMenuOpen
               }"
-              class="absolute right-0 z-10 mt-2 w-dl-10 origin-top-right rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 ease-out focus:outline-none"
+              class="absolute flex flex-col items-center -bottom-30 right-5 z-20 w-dl-7 rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 ease-out focus:outline-none"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="user-menu-button"
               tabindex="-1"
             >
               <a
-                routerLink="/profile"
-                class="block cursor-pointer px-4 py-2 text-sm text-dl-grey-3 hover:bg-dl-grey-9"
+                (click)="profileNavigate('/profile')"
+                class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3 "
                 role="menuitem"
                 tabindex="-1"
                 id="user-menu-item-0"
               >
-                Your Profile
+                Profile
               </a>
               <a
-                routerLink="#"
-                class="block cursor-pointer px-4 py-2 text-sm text-dl-grey-3 hover:bg-dl-grey-9"
+                (click)="profileNavigate('/settings')"
+                class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3 "
                 role="menuitem"
                 tabindex="-1"
                 id="user-menu-item-1"
@@ -155,9 +113,8 @@
                 Settings
               </a>
               <a
-                routerLink="/"
                 (click)="logout()"
-                class="block cursor-pointer px-4 py-2 text-sm text-dl-grey-3 hover:bg-dl-grey-9"
+                class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3 "
                 role="menuitem"
                 tabindex="-1"
                 id="user-menu-item-2"
