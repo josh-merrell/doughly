@@ -33,9 +33,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { selectEmployees } from 'src/app/employees/state/employee-selectors';
 import { environment } from 'src/environments/environment';
-import { Employee } from 'src/app/employees/state/employee-state';
 import { HttpClient } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';

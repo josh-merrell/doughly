@@ -50,6 +50,7 @@ const ingredientsRouter = require('./modules/ingredients/router');
 const ingredientStocksRouter = require('./modules/ingredientStocks/router');
 const uploadsRouter = require('./modules/uploads/router');
 const logsRouter = require('./modules/logs/router');
+const profilesRouter = require('./modules/profiles/router');
 
 app.use(express.json());
 
@@ -77,6 +78,7 @@ app.use('/toolStocks', toolStocksRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/ingredientStocks', ingredientStocksRouter);
 app.use('/logs', logsRouter);
+app.use('/profiles', profilesRouter);
 
 // Start the server
 const port = 3000;
