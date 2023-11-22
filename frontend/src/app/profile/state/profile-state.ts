@@ -9,6 +9,8 @@ export interface Profile {
   email: string;
   imageURL: string;
   joinDate: string;
+  city: string;
+  state: string;
   friendCount: number;
   followerCount: number;
   recipes: Recipe[];
