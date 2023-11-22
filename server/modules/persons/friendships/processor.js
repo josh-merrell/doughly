@@ -40,8 +40,39 @@ module.exports = ({ db, dbPublic }) => {
 
     //return only matching friendships
     const result = friendships.filter((friendship) => friendship.match);
-    global.logger.info(`Got ${result.length} friendships`);
-    return result;
+
+    //enhance the return objects with profile info for each friend
+    const enhancePromises = [];
+    for (let i = 0; i < result.length; i++) {
+      enhancePromises.push(enhanceFriendship(result[i]));
+    }
+    const enhancedFriendships = await Promise.all(enhancePromises);
+    global.logger.info(`Got ${enhancedFriendships.length} friendships`);
+    return enhancedFriendships;
+  }
+
+  async function enhanceFriendship(friendship) {
+    //add profile info for friend
+    const { data: profile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', friendship.friend).single();
+    if (profileError) {
+      global.logger.info(`Error getting profile user_id ${friendship.friend}: ${profileError.message}`);
+      return { error: profileError.message };
+    }
+    friendship.friendNameFirst = profile.name_first;
+    friendship.friendNameLast = profile.name_last;
+    friendship.friendUsername = profile.username;
+    friendship.friendPhotoURL = profile.photo_url;
+    friendship.friendJoinDate = profile.joined_at;
+
+    //add recipe count for friend
+    const { data: recipeCount, error: recipeCountError } = await db.from('recipes').select('recipeID').eq('userID', friendship.friend);
+    if (recipeCountError) {
+      global.logger.info(`Error getting recipe count for user ${friendship.friend}: ${recipeCountError.message}`);
+      return { error: recipeCountError.message };
+    }
+    friendship.friendRecipeCount = recipeCount.length;
+
+    return friendship;
   }
 
   async function getFriendshipByID(options) {
@@ -51,8 +82,11 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Error getting friendship ${options.friendshipID}: ${error.message}`);
       return { error: error.message };
     }
+    //enhance friendship with extra properties
+    const enhancedFriendship = await enhanceFriendship(data);
+
     global.logger.info(`Got friendship ${options.friendshipID}`);
-    return data;
+    return enhancedFriendship;
   }
 
   async function create(options) {

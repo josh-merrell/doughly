@@ -87,6 +87,12 @@ export class AppHeaderComponent {
     this.isMenuOpen = false;
   }
 
+  closeHeaderMenu(link: string) {
+    console.log('closeHeaderMenu');
+    this.showMobileMenu = false;
+    this.router.navigate([link]);
+  }
+
   logout() {
     this.closeMenu();
     this.authService.logout().then(() => {
