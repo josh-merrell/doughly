@@ -57,7 +57,7 @@ export class LoginPageComponent {
           //this.store.dispatch(ToolStockActions.loadToolStocks());
           this.store.dispatch(StepActions.loadSteps());
 
-          this.router.navigate(['/kitchen']);
+          this.router.navigate(['/home']);
         })
         .catch((error) => {
           this.error = error.message;
