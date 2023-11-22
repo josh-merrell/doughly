@@ -24,8 +24,6 @@ import { sharedReducer } from './app/shared/state/shared-reducers';
 import { kitchenReducer } from './app/kitchen/state/kitchen-reducers';
 import { IngredientReducer } from './app/kitchen/feature/ingredients/state/ingredient-reducers';
 import { ingredientStockReducer } from './app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-reducers';
-import { employeeReducer } from './app/employees/state/employee-reducers';
-import { EmployeeEffects } from './app/employees/state/employee-effects';
 import { ToolReducer } from './app/kitchen/feature/tools/state/tool-reducers';
 import { ToolEffects } from './app/kitchen/feature/tools/state/tool-effects';
 import { recipeCategoryReducer } from './app/recipes/state/recipe-category/recipe-category-reducers';
@@ -47,6 +45,8 @@ import { FriendshipReducer } from './app/social/state/friendship-reducers';
 import { FriendshipEffects } from './app/social/state/friendship-effects';
 import { FollowshipReducer } from './app/social/state/followship-reducers';
 import { FollowshipEffects } from './app/social/state/followship-effects';
+import { ProfileReducer } from './app/profile/state/profile-reducers';
+import { ProfileEffects } from './app/profile/state/profile-effects';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -56,7 +56,6 @@ bootstrapApplication(AppComponent, {
     provideState('kitchen', kitchenReducer),
     provideState('ingredient', IngredientReducer),
     provideState('ingredientStock', ingredientStockReducer),
-    provideState('employee', employeeReducer),
     provideState('tool', ToolReducer),
     provideState('toolStock', ToolStockReducer),
     provideState('recipeCategory', recipeCategoryReducer),
@@ -68,10 +67,10 @@ bootstrapApplication(AppComponent, {
     provideState('recipeStep', RecipeStepReducer),
     provideState('friendship', FriendshipReducer),
     provideState('followship', FollowshipReducer),
+    provideState('profile', ProfileReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
-      EmployeeEffects,
       ToolEffects,
       ToolStockEffects,
       RecipeCategoryEffects,
@@ -82,6 +81,7 @@ bootstrapApplication(AppComponent, {
       RecipeStepEffects,
       FriendshipEffects,
       FollowshipEffects,
+      ProfileEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({
