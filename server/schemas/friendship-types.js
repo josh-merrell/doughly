@@ -3,6 +3,7 @@ const getFriendshipsSchema_query = {
   properties: {
     friendIDs: { type: 'array', items: { type: 'number' } },
     name: { type: 'string' },
+    sourceUserID: { type: 'string' },
     cursor: { type: 'string' },
     limit: { type: 'number' },
   },
