@@ -55,7 +55,10 @@ export class SocialService {
     private idService: IDService
   ) {}
 
-  getAllFriendships(): Observable<Friendship[]> {
+  getAllFriendships(sourceUserID?: string): Observable<Friendship[]> {
+    if (sourceUserID) {
+      return this.http.get<Friendship[]>(`${this.API_URL}/friendships?sourceUserID=${sourceUserID}`);
+    }
     return this.http.get<Friendship[]>(`${this.API_URL}/friendships`);
   }
 

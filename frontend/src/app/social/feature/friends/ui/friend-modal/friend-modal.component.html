@@ -1,1 +1,52 @@
-<p>friend-modal works!</p>
+<div
+  class="relative w-full transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+>
+  <!-- Joined, Image, Counts-->
+  <div class="flex justify-between px-dl-2">
+    <div class="flex flex-col justify-normal">
+      <span>Joined</span>
+      <span>{{ friend.friendJoinDate }}</span>
+    </div>
+
+    <!-- Image or Initials -->
+    <img
+      *ngIf="friend.friendPhotoURL"
+      class="h-dl-6 w-dl-6 rounded-full"
+      [src]="friend.friendPhotoURL"
+      alt="friend profile image"
+    />
+    <span
+      class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
+      *ngIf="
+        !friend.friendPhotoURL &&
+        friend.friendNameFirst &&
+        friend.friendNameLast
+      "
+    >
+      <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
+        initials
+      }}</span>
+    </span>
+
+    <!-- Counts -->
+    <div class="flex flex-col items-end">
+      <div>
+        <span class="text-dl-5 font-dl-2 text-dl-grey-4">
+          {{ friendFriendships().length }} friend
+        </span>
+        <span
+          class="text-dl-5 font-dl-2 text-dl-grey-4"
+          *ngIf="friend.friendRecipeCount > 0">s</span>
+          
+      </div>
+    </div>
+  </div>
+
+  <!-- Name -->
+  <div class="flex flex-col items-center">
+    <div>
+      <span>{{friend.friendNameFirst}}</span>
+      <span>{{friend.friendNameLast}}</span>
+    </div>
+  </div>
+</div>
