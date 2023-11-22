@@ -2,6 +2,12 @@ export interface Friendship {
   friendshipID: number;
   status: string;
   friend: string;
+  friendNameFirst: string;
+  friendNameLast: string;
+  friendUsername: string;
+  friendRecipeCount: number;
+  friendJoinDate: string;
+  friendPhotoURL: string;
   version?: number;
   userID?: number;
 }
