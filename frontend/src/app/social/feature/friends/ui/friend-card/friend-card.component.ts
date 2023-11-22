@@ -13,7 +13,6 @@ export class FriendCardComponent {
   public initials: string = '';
 
   ngOnInit(): void {
-    console.log('FRIEND: ', this.friend);
     this.initials = this.friend.friendNameFirst[0] + this.friend.friendNameLast[0];
   }
 

@@ -5,9 +5,10 @@ async function getFriendships(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { cursor, limit } = req.query;
-  const { friendIDs, name } = req.query;
+  const { friendIDs, name, sourceUserID } = req.query;
   const returner = await p.get.all({
     userID: req.userID,
+    sourceUserID,
     cursor,
     limit,
     friendIDs,
