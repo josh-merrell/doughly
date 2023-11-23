@@ -52,7 +52,7 @@ const deleteFriendshipFailure = createAction(
 
 const editFriendship = createAction(
   '[Friendships] Edit',
-  props<{ friendship: Friendship }>()
+  props<{ friendshipID: Number, newStatus: string }>()
 );
 const editFriendshipSuccess = createAction(
   '[Friendships] Edit Success',

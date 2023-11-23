@@ -10,6 +10,7 @@ import { FriendCardComponent } from './ui/friend-card/friend-card.component';
 import { FriendModalComponent } from './ui/friend-modal/friend-modal.component';
 import { Profile } from 'src/app/profile/state/profile-state';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { FriendRequestsModalComponent } from './ui/friend-requests-modal/friend-requests-modal.component';
 
 @Component({
   selector: 'dl-friends',
@@ -52,6 +53,10 @@ export class FriendsComponent {
 
   onRequestsClick(): void {
     console.log('onRequestsClick');
+    this.dialog.open(FriendRequestsModalComponent, {
+      width: '75%',
+      maxWidth: '500px',
+    });
   }
 
   onAddFriend(): void {

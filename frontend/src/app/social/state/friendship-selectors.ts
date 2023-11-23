@@ -10,6 +10,13 @@ export const selectFriendshipByID = (friendshipID: number) =>
     );
   });
 
+export const selectFriendshipByFriendID = (friendID: string) =>
+  createSelector(selectFriendships, (friendships) => {
+    return friendships.find(
+      (friendship: Friendship) => friendship.friend === friendID
+    );
+  });
+
 export const selectDeleting = (state: any) => state.friendship.deleting;
 
 export const selectAdding = (state: any) => state.friendship.adding;
