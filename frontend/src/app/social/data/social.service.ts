@@ -94,10 +94,11 @@ export class SocialService {
     return this.http.post<Followship>(`${this.API_URL}/followships`, body);
   }
 
-  updateFriendship(friendship: Friendship): Observable<Friendship> {
-    return this.http.put<Friendship>(
-      `${this.API_URL}/friendships/${friendship.friendshipID}`,
-      friendship
+  updateFriendship(friendshipID: Number, status: string): Observable<Friendship> {
+    console.log(`IN SERVICE FRIENDSHIP ID: ${friendshipID}, STATUS: ${status}`)
+    return this.http.patch<Friendship>(
+      `${this.API_URL}/friendships/${friendshipID}`,
+      { status }
     );
   }
 
