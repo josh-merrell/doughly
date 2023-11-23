@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { IDService } from 'src/app/shared/utils/ID';
 
-import { Profile } from './profile-state';
+import { Profile } from '../state/profile-state';
 
 @Injectable({
   providedIn: 'root',
