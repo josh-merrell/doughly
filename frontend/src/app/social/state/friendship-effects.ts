@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { SocialService } from '../data/social.service';
 import { FriendshipActions } from './friendship-actions';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
 
 @Injectable()
 export class FriendshipEffects {
@@ -18,7 +19,7 @@ export class FriendshipEffects {
       mergeMap((action) =>
         this.socialService.addFriendship(action.friendship).pipe(
           map((friendship) =>
-            FriendshipActions.addFriendshipSuccess({friendship})
+            FriendshipActions.addFriendshipSuccess({ friendship })
           ),
           catchError((error) =>
             of(
@@ -35,7 +36,7 @@ export class FriendshipEffects {
         )
       )
     );
-  })
+  });
 
   loadFriendships$ = createEffect(() =>
     this.actions$.pipe(
@@ -73,14 +74,18 @@ export class FriendshipEffects {
     this.actions$.pipe(
       ofType(FriendshipActions.editFriendship),
       mergeMap((action) =>
-        this.socialService.updateFriendship(action.friendship).pipe(
-          map((friendship) =>
-            FriendshipActions.editFriendshipSuccess({ friendship })
-          ),
-          catchError((error) =>
-            of(FriendshipActions.editFriendshipFailure({ error }))
+        this.socialService
+          .updateFriendship(action.friendshipID, action.newStatus)
+          .pipe(
+            concatMap((friendship) => [
+              FriendshipActions.editFriendshipSuccess({ friendship }),
+              ProfileActions.loadFriends(),
+              ProfileActions.loadFriendRequests(),
+            ]),
+            catchError((error) =>
+              of(FriendshipActions.editFriendshipFailure({ error }))
+            )
           )
-        )
       )
     )
   );
@@ -90,11 +95,13 @@ export class FriendshipEffects {
       ofType(FriendshipActions.deleteFriendship),
       mergeMap((action) =>
         this.socialService.deleteFriendship(action.friendshipID).pipe(
-          map(() =>
+          concatMap(() => [
             FriendshipActions.deleteFriendshipSuccess({
               friendshipID: action.friendshipID,
-            })
-          ),
+            }),
+            ProfileActions.loadFriends(),
+            ProfileActions.loadFriendRequests(),
+          ]),
           catchError((error) =>
             of(FriendshipActions.deleteFriendshipFailure({ error }))
           )

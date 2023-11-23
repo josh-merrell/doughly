@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { ProfileService } from './profile.service';
+import { ProfileService } from '../data/profile.service';
 import { ProfileActions } from './profile-actions';
 
 @Injectable()
