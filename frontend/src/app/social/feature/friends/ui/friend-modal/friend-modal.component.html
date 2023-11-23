@@ -2,51 +2,100 @@
   class="relative w-full transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
 >
   <!-- Joined, Image, Counts-->
-  <div class="flex justify-between px-dl-2">
-    <div class="flex flex-col justify-normal">
-      <span>Joined</span>
-      <span>{{ friend.joinDate }}</span>
+  <div class="mb-dl-3 flex justify-between px-dl-2">
+    <div class="flex w-dl-7 flex-col justify-normal pt-dl-5">
+      <span class="flex text-dl-5 font-dl-2 text-dl-grey-3">Joined</span>
+      <span class="flex text-dl-5 font-dl-2 text-dl-grey-3">{{
+        friend.joinDate
+      }}</span>
     </div>
 
     <!-- Image or Initials -->
     <img
       *ngIf="friend.imageURL"
-      class="h-dl-6 w-dl-6 rounded-full"
+      class="h-dl-8 w-dl-8 rounded-full"
       [src]="friend.imageURL"
       alt="friend profile image"
     />
     <span
-      class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
-      *ngIf="
-        !friend.imageURL &&
-        friend.nameFirst &&
-        friend.nameLast
-      "
+      class="inline-flex h-dl-8 w-dl-8 items-center justify-center rounded-full bg-dl-grey-9"
+      *ngIf="!friend.imageURL && friend.nameFirst && friend.nameLast"
     >
-      <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
+      <span class="text-dl-5 font-dl-3 leading-none text-dl-grey-7">{{
         initials
       }}</span>
     </span>
 
     <!-- Counts -->
-    <div class="flex flex-col items-end">
-      <div>
-        <span class="text-dl-5 font-dl-2 text-dl-grey-4">
-          {{ friend.friendCount }} friend
-        </span>
+    <div class="flex w-dl-7 flex-col items-end pt-dl-5">
+      <div *ngIf="friend.friendCount > 0">
+        <span class="text-dl-5 font-dl-2 text-dl-grey-3">
+          {{ friend.friendCount }} friend</span
+        >
         <span
-          class="text-dl-5 font-dl-2 text-dl-grey-4"
-          *ngIf="friend.recipes.length > 0">s</span>
-          
+          class="text-dl-5 font-dl-2 text-dl-grey-3"
+          *ngIf="friend.friendCount > 1"
+          >s</span
+        >
+      </div>
+      <div *ngIf="friend.followerCount > 0">
+        <span class="text-dl-5 font-dl-2 text-dl-grey-3">
+          {{ friend.followerCount }} follower</span
+        >
+        <span
+          class="text-dl-5 font-dl-2 text-dl-grey-3"
+          *ngIf="friend.followerCount > 1"
+          >s</span
+        >
       </div>
     </div>
   </div>
 
   <!-- Name -->
   <div class="flex flex-col items-center">
-    <div>
-      <span>{{friend.nameFirst}}</span>
-      <span>{{friend.nameLast}}</span>
+    <div class="mb-dl-4 flex text-dl-7 font-dl-3 text-dl-grey-1">
+      <span>{{ friend.nameFirst }}</span>
+      <span class="ml-dl-2">{{ friend.nameLast }}</span>
     </div>
   </div>
+
+  <!-- View Tabs -->
+  <div>
+    <div class="mb-dl-4 flex h-dl-4 justify-around">
+      <span
+        class="items-center px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+        [ngClass]="{
+          'border-b-2 border-dl-blue-6 font-dl-3 text-dl-grey-2':
+            view === 'recipes',
+          'font-dl-2 text-dl-grey-4': view !== 'recipes'
+        }"
+        (click)="view = 'recipes'"
+      >
+        Recipes
+      </span>
+      <span
+        class="items-center px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+        [ngClass]="{
+          'border-b-2 border-dl-blue-6 font-dl-3 text-dl-grey-2':
+            view === 'timeline',
+          'font-dl-2 text-dl-grey-4': view !== 'timeline'
+        }"
+        (click)="view = 'timeline'"
+      >
+        Timeline
+      </span>
+    </div>
+  </div>
+
+  <!-- Recipes -->
+  <div *ngIf="view === 'recipes'" class="mb-dl-7">
+    <dl-recipe-card *ngFor="let recipe of friend.recipes" [friendUserID]="friend.userID" [recipe]="recipe">
+    </dl-recipe-card>
+  </div>
+
+  <span
+      *ngIf="friend.recipes.length > 0 && view === 'recipes'"
+      class="absolute bottom-3 left-1/2 -translate-x-1/2 text-dl-5 font-dl-2 text-dl-grey-2"
+      >{{ friend.recipes.length }} total</span
+    >
 </div>
