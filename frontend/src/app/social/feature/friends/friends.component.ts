@@ -61,7 +61,8 @@ export class FriendsComponent {
   onFriendClick(friend: any): void {
     this.dialog.open(FriendModalComponent, {
       data: friend,
-      width: '75%',
+      width: '80%',
+      maxWidth: '540px',
     });
   }
 }

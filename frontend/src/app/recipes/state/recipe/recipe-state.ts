@@ -27,13 +27,13 @@ export interface Recipe {
   title: string;
   servings: number;
   recipeCategoryID: number;
+  recipeCategoryName?: string;
   type: RecipeType;
   lifespanDays: number;
   timePrep?: number;
   timeBake?: number;
   status: RecipeStatus;
   photoURL?: string;
-  recipeCategoryName?: string;
   version?: number;
 }
 
