@@ -34,6 +34,19 @@ module.exports = ({ db, dbPublic }) => {
       return { error: errorRecipes };
     }
 
+    // for each recipe, get the recipeCategoryName from the recipeCategoryID, then update the recipe object with recipeCategoryName
+    const promises = recipes.map(async (recipe) => {
+      const { data: recipeCategory, error: errorRecipeCategory } = await db.from('recipeCategories').select('name').eq('recipeCategoryID', recipe.recipeCategoryID).single();
+      if (errorRecipeCategory) {
+        global.logger.info(`Error getting recipe category for recipeCategoryID ${recipe.recipeCategoryID}: ${errorRecipeCategory.message}`);
+        return { error: errorRecipeCategory };
+      }
+      const recipeWithCategoryName = recipe;
+      recipeWithCategoryName.recipeCategoryName = recipeCategory.name;
+      return recipeWithCategoryName;
+    });
+    const recipesWithCategoryNames = await Promise.all(promises);
+
     const result = {
       userID,
       nameFirst: profile.name_first,
@@ -46,7 +59,7 @@ module.exports = ({ db, dbPublic }) => {
       state: profile.state,
       friendCount: friendshipIDs.length ? friendshipIDs.length : 0,
       followerCount: followerIDs.length ? followerIDs.length : 0,
-      recipes,
+      recipes: recipesWithCategoryNames,
       timelineEvents: [],
     };
     return result;

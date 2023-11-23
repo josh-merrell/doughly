@@ -43,7 +43,7 @@ module.exports = ({ db }) => {
     const { customID, authorization, userID, name, brand } = options;
 
     //validate that the provided name is not already used by another tool
-    const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('name', name).filter('deleted', 'eq', false);
+    const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('name', name).eq('userID', userID).filter('deleted', 'eq', false);
     if (existingToolError) {
       global.logger.info(`Error getting existing tools: ${existingToolError.message}`);
       return { error: existingToolError.message };
