@@ -20,7 +20,6 @@ export class FriendModalComponent {
 
   constructor(
     private store: Store,
-    private dialogRef: MatDialogRef<FriendModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private socialService: SocialService
   ) {}
