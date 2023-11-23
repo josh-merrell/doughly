@@ -1,5 +1,5 @@
 <div
-  class="sm:w-dl-18 relative w-dl-16 transform overflow-hidden bg-white px-dl-5 pb-dl-3 pt-dl-4 text-left transition-all sm:my-dl-3 sm:p-dl-6"
+  class="relative w-dl-16 transform overflow-hidden bg-white px-dl-5 pb-dl-3 pt-dl-4 text-left transition-all sm:my-dl-3 sm:w-dl-18 sm:p-dl-6"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -63,12 +63,12 @@
                   {{ category.name }}
                 </mat-option>
               </ng-container>
-              <div
+              <mat-option
                 class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2"
                 (click)="onAddNewCategory()"
               >
                 New Category
-              </div>
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -76,8 +76,14 @@
           id="form-isPublicRecipe"
           class="relative mt-dl-2 flex flex-row items-center"
         >
-          <mat-slide-toggle [(ngModel)]="isChecked" formControlName="isPublicRecipe" class="select-slider"></mat-slide-toggle>
-          <span class="px-dl-3 py-dl-3 text-dl-grey-4 text-dl-4">Make public and track subscriber count</span>
+          <mat-slide-toggle
+            [(ngModel)]="isChecked"
+            formControlName="isPublicRecipe"
+            class="select-slider"
+          ></mat-slide-toggle>
+          <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
+            >Make public and track subscriber count</span
+          >
         </div>
         <div class="mt-dl-2 flex">
           <div id="form-servings" class="mr-dl-4">
