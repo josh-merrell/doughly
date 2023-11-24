@@ -11,6 +11,7 @@ import { FriendModalComponent } from './ui/friend-modal/friend-modal.component';
 import { Profile } from 'src/app/profile/state/profile-state';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { FriendRequestsModalComponent } from './ui/friend-requests-modal/friend-requests-modal.component';
+import { AddFriendModalComponent } from './ui/add-friend-modal/add-friend-modal.component';
 
 @Component({
   selector: 'dl-friends',
@@ -52,7 +53,6 @@ export class FriendsComponent {
   }
 
   onRequestsClick(): void {
-    console.log('onRequestsClick');
     this.dialog.open(FriendRequestsModalComponent, {
       width: '75%',
       maxWidth: '500px',
@@ -60,7 +60,10 @@ export class FriendsComponent {
   }
 
   onAddFriend(): void {
-    console.log('onAddFriend');
+    this.dialog.open(AddFriendModalComponent, {
+      width: '75%',
+      maxWidth: '500px',
+    });
   }
 
   onFriendClick(friend: any): void {

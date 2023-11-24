@@ -102,6 +102,22 @@ export class ProfileEffects {
     )
   );
 
+  searchProfiles$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.searchProfiles),
+      mergeMap((action) =>
+        this.profileService.searchProfiles(action.searchQuery).pipe(
+          map((searchResults) =>
+            ProfileActions.searchProfilesSuccess({ searchResults })
+          ),
+          catchError((error) =>
+            of(ProfileActions.searchProfilesFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
   // deleteFriend$ = createEffect(() =>
   //   this.actions$.pipe(
   //     ofType(ProfileActions.deleteFriend),

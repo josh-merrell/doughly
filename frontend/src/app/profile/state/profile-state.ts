@@ -15,12 +15,14 @@ export interface Profile {
   followerCount: number;
   recipes: Recipe[];
   timelineEvents: TimelineEvent[];
+  friendshipStatus?: string;
 }
 
 export interface ProfileState {
   profile: Profile | null;
   friends: Profile[];
   followers: Profile[];
+  searchResults: Profile[];
   friendRequestProfiles: Profile[];
   friendRequestSentProfiles: Profile[];
   loading: boolean;

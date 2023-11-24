@@ -76,20 +76,20 @@ export class SocialService {
     );
   }
 
-  addFriendship(friendship: Friendship): Observable<Friendship> {
+  addFriendship(friendID: string): Observable<Friendship> {
     const IDtype = this.idService.getIDtype('friendship');
     const body = {
       IDtype,
-      friend: friendship.friend, //user_id of users requested friend
+      friend: friendID, //user_id of users requested friend
     };
     return this.http.post<Friendship>(`${this.API_URL}/friendships`, body);
   }
 
-  addFollowship(followship: Followship): Observable<Followship> {
+  addFollowship(following: string): Observable<Followship> {
     const IDtype = this.idService.getIDtype('followship');
     const body = {
       IDtype,
-      following: followship.following, //user_id of they who user is following
+      following, //user_id of they who user is following
     };
     return this.http.post<Followship>(`${this.API_URL}/followships`, body);
   }

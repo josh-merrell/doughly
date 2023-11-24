@@ -59,10 +59,23 @@ async function getFollower(req, res) {
   return res.json(returner);
 }
 
+async function searchProfiles(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { searchQuery } = req.query;
+  const returner = await p.searchProfiles({
+    userID: req.userID,
+    searchQuery,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   getProfile,
   getFriends,
   getFriend,
   getFollowers,
   getFollower,
+  searchProfiles,
 };
