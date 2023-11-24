@@ -10,7 +10,6 @@ const supabaseDefault = createClient(url, key);
 
 const updater = async (userID, authorization, IDfield, ID, table, updateFields) => {
   //get existing values of updateFields from supabase
-  console.log(`IN UPDATER: ${userID}, ${authorization}, ${IDfield}, ${ID}, ${table}, ${JSON.stringify(updateFields)}`)
   const { data: existingRow, error: existingRowError } = await supabase
     .from(table)
     .select('*')

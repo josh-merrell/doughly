@@ -53,7 +53,6 @@ async function updateFriendship(req, res) {
   const { friendshipID } = req.params;
   const { status } = req.body;
   const { authorization } = req.headers;
-  console.log(`UPDATE HANDLER. STATUS: ${status}`)
   const returner = await p.update({
     userID: req.userID,
     authorization,

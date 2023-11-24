@@ -17,9 +17,9 @@ export class FriendshipEffects {
     return this.actions$.pipe(
       ofType(FriendshipActions.addFriendship),
       mergeMap((action) =>
-        this.socialService.addFriendship(action.friendship).pipe(
+        this.socialService.addFriendship(action.friend).pipe(
           map((friendship) =>
-            FriendshipActions.addFriendshipSuccess({ friendship })
+            FriendshipActions.addFriendshipSuccess({friendship})
           ),
           catchError((error) =>
             of(

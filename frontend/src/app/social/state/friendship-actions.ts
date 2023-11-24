@@ -26,7 +26,7 @@ const loadFriendshipFailure = createAction(
 
 const addFriendship = createAction(
   '[Friendships] Add',
-  props<{ friendship: Friendship }>()
+  props<{ friend: string }>()
 );
 const addFriendshipSuccess = createAction(
   '[Friendships] Add Success',

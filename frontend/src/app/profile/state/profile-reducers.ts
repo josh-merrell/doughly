@@ -8,6 +8,7 @@ export const initialState: ProfileState = {
   followers: [],
   friendRequestProfiles: [],
   friendRequestSentProfiles: [],
+  searchResults: [],
   loading: false,
   deleting: false,
   adding: false,
@@ -52,11 +53,14 @@ export const ProfileReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(ProfileActions.loadFriendRequestsSuccess, (state, { friendRequestProfiles }) => ({
-    ...state,
-    friendRequestProfiles,
-    loading: false,
-  })),
+  on(
+    ProfileActions.loadFriendRequestsSuccess,
+    (state, { friendRequestProfiles }) => ({
+      ...state,
+      friendRequestProfiles,
+      loading: false,
+    })
+  ),
   on(ProfileActions.loadFriendRequestsFailure, (state, { error }) => ({
     ...state,
     error,
@@ -67,11 +71,14 @@ export const ProfileReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(ProfileActions.loadFriendRequestsSentSuccess, (state, { friendRequestSentProfiles }) => ({
-    ...state,
-    friendRequestSentProfiles,
-    loading: false,
-  })),
+  on(
+    ProfileActions.loadFriendRequestsSentSuccess,
+    (state, { friendRequestSentProfiles }) => ({
+      ...state,
+      friendRequestSentProfiles,
+      loading: false,
+    })
+  ),
   on(ProfileActions.loadFriendRequestsSentFailure, (state, { error }) => ({
     ...state,
     error,
@@ -111,6 +118,21 @@ export const ProfileReducer = createReducer(
     error,
     loading: false,
   })),
+  on(ProfileActions.searchProfiles, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(ProfileActions.searchProfilesSuccess, (state, { searchResults }) => ({
+    ...state,
+    searchResults,
+    loading: false,
+  })),
+  on(ProfileActions.searchProfilesFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
   on(ProfileActions.deleteFriend, (state) => ({
     ...state,
     deleting: true,
@@ -145,5 +167,4 @@ export const ProfileReducer = createReducer(
     error,
     deleting: false,
   }))
-  
-)
+);

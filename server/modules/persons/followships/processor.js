@@ -97,25 +97,33 @@ module.exports = ({ db, dbPublic }) => {
       return { error: `Followship already exists` };
     } else if (existingFollowship.length && existingFollowship[0].deleted === true) {
       // if followship exists but is deleted, undelete it
-      const { data: undelete, undeleteError } = await db.from('followships').update({ deleted: false }).eq('followshipID', existingFollowship[0].followshipID).single();
+      const { data: undelete, undeleteError } = await db.from('followships').update({ deleted: false }).eq('followshipID', existingFollowship[0].followshipID).select('*').single();
       if (undeleteError) {
         global.logger.info(`Error undeleting followship ${existingFollowship[0].followshipID}: ${undeleteError.message}`);
         return { error: undeleteError.message };
       }
       global.logger.info(`Undeleted followship ${existingFollowship[0].followshipID}`);
       createUserLog(userID, authorization, 'createdFollowship', existingFollowship[0].followshipID, null, null, null, 'started following ' + profile.name_first + ' ' + profile.name_last);
-      return undelete;
+      return {
+        followshipID: undelete.followshipID,
+        userID: undelete.userID,
+        following: undelete.following,
+      };
     }
 
     // create followship
-    const { data: followship, error } = await db.from('followships').insert({ followshipID: customID, userID, following, deleted: false }).select().single();
+    const { data: followship, error } = await db.from('followships').insert({ followshipID: customID, userID, following, deleted: false }).select('*').single();
     if (error) {
       global.logger.info(`Error creating followship: ${error.message}`);
       return { error: error.message };
     }
     global.logger.info(`Created followship ${customID}`);
     createUserLog(userID, authorization, 'createdFollowship', followship.followshipID, null, null, null, 'started following ' + profile.name_first + ' ' + profile.name_last);
-    return followship;
+    return {
+      followshipID: followship.followshipID,
+      userID: followship.userID,
+      following: followship.following,
+    };
   }
 
   async function deleteFollowship(options) {

@@ -21,8 +21,16 @@ const getFriendSchema_query = {
   },
 };
 
+const getProfileSchema_query = {
+  type: 'object',
+  properties: {
+    searchQuery: { type: 'string' },
+  },
+};
+
 module.exports = {
   getFriendSchema_params,
   getFollowerSchema_params,
   getFriendSchema_query,
+  getProfileSchema_query,
 };
