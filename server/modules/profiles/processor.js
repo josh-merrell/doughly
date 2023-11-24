@@ -182,11 +182,48 @@ module.exports = ({ db, dbPublic }) => {
     return followerProfile;
   }
 
+  async function searchProfiles(options) {
+    const { searchQuery } = options;
+    let q = ``;
+    //split searchQuery into an array of words
+    const searchWords = searchQuery.split(' ');
+    //add each word to the query
+    searchWords.forEach((word) => {
+      q += `'${word}' & `;
+    });
+    //remove the last ' & ' from the query
+    q = q.substring(0, q.length - 3);
+
+    // get all userID's from dbPublic.profiles where name_first or name_last or username contains searchQuery
+    const { data: profileIDs, error } = await dbPublic.from('profiles').select('user_id').textSearch(`first_last_username`, `${q}`);
+    if (error) {
+      global.logger.info(`Error getting profileIDs for searchQuery ${searchQuery}: ${error.message}`);
+      return { error };
+    }
+
+    // Map over profileIDs and return a promise for each profile
+    const promises = profileIDs.map(async (profileID) => {
+      try {
+        const profile = await retrieveProfile(profileID.user_id);
+        return profile;
+      } catch (error) {
+        global.logger.error(`Error retrieving profile for userID ${profileID.user_id}: ${error.message}`);
+        return null;
+      }
+    });
+    const profiles = await Promise.all(promises);
+    const validProfiles = profiles.filter((profile) => profile !== null);
+
+    global.logger.info(`Successfully retrieved ${validProfiles.length} profiles for searchQuery ${searchQuery}`);
+    return validProfiles;
+  }
+
   return {
     getProfile,
     getFriends,
     getFriend,
     getFollowers,
     getFollower,
+    searchProfiles,
   };
 };

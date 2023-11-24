@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
 import { Followship } from './followship-state';
 
-export const selectFollowships = (state: any) => state.followships.followships;
+export const selectFollowships = (state: any) => state.followship.followships;
 
 export const selectFollowers = (state: any) => state.followship.followers;
 
@@ -9,6 +9,13 @@ export const selectFollowshipByID = (followshipID: number) =>
   createSelector(selectFollowships, (followships) => {
     return followships.find(
       (followship: Followship) => followship.followshipID === followshipID
+    );
+  });
+
+export const selectFollowshipByFollowingID = (followingID: string) =>
+  createSelector(selectFollowships, (followships) => {
+    return followships.find(
+      (followship: Followship) => followship.following === followingID
     );
   });
 

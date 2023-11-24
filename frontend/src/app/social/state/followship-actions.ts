@@ -36,7 +36,7 @@ const loadFollowersFailure = createAction(
 
 const addFollowship = createAction(
   '[Followships] Add',
-  props<{ followship: Followship }>()
+  props<{ following: string }>()
 );
 const addFollowshipSuccess = createAction(
   '[Followships] Add Success',

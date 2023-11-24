@@ -95,7 +95,7 @@ module.exports = ({ db, dbPublic }) => {
       return { error: 'Friendship already exists' };
     } else if (existingFriendship.length && existingFriendship[0].deleted === true) {
       // reset status of existing friendship to 'requesting', undelete and return
-      const { data, error } = await db.from('friendships').update({ deleted: false, status }).eq('friendshipID', existingFriendship[0].friendshipID);
+      const { data, error } = await db.from('friendships').update({ deleted: false, status }).eq('friendshipID', existingFriendship[0].friendshipID).select('*').single();
       if (error) {
         global.logger.info(`Error resetting friendship ${existingFriendship[0].friendshipID}: ${error.message}`);
         return { error: error.message };
@@ -122,11 +122,17 @@ module.exports = ({ db, dbPublic }) => {
         global.logger.info(`Error creating inverse friendship: ${inverseFriendshipError.message}`);
         return { error: inverseFriendshipError.message };
       }
-      return data;
+      return {
+        friendshipID: data.friendshipID,
+        status: data.status,
+        friend: data.friend,
+        userID: data.userID,
+        version: data.version,
+      };
     }
 
     // create friendship
-    const { data: friendship, error } = await db.from('friendships').insert({ friendshipID: customID, userID, friend, status, version: 1 }).select().single();
+    const { data: friendship, error } = await db.from('friendships').insert({ friendshipID: customID, userID, friend, status, version: 1 }).select('*').single();
 
     if (error) {
       global.logger.info(`Error creating friendship: ${error.message}`);
@@ -168,7 +174,13 @@ module.exports = ({ db, dbPublic }) => {
       }
       return inverseFriendship;
     }
-    return friendship;
+    return {
+      friendshipID: friendship.friendshipID,
+      status: friendship.status,
+      friend: friendship.friend,
+      userID: friendship.userID,
+      version: friendship.version,
+    };
   }
 
   async function update(options) {
