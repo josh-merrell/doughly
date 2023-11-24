@@ -1,7 +1,7 @@
-<div class="flex flex-col items-center pb-dl-3 px-dl-5 pt-dl-4">
+<div class="flex flex-col items-center px-dl-5 pb-dl-3 pt-dl-4">
   <h3 class="leading-dl-4 text-dl-5 font-dl-3 text-dl-grey-3">Find People</h3>
   <!-- Search Bar-->
-  <div class="mt-dl-6 mb-dl-4 flex justify-around w-full items-center">
+  <div class="mb-dl-4 mt-dl-6 flex w-full items-center justify-around">
     <div class="flex items-center">
       <svg
         width="35"
@@ -36,35 +36,61 @@
       Search
     </button>
   </div>
-  <mat-spinner class="my-app-custom-spinner mb-dl-5" *ngIf="isLoading()"></mat-spinner>
+  <mat-spinner
+    class="my-app-custom-spinner mb-dl-5"
+    *ngIf="isLoading()"
+  ></mat-spinner>
 
   <!-- Profile List -->
-  <div *ngIf="searchResults() && !isLoading()">
-    <dl-profile-card
-      *ngFor="let profile of searchResults(); let i = index"
-      class="h-dl-8 w-full border-dl-grey-9 py-dl-3"
-      (click)="onCardClick(i)"
-      [ngClass]="{
-        'bg-dl-blue-10': selectedCard() === i,
-        'bg-white': selectedCard() !== i
-      }"
-      [profile]="profile"
-    ></dl-profile-card>
+  <div *ngIf="searchResults() && !isLoading()" class="w-dl-16">
+    <div class="pb-dl-5 max-h-dl-18 overflow-auto">
+      <dl-profile-card
+        *ngFor="let profile of searchResults(); let i = index"
+        class="h-dl-8 w-full border-dl-grey-9 py-dl-3"
+        (click)="onCardClick(i)"
+        [ngClass]="{
+          'bg-dl-blue-10': selectedCard() === i,
+          'bg-white': selectedCard() !== i
+        }"
+        [profile]="profile"
+        [index]="i"
+        [selectedIndex]="selectedCard()"
+        (friendshipLoaded)="onFriendshipLoaded(i, $event)"
+        (followshipLoaded)="onFollowshipLoaded(i, $event)"
+      ></dl-profile-card>
+    </div>
     <!-- Buttons -->
-    <div class="mt-dl-5 flex w-full justify-between">
+    <div class="mt-dl-3 flex w-full flex-row-reverse px-dl-5 pb-dl-3">
       <button
         type="button"
-        class="block h-dl-4 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
-        (click)="onFollow()"
+        class="block h-dl-4 whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+        [ngClass]="{
+          'bg-dl-pink-4 text-white':
+            buttonTexts()[selectedCard()].followButton === 'Follow',
+          'border-2 border-dl-pink-4 bg-white text-dl-pink-4':
+            buttonTexts()[selectedCard()].followButton === 'Unfollow'
+        }"
+        (click)="onFollowButtonClick()"
+        *ngIf="searchResults().length > 0 && buttonTexts()[selectedCard()]"
       >
-        {{selectedCard() === 0 ? 'One' : 'Two'}}
+        {{ buttonTexts()[selectedCard()].followButton }}
       </button>
       <button
         type="button"
-        class="block h-dl-4 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
-        (click)="onAddFriend()"
+        class="mr-dl-3 block h-dl-4 whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 shadow-sm"
+        (click)="onFriendButtonClick()"
+        [ngClass]="{
+          'bg-dl-pink-4 text-white':
+            buttonTexts()[selectedCard()].friendButton === 'Add Friend' ||
+            buttonTexts()[selectedCard()].friendButton === 'Accept Request',
+          '  bg-white text-dl-blue-4':
+            buttonTexts()[selectedCard()].friendButton === 'Cancel Request',
+          'border-2 border-dl-pink-4 bg-white text-dl-pink-4':
+            buttonTexts()[selectedCard()].friendButton === 'Unfriend'
+        }"
+        *ngIf="searchResults().length > 0 && buttonTexts()[selectedCard()]"
       >
-        Friend Request
+        {{ buttonTexts()[selectedCard()].friendButton }}
       </button>
     </div>
   </div>

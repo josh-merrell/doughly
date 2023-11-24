@@ -15,6 +15,7 @@ export interface Profile {
   followerCount: number;
   recipes: Recipe[];
   timelineEvents: TimelineEvent[];
+  friendshipStatus?: string;
 }
 
 export interface ProfileState {

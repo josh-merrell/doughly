@@ -13,7 +13,7 @@ export class FollowshipEffects {
     return this.actions$.pipe(
       ofType(FollowshipActions.addFollowship),
       mergeMap((action) =>
-        this.socialService.addFollowship(action.followship).pipe(
+        this.socialService.addFollowship(action.following).pipe(
           map((followship) =>
             FollowshipActions.addFollowshipSuccess({ followship })
           ),
