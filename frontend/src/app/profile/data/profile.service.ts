@@ -54,4 +54,8 @@ export class ProfileService {
       `${this.API_URL}/followers/${followerUserID}`
     );
   }
+
+  searchProfiles(searchQuery: string): Observable<Profile[]> {
+    return this.http.get<Profile[]>(`${this.API_URL}/search?searchQuery=${searchQuery}`);
+  }
 }

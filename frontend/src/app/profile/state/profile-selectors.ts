@@ -33,3 +33,5 @@ export const selectUpdating = (state: any) => state.profile.updating;
 
 export const selectError = (state: any) => state.profile.error;
 
+export const selectSearchResults = (state: any) => state.profile.searchResults;
+
