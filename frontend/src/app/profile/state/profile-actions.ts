@@ -61,6 +61,16 @@ const loadFollowersFailure = createAction(
   props<{ error: any }>()
 );
 
+const searchProfiles = createAction('[Profile] Search Profiles', props<{ searchQuery: string }>());
+const searchProfilesSuccess = createAction(
+  '[Profile] Search Profiles Success',
+  props<{ searchResults: Profile[] }>()
+);
+const searchProfilesFailure = createAction(
+  '[Profile] Search Profiles Failure',
+  props<{ error: any }>()
+);
+
 const deleteFriend = createAction('[Profile] Delete Friend', props<{ friendUserID: string }>());
 const deleteFriendSuccess = createAction(
   '[Profile] Delete Friend Success',
@@ -100,6 +110,9 @@ export const ProfileActions = {
   loadFollowers,
   loadFollowersSuccess,
   loadFollowersFailure,
+  searchProfiles,
+  searchProfilesSuccess,
+  searchProfilesFailure,
   deleteFriend,
   deleteFriendSuccess,
   deleteFriendFailure,
