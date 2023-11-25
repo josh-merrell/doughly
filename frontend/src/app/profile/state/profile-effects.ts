@@ -90,6 +90,22 @@ export class ProfileEffects {
     )
   );
 
+  loadFollowing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.loadFollowing),
+      mergeMap(() =>
+        this.profileService.getFollowing().pipe(
+          map((following) =>
+            ProfileActions.loadFollowingSuccess({ following })
+          ),
+          catchError((error) =>
+            of(ProfileActions.loadFollowingFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
   loadFriend$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProfileActions.loadFriend),

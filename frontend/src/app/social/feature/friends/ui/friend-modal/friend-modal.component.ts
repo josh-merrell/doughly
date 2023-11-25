@@ -91,7 +91,6 @@ export class FriendModalComponent {
   onFriendButtonClick(): void {
     switch (this.friendship()?.status) {
       case 'confirmed':
-        console.log(`Unfriend clicked`);
         this.store.dispatch(
           FriendshipActions.deleteFriendship({
             friendshipID: this.friendship()!.friendshipID,
@@ -105,7 +104,6 @@ export class FriendModalComponent {
         });
         break;
       case 'receivedRequest':
-        console.log(`Accept Request clicked`);
         this.store.dispatch(
           FriendshipActions.editFriendship({
             friendshipID: this.friendship()!.friendshipID,
@@ -114,7 +112,6 @@ export class FriendModalComponent {
         );
         break;
       case 'requesting':
-        console.log(`Cancel Request clicked`);
         this.store.dispatch(
           FriendshipActions.deleteFriendship({
             friendshipID: this.friendship()!.friendshipID,
