@@ -22,6 +22,7 @@ export interface ProfileState {
   profile: Profile | null;
   friends: Profile[];
   followers: Profile[];
+  following: Profile[];
   searchResults: Profile[];
   friendRequestProfiles: Profile[];
   friendRequestSentProfiles: Profile[];

@@ -61,6 +61,16 @@ const loadFollowersFailure = createAction(
   props<{ error: any }>()
 );
 
+const loadFollowing = createAction('[Profile] Load Following');
+const loadFollowingSuccess = createAction(
+  '[Profile] Load Following Success',
+  props<{ following: Profile[] }>()
+);
+const loadFollowingFailure = createAction(
+  '[Profile] Load Following Failure',
+  props<{ error: any }>()
+);
+
 const searchProfiles = createAction('[Profile] Search Profiles', props<{ searchQuery: string }>());
 const searchProfilesSuccess = createAction(
   '[Profile] Search Profiles Success',
@@ -110,6 +120,9 @@ export const ProfileActions = {
   loadFollowers,
   loadFollowersSuccess,
   loadFollowersFailure,
+  loadFollowing,
+  loadFollowingSuccess,
+  loadFollowingFailure,
   searchProfiles,
   searchProfilesSuccess,
   searchProfilesFailure,
