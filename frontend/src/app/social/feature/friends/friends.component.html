@@ -23,9 +23,9 @@
         type="text"
         class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
         [placeholder]="
-          !searchFilter() ? 'Search by Friend Name...' : searchFilter()
+          !searchFilter() ? 'Search by First or Last Name...' : searchFilter()
         "
-        (input)="searchFilter.set(searchInput.value)"
+        (input)="updateSearchFilter(searchInput.value)"
       />
     </div>
     <!-- Add Button -->
@@ -62,7 +62,7 @@
     <div class="flex h-dl-21 flex-col items-center">
       <dl-friend-card
         (click)="onFriendClick(friend)"
-        *ngFor="let friend of friends()"
+        *ngFor="let friend of filteredFriends()"
         class="w-dl-16 border-b-2 border-dl-grey-9 py-dl-3"
         [friend]="friend"
       ></dl-friend-card>
