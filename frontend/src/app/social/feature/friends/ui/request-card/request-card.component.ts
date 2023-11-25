@@ -38,7 +38,6 @@ export class RequestCardComponent {
         newStatus: 'confirmed',
       })
     );
-
   }
 
   onDeclineRequest() {
@@ -46,6 +45,6 @@ export class RequestCardComponent {
       FriendshipActions.deleteFriendship({
         friendshipID: this.friendship()!.friendshipID,
       })
-    )
+    );
   }
 }
