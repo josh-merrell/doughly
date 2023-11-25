@@ -10,6 +10,7 @@
       class=" py-dl-3 h-dl-8 w-full border-dl-grey-9"
       [ngClass]="{ 'border-b-2': i !== friendRequests().length - 1 }"
       [friendRequest]="request"
+      (click)="onFriendCardClicked($event, request)"
     ></dl-request-card>
   </div>
 </div>
