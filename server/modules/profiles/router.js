@@ -15,6 +15,7 @@ router.get('/friends/:friendUserID', routeValidator(getFriendSchema_params, 'par
 router.get('/friends', routeValidator(getFriendSchema_query, 'query'), errorCatcher(h.getFriends));
 router.get('/followers/:followerUserID', routeValidator(getFollowerSchema_params, 'params'), errorCatcher(h.getFollower));
 router.get('/followers', errorCatcher(h.getFollowers));
+router.get('/following', errorCatcher(h.getFollowing));
 router.get('/search', routeValidator(getProfileSchema_query, 'query'), errorCatcher(h.searchProfiles));
 router.get('/', errorCatcher(h.getProfile));
 

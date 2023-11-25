@@ -17,6 +17,8 @@ export const selectFollowerByUserID = (userID: string) =>
     return followers.find((follower: Profile) => follower.userID === userID);
   });
 
+export const selectFollowing = (state: any) => state.profile.following;
+
 export const selectFriendRequests = (state: any) =>
   state.profile.friendRequestProfiles;
 

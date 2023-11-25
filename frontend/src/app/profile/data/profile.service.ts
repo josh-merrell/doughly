@@ -49,6 +49,10 @@ export class ProfileService {
     return this.http.get<Profile[]>(`${this.API_URL}/followers`);
   }
 
+  getFollowing(): Observable<Profile[]> {
+    return this.http.get<Profile[]>(`${this.API_URL}/following`);
+  }
+
   getFollowerByID(followerUserID: string): Observable<Profile> {
     return this.http.get<Profile>(
       `${this.API_URL}/followers/${followerUserID}`

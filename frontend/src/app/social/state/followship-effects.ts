@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { SocialService } from '../data/social.service';
 import { FollowshipActions } from './followship-actions';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
 
 @Injectable()
 export class FollowshipEffects {
-  constructor(private actions$: Actions, private socialService: SocialService) {}
+  constructor(
+    private actions$: Actions,
+    private socialService: SocialService
+  ) {}
 
   addFollowship$ = createEffect(() => {
     return this.actions$.pipe(
@@ -87,11 +91,13 @@ export class FollowshipEffects {
       ofType(FollowshipActions.deleteFollowship),
       mergeMap((action) =>
         this.socialService.deleteFollowship(action.followshipID).pipe(
-          map(() =>
+          concatMap(() => [
             FollowshipActions.deleteFollowshipSuccess({
               followshipID: action.followshipID,
-            })
-          ),
+            }),
+            ProfileActions.loadFollowers(),
+            ProfileActions.loadFollowing(),
+          ]),
           catchError((error) =>
             of(FollowshipActions.deleteFollowshipFailure({ error }))
           )
