@@ -182,6 +182,36 @@ module.exports = ({ db, dbPublic }) => {
     return followerProfile;
   }
 
+  async function getFollowing(options) {
+    const { userID } = options;
+
+    //get followshipIDs where userID = userID and deleted = false
+    const { data: followships, error } = await db.from('followships').select('following').eq('userID', userID).eq('deleted', false);
+    if (error) {
+      global.logger.info(`Error getting followshipIDs for userID ${userID}: ${error.message}`);
+      return { error };
+    }
+    if (!followships) {
+      global.logger.info(`No followships found for userID ${userID}`);
+      return { error: { message: `No followships found for userID ${userID}` } };
+    }
+
+    const promises = followships.map(async (followship) => {
+      try {
+        const friendProfile = await retrieveProfile(followship.following);
+        return friendProfile;
+      } catch (error) {
+        global.logger.error(`Error retrieving profile for userID ${followship.following}: ${error.message}`);
+        return null;
+      }
+    });
+    const followingProfiles = await Promise.all(promises);
+    const validFollowingProfiles = followingProfiles.filter((profile) => profile !== null);
+
+    global.logger.info(`Successfully retrieved ${validFollowingProfiles.length} following for userID ${userID}`);
+    return validFollowingProfiles;
+  }
+
   async function searchProfiles(options) {
     const { searchQuery } = options;
     let q = ``;
@@ -223,6 +253,7 @@ module.exports = ({ db, dbPublic }) => {
     getFriends,
     getFriend,
     getFollowers,
+    getFollowing,
     getFollower,
     searchProfiles,
   };
