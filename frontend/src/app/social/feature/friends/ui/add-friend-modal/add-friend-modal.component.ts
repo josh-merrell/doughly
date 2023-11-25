@@ -103,7 +103,6 @@ export class AddFriendModalComponent {
   onFriendButtonClick(): void {
     switch (this.friendshipStatuses()[this.selectedCard()].status) {
       case 'confirmed':
-        console.log(`Unfriend clicked`);
         this.store.dispatch(
           FriendshipActions.deleteFriendship({
             friendshipID:
@@ -112,7 +111,6 @@ export class AddFriendModalComponent {
         );
         break;
       case 'receivedRequest':
-        console.log(`Accept Request clicked`);
         this.store.dispatch(
           FriendshipActions.editFriendship({
             friendshipID:
@@ -122,7 +120,6 @@ export class AddFriendModalComponent {
         );
         break;
       case 'requesting':
-        console.log(`Cancel Request clicked`);
         this.store.dispatch(
           FriendshipActions.deleteFriendship({
             friendshipID:
@@ -131,7 +128,6 @@ export class AddFriendModalComponent {
         );
         break;
       default:
-        console.log(`Add Friend clicked`);
         this.store.dispatch(
           FriendshipActions.addFriendship({
             friend: this.searchResults()[this.selectedCard()].userID
@@ -147,7 +143,6 @@ export class AddFriendModalComponent {
   onFollowButtonClick(): void {
     switch (this.followshipStatuses()[this.selectedCard()].exists) {
       case true:
-        console.log(`Unfollow clicked`);
         this.store.dispatch(
           FollowshipActions.deleteFollowship({
             followshipID:
@@ -156,7 +151,6 @@ export class AddFriendModalComponent {
         )
         break;
       default:
-        console.log(`Follow clicked`);
         this.store.dispatch(
           FollowshipActions.addFollowship({
             following: this.searchResults()[this.selectedCard()].userID

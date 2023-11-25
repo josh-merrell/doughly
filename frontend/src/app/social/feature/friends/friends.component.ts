@@ -22,13 +22,24 @@ import { AddFriendModalComponent } from './ui/add-friend-modal/add-friend-modal.
 export class FriendsComponent {
   public friendships: WritableSignal<Friendship[]> = signal([]);
   public friends: WritableSignal<Profile[]> = signal([]);
+  public filteredFriends = computed(() => {
+    const searchFilter = this.searchFilter();
+    const friends = this.friends();
+    if (searchFilter) {
+      return friends.filter((friend) => {
+        return (friend.nameFirst.toLowerCase().includes(searchFilter.toLowerCase()) || friend.nameLast.toLowerCase().includes(searchFilter.toLowerCase()) || friend.username.toLowerCase().includes(searchFilter.toLowerCase()));
+      });
+    } else {
+      return friends;
+    }
+  });
   public requests: WritableSignal<Profile[]> = signal([]);
   public searchFilter: WritableSignal<string> = signal('');
 
   constructor(
     private store: Store,
     public dialog: MatDialog,
-    private socialService: SocialService,
+    private socialService: SocialService
   ) {}
 
   ngOnInit(): void {
@@ -49,13 +60,23 @@ export class FriendsComponent {
     this.store.select(selectFriendRequests).subscribe((friendRequests) => {
       this.requests.set(friendRequests);
     });
-
   }
 
   onRequestsClick(): void {
-    this.dialog.open(FriendRequestsModalComponent, {
+    const dialogRef = this.dialog.open(FriendRequestsModalComponent, {
       width: '75%',
       maxWidth: '500px',
+    });
+
+    //upon closing, if a profile is sent back, use it to open FriendModalComponent.
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.profile) {
+        this.dialog.open(FriendModalComponent, {
+          data: result.profile,
+          width: '80%',
+          maxWidth: '540px',
+        });
+      }
     });
   }
 
@@ -72,5 +93,9 @@ export class FriendsComponent {
       width: '80%',
       maxWidth: '540px',
     });
+  }
+
+  updateSearchFilter(searchFilter: string): void {
+    this.searchFilter.set(searchFilter);
   }
 }
