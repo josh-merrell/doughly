@@ -59,6 +59,16 @@ async function getFollower(req, res) {
   return res.json(returner);
 }
 
+async function getFollowing(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const returner = await p.getFollowing({
+    userID: req.userID,
+  });
+  return res.json(returner);
+}
+
 async function searchProfiles(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
@@ -77,5 +87,6 @@ module.exports = {
   getFriend,
   getFollowers,
   getFollower,
+  getFollowing,
   searchProfiles,
 };
