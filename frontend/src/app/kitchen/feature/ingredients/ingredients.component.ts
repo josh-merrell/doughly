@@ -211,8 +211,7 @@ export class IngredientsComponent {
       data: {
         ingredient: ingredient,
       },
-      width: '75%'
-
+      width: '75%',
     });
   }
 
