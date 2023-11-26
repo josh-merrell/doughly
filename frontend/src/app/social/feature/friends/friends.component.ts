@@ -49,11 +49,11 @@ export class FriendsComponent {
     this.store.dispatch(ProfileActions.loadFriendRequests());
     this.store.dispatch(ProfileActions.loadFriendRequestsSent());
 
-    this.store.select(selectFriendships).subscribe((friendships) => {
+    this.store.select(selectFriendships).subscribe((friendships: any) => {
       this.friendships.set(friendships);
     });
 
-    this.store.select(selectFriends).subscribe((friends) => {
+    this.store.select(selectFriends).subscribe((friends: any) => {
       this.friends.set(friends);
     });
 
