@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, WritableSignal, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs';
 import { Ingredient } from '../state/ingredient-state';
@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { selectIngredients } from '../state/ingredient-selectors';
 import { IDService } from 'src/app/shared/utils/ID';
 import { selectIngredientStocks } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
+import { IngredientStock } from '../../Inventory/feature/ingredient-inventory/state/ingredient-stock-state';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,13 @@ import { selectIngredientStocks } from '../../Inventory/feature/ingredient-inven
 export class IngredientService {
   private API_URL = `${environment.BACKEND}/ingredients`;
   public enhancedRows$ = new BehaviorSubject<Ingredient[]>([]);
+
+  //** NEW, USING SIGNALS
+  private ingredientStocks: WritableSignal<IngredientStock[]> = signal([]);
+  public enhancedIngredients = computed(() => {
+    const stocks = this.ingredientStocks();
+    
+  });
 
   constructor(
     private http: HttpClient,

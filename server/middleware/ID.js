@@ -9,7 +9,7 @@ const getNextSequence = async (type) => {
     if (process.env.NODE_ENV === 'development') {
       redis = new Redis({
         host: 'localhost',
-        port: 49153,
+        port: 49151,
         password: 'redispw',
       });
     } else {
