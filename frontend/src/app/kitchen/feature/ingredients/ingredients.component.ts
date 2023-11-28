@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableFullComponent } from 'src/app/shared/ui/dl-table-full/dl-table-full.component';
 import {
@@ -26,6 +26,7 @@ import { IngredientStockActions } from '../Inventory/feature/ingredient-inventor
 import { IngredientDetailsModalComponent } from './ui/ingredient-details-modal/ingredient-details-modal.component';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
+import { Profile } from 'src/app/profile/state/profile-state';
 
 @Component({
   selector: 'dl-ingredients',
@@ -57,6 +58,9 @@ export class IngredientsComponent {
   public filteredIngredients$ = new BehaviorSubject<any[]>([]);
   sorts: Sort[] = [];
   public displayedRows$ = new BehaviorSubject<any[]>([]);
+
+  // ** NEW, USING SIGNALS
+  private profile: WritableSignal<Profile | null> = signal(null);
 
   ingredientsPerRow: number = 2;
   public totalInStock$!: Observable<Number>;

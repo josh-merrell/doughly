@@ -1,0 +1,447 @@
+
+<div class="w-full">
+  <div *ngIf="displayRecipe()">
+    <img
+      *ngIf="displayRecipe().photo"
+      [src]="displayRecipe().photo"
+      alt="Recipe Image"
+      class="w-full object-cover"
+    />
+    <!-- Overview -->
+    <div class="relative mx-dl-5 rounded-lg shadow-md">
+      <div class="mx-dl-5 mt-dl-4 flex justify-between">
+        <h1 class="text-dl-8 font-dl-3 leading-dl-2 text-dl-grey-2">
+          {{ displayRecipe().title }}
+        </h1>
+        <svg
+          class="mt-dl-4"
+          width="35"
+          height="35"
+          viewBox="0 0 15 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          (click)="toggleMenu($event)"
+        >
+          <path
+            d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+        <div
+          #menu
+          *ngIf="menuOpen"
+          class="focus:outling-none absolute right-16 top-2 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
+        >
+          <button
+            (click)="onUpdateClick()"
+            type="button"
+            class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+          >
+            Edit
+          </button>
+          <button
+            (click)="onDeleteClick()"
+            type="button"
+            class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      <div class="mx-dl-5 mt-dl-1 flex justify-between">
+        <div class="flex">
+          <p class="ml-dl-4 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-6">
+            {{ recipeCategory()?.name }}
+          </p>
+        </div>
+        <span class="ml-dl-6 text-dl-6 font-dl-3 text-dl-grey-6"
+          >Servings: {{ displayRecipe().servings }}</span
+        >
+      </div>
+      <!--Public/Private-->
+      <div class="mx-dl-5 mt-dl-5 flex justify-between">
+        <div
+          *ngIf="displayRecipe().type === 'public'"
+          class="flex justify-between"
+        >
+          <svg
+            class="ml-dl-4 text-dl-grey-4"
+            width="50"
+            height="50"
+            viewBox="0 0 30 30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.49996 1.80002C4.35194 1.80002 1.79996 4.352 1.79996 7.50002C1.79996 10.648 4.35194 13.2 7.49996 13.2C10.648 13.2 13.2 10.648 13.2 7.50002C13.2 4.352 10.648 1.80002 7.49996 1.80002ZM0.899963 7.50002C0.899963 3.85494 3.85488 0.900024 7.49996 0.900024C11.145 0.900024 14.1 3.85494 14.1 7.50002C14.1 11.1451 11.145 14.1 7.49996 14.1C3.85488 14.1 0.899963 11.1451 0.899963 7.50002Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+            <path
+              d="M13.4999 7.89998H1.49994V7.09998H13.4999V7.89998Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+            <path
+              d="M7.09991 13.5V1.5H7.89991V13.5H7.09991zM10.375 7.49998C10.375 5.32724 9.59364 3.17778 8.06183 1.75656L8.53793 1.24341C10.2396 2.82218 11.075 5.17273 11.075 7.49998 11.075 9.82724 10.2396 12.1778 8.53793 13.7566L8.06183 13.2434C9.59364 11.8222 10.375 9.67273 10.375 7.49998zM3.99969 7.5C3.99969 5.17611 4.80786 2.82678 6.45768 1.24719L6.94177 1.75281C5.4582 3.17323 4.69969 5.32389 4.69969 7.5 4.6997 9.67611 5.45822 11.8268 6.94179 13.2472L6.45769 13.7528C4.80788 12.1732 3.9997 9.8239 3.99969 7.5z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+            <path
+              d="M7.49996 3.95801C9.66928 3.95801 11.8753 4.35915 13.3706 5.19448 13.5394 5.28875 13.5998 5.50197 13.5055 5.67073 13.4113 5.83948 13.198 5.89987 13.0293 5.8056 11.6794 5.05155 9.60799 4.65801 7.49996 4.65801 5.39192 4.65801 3.32052 5.05155 1.97064 5.8056 1.80188 5.89987 1.58866 5.83948 1.49439 5.67073 1.40013 5.50197 1.46051 5.28875 1.62927 5.19448 3.12466 4.35915 5.33063 3.95801 7.49996 3.95801zM7.49996 10.85C9.66928 10.85 11.8753 10.4488 13.3706 9.6135 13.5394 9.51924 13.5998 9.30601 13.5055 9.13726 13.4113 8.9685 13.198 8.90812 13.0293 9.00238 11.6794 9.75643 9.60799 10.15 7.49996 10.15 5.39192 10.15 3.32052 9.75643 1.97064 9.00239 1.80188 8.90812 1.58866 8.9685 1.49439 9.13726 1.40013 9.30601 1.46051 9.51924 1.62927 9.6135 3.12466 10.4488 5.33063 10.85 7.49996 10.85z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          <span class="text-dl-5 font-dl-2 text-dl-grey-4"
+            >This Recipe is Publicly visible</span
+          >
+        </div>
+        <div
+          *ngIf="displayRecipe().type === 'private'"
+          class="flex justify-between"
+        >
+          <svg
+            class="ml-dl-4 text-dl-grey-4"
+            width="50"
+            height="50"
+            viewBox="0 0 30 30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 4.63601C5 3.76031 5.24219 3.1054 5.64323 2.67357C6.03934 2.24705 6.64582 1.9783 7.5014 1.9783C8.35745 1.9783 8.96306 2.24652 9.35823 2.67208C9.75838 3.10299 10 3.75708 10 4.63325V5.99999H5V4.63601ZM4 5.99999V4.63601C4 3.58148 4.29339 2.65754 4.91049 1.99307C5.53252 1.32329 6.42675 0.978302 7.5014 0.978302C8.57583 0.978302 9.46952 1.32233 10.091 1.99162C10.7076 2.65557 11 3.57896 11 4.63325V5.99999H12C12.5523 5.99999 13 6.44771 13 6.99999V13C13 13.5523 12.5523 14 12 14H3C2.44772 14 2 13.5523 2 13V6.99999C2 6.44771 2.44772 5.99999 3 5.99999H4ZM3 6.99999H12V13H3V6.99999Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          <span class="text-dl-5 font-dl-2 text-dl-grey-4"
+            >This Recipe is Private and visible only to friends</span
+          >
+        </div>
+      </div>
+
+      <!--Times -->
+      <div
+        class="mx-dl-5 mt-dl-2 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
+      >
+        <svg
+          class="ml-dl-4 text-dl-grey-4"
+          width="22"
+          height="22"
+          viewBox="0 0 15 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.50009 0.877014C3.84241 0.877014 0.877258 3.84216 0.877258 7.49984C0.877258 11.1575 3.8424 14.1227 7.50009 14.1227C11.1578 14.1227 14.1229 11.1575 14.1229 7.49984C14.1229 3.84216 11.1577 0.877014 7.50009 0.877014ZM1.82726 7.49984C1.82726 4.36683 4.36708 1.82701 7.50009 1.82701C10.6331 1.82701 13.1729 4.36683 13.1729 7.49984C13.1729 10.6328 10.6331 13.1727 7.50009 13.1727C4.36708 13.1727 1.82726 10.6328 1.82726 7.49984ZM8 4.50001C8 4.22387 7.77614 4.00001 7.5 4.00001C7.22386 4.00001 7 4.22387 7 4.50001V7.50001C7 7.63262 7.05268 7.7598 7.14645 7.85357L9.14645 9.85357C9.34171 10.0488 9.65829 10.0488 9.85355 9.85357C10.0488 9.65831 10.0488 9.34172 9.85355 9.14646L8 7.29291V4.50001Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+        <p
+          *ngIf="displayRecipe().timePrep"
+          class="text-dl-5 font-dl-2 text-dl-grey-4"
+        >
+          Prep: {{ timeString(displayRecipe().timePrep) }}
+        </p>
+        <p
+          *ngIf="displayRecipe().timeBake"
+          class="text-dl-5 font-dl-2 text-dl-grey-4"
+        >
+          Bake: {{ timeString(displayRecipe().timeBake) }}
+        </p>
+        <p
+          *ngIf="displayRecipe().timeBake"
+          class="text-dl-6 font-dl-3 text-dl-grey-3"
+        >
+          Total:
+          {{
+            timeString(
+              displayRecipe().timeBake +
+                displayRecipe().timePrep
+            )
+          }}
+        </p>
+      </div>
+      <div
+        class="mx-dl-4 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
+      >
+        <div
+          class="ml-dl-4 mb-dl-1 flex w-full items-center justify-between px-dl-1 pt-dl-1"
+        >
+          <p *ngIf=""></p>
+          <div class="flex">
+            <p class="text-dl-5 font-dl-2 text-dl-grey-4">Making it</p>
+            <div
+              style="position: relative"
+              class="ml-dl-2 text-dl-5 font-dl-2 text-dl-blue-6"
+            >
+              <div (click)="picker.open()">
+                {{ displayUsageDate }}
+              </div>
+              <input
+                matInput
+                [matDatepicker]="picker"
+                [matDatepickerFilter]="filterPastDates"
+                style="
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  opacity: 0;
+                  pointer-events: none;
+                "
+                (dateChange)="updateUsageDate($event)"
+              />
+              <mat-datepicker #picker></mat-datepicker>
+            </div>
+          </div>
+          <button
+            *ngIf="
+              shoppingList?.ingredients?.length === 0 &&
+              displayUsageDate === 'Today'
+            "
+            type="button"
+            class="block w-dl-8 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            (click)="useRecipe()"
+          >
+            Use it Now
+          </button>
+          <button
+            *ngIf="shoppingList?.ingredients?.length !== 0"
+            type="button"
+            class="block w-dl-10 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            (click)="viewShoppingList()"
+          >
+            View Shopping List
+          </button>
+          <p
+            *ngIf="
+              shoppingList?.ingredients?.length === 0 &&
+              displayUsageDate !== 'Today'
+            "
+            class="ml-dl-4 text-dl-4 italic text-dl-teal-7"
+          >
+            Ready to Make!
+          </p>
+        </div>
+      </div>
+
+      <!-- Past Uses-->
+      <div
+        class="ml-dl-6 mr-dl-2 mt-dl-1 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
+      >
+        <div class="flex">
+          <!-- Single Person-->
+          <svg
+            (click)="selectPersonIcon('true')"
+            version="1.1"
+            id="fi_456212"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 -100 512 612"
+            style="enable-background: new 0 0 512 512"
+            xml:space="preserve"
+            height="29"
+            width="29"
+            class=" text-dl-grey-4"
+          >
+            <g>
+              <g>
+                <path
+                  [attr.fill]="onlyMe() === 'true' ? 'hsl(209, 14%, 37%)' : 'hsl(210, 16%, 82%)'"
+                  d="M256,0c-74.439,0-135,60.561-135,135s60.561,135,135,135s135-60.561,135-135S330.439,0,256,0z"
+                ></path>
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  [attr.fill]="onlyMe() === 'true' ? 'hsl(209, 14%, 37%)' : 'hsl(210, 16%, 82%)'"
+                  d="M423.966,358.195C387.006,320.667,338.009,300,286,300h-60c-52.008,0-101.006,20.667-137.966,58.195
+			C51.255,395.539,31,444.833,31,497c0,8.284,6.716,15,15,15h420c8.284,0,15-6.716,15-15
+			C481,444.833,460.745,395.539,423.966,358.195z"
+                ></path>
+              </g>
+            </g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+          </svg>
+
+          <!-- Multiple Persons -->
+          <svg
+            (click)="selectPersonIcon('false')"
+            height="512"
+            viewBox="0 0 24 24"
+            width="512"
+            xmlns="http://www.w3.org/2000/svg"
+            id="fi_2118701"
+            height="36"
+            width="36"
+            class="ml-dl-2"
+            
+          >
+            <path
+              [attr.fill]="onlyMe() === 'true' ? 'hsl(210, 16%, 82%)' : 'hsl(209, 14%, 37%)'"
+              d="m23 19a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1-1 6 6 0 0 1 6-6h2a6 6 0 0 1 6 6zm-7-15a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm-9 0a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm0 15a7.94 7.94 0 0 1 2.35-5.65 5.43 5.43 0 0 0 -1.91-.35h-.88a5.57 5.57 0 0 0 -5.56 5.56v.44a1 1 0 0 0 1 1h5.18a3 3 0 0 1 -.18-1z"
+            ></path>
+          </svg>
+        </div>
+        <div class="flex px-dl-2">
+          <span class="text-dl-5 font-dl-2 text-dl-grey-4"
+            >Used {{ relevantUses() }} times since
+          </span>
+          <div
+            style="position: relative"
+            class="ml-dl-2 text-dl-5 font-dl-2 text-dl-blue-6"
+          >
+            <div (click)="logsDatePicker.open()">
+              {{ logsAfterDate() }}
+            </div>
+            <input
+              matInput
+              [matDatepicker]="logsDatePicker"
+              [matDatepickerFilter]="filterFutureDates"
+              style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                pointer-events: none;
+              "
+              (dateChange)="updateLogsAfterDate($event)"
+            />
+            <mat-datepicker #logsDatePicker></mat-datepicker>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ingredients -->
+    <div class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md">
+      <div class="flex justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+          Ingredients
+        </p>
+        <button
+          id="edit-recipe-ingredients-button"
+          type="button"
+          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          (click)="editReciptIngredients()"
+        >
+          Edit
+        </button>
+      </div>
+      <div
+        *ngFor="let ingredient of displayIngredients()"
+        class="mt-dl-2 flex"
+      >
+        <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+          {{ ingredient.name }}
+        </span>
+        <span class="ml-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+          {{ ingredient.measurement }} {{ ingredient.measurementUnit }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <div
+      *ngIf="displayTools()"
+      class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md"
+    >
+      <div class="flex justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+          Tools
+        </p>
+        <button
+          id="edit-recipe-tools-button"
+          type="button"
+          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          (click)="editRecipeTools()"
+        >
+          Edit
+        </button>
+      </div>
+      <div *ngFor="let tool of displayTools()" class="mt-dl-2 flex">
+        <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+          {{ tool.name }}
+        </span>
+        <span
+          *ngIf="tool.quantity > 0"
+          class="ml-dl-3 text-dl-5 font-dl-2 text-dl-blue-3"
+        >
+          {{ tool.quantity }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div
+      *ngIf="displayStepsWithPhoto()"
+      class="mx-dl-5 mt-dl-5 flex flex-col items-center rounded-lg pb-dl-5 shadow-md"
+    >
+      <div class="mb-dl-6 flex w-full justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+          Steps
+        </p>
+        <button
+          id="edit-recipe-tools-button"
+          type="button"
+          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          (click)="editRecipeSteps()"
+        >
+          Edit
+        </button>
+      </div>
+      <div
+        *ngFor="let step of displayStepsWithPhoto(); let i = index"
+        class="mb-dl-7 flex w-full flex-col items-center justify-center"
+      >
+        <div class="mb-dl-2 flex w-full items-start">
+          <!-- Step number with consistent width and padding -->
+          <div class="ml-dl-3 mr-dl-1 w-dl-4 px-dl-3 text-dl-5 text-dl-grey-2">
+            {{ i + 1 }}.
+          </div>
+          <!-- Description taking the remaining width -->
+          <div class="flex-1">
+            <p
+              class="mr-dl-6 whitespace-normal text-dl-5 font-dl-2 text-dl-grey-2"
+            >
+              {{ step.description }}
+            </p>
+          </div>
+        </div>
+        <!-- Step photo -->
+        <img
+          *ngIf="step.photo"
+          [src]="step.photo"
+          class="mt-dl-2 w-4/5 object-cover"
+        />
+      </div>
+    </div>
+  </div>
+</div>

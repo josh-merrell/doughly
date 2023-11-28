@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, catchError, from, map, switchMap } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
@@ -24,5 +24,25 @@ export class PhotoService {
   deleteFileFromS3(photoURL: string, type: string, id?: number): Observable<any> {
     const body = { photoURL, type, id };
     return this.http.delete(`${this.API_URL}/image`, {body} );
+  }
+
+  fetchPhoto(url: string): Observable<any> {
+  return from(fetch(url))
+    .pipe(
+      switchMap(response => {
+        if (response.ok) {
+          return response.blob();
+        }
+        throw new Error('Network response was not ok.');
+      }),
+      map(blob => {
+        const objectURL = URL.createObjectURL(blob);
+        return this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      }),
+      catchError(error => {
+        console.error('Error fetching photo:', error);
+        throw error;
+      })
+    );
   }
 }
