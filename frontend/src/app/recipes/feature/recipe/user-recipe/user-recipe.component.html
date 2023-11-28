@@ -1,0 +1,22 @@
+<div *ngIf="recipe()">
+  <p>{{recipe().title}}</p>
+  <div *ngFor="let ing of recipeIngredients()" >
+    <p>{{ing.recipeIngredientID}}</p>
+  </div>
+  <div *ngFor="let ingr of displayIngredients()" >
+    <p>{{ingr.name}}</p>
+  </div>
+  <div *ngFor="let step of displaySteps()" >
+    <p>{{step.title}}</p>
+  </div>
+  <div *ngIf="recipeCategory()">
+    <p>{{recipeCategory()?.name}}</p>
+  </div>
+  <img
+      *ngIf="recipe()"
+      [src]="recipe().photoURL"
+      alt="Recipe Image"
+      class="w-full object-cover"
+    />
+
+</div>
