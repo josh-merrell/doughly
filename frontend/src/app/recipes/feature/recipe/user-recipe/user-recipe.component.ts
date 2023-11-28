@@ -215,6 +215,8 @@ export class UserRecipeComponent {
     this.route.paramMap.subscribe((params) => {
       this.recipeID.set(Number(params.get('recipeID')!));
     });
+
+    this.displayUsageDate = this.updateDisplayUsageData(this.usageDate);
   }
 
   // LIFECYCLE HOOKS  *********************************

@@ -4,7 +4,6 @@ import { IngredientsComponent } from './kitchen/feature/ingredients/ingredients.
 import { NotfoundComponent } from './shared/ui/app-notfound/app-notfound.component';
 import { KitchenPageComponent } from './kitchen/kitchen-page.component';
 import { RecipesPageComponent } from './recipes/feature/recipes-page/recipes-page.component';
-import { RecipeComponent } from './recipes/feature/recipe/recipe.component';
 import { UserRecipeComponent } from './recipes/feature/recipe/user-recipe/user-recipe.component';
 import { LoginPageComponent } from './account/feature/login/login-page.component';
 import { ProfileGuard } from './guards/profile.guard';
@@ -57,7 +56,6 @@ export const routes: Route[] = [
     children: [
       {
         path: ':recipeID',
-        // component: RecipeComponent,
         component: UserRecipeComponent,
       },
     ],
