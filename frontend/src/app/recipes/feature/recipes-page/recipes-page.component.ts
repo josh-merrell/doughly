@@ -63,7 +63,6 @@ import { RecipeToolsModalComponent } from './ui/recipe-tool/recipe-tools-modal/r
 import { RecipeStepsModalComponent } from './ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
 import { AddRecipeModalComponent } from './ui/recipe/add-recipe-modal/add-recipe-modal.component';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { RecipeComponent } from '../recipe/recipe.component';
 import { RecipeActions } from '../../state/recipe/recipe-actions';
 import { RecipeCategoryActions } from '../../state/recipe-category/recipe-category-actions';
 import { RecipeIngredientActions } from '../../state/recipe-ingredient/recipe-ingredient-actions';
@@ -90,7 +89,6 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
     RecipesInfoComponent,
     RouterOutlet,
     FormsModule,
-    RecipeComponent,
   ],
   templateUrl: './recipes-page.component.html',
   styleUrls: ['./recipes-page.component.scss'],
