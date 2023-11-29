@@ -235,7 +235,7 @@ module.exports = ({ db }) => {
 
       //delete any associated recipeSteps entries;
       for (let i = 0; i < relatedRecipeSteps.length; i++) {
-        const { data: recipeStepDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipeSteps/${relatedRecipeSteps[i].recipeStepID}`, {
+        const { data: recipeStepDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/steps/recipe/${relatedRecipeSteps[i].recipeStepID}`, {
           headers: {
             authorization: options.authorization,
           },
@@ -263,7 +263,7 @@ module.exports = ({ db }) => {
 
       //delete any associated recipeTools entries;
       for (let i = 0; i < relatedRecipeTools.length; i++) {
-        const { data: recipeToolDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipeTools/${relatedRecipeTools[i].recipeToolID}`, {
+        const { data: recipeToolDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/tools/recipe/${relatedRecipeTools[i].recipeToolID}`, {
           headers: {
             authorization: options.authorization,
           },
@@ -291,7 +291,7 @@ module.exports = ({ db }) => {
 
       //delete any associated recipeIngredients entries;
       for (let i = 0; i < relatedRecipeIngredients.length; i++) {
-        const { data: recipeIngredientDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipeIngredients/${relatedRecipeIngredients[i].recipeIngredientID}`, {
+        const { data: recipeIngredientDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/recipe/${relatedRecipeIngredients[i].recipeIngredientID}`, {
           headers: {
             authorization: options.authorization,
           },

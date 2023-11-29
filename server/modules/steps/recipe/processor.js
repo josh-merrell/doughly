@@ -253,6 +253,7 @@ module.exports = ({ db }) => {
 
   async function deleteStep(options) {
     const { recipeStepID, authorization, userID } = options;
+    console.log(`DELETE RECIPE STEP. USERID: ${userID}, AUTH: ${authorization}, RECIPESTEPID: ${recipeStepID}`)
     //validate that provided recipeStepID exists
     const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID).eq('deleted', false);
     if (validationError) {
