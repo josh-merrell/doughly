@@ -11,6 +11,7 @@ export interface RecipeCategory {
   recipeCategoryID: number;
   name: string;
   photoURL: string;
+  recipeCount?: number;
 }
 
 export interface RecipeCategoryError {
