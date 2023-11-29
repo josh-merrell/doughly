@@ -18,7 +18,6 @@ import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { EffectSources } from '@ngrx/effects';
 import { MatDialog } from '@angular/material/dialog';
-import { AddRecipeCategoryModalComponent } from '../../ui/recipe-category/add-recipe-category-modal/add-recipe-category-modal.component';
 import { AddRecipeModalComponent } from '../../ui/recipe/add-recipe-modal/add-recipe-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
@@ -52,7 +51,7 @@ export class CreatedRecipesComponent {
   showScrollDownArrow = false;
   showScrollUpArrow = false;
 
-  public listView: WritableSignal<string> = signal('byCategory');
+  public listView: WritableSignal<string> = signal('all');
   public searchFilter: WritableSignal<string> = signal('');
   public categories: WritableSignal<RecipeCategory[]> = signal([]);
   public filteredCategories = computed(() => {
@@ -108,7 +107,7 @@ export class CreatedRecipesComponent {
       () => {
         const filteredCategories = this.filteredCategories();
         const recipes = this.recipes();
-        const newCategories: RecipeCategory[] = filteredCategories.map(
+        let newCategories: RecipeCategory[] = filteredCategories.map(
           (category) => {
             const recipeCount = recipes.filter((recipe) => {
               return recipe.recipeCategoryID === category.recipeCategoryID;
@@ -120,6 +119,9 @@ export class CreatedRecipesComponent {
             };
           }
         );
+        newCategories = newCategories.filter((category) => {
+          return category.recipeCount !== 0;
+        });
         this.displayCategories.set(newCategories);
       },
       { allowSignalWrites: true }
@@ -164,22 +166,13 @@ export class CreatedRecipesComponent {
     this.searchFilter.set(searchFilter);
   }
   onAddClick(): void {
-    let dialogRef: any;
-    if (this.listView() === 'byCategory') {
-      dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
+    const dialogRef = this.dialog.open(AddRecipeModalComponent, {
         data: {
           recipeCategories: this.categories(),
         },
       });
-    } else if (this.listView() === 'all') {
-      dialogRef = this.dialog.open(AddRecipeModalComponent, {
-        data: {
-          recipeCategories: this.categories(),
-        },
-      });
-    }
     dialogRef.afterClosed().subscribe((result) => {
-      const message = this.listView() === 'byCategory' ? 'Category' : 'Recipe';
+      const message = 'Recipe';
       if (result === 'success') {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
