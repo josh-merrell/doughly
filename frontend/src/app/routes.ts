@@ -12,6 +12,7 @@ import { SignupPageComponent } from './account/feature/signup/signup-page.compon
 import { VerifyComponent } from './account/feature/verify/verify.component';
 import { ProfileComponent } from './profile/profile.component'
 import { SocialPageComponent } from './social/social-page.component';
+import { RecipesPageNewComponent } from './recipes/feature/recipes-page/recipes-page.component-new';
 
 export const routes: Route[] = [
   {
@@ -52,13 +53,11 @@ export const routes: Route[] = [
   },
   {
     path: 'recipes',
-    component: RecipesPageComponent,
-    children: [
-      {
-        path: ':recipeID',
-        component: UserRecipeComponent,
-      },
-    ],
+    component: RecipesPageNewComponent,
+  },
+  {
+    path: 'recipe/:recipeID',
+    component: UserRecipeComponent,
   },
   {
     path: 'kitchen',

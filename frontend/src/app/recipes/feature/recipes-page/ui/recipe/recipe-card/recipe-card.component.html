@@ -12,6 +12,12 @@
       >
         {{ recipe.recipeCategoryName }}
       </p>
+      <p
+        *ngIf="recipe.status !== 'published'"
+        class="ml-dl-4 text-dl-4 italic text-dl-yellow-4"
+      >
+        Draft
+      </p>
     </div>
   </div>
   <img

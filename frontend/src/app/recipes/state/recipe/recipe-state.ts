@@ -67,7 +67,7 @@ export enum RecipeStatus {
   noIngredients = 'noIngredients',
   noTools = 'noTools',
   noSteps = 'noSteps',
-  published = 'Published',
+  published = 'published',
 }
 
 
