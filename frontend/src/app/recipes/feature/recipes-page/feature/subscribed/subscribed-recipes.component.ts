@@ -8,5 +8,4 @@ import { CommonModule } from '@angular/common';
   templateUrl: './subscribed-recipes.component.html',
 })
 export class SubscribedRecipesComponent {
-  @Input() listView!: string;
 }

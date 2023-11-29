@@ -30,7 +30,6 @@ import { Store } from '@ngrx/store';
 })
 export class RecipesPageNewComponent {
   public view: WritableSignal<string> = signal('created');
-  public listView: WritableSignal<string> = signal('byCategory');
 
   constructor(public dialog: MatDialog, private store: Store) {}
 
@@ -44,9 +43,5 @@ export class RecipesPageNewComponent {
 
   setView(view: string) {
     this.view.set(view);
-  }
-
-  setListView(listView: string) {
-    this.listView.set(listView);
   }
 }

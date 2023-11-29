@@ -53,14 +53,11 @@ export const routes: Route[] = [
   },
   {
     path: 'recipes',
-    // component: RecipesPageComponent,
     component: RecipesPageNewComponent,
-    children: [
-      {
-        path: ':recipeID',
-        component: UserRecipeComponent,
-      },
-    ],
+  },
+  {
+    path: 'recipe/:recipeID',
+    component: UserRecipeComponent,
   },
   {
     path: 'kitchen',

@@ -1,6 +1,6 @@
 <div class="relative mx-auto h-full w-full bg-white pt-dl-5">
   <!-- View Header -->
-  <div class="flex w-full justify-around h-dl-4 mb-dl-4">
+  <div class="flex w-full justify-around h-dl-4 mb-dl-5">
     <span
       (click)="setView('discover')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
@@ -36,35 +36,10 @@
     </span>
   </div>
 
-  <!-- List View Header -->
-  <div *ngIf="view() !== 'discover'" class="flex w-full justify-around h-dl-4 mb-dl-6">
-    <span
-      (click)="setListView('byCategory')"
-      class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
-      [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
-          listView() === 'byCategory',
-        'text-dl-5 text-dl-grey-4 font-dl-2': listView() !== 'byCategory'
-      }"
-    >
-      By Category
-    </span>
-    <span
-      (click)="setListView('all')"
-      class="inline-flex items-center py-1 font-dl-2 transition-all duration-200 ease-in-out"
-      [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
-          listView() === 'all',
-        'text-dl-5 text-dl-grey-4 font-dl-2': listView() !== 'all'
-      }"
-    >
-      All
-    </span>
-  </div>
   <!-- Main Content -->
   <div class="h-full">
     <dl-discover-recipes *ngIf="view() === 'discover'"></dl-discover-recipes>
-    <dl-created-recipes [listView]="listView()" *ngIf="view() === 'created'"></dl-created-recipes>
-    <dl-subscribed-recipes [listView]="listView()" *ngIf="view() === 'subscribed'"></dl-subscribed-recipes>
+    <dl-created-recipes *ngIf="view() === 'created'"></dl-created-recipes>
+    <dl-subscribed-recipes *ngIf="view() === 'subscribed'"></dl-subscribed-recipes>
   </div>
 </div>
