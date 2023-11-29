@@ -37,29 +37,4 @@ export class RecipeCategoryService {
     return this.http.get<RecipeCategory[]>(this.API_URL);
   }
 
-  getByID(recipeCategoryID: number): Observable<RecipeCategory> {
-    return this.http.get<RecipeCategory>(`${this.API_URL}/${recipeCategoryID}`);
-  }
-
-  add(recipeCategory: RecipeCategory): Observable<RecipeCategory> {
-    const body = {
-      IDtype: this.idService.getIDtype('recipeCategory'),
-      name: recipeCategory.name,
-      photoURL: recipeCategory.photoURL,
-    };
-    return this.http.post<RecipeCategory>(this.API_URL, body);
-  }
-
-  delete(recipeCategoryID: number): Observable<RecipeCategory> {
-    return this.http.delete<RecipeCategory>(
-      `${this.API_URL}/${recipeCategoryID}`
-    );
-  }
-
-  update(recipeCategory: RecipeCategory): Observable<RecipeCategory> {
-    return this.http.patch<RecipeCategory>(
-      `${this.API_URL}/${recipeCategory.recipeCategoryID}`,
-      recipeCategory
-    );
-  }
 }
