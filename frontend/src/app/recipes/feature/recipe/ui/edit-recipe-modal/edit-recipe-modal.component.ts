@@ -25,9 +25,6 @@ import {
   twoByteInteger,
 } from 'src/app/shared/utils/formValidator';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
-import { AddRecipeCategoryModalComponent } from '../../../recipes-page/ui/recipe-category/add-recipe-category-modal/add-recipe-category-modal.component';
-import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
-import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 
 @Component({
   selector: 'dl-edit-recipe-modal',
@@ -141,32 +138,6 @@ export class EditRecipeModalComponent {
     };
   }
 
-  onAddNewCategory() {
-    const dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
-      data: {
-        recipeCategories: this.categories,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: {
-            result: result,
-            addSuccessMessage: 'Category added successfully!',
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            result: result,
-            addErrorMessage: 'Failed to add category.',
-          },
-        });
-      }
-    });
-  }
-
   //photo selection/cropping
   recipeOnFileSelected(event: Event): void {
     this.recipeImageChangedEvent = event; // For the cropping UI
@@ -246,7 +217,6 @@ export class EditRecipeModalComponent {
       photoURL: this.photoURL,
       recipeID: this.data.recipeID,
     };
-    console.log(`UPDATING RECIPE TYPE: ${newRecipe.type}`)
     //first replace the image if necessary
     if (this.croppedImage && this.selectedFile) {
       await this.replaceImage();

@@ -35,9 +35,6 @@ import {
 } from '../../state/recipe-category/recipe-category-state';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
-import { AddRecipeCategoryModalComponent } from './ui/recipe-category/add-recipe-category-modal/add-recipe-category-modal.component';
-import { EditRecipeCategoryModalComponent } from './ui/recipe-category/edit-recipe-category-modal/edit-recipe-category-modal.component';
-import { DeleteRecipeCategoryModalComponent } from './ui/recipe-category/delete-recipe-category-modal/delete-recipe-category-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -550,13 +547,7 @@ export class RecipesPageComponent {
 
   openAddDialog() {
     let dialogRef: any;
-    if (this.view === 'categories') {
-      dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
-        data: {
-          recipeCategories: this.categoryRows,
-        },
-      });
-    } else if (this.view === 'list') {
+    if (this.view === 'list') {
       dialogRef = this.dialog.open(AddRecipeModalComponent, {
         data: {
           recipeCategories: this.categoryRows,
@@ -590,61 +581,6 @@ export class RecipesPageComponent {
 
   deactivateModalForRow() {
     this.modalActiveForRowID = null;
-  }
-
-  openEditDialog(event: any, recipeCategory: any, rowIndex: number): void {
-    this.activateModalForRow(rowIndex);
-    const dialogRef = this.dialog.open(EditRecipeCategoryModalComponent, {
-      data: recipeCategory,
-      width: '75%',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      this.deactivateModalForRow();
-      if (result instanceof HttpErrorResponse) {
-        this.dialog.open(UpdateRequestErrorModalComponent, {
-          data: {
-            error: result,
-            updateFailureMessage: `Category could not be updated. Try again later.`,
-          },
-        });
-      } else if (result === 'success') {
-        this.dialog.open(UpdateRequestConfirmationModalComponent, {
-          data: {
-            result: result,
-            updateSuccessMessage: `Category with name "${recipeCategory.name}" updated successfully!`,
-          },
-        });
-      }
-    });
-  }
-
-  openDeleteDialog(event: any, categoryName: string, rowIndex: number): void {
-    event.stopPropagation();
-    this.activateModalForRow(rowIndex);
-    const dialogRef = this.dialog.open(DeleteRecipeCategoryModalComponent, {
-      data: {
-        categoryName,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      this.deactivateModalForRow();
-      if (result instanceof HttpErrorResponse) {
-        this.dialog.open(DeleteRequestErrorModalComponent, {
-          data: {
-            error: result,
-            deleteFailureMessage: `Category could not be deleted. Try again later.`,
-          },
-        });
-      } else if (result === 'success') {
-        this.dialog.open(DeleteRequestConfirmationModalComponent, {
-          data: {
-            deleteSuccessMessage: `Category "${categoryName}" deleted successfully!`,
-          },
-        });
-      }
-    });
   }
 
   onSortIconClick(rowIndex: number): void {

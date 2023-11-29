@@ -63,45 +63,45 @@ const RecipeDeleteSchema_params = {
   },
 };
 
-const getRecipeCategorySchema_params = {
-  type: 'object',
-  required: ['recipeCategoryID'],
-  properties: {
-    recipeCategoryID: { type: 'string' },
-  },
-};
+// const getRecipeCategorySchema_params = {
+//   type: 'object',
+//   required: ['recipeCategoryID'],
+//   properties: {
+//     recipeCategoryID: { type: 'string' },
+//   },
+// };
 
-const newRecipeCategorySchema_body = {
-  type: 'object',
-  required: ['name'],
-  properties: {
-    name: { type: 'string' },
-    photoURL: { type: 'string' },
-  },
-};
+// const newRecipeCategorySchema_body = {
+//   type: 'object',
+//   required: ['name'],
+//   properties: {
+//     name: { type: 'string' },
+//     photoURL: { type: 'string' },
+//   },
+// };
 
-const RecipeCategoryUpdateSchema_body = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-  },
-};
+// const RecipeCategoryUpdateSchema_body = {
+//   type: 'object',
+//   properties: {
+//     name: { type: 'string' },
+//   },
+// };
 
-const RecipeCategoryUpdateSchema_params = {
-  type: 'object',
-  required: ['recipeCategoryID'],
-  properties: {
-    recipeCategoryID: { type: 'string' },
-  },
-};
+// const RecipeCategoryUpdateSchema_params = {
+//   type: 'object',
+//   required: ['recipeCategoryID'],
+//   properties: {
+//     recipeCategoryID: { type: 'string' },
+//   },
+// };
 
-const RecipeCategoryDeleteSchema_params = {
-  type: 'object',
-  required: ['recipeCategoryID'],
-  properties: {
-    recipeCategoryID: { type: 'string' },
-  },
-};
+// const RecipeCategoryDeleteSchema_params = {
+//   type: 'object',
+//   required: ['recipeCategoryID'],
+//   properties: {
+//     recipeCategoryID: { type: 'string' },
+//   },
+// };
 
 const getRecipeComponentsSchema_query = {
   type: 'object',
@@ -178,11 +178,11 @@ module.exports = {
   RecipeUpdateSchema_body,
   RecipeUpdateSchema_params,
   RecipeDeleteSchema_params,
-  getRecipeCategorySchema_params,
-  newRecipeCategorySchema_body,
-  RecipeCategoryUpdateSchema_body,
-  RecipeCategoryUpdateSchema_params,
-  RecipeCategoryDeleteSchema_params,
+  // getRecipeCategorySchema_params,
+  // newRecipeCategorySchema_body,
+  // RecipeCategoryUpdateSchema_body,
+  // RecipeCategoryUpdateSchema_params,
+  // RecipeCategoryDeleteSchema_params,
   getRecipeComponentsSchema_query,
   getRecipeComponentSchema_params,
   newRecipeComponentSchema_body,

@@ -24,44 +24,6 @@ const loadRecipeCategoryFailure = createAction(
   props<{ error: any }>()
 );
 
-const addRecipeCategory = createAction(
-  '[RecipeCategories] Add',
-  props<{ recipeCategory: RecipeCategory }>()
-);
-const addRecipeCategorySuccess = createAction(
-  '[RecipeCategories] Add Success',
-  props<{ recipeCategory: RecipeCategory }>()
-);
-const addRecipeCategoryFailure = createAction(
-  '[RecipeCategories] Add Failure',
-  props<{ error: any }>()
-);
-
-const deleteRecipeCategory = createAction(
-  '[RecipeCategories] Delete',
-  props<{ recipeCategoryID: number }>()
-);
-const deleteRecipeCategorySuccess = createAction(
-  '[RecipeCategories] Delete Success',
-  props<{ recipeCategoryID: number }>()
-);
-const deleteRecipeCategoryFailure = createAction(
-  '[RecipeCategories] Delete Failure',
-  props<{ error: any }>()
-);
-
-const updateRecipeCategory = createAction(
-  '[RecipeCategories] Edit',
-  props<{ recipeCategory: RecipeCategory }>()
-);
-const updateRecipeCategorySuccess = createAction(
-  '[RecipeCategories] Edit Success',
-  props<{ recipeCategory: RecipeCategory }>()
-);
-const updateRecipeCategoryFailure = createAction(
-  '[RecipeCategories] Edit Failure',
-  props<{ error: any }>()
-);
 
 export const RecipeCategoryActions = {
   loadRecipeCategories,
@@ -70,13 +32,4 @@ export const RecipeCategoryActions = {
   loadRecipeCategory,
   loadRecipeCategorySuccess,
   loadRecipeCategoryFailure,
-  addRecipeCategory,
-  addRecipeCategorySuccess,
-  addRecipeCategoryFailure,
-  deleteRecipeCategory,
-  deleteRecipeCategorySuccess,
-  deleteRecipeCategoryFailure,
-  updateRecipeCategory,
-  updateRecipeCategorySuccess,
-  updateRecipeCategoryFailure,
 };
