@@ -35,9 +35,6 @@ import {
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
-import { AddRecipeCategoryModalComponent } from '../../recipe-category/add-recipe-category-modal/add-recipe-category-modal.component';
-import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
-import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
@@ -164,33 +161,7 @@ export class AddRecipeModalComponent {
       }
     }
   }
-
-  onAddNewCategory() {
-    const dialogRef = this.dialog.open(AddRecipeCategoryModalComponent, {
-      data: {
-        recipeCategories: this.recipeCategories,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: {
-            result: result,
-            addSuccessMessage: 'Category added successfully!',
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            result: result,
-            addErrorMessage: 'Failed to add category.',
-          },
-        });
-      }
-    });
-  }
-
+  
   async onSubmit() {
     //first upload the cropped image
     await this.uploadCroppedImage();
