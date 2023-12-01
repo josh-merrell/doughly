@@ -95,6 +95,7 @@
         *ngFor="let recipe of filteredRecipes()"
         (click)="recipeCardClick(recipe)"
         [recipe]="recipe"
+        [isUserRecipe]="true"
       ></dl-recipe-card>
     </div>
     <span class="absolute -bottom-10 text-dl-5 font-dl-2 text-dl-grey-2"

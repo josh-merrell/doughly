@@ -12,20 +12,6 @@ export class ProfileEffects {
     private profileService: ProfileService
   ) {}
 
-  loadProfile$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ProfileActions.loadProfile),
-      mergeMap(() =>
-        this.profileService.getProfile().pipe(
-          map((profile) => ProfileActions.loadProfileSuccess({ profile })),
-          catchError((error) =>
-            of(ProfileActions.loadProfileFailure({ error }))
-          )
-        )
-      )
-    )
-  );
-
   loadFriends$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProfileActions.loadFriends),
@@ -117,6 +103,39 @@ export class ProfileEffects {
       )
     )
   );
+
+  // loadProfile$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(ProfileActions.loadProfile),
+  //     mergeMap((action) =>
+  //       this.profileService.getProfile(action.userID).pipe(
+  //         map((profile) => ProfileActions.loadProfileSuccess({ profile })),
+  //         catchError((error) =>
+  //           of(ProfileActions.loadProfileFailure({ error }))
+  //         )
+  //       )
+  //     )
+  //   )
+  // );
+
+  loadProfile$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(ProfileActions.loadProfile),
+    mergeMap((action) => {
+      // Check if userID is provided
+      const call$ = action.userID
+        ? this.profileService.getProfile(action.userID)
+        : this.profileService.getProfile();
+
+      return call$.pipe(
+        map((profile) => ProfileActions.loadProfileSuccess({ profile })),
+        catchError((error) =>
+          of(ProfileActions.loadProfileFailure({ error }))
+        )
+      );
+    })
+  )
+);
 
   searchProfiles$ = createEffect(() =>
     this.actions$.pipe(

@@ -10,9 +10,10 @@ import { ProfileGuard } from './guards/profile.guard';
 import { PasswordResetPageComponent } from './account/feature/password/password-reset-page.component';
 import { SignupPageComponent } from './account/feature/signup/signup-page.component';
 import { VerifyComponent } from './account/feature/verify/verify.component';
-import { ProfileComponent } from './profile/profile.component'
+import { ProfileComponent } from './profile/profile.component';
 import { SocialPageComponent } from './social/social-page.component';
 import { RecipesPageNewComponent } from './recipes/feature/recipes-page/recipes-page.component-new';
+import { PublicRecipeComponent } from './recipes/feature/recipe/public-recipe/public-recipe.component';
 
 export const routes: Route[] = [
   {
@@ -54,6 +55,10 @@ export const routes: Route[] = [
   {
     path: 'recipes',
     component: RecipesPageNewComponent,
+  },
+  {
+    path: 'recipe/public/:recipeID',
+    component: PublicRecipeComponent,
   },
   {
     path: 'recipe/:recipeID',

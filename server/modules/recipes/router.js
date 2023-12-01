@@ -18,6 +18,9 @@ router.use('/components', recipeComponentsRouter);
 router.use(authenticateJWT);
 
 router.get('/:recipeID', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeByID));
+router.get('/:recipeID/ingredients', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeIngredients));
+router.get('/:recipeID/tools', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeTools));
+router.get('/:recipeID/steps', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeSteps));
 router.patch('/:recipeID', routeValidator(RecipeUpdateSchema_body, 'body'), routeValidator(RecipeUpdateSchema_params, 'params'), errorCatcher(h.updateRecipe));
 router.delete('/:recipeID', routeValidator(RecipeDeleteSchema_params, 'params'), errorCatcher(h.deleteRecipe));
 router.get('/', routeValidator(getRecipesSchema_query, 'query'), errorCatcher(h.getRecipes));

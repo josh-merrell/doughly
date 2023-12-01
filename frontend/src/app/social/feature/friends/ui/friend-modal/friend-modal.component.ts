@@ -23,6 +23,7 @@ import { FriendshipActions } from 'src/app/social/state/friendship-actions';
 import { Subscription } from 'rxjs';
 import { FollowshipActions } from 'src/app/social/state/followship-actions';
 import { Followship } from 'src/app/social/state/followship-state';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'dl-friend-modal',
@@ -42,7 +43,8 @@ export class FriendModalComponent {
   constructor(
     private store: Store,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<FriendModalComponent>
+    public dialogRef: MatDialogRef<FriendModalComponent>,
+    public router: Router
   ) {
     this.buttonTexts.set({ friendButton: '', followButton: '' });
   }
@@ -144,5 +146,10 @@ export class FriendModalComponent {
         })
       );
     }
+  }
+
+  onRecipeCardClick(recipeID: number): void {
+    this.router.navigate(['/recipe/public', recipeID]);
+    this.dialogRef.close();
   }
 }
