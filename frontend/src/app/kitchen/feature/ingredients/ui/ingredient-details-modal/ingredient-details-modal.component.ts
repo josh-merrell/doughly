@@ -124,7 +124,7 @@ export class IngredientDetailsModalComponent {
   }
 
   onRecipeClick(recipeID: number): void {
-    this.router.navigate(['/recipes', recipeID]);
+    this.router.navigate(['/recipe', recipeID]);
     this.dialogRef.close();
   }
 
