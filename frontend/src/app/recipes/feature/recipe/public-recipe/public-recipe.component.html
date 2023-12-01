@@ -1,0 +1,165 @@
+<div class="w-full">
+  <div *ngIf="recipe()">
+    <img
+    *ngIf="recipe().photoURL"
+    [src]="recipe().photoURL"
+    alt="Recipe Image"
+    class="w-full object-cover"
+    />
+    <!-- Overview -->
+    <div class="relative mx-dl-5 mb-dl-3 mt-dl-3 rounded-lg shadow-md">
+      <div class="mx-dl-5 mb-dl-4 mt-dl-4 flex justify-between">
+        <h1 class="mt-dl-1 text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
+          {{ recipe().title }}
+        </h1>
+        <div class="" *ngIf="author()">
+          <img
+            *ngIf="author().imageURL"
+            (click)="onFriendClick(author())"
+            class="h-dl-5 w-dl-5 rounded-full"
+            [src]="author().imageURL"
+            alt="author profile image"
+          />
+          <span
+            class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
+            *ngIf="
+              !author().imageURL && author().nameFirst && author().nameLast
+            "
+          >
+            <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
+              initials()
+            }}</span>
+          </span>
+        </div>
+      </div>
+      <div class="mx-dl-5 mb-dl-6 flex justify-between">
+        <div class="flex">
+          <p class="ml-dl-2 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-6">
+            {{ recipeCategory()?.name }}
+          </p>
+        </div>
+        <span class="ml-dl-6 text-dl-6 font-dl-2 text-dl-grey-6"
+        >Serves {{ recipe().servings }}</span
+        >
+      </div>
+
+      <!--Times -->
+      <div
+        class="mx-dl-3 flex items-center mb-dl-5 justify-between px-dl-1"
+      >
+        <svg
+          class="ml-dl-4 text-dl-grey-4"
+          width="22"
+          height="22"
+          viewBox="0 0 15 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.50009 0.877014C3.84241 0.877014 0.877258 3.84216 0.877258 7.49984C0.877258 11.1575 3.8424 14.1227 7.50009 14.1227C11.1578 14.1227 14.1229 11.1575 14.1229 7.49984C14.1229 3.84216 11.1577 0.877014 7.50009 0.877014ZM1.82726 7.49984C1.82726 4.36683 4.36708 1.82701 7.50009 1.82701C10.6331 1.82701 13.1729 4.36683 13.1729 7.49984C13.1729 10.6328 10.6331 13.1727 7.50009 13.1727C4.36708 13.1727 1.82726 10.6328 1.82726 7.49984ZM8 4.50001C8 4.22387 7.77614 4.00001 7.5 4.00001C7.22386 4.00001 7 4.22387 7 4.50001V7.50001C7 7.63262 7.05268 7.7598 7.14645 7.85357L9.14645 9.85357C9.34171 10.0488 9.65829 10.0488 9.85355 9.85357C10.0488 9.65831 10.0488 9.34172 9.85355 9.14646L8 7.29291V4.50001Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+        <p *ngIf="recipe().timePrep" class="text-dl-5 font-dl-2 text-dl-grey-4">
+          Prep: {{ timeString(recipe().timePrep) }}
+        </p>
+        <p *ngIf="recipe().timeBake" class="text-dl-5 font-dl-2 text-dl-grey-4">
+          Bake: {{ timeString(recipe().timeBake) }}
+        </p>
+        <p *ngIf="recipe().timeBake" class="text-dl-6 font-dl-3 text-dl-grey-3">
+          Total:
+          {{ timeString(recipe().timeBake + recipe().timePrep) }}
+        </p>
+      </div>
+
+      <!-- Subscribe Section -->
+      <div *ngIf="subscribed() === false" class="mx-dl-5 flex items-center mb-dl-5 justify-between px-dl-1 pb-dl-5 pt-dl-1">
+        <p class="text-dl-4 font-dl-2 text-dl-grey-4">Subscribe to use this recipe in your kitchen</p>
+        <button
+            type="button"
+            class="block w-dl-7 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+            (click)="onSubscribeClick()"
+          >
+            Subscribe
+          </button>
+      </div>
+    </div>
+
+    <!-- Ingredients -->
+    <div *ngIf="displayIngredients()" class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md">
+      <div class="flex justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+          Ingredients
+        </p>
+      </div>
+      <div *ngFor="let ingredient of displayIngredients()" class="mt-dl-2 flex">
+        <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+          {{ ingredient.name }}
+        </span>
+        <span class="ml-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+          {{ ingredient.measurement }} {{ ingredient.measurementUnit }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <div
+      class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md"
+    >
+      <div class="flex justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+          Tools
+        </p>
+      </div>
+      <div *ngFor="let tool of tools()" class="mt-dl-2 flex">
+        <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+          {{ tool.name }}
+        </span>
+        <span
+          *ngIf="tool.quantity > 0"
+          class="ml-dl-3 text-dl-5 font-dl-2 text-dl-blue-3"
+        >
+          {{ tool.quantity }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div
+      class="mx-dl-5 mt-dl-5 flex flex-col items-center rounded-lg pb-dl-5 shadow-md"
+    >
+      <div class="mb-dl-4 flex w-full justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+          Steps
+        </p>
+      </div>
+      <div
+        *ngFor="let step of steps(); let i = index"
+        class="mb-dl-3 flex w-full flex-col items-center justify-center"
+      >
+        <div class="mb-dl-2 flex w-full items-start">
+          <div class="flex flex-col">
+            <p
+              class="pl-dl-4 mb-dl-2 mr-dl-6 overflow-hidden whitespace-normal text-dl-6 font-dl-3 text-dl-grey-2"
+            >
+              {{ i + 1 }}. {{ step.title }}
+            </p>
+            <p
+              class="pl-dl-7 mr-dl-6 overflow-y-auto whitespace-normal text-dl-4 font-dl-3 text-dl-grey-4"
+            >
+              {{ step.description }}
+            </p>
+          </div>
+        </div>
+        <!-- Step photo -->
+        <img
+          *ngIf="step.photoURL"
+          [src]="step.photoURL"
+          class="mt-dl-2 w-4/5 object-cover"
+        />
+      </div>
+    </div>
+  </div>
+</div>

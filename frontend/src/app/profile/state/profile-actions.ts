@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { Profile } from './profile-state';
 
-const loadProfile = createAction('[Profile] Load');
+const loadProfile = createAction('[Profile] Load', props<{ userID?: string }>());
 const loadProfileSuccess = createAction(
   '[Profile] Load Success',
   props<{ profile: Profile }>()
