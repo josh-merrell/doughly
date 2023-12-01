@@ -199,6 +199,8 @@
       *ngFor="let recipe of friend.recipes"
       [friendUserID]="friend.userID"
       [recipe]="recipe"
+      [isUserRecipe]="false"
+      (click)="onRecipeCardClick(recipe.recipeID)"
     >
     </dl-recipe-card>
   </div>

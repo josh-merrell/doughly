@@ -40,6 +40,42 @@ module.exports = ({ db }) => {
     return recipe;
   }
 
+  async function getRecipeIngredients(options) {
+    const { recipeID } = options;
+    const { data: recipeIngredients, error } = await db.from('recipeIngredients').select().eq('recipeID', recipeID).eq('deleted', false);
+    
+    if (error) {
+      global.logger.info(`Error getting recipeIngredients for recipeID: ${recipeID}: ${error.message}`);
+      return { error: error.message };
+    }
+    global.logger.info(`Got ${recipeIngredients.length} recipeIngredients for recipeID: ${recipeID}`);
+    return recipeIngredients;
+  }
+
+  async function getRecipeTools(options) {
+    const { recipeID } = options;
+    const { data: recipeTools, error } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('deleted', false);
+    
+    if (error) {
+      global.logger.info(`Error getting recipeTools for recipeID: ${recipeID}: ${error.message}`);
+      return { error: error.message };
+    }
+    global.logger.info(`Got ${recipeTools.length} recipeTools for recipeID: ${recipeID}`);
+    return recipeTools;
+  }
+
+  async function getRecipeSteps(options) {
+    const { recipeID } = options;
+    const { data: recipeSteps, error } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('deleted', false);
+
+    if (error) {
+      global.logger.info(`Error getting recipeSteps for recipeID: ${recipeID}: ${error.message}`);
+      return { error: error.message };
+    }
+    global.logger.info(`Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`);
+    return recipeSteps;
+  }
+
   async function create(options) {
     const { customID, authorization, userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = options;
     const status = 'noIngredients';
@@ -408,6 +444,9 @@ module.exports = ({ db }) => {
     get: {
       all: getAll,
       byID: getByID,
+      ingredients: getRecipeIngredients,
+      tools: getRecipeTools,
+      steps: getRecipeSteps,
     },
     create,
     update,

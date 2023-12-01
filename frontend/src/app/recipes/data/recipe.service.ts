@@ -52,6 +52,7 @@ export class RecipeService {
         if (!recipeCategory) {
           return {
             recipeID: recipe.recipeID,
+            userID: recipe.userID,
             title: recipe.title,
             recipeCategoryID: 0,
             type: recipe.type,
@@ -66,6 +67,7 @@ export class RecipeService {
         }
         return {
           recipeID: recipe.recipeID,
+          userID: recipe.userID,
           title: recipe.title,
           recipeCategoryID: recipe.recipeCategoryID,
           type: recipe.type,
