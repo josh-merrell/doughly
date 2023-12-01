@@ -416,9 +416,9 @@ export class UserRecipeComponent {
   }
   timeString(minutes: number) {
     const hours = Math.floor(minutes / 60);
-    if (hours === 0) return `${minutes} min`;
+    if (hours === 0) return `${minutes} m`;
     const mins = minutes % 60;
-    return `${hours} hr ${mins} min`;
+    return `${hours} h ${mins} m`;
   }
   editRecipeIngredients() {
     const dialogRef = this.dialog.open(RecipeIngredientsModalComponent, {

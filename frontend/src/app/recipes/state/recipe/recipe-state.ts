@@ -24,6 +24,7 @@ export enum RecipeType {
 
 export interface Recipe {
   recipeID: number;
+  userID: number;
   title: string;
   servings: number;
   recipeCategoryID: number;

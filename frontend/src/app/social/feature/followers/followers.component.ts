@@ -42,7 +42,7 @@ export class FollowersComponent {
   constructor(private store: Store, public dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.store.dispatch(ProfileActions.loadProfile());
+    this.store.dispatch(ProfileActions.loadProfile({}));
     this.store.dispatch(ProfileActions.loadFollowers());
     this.store.dispatch(ProfileActions.loadFollowing());
 

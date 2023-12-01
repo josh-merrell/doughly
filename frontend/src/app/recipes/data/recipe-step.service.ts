@@ -12,6 +12,7 @@ import { IDService } from 'src/app/shared/utils/ID';
 })
 export class RecipeStepService {
   private API_URL = `${environment.BACKEND}/steps/recipe`;
+  private API_URL_RECIPE = `${environment.BACKEND}/recipes`;
 
   constructor(
     private http: HttpClient,
@@ -39,6 +40,10 @@ export class RecipeStepService {
 
   getByID(recipeStepID: number): Observable<RecipeStep> {
     return this.http.get<RecipeStep>(`${this.API_URL}/${recipeStepID}`);
+  }
+
+  getByRecipeID(recipeID: number): Observable<RecipeStep[]> {
+    return this.http.get<RecipeStep[]>(`${this.API_URL_RECIPE}/${recipeID}/steps`);
   }
 
   add(recipeStep: RecipeStep): Observable<RecipeStep> {

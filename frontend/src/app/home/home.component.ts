@@ -28,7 +28,7 @@ export class HomeComponent {
     this.store.dispatch(FollowshipActions.loadFollowers());
 
     // also load profile store, including profiles of any friends and followers
-    this.store.dispatch(ProfileActions.loadProfile());
+    this.store.dispatch(ProfileActions.loadProfile({}));
     this.store.dispatch(ProfileActions.loadFriends());
     this.store.dispatch(ProfileActions.loadFollowers());
   }

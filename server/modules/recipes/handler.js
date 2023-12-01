@@ -8,6 +8,30 @@ async function getRecipes(req, res) {
   return res.json(returner);
 }
 
+async function getRecipeIngredients(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { recipeID } = req.params;
+  const returner = await p.get.ingredients({ userID: req.userID, recipeID });
+  return res.json(returner);
+}
+
+async function getRecipeTools(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { recipeID } = req.params;
+  const returner = await p.get.tools({ userID: req.userID, recipeID });
+  return res.json(returner);
+}
+
+async function getRecipeSteps(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { recipeID } = req.params;
+  const returner = await p.get.steps({ userID: req.userID, recipeID });
+  return res.json(returner);
+}
+
 async function getRecipeByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -92,6 +116,9 @@ async function useRecipe(req, res) {
 
 module.exports = {
   getRecipes,
+  getRecipeIngredients,
+  getRecipeTools,
+  getRecipeSteps,
   getRecipeByID,
   createRecipe,
   updateRecipe,
