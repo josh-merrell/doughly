@@ -4,8 +4,12 @@ async function getProfile(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
+  let { userID } = req.query;
+  if (!userID) {
+    userID = req.userID;
+  }
   const returner = await p.getProfile({
-    userID: req.userID,
+    userID
   });
   return res.json(returner);
 }

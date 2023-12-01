@@ -19,8 +19,11 @@ export class ProfileService {
     private idService: IDService
   ) {}
 
-  getProfile(): Observable<Profile> {
-    return this.http.get<Profile>(`${this.API_URL}/`);
+  getProfile(userID?: string): Observable<Profile> {
+    if (!userID) {
+      return this.http.get<Profile>(`${this.API_URL}/`);
+    }
+    return this.http.get<Profile>(`${this.API_URL}/?userID=${userID}`);
   }
 
   getFriends(): Observable<Profile[]> {
@@ -60,6 +63,8 @@ export class ProfileService {
   }
 
   searchProfiles(searchQuery: string): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.API_URL}/search?searchQuery=${searchQuery}`);
+    return this.http.get<Profile[]>(
+      `${this.API_URL}/search?searchQuery=${searchQuery}`
+    );
   }
 }
