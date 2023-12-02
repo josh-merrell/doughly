@@ -23,7 +23,7 @@ module.exports = ({ db }) => {
           title,
           servings,
           lifespanDays,
-          type,
+          type: 'subscription',
           timePrep,
           timeBake,
           photoURL,
@@ -91,7 +91,7 @@ module.exports = ({ db }) => {
   async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
     let ingredientID;
     try {
-      if (!ingredient.ingredientID) {
+      if ( ingredient.ingredientID === 0) {
         // If ingredientID is not provided, create a new ingredient
         const { data } = await axios.post(
           `${process.env.NODE_HOST}:${process.env.PORT}/ingredients`,
@@ -124,7 +124,6 @@ module.exports = ({ db }) => {
           IDtype: 16,
           recipeID,
           ingredientID,
-          quantity: ingredient.quantity,
           measurementUnit: ingredient.measurementUnit,
           measurement: ingredient.measurement,
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
@@ -162,8 +161,9 @@ module.exports = ({ db }) => {
           { headers: { authorization } },
         );
         return { recipeToolID: data.recipeToolID, toolID: toolID };
-      }
-      if (!tool.toolID) {
+      } 
+      
+      if (tool.toolID === 0) {
         // If toolID is not provided, create a new tool
         const { data } = await axios.post(
           `${process.env.NODE_HOST}:${process.env.PORT}/tools`,
@@ -213,7 +213,7 @@ module.exports = ({ db }) => {
   async function constructRecipeStep(step, authorization, userID, recipeID) {
     let stepID;
     try {
-      if (!step.stepID) {
+      if (step.stepID === 0) {
         // if stepID is not provided, create a new step
         const { data } = await axios.post(
           `${process.env.NODE_HOST}:${process.env.PORT}/steps`,

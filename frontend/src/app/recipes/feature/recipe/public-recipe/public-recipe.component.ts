@@ -11,9 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
 import { selectRecipeCategoryByID } from '../../../state/recipe-category/recipe-category-selectors';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  RecipeIngredient,
-} from '../../../state/recipe-ingredient/recipe-ingredient-state';
+import { RecipeIngredient } from '../../../state/recipe-ingredient/recipe-ingredient-state';
 import { RecipeService } from '../../../data/recipe.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -28,6 +26,8 @@ import { RecipeStepService } from 'src/app/recipes/data/recipe-step.service';
 import { StepService } from 'src/app/recipes/data/step.service';
 import { FriendModalComponent } from 'src/app/social/feature/friends/ui/friend-modal/friend-modal.component';
 import { SubscribeRecipeModalComponent } from '../ui/subscribe-recipe-modal/subscribe-recipe-modal.component';
+import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
+import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 
 @Component({
   selector: 'dl-public-recipe',
@@ -49,6 +49,7 @@ export class PublicRecipeComponent {
   public initials: WritableSignal<string> = signal('');
   ingredients: WritableSignal<any[]> = signal([]);
   recipeIngredients: WritableSignal<RecipeIngredient[]> = signal([]);
+  recipeSubscription: WritableSignal<any> = signal(null);
   displayIngredients = computed(() => {
     const recipeIngredients = this.recipeIngredients();
     const ingredients = this.ingredients();
@@ -60,6 +61,7 @@ export class PublicRecipeComponent {
       if (!ri) return null;
       return {
         ...i,
+        purchaseUnitRatio: ri.purchaseUnitRatio,
         measurement: ri.measurement,
         measurementUnit: ri.measurementUnit,
       };
@@ -157,7 +159,10 @@ export class PublicRecipeComponent {
       recipeTools.forEach((rt) => {
         if (rt.quantity === -1) return; // this is a placeholder for noTools, don't try to retrieve it
         this.toolService.getByID(rt.toolID).subscribe((data) => {
-          this.tools.set([...this.tools(), data[0]]);
+          this.tools.set([
+            ...this.tools(),
+            { ...data[0], quantity: rt.quantity },
+          ]);
         });
       });
     });
@@ -168,7 +173,10 @@ export class PublicRecipeComponent {
       recipeSteps.forEach((rs) => {
         this.stepService.getByID(rs.stepID).subscribe((data) => {
           if (!data) return;
-          this.steps.set([...this.steps(), data]);
+          this.steps.set([
+            ...this.steps(),
+            { ...data, sequence: rs.sequence, photoURL: rs.photoURL },
+          ]);
         });
       });
     });
@@ -197,18 +205,38 @@ export class PublicRecipeComponent {
   }
 
   onSubscribeClick() {
-    console.log('subscribe clicked');
-    this.dialog.open(SubscribeRecipeModalComponent, {
-      data: {
-        recipe: this.recipe(),
-        ingredients: this.displayIngredients(),
-        tools: this.tools(),
-        steps: this.steps(),
-        author: this.author(),
-      },
-      width: '90%',
-      maxWidth: '640px',
-      maxHeight: '840px',
-    });
+    if (!this.recipeSubscription()()) {
+      const dialogRef = this.dialog.open(SubscribeRecipeModalComponent, {
+        data: {
+          recipe: this.recipe(),
+          ingredients: this.displayIngredients(),
+          tools: this.tools(),
+          steps: this.steps(),
+          author: this.author(),
+        },
+        width: '90%',
+        maxWidth: '640px',
+        maxHeight: '840px',
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result.recipeID) {
+          this.dialog.open(AddRequestConfirmationModalComponent, {
+            data: {
+              result: result,
+              addSuccessMessage: `Subscribed to recipe. Find it in your 'Recipes' page!`,
+            },
+          });
+        } else if (result) {
+          this.dialog.open(AddRequestErrorModalComponent, {
+            data: {
+              error: result,
+              addFailureMessage:
+                'Failed to subscribe to recipe. Refresh and try again.',
+            },
+          });
+        }
+      });
+    }
   }
 }
