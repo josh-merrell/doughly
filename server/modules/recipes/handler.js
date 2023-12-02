@@ -114,6 +114,31 @@ async function useRecipe(req, res) {
   return res.json(returner);
 }
 
+async function constructRecipe(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { title, servings, recipeCategoryID, lifespanDays, timePrep, timeBake, photoURL, type, components, ingredients, tools, steps } = req.body;
+  const { authorization } = req.headers;
+  const { customID } = req;
+  const returner = await p.construct({
+    authorization,
+    userID: req.userID,
+    recipeCategoryID,
+    title,
+    servings,
+    lifespanDays,
+    type,
+    timePrep,
+    timeBake,
+    photoURL,
+    components,
+    ingredients,
+    tools,
+    steps,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   getRecipes,
   getRecipeIngredients,
@@ -124,4 +149,5 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   useRecipe,
+  constructRecipe,
 };

@@ -6,6 +6,288 @@ const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 
 module.exports = ({ db }) => {
+  async function construct(options) {
+    const { customID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type, timePrep, timeBake, photoURL, components, ingredients, tools, steps } = options;
+
+    console.log();
+    let recipeID;
+    const createdItems = [];
+    try {
+      //first create the recipe, save as {'recipeID': recipeID} to createdItems
+      console.log(`creating recipe. path: ${process.env.NODE_HOST}:${process.env.PORT}/recipes`);
+      const { data: recipe, error } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/recipes`,
+        {
+          authorization,
+          userID,
+          title,
+          servings,
+          lifespanDays,
+          type,
+          timePrep,
+          timeBake,
+          photoURL,
+          IDtype: 11,
+          recipeCategoryID,
+        },
+        { headers: { authorization } },
+      );
+      if (error) {
+        throw error;
+      }
+      recipeID = recipe.recipeID;
+
+      const ingredientPromises = ingredients.map((i) => constructRecipeIngredient(i, authorization, userID, recipe.recipeID));
+      const ingredientResults = await Promise.allSettled(ingredientPromises);
+      for (const result of ingredientResults) {
+        if (result.status === 'fulfilled') {
+          createdItems.push({ ingredientID: result.value.ingredientID });
+        } else {
+          throw new Error(`Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason}`);
+        }
+      }
+      console.log('created ingredients');
+
+      if (!tools.length) { // dummy recipeTool case
+        constructRecipeTool({ quantity: -1 }, authorization, userID, recipe.recipeID);
+      } else {
+        const toolPromises = tools.map((t) => constructRecipeTool(t, authorization, userID, recipe.recipeID));
+        const toolResults = await Promise.allSettled(toolPromises);
+        for (const result of toolResults) {
+          if (result.status === 'fulfilled') {
+            createdItems.push({ toolID: result.value.toolID });
+          } else {
+            throw new Error(`Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`);
+          }
+        }
+        console.log('created tools');
+      }
+
+      const stepPromises = steps.map((s) => constructRecipeStep(s, authorization, userID, recipe.recipeID));
+      const stepResults = await Promise.allSettled(stepPromises);
+      for (const result of stepResults) {
+        if (result.status === 'fulfilled') {
+          createdItems.push({ stepID: result.value.stepID });
+        } else {
+          throw new Error(`Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`);
+        }
+      }
+      console.log('created steps');
+
+      return { recipeID: recipe.recipeID };
+    } catch (error) {
+      //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
+      if (recipeID) {
+        await deleteItem({ recipeID: recipeID }, authorization);
+        for (let i in createdItems) {
+          deleteItem(createdItems[i], authorization);
+        }
+      }
+      throw new Error(`Failed to construct Recipe. ${error.message}`);
+    }
+  }
+
+  async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
+    let ingredientID;
+    try {
+      if (!ingredient.ingredientID) {
+        // If ingredientID is not provided, create a new ingredient
+        const { data } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/ingredients`,
+          {
+            authorization,
+            userID,
+            IDtype: 12,
+            name: ingredient.name,
+            lifespanDays: ingredient.lifespanDays,
+            purchaseUnit: ingredient.purchaseUnit,
+            gramRatio: ingredient.gramRatio,
+            brand: ingredient.brand,
+          },
+          { headers: { authorization } },
+        );
+        ingredientID = data.ingredientID;
+      } else {
+        ingredientID = ingredient.ingredientID;
+      }
+    } catch (error) {
+      throw error;
+    }
+    // Then, create the recipeIngredient
+    try {
+      const { data } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/ingredients/recipe`,
+        {
+          authorization,
+          userID,
+          IDtype: 16,
+          recipeID,
+          ingredientID,
+          quantity: ingredient.quantity,
+          measurementUnit: ingredient.measurementUnit,
+          measurement: ingredient.measurement,
+          purchaseUnitRatio: ingredient.purchaseUnitRatio,
+        },
+        { headers: { authorization } },
+      );
+      return { recipeIngredientID: data.recipeIngredientID, ingredientID: ingredientID };
+    } catch (error) {
+      if (ingredientID) {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/${ingredientID}`, {
+          headers: {
+            authorization,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  async function constructRecipeTool(tool, authorization, userID, recipeID) {
+    let toolID;
+    try {
+      if (tool.quantity === -1) {
+        // create dummy recipeTool
+        const { data } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/tools/recipe`,
+          {
+            authorization,
+            userID,
+            IDtype: 17,
+            recipeID,
+            toolID: 0,
+            quantity: tool.quantity
+          },
+          { headers: { authorization } },
+        );
+        return { recipeToolID: data.recipeToolID, toolID: toolID };
+      }
+      if (!tool.toolID) {
+        // If toolID is not provided, create a new tool
+        const { data } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/tools`,
+          {
+            authorization,
+            userID,
+            IDtype: 14,
+            name: tool.name,
+            brand: tool.brand,
+          },
+          { headers: { authorization } },
+        );
+        toolID = data.toolID;
+      } else {
+        toolID = tool.toolID;
+      }
+    } catch (error) {
+      throw error;
+    }
+    // Then, create the recipeTool
+    try {
+      const { data } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/tools/recipe`,
+        {
+          authorization,
+          userID,
+          IDtype: 17,
+          recipeID,
+          toolID,
+          quantity: tool.quantity,
+        },
+        { headers: { authorization } },
+      );
+      return { recipeToolID: data.recipeToolID, toolID: toolID };
+    } catch (error) {
+      if (toolID) {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/tools/${toolID}`, {
+          headers: {
+            authorization,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  async function constructRecipeStep(step, authorization, userID, recipeID) {
+    let stepID;
+    try {
+      if (!step.stepID) {
+        // if stepID is not provided, create a new step
+        const { data } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/steps`,
+          {
+            authorization,
+            userID,
+            IDtype: 18,
+            title: step.title,
+            description: step.description,
+          },
+          { headers: { authorization } },
+        );
+        stepID = data.stepID;
+      } else {
+        stepID = step.stepID;
+      }
+    } catch (error) {
+      throw error;
+    }
+    // Then, create the recipeStep
+    try {
+      const { data } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/steps/recipe`,
+        {
+          authorization,
+          userID,
+          IDtype: 19,
+          recipeID,
+          stepID,
+          sequence: step.sequence,
+          photoURL: step.photoURL,
+        },
+        { headers: { authorization } },
+      );
+      return { recipeStepID: data.recipeStepID, stepID: stepID };
+    } catch (error) {
+      if (stepID) {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/steps/${stepID}`, {
+          headers: {
+            authorization,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  async function deleteItem(item, authorization) {
+    if (item.recipeID) {
+      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${item.recipeID}`, {
+        headers: {
+          authorization,
+        },
+      });
+    } else if (item.ingredientID) {
+      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/${item.ingredientID}`, {
+        headers: {
+          authorization,
+        },
+      });
+    } else if (item.toolID) {
+      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/tools/${item.toolID}`, {
+        headers: {
+          authorization,
+        },
+      });
+    } else if (item.stepID) {
+      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/steps/${item.stepID}`, {
+        headers: {
+          authorization,
+        },
+      });
+    }
+  }
+
   async function getAll(options) {
     const { userID, recipeIDs, title, recipeCategoryID } = options;
     let q = db.from('recipes').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeID', { ascending: true });
@@ -43,7 +325,7 @@ module.exports = ({ db }) => {
   async function getRecipeIngredients(options) {
     const { recipeID } = options;
     const { data: recipeIngredients, error } = await db.from('recipeIngredients').select().eq('recipeID', recipeID).eq('deleted', false);
-    
+
     if (error) {
       global.logger.info(`Error getting recipeIngredients for recipeID: ${recipeID}: ${error.message}`);
       return { error: error.message };
@@ -55,7 +337,7 @@ module.exports = ({ db }) => {
   async function getRecipeTools(options) {
     const { recipeID } = options;
     const { data: recipeTools, error } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('deleted', false);
-    
+
     if (error) {
       global.logger.info(`Error getting recipeTools for recipeID: ${recipeID}: ${error.message}`);
       return { error: error.message };
@@ -79,6 +361,9 @@ module.exports = ({ db }) => {
   async function create(options) {
     const { customID, authorization, userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = options;
     const status = 'noIngredients';
+    console.log(
+      `creating recipe. customID: ${customID} authorization: ${authorization}, userID: ${userID}, title: ${title}, servings: ${servings}, lifespanDays: ${lifespanDays}, type: ${type}, timePrep: ${timePrep}, timeBake: ${timeBake}, photoURL: ${photoURL}, recipeCategoryID: ${recipeCategoryID}`,
+    );
 
     if (!title) {
       global.logger.info(`Title is required`);
@@ -137,6 +422,7 @@ module.exports = ({ db }) => {
       timePrep: recipe.timePrep,
       timeBake: recipe.timeBake,
       photoURL: recipe.photoURL,
+      type: recipe.type,
       version: 1,
     };
   }
@@ -448,6 +734,7 @@ module.exports = ({ db }) => {
       tools: getRecipeTools,
       steps: getRecipeSteps,
     },
+    construct,
     create,
     update,
     delete: deleteRecipe,
