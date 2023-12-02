@@ -7,68 +7,36 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
-import { selectRecipeByID } from '../../../state/recipe/recipe-selectors';
-import { selectRecipeIngredientsByRecipeID } from '../../../state/recipe-ingredient/recipe-ingredient-selectors';
-import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
-import { selectRecipeToolsByRecipeID } from '../../../state/recipe-tool/recipe-tool-selectors';
 import { selectRecipeCategoryByID } from '../../../state/recipe-category/recipe-category-selectors';
-import { DomSanitizer } from '@angular/platform-browser';
-import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { MatDialog } from '@angular/material/dialog';
-import { RecipeIngredientsModalComponent } from '../../recipes-page/ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
-import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
-import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import {
   RecipeIngredient,
-  RecipeIngredientError,
 } from '../../../state/recipe-ingredient/recipe-ingredient-state';
-import { RecipeToolsModalComponent } from '../../recipes-page/ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
-import { selectSteps } from '../../../state/step/step-selectors';
-import { selectRecipeStepsByID } from '../../../state/recipe-step/recipe-step-selectors';
-import { RecipeStepsModalComponent } from '../../recipes-page/ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
-import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
-import { DeleteRecipeModalComponent } from './../ui/delete-recipe-modal/delete-recipe-modal.component';
-import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
-import { EditRecipeModalComponent } from './../ui/edit-recipe-modal/edit-recipe-modal.component';
-import { UpdateRequestErrorModalComponent } from 'src/app/shared/ui/update-request-error/update-request-error-modal.component';
-import { HttpErrorResponse } from '@angular/common/http';
-import { UpdateRequestConfirmationModalComponent } from 'src/app/shared/ui/update-request-confirmation/update-request-confirmation-modal.component';
 import { RecipeService } from '../../../data/recipe.service';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { Recipe, ShoppingList } from '../../../state/recipe/recipe-state';
-import { RecipeShoppingListModalComponent } from './../ui/recipe-shopping-list-modal/recipe-shopping-list-modal.component';
-import { UseRecipeModalComponent } from './../ui/use-recipe-modal/use-recipe-modal.component';
-import { PhotoService } from 'src/app/shared/utils/photoService';
-import { IngredientActions } from 'src/app/kitchen/feature/ingredients/state/ingredient-actions';
-import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
-import { StepActions } from 'src/app/recipes/state/step/step-actions';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { ProfileService } from 'src/app/profile/data/profile.service';
 import { RecipeCategoryActions } from 'src/app/recipes/state/recipe-category/recipe-category-actions';
 import { RecipeIngredientService } from 'src/app/recipes/data/recipe-ingredients.service';
 import { IngredientService } from 'src/app/kitchen/feature/ingredients/data/ingredient.service';
-import { Ingredient } from 'src/app/kitchen/state/kitchen-interfaces';
 import { ToolService } from 'src/app/kitchen/feature/tools/data/tool.service';
 import { RecipeToolService } from 'src/app/recipes/data/recipe-tool.service';
 import { RecipeStepService } from 'src/app/recipes/data/recipe-step.service';
 import { StepService } from 'src/app/recipes/data/step.service';
-import { retry } from 'rxjs';
 import { FriendModalComponent } from 'src/app/social/feature/friends/ui/friend-modal/friend-modal.component';
-
-function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
-  return obj && obj.errorType !== undefined && obj.message !== undefined;
-}
-function isRecipeStepError(obj: any): obj is RecipeIngredientError {
-  return obj && obj.errorType !== undefined && obj.message !== undefined;
-}
 
 @Component({
   selector: 'dl-public-recipe',
   standalone: true,
-  imports: [CommonModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [
+    CommonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './public-recipe.component.html',
 })
 export class PublicRecipeComponent {
@@ -95,6 +63,10 @@ export class PublicRecipeComponent {
       };
     });
     return newIngredients;
+  });
+  ready = computed(() => {
+    if (this.recipe() && this.displayIngredients() && this.steps() && this.tools()) return true;
+    return false;
   });
   tools: WritableSignal<any[]> = signal([]);
   recipeTools: WritableSignal<any[]> = signal([]);

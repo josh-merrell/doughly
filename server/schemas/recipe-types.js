@@ -63,46 +63,6 @@ const RecipeDeleteSchema_params = {
   },
 };
 
-// const getRecipeCategorySchema_params = {
-//   type: 'object',
-//   required: ['recipeCategoryID'],
-//   properties: {
-//     recipeCategoryID: { type: 'string' },
-//   },
-// };
-
-// const newRecipeCategorySchema_body = {
-//   type: 'object',
-//   required: ['name'],
-//   properties: {
-//     name: { type: 'string' },
-//     photoURL: { type: 'string' },
-//   },
-// };
-
-// const RecipeCategoryUpdateSchema_body = {
-//   type: 'object',
-//   properties: {
-//     name: { type: 'string' },
-//   },
-// };
-
-// const RecipeCategoryUpdateSchema_params = {
-//   type: 'object',
-//   required: ['recipeCategoryID'],
-//   properties: {
-//     recipeCategoryID: { type: 'string' },
-//   },
-// };
-
-// const RecipeCategoryDeleteSchema_params = {
-//   type: 'object',
-//   required: ['recipeCategoryID'],
-//   properties: {
-//     recipeCategoryID: { type: 'string' },
-//   },
-// };
-
 const getRecipeComponentsSchema_query = {
   type: 'object',
   properties: {
@@ -152,6 +112,25 @@ const RecipeComponentDeleteSchema_params = {
   },
 };
 
+const constructRecipeSchema_body = {
+  type: 'object',
+  required: ['title', 'servings', 'lifespanDays', 'timePrep', 'type', 'ingredients', 'tools', 'steps'],
+  properties: {
+    title: { type: 'string' },
+    recipeCategoryID: { type: 'integer' },
+    servings: { type: 'integer' },
+    lifespanDays: { type: 'integer' },
+    type: { type: 'string' },
+    timePrep: { type: 'integer' },
+    timeBake: { type: 'integer' },
+    photoURL: { type: 'string' },
+    components: { type: 'array', items: { type: 'object' } },
+    ingredients: { type: 'array', items: { type: 'object' } },
+    tools: { type: 'array', items: { type: 'object' } },
+    steps: { type: 'array', items: { type: 'object' } },
+  },
+};
+
 // Use Recipe
 const useRecipeSchema_params = {
   type: 'object',
@@ -171,6 +150,7 @@ const useRecipeSchema_body = {
   },
 };
 
+
 module.exports = {
   getRecipesSchema_query,
   getRecipeSchema_params,
@@ -178,17 +158,13 @@ module.exports = {
   RecipeUpdateSchema_body,
   RecipeUpdateSchema_params,
   RecipeDeleteSchema_params,
-  // getRecipeCategorySchema_params,
-  // newRecipeCategorySchema_body,
-  // RecipeCategoryUpdateSchema_body,
-  // RecipeCategoryUpdateSchema_params,
-  // RecipeCategoryDeleteSchema_params,
   getRecipeComponentsSchema_query,
   getRecipeComponentSchema_params,
   newRecipeComponentSchema_body,
   RecipeComponentUpdateSchema_body,
   RecipeComponentUpdateSchema_params,
   RecipeComponentDeleteSchema_params,
+  constructRecipeSchema_body,
   useRecipeSchema_params,
   useRecipeSchema_body,
 };
