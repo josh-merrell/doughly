@@ -150,6 +150,15 @@ const useRecipeSchema_body = {
   },
 };
 
+const subscribeRecipe_body = {
+  type: 'object',
+  required: ['sourceRecipeID', 'newRecipeID'],
+  properties: {
+    sourceRecipeID: { type: 'integer' },
+    newRecipeID: { type: 'integer' },
+  },
+}
+
 
 module.exports = {
   getRecipesSchema_query,
@@ -167,4 +176,5 @@ module.exports = {
   constructRecipeSchema_body,
   useRecipeSchema_params,
   useRecipeSchema_body,
+  subscribeRecipe_body,
 };
