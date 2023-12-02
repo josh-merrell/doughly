@@ -249,4 +249,8 @@ export class RecipeService {
 
     return this.http.post<RecipeUse>(`${this.API_URL}/use/${recipeID}`, body);
   }
+
+  constructRecipe(constructBody): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/constructed`, constructBody);
+  }
 }
