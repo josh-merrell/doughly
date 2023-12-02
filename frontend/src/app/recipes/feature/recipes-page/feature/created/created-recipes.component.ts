@@ -130,6 +130,10 @@ export class CreatedRecipesComponent {
 
   ngOnInit(): void {
     this.store.select(selectRecipes).subscribe((recipes) => {
+      // filter out any with type of 'subscription'
+      recipes = recipes.filter((recipe) => {
+        return recipe.type !== 'subscription';
+      });
       this.recipes.set(
         [...recipes].sort((a, b) => a.title.localeCompare(b.title))
       );

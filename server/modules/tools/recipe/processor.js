@@ -83,20 +83,39 @@ module.exports = ({ db }) => {
           return { error: undeleteError };
         }
       }
-      //if status of existingRecipe is 'noTools', update status to 'noSteps'
+      //if status of existingRecipe is 'noTools', check whether there are any recipeSteps
       if (recipe[0].status === 'noTools') {
-        await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeID);
-        //log recipe status update
-        const logID1 = await createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'noSteps', `updated recipe status from 'noTools' to 'noSteps'`);
-        //increment recipe version and add a 'updatedRecipeVersion' log entry
-        const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
-        createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion), `updated recipe, ID: ${recipeID} to version: ${newVersion}`);
+        const { data: recipeSteps, error: recipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('deleted', false);
+        if (recipeStepsError) {
+          global.logger.info(`Error getting recipeSteps for recipe: ${recipeStepsError}`);
+          return { error: recipeStepsError };
+        }
+        //if there are any, update status to 'published'
+        if (recipeSteps.length) {
+          const { error: updateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
+          if (updateError) {
+            global.logger.info(`Error updating recipe status: ${updateError}`);
+            return { error: updateError };
+          }
+          //log recipe status update
+          const logID1 = await createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'published', `updated recipe status from 'noTools' to 'published'`);
+          //increment recipe version and add a 'updatedRecipeVersion' log entry
+          const newVersion1 = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+          createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion1), `updated recipe, ID: ${recipeID} to version: ${newVersion1}`);
+        } else {
+          await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeID);
+          //log recipe status update
+          const logID2 = await createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'noSteps', `updated recipe status from 'noTools' to 'noSteps'`);
+          //increment recipe version and add a 'updatedRecipeVersion' log entry
+          const newVersion2 = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+          createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID2), String(recipe[0].version), String(newVersion2), `updated recipe, ID: ${recipeID} to version: ${newVersion2}`);
+        }
       }
       //log dummy recipeTool creation
-      const logID2 = await createRecipeLog(userID, authorization, 'createDummyRecipeTool', Number(dummyRecipeTool.recipeToolID), Number(recipeID), null, null, `created dummy recipeTool with ID: ${dummyRecipeTool.recipeToolID}`);
+      const logID3 = await createRecipeLog(userID, authorization, 'createDummyRecipeTool', Number(dummyRecipeTool.recipeToolID), Number(recipeID), null, null, `created dummy recipeTool with ID: ${dummyRecipeTool.recipeToolID}`);
       //increment recipe version and add a 'updatedRecipeVersion' log entry
-      const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
-      createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID2), String(recipe[0].version), String(newVersion), `Updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
+      const newVersion3 = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+      createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID3), String(recipe[0].version), String(newVersion3), `Updated Recipe, ID: ${recipeID} to version: ${newVersion3}`);
       return {
         recipeToolID: dummyRecipeTool.recipeToolID,
         recipeID: dummyRecipeTool.recipeID,
@@ -124,14 +143,27 @@ module.exports = ({ db }) => {
     }
 
     //validate that recipeTool does not already exist
-    const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('toolID', toolID);
+    const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('toolID', toolID).eq;
     if (recipeToolError) {
       global.logger.info(`Error checking for duplicate recipeTool: ${recipeToolError}`);
       return { error: recipeToolError };
     }
-    if (recipeTool.length) {
+    if (recipeTool && recipeTool[0].deleted === false) {
       global.logger.info(`RecipeTool already exists, cannot create recipeTool`);
       return { error: `RecipeTool already exists, cannot create recipeTool` };
+    }
+    if (recipeTool && recipeTool[0].deleted === true) {
+      //undelete existing recipeTool
+      const { data: undeletedRecipeTool, error: undeleteError } = await db.from('recipeTools').update({ deleted: false }).eq('recipeToolID', recipeTool[0].recipeToolID).select().single();
+      if (undeleteError) {
+        global.logger.info(`Error undeleting recipeTool: ${undeleteError}`);
+        return { error: undeleteError };
+      }
+      //add a 'created' log entry
+      const logID6 = await createRecipeLog(userID, authorization, 'createRecipeTool', Number(undeletedRecipeTool.recipeToolID), Number(recipeID), null, null, `created recipeTool with ID: ${undeletedRecipeTool.recipeToolID}`);
+      //increment recipe version and add a 'updatedRecipeVersion' log entry
+      const newVersion6 = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+      createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID6), String(recipe[0].version), String(newVersion6), `updated recipe, ID: ${recipeID} from ${recipe[0].version} to ${newVersion6}`);
     }
 
     //create recipeTool
@@ -143,28 +175,48 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    const logID3 = await createRecipeLog(userID, authorization, 'createRecipeTool', Number(newRecipeTool.recipeToolID), Number(recipeID), null, null, `created recipeTool with ID: ${newRecipeTool.recipeToolID}`);
+    const logID4 = await createRecipeLog(userID, authorization, 'createRecipeTool', Number(newRecipeTool.recipeToolID), Number(recipeID), null, null, `created recipeTool with ID: ${newRecipeTool.recipeToolID}`);
     //increment recipe version and add a 'updatedRecipeVersion' log entry
-    const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
-    createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID3), String(recipe[0].version), String(newVersion), `updated recipe, ID: ${recipeID} from ${recipe[0].version} to ${newVersion}`);
+    const newVersion4 = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+    createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID4), String(recipe[0].version), String(newVersion4), `updated recipe, ID: ${recipeID} from ${recipe[0].version} to ${newVersion4}`);
 
-    //if status of existingRecipe is 'noTools', update status to 'noSteps'
+    //if status of existingRecipe is 'noTools', check whether there are any recipeSteps
     if (recipe[0].status === 'noTools') {
-      const { error: updateError } = await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeID);
-      if (updateError) {
-        global.logger.info(`Error updating recipe status: ${updateError}`);
-        //rollback recipeTool creation
-        const { error: rollbackError } = await db.from('recipeTools').delete().eq('recipeToolID', newRecipeTool.recipeToolID);
-        if (rollbackError) {
-          global.logger.info(`Error rolling back recipeTool: ${rollbackError}`);
-          return { error: rollbackError };
-        }
-        return { error: updateError };
+      const { data: recipeSteps, error: recipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('deleted', false);
+      if (recipeStepsError) {
+        global.logger.info(`Error getting recipeSteps for recipe: ${recipeStepsError}`);
+        return { error: recipeStepsError };
       }
-      const logID4 = createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'noSteps', `updated recipe status from 'noTools' to 'noSteps'`);
-      //increment recipe version and add a 'updatedRecipeVersion' log entry
-      const newVersion = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
-      createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID4), String(recipe[0].version), String(newVersion), `updated recipe, ID: ${recipeID} from ${recipe[0].version} to ${newVersion}`);
+      //if there are any, update status to 'published'
+      if (recipeSteps.length) {
+        const { error: updateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
+        if (updateError) {
+          global.logger.info(`Error updating recipe status: ${updateError}`);
+          return { error: updateError };
+        }
+        //log recipe status update
+        const logID5 = await createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'published', `updated recipe status from 'noTools' to 'published'`);
+        //increment recipe version and add a 'updatedRecipeVersion' log entry
+        const newVersion5 = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+        createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID5), String(recipe[0].version), String(newVersion5), `updated recipe, ID: ${recipeID} from ${recipe[0].version} to ${newVersion5}`);
+      } else {
+        // if there are no recipeSteps, update status to 'noSteps'
+        const { error: updateError } = await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeID);
+        if (updateError) {
+          global.logger.info(`Error updating recipe status: ${updateError}`);
+          //rollback recipeTool creation
+          const { error: rollbackError } = await db.from('recipeTools').delete().eq('recipeToolID', newRecipeTool.recipeToolID);
+          if (rollbackError) {
+            global.logger.info(`Error rolling back recipeTool: ${rollbackError}`);
+            return { error: rollbackError };
+          }
+          return { error: updateError };
+        }
+        const logID5 = createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'noSteps', `updated recipe status from 'noTools' to 'noSteps'`);
+        //increment recipe version and add a 'updatedRecipeVersion' log entry
+        const newVersion5 = await incrementVersion('recipes', 'recipeID', recipeID, recipe[0].version);
+        createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID5), String(recipe[0].version), String(newVersion5), `updated recipe, ID: ${recipeID} from ${recipe[0].version} to ${newVersion5}`);
+      }
     }
 
     return {

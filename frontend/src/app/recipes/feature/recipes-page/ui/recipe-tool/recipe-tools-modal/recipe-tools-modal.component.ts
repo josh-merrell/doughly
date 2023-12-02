@@ -30,6 +30,7 @@ import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors'
 import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
 import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
 import { DeleteRecipeToolModalComponent } from '../delete-recipe-tool-modal/delete-recipe-tool-modal.component';
+import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
 
 @Component({
   selector: 'dl-recipe-tools-modal',
@@ -80,6 +81,7 @@ export class RecipeToolsModalComponent {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(ToolActions.loadTools());
     this.tools$ = this.store.select(selectTools);
     this.displayedTools$.subscribe((tools) => {
       if (tools.length > 0) {

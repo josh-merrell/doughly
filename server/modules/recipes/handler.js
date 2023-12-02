@@ -139,6 +139,22 @@ async function constructRecipe(req, res) {
   return res.json(returner);
 }
 
+async function subscribeRecipe(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { sourceRecipeID, newRecipeID } = req.body;
+  const { authorization } = req.headers;
+  const { customID } = req;
+  const returner = await p.subscribe({
+    authorization,
+    userID: req.userID,
+    customID,
+    sourceRecipeID,
+    newRecipeID,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   getRecipes,
   getRecipeIngredients,
@@ -150,4 +166,5 @@ module.exports = {
   deleteRecipe,
   useRecipe,
   constructRecipe,
+  subscribeRecipe,
 };
