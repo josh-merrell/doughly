@@ -48,7 +48,8 @@ module.exports = ({ db }) => {
       }
       console.log('created ingredients');
 
-      if (!tools.length) { // dummy recipeTool case
+      if (!tools.length) {
+        // dummy recipeTool case
         constructRecipeTool({ quantity: -1 }, authorization, userID, recipe.recipeID);
       } else {
         const toolPromises = tools.map((t) => constructRecipeTool(t, authorization, userID, recipe.recipeID));
@@ -156,7 +157,7 @@ module.exports = ({ db }) => {
             IDtype: 17,
             recipeID,
             toolID: 0,
-            quantity: tool.quantity
+            quantity: tool.quantity,
           },
           { headers: { authorization } },
         );
@@ -727,7 +728,7 @@ module.exports = ({ db }) => {
   }
 
   async function subscribeRecipe(options) {
-    const { sourceRecipeID, newRecipeID, authorization, userID } = options;
+    const { customID, sourceRecipeID, newRecipeID, authorization, userID } = options;
 
     //ensure provided sourceRecipeID exists and is not deleted
     const { data: sourceRecipe, error } = await db.from('recipes').select().eq('recipeID', sourceRecipeID).eq('deleted', false);
@@ -738,6 +739,10 @@ module.exports = ({ db }) => {
     if (!sourceRecipe.length) {
       global.logger.info(`Error subscribing to recipe. Recipe with provided ID (${sourceRecipeID}) does not exist`);
       return { error: `Error subscribing to recipe. Recipe with provided ID (${sourceRecipeID}) does not exist` };
+    }
+    if (sourceRecipe[0].userID === userID) {
+      global.logger.info(`Error subscribing to recipe. Cannot subscribe to your own recipe`);
+      return { error: `Error subscribing to recipe. Cannot subscribe to your own recipe` };
     }
 
     //ensure provided newRecipeID exists and is not deleted
@@ -758,16 +763,16 @@ module.exports = ({ db }) => {
     }
 
     //ensure provided sourceRecipeID is not already subscribed to newRecipeID
-    const { data: existingSubscription, error: existingSubscriptionError } = await db.from('recipeSubscriptions').select().eq('sourceRecipeID', sourceRecipeID).eq('newRecipeID', newRecipeID).single();
+    const { data: existingSubscription, error: existingSubscriptionError } = await db.from('recipeSubscriptions').select('*').eq('sourceRecipeID', sourceRecipeID).eq('newRecipeID', newRecipeID);
     if (existingSubscriptionError) {
       global.logger.info(`Error getting existing subscription: ${existingSubscriptionError.message}`);
       return { error: existingSubscriptionError.message };
     }
     const startDate = new Date();
     //if exists but deleted is true, undelete it and update startDate
-    if (existingSubscription && existingSubscription.deleted) {
+    if (existingSubscription.length && existingSubscription[0].deleted) {
       try {
-        const { data: updatedSubscription, error: undeleteError } = await db.from('recipeSubscriptions').update({ deleted: false, startDate }).eq('recipeSubscriptionID', existingSubscription.recipeSubscriptionID).single();
+        const { data: updatedSubscription, error: undeleteError } = await db.from('recipeSubscriptions').update({ deleted: false, startDate }).eq('recipeSubscriptionID', existingSubscription[0].recipeSubscriptionID).single();
         if (undeleteError) {
           global.logger.info(`Error undeleting existing subscription: ${undeleteError.message}`);
           return { error: undeleteError.message };
@@ -777,13 +782,13 @@ module.exports = ({ db }) => {
         global.logger.info(`Error undeleting existing subscription: ${error.message}`);
         return { error: error.message };
       }
-    } else if (existingSubscription) {
+    } else if (existingSubscription.length) {
       global.logger.info(`Error subscribing to recipe. sourceRecipeID: ${sourceRecipeID} is already subscribed to newRecipeID: ${newRecipeID}`);
       return { error: `Error subscribing to recipe. sourceRecipeID: ${sourceRecipeID} is already subscribed to newRecipeID: ${newRecipeID}` };
     }
 
     //create subscription
-    const { data: subscription, error: subscriptionError } = await db.from('recipeSubscriptions').insert({ sourceRecipeID, newRecipeID, startDate }).select().single();
+    const { data: subscription, error: subscriptionError } = await db.from('recipeSubscriptions').insert({ userID, subscriptionID: customID, sourceRecipeID, newRecipeID, startDate }).select().single();
     if (subscriptionError) {
       global.logger.info(`Error creating subscription: ${subscriptionError.message}`);
       return { error: subscriptionError.message };

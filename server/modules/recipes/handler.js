@@ -144,9 +144,11 @@ async function subscribeRecipe(req, res) {
   const p = require('./processor')({ db });
   const { sourceRecipeID, newRecipeID } = req.body;
   const { authorization } = req.headers;
+  const { customID } = req;
   const returner = await p.subscribe({
     authorization,
     userID: req.userID,
+    customID,
     sourceRecipeID,
     newRecipeID,
   });

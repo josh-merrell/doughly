@@ -16,7 +16,6 @@ const {
   useRecipeSchema_params,
   useRecipeSchema_body,
   constructRecipeSchema_body,
-  subscribeRecipe_body,
 } = require('../../schemas/recipe-types');
 const recipeCategoriesRouter = require('./categories/router');
 const recipeComponentsRouter = require('./components/router');
@@ -31,7 +30,7 @@ router.use(authenticateJWT);
 
 router.post('/constructed', routeValidator(constructRecipeSchema_body, 'body'), errorCatcher(h.constructRecipe));
 router.post('/use/:recipeID', routeValidator(useRecipeSchema_params, 'params'), routeValidator(useRecipeSchema_body, 'body'), errorCatcher(h.useRecipe));
-router.post('/subscribe', routeValidator(subscribeRecipe_body, 'body'), errorCatcher(h.subscribeRecipe));
+router.post('/subscribe', generateID, routeValidator(subscribeRecipe_body, 'body'), errorCatcher(h.subscribeRecipe));
 router.post('/', generateID, routeValidator(newRecipeSchema_body, 'body'), errorCatcher(h.createRecipe));
 
 router.get('/:recipeID/ingredients', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeIngredients));
