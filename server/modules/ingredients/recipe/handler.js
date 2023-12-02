@@ -19,11 +19,17 @@ async function createRecipeIngredient(req, res) {
   const p = require('./processor')({ db });
   const { recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = req.body;
   const { authorization } = req.headers;
+  let userID;
+  if (req.body.userID) {
+    userID = req.body.userID;
+  } else {
+    userID = req.userID;
+  }
   const { customID } = req;
   const returner = await p.create({
     customID,
     authorization,
-    userID: req.userID,
+    userID,
     recipeID,
     ingredientID,
     measurementUnit,
