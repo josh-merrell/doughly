@@ -1,0 +1,198 @@
+<div
+  class="flex h-full w-full flex-col items-center bg-white px-dl-5 pb-dl-4 pt-dl-4 transition-all"
+>
+  <!-- Recipe Image and Author Image -->
+  <div class="mb-dl-5 flex px-dl-4">
+    <!-- Recipe Image -->
+    <div *ngIf="recipe.photoURL">
+      <img
+        class="h-dl-6 w-dl-6 rounded-full"
+        [src]="recipe.photoURL"
+        alt="recipe image"
+      />
+    </div>
+    <!-- Author Image -->
+    <div *ngIf="author" class="ml-dl-3">
+      <img
+        *ngIf="author.imageURL"
+        class="h-dl-6 w-dl-6 rounded-full"
+        [src]="author.imageURL"
+        alt="author profile image"
+      />
+      <span
+        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
+        *ngIf="!author.imageURL && author.nameFirst && author.nameLast"
+      >
+        <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
+          initials
+        }}</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Header Bar -->
+  <div class="mb-dl-3 flex w-dl-16 justify-between">
+    <label class="text-dl-6 font-dl-3 text-dl-grey-4">Recipe</label>
+    <label class="mr-dl-4 text-dl-6 font-dl-3 text-dl-grey-4"
+      >Your Kitchen</label
+    >
+  </div>
+
+  <!-- Mappings -->
+  <div class="mb-dl-3 flex max-h-dl-16 w-full flex-col overflow-auto">
+    <!-- Ingredient Mappings -->
+    <div
+      *ngFor="let i of ingredients(); let idx = index"
+      class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9"
+    >
+      <!-- Recipe Ingredient-->
+      <div class="flex">
+        <label class="pl-dl-6 text-dl-5 font-dl-3 text-dl-grey-6">{{
+          i.name
+        }}</label>
+        <div
+          [ngClass]="{ invisible: !ingredientStatuses()[idx] }"
+          class="ml-dl-3 pt-dl-1"
+        >
+          <svg
+            class="rounded-full bg-dl-teal-7"
+            width="26"
+            height="26"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              [attr.fill]="'hsl(216, 33%, 97%)'"
+              d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Kitchen Mapping -->
+      <div class="flex flex-col">
+        <mat-form-field class="mt-dl-4 text-dl-4">
+          <mat-select
+            (selectionChange)="onIngredientSelectChange($event.value, i)"
+            class="w-dl-10"
+          >
+            <ng-container *ngFor="let ui of userIngredients()">
+              <mat-option [value]="ui.ingredientID">
+                {{ ui.name }}
+              </mat-option>
+            </ng-container>
+            <mat-option
+              class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
+              [value]="0"
+            >
+              Copy to Kitchen
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="i.userIngredientID && i.userIngredientID !== 0">
+          <input
+            [value]="i.userPurchaseUnitRatio || ''"
+            (input)="onPurchaseUnitRatioChange($event.target, i)"
+            matInput
+            name="userPurchaseUnitRatio{{ idx }}"
+            type="text"
+            placeholder="{{ ingredientMeasurementUnitString(i) }} per {{
+              i.measurementUnit
+            }}"
+            class="text-dl-4"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Tool Mappings -->
+    <div
+      *ngFor="let t of tools(); let idx = index"
+      class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9"
+    >
+      <!-- Recipe Tool-->
+      <div class="flex">
+        <label class="pl-dl-6 text-dl-5 font-dl-3 text-dl-grey-6">{{
+          t.name
+        }}</label>
+        <div
+          [ngClass]="{ invisible: !toolStatuses()[idx] }"
+          class="ml-dl-3 pt-dl-1"
+        >
+          <svg
+            class="rounded-full bg-dl-teal-7"
+            width="26"
+            height="26"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              [attr.fill]="'hsl(216, 33%, 97%)'"
+              d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </div>
+      </div>
+      <!-- Kitchen Mapping -->
+      <div class="flex flex-col">
+        <mat-form-field class="mt-dl-4 text-dl-4">
+          <mat-select
+            (selectionChange)="onToolSelectChange($event.value, t)"
+            class="w-dl-10"
+          >
+            <ng-container *ngFor="let ut of userTools()">
+              <mat-option [value]="ut.toolID">
+                {{ ut.name }}
+              </mat-option>
+            </ng-container>
+            <mat-option
+              class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
+              [value]="0"
+            >
+              Copy to Kitchen
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex h-dl-6 w-full justify-between">
+    <div>
+      <p>Ingredients</p>
+      <svg
+        *ngIf="ingredientsReady()"
+        class="rounded-full bg-dl-teal-7"
+        width="26"
+        height="26"
+        viewBox="0 0 15 15"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          [attr.fill]="'hsl(216, 33%, 97%)'"
+          d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"
+          fill="currentColor"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+    </div>
+    <button
+      type="button"
+      class="block w-dl-7 h-dl-4 whitespace-nowrap rounded-dl-1 border  px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3  shadow-sm transition-all duration-200 ease-in-out"
+      (click)="onSubscribeClick()"
+      [ngClass]="{ 'bg-dl-pink-4 text-white': ingredientsReady() && toolsReady(), 'bg-dl-grey-9 text-dl-grey-4': !ingredientsReady() || !toolsReady()}"
+    >
+      Subscribe
+    </button>
+  </div>
+</div>

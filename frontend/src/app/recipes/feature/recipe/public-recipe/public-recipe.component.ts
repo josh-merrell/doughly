@@ -27,6 +27,7 @@ import { RecipeToolService } from 'src/app/recipes/data/recipe-tool.service';
 import { RecipeStepService } from 'src/app/recipes/data/recipe-step.service';
 import { StepService } from 'src/app/recipes/data/step.service';
 import { FriendModalComponent } from 'src/app/social/feature/friends/ui/friend-modal/friend-modal.component';
+import { SubscribeRecipeModalComponent } from '../ui/subscribe-recipe-modal/subscribe-recipe-modal.component';
 
 @Component({
   selector: 'dl-public-recipe',
@@ -36,6 +37,7 @@ import { FriendModalComponent } from 'src/app/social/feature/friends/ui/friend-m
     MatDatepickerModule,
     MatNativeDateModule,
     MatProgressSpinnerModule,
+    SubscribeRecipeModalComponent,
   ],
   templateUrl: './public-recipe.component.html',
 })
@@ -65,7 +67,13 @@ export class PublicRecipeComponent {
     return newIngredients;
   });
   ready = computed(() => {
-    if (this.recipe() && this.displayIngredients() && this.steps() && this.tools()) return true;
+    if (
+      this.recipe() &&
+      this.displayIngredients() &&
+      this.steps() &&
+      this.tools()
+    )
+      return true;
     return false;
   });
   tools: WritableSignal<any[]> = signal([]);
@@ -190,5 +198,17 @@ export class PublicRecipeComponent {
 
   onSubscribeClick() {
     console.log('subscribe clicked');
+    this.dialog.open(SubscribeRecipeModalComponent, {
+      data: {
+        recipe: this.recipe(),
+        ingredients: this.displayIngredients(),
+        tools: this.tools(),
+        steps: this.steps(),
+        author: this.author(),
+      },
+      width: '90%',
+      maxWidth: '640px',
+      maxHeight: '840px',
+    });
   }
 }
