@@ -235,17 +235,20 @@ module.exports = ({ db }) => {
     }
     // Then, create the recipeStep
     try {
+      const body = {
+        authorization,
+        userID,
+        IDtype: 19,
+        recipeID,
+        stepID,
+        sequence: step.sequence,
+      };
+      if (step.photoURL) {
+        body.photoURL = step.photoURL;
+      }
       const { data } = await axios.post(
         `${process.env.NODE_HOST}:${process.env.PORT}/steps/recipe`,
-        {
-          authorization,
-          userID,
-          IDtype: 19,
-          recipeID,
-          stepID,
-          sequence: step.sequence,
-          photoURL: step.photoURL,
-        },
+        body,
         { headers: { authorization } },
       );
       return { recipeStepID: data.recipeStepID, stepID: stepID };

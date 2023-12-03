@@ -205,7 +205,7 @@ export class PublicRecipeComponent {
   }
 
   onSubscribeClick() {
-    if (!this.recipeSubscription()()) {
+    if (!this.recipeSubscription()) {
       const dialogRef = this.dialog.open(SubscribeRecipeModalComponent, {
         data: {
           recipe: this.recipe(),
