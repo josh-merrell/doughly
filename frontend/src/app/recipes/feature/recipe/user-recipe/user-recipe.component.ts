@@ -12,11 +12,12 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectRecipeByID } from '../../../state/recipe/recipe-selectors';
+import { selectRecipeByID, selectSubscriptionByNewRecipeID } from '../../../state/recipe/recipe-selectors';
 import { selectRecipeIngredientsByRecipeID } from '../../../state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectRecipeToolsByRecipeID } from '../../../state/recipe-tool/recipe-tool-selectors';
 import { selectRecipeCategoryByID } from '../../../state/recipe-category/recipe-category-selectors';
+import { ProfileCardComponent } from 'src/app/social/feature/friends/ui/profile-card/profile-card.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { MatDialog } from '@angular/material/dialog';
@@ -39,7 +40,7 @@ import { RecipeService } from '../../../data/recipe.service';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { Recipe, ShoppingList } from '../../../state/recipe/recipe-state';
+import { Recipe, RecipeSubscription, ShoppingList } from '../../../state/recipe/recipe-state';
 import { RecipeShoppingListModalComponent } from './../ui/recipe-shopping-list-modal/recipe-shopping-list-modal.component';
 import { UseRecipeModalComponent } from './../ui/use-recipe-modal/use-recipe-modal.component';
 import { PhotoService } from 'src/app/shared/utils/photoService';
@@ -47,6 +48,12 @@ import { IngredientActions } from 'src/app/kitchen/feature/ingredients/state/ing
 import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
 import { StepActions } from 'src/app/recipes/state/step/step-actions';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
+import { ProfileService } from 'src/app/profile/data/profile.service';
+import { FriendModalComponent } from 'src/app/social/feature/friends/ui/friend-modal/friend-modal.component';
+import { Profile } from 'src/app/profile/state/profile-state';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
+import { UnsubscribeRecipeModalComponent } from '../ui/unsubscribe-recipe-modal/unsubscribe-recipe-modal.component';
 
 function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -58,12 +65,19 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
 @Component({
   selector: 'dl-user-recipe',
   standalone: true,
-  imports: [CommonModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [
+    CommonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    ProfileCardComponent,
+  ],
   templateUrl: './user-recipe.component.html',
 })
 export class UserRecipeComponent {
   recipeID: WritableSignal<number> = signal(0);
   recipe: WritableSignal<any> = signal(null);
+  recipeSubscription: WritableSignal<any> = signal(null);
+  sourceAuthor: WritableSignal<Profile | null> = signal(null);
   recipeCategory: WritableSignal<RecipeCategory | null> = signal(null);
   ingredients: WritableSignal<any[]> = signal([]);
   tools: WritableSignal<any[]> = signal([]);
@@ -99,7 +113,9 @@ export class UserRecipeComponent {
   public displayUsageDate!: string;
 
   menuOpen: boolean = false;
+  usernameOpen: boolean = false;
   @ViewChild('menu') rowItemMenu!: ElementRef;
+  @ViewChild('username') username!: ElementRef;
   globalClickListener: () => void = () => {};
 
   constructor(
@@ -110,11 +126,17 @@ export class UserRecipeComponent {
     public dialog: MatDialog,
     private router: Router,
     private recipeService: RecipeService,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private profileService: ProfileService
   ) {
-    effect(
+    effect( 
       () => {
         const recipeID = this.recipeID();
+        this.store
+          .select(selectSubscriptionByNewRecipeID(recipeID))
+          .subscribe((subscription) => {
+            this.recipeSubscription.set(subscription);
+          });
         this.store.select(selectRecipeByID(recipeID)).subscribe((recipe) => {
           this.recipe.set(recipe);
         });
@@ -142,6 +164,16 @@ export class UserRecipeComponent {
       },
       { allowSignalWrites: true }
     );
+
+    effect(() => {
+      const recipeSubscription = this.recipeSubscription();
+      if (!recipeSubscription) return;
+      this.profileService
+        .getProfile(recipeSubscription.authorID)
+        .subscribe((profile) => {
+          this.sourceAuthor.set(profile);
+        });
+    });
 
     effect(
       () => {
@@ -198,6 +230,8 @@ export class UserRecipeComponent {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(ProfileActions.loadFriends());
+    this.store.dispatch(ProfileActions.loadFollowers());
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(ToolActions.loadTools());
     this.store.dispatch(StepActions.loadSteps());
@@ -231,6 +265,12 @@ export class UserRecipeComponent {
         if (!clickedInside && this.rowItemMenu) {
           this.closeMenu();
         }
+        const clickedAuthor = this.username?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedAuthor && this.username) {
+          this.closeUsername();
+        }
       }
     );
   }
@@ -243,10 +283,49 @@ export class UserRecipeComponent {
     event.stopPropagation();
     this.menuOpen = !this.menuOpen;
   }
+  toggleUsername(event: any) {
+    event.stopPropagation();
+    this.usernameOpen = !this.usernameOpen;
+  }
   closeMenu() {
     this.menuOpen = false;
   }
+  closeUsername() {
+    this.usernameOpen = false;
+  }
+  onUnsubscribeClick() {
+    this.closeMenu();
+    if (this.recipeSubscription()) {
+      const dialogRef = this.dialog.open(UnsubscribeRecipeModalComponent, {
+        data: {
+          subscriptionID: this.recipeSubscription().subscriptionID,
+          title: this.recipe().title,
+          authorName: this.sourceAuthor()!.username,
+        },
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          const confirmDialogRef = this.dialog.open(DeleteRequestConfirmationModalComponent, {
+            data: {
+              deleteSuccessMessage: `Unsubscribed from ${this.recipe().title}!}`,
+            },
+          });
+          confirmDialogRef.afterClosed().subscribe(() => {
+            this.router.navigate(['/recipes']);
+          });
+        } else if (result === 'error') {
+          this.dialog.open(DeleteRequestErrorModalComponent, {
+            data: {
+              error: result,
+              deleteFailureMessage: `Subscription could not be deleted. Try again later.`,
+            },
+          });
+        }
+      });
+    }
+  }
   onUpdateClick() {
+    this.closeMenu();
     const dialogRef = this.dialog.open(EditRecipeModalComponent, {
       data: this.recipe(),
       width: '75%',
@@ -270,6 +349,7 @@ export class UserRecipeComponent {
     });
   }
   onDeleteClick() {
+    this.closeMenu();
     const dialogRef = this.dialog.open(DeleteRecipeModalComponent, {
       data: {
         recipeID: this.recipeID(),
@@ -534,6 +614,7 @@ export class UserRecipeComponent {
       }
     });
   }
+
   //***************************************************
 }
 

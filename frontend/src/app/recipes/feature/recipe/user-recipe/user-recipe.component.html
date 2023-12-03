@@ -7,7 +7,7 @@
       class="w-full object-cover"
     />
     <!-- Overview -->
-    <div class="relative mx-dl-5 mt-dl-3 mb-dl-3 rounded-lg shadow-md">
+    <div class="relative mx-dl-5 mb-dl-3 mt-dl-3 rounded-lg shadow-md">
       <div class="mx-dl-5 mt-dl-4 flex justify-between">
         <h1 class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
           {{ recipe().title }}
@@ -34,6 +34,7 @@
           class="focus:outling-none absolute right-16 top-2 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
         >
           <button
+            *ngIf="!recipeSubscription()"
             (click)="onUpdateClick()"
             type="button"
             class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
@@ -41,11 +42,20 @@
             Edit
           </button>
           <button
+            *ngIf="!recipeSubscription()"
             (click)="onDeleteClick()"
             type="button"
             class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
           >
             Delete
+          </button>
+          <button
+            *ngIf="recipeSubscription()"
+            (click)="onUnsubscribeClick()"
+            type="button"
+            class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+          >
+            Unsubscribe
           </button>
         </div>
       </div>
@@ -61,10 +71,7 @@
       </div>
       <!--Public/Private-->
       <div class="mx-dl-5 mt-dl-5 flex justify-between">
-        <div
-          *ngIf="recipe().type === 'public'"
-          class="flex justify-between"
-        >
+        <div *ngIf="recipe().type === 'public'" class="flex justify-between">
           <svg
             class="ml-dl-4 text-dl-grey-4"
             width="50"
@@ -102,10 +109,7 @@
             >This Recipe is Publicly visible</span
           >
         </div>
-        <div
-          *ngIf="recipe().type === 'private'"
-          class="flex justify-between"
-        >
+        <div *ngIf="recipe().type === 'private'" class="flex justify-between">
           <svg
             class="ml-dl-4 text-dl-grey-4"
             width="50"
@@ -125,57 +129,122 @@
             >This Recipe is Private and visible only to friends</span
           >
         </div>
+        <div
+          *ngIf="!recipe().timeBake && !recipeSubscription()"
+          class="flex items-center"
+        >
+          <svg
+            class="ml-dl-4 text-dl-grey-4"
+            width="22"
+            height="22"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.50009 0.877014C3.84241 0.877014 0.877258 3.84216 0.877258 7.49984C0.877258 11.1575 3.8424 14.1227 7.50009 14.1227C11.1578 14.1227 14.1229 11.1575 14.1229 7.49984C14.1229 3.84216 11.1577 0.877014 7.50009 0.877014ZM1.82726 7.49984C1.82726 4.36683 4.36708 1.82701 7.50009 1.82701C10.6331 1.82701 13.1729 4.36683 13.1729 7.49984C13.1729 10.6328 10.6331 13.1727 7.50009 13.1727C4.36708 13.1727 1.82726 10.6328 1.82726 7.49984ZM8 4.50001C8 4.22387 7.77614 4.00001 7.5 4.00001C7.22386 4.00001 7 4.22387 7 4.50001V7.50001C7 7.63262 7.05268 7.7598 7.14645 7.85357L9.14645 9.85357C9.34171 10.0488 9.65829 10.0488 9.85355 9.85357C10.0488 9.65831 10.0488 9.34172 9.85355 9.14646L8 7.29291V4.50001Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          <p
+            *ngIf="recipe().timePrep"
+            class="ml-dl-2 text-dl-5 font-dl-2 text-dl-grey-4"
+          >
+            Prep: {{ timeString(recipe().timePrep) }}
+          </p>
+        </div>
+      </div>
+      <div
+        *ngIf="recipeSubscription()"
+        class="relative mx-dl-5 flex items-center justify-between pb-dl-4"
+      >
+        <div class="flex items-center justify-between">
+          <img
+            (click)="toggleUsername($event)"
+            *ngIf="recipeSubscription().authorPhotoURL"
+            class="ml-dl-4 h-dl-5 w-dl-5 rounded-full"
+            [src]="recipeSubscription().authorPhotoURL"
+            alt="author profile image"
+          />
+          <span
+            class="ml-dl-3 text-dl-5 font-dl-2 italic leading-dl-2 text-dl-grey-4"
+          >
+            By {{ recipeSubscription().authorName }}
+          </span>
+        </div>
+        <div
+          #username
+          *ngIf="usernameOpen"
+          class="absolute -right-20 top-8 text-dl-grey-4 italic text-dl-5 p-dl-2 h-dl-8 z-20 w-full border-dl-grey-9 "
+        >{{recipeSubscription().authorUsername}}</div>
+        <div *ngIf="!recipe().timeBake" class="flex items-center">
+          <svg
+            class="ml-dl-4 text-dl-grey-4"
+            width="22"
+            height="22"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.50009 0.877014C3.84241 0.877014 0.877258 3.84216 0.877258 7.49984C0.877258 11.1575 3.8424 14.1227 7.50009 14.1227C11.1578 14.1227 14.1229 11.1575 14.1229 7.49984C14.1229 3.84216 11.1577 0.877014 7.50009 0.877014ZM1.82726 7.49984C1.82726 4.36683 4.36708 1.82701 7.50009 1.82701C10.6331 1.82701 13.1729 4.36683 13.1729 7.49984C13.1729 10.6328 10.6331 13.1727 7.50009 13.1727C4.36708 13.1727 1.82726 10.6328 1.82726 7.49984ZM8 4.50001C8 4.22387 7.77614 4.00001 7.5 4.00001C7.22386 4.00001 7 4.22387 7 4.50001V7.50001C7 7.63262 7.05268 7.7598 7.14645 7.85357L9.14645 9.85357C9.34171 10.0488 9.65829 10.0488 9.85355 9.85357C10.0488 9.65831 10.0488 9.34172 9.85355 9.14646L8 7.29291V4.50001Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          <p
+            *ngIf="recipe().timePrep"
+            class="ml-dl-2 text-dl-5 font-dl-2 text-dl-grey-4"
+          >
+            Prep: {{ timeString(recipe().timePrep) }}
+          </p>
+        </div>
       </div>
 
-      <!--Times -->
+      <!--Times IF timeBake is Provided -->
       <div
+        *ngIf="recipe().timeBake"
         class="mx-dl-5 mt-dl-2 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
-        <svg
-          class="ml-dl-4 text-dl-grey-4"
-          width="22"
-          height="22"
-          viewBox="0 0 15 15"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M7.50009 0.877014C3.84241 0.877014 0.877258 3.84216 0.877258 7.49984C0.877258 11.1575 3.8424 14.1227 7.50009 14.1227C11.1578 14.1227 14.1229 11.1575 14.1229 7.49984C14.1229 3.84216 11.1577 0.877014 7.50009 0.877014ZM1.82726 7.49984C1.82726 4.36683 4.36708 1.82701 7.50009 1.82701C10.6331 1.82701 13.1729 4.36683 13.1729 7.49984C13.1729 10.6328 10.6331 13.1727 7.50009 13.1727C4.36708 13.1727 1.82726 10.6328 1.82726 7.49984ZM8 4.50001C8 4.22387 7.77614 4.00001 7.5 4.00001C7.22386 4.00001 7 4.22387 7 4.50001V7.50001C7 7.63262 7.05268 7.7598 7.14645 7.85357L9.14645 9.85357C9.34171 10.0488 9.65829 10.0488 9.85355 9.85357C10.0488 9.65831 10.0488 9.34172 9.85355 9.14646L8 7.29291V4.50001Z"
-            fill="currentColor"
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-          ></path>
-        </svg>
-        <p
-          *ngIf="recipe().timePrep"
-          class="text-dl-5 font-dl-2 text-dl-grey-4"
-        >
-          Prep: {{ timeString(recipe().timePrep) }}
-        </p>
-        <p
-          *ngIf="recipe().timeBake"
-          class="text-dl-5 font-dl-2 text-dl-grey-4"
-        >
+        <div class="flex items-center">
+          <svg
+            class="ml-dl-4 text-dl-grey-4"
+            width="22"
+            height="22"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.50009 0.877014C3.84241 0.877014 0.877258 3.84216 0.877258 7.49984C0.877258 11.1575 3.8424 14.1227 7.50009 14.1227C11.1578 14.1227 14.1229 11.1575 14.1229 7.49984C14.1229 3.84216 11.1577 0.877014 7.50009 0.877014ZM1.82726 7.49984C1.82726 4.36683 4.36708 1.82701 7.50009 1.82701C10.6331 1.82701 13.1729 4.36683 13.1729 7.49984C13.1729 10.6328 10.6331 13.1727 7.50009 13.1727C4.36708 13.1727 1.82726 10.6328 1.82726 7.49984ZM8 4.50001C8 4.22387 7.77614 4.00001 7.5 4.00001C7.22386 4.00001 7 4.22387 7 4.50001V7.50001C7 7.63262 7.05268 7.7598 7.14645 7.85357L9.14645 9.85357C9.34171 10.0488 9.65829 10.0488 9.85355 9.85357C10.0488 9.65831 10.0488 9.34172 9.85355 9.14646L8 7.29291V4.50001Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          <p
+            *ngIf="recipe().timePrep"
+            class="ml-dl-2 text-dl-5 font-dl-2 text-dl-grey-4"
+          >
+            Prep: {{ timeString(recipe().timePrep) }}
+          </p>
+        </div>
+        <p *ngIf="recipe().timeBake" class="text-dl-5 font-dl-2 text-dl-grey-4">
           Bake: {{ timeString(recipe().timeBake) }}
         </p>
-        <p
-          *ngIf="recipe().timeBake"
-          class="text-dl-6 font-dl-3 text-dl-grey-3"
-        >
+        <p *ngIf="recipe().timeBake" class="text-dl-6 font-dl-3 text-dl-grey-3">
           Total:
-          {{
-            timeString(
-              recipe().timeBake +
-                recipe().timePrep
-            )
-          }}
+          {{ timeString(recipe().timeBake + recipe().timePrep) }}
         </p>
       </div>
       <div
         class="mx-dl-4 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
         <div
-          class="ml-dl-4 mb-dl-1 flex w-full items-center justify-between px-dl-1 pt-dl-1"
+          class="mb-dl-1 ml-dl-4 flex w-full items-center justify-between px-dl-1 pt-dl-1"
         >
           <p *ngIf=""></p>
           <div class="flex">
@@ -253,12 +322,16 @@
             xml:space="preserve"
             height="29"
             width="29"
-            class=" text-dl-grey-4"
+            class="text-dl-grey-4"
           >
             <g>
               <g>
                 <path
-                  [attr.fill]="onlyMe() === 'true' ? 'hsl(209, 14%, 37%)' : 'hsl(210, 16%, 82%)'"
+                  [attr.fill]="
+                    onlyMe() === 'true'
+                      ? 'hsl(209, 14%, 37%)'
+                      : 'hsl(210, 16%, 82%)'
+                  "
                   d="M256,0c-74.439,0-135,60.561-135,135s60.561,135,135,135s135-60.561,135-135S330.439,0,256,0z"
                 ></path>
               </g>
@@ -266,7 +339,11 @@
             <g>
               <g>
                 <path
-                  [attr.fill]="onlyMe() === 'true' ? 'hsl(209, 14%, 37%)' : 'hsl(210, 16%, 82%)'"
+                  [attr.fill]="
+                    onlyMe() === 'true'
+                      ? 'hsl(209, 14%, 37%)'
+                      : 'hsl(210, 16%, 82%)'
+                  "
                   d="M423.966,358.195C387.006,320.667,338.009,300,286,300h-60c-52.008,0-101.006,20.667-137.966,58.195
 			C51.255,395.539,31,444.833,31,497c0,8.284,6.716,15,15,15h420c8.284,0,15-6.716,15-15
 			C481,444.833,460.745,395.539,423.966,358.195z"
@@ -301,10 +378,13 @@
             height="36"
             width="36"
             class="ml-dl-2"
-            
           >
             <path
-              [attr.fill]="onlyMe() === 'true' ? 'hsl(210, 16%, 82%)' : 'hsl(209, 14%, 37%)'"
+              [attr.fill]="
+                onlyMe() === 'true'
+                  ? 'hsl(210, 16%, 82%)'
+                  : 'hsl(209, 14%, 37%)'
+              "
               d="m23 19a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1-1 6 6 0 0 1 6-6h2a6 6 0 0 1 6 6zm-7-15a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm-9 0a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm0 15a7.94 7.94 0 0 1 2.35-5.65 5.43 5.43 0 0 0 -1.91-.35h-.88a5.57 5.57 0 0 0 -5.56 5.56v.44a1 1 0 0 0 1 1h5.18a3 3 0 0 1 -.18-1z"
             ></path>
           </svg>
@@ -347,6 +427,7 @@
           Ingredients
         </p>
         <button
+          *ngIf="!recipeSubscription()"
           id="edit-recipe-ingredients-button"
           type="button"
           class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
@@ -355,10 +436,7 @@
           Edit
         </button>
       </div>
-      <div
-        *ngFor="let ingredient of displayIngredients()"
-        class="mt-dl-2 flex"
-      >
+      <div *ngFor="let ingredient of displayIngredients()" class="mt-dl-2 flex">
         <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
           {{ ingredient.name }}
         </span>
@@ -378,6 +456,7 @@
           Tools
         </p>
         <button
+          *ngIf="!recipeSubscription()"
           id="edit-recipe-tools-button"
           type="button"
           class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
@@ -409,6 +488,7 @@
           Steps
         </p>
         <button
+          *ngIf="!recipeSubscription()"
           id="edit-recipe-tools-button"
           type="button"
           class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
@@ -429,7 +509,7 @@
           <!-- Title taking the remaining width -->
           <div class="flex-1">
             <p
-              class="mr-dl-6 whitespace-normal text-dl-5 font-dl-2 text-dl-grey-2 overflow-hidden"
+              class="mr-dl-6 overflow-hidden whitespace-normal text-dl-5 font-dl-2 text-dl-grey-2"
             >
               {{ step.title }}
             </p>

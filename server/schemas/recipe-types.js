@@ -63,6 +63,14 @@ const RecipeDeleteSchema_params = {
   },
 };
 
+const SubscriptionDeleteSchema_params = {
+  type: 'object',
+  required: ['subscriptionID'],
+  properties: {
+    subscriptionID: { type: 'string' },
+  },
+};
+
 const getRecipeComponentsSchema_query = {
   type: 'object',
   properties: {
@@ -114,8 +122,9 @@ const RecipeComponentDeleteSchema_params = {
 
 const constructRecipeSchema_body = {
   type: 'object',
-  required: ['title', 'servings', 'lifespanDays', 'timePrep', 'type', 'ingredients', 'tools', 'steps'],
+  required: ['sourceRecipeID', 'title', 'servings', 'lifespanDays', 'timePrep', 'type', 'ingredients', 'tools', 'steps'],
   properties: {
+    sourceRecipeID: { type: 'integer' },
     title: { type: 'string' },
     recipeCategoryID: { type: 'integer' },
     servings: { type: 'integer' },
@@ -167,6 +176,7 @@ module.exports = {
   RecipeUpdateSchema_body,
   RecipeUpdateSchema_params,
   RecipeDeleteSchema_params,
+  SubscriptionDeleteSchema_params,
   getRecipeComponentsSchema_query,
   getRecipeComponentSchema_params,
   newRecipeComponentSchema_body,

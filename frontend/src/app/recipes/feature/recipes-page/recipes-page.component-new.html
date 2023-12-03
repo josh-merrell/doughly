@@ -39,7 +39,7 @@
   <!-- Main Content -->
   <div class="h-full">
     <dl-discover-recipes *ngIf="view() === 'discover'"></dl-discover-recipes>
-    <dl-created-recipes *ngIf="view() === 'created'"></dl-created-recipes>
-    <dl-subscribed-recipes *ngIf="view() === 'subscribed'"></dl-subscribed-recipes>
+    <dl-recipe-list [type]="'created'" *ngIf="view() === 'created'"></dl-recipe-list>
+    <dl-recipe-list [type]="'subscription'" *ngIf="view() === 'subscribed'"></dl-recipe-list>
   </div>
 </div>

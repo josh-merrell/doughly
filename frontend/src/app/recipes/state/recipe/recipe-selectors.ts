@@ -4,11 +4,33 @@ import { Recipe } from './recipe-state';
 
 export const selectRecipes = (state: any) => state.recipe.recipes;
 
+export const selectRecipeSubscriptions = (state: any) => state.recipe.recipeSubscriptions;
+
 export const selectRecipeByID = memoize((recipeID: number) => {
   return createSelector(
     selectRecipes,
     (recipes: Recipe[]): Recipe | undefined => {
       return recipes.find((recipe: Recipe) => recipe.recipeID === recipeID);
+    }
+  );
+});
+
+export const selectSubscriptionByNewRecipeID = memoize((recipeID: number) => {
+  return createSelector(
+    selectRecipeSubscriptions,
+    (recipeSubscriptions: any[]): any | undefined => {
+      return recipeSubscriptions.find((subscription: any) => subscription.newRecipeID === recipeID);
+    }
+  );
+});
+
+export const selectSubscriptionBySourceRecipeID = memoize((recipeID: number) => {
+  return createSelector(
+    selectRecipeSubscriptions,
+    (recipeSubscriptions: any[]): any | undefined => {
+      return recipeSubscriptions.find(
+        (subscription: any) => subscription.sourceRecipeID === recipeID
+      );
     }
   );
 });

@@ -3,11 +3,23 @@ import { Ingredient } from "src/app/kitchen/state/kitchen-interfaces";
 
 export interface RecipeState {
   recipes: Recipe[];
+  recipeSubscriptions: RecipeSubscription[];
   loading: boolean;
   adding: boolean;
   updating: boolean;
   deleting: boolean;
   error: RecipeError | null;
+}
+
+export interface RecipeSubscription {
+  subscriptionID: number;
+  sourceRecipeID: number;
+  userRecipeID: number;
+  startDate: string;
+  authorID: number;
+  authorUsername: string;
+  authorName: string;
+  authorPhotoURL: string;
 }
 
 export interface RecipeUse {
