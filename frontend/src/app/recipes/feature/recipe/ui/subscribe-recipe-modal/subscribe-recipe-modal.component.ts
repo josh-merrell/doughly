@@ -196,7 +196,8 @@ export class SubscribeRecipeModalComponent {
   onSubscribeClick() {
     if (this.ingredientsReady() && this.toolsReady()) {
       const constructBody = {};
-      // add 'title', 'recipeCategoryID', 'servings', 'lifespanDays', 'type', 'timePrep', 'photoURL', 'ingredients', 'tools', 'steps'
+      // add 'sourceRecipeID', 'title', 'recipeCategoryID', 'servings', 'lifespanDays', 'type', 'timePrep', 'photoURL', 'ingredients', 'tools', 'steps'
+      constructBody['sourceRecipeID'] = this.recipe.recipeID;
       constructBody['title'] = this.recipe.title;
       constructBody['recipeCategoryID'] = this.recipe.recipeCategoryID;
       constructBody['servings'] = this.recipe.servings;

@@ -114,8 +114,9 @@ const RecipeComponentDeleteSchema_params = {
 
 const constructRecipeSchema_body = {
   type: 'object',
-  required: ['title', 'servings', 'lifespanDays', 'timePrep', 'type', 'ingredients', 'tools', 'steps'],
+  required: ['sourceRecipeID', 'title', 'servings', 'lifespanDays', 'timePrep', 'type', 'ingredients', 'tools', 'steps'],
   properties: {
+    sourceRecipeID: { type: 'integer' },
     title: { type: 'string' },
     recipeCategoryID: { type: 'integer' },
     servings: { type: 'integer' },

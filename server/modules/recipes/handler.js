@@ -117,12 +117,13 @@ async function useRecipe(req, res) {
 async function constructRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { title, servings, recipeCategoryID, lifespanDays, timePrep, timeBake, photoURL, type, components, ingredients, tools, steps } = req.body;
+  const { title, sourceRecipeID, servings, recipeCategoryID, lifespanDays, timePrep, timeBake, photoURL, type, components, ingredients, tools, steps } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.construct({
     authorization,
     userID: req.userID,
+    sourceRecipeID,
     recipeCategoryID,
     title,
     servings,

@@ -7,7 +7,7 @@ const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supp
 
 module.exports = ({ db }) => {
   async function construct(options) {
-    const { customID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type, timePrep, timeBake, photoURL, components, ingredients, tools, steps } = options;
+    const { customID, sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type, timePrep, timeBake, photoURL, components, ingredients, tools, steps } = options;
 
     console.log();
     let recipeID;
@@ -74,6 +74,22 @@ module.exports = ({ db }) => {
         }
       }
       console.log('created steps');
+
+      //make axios call to add recipeSubscription
+      const { data: subscription, error: subscriptionError } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe`,
+        {
+          authorization,
+          userID,
+          IDtype: 25,
+          sourceRecipeID: sourceRecipeID,
+          newRecipeID: recipe.recipeID,
+        },
+        { headers: { authorization } },
+      );
+      if (subscriptionError) {
+        throw subscriptionError;
+      }
 
       return { recipeID: recipe.recipeID };
     } catch (error) {
