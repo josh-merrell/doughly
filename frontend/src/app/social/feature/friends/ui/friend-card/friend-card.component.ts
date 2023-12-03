@@ -16,5 +16,4 @@ export class FriendCardComponent {
   ngOnInit(): void {
     this.initials = this.friend.nameFirst[0] + this.friend.nameLast[0];
   }
-
 }

@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Recipe, RecipeStatus } from './recipe-state';
+import { Recipe, RecipeStatus, RecipeSubscription } from './recipe-state';
 
 const loadRecipes = createAction('[Recipes] Load');
 const loadRecipesSuccess = createAction(
@@ -21,6 +21,29 @@ const loadRecipeSuccess = createAction(
 );
 const loadRecipeFailure = createAction(
   '[Recipes] Load Single Failure',
+  props<{ error: any }>()
+);
+
+const loadRecipeSubscriptions = createAction('[Recipes] Load Subscriptions');
+const loadRecipeSubscriptionsSuccess = createAction(
+  '[Recipes] Load Subscriptions Success',
+  props<{ recipeSubscriptions: RecipeSubscription[] }>()
+);
+const loadRecipeSubscriptionsFailure = createAction(
+  '[Recipes] Load Subscriptions Failure',
+  props<{ error: any }>()
+);
+
+const deleteRecipeSubscription = createAction(
+  '[Recipes] Delete Subscription',
+  props<{ subscriptionID: number }>()
+);
+const deleteRecipeSubscriptionSuccess = createAction(
+  '[Recipes] Delete Subscription Success',
+  props<{ subscriptionID: number }>()
+);
+const deleteRecipeSubscriptionFailure = createAction(
+  '[Recipes] Delete Subscription Failure',
   props<{ error: any }>()
 );
 
@@ -72,6 +95,12 @@ export const RecipeActions = {
   loadRecipe,
   loadRecipeSuccess,
   loadRecipeFailure,
+  loadRecipeSubscriptions,
+  loadRecipeSubscriptionsSuccess,
+  loadRecipeSubscriptionsFailure,
+  deleteRecipeSubscription,
+  deleteRecipeSubscriptionSuccess,
+  deleteRecipeSubscriptionFailure,
   addRecipe,
   addRecipeSuccess,
   addRecipeFailure,
