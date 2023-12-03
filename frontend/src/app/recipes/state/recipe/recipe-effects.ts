@@ -93,6 +93,61 @@ export class RecipeEffects {
     )
   );
 
+  loadRecipeSubsriptions$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.loadRecipeSubscriptions),
+      mergeMap((action) =>
+        this.recipeService.getSubscriptions().pipe(
+          map((recipeSubscriptions) =>
+            RecipeActions.loadRecipeSubscriptionsSuccess({
+              recipeSubscriptions,
+            })
+          ),
+          catchError((error) =>
+            of(
+              RecipeActions.loadRecipeSubscriptionsFailure({
+                error: {
+                  errorType: 'LOAD_RECIPE_SUBSCRIPTIONS_FAILURE',
+                  message: 'Failed to load recipe subscriptions',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
+  deleteRecipeSubscription$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.deleteRecipeSubscription),
+      mergeMap((action) =>
+        this.recipeService.deleteSubscription(action.subscriptionID).pipe(
+          map(() =>
+            RecipeActions.deleteRecipeSubscriptionSuccess({
+              subscriptionID: action.subscriptionID,
+            }),
+            RecipeActions.loadRecipeSubscriptions()
+          ),
+          catchError((error) =>
+            of(
+              RecipeActions.deleteRecipeSubscriptionFailure({
+                error: {
+                  errorType: 'DELETE_RECIPE_SUBSCRIPTION_FAILURE',
+                  message: 'Failed to delete recipe subscription',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
   deleteRecipe$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeActions.deleteRecipe),
@@ -101,7 +156,8 @@ export class RecipeEffects {
           map(() =>
             RecipeActions.deleteRecipeSuccess({
               recipeID: action.recipeID,
-            })
+            }),
+            RecipeActions.loadRecipes()
           ),
           catchError((error) =>
             of(
@@ -128,7 +184,8 @@ export class RecipeEffects {
           map((recipe) =>
             RecipeActions.updateRecipeSuccess({
               recipe,
-            })
+            }),
+            RecipeActions.loadRecipes()
           ),
           catchError((error) =>
             of(

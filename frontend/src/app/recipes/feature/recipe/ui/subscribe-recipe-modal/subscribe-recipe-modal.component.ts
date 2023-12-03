@@ -171,7 +171,6 @@ export class SubscribeRecipeModalComponent {
   }
 
   onToolSelectChange(newUserToolID, tool) {
-    console.log(`onToolSelectChange: `, newUserToolID, tool);
     const newTools = this.tools().map((t) => {
       if (t.toolID === tool.toolID) {
         t.userToolID = newUserToolID;
@@ -179,7 +178,6 @@ export class SubscribeRecipeModalComponent {
       return t;
     });
     this.tools.set(newTools);
-    console.log(`newTools: `, newTools);
   }
 
   getProgressValue() {
@@ -190,7 +188,6 @@ export class SubscribeRecipeModalComponent {
         ? 40
         : 10;
     this.progressValue = progress;
-    console.log(`getProgressValue: `, progress);
   }
 
   onSubscribeClick() {

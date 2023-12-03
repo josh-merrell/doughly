@@ -28,6 +28,8 @@ import { FriendModalComponent } from 'src/app/social/feature/friends/ui/friend-m
 import { SubscribeRecipeModalComponent } from '../ui/subscribe-recipe-modal/subscribe-recipe-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
+import { selectSubscriptionBySourceRecipeID } from 'src/app/recipes/state/recipe/recipe-selectors';
+import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 
 @Component({
   selector: 'dl-public-recipe',
@@ -83,7 +85,6 @@ export class PublicRecipeComponent {
   steps: WritableSignal<any[]> = signal([]);
   recipeSteps: WritableSignal<any[]> = signal([]);
 
-  subscribed: WritableSignal<boolean> = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -102,6 +103,11 @@ export class PublicRecipeComponent {
     effect(
       () => {
         const recipeID = this.recipeID();
+        this.store
+          .select(selectSubscriptionBySourceRecipeID(recipeID))
+          .subscribe((subscription) => {
+            this.recipeSubscription.set(subscription);
+          });
         this.recipeService.getByID(recipeID).subscribe((recipeData) => {
           if (!recipeData[0]) return;
           this.recipe.set(recipeData[0]);
@@ -183,6 +189,7 @@ export class PublicRecipeComponent {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
     this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
     this.route.paramMap.subscribe((params) => {
       this.recipeID.set(Number(params.get('recipeID')!));
@@ -205,6 +212,9 @@ export class PublicRecipeComponent {
   }
 
   onSubscribeClick() {
+    if (this.recipeSubscription()) {
+      this.router.navigate(['/recipe', this.recipeSubscription().newRecipeID])
+    }
     if (!this.recipeSubscription()) {
       const dialogRef = this.dialog.open(SubscribeRecipeModalComponent, {
         data: {

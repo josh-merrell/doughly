@@ -63,6 +63,14 @@ const RecipeDeleteSchema_params = {
   },
 };
 
+const SubscriptionDeleteSchema_params = {
+  type: 'object',
+  required: ['subscriptionID'],
+  properties: {
+    subscriptionID: { type: 'string' },
+  },
+};
+
 const getRecipeComponentsSchema_query = {
   type: 'object',
   properties: {
@@ -168,6 +176,7 @@ module.exports = {
   RecipeUpdateSchema_body,
   RecipeUpdateSchema_params,
   RecipeDeleteSchema_params,
+  SubscriptionDeleteSchema_params,
   getRecipeComponentsSchema_query,
   getRecipeComponentSchema_params,
   newRecipeComponentSchema_body,

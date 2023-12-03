@@ -76,7 +76,7 @@ module.exports = ({ db }) => {
       console.log('created steps');
 
       //make axios call to add recipeSubscription
-      const { data: subscription, error: subscriptionError } = await axios.post(
+      const { data: subscriptionID, error: subscriptionError } = await axios.post(
         `${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe`,
         {
           authorization,
@@ -90,7 +90,7 @@ module.exports = ({ db }) => {
       if (subscriptionError) {
         throw subscriptionError;
       }
-
+      createdItems.push({ subscriptionID: subscriptionID });
       return { recipeID: recipe.recipeID };
     } catch (error) {
       //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
@@ -287,6 +287,12 @@ module.exports = ({ db }) => {
           authorization,
         },
       });
+    } else if (item.subscriptionID) {
+      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe/${item.subscriptionID}`, {
+        headers: {
+          authorization,
+        },
+      });
     } else if (item.ingredientID) {
       await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/${item.ingredientID}`, {
         headers: {
@@ -376,6 +382,46 @@ module.exports = ({ db }) => {
     }
     global.logger.info(`Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`);
     return recipeSteps;
+  }
+
+  async function getRecipeSubscriptions(options) {
+    const { userID, authorization } = options;
+    const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('userID', userID).eq('deleted', false);
+    if (error) {
+      global.logger.info(`Error getting recipeSubscriptions for userID: ${userID}: ${error.message}`);
+      return { error: error.message };
+    }
+    const enhancedSubscriptions = [];
+    for (let i = 0; i < subscriptions.length; i++) {
+      // get source recipe using axios endpoint
+      const { data: sourceRecipe, error: sourceRecipeError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${subscriptions[i].sourceRecipeID}`, { headers: { authorization } });
+      if (sourceRecipeError) {
+        global.logger.info(`Error getting sourceRecipe for subscriptionID: ${subscriptions[i].subscriptionID}: ${sourceRecipeError.message}`);
+        return { error: sourceRecipeError.message };
+      }
+      console.log(`sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`)
+  
+      // get profile using axios endpoint providing userID in query
+      const { data: profile, error: profileError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/profiles?userID=${sourceRecipe[0].userID}`, { headers: { authorization } });
+      if (profileError) {
+        global.logger.info(`Error getting profile for userID: ${sourceRecipe[0].userID}: ${profileError.message}`);
+        return { error: profileError.message };
+      }
+      console.log(`PROFILE: ${JSON.stringify(profile)}`)
+
+      enhancedSubscriptions.push({
+        subscriptionID: subscriptions[i].subscriptionID,
+        sourceRecipeID: subscriptions[i].sourceRecipeID,
+        newRecipeID: subscriptions[i].newRecipeID,
+        startDate: subscriptions[i].startDate,
+        authorID: sourceRecipe[0].userID,
+        authorName: `${profile.nameFirst} ${profile.nameLast}`,
+        authorUsername: profile.username,
+        authorPhotoURL: profile.imageURL,
+      });
+    }
+    global.logger.info(`Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`);
+    return enhancedSubscriptions;
   }
 
   async function create(options) {
@@ -815,8 +861,47 @@ module.exports = ({ db }) => {
     return subscription.subscriptionID;
   }
 
+  async function deleteRecipeSubscription(options) {
+    const { subscriptionID, authorization, userID } = options;
+
+    //ensure provided subscriptionID exists and is not deleted
+    const { data: subscription, error } = await db.from('recipeSubscriptions').select().eq('subscriptionID', subscriptionID).eq('deleted', false);
+    if (error) {
+      global.logger.info(`Error getting subscription: ${error.message}`);
+      return { error: error.message };
+    }
+    if (!subscription.length) {
+      global.logger.info(`Error deleting subscription. Subscription with provided ID (${subscriptionID}) does not exist`);
+      return { error: `Error deleting subscription. Subscription with provided ID (${subscriptionID}) does not exist` };
+    }
+    if (subscription[0].userID !== userID) {
+      global.logger.info(`Error deleting subscription. Subscription with provided ID (${subscriptionID}) does not belong to user`);
+      return { error: `Error deleting subscription. Subscription with provided ID (${subscriptionID}) does not belong to user` };
+    }
+
+    //delete subscription
+    const { error: deleteError } = await db.from('recipeSubscriptions').update({ deleted: true }).eq('subscriptionID', subscriptionID);
+    if (deleteError) {
+      global.logger.info(`Error deleting subscription: ${deleteError.message}`);
+      return { error: deleteError.message };
+    }
+
+    //make axios call to delete recipe
+    try {
+      const { data: deleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${subscription[0].newRecipeID}`, { headers: { authorization } });
+      if (deleteResult.error) {
+        global.logger.info(`Error deleting recipe: ${deleteResult.error}`);
+        return { error: deleteResult.error };
+      }
+    } catch (error) {
+      global.logger.info(`Error deleting recipe: ${error.message}`);
+      return { error: error.message };
+    }
+  }
+
   return {
     get: {
+      subscriptions: getRecipeSubscriptions,
       all: getAll,
       byID: getByID,
       ingredients: getRecipeIngredients,
@@ -829,5 +914,6 @@ module.exports = ({ db }) => {
     delete: deleteRecipe,
     use: useRecipe,
     subscribe: subscribeRecipe,
+    unsubscribe: deleteRecipeSubscription,
   };
 };

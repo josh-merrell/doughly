@@ -40,6 +40,14 @@ async function getRecipeByID(req, res) {
   return res.json(returner);
 }
 
+async function getRecipeSubscriptions(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { authorization } = req.headers;
+  const returner = await p.get.subscriptions({ userID: req.userID, authorization });
+  return res.json(returner);
+}
+
 async function createRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -156,16 +164,31 @@ async function subscribeRecipe(req, res) {
   return res.json(returner);
 }
 
+async function unsubscribeRecipe(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { subscriptionID } = req.params;
+  const { authorization } = req.headers;
+  const returner = await p.unsubscribe({
+    authorization,
+    userID: req.userID,
+    subscriptionID,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   getRecipes,
   getRecipeIngredients,
   getRecipeTools,
   getRecipeSteps,
   getRecipeByID,
+  getRecipeSubscriptions,
   createRecipe,
   updateRecipe,
   deleteRecipe,
   useRecipe,
   constructRecipe,
   subscribeRecipe,
+  unsubscribeRecipe
 };
