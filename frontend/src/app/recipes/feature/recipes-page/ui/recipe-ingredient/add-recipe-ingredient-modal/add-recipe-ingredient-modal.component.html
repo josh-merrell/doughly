@@ -75,7 +75,6 @@
             <input
               matInput
               formControlName="measurement"
-              [disabled]="!form.get('ingredientID')?.value"
               placeholder="ex: 2"
             />
             <mat-error
@@ -110,10 +109,6 @@
             <input
               matInput
               formControlName="purchaseUnitRatio"
-              [disabled]="
-                !form.get('ingredientID')?.value ||
-                !form.get('measurementUnit')?.value
-              "
               [placeholder]="
                 mUnit && pUnit
                   ? 'How many ' + mUnit + ' per ' + pUnit + '? ex: 1.45'

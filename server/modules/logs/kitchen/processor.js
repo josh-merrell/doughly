@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
 
     if (error) {
       global.logger.info(`Error creating kitchenLog: ${error.message}`);
-      return { error: error.message };
+      return { kitchenLogID: 0, error: error.message };
     }
     return {
       kitchenLogID: log.kitchenLogID,

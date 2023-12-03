@@ -11,6 +11,8 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 import { IngredientActions } from 'src/app/kitchen/feature/ingredients/state/ingredient-actions';
 import { Store } from '@ngrx/store';
@@ -28,6 +30,7 @@ import { RecipeService } from 'src/app/recipes/data/recipe.service';
     MatInputModule,
     FormsModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './subscribe-recipe-modal.component.html',
 })
@@ -168,7 +171,6 @@ export class SubscribeRecipeModalComponent {
   }
 
   onToolSelectChange(newUserToolID, tool) {
-    console.log(`onToolSelectChange: `, newUserToolID, tool);
     const newTools = this.tools().map((t) => {
       if (t.toolID === tool.toolID) {
         t.userToolID = newUserToolID;
@@ -176,7 +178,6 @@ export class SubscribeRecipeModalComponent {
       return t;
     });
     this.tools.set(newTools);
-    console.log(`newTools: `, newTools);
   }
 
   getProgressValue() {
@@ -187,13 +188,13 @@ export class SubscribeRecipeModalComponent {
         ? 40
         : 10;
     this.progressValue = progress;
-    console.log(`getProgressValue: `, progress);
   }
 
   onSubscribeClick() {
     if (this.ingredientsReady() && this.toolsReady()) {
       const constructBody = {};
-      // add 'title', 'recipeCategoryID', 'servings', 'lifespanDays', 'type', 'timePrep', 'photoURL', 'ingredients', 'tools', 'steps'
+      // add 'sourceRecipeID', 'title', 'recipeCategoryID', 'servings', 'lifespanDays', 'type', 'timePrep', 'photoURL', 'ingredients', 'tools', 'steps'
+      constructBody['sourceRecipeID'] = this.recipe.recipeID;
       constructBody['title'] = this.recipe.title;
       constructBody['recipeCategoryID'] = this.recipe.recipeCategoryID;
       constructBody['servings'] = this.recipe.servings;
@@ -207,7 +208,6 @@ export class SubscribeRecipeModalComponent {
 
       // Add Ingredients
       const ingredients = this.ingredients();
-      console.log('INGREDIENTS: ', ingredients);
       for (let i in ingredients) {
         const newIngredient = {};
         // if userIngredientID is 0, this ingredient needs 'name', 'lifespanDays', 'purchaseUnit', 'gramRatio', 'brand', 'purchaseUnitRatio', 'measurementUnit', 'measurement
@@ -240,7 +240,6 @@ export class SubscribeRecipeModalComponent {
 
       // Add Tools
       const tools = this.tools();
-      console.log('TOOLS: ', tools);
       for (let i in tools) {
         const newTool = {};
         // if userToolID is 0, this tool needs 'name', 'lifespanDays', 'brand'
@@ -262,7 +261,6 @@ export class SubscribeRecipeModalComponent {
 
       // Add Steps
       const steps = this.steps;
-      console.log('STEPS: ', steps);
       for (let i in steps) {
         const newStep = {};
         newStep['stepID'] = 0;

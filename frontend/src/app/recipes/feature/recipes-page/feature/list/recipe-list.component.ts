@@ -12,7 +12,10 @@ import { CommonModule } from '@angular/common';
 import { RecipeCategoryCardComponent } from '../../ui/recipe-category/recipe-category-card/recipe-category-card.component';
 import { RecipeCardComponent } from '../../ui/recipe/recipe-card/recipe-card.component';
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
-import { RecipeCategory, RecipeCategoryError } from 'src/app/recipes/state/recipe-category/recipe-category-state';
+import {
+  RecipeCategory,
+  RecipeCategoryError,
+} from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { Store } from '@ngrx/store';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
@@ -40,12 +43,13 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
 @Component({
-  selector: 'dl-created-recipes',
+  selector: 'dl-recipe-list',
   standalone: true,
   imports: [CommonModule, RecipeCategoryCardComponent, RecipeCardComponent],
-  templateUrl: './created-recipes.component.html',
+  templateUrl: './recipe-list.component.html',
 })
-export class CreatedRecipesComponent {
+export class RecipeListComponent {
+  @Input() type!: string;
   @ViewChild('scrollContainer', { static: false })
   scrollContainer!: ElementRef;
   showScrollDownArrow = false;
@@ -130,9 +134,10 @@ export class CreatedRecipesComponent {
 
   ngOnInit(): void {
     this.store.select(selectRecipes).subscribe((recipes) => {
-      // filter out any with type of 'subscription'
       recipes = recipes.filter((recipe) => {
-        return recipe.type !== 'subscription';
+        return this.type === 'subscription'
+          ? recipe.type === 'subscription'
+          : recipe.type !== 'subscription';
       });
       this.recipes.set(
         [...recipes].sort((a, b) => a.title.localeCompare(b.title))
@@ -148,8 +153,9 @@ export class CreatedRecipesComponent {
       const childHeight = Array.from(
         this.scrollContainer.nativeElement.children as HTMLElement[]
       ).reduce((height, child: HTMLElement) => height + child.clientHeight, 0);
-      this.showScrollDownArrow = childHeight > this.scrollContainer.nativeElement.clientHeight;
-    }
+      this.showScrollDownArrow =
+        childHeight > this.scrollContainer.nativeElement.clientHeight;
+    };
     checkScrollHeight();
   }
 
@@ -157,7 +163,8 @@ export class CreatedRecipesComponent {
     if (target) {
       let element = target as HTMLElement;
       this.showScrollUpArrow = element.scrollTop > 0;
-      this.showScrollDownArrow = element.scrollHeight - element.scrollTop - element.clientHeight > 1;
+      this.showScrollDownArrow =
+        element.scrollHeight - element.scrollTop - element.clientHeight > 1;
     }
   }
 
@@ -171,10 +178,10 @@ export class CreatedRecipesComponent {
   }
   onAddClick(): void {
     const dialogRef = this.dialog.open(AddRecipeModalComponent, {
-        data: {
-          recipeCategories: this.categories(),
-        },
-      });
+      data: {
+        recipeCategories: this.categories(),
+      },
+    });
     dialogRef.afterClosed().subscribe((result) => {
       const message = 'Recipe';
       if (result === 'success') {

@@ -14,15 +14,25 @@ import {
   selectAdding,
   selectLoading,
 } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
-import { Observable, Subscription } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Observable, Subscription, combineLatest } from 'rxjs';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
-import { selectIngredientByID, selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
+import {
+  selectIngredientByID,
+  selectIngredients,
+} from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddIngredientModalComponent } from 'src/app/kitchen/feature/ingredients/ui/add-ingredient-modal/add-ingredient-modal.component';
-import { positiveFloatValidator, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import {
+  positiveFloatValidator,
+  positiveIntegerValidator,
+} from 'src/app/shared/utils/formValidator';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -72,24 +82,57 @@ export class AddRecipeIngredientModalComponent {
   }
 
   setForm() {
+    const initialIngredientID = '';
+    const initialMeasurementUnit = '';
     this.form = this.fb.group({
-      ingredientID: ['', Validators.required],
-      measurement: ['', [Validators.required, positiveIntegerValidator()]],
-      measurementUnit: ['', Validators.required],
-      purchaseUnitRatio: ['', [Validators.required, positiveFloatValidator()]],
+      ingredientID: [initialIngredientID, Validators.required],
+      measurement: [
+        { value: '', disabled: !initialIngredientID },
+        [Validators.required, positiveIntegerValidator()],
+      ],
+      measurementUnit: [initialMeasurementUnit, Validators.required],
+      purchaseUnitRatio: [
+        {
+          value: '',
+          disabled: !initialIngredientID || !initialMeasurementUnit,
+        },
+        [Validators.required, positiveFloatValidator()],
+      ],
     });
 
     // Update mUnit whenever measurementUnit value changes
     this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
       // if value is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
       if (
-        value === 'box' || value === 'bunch' || value === 'pinch' || value === 'dash'
+        value === 'box' ||
+        value === 'bunch' ||
+        value === 'pinch' ||
+        value === 'dash'
       ) {
         value += 'es';
       } else {
         value += 's';
       }
       this.mUnit = value;
+    });
+
+    this.form.get('ingredientID')?.valueChanges.subscribe((ingredientID) => {
+      if (ingredientID) {
+        this.form.get('measurement')?.enable();
+      } else {
+        this.form.get('measurement')?.disable();
+      }
+    });
+
+    combineLatest([
+      this.form.get('ingredientID')!.valueChanges,
+      this.form.get('measurementUnit')!.valueChanges,
+    ]).subscribe(([ingredientID, measurementUnit]) => {
+      if (ingredientID && measurementUnit) {
+        this.form.get('purchaseUnitRatio')?.enable();
+      } else {
+        this.form.get('purchaseUnitRatio')?.disable();
+      }
     });
 
     // Update pUnit whenever ingredientID value changes
