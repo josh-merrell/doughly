@@ -104,19 +104,6 @@ export class ProfileEffects {
     )
   );
 
-  // loadProfile$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(ProfileActions.loadProfile),
-  //     mergeMap((action) =>
-  //       this.profileService.getProfile(action.userID).pipe(
-  //         map((profile) => ProfileActions.loadProfileSuccess({ profile })),
-  //         catchError((error) =>
-  //           of(ProfileActions.loadProfileFailure({ error }))
-  //         )
-  //       )
-  //     )
-  //   )
-  // );
 
   loadProfile$ = createEffect(() =>
   this.actions$.pipe(

@@ -6,6 +6,7 @@ import { FollowshipActions } from './state/followship-actions';
 import { FriendsComponent } from './feature/friends/friends.component';
 import { FollowersComponent } from './feature/followers/followers.component';
 import { TimelineComponent } from './feature/timeline/timeline.component';
+import { RecipeActions } from '../recipes/state/recipe/recipe-actions';
 
 @Component({
   selector: 'dl-social-page',

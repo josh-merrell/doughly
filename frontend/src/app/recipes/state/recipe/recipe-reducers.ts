@@ -4,6 +4,7 @@ import { RecipeState, RecipeStatus } from './recipe-state';
 
 export const initialState: RecipeState = {
   recipes: [],
+  recipeSubscriptions: [],
   loading: false,
   error: null,
   adding: false,
@@ -46,6 +47,41 @@ export const recipeReducer = createReducer(
     ...state,
     error,
     loading: false,
+  })),
+  on(RecipeActions.loadRecipeSubscriptions, (state) => ({
+    ...state,
+    error: null,
+    loading: true,
+  })),
+  on(
+    RecipeActions.loadRecipeSubscriptionsSuccess,
+    (state, { recipeSubscriptions }) => ({
+      ...state,
+      recipeSubscriptions: recipeSubscriptions,
+      loading: false,
+    })
+  ),
+  on(RecipeActions.loadRecipeSubscriptionsFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+  on(RecipeActions.deleteRecipeSubscription, (state) => ({
+    ...state,
+    error: null,
+    deleting: true,
+  })),
+  on(RecipeActions.deleteRecipeSubscriptionSuccess, (state, { subscriptionID }) => ({
+    ...state,
+    recipeSubscriptions: state.recipeSubscriptions.filter(
+      (item) => item.subscriptionID !== subscriptionID
+    ),
+    deleting: false,
+  })),
+  on(RecipeActions.deleteRecipeSubscriptionFailure, (state, { error }) => ({
+    ...state,
+    error,
+    deleting: false,
   })),
   on(RecipeActions.addRecipe, (state) => ({
     ...state,

@@ -1,4 +1,11 @@
 <div
+  *ngIf="loading()"
+  class="flex h-dl-12 w-full flex-col items-center justify-center"
+>
+  <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+</div>
+<div
+  *ngIf="!loading()"
   class="flex h-full w-full flex-col items-center bg-white px-dl-5 pb-dl-4 pt-dl-4 transition-all"
 >
   <!-- Recipe Image and Author Image -->
@@ -166,7 +173,7 @@
   </div>
 
   <div class="flex h-dl-6 w-full items-center justify-between">
-    <div class="relative flex w-full mt-dl-2 items-center">
+    <div class="relative mt-dl-2 flex w-full items-center">
       <mat-progress-bar
         mode="determinate"
         [value]="progressValue"
@@ -175,8 +182,8 @@
       <p
         class="absolute -top-7 left-28 text-dl-4"
         [ngClass]="{
-          'text-dl-grey-2 font-dl-3': ingredientsReady(),
-          'text-dl-grey-7 font-dl-2': !ingredientsReady()
+          'font-dl-3 text-dl-grey-2': ingredientsReady(),
+          'font-dl-2 text-dl-grey-7': !ingredientsReady()
         }"
       >
         Ingredients
@@ -184,8 +191,8 @@
       <p
         class="absolute -top-7 left-72 text-dl-4"
         [ngClass]="{
-          'text-dl-grey-2 font-dl-3': toolsReady(),
-          'text-dl-grey-7 font-dl-2': !toolsReady()
+          'font-dl-3 text-dl-grey-2': toolsReady(),
+          'font-dl-2 text-dl-grey-7': !toolsReady()
         }"
       >
         Tools

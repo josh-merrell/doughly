@@ -79,7 +79,17 @@
       </div>
 
       <!-- Subscribe Section -->
-      <div *ngIf="subscribed() === false" class="mx-dl-5 flex items-center mb-dl-5 justify-between px-dl-1 pb-dl-5 pt-dl-1">
+      <div *ngIf="recipeSubscription()" class="mx-dl-5 flex items-center mb-dl-5 justify-between px-dl-1 pb-dl-5 pt-dl-1">
+        <p class="text-dl-4 font-dl-2 text-dl-grey-4">Your subscription is tracking updates</p>
+        <button
+            type="button"
+            class="block w-dl-9 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+            (click)="onSubscribeClick()"
+          >
+            My Subscription
+          </button>
+      </div>
+      <div *ngIf="!recipeSubscription()" class="mx-dl-5 flex items-center mb-dl-5 justify-between px-dl-1 pb-dl-5 pt-dl-1">
         <p class="text-dl-4 font-dl-2 text-dl-grey-4">Subscribe to use this recipe in your kitchen</p>
         <button
             type="button"

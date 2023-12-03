@@ -3,9 +3,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   Observable,
   combineLatest,
+  forkJoin,
   map,
   of,
   switchMap,
+  take,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Store, select } from '@ngrx/store';
@@ -22,7 +24,7 @@ import { selectRecipeToolsByRecipeID } from '../state/recipe-tool/recipe-tool-se
 import { selectIngredientByID } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectIngredientStocksByIngredientID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { IDService } from 'src/app/shared/utils/ID';
-import { RecipeUse } from '../state/recipe/recipe-state';
+import { RecipeUse, RecipeSubscription } from '../state/recipe/recipe-state';
 
 @Injectable({
   providedIn: 'root',
@@ -91,6 +93,11 @@ export class RecipeService {
     return this.http.get<any>(`${this.API_URL}/${recipeID}`);
   }
 
+  getSubscriptions(): Observable<RecipeSubscription[]> {
+    const results = this.http.get<any[]>(`${this.API_URL}/subscriptions`);
+    return results
+  }
+
   add(recipe: Recipe): Observable<Recipe> {
     const body = {
       IDtype: this.idService.getIDtype('recipe'),
@@ -133,20 +140,20 @@ export class RecipeService {
             return combineLatest([
               of(recipeIngredient),
               this.store.pipe(
-                select(selectIngredientByID(recipeIngredient.ingredientID))
+                select(selectIngredientByID(recipeIngredient.ingredientID)), take(1)
               ),
               this.store.pipe(
                 select(
                   selectIngredientStocksByIngredientID(
                     recipeIngredient.ingredientID
                   )
-                )
+                ), take(1)
               ),
             ]);
           }
         );
 
-        return combineLatest(ingredientObservables);
+        return forkJoin(ingredientObservables);
       }),
       map((ingredientsData) => {
         if (ingredientsData.length === 1 && ingredientsData[0].length === 0) {
@@ -252,5 +259,11 @@ export class RecipeService {
 
   constructRecipe(constructBody): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/constructed`, constructBody);
+  }
+
+  deleteSubscription(subscriptionID: number): Observable<any> {
+    return this.http.delete<any>(
+      `${this.API_URL}/subscriptions/${subscriptionID}`
+    );
   }
 }
