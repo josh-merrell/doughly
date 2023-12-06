@@ -17,6 +17,7 @@ const {
   useRecipeSchema_body,
   constructRecipeSchema_body,
   SubscriptionDeleteSchema_params,
+  syncRecipe_body,
 } = require('../../schemas/recipe-types');
 const recipeCategoriesRouter = require('./categories/router');
 const recipeComponentsRouter = require('./components/router');
