@@ -49,12 +49,27 @@
             </mat-select>
           </mat-form-field>
         </div>
+        <!-- Heirloom Recipe -->
         <div
+          id="form-isHeirloomRecipe"
+          class="relative mt-dl-2 flex flex-row items-center"
+        >
+          <mat-slide-toggle
+            [(ngModel)]="isHeirloom"
+            formControlName="isHeirloomRecipe"
+            class="select-slider"
+          ></mat-slide-toggle>
+          <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
+            >Allow friends to view and use</span
+          >
+        </div>
+        <div
+          [ngClass]="{ invisible: !isHeirloom }"
           id="form-isPublicRecipe"
           class="relative mt-dl-2 flex flex-row items-center"
         >
           <mat-slide-toggle
-            [(ngModel)]="isChecked"
+            [(ngModel)]="isPublic"
             formControlName="isPublicRecipe"
             class="select-slider"
           ></mat-slide-toggle>

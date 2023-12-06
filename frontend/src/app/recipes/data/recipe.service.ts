@@ -95,7 +95,15 @@ export class RecipeService {
 
   getSubscriptions(): Observable<RecipeSubscription[]> {
     const results = this.http.get<any[]>(`${this.API_URL}/subscriptions`);
-    return results
+    return results;
+  }
+  // deleteSubscription(subscriptionID: number): Observable<any> {
+  //   return this.http.delete<any>(
+  //     `${this.API_URL}/subscriptions/${subscriptionID}`
+  //   );
+  // }
+  getSubscriptionsByRecipeID(recipeID: number): Observable<RecipeSubscription[]> {
+    return this.http.get<any[]>(`${this.API_URL}/${recipeID}/subscriptions`);
   }
 
   add(recipe: Recipe): Observable<Recipe> {
@@ -127,7 +135,7 @@ export class RecipeService {
 
   getShoppingList(
     recipeID: number,
-    date = new Date()
+    date = new Date(),
   ): Observable<ShoppingList> {
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
@@ -140,14 +148,16 @@ export class RecipeService {
             return combineLatest([
               of(recipeIngredient),
               this.store.pipe(
-                select(selectIngredientByID(recipeIngredient.ingredientID)), take(1)
+                select(selectIngredientByID(recipeIngredient.ingredientID)),
+                take(1)
               ),
               this.store.pipe(
                 select(
                   selectIngredientStocksByIngredientID(
                     recipeIngredient.ingredientID
                   )
-                ), take(1)
+                ),
+                take(1)
               ),
             ]);
           }
@@ -166,6 +176,9 @@ export class RecipeService {
           ingredient,
           ingredientStocks,
         ] of ingredientsData) {
+          if (!ingredient || !recipeIngredient || !ingredientStocks.length) {
+            return { ingredients: [] }; // Return default ShoppingList when no ingredients are found
+          }
           let neededGrams =
             (recipeIngredient.measurement /
               recipeIngredient.purchaseUnitRatio) *
@@ -259,6 +272,14 @@ export class RecipeService {
 
   constructRecipe(constructBody): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/constructed`, constructBody);
+  }
+
+  syncRecipe(recipeID: number, sourceRecipeID: number): Observable<any> {
+    const body = {
+      sourceRecipeID: sourceRecipeID,
+      childRecipeID: recipeID,
+    }
+    return this.http.post<any>(`${this.API_URL}/sync`, body);
   }
 
   deleteSubscription(subscriptionID: number): Observable<any> {

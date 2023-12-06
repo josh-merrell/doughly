@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -61,7 +61,8 @@ export class EditRecipeModalComponent {
   public imagePresent: boolean = false;
   public photoURL?: string = '';
   public photo: any;
-  public isChecked!: boolean;
+  public isPublic!: boolean;
+  public isHeirloom!: boolean;
   newPhotoURL!: string;
 
   constructor(
@@ -76,7 +77,8 @@ export class EditRecipeModalComponent {
   }
 
   ngOnInit(): void {
-    this.isChecked = this.data.type === 'public' ? true : false;
+    this.isPublic = this.data.type === 'public' ? true : false;
+    this.isHeirloom = this.data.type === 'heirloom' || this.data.type === 'public' ? true : false;
     this.store
       .select(selectRecipes)
       .pipe(takeUntil(this.unsubscribe$))
@@ -97,6 +99,7 @@ export class EditRecipeModalComponent {
     this.form = this.fb.group({
       title: [this.data.title, [Validators.required, this.titleValidator()]],
       recipeCategoryID: [this.data.recipeCategoryID, [Validators.required]],
+      isHeirloomRecipe: [this.data.type === 'heirloom' || this.data.type === 'public' ? true : false],
       isPublicRecipe: [this.data.type === 'public' ? true : false],
       servings: [
         this.data.servings,
@@ -213,7 +216,7 @@ export class EditRecipeModalComponent {
       timeBake: this.form.value.timeBake
         ? parseInt(this.form.value.timeBake)
         : null,
-      type: this.form.value.isPublicRecipe ? 'public' : 'private',
+      type: this.form.value.isHeirloomRecipe ? this.form.value.isPublicRecipe ? 'public' : 'heirloom' : 'private',
       photoURL: this.photoURL,
       recipeID: this.data.recipeID,
     };

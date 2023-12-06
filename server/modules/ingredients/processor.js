@@ -59,7 +59,7 @@ module.exports = ({ db }) => {
       return { error: error.message };
     }
     if (existingIngredient.length > 0) {
-      global.logger.info(`Ingredient name already exists, cannot create ingredient`);
+      global.logger.info(`Ingredient name ${existingIngredient[0].name} already exists, cannot create ingredient`);
       return { error: `Ingredient name already exists, cannot cretae ingredient` };
     }
 

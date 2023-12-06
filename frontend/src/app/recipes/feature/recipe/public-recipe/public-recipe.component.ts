@@ -52,23 +52,45 @@ export class PublicRecipeComponent {
   ingredients: WritableSignal<any[]> = signal([]);
   recipeIngredients: WritableSignal<RecipeIngredient[]> = signal([]);
   recipeSubscription: WritableSignal<any> = signal(null);
-  displayIngredients = computed(() => {
+  enhancedIngredients = computed(() => {
     const recipeIngredients = this.recipeIngredients();
     const ingredients = this.ingredients();
     if (!recipeIngredients || !ingredients) return [];
-    const newIngredients = ingredients.map((i) => {
+    const newIngredients: any[] = [];
+    for (const ingredient of ingredients) {
       const ri = recipeIngredients.find(
-        (ri) => ri.ingredientID === i.ingredientID
+        (ri) => ri.ingredientID === ingredient.ingredientID
       );
-      if (!ri) return null;
-      return {
-        ...i,
+      if (!ri) {
+        return null;
+      }
+      newIngredients.push({
+        ...ingredient,
         purchaseUnitRatio: ri.purchaseUnitRatio,
         measurement: ri.measurement,
         measurementUnit: ri.measurementUnit,
+      });
+    }
+    return newIngredients;
+  });
+  displayIngredients = computed(() => {
+    const enhancedIngredients = this.enhancedIngredients();
+    if (!enhancedIngredients) return [];
+    return enhancedIngredients.map((i) => {
+      if (!i) return null;
+      let newMeasurementUnit = i.measurementUnit;
+      if (i.measurement > 1) {
+        if (['box', 'bunch', 'pinch', 'dash'].includes(i.measurementUnit)) {
+          newMeasurementUnit += 'es';
+        } else {
+          newMeasurementUnit += 's';
+        }
+      }
+      return {
+        ...i,
+        measurementUnit: newMeasurementUnit,
       };
     });
-    return newIngredients;
   });
   ready = computed(() => {
     if (
@@ -85,6 +107,7 @@ export class PublicRecipeComponent {
   steps: WritableSignal<any[]> = signal([]);
   recipeSteps: WritableSignal<any[]> = signal([]);
 
+  public subscriptions: WritableSignal<any[]> = signal([]);
 
   constructor(
     private route: ActivatedRoute,
@@ -126,6 +149,12 @@ export class PublicRecipeComponent {
           if (!data) return;
           this.recipeSteps.set(data);
         });
+        this.recipeService
+          .getSubscriptionsByRecipeID(recipeID)
+          .subscribe((data) => {
+            if (!data) return;
+            this.subscriptions.set(data);
+          });
       },
       { allowSignalWrites: true }
     );
@@ -213,13 +242,13 @@ export class PublicRecipeComponent {
 
   onSubscribeClick() {
     if (this.recipeSubscription()) {
-      this.router.navigate(['/recipe', this.recipeSubscription().newRecipeID])
+      this.router.navigate(['/recipe', this.recipeSubscription().newRecipeID]);
     }
     if (!this.recipeSubscription()) {
       const dialogRef = this.dialog.open(SubscribeRecipeModalComponent, {
         data: {
           recipe: this.recipe(),
-          ingredients: this.displayIngredients(),
+          ingredients: this.enhancedIngredients(),
           tools: this.tools(),
           steps: this.steps(),
           author: this.author(),
