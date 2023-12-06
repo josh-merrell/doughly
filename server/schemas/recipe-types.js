@@ -168,6 +168,17 @@ const subscribeRecipe_body = {
   },
 }
 
+const syncRecipe_body = {
+  type: 'object',
+  required: ['sourceRecipeID', 'newRecipeID'],
+  properties: {
+    sourceRecipeID: { type: 'integer' },
+    childRecipeID: { type: 'integer' },
+    newIngredientMappings: { type: 'array', items: { type: 'object' } },
+    newToolMappings: { type: 'array', items: { type: 'object' } },
+  },
+}
+
 
 module.exports = {
   getRecipesSchema_query,
@@ -187,4 +198,5 @@ module.exports = {
   useRecipeSchema_params,
   useRecipeSchema_body,
   subscribeRecipe_body,
+  syncRecipe_body,
 };
