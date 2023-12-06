@@ -91,6 +91,17 @@ module.exports = ({ db }) => {
         throw subscriptionError;
       }
       createdItems.push({ subscriptionID: subscriptionID });
+
+      //get current version of source recipe and update newRecipe version to match
+      const { data: sourceRecipe, error: sourceRecipeError } = await db.from('recipes').select('version').eq('recipeID', sourceRecipeID).eq('deleted', false).single();
+      if (sourceRecipeError) {
+        throw sourceRecipeError;
+      }
+      const { error: updateError } = await db.from('recipes').update({ version: sourceRecipe.version }).eq('recipeID', recipe.recipeID);
+      if (updateError) {
+        throw updateError;
+      }
+
       return { recipeID: recipe.recipeID };
     } catch (error) {
       //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
@@ -107,7 +118,7 @@ module.exports = ({ db }) => {
   async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
     let ingredientID;
     try {
-      if ( ingredient.ingredientID === 0) {
+      if (ingredient.ingredientID === 0) {
         // If ingredientID is not provided, create a new ingredient
         const { data } = await axios.post(
           `${process.env.NODE_HOST}:${process.env.PORT}/ingredients`,
@@ -148,13 +159,6 @@ module.exports = ({ db }) => {
       );
       return { recipeIngredientID: data.recipeIngredientID, ingredientID: ingredientID };
     } catch (error) {
-      if (ingredientID) {
-        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/${ingredientID}`, {
-          headers: {
-            authorization,
-          },
-        });
-      }
       throw error;
     }
   }
@@ -177,8 +181,8 @@ module.exports = ({ db }) => {
           { headers: { authorization } },
         );
         return { recipeToolID: data.recipeToolID, toolID: toolID };
-      } 
-      
+      }
+
       if (tool.toolID === 0) {
         // If toolID is not provided, create a new tool
         const { data } = await axios.post(
@@ -215,13 +219,6 @@ module.exports = ({ db }) => {
       );
       return { recipeToolID: data.recipeToolID, toolID: toolID };
     } catch (error) {
-      if (toolID) {
-        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/tools/${toolID}`, {
-          headers: {
-            authorization,
-          },
-        });
-      }
       throw error;
     }
   }
@@ -262,11 +259,7 @@ module.exports = ({ db }) => {
       if (step.photoURL) {
         body.photoURL = step.photoURL;
       }
-      const { data } = await axios.post(
-        `${process.env.NODE_HOST}:${process.env.PORT}/steps/recipe`,
-        body,
-        { headers: { authorization } },
-      );
+      const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/steps/recipe`, body, { headers: { authorization } });
       return { recipeStepID: data.recipeStepID, stepID: stepID };
     } catch (error) {
       if (stepID) {
@@ -399,15 +392,14 @@ module.exports = ({ db }) => {
         global.logger.info(`Error getting sourceRecipe for subscriptionID: ${subscriptions[i].subscriptionID}: ${sourceRecipeError.message}`);
         return { error: sourceRecipeError.message };
       }
-      console.log(`sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`)
-  
+      console.log(`sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`);
+
       // get profile using axios endpoint providing userID in query
       const { data: profile, error: profileError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/profiles?userID=${sourceRecipe[0].userID}`, { headers: { authorization } });
       if (profileError) {
         global.logger.info(`Error getting profile for userID: ${sourceRecipe[0].userID}: ${profileError.message}`);
         return { error: profileError.message };
       }
-      console.log(`PROFILE: ${JSON.stringify(profile)}`)
 
       enhancedSubscriptions.push({
         subscriptionID: subscriptions[i].subscriptionID,
@@ -422,6 +414,17 @@ module.exports = ({ db }) => {
     }
     global.logger.info(`Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`);
     return enhancedSubscriptions;
+  }
+
+  async function getRecipeSubscriptionsByRecipeID(options) {
+    const { recipeID } = options;
+    const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('sourceRecipeID', recipeID).eq('deleted', false);
+    if (error) {
+      global.logger.info(`Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`);
+      return { error: error.message };
+    }
+    global.logger.info(`Found ${subscriptions.length} recipeSubscriptions for recipeID: ${recipeID}`);
+    return subscriptions;
   }
 
   async function create(options) {
@@ -899,8 +902,80 @@ module.exports = ({ db }) => {
     }
   }
 
+  async function syncRecipe(options) {
+    const { sourceRecipeID, childRecipeID, authorization, userID, newIngredientMappings, newToolMappings } = options;
+    // validate that sourceRecipeID exists and is not deleted
+    const { data: sourceRecipe, error } = await db.from('recipes').select('title, servings, recipeCategory, lifespanDays, timePrep, timeBake, photoURL, version').eq('recipeID', sourceRecipeID).eq('deleted', false).single();
+    if (error) {
+      global.logger.info(`Error getting sourceRecipe: ${error.message}`);
+      return { error: error.message };
+    }
+    if (!sourceRecipe.length) {
+      global.logger.info(`Error syncing recipe. Recipe with provided ID (${sourceRecipeID}) does not exist`);
+      return { error: `Error syncing recipe. Recipe with provided ID (${sourceRecipeID}) does not exist` };
+    }
+
+    // validate that childRecipeID exists and is not deleted
+    const { data: childRecipe, error: childRecipeError } = await db.from('recipes').select('title, servings, recipeCategory, lifespanDays, timePrep, timeBake, photoURL, version').eq('recipeID', childRecipeID).eq('deleted', false).single();
+    if (childRecipeError) {
+      global.logger.info(`Error getting childRecipe: ${childRecipeError.message}`);
+      return { error: childRecipeError.message };
+    }
+    if (!childRecipe.length) {
+      global.logger.info(`Error syncing recipe. Recipe with provided ID (${childRecipeID}) does not exist`);
+      return { error: `Error syncing recipe. Recipe with provided ID (${childRecipeID}) does not exist` };
+    }
+
+    if (sourceRecipe.version === childRecipe.version) {
+      global.logger.info(`No need to synce recipe. SourceRecipe and ChildRecipe have the same version`);
+      return { error: `Error syncing recipe. SourceRecipe and ChildRecipe have the same version` };
+    }
+
+    try {
+      const updateFields = {};
+      if (sourceRecipe.title !== childRecipe.title) {
+        updateFields.title = sourceRecipe.title;
+      }
+      if (sourceRecipe.servings !== childRecipe.servings) {
+        updateFields.servings = sourceRecipe.servings;
+      }
+      if (sourceRecipe.recipeCategory !== childRecipe.recipeCategory) {
+        updateFields.recipeCategory = sourceRecipe.recipeCategory;
+      }
+      if (sourceRecipe.lifespanDays !== childRecipe.lifespanDays) {
+        updateFields.lifespanDays = sourceRecipe.lifespanDays;
+      }
+      if (sourceRecipe.timePrep !== childRecipe.timePrep) {
+        updateFields.timePrep = sourceRecipe.timePrep;
+      }
+      if (sourceRecipe.timeBake !== childRecipe.timeBake) {
+        updateFields.timeBake = sourceRecipe.timeBake;
+      }
+      if (sourceRecipe.photoURL !== childRecipe.photoURL) {
+        updateFields.photoURL = sourceRecipe.photoURL;
+      }
+
+      //update childRecipe with updateFields
+      const updatedRecipe = await updater(userID, authorization, 'recipeID', childRecipeID, 'recipes', updateFields);
+      //update recipeIngredients
+      //if any newIngredientMappings, create new ingredient and ri using 'constructRecipeIngredient'
+      //for all sourceRecipe recipeIngredients, find the corresponding childRecipe recipeIngredient and update it to match
+      //if childRecipe has any other recipeIngredients, delete them
+
+      //update recipeTools
+      //if any newToolMappings, create new tool and rt using 'constructRecipeTool'
+      //for all sourceRecipe recipeTools, find the corresponding childRecipe recipeTool and update it to match
+      //if childRecipe has any other recipeTools, delete them
+
+      //update recipeSteps
+
+      //set childRecipe version to sourceRecipe version
+    } catch (err) {}
+  }
+
   return {
     get: {
+      subscriptionsByRecipeID: getRecipeSubscriptionsByRecipeID,
       subscriptions: getRecipeSubscriptions,
       all: getAll,
       byID: getByID,
@@ -915,5 +990,6 @@ module.exports = ({ db }) => {
     use: useRecipe,
     subscribe: subscribeRecipe,
     unsubscribe: deleteRecipeSubscription,
+    sync: syncRecipe,
   };
 };

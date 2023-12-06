@@ -27,8 +27,14 @@ module.exports = ({ db, dbPublic }) => {
       return { error: errorFollowerCount };
     }
 
-    // get (recipeID, title, servings, recipeCategoryID, type, lifespanDays, version, status, photoURL) from db.recipes where userID = userID, status = published and deleted = false
-    const { data: recipes, error: errorRecipes } = await db.from('recipes').select('recipeID, title, servings, recipeCategoryID, type, lifespanDays, version, status, photoURL').eq('userID', userID).eq('status', 'published').eq('deleted', false);
+    // get public recipes for this user. If the friendStatus is confirmed, get any recipes not equal to private
+    const q = db.from('recipes').select('recipeID, title, servings, recipeCategoryID, type, lifespanDays, version, status, photoURL').eq('userID', userID).eq('status', 'published').eq('deleted', false);
+    if (friendStatus === 'confirmed') {
+      q.neq('type', 'private');
+    } else {
+      q.eq('type', 'public');
+    }
+    const { data: recipes, error: errorRecipes } = await q;
     if (errorRecipes) {
       global.logger.info(`Error getting recipes for userID ${userID}: ${errorRecipes.message}`);
       return { error: errorRecipes };
@@ -234,7 +240,7 @@ module.exports = ({ db, dbPublic }) => {
     // Map over profileIDs and return a promise for each profile
     const promises = profileIDs.map(async (profileID) => {
       try {
-        const profile = await retrieveProfile(profileID.user_id);
+        const profile = await retrieveProfile(profileID.user_id, 'null');
         return profile;
       } catch (error) {
         global.logger.error(`Error retrieving profile for userID ${profileID.user_id}: ${error.message}`);
