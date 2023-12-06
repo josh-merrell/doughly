@@ -110,8 +110,8 @@ export class SubscribeRecipeModalComponent {
     if (!this.data.tools) this.toolsReady.set(true);
 
     // Load User Kitchen Items
-    this.store.dispatch(IngredientActions.loadIngredients());
-    this.store.dispatch(ToolActions.loadTools());
+    // this.store.dispatch(IngredientActions.loadIngredients());
+    // this.store.dispatch(ToolActions.loadTools());
     this.store.select(selectIngredients).subscribe((ingredients) => {
       this.userIngredients.set(ingredients);
       const initialStatuses = ingredients.map((i) => false);

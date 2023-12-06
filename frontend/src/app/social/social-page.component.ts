@@ -25,9 +25,9 @@ export class SocialPageComponent {
   constructor(private store: Store) {}
 
   ngOnInit() {
-    this.store.dispatch(FriendshipActions.loadFriendships());
-    this.store.dispatch(FollowshipActions.loadFollowships());
-    this.store.dispatch(FollowshipActions.loadFollowers());
+    // this.store.dispatch(FriendshipActions.loadFriendships());
+    // this.store.dispatch(FollowshipActions.loadFollowships());
+    // this.store.dispatch(FollowshipActions.loadFollowers());
   }
 
   setView(view: string) {

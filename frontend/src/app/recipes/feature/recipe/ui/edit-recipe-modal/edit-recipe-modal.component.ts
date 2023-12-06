@@ -174,7 +174,7 @@ export class EditRecipeModalComponent {
           // wait for delete operation to complete
           const result = await this.recipeDeleteImage().toPromise();
           if (result.data) {
-            this.store.dispatch(RecipeActions.loadRecipe(this.data.recipeID));
+            // this.store.dispatch(RecipeActions.loadRecipe(this.data.recipeID));
           }
         }
         // proceed with upload
