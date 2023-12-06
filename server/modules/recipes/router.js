@@ -32,9 +32,11 @@ router.use(authenticateJWT);
 router.post('/constructed', routeValidator(constructRecipeSchema_body, 'body'), errorCatcher(h.constructRecipe));
 router.post('/use/:recipeID', routeValidator(useRecipeSchema_params, 'params'), routeValidator(useRecipeSchema_body, 'body'), errorCatcher(h.useRecipe));
 router.post('/subscribe', generateID, routeValidator(subscribeRecipe_body, 'body'), errorCatcher(h.subscribeRecipe));
+router.post('/sync', routeValidator(syncRecipe_body, 'body'), errorCatcher(h.syncRecipe));
 router.post('/', generateID, routeValidator(newRecipeSchema_body, 'body'), errorCatcher(h.createRecipe));
 
 router.get('/subscriptions', errorCatcher(h.getRecipeSubscriptions));
+router.get('/:recipeID/subscriptions', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.subscriptionsByRecipeID));
 router.get('/:recipeID/ingredients', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeIngredients));
 router.get('/:recipeID/tools', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeTools));
 router.get('/:recipeID/steps', routeValidator(getRecipeSchema_params, 'params'), errorCatcher(h.getRecipeSteps));

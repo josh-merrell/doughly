@@ -12,7 +12,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectRecipeByID, selectSubscriptionByNewRecipeID } from '../../../state/recipe/recipe-selectors';
+import {
+  selectRecipeByID,
+  selectSubscriptionByNewRecipeID,
+} from '../../../state/recipe/recipe-selectors';
 import { selectRecipeIngredientsByRecipeID } from '../../../state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectRecipeToolsByRecipeID } from '../../../state/recipe-tool/recipe-tool-selectors';
@@ -24,7 +27,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { RecipeIngredientsModalComponent } from '../../recipes-page/ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
-import { RecipeIngredient, RecipeIngredientError } from '../../../state/recipe-ingredient/recipe-ingredient-state';
+import {
+  RecipeIngredient,
+  RecipeIngredientError,
+} from '../../../state/recipe-ingredient/recipe-ingredient-state';
 import { RecipeToolsModalComponent } from '../../recipes-page/ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
 import { selectSteps } from '../../../state/step/step-selectors';
 import { selectRecipeStepsByID } from '../../../state/recipe-step/recipe-step-selectors';
@@ -40,7 +46,11 @@ import { RecipeService } from '../../../data/recipe.service';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { Recipe, RecipeSubscription, ShoppingList } from '../../../state/recipe/recipe-state';
+import {
+  Recipe,
+  RecipeSubscription,
+  ShoppingList,
+} from '../../../state/recipe/recipe-state';
 import { RecipeShoppingListModalComponent } from './../ui/recipe-shopping-list-modal/recipe-shopping-list-modal.component';
 import { UseRecipeModalComponent } from './../ui/use-recipe-modal/use-recipe-modal.component';
 import { PhotoService } from 'src/app/shared/utils/photoService';
@@ -54,6 +64,11 @@ import { Profile } from 'src/app/profile/state/profile-state';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { UnsubscribeRecipeModalComponent } from '../ui/unsubscribe-recipe-modal/unsubscribe-recipe-modal.component';
+import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
+import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool-actions';
+import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
+import { RecipeCategoryActions } from 'src/app/recipes/state/recipe-category/recipe-category-actions';
+import { IngredientStockActions } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 
 function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -89,6 +104,8 @@ export class UserRecipeComponent {
   displayIngredients: WritableSignal<any[]> = signal([]);
   displayTools: WritableSignal<any[]> = signal([]);
   displaySteps: WritableSignal<any[]> = signal([]);
+  public subscriptions: WritableSignal<any[]> = signal([]);
+  public sourceRecipeVersion: WritableSignal<number> = signal(0);
 
   //****** Usage Logs ******
   //default datestring 30 days prior
@@ -129,7 +146,7 @@ export class UserRecipeComponent {
     private photoService: PhotoService,
     private profileService: ProfileService
   ) {
-    effect( 
+    effect(
       () => {
         const recipeID = this.recipeID();
         this.store
@@ -161,6 +178,26 @@ export class UserRecipeComponent {
           .subscribe((shoppingList) => {
             this.shoppingList.set(shoppingList);
           });
+        this.recipeService
+          .getSubscriptionsByRecipeID(recipeID)
+          .subscribe((data) => {
+            if (!data) return;
+            this.subscriptions.set(data);
+          });
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(
+      () => {
+        const recipeID = this.recipeID();
+        const ingredients = this.ingredients();
+        const recipeIngredients = this.recipeIngredients();
+        this.recipeService
+          .getShoppingList(recipeID)
+          .subscribe((shoppingList) => {
+            this.shoppingList.set(shoppingList);
+          });
       },
       { allowSignalWrites: true }
     );
@@ -172,6 +209,11 @@ export class UserRecipeComponent {
         .getProfile(recipeSubscription.authorID)
         .subscribe((profile) => {
           this.sourceAuthor.set(profile);
+        });
+      this.recipeService
+        .getByID(recipeSubscription.sourceRecipeID)
+        .subscribe((sr) => {
+          this.sourceRecipeVersion.set(sr[0].version);
         });
     });
 
@@ -232,6 +274,13 @@ export class UserRecipeComponent {
   ngOnInit(): void {
     this.store.dispatch(ProfileActions.loadFriends());
     this.store.dispatch(ProfileActions.loadFollowers());
+    this.store.dispatch(RecipeActions.loadRecipes());
+    this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
+    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
+    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+    this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+    this.store.dispatch(RecipeToolActions.loadRecipeTools());
+    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(ToolActions.loadTools());
     this.store.dispatch(StepActions.loadSteps());
@@ -305,11 +354,16 @@ export class UserRecipeComponent {
       });
       dialogRef.afterClosed().subscribe((result) => {
         if (result === 'success') {
-          const confirmDialogRef = this.dialog.open(DeleteRequestConfirmationModalComponent, {
-            data: {
-              deleteSuccessMessage: `Unsubscribed from ${this.recipe().title}!}`,
-            },
-          });
+          const confirmDialogRef = this.dialog.open(
+            DeleteRequestConfirmationModalComponent,
+            {
+              data: {
+                deleteSuccessMessage: `Unsubscribed from ${
+                  this.recipe().title
+                }!}`,
+              },
+            }
+          );
           confirmDialogRef.afterClosed().subscribe(() => {
             this.router.navigate(['/recipes']);
           });
@@ -374,6 +428,10 @@ export class UserRecipeComponent {
       }
     });
   }
+  onSyncClick() {
+    console.log('sync clicked');
+    // this.recipeService.syncRecipe(this.recipeID(), this.subscription().sourceRecipeID)
+  }
   // ***************************************************
 
   // UTILITY FUNCTIONS  ********************************
@@ -390,10 +448,12 @@ export class UserRecipeComponent {
         ...recipeIngredient,
         name: ingredient ? ingredient.name : 'Unknown',
         measurementUnit:
-          recipeIngredient.measurementUnit === 'box' ||
-          recipeIngredient.measurementUnit === 'bunch' ||
-          recipeIngredient.measurementUnit === 'pinch' ||
-          recipeIngredient.measurementUnit === 'dash'
+          Number(recipeIngredient.measurement) < 2
+            ? recipeIngredient.measurementUnit
+            : recipeIngredient.measurementUnit === 'box' ||
+              recipeIngredient.measurementUnit === 'bunch' ||
+              recipeIngredient.measurementUnit === 'pinch' ||
+              recipeIngredient.measurementUnit === 'dash'
             ? recipeIngredient.measurementUnit + 'es'
             : recipeIngredient.measurementUnit + 's',
       };
@@ -617,4 +677,3 @@ export class UserRecipeComponent {
 
   //***************************************************
 }
-
