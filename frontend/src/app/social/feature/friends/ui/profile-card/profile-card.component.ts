@@ -32,13 +32,11 @@ export class ProfileCardComponent {
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    console.log(`PROFILE: `, this.profile)
     this.initials = this.profile.nameFirst[0] + this.profile.nameLast[0];
 
     this.store
       .select(selectFriendshipByFriendID(this.profile.userID))
       .subscribe((friendship) => {
-        console.log(`FRIENDSHIP: `, friendship)
         this.friendship.set(friendship);
         this.friendshipLoaded.emit(
           friendship
