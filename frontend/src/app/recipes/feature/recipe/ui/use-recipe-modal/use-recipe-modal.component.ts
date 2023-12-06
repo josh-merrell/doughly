@@ -87,7 +87,7 @@ export class UseRecipeModalComponent {
         }),
         tap(() => {
           // Dispatch action to update ingredient stocks
-          this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+          // this.store.dispatch(IngredientStockActions.loadIngredientStocks());
         }),
         switchMap(() =>
           // Wait for ingredient stocks loading to finish
@@ -98,7 +98,7 @@ export class UseRecipeModalComponent {
         ),
         tap(() => {
           // After stocks are updated, dispatch action to reload recipe state
-          this.store.dispatch(RecipeActions.loadRecipe({ recipeID: this.data.recipeID }));
+          // this.store.dispatch(RecipeActions.loadRecipe({ recipeID: this.data.recipeID }));
         }),
         take(1)
       )

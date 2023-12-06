@@ -23,13 +23,13 @@ export class HomeComponent {
   constructor(private store: Store) {}
 
   ngOnInit() {
-    this.store.dispatch(FriendshipActions.loadFriendships());
-    this.store.dispatch(FollowshipActions.loadFollowships());
-    this.store.dispatch(FollowshipActions.loadFollowers());
+    // this.store.dispatch(FriendshipActions.loadFriendships());
+    // this.store.dispatch(FollowshipActions.loadFollowships());
+    // this.store.dispatch(FollowshipActions.loadFollowers());
 
     // also load profile store, including profiles of any friends and followers
-    this.store.dispatch(ProfileActions.loadProfile({}));
-    this.store.dispatch(ProfileActions.loadFriends());
-    this.store.dispatch(ProfileActions.loadFollowers());
+    // this.store.dispatch(ProfileActions.loadProfile({}));
+    // this.store.dispatch(ProfileActions.loadFriends());
+    // this.store.dispatch(ProfileActions.loadFollowers());
   }
 }
