@@ -81,7 +81,7 @@ export class RecipeToolsModalComponent {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(ToolActions.loadTools());
+    // this.store.dispatch(ToolActions.loadTools());
     this.tools$ = this.store.select(selectTools);
     this.displayedTools$.subscribe((tools) => {
       if (tools.length > 0) {

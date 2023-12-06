@@ -51,11 +51,11 @@ export class LoginPageComponent {
         .signIn(email!, password!)
         .then(() => {
           //hydrate data, then redirect
-          this.store.dispatch(IngredientActions.loadIngredients());
-          this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-          this.store.dispatch(ToolActions.loadTools());
+          // this.store.dispatch(IngredientActions.loadIngredients());
+          // this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+          // this.store.dispatch(ToolActions.loadTools());
           //this.store.dispatch(ToolStockActions.loadToolStocks());
-          this.store.dispatch(StepActions.loadSteps());
+          // this.store.dispatch(StepActions.loadSteps());
 
           this.router.navigate(['/home']);
         })

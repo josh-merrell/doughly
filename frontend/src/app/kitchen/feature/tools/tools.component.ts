@@ -59,10 +59,10 @@ export class ToolsComponent {
   modalActiveForToolID: number | null = null;
 
   ngOnInit(): void {
-    this.store.dispatch(ToolActions.loadTools());
-    this.store.dispatch(ToolStockActions.loadToolStocks());
-    this.store.dispatch(RecipeActions.loadRecipes());
-    this.store.dispatch(RecipeToolActions.loadRecipeTools());
+    // this.store.dispatch(ToolActions.loadTools());
+    // this.store.dispatch(ToolStockActions.loadToolStocks());
+    // this.store.dispatch(RecipeActions.loadRecipes());
+    // this.store.dispatch(RecipeToolActions.loadRecipeTools());
 
     this.tools$.subscribe((tools) => {
       this.toolService.addStockTotals(tools);

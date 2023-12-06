@@ -162,9 +162,9 @@ export class EditRecipeStepModalComponent {
           // wait for delete operation to complete
           const result = await this.deleteImage().toPromise();
           if (result.data) {
-            this.store.dispatch(
-              RecipeStepActions.loadRecipeStep(this.data.recipeStepID)
-            );
+            // this.store.dispatch(
+            //   RecipeStepActions.loadRecipeStep(this.data.recipeStepID)
+            // );
           }
         }
         // proceed with upload

@@ -272,18 +272,18 @@ export class UserRecipeComponent {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(ProfileActions.loadFriends());
-    this.store.dispatch(ProfileActions.loadFollowers());
-    this.store.dispatch(RecipeActions.loadRecipes());
-    this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
-    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
-    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
-    this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-    this.store.dispatch(RecipeToolActions.loadRecipeTools());
-    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
-    this.store.dispatch(IngredientActions.loadIngredients());
-    this.store.dispatch(ToolActions.loadTools());
-    this.store.dispatch(StepActions.loadSteps());
+    // this.store.dispatch(ProfileActions.loadFriends());
+    // this.store.dispatch(ProfileActions.loadFollowers());
+    // this.store.dispatch(RecipeActions.loadRecipes());
+    // this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
+    // this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
+    // this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+    // this.store.dispatch(IngredientStockActions.loadIngredientStocks());
+    // this.store.dispatch(RecipeToolActions.loadRecipeTools());
+    // this.store.dispatch(RecipeStepActions.loadRecipeSteps());
+    // this.store.dispatch(IngredientActions.loadIngredients());
+    // this.store.dispatch(ToolActions.loadTools());
+    // this.store.dispatch(StepActions.loadSteps());
 
     this.store.select(selectIngredients).subscribe((ingredients) => {
       this.ingredients.set(ingredients);

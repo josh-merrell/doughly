@@ -192,11 +192,11 @@ export class RecipesPageComponent {
   recipeContainer!: ElementRef;
 
   ngOnInit() {
-    this.store.dispatch(RecipeActions.loadRecipes());
-    this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
-    this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
-    this.store.dispatch(RecipeToolActions.loadRecipeTools());
-    this.store.dispatch(RecipeStepActions.loadRecipeSteps());
+    // this.store.dispatch(RecipeActions.loadRecipes());
+    // this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
+    // this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+    // this.store.dispatch(RecipeToolActions.loadRecipeTools());
+    // this.store.dispatch(RecipeStepActions.loadRecipeSteps());
     
     this.view$.subscribe((view) => {
       this.view = view;
