@@ -131,8 +131,10 @@ export class UserRecipeComponent {
 
   menuOpen: boolean = false;
   usernameOpen: boolean = false;
+  syncMessageOpen: boolean = false;
   @ViewChild('menu') rowItemMenu!: ElementRef;
   @ViewChild('username') username!: ElementRef;
+  @ViewChild('syncMessage') syncMessage!: ElementRef;
   globalClickListener: () => void = () => {};
 
   constructor(
@@ -272,19 +274,6 @@ export class UserRecipeComponent {
   }
 
   ngOnInit(): void {
-    // this.store.dispatch(ProfileActions.loadFriends());
-    // this.store.dispatch(ProfileActions.loadFollowers());
-    // this.store.dispatch(RecipeActions.loadRecipes());
-    // this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
-    // this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
-    // this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
-    // this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-    // this.store.dispatch(RecipeToolActions.loadRecipeTools());
-    // this.store.dispatch(RecipeStepActions.loadRecipeSteps());
-    // this.store.dispatch(IngredientActions.loadIngredients());
-    // this.store.dispatch(ToolActions.loadTools());
-    // this.store.dispatch(StepActions.loadSteps());
-
     this.store.select(selectIngredients).subscribe((ingredients) => {
       this.ingredients.set(ingredients);
     });
@@ -320,6 +309,12 @@ export class UserRecipeComponent {
         if (!clickedAuthor && this.username) {
           this.closeUsername();
         }
+        const clickedSyncMessage = this.syncMessage?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedSyncMessage && this.syncMessage) {
+          this.closeSyncMessage();
+        }
       }
     );
   }
@@ -341,6 +336,13 @@ export class UserRecipeComponent {
   }
   closeUsername() {
     this.usernameOpen = false;
+  }
+  toggleSyncMessage(event: any) {
+    event.stopPropagation();
+    this.syncMessageOpen = !this.syncMessageOpen;
+  }
+  closeSyncMessage() {
+    this.syncMessageOpen = false;
   }
   onUnsubscribeClick() {
     this.closeMenu();
@@ -427,10 +429,6 @@ export class UserRecipeComponent {
         this.router.navigate(['/recipes']);
       }
     });
-  }
-  onSyncClick() {
-    console.log('sync clicked');
-    // this.recipeService.syncRecipe(this.recipeID(), this.subscription().sourceRecipeID)
   }
   // ***************************************************
 
