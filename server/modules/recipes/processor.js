@@ -902,77 +902,6 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function syncRecipe(options) {
-    const { sourceRecipeID, childRecipeID, authorization, userID, newIngredientMappings, newToolMappings } = options;
-    // validate that sourceRecipeID exists and is not deleted
-    const { data: sourceRecipe, error } = await db.from('recipes').select('title, servings, recipeCategory, lifespanDays, timePrep, timeBake, photoURL, version').eq('recipeID', sourceRecipeID).eq('deleted', false).single();
-    if (error) {
-      global.logger.info(`Error getting sourceRecipe: ${error.message}`);
-      return { error: error.message };
-    }
-    if (!sourceRecipe.length) {
-      global.logger.info(`Error syncing recipe. Recipe with provided ID (${sourceRecipeID}) does not exist`);
-      return { error: `Error syncing recipe. Recipe with provided ID (${sourceRecipeID}) does not exist` };
-    }
-
-    // validate that childRecipeID exists and is not deleted
-    const { data: childRecipe, error: childRecipeError } = await db.from('recipes').select('title, servings, recipeCategory, lifespanDays, timePrep, timeBake, photoURL, version').eq('recipeID', childRecipeID).eq('deleted', false).single();
-    if (childRecipeError) {
-      global.logger.info(`Error getting childRecipe: ${childRecipeError.message}`);
-      return { error: childRecipeError.message };
-    }
-    if (!childRecipe.length) {
-      global.logger.info(`Error syncing recipe. Recipe with provided ID (${childRecipeID}) does not exist`);
-      return { error: `Error syncing recipe. Recipe with provided ID (${childRecipeID}) does not exist` };
-    }
-
-    if (sourceRecipe.version === childRecipe.version) {
-      global.logger.info(`No need to synce recipe. SourceRecipe and ChildRecipe have the same version`);
-      return { error: `Error syncing recipe. SourceRecipe and ChildRecipe have the same version` };
-    }
-
-    try {
-      const updateFields = {};
-      if (sourceRecipe.title !== childRecipe.title) {
-        updateFields.title = sourceRecipe.title;
-      }
-      if (sourceRecipe.servings !== childRecipe.servings) {
-        updateFields.servings = sourceRecipe.servings;
-      }
-      if (sourceRecipe.recipeCategory !== childRecipe.recipeCategory) {
-        updateFields.recipeCategory = sourceRecipe.recipeCategory;
-      }
-      if (sourceRecipe.lifespanDays !== childRecipe.lifespanDays) {
-        updateFields.lifespanDays = sourceRecipe.lifespanDays;
-      }
-      if (sourceRecipe.timePrep !== childRecipe.timePrep) {
-        updateFields.timePrep = sourceRecipe.timePrep;
-      }
-      if (sourceRecipe.timeBake !== childRecipe.timeBake) {
-        updateFields.timeBake = sourceRecipe.timeBake;
-      }
-      if (sourceRecipe.photoURL !== childRecipe.photoURL) {
-        updateFields.photoURL = sourceRecipe.photoURL;
-      }
-
-      //update childRecipe with updateFields
-      const updatedRecipe = await updater(userID, authorization, 'recipeID', childRecipeID, 'recipes', updateFields);
-      //update recipeIngredients
-      //if any newIngredientMappings, create new ingredient and ri using 'constructRecipeIngredient'
-      //for all sourceRecipe recipeIngredients, find the corresponding childRecipe recipeIngredient and update it to match
-      //if childRecipe has any other recipeIngredients, delete them
-
-      //update recipeTools
-      //if any newToolMappings, create new tool and rt using 'constructRecipeTool'
-      //for all sourceRecipe recipeTools, find the corresponding childRecipe recipeTool and update it to match
-      //if childRecipe has any other recipeTools, delete them
-
-      //update recipeSteps
-
-      //set childRecipe version to sourceRecipe version
-    } catch (err) {}
-  }
-
   return {
     get: {
       subscriptionsByRecipeID: getRecipeSubscriptionsByRecipeID,
@@ -990,6 +919,5 @@ module.exports = ({ db }) => {
     use: useRecipe,
     subscribe: subscribeRecipe,
     unsubscribe: deleteRecipeSubscription,
-    sync: syncRecipe,
   };
 };
