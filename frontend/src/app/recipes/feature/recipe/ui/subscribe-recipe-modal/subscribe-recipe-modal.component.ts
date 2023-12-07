@@ -7,12 +7,15 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
 
 import { IngredientActions } from 'src/app/kitchen/feature/ingredients/state/ingredient-actions';
 import { Store } from '@ngrx/store';
@@ -20,6 +23,11 @@ import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
+import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
+import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool-actions';
+import { StepActions } from 'src/app/recipes/state/step/step-actions';
+import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
+import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
 
 @Component({
   selector: 'dl-subscribe-recipe-modal',
@@ -109,20 +117,6 @@ export class SubscribeRecipeModalComponent {
   ngOnInit(): void {
     if (!this.data.tools) this.toolsReady.set(true);
 
-    // Load User Kitchen Items
-    // this.store.dispatch(IngredientActions.loadIngredients());
-    // this.store.dispatch(ToolActions.loadTools());
-    this.store.select(selectIngredients).subscribe((ingredients) => {
-      this.userIngredients.set(ingredients);
-      const initialStatuses = ingredients.map((i) => false);
-      this.ingredientStatuses.set(initialStatuses);
-    });
-    this.store.select(selectTools).subscribe((tools) => {
-      this.userTools.set(tools);
-      const initialStatuses = tools.map((t) => false);
-      this.toolStatuses.set(initialStatuses);
-    });
-
     this.recipe = this.data.recipe;
     this.data.ingredients.map((i: any) => {
       i.userIngredientID = null;
@@ -136,6 +130,78 @@ export class SubscribeRecipeModalComponent {
     this.steps = this.data.steps;
     this.author = this.data.author;
     this.initials = this.author.nameFirst[0] + this.author.nameLast[0];
+
+    // Load User Kitchen Items
+    this.store.select(selectIngredients).subscribe((ingredients) => {
+      this.userIngredients.set(ingredients);
+      // Iterate over each source ingredient and premap any where the name matches that of a user ingredient
+      const updatedIngredients = this.ingredients().map((sourceIngredient) => {
+        const matchingUserIngredient = this.findMatchingUserIngredient(
+          sourceIngredient.name,
+          this.userIngredients()
+        );
+        if (matchingUserIngredient) {
+          sourceIngredient.userIngredientID =
+            matchingUserIngredient.ingredientID;
+        }
+        return sourceIngredient;
+      });
+      this.ingredients.set(updatedIngredients);
+      const initialStatuses = ingredients.map((i) => false);
+      this.ingredientStatuses.set(initialStatuses);
+    });
+    // Load User Tools and pre-map them
+    this.store.select(selectTools).subscribe((userTools) => {
+      this.userTools.set(userTools);
+
+      // Iterate over each source tool and premap any where the name matches that of a user tool
+      const updatedTools = this.tools().map((sourceTool) => {
+        const matchingUserTool = this.findMatchingUserTool(
+          sourceTool.name,
+          this.userTools()
+        );
+        if (matchingUserTool) {
+          sourceTool.userToolID = matchingUserTool.toolID;
+        }
+        return sourceTool;
+      });
+      this.tools.set(updatedTools);
+      const initialStatuses = userTools.map(() => false);
+      this.toolStatuses.set(initialStatuses);
+    });
+  }
+
+  getIngredientPlaceholder(sourceIngredient: any): string {
+    if (sourceIngredient.userIngredientID) {
+      const matchedIngredient = this.userIngredients().find(
+        (ui) => ui.ingredientID === sourceIngredient.userIngredientID
+      );
+      return matchedIngredient ? matchedIngredient.name : 'Select Ingredient';
+    }
+    return 'Select Ingredient';
+  }
+  getToolPlaceholder(sourceTool: any): string {
+    if (sourceTool.userToolID) {
+      const matchedTool = this.userTools().find(
+        (ut) => ut.toolID === sourceTool.userToolID
+      );
+      return matchedTool ? matchedTool.name : 'Select Tool';
+    }
+    return 'Select Tool';
+  }
+
+  private findMatchingUserIngredient(
+    sourceIngredientName: string,
+    userIngredients: any[]
+  ): any {
+    return userIngredients.find(
+      (ui) => ui.name.toLowerCase() === sourceIngredientName.toLowerCase()
+    );
+  }
+  private findMatchingUserTool(sourceToolName: string, userTools: any[]): any {
+    return userTools.find(
+      (ut) => ut.name.toLowerCase() === sourceToolName.toLowerCase()
+    );
   }
 
   ingredientMeasurementUnitString(ingredient) {
@@ -274,6 +340,12 @@ export class SubscribeRecipeModalComponent {
       this.loading.set(true);
       this.recipeService.constructRecipe(constructBody).subscribe((data) => {
         this.loading.set(false);
+        this.store.dispatch(RecipeActions.loadRecipes());
+        this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
+        this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
+        this.store.dispatch(RecipeToolActions.loadRecipeTools());
+        this.store.dispatch(StepActions.loadSteps());
+        this.store.dispatch(RecipeStepActions.loadRecipeSteps());
         this.dialogRef.close(data);
       });
     }

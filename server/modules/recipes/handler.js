@@ -185,22 +185,6 @@ async function unsubscribeRecipe(req, res) {
   return res.json(returner);
 }
 
-async function syncRecipe(req, res) {
-  const db = req.client.db;
-  const p = require('./processor')({ db });
-  const { sourceRecipeID, childRecipeID, newIngredientMappings, newToolMappings } = req.body;
-  const { authorization } = req.headers;
-  const returner = await p.sync({
-    authorization,
-    userID: req.userID,
-    sourceRecipeID,
-    childRecipeID,
-    newIngredientMappings,
-    newToolMappings,
-  });
-  return res.json(returner);
-}
-
 module.exports = {
   subscriptionsByRecipeID,
   getRecipes,
@@ -216,5 +200,4 @@ module.exports = {
   constructRecipe,
   subscribeRecipe,
   unsubscribeRecipe,
-  syncRecipe,
 };
