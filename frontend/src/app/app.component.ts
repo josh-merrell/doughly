@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AppHeaderComponent } from './header/feature/app-header.component';
+import { AppFooterComponent } from './footer/feature/app-footer.component';
 import { Router } from '@angular/router';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { Store } from '@ngrx/store';
@@ -24,7 +24,7 @@ import { RecipeStepActions } from './recipes/state/recipe-step/recipe-step-actio
   imports: [
     CommonModule,
     RouterModule,
-    AppHeaderComponent,
+    AppFooterComponent,
     StoreDevtoolsModule,
   ],
   templateUrl: './app.component.html',
@@ -62,5 +62,4 @@ export class AppComponent {
     this.store.dispatch(ProfileActions.loadFriendRequests());
     this.store.dispatch(ProfileActions.loadFriendRequestsSent());
   }
-
 }

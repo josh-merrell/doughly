@@ -32,12 +32,6 @@ export class RecipesPageNewComponent {
   constructor(public dialog: MatDialog, private store: Store) {}
 
   ngOnInit() {
-    // this.store.dispatch(RecipeActions.loadRecipes());
-    // this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
-    // this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
-    // this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
-    // this.store.dispatch(RecipeToolActions.loadRecipeTools());
-    // this.store.dispatch(RecipeStepActions.loadRecipeSteps());
   }
 
   setView(view: string) {
