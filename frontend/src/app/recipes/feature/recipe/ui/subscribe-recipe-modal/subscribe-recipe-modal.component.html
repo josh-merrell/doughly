@@ -81,9 +81,10 @@
       </div>
 
       <!-- Kitchen Mapping -->
-      <div class="flex flex-col">
+      <div class="flex flex-col mr-dl-4">
         <mat-form-field class="mt-dl-4 text-dl-4">
           <mat-select
+            [placeholder]="getIngredientPlaceholder(i)"
             (selectionChange)="onIngredientSelectChange($event.value, i)"
             class="w-dl-10"
           >
@@ -149,9 +150,10 @@
         </div>
       </div>
       <!-- Kitchen Mapping -->
-      <div class="flex flex-col">
+      <div class="flex flex-col mr-dl-4 ">
         <mat-form-field class="mt-dl-4 text-dl-4">
           <mat-select
+            [placeholder]="getToolPlaceholder(t)"
             (selectionChange)="onToolSelectChange($event.value, t)"
             class="w-dl-10"
           >

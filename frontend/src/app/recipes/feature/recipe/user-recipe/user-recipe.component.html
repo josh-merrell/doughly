@@ -29,7 +29,8 @@
           ></path>
         </svg>
         <svg
-          *ngIf="sourceRecipeVersion() === recipe().version"
+          *ngIf="recipeSubscription() && sourceRecipeVersion() !== recipe().version"
+          (click)="toggleSyncMessage($event)"
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
           version="1.1"
@@ -74,19 +75,18 @@
             *ngIf="recipeSubscription()"
             (click)="onUnsubscribeClick()"
             type="button"
-            class="block cursor-pointer rounded-dl-1px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+            class="block cursor-pointer rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
           >
             Unsubscribe
           </button>
-          <button
-            *ngIf="sourceRecipeVersion() === recipe().version"
-            (click)="onSyncClick()"
-            type="button"
-            class="block cursor-pointer rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 text-white"
-          >
-            Sync Updates
-          </button>
         </div>
+        <span
+          #syncMessage
+          *ngIf="syncMessageOpen"
+          class="absolute p-dl-2 right-24 rounded-dl-1 top-2 z-10 bg-white shadow-md text-dl-grey-3 text-dl-5 ease-out"
+        >
+          The source recipe authored by <span class="text-dl-grey-2 font-dl-3 text-dl-5 ">{{recipeSubscription().authorUsername}}</span> has been updated. To accept the changes unsubscribe, then subscribe again from the source recipe.
+      </span>
       </div>
       <!-- Category, Servings , Subscriber Count-->
       <div class="mx-dl-5 mb-dl-3 flex items-center justify-between">
