@@ -218,8 +218,6 @@ export class PublicRecipeComponent {
   }
 
   ngOnInit(): void {
-    // this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
-    // this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
     this.route.paramMap.subscribe((params) => {
       this.recipeID.set(Number(params.get('recipeID')!));
     });
