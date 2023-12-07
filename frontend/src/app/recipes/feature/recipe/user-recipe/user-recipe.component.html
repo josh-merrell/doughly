@@ -1,5 +1,5 @@
-<div class="w-full">
-  <div *ngIf="recipe()">
+<div class="overflow-y-scroll">
+  <div *ngIf="recipe()" class="overflow-y-auto" >
     <img
       *ngIf="recipe().photoURL"
       [src]="recipe().photoURL"
