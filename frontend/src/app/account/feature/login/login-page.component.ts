@@ -13,12 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
 
-// State Hydration Imports
-import { IngredientActions } from '../../../kitchen/feature/ingredients/state/ingredient-actions';
-import { IngredientStockActions } from '../../../kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
-import { ToolActions } from '../../../kitchen/feature/tools/state/tool-actions';
-import { StepActions } from '../../../recipes/state/step/step-actions';
-
 @Component({
   selector: 'dl-login-page',
   standalone: true,
@@ -50,14 +44,8 @@ export class LoginPageComponent {
       this.authService
         .signIn(email!, password!)
         .then(() => {
-          //hydrate data, then redirect
-          // this.store.dispatch(IngredientActions.loadIngredients());
-          // this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-          // this.store.dispatch(ToolActions.loadTools());
-          //this.store.dispatch(ToolStockActions.loadToolStocks());
-          // this.store.dispatch(StepActions.loadSteps());
 
-          this.router.navigate(['/home']);
+          this.router.navigate(['/recipes']);
         })
         .catch((error) => {
           this.error = error.message;

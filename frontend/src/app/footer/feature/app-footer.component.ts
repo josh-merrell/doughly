@@ -15,16 +15,15 @@ import { AppState } from '../../shared/state/app-state';
 import { AuthService } from '../../shared/utils/authenticationService';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-footer',
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLinkWithHref],
-  templateUrl: './app-header.component.html',
+  templateUrl: './app-footer.component.html',
 })
-export class AppHeaderComponent {
+export class AppFooterComponent {
   @ViewChild('menu') menu!: ElementRef;
   globalClickListener: () => void = () => {};
   isMenuOpen = false;
-  showMobileMenu = false;
   currentUrl$: Observable<string> = this.store.select(selectCurrentUrl);
   private destroy$ = new Subject<void>();
   public profileImageLink: string | undefined;
@@ -87,8 +86,7 @@ export class AppHeaderComponent {
     this.isMenuOpen = false;
   }
 
-  closeHeaderMenu(link: string) {
-    this.showMobileMenu = false;
+  navigate(link: string) {
     this.router.navigate([link]);
   }
 
