@@ -8,11 +8,16 @@ const k = require('./kitchen/handler');
 const r = require('./recipe/handler');
 const u = require('./user/handler');
 const rf = require('./recipeFeedback/handler');
+const s = require('./shopping/handler');
 const { getLogSchema_params, getLogsSchema_query, newLogSchema_body, getRecipeFeedbackSchema_params, getRecipeFeedbacksSchema_query, newRecipeFeedbackSchema_body } = require('../../schemas/log-types');
 
 const router = express.Router();
 
 router.use(authenticateJWT);
+
+router.get('/shopping/:logID', routeValidator(getLogSchema_params, 'params'), errorCatcher(s.getLogByID));
+router.get('/shopping/', routeValidator(getLogsSchema_query, 'query'), errorCatcher(s.getLogs));
+router.post('/shopping/', generateID, routeValidator(newLogSchema_body, 'body'), errorCatcher(s.createLog));
 
 router.get('/kitchen/:logID', routeValidator(getLogSchema_params, 'params'), errorCatcher(k.getLogByID));
 router.get('/kitchen/', routeValidator(getLogsSchema_query, 'query'), errorCatcher(k.getLogs));

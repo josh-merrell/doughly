@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const { createKitchenLog, createRecipeLog, createUserLog } = require('./services/dbLogger');
+const { createKitchenLog, createRecipeLog, createUserLog, createShoppingLog } = require('./services/dbLogger');
 
 const url = process.env.SUPABASE_DOUGHLEAP_URL;
 const key = process.env.SUPABASE_DOUGHLEAP_KEY;
@@ -45,6 +45,8 @@ const updater = async (userID, authorization, IDfield, ID, table, updateFields) 
     logger = createRecipeLog;
   } else if (['persons', 'friendships'].includes(table)) {
     logger = createUserLog;
+  } else if (['shoppingLists', 'shoppingListIngredients', 'shoppingListRecipes'].includes(table)) {
+    logger = createShoppingLog;
   } else {
     global.logger.info(`In updater, don't know which logger to use based on provided table name: ${table}`);
     return { error: `In updater, don't know which logger to use based on provided table name: ${table}` };
