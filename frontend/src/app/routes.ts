@@ -3,7 +3,6 @@ import { HomeComponent } from './home/home.component';
 import { IngredientsComponent } from './kitchen/feature/ingredients/ingredients.component';
 import { NotfoundComponent } from './shared/ui/app-notfound/app-notfound.component';
 import { KitchenPageComponent } from './kitchen/kitchen-page.component';
-import { RecipesPageComponent } from './recipes/feature/recipes-page/recipes-page.component';
 import { UserRecipeComponent } from './recipes/feature/recipe/user-recipe/user-recipe.component';
 import { LoginPageComponent } from './account/feature/login/login-page.component';
 import { ProfileGuard } from './guards/profile.guard';
