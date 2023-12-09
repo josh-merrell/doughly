@@ -7,7 +7,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, recipeIngredientIDs, recipeID, ingredientID } = options;
 
-    let q = db.from('recipeIngredients').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeIngredientID', { ascending: true });
+    let q = db.from('recipeIngredients').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeIngredientID', { descending: true });
     if (recipeIngredientIDs) {
       q = q.in('recipeIngredientID', recipeIngredientIDs);
     }

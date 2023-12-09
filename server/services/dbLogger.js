@@ -86,6 +86,34 @@ async function createUserLog(userID, authorization, eventType, subjectID, associ
   }
 }
 
+async function createShoppingLog(userID, authorization, eventType, subjectID, associatedID = null, oldValue = null, newValue = null, message = null) {
+  try {
+    let log = await axios.post(
+      `${process.env.NODE_HOST}:${process.env.PORT}/logs/shopping`,
+      {
+        userID,
+        IDtype: 73,
+        eventType,
+        subjectID,
+        ...(associatedID && { associatedID }),
+        ...(oldValue && { oldValue }),
+        ...(newValue && { newValue }),
+        ...(message && { message }),
+      },
+      {
+        headers: {
+          authorization: authorization,
+        },
+      },
+    );
+    global.logger.info(`**SHOPPING LOG ENTRY ID: ${log.data.shoppingLogID}** ${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
+    return log.data.shoppingLogID;
+  } catch (error) {
+    global.logger.error(`Error creating shopping log: ${error.message}`);
+    return null;
+  }
+}
+
 async function createRecipeFeedbackLog(userID, authorization, recipeID, satisfaction, difficulty, note) {
   try {
     let log = await axios.post(
@@ -118,4 +146,5 @@ module.exports = {
   createRecipeLog,
   createUserLog,
   createRecipeFeedbackLog,
+  createShoppingLog,
 };

@@ -37,6 +37,12 @@ export class IDService {
         return 24;
       case 'recipeSubscription':
         return 25;
+      case 'shoppingList':
+        return 26;
+      case 'shoppingListIngredient':
+        return 27;
+      case 'shoppingListRecipe':
+        return 28;
       case 'kitchenLog':
         return 70;
       case 'recipeLog':
@@ -45,6 +51,8 @@ export class IDService {
         return 72;
       case 'recipeFeedback':
         return 73;
+      case 'shoppingLog':
+        return 74;
       default:
         return 0;
     }

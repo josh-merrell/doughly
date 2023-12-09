@@ -51,6 +51,7 @@ const ingredientStocksRouter = require('./modules/ingredientStocks/router');
 const uploadsRouter = require('./modules/uploads/router');
 const logsRouter = require('./modules/logs/router');
 const profilesRouter = require('./modules/profiles/router');
+const shoppingRouter = require('./modules/shopping/router');
 
 app.use(express.json());
 
@@ -72,6 +73,7 @@ app.use('/ping', (req, res) => {
 app.use('/uploads', uploadsRouter);
 app.use('/persons', personsRouter);
 app.use('/recipes', recipesRouter);
+app.use('/shopping', shoppingRouter);
 app.use('/steps', stepsRouter);
 app.use('/tools', toolsRouter);
 app.use('/toolStocks', toolStocksRouter);

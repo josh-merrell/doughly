@@ -1,15 +1,48 @@
 <div class="overflow-visible">
   <nav class="border-t-2 border-dl-grey-8 bg-white shadow">
     <!-- Mobile menu, show/hide based on menu state. -->
-    <div
-      class="flex justify-center"
-      id="mobile-menu"
-    >
+    <div class="flex justify-center" id="mobile-menu">
       <div
         class="flex w-full items-center justify-between space-y-1 px-dl-2 pt-2"
       >
-        <div class="h-dl-5 w-dl-5">
-        </div>
+        <div class="h-dl-5 w-dl-5"></div>
+        <ng-container *ngIf="authService.$profile | async as profile">
+          <div (click)="navigate('/groceries')" class="flex flex-col">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              version="1.1"
+              [ngClass]="{
+                'border-dl-blue-6 text-dl-grey-1':
+                  (currentUrl$ | async) === '/groceries',
+                'border-transparent text-dl-grey-5 ':
+                  (currentUrl$ | async) !== '/groceries'
+              }"
+              class="ml-dl-1 inline-flex items-center"
+              height="65"
+              width="65"
+              viewBox="-14 0 67 71"
+              enable-background="new 0 0 84 64"
+              xml:space="preserve"
+            >
+              <path
+                [attr.fill]="'hsl(210, 24%, 16%)'"
+                d="M54.365,22.459c-0.023-0.06-0.063-0.108-0.101-0.158c-0.02-0.027-0.028-0.058-0.052-0.082  c-0.002-0.002-0.004-0.002-0.006-0.004c-0.054-0.055-0.12-0.095-0.188-0.131c-0.019-0.01-0.033-0.027-0.053-0.035  c-0.021-0.009-0.046-0.008-0.067-0.015c-0.072-0.022-0.145-0.043-0.22-0.044c-0.002,0-0.004-0.001-0.007-0.001  c-0.032,0-0.06,0.014-0.09,0.018c-0.064,0.008-0.129,0.014-0.19,0.039c-0.052,0.021-0.094,0.057-0.14,0.088  c-0.032,0.023-0.07,0.035-0.1,0.063l-3.906,3.748l2.681-7.053c0.912-2.403,0.126-5.038-1.758-6.587  c3.114-2.038,4.671-4.13,4.266-5.824c-0.233-0.979-1.114-1.633-2.297-1.709c-1.456-0.089-3.265,0.652-4.813,2.364  c-0.025-2.317-0.891-4.079-2.022-4.961c-0.933-0.727-2.025-0.825-2.853-0.248c-1.428,0.998-1.653,3.595-0.679,7.187  c-2.436-0.091-4.775,1.355-5.689,3.759l-3.56,9.371l-0.047-0.045c-0.29-0.278-0.749-0.278-1.039,0l-0.673,0.646  c-0.091-1.738-0.333-3.523-0.722-5.326C28.011,8.102,22.727,1.519,18.005,2.54c-3.438,0.741-5.478,5.288-5.553,11.339  c-0.033,0.199-0.031,0.398-0.009,0.597c0.019,2.088,0.267,4.341,0.769,6.67c0,0,0,0.001,0,0.001s0,0,0,0.001  c0.355,1.646,0.823,3.222,1.382,4.719l-3.822-3.671c-0.026-0.025-0.061-0.036-0.089-0.057c-0.049-0.035-0.095-0.073-0.151-0.095  c-0.057-0.023-0.117-0.028-0.177-0.036c-0.035-0.005-0.066-0.021-0.103-0.021c-0.002,0-0.005,0.001-0.008,0.001  c-0.07,0.001-0.137,0.021-0.205,0.042c-0.027,0.008-0.057,0.007-0.082,0.018c-0.016,0.006-0.028,0.021-0.043,0.029  c-0.072,0.037-0.141,0.079-0.197,0.136c-0.002,0.002-0.004,0.002-0.006,0.004c-0.025,0.026-0.036,0.06-0.056,0.088  c-0.036,0.049-0.074,0.095-0.097,0.152c-0.023,0.058-0.028,0.119-0.036,0.18c-0.005,0.034-0.02,0.064-0.02,0.099v37.236  c0,1.365,1.25,2.477,2.787,2.477h39.344c1.537,0,2.787-1.111,2.787-2.477V22.738c0-0.034-0.015-0.063-0.02-0.096  C54.395,22.58,54.39,22.518,54.365,22.459z M52.041,6.268c0.244,0.016,0.825,0.102,0.935,0.561c0.161,0.671-0.573,2.383-4.237,4.613  c-0.067-0.028-0.131-0.062-0.199-0.087l-1.737-0.66C48.322,7.313,50.709,6.185,52.041,6.268z M43.31,3.155  c0.386-0.27,0.878,0.05,1.071,0.201c1.042,0.813,2.085,3.25,0.977,6.789l-1.736-0.66c-0.069-0.026-0.139-0.044-0.208-0.067  C42.155,5.317,42.744,3.55,43.31,3.155z M37.484,13.404c0.851-2.238,3.359-3.371,5.604-2.517l2.458,0.935l0.001,0h0.001l2.458,0.935  c2.239,0.85,3.368,3.363,2.519,5.602l-2.993,7.872l-4.205-4.035c-0.291-0.278-0.748-0.278-1.039,0l-4.908,4.712l-3.682-3.537  L37.484,13.404z M18.322,4.006c3.757-0.815,8.462,5.521,10.253,13.828c0.472,2.189,0.71,4.345,0.722,6.417l-2.768,2.658  l-4.906-4.712c-0.29-0.278-0.749-0.278-1.039,0l-4.224,4.058c-0.691-1.675-1.255-3.47-1.667-5.364  c0.25-0.617,3.144-2.214,8.21-3.306c0.405-0.087,0.662-0.486,0.575-0.892c-0.087-0.405-0.489-0.662-0.892-0.575  c-2.53,0.545-4.865,1.289-6.576,2.093c-0.674,0.317-1.213,0.632-1.645,0.945c-0.292-1.797-0.415-3.539-0.397-5.171  c0.307-0.94,2.195-2.369,5.264-3.031c0.405-0.087,0.662-0.486,0.575-0.891c-0.087-0.405-0.486-0.664-0.891-0.575  c-1.985,0.428-3.652,1.169-4.802,2.053C14.571,7.46,16.066,4.493,18.322,4.006z M51.635,60.95H12.291  c-0.698,0-1.287-0.447-1.287-0.977V24.498l4.156,3.992c0.29,0.278,0.749,0.278,1.039,0l4.905-4.712l4.906,4.712  c0.29,0.278,0.749,0.278,1.039,0l3.519-3.379c0.008-0.008,0.017-0.015,0.024-0.023l1.364-1.31l0.345,0.331  c0.001,0.001,0.003,0.003,0.005,0.005l4.554,4.376c0.291,0.278,0.748,0.278,1.039,0l4.908-4.712l4.913,4.713  c0.146,0.139,0.332,0.208,0.52,0.208s0.374-0.069,0.52-0.208l4.163-3.994v35.477C52.922,60.503,52.332,60.95,51.635,60.95z"
+              />
+            </svg>
+            <a
+              [ngClass]="{
+                'border-dl-blue-6 text-dl-grey-1':
+                  (currentUrl$ | async) === '/groceries',
+                'border-transparent text-dl-grey-4 ':
+                  (currentUrl$ | async) !== '/groceries'
+              }"
+              class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
+            >
+              Groceries
+            </a>
+          </div>
+        </ng-container>
         <ng-container *ngIf="authService.$profile | async as profile">
           <div (click)="navigate('/recipes')" class="flex flex-col">
             <svg
@@ -54,9 +87,37 @@
                 'border-transparent text-dl-grey-4 ':
                   (currentUrl$ | async) !== '/recipes'
               }"
-              class="inline-flex items-center border-b-2 px-1 text-dl-5 font-dl-3"
+              class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
               Recipes
+            </a>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="authService.$profile | async as profile">
+          <div (click)="navigate('/social')" class="flex flex-col">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              data-name="Layer 1"
+              viewBox="10 14 80 75"
+              class="inline-flex items-center"
+              height="65"
+              width="65"
+            >
+              <path
+                [attr.fill]="'hsl(209, 14%, 37%)'"
+                d="M30,79a11,11,0,0,0,7.87-3.32,23.85,23.85,0,0,0,24.27,0,11,11,0,1,0,11.71-18A23.91,23.91,0,0,0,61,33.67a11,11,0,0,0-22,0,23.91,23.91,0,0,0-12.86,24A11,11,0,0,0,30,79Zm40-6a5,5,0,1,1,5-5A5,5,0,0,1,70,73ZM50,29a5,5,0,1,1-5,5A5,5,0,0,1,50,29ZM40.59,39.68a11,11,0,0,0,18.81,0A18,18,0,0,1,68,55a17.69,17.69,0,0,1-.15,2.21A11,11,0,0,0,59.27,70.4a17.8,17.8,0,0,1-18.54,0,11,11,0,0,0-8.58-13.18A17.69,17.69,0,0,1,32,55,18,18,0,0,1,40.59,39.68ZM30,63a5,5,0,1,1-5,5A5,5,0,0,1,30,63Z"
+              />
+            </svg>
+            <a
+              [ngClass]="{
+                'border-dl-blue-6 text-dl-grey-1':
+                  (currentUrl$ | async) === '/social',
+                'border-transparent text-dl-grey-4 ':
+                  (currentUrl$ | async) !== '/social'
+              }"
+              class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
+            >
+              Social
             </a>
           </div>
         </ng-container>
@@ -91,128 +152,99 @@
                 'border-transparent text-dl-grey-4 ':
                   (currentUrl$ | async) !== '/kitchen'
               }"
-              class="inline-flex items-center border-b-2 px-1 text-dl-5 font-dl-3"
+              class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
               Kitchen
             </a>
           </div>
         </ng-container>
-        <ng-container *ngIf="authService.$profile | async as profile">
-          <div (click)="navigate('/social')" class="flex flex-col">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              data-name="Layer 1"
-              viewBox="10 14 80 75"
-              class="inline-flex items-center"
-              height="65"
-              width="65"
+        <!-- Profile dropdown -->
+        <div
+          *ngIf="authService.$profile | async as profile"
+          class="relative ml-3"
+        >
+          <div>
+            <button
+              type="button"
+              (click)="toggleMenu($event)"
+              class="flex rounded-full pb-dl-5 text-sm"
+              id="user-menu-button"
+              aria-expanded="false"
+              aria-haspopup="true"
             >
-              <path
-                [attr.fill]="'hsl(209, 20%, 25%)'"
-                d="M30,79a11,11,0,0,0,7.87-3.32,23.85,23.85,0,0,0,24.27,0,11,11,0,1,0,11.71-18A23.91,23.91,0,0,0,61,33.67a11,11,0,0,0-22,0,23.91,23.91,0,0,0-12.86,24A11,11,0,0,0,30,79Zm40-6a5,5,0,1,1,5-5A5,5,0,0,1,70,73ZM50,29a5,5,0,1,1-5,5A5,5,0,0,1,50,29ZM40.59,39.68a11,11,0,0,0,18.81,0A18,18,0,0,1,68,55a17.69,17.69,0,0,1-.15,2.21A11,11,0,0,0,59.27,70.4a17.8,17.8,0,0,1-18.54,0,11,11,0,0,0-8.58-13.18A17.69,17.69,0,0,1,32,55,18,18,0,0,1,40.59,39.68ZM30,63a5,5,0,1,1-5,5A5,5,0,0,1,30,63Z"
+              <span class="sr-only">Open User Menu</span>
+              <img
+                *ngIf="profileImageLink"
+                class="h-dl-5 w-dl-5 rounded-full focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
+                [src]="profileImageLink"
+                alt="profile image"
               />
-            </svg>
+              <span
+                class="inline-flex h-dl-4 w-dl-4 items-center justify-center rounded-full bg-dl-grey-9"
+                *ngIf="!profileImageLink && initials"
+              >
+                <span class="text-dl-5 font-dl-3 leading-none text-dl-grey-7">{{
+                  initials
+                }}</span>
+              </span>
+              <span
+                *ngIf="!profileImageLink && !initials"
+                class="inline-block h-dl-4 w-dl-4 overflow-hidden rounded-full bg-dl-grey-9"
+              >
+                <svg
+                  class="h-full w-full text-dl-grey-7"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
+          <div
+            #menu
+            *ngIf="isMenuOpen"
+            [ngClass]="{
+              'scale-100 opacity-100 duration-200': isMenuOpen,
+              'scale-95 opacity-0 duration-75': !isMenuOpen
+            }"
+            class="absolute bottom-28 right-5 z-20 flex w-dl-7 flex-col items-center rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 ease-out focus:outline-none"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="user-menu-button"
+            tabindex="-1"
+          >
             <a
-              [ngClass]="{
-                'border-dl-blue-6 text-dl-grey-1':
-                  (currentUrl$ | async) === '/social',
-                'border-transparent text-dl-grey-4 ':
-                  (currentUrl$ | async) !== '/social'
-              }"
-              class="inline-flex items-center border-b-2 px-1 text-dl-5 font-dl-3"
+              (click)="profileNavigate('/profile')"
+              class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3"
+              role="menuitem"
+              tabindex="-1"
+              id="user-menu-item-0"
             >
-              Social
+              Profile
+            </a>
+            <a
+              (click)="profileNavigate('/settings')"
+              class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3"
+              role="menuitem"
+              tabindex="-1"
+              id="user-menu-item-1"
+            >
+              Settings
+            </a>
+            <a
+              (click)="logout()"
+              class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3"
+              role="menuitem"
+              tabindex="-1"
+              id="user-menu-item-2"
+            >
+              Sign out
             </a>
           </div>
-        </ng-container>
-        <!-- Profile dropdown -->
-          <div
-            *ngIf="authService.$profile | async as profile"
-            class="relative ml-3"
-          >
-            <div>
-              <button
-                type="button"
-                (click)="toggleMenu($event)"
-                class="flex pb-dl-5 rounded-full text-sm"
-                id="user-menu-button"
-                aria-expanded="false"
-                aria-haspopup="true"
-              >
-                <span class="sr-only">Open User Menu</span>
-                <img
-                  *ngIf="profileImageLink"
-                  class="h-dl-5 w-dl-5 rounded-full focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
-                  [src]="profileImageLink"
-                  alt="profile image"
-                />
-                <span
-                  class="inline-flex h-dl-4 w-dl-4 items-center justify-center rounded-full bg-dl-grey-9"
-                  *ngIf="!profileImageLink && initials"
-                >
-                  <span
-                    class="text-dl-5 font-dl-3 leading-none text-dl-grey-7"
-                    >{{ initials }}</span
-                  >
-                </span>
-                <span
-                  *ngIf="!profileImageLink && !initials"
-                  class="inline-block h-dl-4 w-dl-4 overflow-hidden rounded-full bg-dl-grey-9"
-                >
-                  <svg
-                    class="h-full w-full text-dl-grey-7"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                </span>
-              </button>
-            </div>
-            <div
-              #menu
-              *ngIf="isMenuOpen"
-              [ngClass]="{
-                'scale-100 opacity-100 duration-200': isMenuOpen,
-                'scale-95 opacity-0 duration-75': !isMenuOpen
-              }"
-              class="absolute bottom-28 right-5 z-20 flex w-dl-7 flex-col items-center rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 ease-out focus:outline-none"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="user-menu-button"
-              tabindex="-1"
-            >
-              <a
-                (click)="profileNavigate('/profile')"
-                class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3"
-                role="menuitem"
-                tabindex="-1"
-                id="user-menu-item-0"
-              >
-                Profile
-              </a>
-              <a
-                (click)="profileNavigate('/settings')"
-                class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3"
-                role="menuitem"
-                tabindex="-1"
-                id="user-menu-item-1"
-              >
-                Settings
-              </a>
-              <a
-                (click)="logout()"
-                class="cursor-pointer px-4 py-2 text-dl-5 font-dl-3 text-dl-grey-3"
-                role="menuitem"
-                tabindex="-1"
-                id="user-menu-item-2"
-              >
-                Sign out
-              </a>
-            </div>
-          </div>
+        </div>
       </div>
     </div>
   </nav>
