@@ -13,6 +13,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { SocialPageComponent } from './social/social-page.component';
 import { RecipesPageNewComponent } from './recipes/feature/recipes-page/recipes-page.component-new';
 import { PublicRecipeComponent } from './recipes/feature/recipe/public-recipe/public-recipe.component';
+import { GroceriesPageComponent } from './groceries/groceries-page/groceries-page.component';
 
 export const routes: Route[] = [
   {
@@ -21,8 +22,8 @@ export const routes: Route[] = [
     canActivate: [ProfileGuard],
   },
   {
-    path: 'social',
-    component: SocialPageComponent,
+    path: 'groceries',
+    component: GroceriesPageComponent,
     canActivate: [ProfileGuard],
   },
   {
@@ -31,29 +32,27 @@ export const routes: Route[] = [
     canActivate: [ProfileGuard],
   },
   {
-    path: 'login',
-    component: LoginPageComponent,
-  },
-  {
-    path: 'profile',
-    component: ProfileComponent,
+    path: 'ingredients',
+    component: IngredientsComponent,
     canActivate: [ProfileGuard],
   },
   {
-    path: 'register',
-    component: SignupPageComponent,
+    path: 'kitchen',
+    component: KitchenPageComponent,
+    canActivate: [ProfileGuard],
   },
   {
-    path: 'verify-account',
-    component: VerifyComponent,
+    path: 'login',
+    component: LoginPageComponent,
   },
   {
     path: 'password-reset',
     component: PasswordResetPageComponent,
   },
   {
-    path: 'recipes',
-    component: RecipesPageNewComponent,
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [ProfileGuard],
   },
   {
     path: 'recipe/public/:recipeID',
@@ -64,14 +63,21 @@ export const routes: Route[] = [
     component: UserRecipeComponent,
   },
   {
-    path: 'kitchen',
-    component: KitchenPageComponent,
+    path: 'recipes',
+    component: RecipesPageNewComponent,
+  },
+  {
+    path: 'register',
+    component: SignupPageComponent,
+  },
+  {
+    path: 'social',
+    component: SocialPageComponent,
     canActivate: [ProfileGuard],
   },
   {
-    path: 'ingredients',
-    component: IngredientsComponent,
-    canActivate: [ProfileGuard],
+    path: 'verify-account',
+    component: VerifyComponent,
   },
   {
     path: '**',
