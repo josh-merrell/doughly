@@ -18,6 +18,7 @@ import { RecipeIngredientActions } from './recipes/state/recipe-ingredient/recip
 import { ToolStockActions } from './kitchen/feature/Inventory/feature/tool-inventory/state/tool-stock-actions';
 import { RecipeToolActions } from './recipes/state/recipe-tool/recipe-tool-actions';
 import { RecipeStepActions } from './recipes/state/recipe-step/recipe-step-actions';
+import { ShoppingListActions } from './groceries/state/shopping-list-actions';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -61,5 +62,8 @@ export class AppComponent {
     this.store.dispatch(ProfileActions.loadFriends());
     this.store.dispatch(ProfileActions.loadFriendRequests());
     this.store.dispatch(ProfileActions.loadFriendRequestsSent());
+
+    //--shopping
+    this.store.dispatch(ShoppingListActions.loadShoppingLists());
   }
 }
