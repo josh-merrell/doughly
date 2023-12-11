@@ -39,6 +39,40 @@ const ShoppingListDeleteSchema_params = {
   },
 };
 
+const getShoppingListRecipeSchema_params = {
+  type: 'object',
+  required: ['shoppingListRecipeID'],
+  properties: {
+    shoppingListRecipeID: { type: 'string' },
+  },
+};
+
+const getRecipesByShoppingListSchema_params = {
+  type: 'object',
+  required: ['shoppingListID'],
+  properties: {
+    shoppingListID: { type: 'string' },
+  },
+};
+
+const ShoppingListRecipeDeleteSchema_params = {
+  type: 'object',
+  required: ['shoppingListRecipeID'],
+  properties: {
+    shoppingListRecipeID: { type: 'string' },
+  },
+};
+
+const createShoppingListRecipeSchema_body = {
+  type: 'object',
+  required: ['recipeID', 'plannedDate'],
+  properties: {
+    recipeID: { type: 'integer' },
+    plannedDate: { type: 'string' },
+  },
+
+};
+
 
 module.exports = {
   getShoppingListSchema_params,
@@ -46,4 +80,8 @@ module.exports = {
   ShoppingListUpdateSchema_body,
   ShoppingListUpdateSchema_params,
   ShoppingListDeleteSchema_params,
+  getShoppingListRecipeSchema_params,
+  getRecipesByShoppingListSchema_params,
+  ShoppingListRecipeDeleteSchema_params,
+  createShoppingListRecipeSchema_body,
 };

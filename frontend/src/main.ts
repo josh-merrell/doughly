@@ -47,6 +47,8 @@ import { FollowshipReducer } from './app/social/state/followship-reducers';
 import { FollowshipEffects } from './app/social/state/followship-effects';
 import { ProfileReducer } from './app/profile/state/profile-reducers';
 import { ProfileEffects } from './app/profile/state/profile-effects';
+import { ShoppingListEffects } from './app/groceries/state/shopping-list-effects';
+import { ShoppingListReducer } from './app/groceries/state/shopping-list-reducers';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -68,6 +70,7 @@ bootstrapApplication(AppComponent, {
     provideState('friendship', FriendshipReducer),
     provideState('followship', FollowshipReducer),
     provideState('profile', ProfileReducer),
+    provideState('shoppingList', ShoppingListReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
@@ -82,6 +85,7 @@ bootstrapApplication(AppComponent, {
       FriendshipEffects,
       FollowshipEffects,
       ProfileEffects,
+      ShoppingListEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({
