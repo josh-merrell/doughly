@@ -19,6 +19,7 @@
         Draft
       </p>
     </div>
+    <p *ngIf="recipe.plannedDate" class="text-dl-4 text-dl-grey-4">Planned: {{ recipe.plannedDate }}</p>
   </div>
   <img
     *ngIf="recipe.photoURL"

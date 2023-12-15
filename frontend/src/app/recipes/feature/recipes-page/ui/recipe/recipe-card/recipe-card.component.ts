@@ -14,12 +14,22 @@ import { Router } from '@angular/router';
   templateUrl: './recipe-card.component.html',
 })
 export class RecipeCardComponent implements OnInit {
-  @Input() recipe!: Recipe;
+  @Input() recipe!: any;
   @Input() friendUserID!: string;
   @Input() isUserRecipe!: boolean;
 
-  constructor(private store: Store, private recipeCategoryService: RecipeCategoryService, public router: Router) {}
+  constructor(
+    private store: Store,
+    private recipeCategoryService: RecipeCategoryService,
+    public router: Router
+  ) {}
 
   ngOnInit(): void {
+    if (this.recipe.plannedDate) {
+      //convert yyyy-mm-dd 'plannedDate' to day of week string like "Monday"
+      const date = new Date(this.recipe.plannedDate);
+      const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
+      this.recipe.plannedDate = dayOfWeek;
+    }
   }
 }
