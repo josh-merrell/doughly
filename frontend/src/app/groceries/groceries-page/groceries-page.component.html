@@ -1,4 +1,4 @@
-<div class="relative mx-auto flex w-full flex-col bg-white pt-dl-5">
+<div class="relative mx-auto flex w-full h-full flex-col bg-white pt-dl-5">
   <!-- Heading ('Shopping' or 'Draft')-->
   <div class="relative mx-dl-5 flex justify-between">
     <h2 class="text-dl-8 font-dl-3 text-dl-grey-2">
@@ -40,7 +40,7 @@
       ERROR: Multiple ShoppingLists Found
     </div>
   } @else if (status() === "draft") {
-    <dl-draft-page></dl-draft-page>
+    <dl-draft-page class="h-full"></dl-draft-page>
   } @else {
     <dl-shopping-page></dl-shopping-page>
   }

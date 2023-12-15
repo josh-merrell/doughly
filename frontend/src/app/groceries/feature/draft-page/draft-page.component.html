@@ -1,21 +1,73 @@
-<!-- recipes/ingredients columns-->
-<div class="flex flex-col">
-  <!-- ShoppingListRecipes -->
-  <!-- List -->
-  <div class="relative mb-dl-3 flex flex-col items-center">
+<div class="flex h-full flex-col items-center">
+  <!-- recipes/ingredients columns-->
+  <div class="flex flex-col items-center">
+    <!-- ShoppingListRecipes -->
+    <p class="mb-dl-3 mt-dl-7 text-dl-6 font-dl-3 text-dl-grey-2">
+      Recipes included in Shopping List
+    </p>
     <div
-      class="flex h-dl-21 flex-col items-center"
-      #scrollContainer
+      class="relative mb-dl-3 flex max-h-dl-15 flex-col items-center overflow-y-auto"
     >
-      <dl-recipe-card
-        *ngFor="let recipe of displayRecipes()"
-        (click)="recipeCardClick(recipe)"
-        [recipe]="recipe"
-        [isUserRecipe]="true"
-      ></dl-recipe-card>
+      <div class="flex flex-col items-center">
+        <dl-recipe-card
+          *ngFor="let recipe of displayRecipes()"
+          (click)="recipeCardClick(recipe)"
+          [recipe]="recipe"
+          [isUserRecipe]="true"
+        ></dl-recipe-card>
+      </div>
     </div>
-    <span class="absolute -bottom-10 text-dl-5 font-dl-2 text-dl-grey-2"
-      >{{displayRecipes().length}} total</span
+    <button
+      type="button"
+      class="mb-dl-8 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 transition-all duration-200 ease-in-out"
+      (click)="onAddRecipeClick()"
     >
+      @if (!recipeSelected()) {
+        Add Recipe
+      } @else {
+        Remove Recipe and Related Items
+      }
+    </button>
+
+    <!-- ShoppingListIngredients -->
+    <p class="mb-dl-3 mt-dl-7 text-dl-6 font-dl-3 text-dl-grey-2">
+      Items to Buy
+    </p>
+    <div
+      class="relative mb-dl-3 flex max-h-dl-15 w-dl-16 flex-wrap overflow-y-auto rounded-dl-3 border-dl-grey-2 bg-dl-grey-10 p-dl-3"
+    >
+      @for (item of displaySLIngr(); track item.ingredientName) {
+      <div
+        class="relative mx-dl-2 mb-dl-2 flex justify-between rounded-dl-1 bg-white px-dl-3 py-dl-1"
+      >
+        <span class="text-dl-5 font-dl-3 text-dl-grey-1">
+          {{ item.ingredientName }}
+          <span class="text-dl-5 font-dl-2 text-dl-grey-3">
+            {{ Math.ceil(item.quantity) }} {{ item.unit }}
+          </span>
+        </span>
+      </div>
+      } @empty {
+      <p class="text-dl-4 font-dl-2 text-dl-grey-5">No items to buy</p>
+      }
+    </div>
+    <button
+      type="button"
+      class="mb-dl-8 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 transition-all duration-200 ease-in-out"
+      (click)="onAddItemClick()"
+    >
+      Add Item
+    </button>
   </div>
+  <!-- Spacer div -->
+  <div class="flex-grow"></div>
+
+  <!-- Done Adding, Shop button-->
+  <button
+    type="button"
+    class="block mb-dl-3 h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+    (click)="onShopClick()"
+  >
+    Shop List
+  </button>
 </div>
