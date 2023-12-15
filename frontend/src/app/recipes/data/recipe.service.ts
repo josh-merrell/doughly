@@ -137,12 +137,14 @@ export class RecipeService {
     recipeID: number,
     date = new Date(),
   ): Observable<ShoppingList> {
+    // console.log(`IN getShoppingList: `, recipeID, date)
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
       switchMap((recipeIngredients) => {
         if (recipeIngredients.length === 0) {
           return of([[]]);
         }
+        console.log(`RI: `, recipeIngredients)
         const ingredientObservables = recipeIngredients.map(
           (recipeIngredient) => {
             return combineLatest([
@@ -176,7 +178,7 @@ export class RecipeService {
           ingredient,
           ingredientStocks,
         ] of ingredientsData) {
-          if (!ingredient || !recipeIngredient || !ingredientStocks.length) {
+          if (!ingredient || !recipeIngredient) {
             return { ingredients: [] }; // Return default ShoppingList when no ingredients are found
           }
           let neededGrams =
@@ -226,6 +228,7 @@ export class RecipeService {
             });
           }
         }
+        // console.log(`RETURNING FROM getShoppingList. SHOPPINGLIST: `, shoppingList)
         return { ingredients: shoppingList };
       })
     );
