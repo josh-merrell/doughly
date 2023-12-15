@@ -49,6 +49,8 @@ import { ProfileReducer } from './app/profile/state/profile-reducers';
 import { ProfileEffects } from './app/profile/state/profile-effects';
 import { ShoppingListEffects } from './app/groceries/state/shopping-list-effects';
 import { ShoppingListReducer } from './app/groceries/state/shopping-list-reducers';
+import { ShoppingListRecipeEffects } from './app/groceries/state/shopping-list-recipe-effects';
+import { ShoppingListRecipeReducer } from './app/groceries/state/shopping-list-recipe-reducers';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -71,6 +73,7 @@ bootstrapApplication(AppComponent, {
     provideState('followship', FollowshipReducer),
     provideState('profile', ProfileReducer),
     provideState('shoppingList', ShoppingListReducer),
+    provideState('shoppingListRecipe', ShoppingListRecipeReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
@@ -86,6 +89,7 @@ bootstrapApplication(AppComponent, {
       FollowshipEffects,
       ProfileEffects,
       ShoppingListEffects,
+      ShoppingListRecipeEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({

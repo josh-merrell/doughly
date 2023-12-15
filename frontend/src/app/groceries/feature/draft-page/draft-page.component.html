@@ -1,1 +1,21 @@
-<p>draft-page works!</p>
+<!-- recipes/ingredients columns-->
+<div class="flex flex-col">
+  <!-- ShoppingListRecipes -->
+  <!-- List -->
+  <div class="relative mb-dl-3 flex flex-col items-center">
+    <div
+      class="flex h-dl-21 flex-col items-center"
+      #scrollContainer
+    >
+      <dl-recipe-card
+        *ngFor="let recipe of displayRecipes()"
+        (click)="recipeCardClick(recipe)"
+        [recipe]="recipe"
+        [isUserRecipe]="true"
+      ></dl-recipe-card>
+    </div>
+    <span class="absolute -bottom-10 text-dl-5 font-dl-2 text-dl-grey-2"
+      >{{displayRecipes().length}} total</span
+    >
+  </div>
+</div>

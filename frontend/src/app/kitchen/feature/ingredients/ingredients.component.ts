@@ -70,10 +70,6 @@ export class IngredientsComponent {
   modalActiveForIngredientID: number | null = null;
 
   ngOnInit(): void {
-    // this.store.dispatch(IngredientActions.loadIngredients());
-    // this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-    // this.store.dispatch(RecipeActions.loadRecipes());
-    // this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
 
     this.ingredients$.subscribe((ingredients) => {
       this.ingredientService.addStockTotals(ingredients);

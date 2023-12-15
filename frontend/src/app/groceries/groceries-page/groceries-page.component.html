@@ -35,7 +35,11 @@
       </button>
     </div>
   </div>
-  @if (status() === "draft") {
+  @if (status() === "multipleLists") {
+    <div>
+      ERROR: Multiple ShoppingLists Found
+    </div>
+  } @else if (status() === "draft") {
     <dl-draft-page></dl-draft-page>
   } @else {
     <dl-shopping-page></dl-shopping-page>
