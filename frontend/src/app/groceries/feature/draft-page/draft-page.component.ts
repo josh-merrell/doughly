@@ -32,6 +32,7 @@ import { RecipeService } from 'src/app/recipes/data/recipe.service';
   templateUrl: './draft-page.component.html',
 })
 export class DraftPageComponent {
+  Math = Math;
   public shoppingLists: WritableSignal<any> = signal([]);
   public listRecipes: WritableSignal<any> = signal([]);
   public recipes: WritableSignal<any> = signal([]);
@@ -72,6 +73,7 @@ export class DraftPageComponent {
   // **reactive state signals**
   individualShoppingLists: WritableSignal<Map<number, any>> = signal(new Map());
   allFetchesComplete: WritableSignal<boolean> = signal(false);
+  recipeSelected: WritableSignal<boolean> = signal(false);
 
   public displaySLIngr = computed(() => {
     const combinedSLRecipeIng = this.combinedSLRecipeIng();
@@ -85,7 +87,7 @@ export class DraftPageComponent {
     effect(
       () => {
         const displayRecipes = this.displayRecipes();
-        console.log(`displayRecipes: `, displayRecipes)
+        console.log(`displayRecipes: `, displayRecipes);
         const tempMap = new Map();
 
         displayRecipes.forEach((recipe) => {
@@ -110,7 +112,7 @@ export class DraftPageComponent {
           const allShoppingLists = this.individualShoppingLists();
           const combinedList = combineShoppingLists(allShoppingLists);
           this.combinedSLRecipeIng.set(combinedList);
-          console.log(`combinedSLRecipeIng: `, combinedList)
+          console.log(`combinedSLRecipeIng: `, combinedList);
         }
       },
       { allowSignalWrites: true }
@@ -160,5 +162,18 @@ export class DraftPageComponent {
 
   recipeCardClick(recipe) {
     console.log('recipeCardClick: ', recipe);
+    this.recipeSelected.set(!this.recipeSelected());
+  }
+
+  onAddRecipeClick() {
+    console.log('onAddRecipeClick');
+  }
+
+  onAddItemClick() {
+    console.log('onAddItemClick');
+  }
+
+  onShopClick() {
+    console.log('onShopClick');
   }
 }
