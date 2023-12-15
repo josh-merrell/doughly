@@ -43,11 +43,6 @@ export class FriendsComponent {
   ) {}
 
   ngOnInit(): void {
-    // this.store.dispatch(ProfileActions.loadProfile({}));
-    // this.store.dispatch(ProfileActions.loadFriends());
-    // this.store.dispatch(ProfileActions.loadFollowers());
-    // this.store.dispatch(ProfileActions.loadFriendRequests());
-    // this.store.dispatch(ProfileActions.loadFriendRequestsSent());
 
     this.store.select(selectFriendships).subscribe((friendships: any) => {
       this.friendships.set(friendships);

@@ -1,5 +1,6 @@
 import { createAction, props } from '@ngrx/store';
-import { ShoppingList, ShoppingListIngredient, ShoppingListRecipe } from './shopping-list-state';
+import { ShoppingList, ShoppingListIngredient } from './shopping-list-state';
+import { ShoppingListRecipe } from './shopping-list-recipe-state';
 
 const loadShoppingLists = createAction('[ShoppingLists] Load');
 const loadShoppingListsSuccess = createAction(

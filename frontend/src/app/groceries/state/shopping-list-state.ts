@@ -1,3 +1,5 @@
+import { ShoppingListRecipe } from "./shopping-list-recipe-state";
+
 export interface ShoppingList {
   shoppingListID: number;
   status: string;
@@ -18,13 +20,6 @@ export interface ShoppingListIngredient {
   purchasedMeasurement?: number;
   purchasedUnit?: string;
   status: string;
-}
-
-export interface ShoppingListRecipe {
-  shoppingListRecipeID: number;
-  shoppingListID: number;
-  recipeID: number;
-  plannedDate: Date;
 }
 
 export interface ShoppingListState {
