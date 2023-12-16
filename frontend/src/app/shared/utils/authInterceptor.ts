@@ -18,7 +18,6 @@ export function authInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> {
-  
   return from(supabase.auth.getSession()).pipe(
     mergeMap((result: any) => {
       if (result) {

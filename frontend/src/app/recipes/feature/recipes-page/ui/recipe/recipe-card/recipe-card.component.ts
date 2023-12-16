@@ -17,6 +17,7 @@ export class RecipeCardComponent implements OnInit {
   @Input() recipe!: any;
   @Input() friendUserID!: string;
   @Input() isUserRecipe!: boolean;
+  @Input() isSelected!: boolean;
 
   constructor(
     private store: Store,
