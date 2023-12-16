@@ -26,11 +26,17 @@ import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ing
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { ShoppingListRecipeService } from '../../data/shopping-list-recipe.service';
 import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-actions';
+import { AddShoppingListRecipeModalComponent } from '../../ui/add-shopping-list-recipe-modal/add-shopping-list-recipe-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'dl-draft-page',
   standalone: true,
-  imports: [CommonModule, RecipeCardComponent],
+  imports: [
+    CommonModule,
+    RecipeCardComponent,
+    AddShoppingListRecipeModalComponent,
+  ],
   templateUrl: './draft-page.component.html',
 })
 export class DraftPageComponent {
@@ -93,6 +99,7 @@ export class DraftPageComponent {
   });
 
   constructor(
+    public dialog: MatDialog,
     private store: Store,
     private recipeService: RecipeService
   ) {
@@ -198,7 +205,7 @@ export class DraftPageComponent {
     }
   }
 
-  onAddRecipeClick() {
+  onRecipeButtonClick() {
     console.log('onAddRecipeClick');
     if (this.selectedRecipeID() !== 0) {
       console.log(`DELETING LIST RECIPE: `, this.selectedRecipeID());
@@ -212,6 +219,15 @@ export class DraftPageComponent {
           shoppingListID: this.shoppingLists()[0].shoppingListID,
         })
       );
+    } else {
+      this.dialog.open(AddShoppingListRecipeModalComponent, {
+        width: '80%',
+        maxWidth: '540px',
+        data: {
+          shoppingListRecipes: this.listRecipes(),
+          recipes: this.recipes(),
+        },
+      });
     }
   }
 

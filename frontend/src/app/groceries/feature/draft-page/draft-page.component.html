@@ -20,14 +20,15 @@
     </div>
     <button
       type="button"
-      class="mb-dl-8 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 transition-all duration-200 ease-in-out"
-      (click)="onAddRecipeClick()"
+      class="mb-dl-8 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3"
+      [ngClass]="{
+        'bg-dl-pink-4 text-white': selectedRecipeID() === 0,
+        'border-dl-pink-4 bg-white text-dl-pink-4': selectedRecipeID() !== 0
+      }"
+      (click)="onRecipeButtonClick()"
     >
-      @if (selectedRecipeID() === 0) {
-        Add Recipe
-      } @else {
-        Remove Recipe and Related Items
-      }
+      @if (selectedRecipeID() === 0) { Add Recipe } @else { Remove Recipe and
+      Related Items }
     </button>
 
     <!-- ShoppingListIngredients -->
@@ -47,7 +48,7 @@
             {{ Math.ceil(item.quantity) }} {{ item.unit }}
           </span>
         </span>
-      </div> 
+      </div>
       } @empty {
       <p class="text-dl-4 font-dl-2 text-dl-grey-5">No items to buy</p>
       }
@@ -66,7 +67,7 @@
   <!-- Done Adding, Shop button-->
   <button
     type="button"
-    class="block mb-dl-3 h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+    class="mb-dl-3 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
     (click)="onShopClick()"
   >
     Shop List
