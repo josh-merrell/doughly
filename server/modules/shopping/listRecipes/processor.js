@@ -83,6 +83,7 @@ module.exports = ({ db }) => {
 
   async function deleteShoppingListRecipe (options) {
     const { userID, authorization, shoppingListRecipeID } = options;
+    console.log(`IN DELETE PROCESSOR FOR SLR ID: ${shoppingListRecipeID}`)
     //verify that provided shoppingListRecipe exists
     console.log('shoppingListRecipeID', shoppingListRecipeID)
     const { data: shoppingListRecipe, error: shoppingListRecipeError } = await db.from('shoppingListRecipes').select('*').filter('shoppingListRecipeID', 'eq', shoppingListRecipeID).filter('deleted', 'eq', false);

@@ -24,6 +24,8 @@ import {
 import { selectShoppingLists } from '../../state/shopping-list-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
+import { ShoppingListRecipeService } from '../../data/shopping-list-recipe.service';
+import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-actions';
 
 @Component({
   selector: 'dl-draft-page',
@@ -44,6 +46,12 @@ export class DraftPageComponent {
   public displayRecipes = computed(() => {
     const recipes = this.recipes();
     const listRecipes = this.listRecipes();
+    console.log(
+      `SETTING DISPLAY RECIPES. RECIPES: `,
+      recipes,
+      `LIST RECIPES: `,
+      listRecipes
+    );
     return (
       recipes
         .map((recipe) => {
@@ -55,7 +63,8 @@ export class DraftPageComponent {
           if (matchingListRecipe) {
             return {
               ...recipe,
-              plannedDate: matchingListRecipe.plannedDate, // Adding the plannedDate property
+              plannedDate: matchingListRecipe.plannedDate,
+              shoppingListRecipeID: matchingListRecipe.shoppingListRecipeID,
             };
           }
           return recipe;
@@ -73,7 +82,7 @@ export class DraftPageComponent {
   // **reactive state signals**
   individualShoppingLists: WritableSignal<Map<number, any>> = signal(new Map());
   allFetchesComplete: WritableSignal<boolean> = signal(false);
-  recipeSelected: WritableSignal<boolean> = signal(false);
+  selectedRecipeID: WritableSignal<number> = signal(0);
 
   public displaySLIngr = computed(() => {
     const combinedSLRecipeIng = this.combinedSLRecipeIng();
@@ -83,12 +92,19 @@ export class DraftPageComponent {
     return combinedSLRecipeIng;
   });
 
-  constructor(private store: Store, private recipeService: RecipeService) {
+  constructor(
+    private store: Store,
+    private recipeService: RecipeService
+  ) {
     effect(
       () => {
         const displayRecipes = this.displayRecipes();
         console.log(`displayRecipes: `, displayRecipes);
         const tempMap = new Map();
+        if (displayRecipes.length === 0) {
+          this.individualShoppingLists.set(new Map(tempMap));
+          this.allFetchesComplete.set(true);
+        }
 
         displayRecipes.forEach((recipe) => {
           this.recipeService
@@ -112,11 +128,23 @@ export class DraftPageComponent {
           const allShoppingLists = this.individualShoppingLists();
           const combinedList = combineShoppingLists(allShoppingLists);
           this.combinedSLRecipeIng.set(combinedList);
-          console.log(`combinedSLRecipeIng: `, combinedList);
         }
       },
       { allowSignalWrites: true }
     );
+
+    effect(() => {
+      const lr = this.listRecipes();
+      for (let i = 0; i < lr.length; i++) {
+        //if the 'plannedDate' property of the listRecipe is prior to today, call the 'deleteListRecipe' method
+        if (
+          new Date(lr[i].plannedDate).getTime() <
+          new Date(new Date().toDateString()).getTime()
+        ) {
+          this.deleteListRecipe(lr[i].shoppingListRecipeID);
+        }
+      }
+    });
 
     function combineShoppingLists(allShoppingLists) {
       const result: any[] = [];
@@ -145,9 +173,11 @@ export class DraftPageComponent {
     this.store
       .select(selectShoppingListRecipes)
       .subscribe((listRecipes: any) => {
+        console.log(`SETTING LIST RECIPES: `, listRecipes);
         this.listRecipes.set(listRecipes);
       });
     this.store.select(selectRecipes).subscribe((recipes: any) => {
+      console.log(`SETTING RECIPES: `, recipes);
       this.recipes.set(recipes);
     });
     this.store
@@ -161,12 +191,28 @@ export class DraftPageComponent {
   }
 
   recipeCardClick(recipe) {
-    console.log('recipeCardClick: ', recipe);
-    this.recipeSelected.set(!this.recipeSelected());
+    if (this.selectedRecipeID() === recipe.shoppingListRecipeID) {
+      this.selectedRecipeID.set(0);
+    } else {
+      this.selectedRecipeID.set(recipe.shoppingListRecipeID);
+    }
   }
 
   onAddRecipeClick() {
     console.log('onAddRecipeClick');
+    if (this.selectedRecipeID() !== 0) {
+      console.log(`DELETING LIST RECIPE: `, this.selectedRecipeID());
+      console.log(
+        `FROM SHOPPING LIST: `,
+        this.shoppingLists()[0].shoppingListID
+      );
+      this.store.dispatch(
+        ShoppingListRecipeActions.deleteShoppingListRecipe({
+          shoppingListRecipeID: this.selectedRecipeID(),
+          shoppingListID: this.shoppingLists()[0].shoppingListID,
+        })
+      );
+    }
   }
 
   onAddItemClick() {
@@ -175,5 +221,9 @@ export class DraftPageComponent {
 
   onShopClick() {
     console.log('onShopClick');
+  }
+
+  deleteListRecipe(listRecipeID) {
+    console.log(`DELETING LIST RECIPE: `, listRecipeID);
   }
 }
