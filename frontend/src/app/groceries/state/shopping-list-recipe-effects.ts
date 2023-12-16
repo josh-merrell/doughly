@@ -75,6 +75,7 @@ export class ShoppingListRecipeEffects {
             map(() =>
               ShoppingListRecipeActions.deleteShoppingListRecipeSuccess({
                 shoppingListRecipeID: action.shoppingListRecipeID,
+                shoppingListID: action.shoppingListID,
               })
             ),
             catchError((error) =>
@@ -85,6 +86,17 @@ export class ShoppingListRecipeEffects {
               )
             )
           )
+      )
+    )
+  );
+
+  loadShoppingListsAfterDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListRecipeActions.deleteShoppingListRecipeSuccess),
+      map((action) =>
+        ShoppingListRecipeActions.loadShoppingListRecipes({
+          shoppingListID: action.shoppingListID,
+        })
       )
     )
   );

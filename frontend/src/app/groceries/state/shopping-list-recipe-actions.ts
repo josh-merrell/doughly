@@ -21,10 +21,13 @@ const addShoppingListRecipeFailure = createAction(
   props<{ error: any }>()
 );
 
-const deleteShoppingListRecipe = createAction('[ShoppingListRecipes] Delete', props<{ shoppingListRecipeID: number }>());
+const deleteShoppingListRecipe = createAction(
+  '[ShoppingListRecipes] Delete',
+  props<{ shoppingListRecipeID: number; shoppingListID: number }>()
+);
 const deleteShoppingListRecipeSuccess = createAction(
   '[ShoppingListRecipes] Delete Success',
-  props<{ shoppingListRecipeID: number }>()
+  props<{ shoppingListRecipeID: number, shoppingListID: number }>()
 );
 const deleteShoppingListRecipeFailure = createAction(
   '[ShoppingListRecipes] Delete Failure',

@@ -144,7 +144,6 @@ export class RecipeService {
         if (recipeIngredients.length === 0) {
           return of([[]]);
         }
-        console.log(`RI: `, recipeIngredients)
         const ingredientObservables = recipeIngredients.map(
           (recipeIngredient) => {
             return combineLatest([
