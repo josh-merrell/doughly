@@ -65,6 +65,17 @@ export class ShoppingListRecipeEffects {
     )
   );
 
+  loadShoppingListsAfterCreate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListRecipeActions.addShoppingListRecipeSuccess),
+      map((action) =>
+        ShoppingListRecipeActions.loadShoppingListRecipes({
+          shoppingListID: action.shoppingListRecipe.shoppingListID,
+        })
+      )
+    )
+  );
+
   deleteShoppingListRecipe$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListRecipeActions.deleteShoppingListRecipe),

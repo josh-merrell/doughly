@@ -8,11 +8,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { RouterOutlet } from '@angular/router';
 import { DiscoverRecipesComponent } from './feature/discover/discover-recipes.component';
 import { RecipeListComponent } from './feature/list/recipe-list.component';
-import { RecipeActions } from '../../state/recipe/recipe-actions';
-import { RecipeCategoryActions } from '../../state/recipe-category/recipe-category-actions';
-import { RecipeIngredientActions } from '../../state/recipe-ingredient/recipe-ingredient-actions';
-import { RecipeToolActions } from '../../state/recipe-tool/recipe-tool-actions';
-import { RecipeStepActions } from '../../state/recipe-step/recipe-step-actions';
 import { Store } from '@ngrx/store';
 
 @Component({
