@@ -1,17 +1,14 @@
 <div class="flex h-full">
   <div class="relative flex h-full w-full items-center justify-between">
-    <div class="relative flex flex-grow justify-between pl-dl-3">
-      <p class="text-dl-7 font-dl-3 text-dl-grey-2">
-        {{ category.name }}
-      </p>
-
-      <div class="flex flex-col">
-        <div class="mr-dl-5 flex">
-          <span class="text-dl-4 text-dl-grey-6"> Recipes: </span>
-          <span class="ml-dl-2 text-dl-4 text-dl-blue-4">
-            {{ category.recipeCount }}
-          </span>
-        </div>
+    <div class="flex flex-col pl-dl-3">
+        <p class="text-dl-6 font-dl-3 text-dl-grey-2">
+          {{ category.name }}
+        </p>
+      <div class="mt-dl-2 flex">
+        <span class="text-dl-4 font-dl-2 text-dl-grey-5"> Recipes: </span>
+        <span class="text-dl-4 font-dl-2 text-dl-grey-5">
+          {{ category.recipeCount }}
+        </span>
       </div>
     </div>
     <img

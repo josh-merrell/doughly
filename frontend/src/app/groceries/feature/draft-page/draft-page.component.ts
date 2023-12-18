@@ -7,30 +7,28 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { selectShoppingListRecipes } from '../../state/shopping-list-recipe-selectors';
-import { RecipeListComponent } from '../../../recipes/feature/recipes-page/feature/list/recipe-list.component';
 import { RecipeCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/recipe-card/recipe-card.component';
 
 import { Store } from '@ngrx/store';
 import {
-  selectRecipeByID,
   selectRecipes,
 } from 'src/app/recipes/state/recipe/recipe-selectors';
-import { Subscription, catchError, forkJoin, of } from 'rxjs';
-import { RecipeIngredient } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-state';
-import {
-  selectRecipeIngredients,
-  selectRecipeIngredientsByRecipeID,
-} from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
+import {selectRecipeIngredients} from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectShoppingLists } from '../../state/shopping-list-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
-import { ShoppingListRecipeService } from '../../data/shopping-list-recipe.service';
 import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-actions';
+import { AddShoppingListRecipeModalComponent } from '../../ui/add-shopping-list-recipe-modal/add-shopping-list-recipe-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'dl-draft-page',
   standalone: true,
-  imports: [CommonModule, RecipeCardComponent],
+  imports: [
+    CommonModule,
+    RecipeCardComponent,
+    AddShoppingListRecipeModalComponent,
+  ],
   templateUrl: './draft-page.component.html',
 })
 export class DraftPageComponent {
@@ -46,12 +44,6 @@ export class DraftPageComponent {
   public displayRecipes = computed(() => {
     const recipes = this.recipes();
     const listRecipes = this.listRecipes();
-    console.log(
-      `SETTING DISPLAY RECIPES. RECIPES: `,
-      recipes,
-      `LIST RECIPES: `,
-      listRecipes
-    );
     return (
       recipes
         .map((recipe) => {
@@ -93,13 +85,13 @@ export class DraftPageComponent {
   });
 
   constructor(
+    public dialog: MatDialog,
     private store: Store,
     private recipeService: RecipeService
   ) {
     effect(
       () => {
         const displayRecipes = this.displayRecipes();
-        console.log(`displayRecipes: `, displayRecipes);
         const tempMap = new Map();
         if (displayRecipes.length === 0) {
           this.individualShoppingLists.set(new Map(tempMap));
@@ -141,7 +133,7 @@ export class DraftPageComponent {
           new Date(lr[i].plannedDate).getTime() <
           new Date(new Date().toDateString()).getTime()
         ) {
-          this.deleteListRecipe(lr[i].shoppingListRecipeID);
+          this.deleteListRecipe();
         }
       }
     });
@@ -173,11 +165,9 @@ export class DraftPageComponent {
     this.store
       .select(selectShoppingListRecipes)
       .subscribe((listRecipes: any) => {
-        console.log(`SETTING LIST RECIPES: `, listRecipes);
         this.listRecipes.set(listRecipes);
       });
     this.store.select(selectRecipes).subscribe((recipes: any) => {
-      console.log(`SETTING RECIPES: `, recipes);
       this.recipes.set(recipes);
     });
     this.store
@@ -198,20 +188,28 @@ export class DraftPageComponent {
     }
   }
 
-  onAddRecipeClick() {
-    console.log('onAddRecipeClick');
+  onRecipeButtonClick() {
     if (this.selectedRecipeID() !== 0) {
-      console.log(`DELETING LIST RECIPE: `, this.selectedRecipeID());
-      console.log(
-        `FROM SHOPPING LIST: `,
-        this.shoppingLists()[0].shoppingListID
-      );
-      this.store.dispatch(
-        ShoppingListRecipeActions.deleteShoppingListRecipe({
-          shoppingListRecipeID: this.selectedRecipeID(),
+      this.deleteListRecipe();
+      this.selectedRecipeID.set(0);
+    } else {
+      const ref = this.dialog.open(AddShoppingListRecipeModalComponent, {
+        width: '80%',
+        maxWidth: '540px',
+        data: {
+          shoppingListRecipes: this.listRecipes(),
+          recipes: this.recipes(),
           shoppingListID: this.shoppingLists()[0].shoppingListID,
-        })
-      );
+        },
+      });
+      // after the modal closes, trigger the 'loadShoppingListRecipes' action
+      ref.afterClosed().subscribe(() => {
+        this.store.dispatch(
+          ShoppingListRecipeActions.loadShoppingListRecipes({
+            shoppingListID: this.shoppingLists()[0].shoppingListID,
+          })
+        );
+      });
     }
   }
 
@@ -223,7 +221,12 @@ export class DraftPageComponent {
     console.log('onShopClick');
   }
 
-  deleteListRecipe(listRecipeID) {
-    console.log(`DELETING LIST RECIPE: `, listRecipeID);
+  deleteListRecipe() {
+    this.store.dispatch(
+      ShoppingListRecipeActions.deleteShoppingListRecipe({
+        shoppingListRecipeID: this.selectedRecipeID(),
+        shoppingListID: this.shoppingLists()[0].shoppingListID,
+      })
+    );
   }
 }
