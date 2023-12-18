@@ -10,18 +10,27 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { RecipeCategoryCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe-category/recipe-category-card/recipe-category-card.component';
 import { RecipeCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/recipe-card/recipe-card.component';
-
-
+import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-actions';
+import { selectAdding } from '../../state/shopping-list-recipe-selectors';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'dl-add-shopping-list-recipe-modal',
   standalone: true,
-  imports: [CommonModule, RecipeCategoryCardComponent, RecipeCardComponent],
+  imports: [
+    CommonModule,
+    RecipeCategoryCardComponent,
+    RecipeCardComponent,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
   templateUrl: './add-shopping-list-recipe-modal.component.html',
 })
 export class AddShoppingListRecipeModalComponent {
@@ -31,6 +40,7 @@ export class AddShoppingListRecipeModalComponent {
   showScrollUpArrow = false;
 
   public shoppingListRecipes: WritableSignal<any> = signal([]);
+  public shoppingListID: WritableSignal<number> = signal(0);
   public recipes: WritableSignal<any> = signal([]);
   recipesWithCatName = computed(() => {
     const recipes = this.recipes();
@@ -72,7 +82,7 @@ export class AddShoppingListRecipeModalComponent {
       });
     });
     return filteredRecipes;
-  })
+  });
   public categories: WritableSignal<RecipeCategory[]> = signal([]);
   public filteredCategories = computed(() => {
     const searchFilter = this.searchFilter();
@@ -89,37 +99,39 @@ export class AddShoppingListRecipeModalComponent {
   public view: WritableSignal<string> = signal('byCategory');
   public searchFilter: WritableSignal<string> = signal('');
   selectedRecipeID: WritableSignal<number> = signal(0);
-  plannedDate: WritableSignal<string> = signal('');
+  plannedDate: WritableSignal<string> = signal(
+    new Date().toLocaleDateString('en-US', {
+      // initialized to today's date in format of "Jan 1, 2023"
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  );
+  displayPlannedDate: WritableSignal<string> = signal('');
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private store: Store,
+    private dialogRef: MatDialogRef<AddShoppingListRecipeModalComponent>
+  ) {
     effect(
       () => {
         const filteredCategories = this.filteredCategories();
-        // const recipes = this.recipes();
-        // let newCategories: RecipeCategory[] = filteredCategories.map(
-        //   (category) => {
-        //     const recipeCount = recipes.filter((recipe) => {
-        //       return recipe.recipeCategoryID === category.recipeCategoryID;
-        //     }).length;
-
-        //     return {
-        //       ...category,
-        //       recipeCount: recipeCount,
-        //     };
-        //   }
-        // );
-        // newCategories = newCategories.filter((category) => {
-        //   return category.recipeCount !== 0;
-        // });
-        // this.displayCategories.set(newCategories);
-
-        //filter out any categories that don't have any recipes in displayRecipes
         const displayRecipes = this.displayRecipes();
-        const newCategories = filteredCategories.filter((category) => {
-          return displayRecipes.find((recipe) => {
-            return recipe.recipeCategoryID === category.recipeCategoryID;
-          });
-        });
+
+        const newCategories = filteredCategories
+          .map((category) => {
+            const recipeCount = displayRecipes.reduce((count, recipe) => {
+              return (
+                count +
+                (recipe.recipeCategoryID === category.recipeCategoryID ? 1 : 0)
+              );
+            }, 0);
+
+            return { ...category, recipeCount };
+          })
+          .filter((category) => category.recipeCount > 0); // Include only categories with at least one recipe
+
         this.displayCategories.set(newCategories);
       },
       { allowSignalWrites: true }
@@ -129,12 +141,16 @@ export class AddShoppingListRecipeModalComponent {
   ngOnInit(): void {
     this.shoppingListRecipes.set(this.data.shoppingListRecipes);
     this.recipes.set(this.data.recipes);
+    this.shoppingListID.set(this.data.shoppingListID);
     this.store.select(selectRecipeCategories).subscribe((categories) => {
       this.categories.set(categories);
     });
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     this.plannedDate.set(tomorrow.toISOString().slice(0, 10));
+    this.displayPlannedDate.set(
+      this.updateDisplayPlannedData(this.plannedDate())
+    );
   }
 
   ngAfterViewInit(): void {
@@ -161,6 +177,78 @@ export class AddShoppingListRecipeModalComponent {
     this.view.set(view);
     this.searchFilter.set('');
   }
+  filterPastDates(date: Date | null): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (date) {
+      const dateWithoutTime = new Date(date);
+      dateWithoutTime.setHours(0, 0, 0, 0);
+      return dateWithoutTime >= today;
+    }
+    return true;
+  }
+  filterFutureDates(date: Date | null): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (date) {
+      const dateWithoutTime = new Date(date);
+      dateWithoutTime.setHours(0, 0, 0, 0);
+      return dateWithoutTime <= today;
+    }
+    return true;
+  }
+  allowNextWeek(date: Date | null): boolean {
+    //only allow dates up to 7 days from today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    nextWeek.setHours(0, 0, 0, 0);
+    if (date) {
+      const dateWithoutTime = new Date(date);
+      dateWithoutTime.setHours(0, 0, 0, 0);
+      return dateWithoutTime >= today && dateWithoutTime <= nextWeek;
+    }
+    return true;
+  }
+  updatePlannedDate(event: MatDatepickerInputEvent<Date>) {
+    const date = event.value;
+    if (date && date instanceof Date) {
+      const formattedDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      this.plannedDate.set(formattedDate);
+      this.displayPlannedDate.set(this.updateDisplayPlannedData(formattedDate));
+    } else {
+      console.error('Received value is not a Date object:', date);
+    }
+  }
+  updateDisplayPlannedData(plannedDate: string) {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const todayString = today.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+    const tomorrowString = tomorrow.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+    if (plannedDate === todayString) {
+      return 'Today';
+    } else if (plannedDate === tomorrowString) {
+      return 'Tomorrow';
+    } else {
+      return plannedDate;
+    }
+  }
   updateSearchFilter(searchFilter: string): void {
     this.searchFilter.set(searchFilter);
   }
@@ -168,10 +256,25 @@ export class AddShoppingListRecipeModalComponent {
     this.updateSearchFilter(category.name);
     this.view.set('all');
   }
-  recipeCardClick(recipe: any): void {
-    this.selectedRecipeID.set(recipe.recipeID);
+  recipeCardClick(recipe) {
+    if (this.selectedRecipeID() === recipe.recipeID) {
+      this.selectedRecipeID.set(0);
+    } else {
+      this.selectedRecipeID.set(recipe.recipeID);
+    }
   }
   onAddClick(): void {
-    console.log(`ADDING RECIPE TO SHOPPING LIST: `, this.selectedRecipeID());
+    this.store.dispatch(
+      ShoppingListRecipeActions.addShoppingListRecipe({
+        shoppingListID: this.data.shoppingListID,
+        recipeID: this.selectedRecipeID(),
+        plannedDate: this.plannedDate(),
+      })
+    );
+    this.store.select(selectAdding).subscribe((adding) => {
+      if (!adding) {
+        this.dialogRef.close();
+      }
+    });
   }
 }

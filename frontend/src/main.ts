@@ -51,6 +51,7 @@ import { ShoppingListEffects } from './app/groceries/state/shopping-list-effects
 import { ShoppingListReducer } from './app/groceries/state/shopping-list-reducers';
 import { ShoppingListRecipeEffects } from './app/groceries/state/shopping-list-recipe-effects';
 import { ShoppingListRecipeReducer } from './app/groceries/state/shopping-list-recipe-reducers';
+import { MatNativeDateModule } from '@angular/material/core';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -105,6 +106,7 @@ bootstrapApplication(AppComponent, {
       ReactiveFormsModule,
       MatDatepickerModule,
       MatMomentDateModule,
+      MatNativeDateModule,
       BrowserAnimationsModule
     ),
     // provideRouterStore(),

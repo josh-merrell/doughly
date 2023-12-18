@@ -1,4 +1,7 @@
-<div class="relative h-full w-full">
+<div
+  *ngIf="displayRecipes().length > 0"
+  class="relative flex h-full w-full flex-col items-center"
+>
   <!-- List View Header -->
   <div class="mb-dl-6 flex h-dl-4 w-full justify-around">
     <span
@@ -64,20 +67,20 @@
   <div class="relative mb-dl-3 flex flex-col items-center">
     <div
       *ngIf="view() === 'byCategory'"
-      class="flex h-dl-21 flex-col items-center"
+      class="flex h-dl-20 flex-col items-center"
       #scrollContainer
       (scroll)="checkScroll($event.target)"
     >
       <dl-recipe-category-card
         *ngFor="let category of displayCategories()"
         (click)="categoryCardClick(category)"
-        class="recipe-card m-dl-3 h-dl-7 w-dl-17 rounded-lg shadow-md"
+        class="recipe-card my-dl-4 h-dl-7 w-dl-16 rounded-lg shadow-md"
         [category]="category"
       ></dl-recipe-category-card>
     </div>
     <div
       *ngIf="view() === 'all'"
-      class="flex h-dl-21 flex-col items-center"
+      class="flex h-dl-20 flex-col items-center"
       #scrollContainer
       (scroll)="checkScroll($event.target)"
     >
@@ -86,27 +89,50 @@
         (click)="recipeCardClick(recipe)"
         [recipe]="recipe"
         [isUserRecipe]="true"
-        [isSelected]="false"
+        [isSelected]="recipe.recipeID === selectedRecipeID()"
       ></dl-recipe-card>
     </div>
-    <span class="absolute -bottom-10 text-dl-5 font-dl-2 text-dl-grey-2"
-      >{{
-        view() === "byCategory"
-          ? displayCategories().length
-          : displayRecipes().length
-      }}
-      total</span
-    >
   </div>
 
-  <!-- Add Button -->
-    <button
-      id="add-button"
-      type="button"
-      class="mt-dl-5 block h-dl-4 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
-      (click)="onAddClick()"
-      [ngClass]="{ invisible: view() !== 'all' || selectedRecipeID() === 0 }"
+  <!-- Planned Date-->
+  <div class="flex mb-dl-3">
+    <p class="text-dl-5 font-dl-2 text-dl-grey-4">Making it</p>
+    <div
+      style="position: relative"
+      class="ml-dl-2 text-dl-5 font-dl-2 text-dl-blue-6"
     >
-      Add to Shopping List
-    </button>
+      <div (click)="picker.open()">
+        {{ displayPlannedDate() }}
+      </div>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        [matDatepickerFilter]="allowNextWeek"
+        style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          opacity: 0;
+          pointer-events: none;
+        "
+        (dateChange)="updatePlannedDate($event)"
+      />
+      <mat-datepicker #picker></mat-datepicker>
+    </div>
+  </div>
+  <!-- Add Button -->
+  <button
+    id="add-button"
+    type="button"
+    class="mb-dl-4 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+    (click)="onAddClick()"
+    [ngClass]="{ invisible: view() !== 'all' || selectedRecipeID() === 0 }"
+  >
+    Add to Shopping List
+  </button>
+</div>
+<div class="flex flex-col items-center" *ngIf="displayRecipes().length === 0">
+  <p class="p-dl-3 text-dl-7 font-dl-3 text-dl-grey-2">
+    No Recipes Found to Add
+  </p>
 </div>
