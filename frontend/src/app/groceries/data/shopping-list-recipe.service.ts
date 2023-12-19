@@ -35,7 +35,6 @@ export class ShoppingListRecipeService {
   }
 
   deleteShoppingListRecipe(shoppingListRecipeID: number): Observable<any> {
-    console.log(`DELETING SHOPPING LIST RECIPE ${shoppingListRecipeID}`);
     return this.http.delete<any>(`${this.API_URL}/${shoppingListRecipeID}`);
   }
 }
