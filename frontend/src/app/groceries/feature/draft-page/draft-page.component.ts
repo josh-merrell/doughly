@@ -10,16 +10,15 @@ import { selectShoppingListRecipes } from '../../state/shopping-list-recipe-sele
 import { RecipeCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/recipe-card/recipe-card.component';
 
 import { Store } from '@ngrx/store';
-import {
-  selectRecipes,
-} from 'src/app/recipes/state/recipe/recipe-selectors';
-import {selectRecipeIngredients} from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
+import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
+import { selectRecipeIngredients } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectShoppingLists } from '../../state/shopping-list-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-actions';
 import { AddShoppingListRecipeModalComponent } from '../../ui/add-shopping-list-recipe-modal/add-shopping-list-recipe-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { selectShoppingListIngredients } from '../../state/shopping-list-ingredient-selectors';
 
 @Component({
   selector: 'dl-draft-page',
@@ -40,7 +39,7 @@ export class DraftPageComponent {
   public ingredients: WritableSignal<any> = signal([]);
 
   public combinedSLRecipeIng: WritableSignal<any> = signal([]);
-  public standaloneIngr: WritableSignal<any> = signal([]);
+  public allShoppingListIngredients: WritableSignal<any> = signal([]);
   // **computed**
   public displayRecipes = computed(() => {
     const recipes = this.recipes();
@@ -71,19 +70,37 @@ export class DraftPageComponent {
         )
     );
   });
-
-  // **reactive state signals**
-  individualShoppingLists: WritableSignal<Map<number, any>> = signal(new Map());
-  allFetchesComplete: WritableSignal<boolean> = signal(false);
-  selectedRecipeID: WritableSignal<number> = signal(0);
-
-  public displaySLIngr = computed(() => {
+  public displaySLRecipeIngr = computed(() => {
     const combinedSLRecipeIng = this.combinedSLRecipeIng();
     // const standaloneIngr = this.standaloneIngr(); //add later when standalone ingredients are added
     // for each standalone ingredient, if 'ingredientID' is in combinedSLRecipeIng, then add the 'needMeasure' from standalone ingredient to the combinedSLRecipeIng, then put the result in the displaySLIngr and remove the item from combinedSLRecipeIng. Otherwise, just put the standalone ingredient in the displaySLIngr.
     // add any remaining items in combinedSLRecipeIng to the displaySLIngr
     return combinedSLRecipeIng;
   });
+  public displaySLStandaloneIngr = computed(() => {
+    const shoppingLists = this.shoppingLists();
+    const allShoppingListIngredients = this.allShoppingListIngredients();
+    const ingredients = this.ingredients();
+    const filtered = allShoppingListIngredients.filter(
+      (slIngr) => slIngr.shoppingListID === shoppingLists[0].shoppingListID
+    );
+    // for each filtered shoppingListIngredient, add the 'name' property from the corresponding ingredient
+    const result = filtered.map((slIngr) => {
+      const matchingIngredient = ingredients.find(
+        (ingr) => ingr.ingredientID === slIngr.ingredientID
+      );
+      return {
+        ...slIngr,
+        name: matchingIngredient.name,
+      };
+    });
+    return result;
+  });
+
+  // **reactive state signals**
+  individualShoppingLists: WritableSignal<Map<number, any>> = signal(new Map());
+  allFetchesComplete: WritableSignal<boolean> = signal(false);
+  selectedRecipeID: WritableSignal<number> = signal(0);
 
   constructor(
     public dialog: MatDialog,
@@ -167,6 +184,11 @@ export class DraftPageComponent {
       .select(selectShoppingListRecipes)
       .subscribe((listRecipes: any) => {
         this.listRecipes.set(listRecipes);
+      });
+    this.store
+      .select(selectShoppingListIngredients)
+      .subscribe((slIngr: any) => {
+        this.allShoppingListIngredients.set(slIngr);
       });
     this.store.select(selectRecipes).subscribe((recipes: any) => {
       this.recipes.set(recipes);

@@ -18,6 +18,7 @@ import {
   selectLoading,
   selectShoppingListRecipes,
 } from '../state/shopping-list-recipe-selectors';
+import { ShoppingListIngredientActions } from '../state/shopping-list-ingredient-actions';
 
 @Component({
   selector: 'dl-groceries-page',
@@ -34,16 +35,24 @@ export class GroceriesPageComponent {
   public listRecipes: WritableSignal<any> = signal([]);
 
   constructor(private renderer: Renderer2, private store: Store) {
-    effect(() => {
-      const shoppingLists = this.shoppingLists();
-      if (shoppingLists.length === 1) {
-        this.store.dispatch(
-          ShoppingListRecipeActions.loadShoppingListRecipes({
-            shoppingListID: shoppingLists[0].shoppingListID,
-          })
-        );
-      }
-    }, { allowSignalWrites: true });
+    effect(
+      () => {
+        const shoppingLists = this.shoppingLists();
+        if (shoppingLists.length === 1) {
+          this.store.dispatch(
+            ShoppingListRecipeActions.loadShoppingListRecipes({
+              shoppingListID: shoppingLists[0].shoppingListID,
+            })
+          );
+          this.store.dispatch(
+            ShoppingListIngredientActions.loadShoppingListIngredients({
+              shoppingListID: shoppingLists[0].shoppingListID,
+            })
+          );
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit(): void {

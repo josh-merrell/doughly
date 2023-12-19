@@ -46,7 +46,7 @@
         Planned Recipe Items
       </p>
       <div class="flex flex-wrap overflow-y-auto rounded-dl-3">
-        @for (item of displaySLIngr(); track item.ingredientName) {
+        @for (item of displaySLRecipeIngr(); track item.ingredientName) {
         <div
           class="relative mx-dl-2 mb-dl-2 flex justify-between rounded-dl-1 bg-white px-dl-3 py-dl-1"
         >
@@ -66,22 +66,22 @@
       <p class="mb-dl-3 mt-dl-5 ml-dl-2 text-dl-5 font-dl-3 text-dl-pink-6">
         Other Items
       </p>
-      <!-- <div class="flex flex-wrap overflow-y-auto rounded-dl-3">
-        @for (item of displayStandaloneIngr(); track standalonItem.ingredientName) {
+      <div class="flex flex-wrap overflow-y-auto rounded-dl-3">
+        @for (item of displaySLStandaloneIngr(); track item.ingredientID) {
         <div
           class="relative mx-dl-2 mb-dl-2 flex justify-between rounded-dl-1 bg-white px-dl-3 py-dl-1"
         >
           <span class="text-dl-5 font-dl-3 text-dl-grey-1">
-            {{ standalonItem.ingredientName }}
+            {{ item.name }}
             <span class="text-dl-5 font-dl-2 text-dl-grey-3">
-              {{ Math.ceil(item.quantity) }} {{ item.unit }}
+              {{ Math.ceil(item.needMeasurement) }} {{ item.needUnit }}
             </span>
           </span>
         </div>
         } @empty {
         <p class="text-dl-4 font-dl-2 text-dl-grey-5">None</p>
         }
-      </div> -->
+      </div>
     </div>
     <button
       type="button"
