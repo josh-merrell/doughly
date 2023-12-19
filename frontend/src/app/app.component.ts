@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AppFooterComponent } from './footer/feature/app-footer.component';
-import { Router } from '@angular/router';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { Store } from '@ngrx/store';
 import { RecipeActions } from './recipes/state/recipe/recipe-actions';
