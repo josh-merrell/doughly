@@ -6,7 +6,7 @@
       Planned Recipes
     </p>
     <div
-      class="relative mb-dl-3 flex max-h-dl-15 flex-col items-center overflow-y-auto"
+      class="relative mb-dl-3 flex h-dl-13 flex-col items-center overflow-y-auto"
     >
       <div class="flex flex-col items-center">
         <dl-recipe-card
@@ -39,7 +39,7 @@
       Items to Buy
     </p>
     <div
-      class="relative mb-dl-3 flex flex-col max-h-dl-15 w-dl-16 border-dl-grey-2 bg-dl-grey-10 p-dl-3"
+      class="relative mb-dl-3 flex max-h-dl-15 w-dl-16 flex-col border-dl-grey-2 bg-dl-grey-10 p-dl-3"
     >
       <!-- Planned Recipe Items -->
       <p class="mb-dl-3 ml-dl-2 text-dl-5 font-dl-3 text-dl-pink-6">
@@ -63,13 +63,20 @@
       </div>
 
       <!-- Standalone Items -->
-      <p class="mb-dl-3 mt-dl-5 ml-dl-2 text-dl-5 font-dl-3 text-dl-pink-6">
+      <p class="mb-dl-3 ml-dl-2 mt-dl-5 text-dl-5 font-dl-3 text-dl-pink-6">
         Other Items
       </p>
       <div class="flex flex-wrap overflow-y-auto rounded-dl-3">
         @for (item of displaySLStandaloneIngr(); track item.ingredientID) {
         <div
-          class="relative mx-dl-2 mb-dl-2 flex justify-between rounded-dl-1 bg-white px-dl-3 py-dl-1"
+          (click)="standaloneIngredientCardClick(item)"
+          class="relative mx-dl-2 mb-dl-2 flex justify-between rounded-dl-1 border border-dl-grey-5 px-dl-3 py-dl-1 transition-all duration-200 ease-in-out"
+          [ngClass]="{
+            'border-dl-grey-5':
+              item.shoppingListIngredientID !== selectedSLIngrID(),
+            'border-dl-teal-10 bg-dl-teal-10':
+              item.shoppingListIngredientID === selectedSLIngrID()
+          }"
         >
           <span class="text-dl-5 font-dl-3 text-dl-grey-1">
             {{ item.name }}
@@ -79,16 +86,20 @@
           </span>
         </div>
         } @empty {
-        <p class="text-dl-4 font-dl-2 text-dl-grey-5">None</p>
+        <p class="italic pl-dl-3 text-dl-4 font-dl-2 text-dl-grey-5">None</p>
         }
       </div>
     </div>
     <button
       type="button"
-      class="mb-dl-8 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 transition-all duration-200 ease-in-out"
-      (click)="onAddItemClick()"
+      class="mb-dl-8 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3"
+      (click)="onItemButtonClick()"
+      [ngClass]="{
+        'bg-dl-pink-4 text-white': selectedSLIngrID() === 0,
+        'border-dl-pink-4 bg-white text-dl-pink-4': selectedSLIngrID() !== 0,
+      }"
     >
-      Add Other Item
+      @if (selectedSLIngrID() === 0) { Add Other Item } @else { Remove Selected Item }
     </button>
   </div>
   <!-- Spacer div -->

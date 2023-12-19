@@ -19,6 +19,8 @@ import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-acti
 import { AddShoppingListRecipeModalComponent } from '../../ui/add-shopping-list-recipe-modal/add-shopping-list-recipe-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { selectShoppingListIngredients } from '../../state/shopping-list-ingredient-selectors';
+import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
+import { AddShoppingListIngredientModalComponent } from '../../ui/add-shopping-list-ingredient-modal/add-shopping-list-ingredient-modal.component';
 
 @Component({
   selector: 'dl-draft-page',
@@ -61,7 +63,7 @@ export class DraftPageComponent {
           }
           return recipe;
         })
-        // filter out recipes without a plannedDate or if plannedDate is before today
+        // filter out recipes without a plannnedDate or if plannedDate is before today
         .filter(
           (recipe) =>
             recipe.plannedDate &&
@@ -94,6 +96,7 @@ export class DraftPageComponent {
         name: matchingIngredient.name,
       };
     });
+    console.log('displaySLStandaloneIngr', result);
     return result;
   });
 
@@ -101,6 +104,7 @@ export class DraftPageComponent {
   individualShoppingLists: WritableSignal<Map<number, any>> = signal(new Map());
   allFetchesComplete: WritableSignal<boolean> = signal(false);
   selectedRecipeID: WritableSignal<number> = signal(0);
+  selectedSLIngrID: WritableSignal<number> = signal(0);
 
   constructor(
     public dialog: MatDialog,
@@ -211,6 +215,14 @@ export class DraftPageComponent {
     }
   }
 
+  standaloneIngredientCardClick(ingredient) {
+    if (this.selectedSLIngrID() === ingredient.shoppingListIngredientID) {
+      this.selectedSLIngrID.set(0);
+    } else {
+      this.selectedSLIngrID.set(ingredient.shoppingListIngredientID);
+    }
+  }
+
   onRecipeButtonClick() {
     if (this.selectedRecipeID() !== 0) {
       this.deleteListRecipe(this.selectedRecipeID());
@@ -236,12 +248,30 @@ export class DraftPageComponent {
     }
   }
 
-  onAddItemClick() {
-    console.log('onAddItemClick');
-  }
-
-  onShopClick() {
-    console.log('onShopClick');
+  onItemButtonClick() {
+    if (this.selectedSLIngrID() !== 0) {
+      this.deleteStandaloneItem(this.selectedSLIngrID());
+      this.selectedSLIngrID.set(0);
+    } else {
+      console.log('onItemButtonClick');
+      const ref = this.dialog.open(AddShoppingListIngredientModalComponent, {
+        width: '80%',
+        maxWidth: '540px',
+        data: {
+          shoppingListIngredients: this.displaySLStandaloneIngr(),
+          ingredients: this.ingredients(),
+          shoppingListID: this.shoppingLists()[0].shoppingListID,
+        },
+      });
+      // after the modal closes, trigger the 'loadShoppingListIngredients' action
+      ref.afterClosed().subscribe(() => {
+        this.store.dispatch(
+          ShoppingListIngredientActions.loadShoppingListIngredients({
+            shoppingListID: this.shoppingLists()[0].shoppingListID,
+          })
+        );
+      });
+    }
   }
 
   deleteListRecipe(shoppingListRecipeID: number) {
@@ -251,5 +281,18 @@ export class DraftPageComponent {
         shoppingListID: this.shoppingLists()[0].shoppingListID,
       })
     );
+  }
+
+  deleteStandaloneItem(shoppingListIngredientID: number) {
+    this.store.dispatch(
+      ShoppingListIngredientActions.deleteShoppingListIngredient({
+        shoppingListIngredientID: shoppingListIngredientID,
+        shoppingListID: this.shoppingLists()[0].shoppingListID,
+      })
+    );
+  }
+
+  onShopClick() {
+    console.log('onShopClick');
   }
 }

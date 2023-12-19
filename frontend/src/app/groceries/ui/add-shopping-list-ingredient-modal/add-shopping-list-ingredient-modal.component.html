@@ -1,0 +1,95 @@
+<div
+  *ngIf="displayIngredients().length > 0"
+  class="relative flex h-full w-full flex-col items-center"
+>
+  <!-- Search, Add-->
+  <div class="mx-dl-7 mb-dl-6 flex justify-between">
+    <!-- Search Bar -->
+    <div class="mt-dl-3 flex items-center">
+      <svg
+        width="35"
+        height="35"
+        viewBox="0 0 15 15"
+        class="pt-dl-1 text-dl-grey-3"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z"
+          fill="currentColor"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+      <input
+        #searchInput
+        type="text"
+        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+        [placeholder]="'Search by Ingredient Name'"
+        (input)="updateSearchFilter(searchInput.value)"
+      />
+    </div>
+  </div>
+
+  <!-- List -->
+  <div class="relative mb-dl-3 flex flex-col items-center">
+    <div
+      class="flex h-dl-20 flex-col items-center"
+    >
+      @for (ingredient of displayIngredients(); track ingredient.ingredientID) {
+      <div
+        class="my-dl-3 flex h-dl-6 w-dl-16 flex-col justify-start rounded-md shadow-md"
+        (click)="ingredientCardClick(ingredient)"
+      >
+        <p class="text-dl-6 font-dl-3 text-dl-grey-2">
+          {{ ingredient.name }}
+        </p>
+        <p
+          *ngIf="ingredient.stockTotal"
+          class="text-dl-4 font-dl-2 text-dl-grey-5"
+        >
+          {{ ingredient.stockTotal }}
+        </p>
+      </div>
+      }
+    </div>
+  </div>
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
+
+  <!-- Measurement -->
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    *ngIf="isAdding() === false"
+  >
+    <div id="form-measurement">
+      <label class="text-dl-2 font-dl-3 text-dl-grey-4"
+        >Measurement 
+        <ng-container *ngIf="selectedIngredient()"
+          >in {{ selectedIngredient().purchaseUnit }}s</ng-container
+        ></label
+      >
+      <mat-form-field class="w-full">
+        <input matInput formControlName="measurement" />
+      </mat-form-field>
+    </div>
+    <!-- Add Button -->
+    <button
+      id="add-button"
+      type="button"
+      class="mb-dl-4 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+      (click)="onSubmit()"
+      [ngClass]="{ invisible: selectedIngredient().ingredientID === 0 }"
+    >
+      Add to Shopping List
+    </button>
+  </form>
+</div>
+<div
+  class="flex flex-col items-center"
+  *ngIf="displayIngredients().length === 0"
+>
+  <p class="p-dl-3 text-dl-7 font-dl-3 text-dl-grey-2">
+    No Ingredients Found to Add
+  </p>
+</div>
