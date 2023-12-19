@@ -12,6 +12,15 @@ export function positiveIntegerValidator(): ValidatorFn {
   };
 }
 
+export function lessThanValidator(max: number): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    if (!control.value) return null;
+
+    const value = Number(control.value);
+    return value < max ? null : { notLessThan: { value: control.value } };
+  };
+}
+
 export function positiveFloatValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
     if (!control.value) return null;

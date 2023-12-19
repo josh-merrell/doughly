@@ -96,7 +96,6 @@ export class DraftPageComponent {
         name: matchingIngredient.name,
       };
     });
-    console.log('displaySLStandaloneIngr', result);
     return result;
   });
 
@@ -253,10 +252,9 @@ export class DraftPageComponent {
       this.deleteStandaloneItem(this.selectedSLIngrID());
       this.selectedSLIngrID.set(0);
     } else {
-      console.log('onItemButtonClick');
       const ref = this.dialog.open(AddShoppingListIngredientModalComponent, {
-        width: '80%',
-        maxWidth: '540px',
+        width: '75%',
+        maxWidth: '520px',
         data: {
           shoppingListIngredients: this.displaySLStandaloneIngr(),
           ingredients: this.ingredients(),

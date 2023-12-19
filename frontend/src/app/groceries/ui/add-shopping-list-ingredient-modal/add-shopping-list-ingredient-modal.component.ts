@@ -1,20 +1,17 @@
 import { Component, Inject, WritableSignal, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
+import { lessThanValidator, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
 import { selectAdding } from '../../state/shopping-list-ingredient-selectors';
 
@@ -70,18 +67,26 @@ export class AddShoppingListIngredientModalComponent {
 
   setForm() {
     this.form = this.fb.group({
-      quantity: ['', [Validators.required, positiveFloatValidator()]],
+      measurement: [
+        '',
+        [Validators.required, positiveIntegerValidator(), lessThanValidator(100)],
+      ],
     });
   }
 
   ngOnInit(): void {
     this.setForm();
-    this.shoppingListIngredients.set(this.data.shoppingListIngredients());
-    this.ingredients.set(this.data.ingredients());
+    this.shoppingListIngredients.set(this.data.shoppingListIngredients);
+    this.ingredients.set(this.data.ingredients);
   }
 
   ingredientCardClick(ingredient: any): void {
-    this.selectedIngredient.set(ingredient);
+    if (this.selectedIngredient().ingredientID === ingredient.ingredientID) {
+      this.selectedIngredient.set({ ingredientID: 0 });
+    } else {
+      this.selectedIngredient.set(ingredient);
+    }
+
   }
 
   onSubmit(): void {
@@ -91,7 +96,7 @@ export class AddShoppingListIngredientModalComponent {
       ShoppingListIngredientActions.addShoppingListIngredient({
         shoppingListID: this.data.shoppingListID,
         ingredientID: this.selectedIngredient().ingredientID,
-        needMeasurement: formValues.quantity,
+        needMeasurement: parseInt(formValues.measurement),
         needUnit: this.selectedIngredient().purchaseUnit,
         source: 'standalone',
       })
@@ -106,5 +111,6 @@ export class AddShoppingListIngredientModalComponent {
 
   updateSearchFilter(searchFilter: string): void {
     this.searchFilter.set(searchFilter);
+    this.selectedIngredient.set({ ingredientID: 0 });
   }
 }
