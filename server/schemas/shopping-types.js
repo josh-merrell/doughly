@@ -73,6 +73,57 @@ const createShoppingListRecipeSchema_body = {
 
 };
 
+const getShoppingListIngredientSchema_params = {
+  type: 'object',
+  required: ['shoppingListIngredientID'],
+  properties: {
+    shoppingListIngredientID: { type: 'string' },
+  },
+};
+
+const getIngredientsByShoppingListSchema_params = {
+  type: 'object',
+  required: ['shoppingListID'],
+  properties: {
+    shoppingListID: { type: 'string' },
+  },
+};
+
+const ShoppingListIngredientUpdateSchema_params = {
+  type: 'object',
+  required: ['shoppingListIngredientID'],
+  properties: {
+    shoppingListIngredientID: { type: 'string' },
+  },
+};
+
+const ShoppingListIngredientUpdateSchema_body = {
+  type: 'object',
+  properties: {
+    purchasedMeasurement: { type: 'integer' },
+    purchasedUnit: { type: 'string' },
+    store: { type: 'string' },
+  },
+};
+
+const ShoppingListIngredientDeleteSchema_params = {
+  type: 'object',
+  required: ['shoppingListIngredientID'],
+  properties: {
+    shoppingListIngredientID: { type: 'string' },
+  },
+};
+
+const createShoppingListIngredientSchema_body = {
+  type: 'object',
+  required: ['ingredientID', 'needMeasurement', 'needUnit', 'source'],
+  properties: {
+    ingredientID: { type: 'integer' },
+    needMeasurement: { type: 'integer' },
+    needUnit: { type: 'string' },
+    source: { type: 'string' },
+  },
+};
 
 module.exports = {
   getShoppingListSchema_params,
@@ -84,4 +135,10 @@ module.exports = {
   getRecipesByShoppingListSchema_params,
   ShoppingListRecipeDeleteSchema_params,
   createShoppingListRecipeSchema_body,
+  getShoppingListIngredientSchema_params,
+  getIngredientsByShoppingListSchema_params,
+  ShoppingListIngredientUpdateSchema_params,
+  ShoppingListIngredientUpdateSchema_body,
+  ShoppingListIngredientDeleteSchema_params,
+  createShoppingListIngredientSchema_body,
 };

@@ -40,6 +40,7 @@ export class DraftPageComponent {
   public ingredients: WritableSignal<any> = signal([]);
 
   public combinedSLRecipeIng: WritableSignal<any> = signal([]);
+  public standaloneIngr: WritableSignal<any> = signal([]);
   // **computed**
   public displayRecipes = computed(() => {
     const recipes = this.recipes();
@@ -133,7 +134,7 @@ export class DraftPageComponent {
           new Date(lr[i].plannedDate).getTime() <
           new Date(new Date().toDateString()).getTime()
         ) {
-          this.deleteListRecipe();
+          this.deleteListRecipe(lr[i].shoppingListRecipeID);
         }
       }
     });
@@ -190,7 +191,7 @@ export class DraftPageComponent {
 
   onRecipeButtonClick() {
     if (this.selectedRecipeID() !== 0) {
-      this.deleteListRecipe();
+      this.deleteListRecipe(this.selectedRecipeID());
       this.selectedRecipeID.set(0);
     } else {
       const ref = this.dialog.open(AddShoppingListRecipeModalComponent, {
@@ -221,10 +222,10 @@ export class DraftPageComponent {
     console.log('onShopClick');
   }
 
-  deleteListRecipe() {
+  deleteListRecipe(shoppingListRecipeID: number) {
     this.store.dispatch(
       ShoppingListRecipeActions.deleteShoppingListRecipe({
-        shoppingListRecipeID: this.selectedRecipeID(),
+        shoppingListRecipeID: shoppingListRecipeID,
         shoppingListID: this.shoppingLists()[0].shoppingListID,
       })
     );
