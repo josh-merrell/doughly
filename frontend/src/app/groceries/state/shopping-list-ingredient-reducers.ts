@@ -43,6 +43,21 @@ export const ShoppingListIngredientReducer = createReducer(
     error,
     adding: false,
   })),
+  on(ShoppingListIngredientActions.batchAddShoppingListIngredients, (state) => ({
+    ...state,
+    adding: true,
+    error: null,
+  })),
+  on(ShoppingListIngredientActions.batchAddShoppingListIngredientsSuccess, (state, { shoppingListIngredients }) => ({
+    ...state,
+    shoppingListIngredients: [...state.shoppingListIngredients, ...shoppingListIngredients],
+    adding: false,
+  })),
+  on(ShoppingListIngredientActions.batchAddShoppingListIngredientsFailure, (state, { error }) => ({
+    ...state,
+    error,
+    adding: false,
+  })),
   on(ShoppingListIngredientActions.updateShoppingListIngredient, (state) => ({
     ...state,
     updating: true,

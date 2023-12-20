@@ -78,6 +78,44 @@ export class ShoppingListIngredientEffects {
     )
   );
 
+  batchCreateShoppingListIngredients$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListIngredientActions.batchAddShoppingListIngredients),
+      mergeMap((action) =>
+        this.shoppingListIngredientService
+          .batchCreateShoppingListIngredients(
+            action.shoppingListID,
+            action.ingredients
+          )
+          .pipe(
+            map((shoppingListIngredients: ShoppingListIngredient[]) =>
+              ShoppingListIngredientActions.batchAddShoppingListIngredientsSuccess({
+                shoppingListIngredients,
+              })
+            ),
+            catchError((error) =>
+              of(
+                ShoppingListIngredientActions.batchAddShoppingListIngredientsFailure({
+                  error,
+                })
+              )
+            )
+          )
+      )
+    )
+  );
+
+  loadShoppingListIngredientsAfterBatchCreate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListIngredientActions.batchAddShoppingListIngredientsSuccess),
+      map((action) =>
+        ShoppingListIngredientActions.loadShoppingListIngredients({
+          shoppingListID: action.shoppingListIngredients[0].shoppingListID,
+        })
+      )
+    )
+  );
+
   updateShoppingListIngredient$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListIngredientActions.updateShoppingListIngredient),

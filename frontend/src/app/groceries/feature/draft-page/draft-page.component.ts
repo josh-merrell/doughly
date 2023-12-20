@@ -10,7 +10,6 @@ import { selectShoppingListRecipes } from '../../state/shopping-list-recipe-sele
 import { RecipeCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/recipe-card/recipe-card.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-
 import { Store } from '@ngrx/store';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { selectRecipeIngredients } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
@@ -27,7 +26,7 @@ import {
 } from '../../state/shopping-list-ingredient-selectors';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
 import { AddShoppingListIngredientModalComponent } from '../../ui/add-shopping-list-ingredient-modal/add-shopping-list-ingredient-modal.component';
-import { combineLatest, first, map, take } from 'rxjs';
+import { combineLatest, first, map, take, tap } from 'rxjs';
 import { ShoppingListActions } from '../../state/shopping-list-actions';
 import { Router } from '@angular/router';
 
@@ -305,75 +304,55 @@ export class DraftPageComponent {
   async onShopClick() {
     this.isLoading.set(true);
     try {
-      //for each of displaySLRecipeIngr, create a shoppingListIngredient. Wait for each to complete before creating the next one.
       const displaySLRecipeIngr = this.displaySLRecipeIngr();
-      for (let i = 0; i < displaySLRecipeIngr.length; i++) {
-        const result = await this.createShoppingListIngredient(
-          this.shoppingLists()[0].shoppingListID,
-          displaySLRecipeIngr[i].ingredientID,
-          Math.ceil(displaySLRecipeIngr[i].quantity),
-          displaySLRecipeIngr[i].unit,
-          'recipe'
-        );
-        if (result === 'success') {
-        } else {
-          //throw the received error
-          throw result;
-        }
-      }
-
-      //update status of shoppingList to 'shopping'
+      //use batchCreateShoppingListIngredients to create all shoppingListIngredients at once. Do this by calling the ShoppingListIngredientActions.batchAddShoppingListIngredients action.
+      const ingredients = displaySLRecipeIngr.map((ingr) => {
+        return {
+          ingredientID: ingr.ingredientID,
+          needMeasurement: Math.ceil(ingr.quantity),
+          needUnit: ingr.unit,
+          source: 'recipe',
+        };
+      });
       this.store.dispatch(
-        ShoppingListActions.editShoppingList({
-          shoppingList: {
-            shoppingListID: this.shoppingLists()[0].shoppingListID,
-            status: 'shopping',
-          },
+        ShoppingListIngredientActions.batchAddShoppingListIngredients({
+          shoppingListID: this.shoppingLists()[0].shoppingListID,
+          ingredients: ingredients,
         })
       );
-
-      //navigate to root shopping page
-      this.router.navigate(['/groceries']);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async createShoppingListIngredient(
-    shoppingListID: number,
-    ingredientID: number,
-    needMeasurement: number,
-    needUnit: string,
-    source: string
-  ): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.store.dispatch(
-        ShoppingListIngredientActions.addShoppingListIngredient({
-          shoppingListID: shoppingListID,
-          ingredientID: ingredientID,
-          needMeasurement: needMeasurement,
-          needUnit: needUnit,
-          source: source,
-        })
-      );
+      //subscribe to selectAdding. When it is false, use selectError to check if there was an error. If there was, throw the error. If there wasn't, continue.
       combineLatest([
         this.store.select(selectAdding).pipe(map((adding) => !adding)),
         this.store.select(selectError),
       ])
         .pipe(
           first(([isNotAdding, error]) => isNotAdding || error != null),
-          take(1) // Ensure the subscription completes after the first emission
-        )
-        .subscribe({
-          next: ([isNotAdding, error]) => {
+          take(1),
+          tap(([isNotAdding, error]) => {
             if (error) {
-              reject(error);
-            } else if (isNotAdding) {
-              resolve('success');
+              // Handle the error here
+              console.error(error);
+              this.isLoading.set(false);
+              return;
             }
-          },
-          error: (err) => reject(err),
-        });
-    });
+
+            if (isNotAdding) {
+              // Continue with your logic
+              this.store.dispatch(
+                ShoppingListActions.editShoppingList({
+                  shoppingList: {
+                    shoppingListID: this.shoppingLists()[0].shoppingListID,
+                    status: 'shopping',
+                  },
+                })
+              );
+              this.router.navigate(['/groceries']);
+            }
+          })
+        )
+        .subscribe();
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
