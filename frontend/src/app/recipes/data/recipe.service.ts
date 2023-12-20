@@ -221,6 +221,7 @@ export class RecipeService {
             shoppingList.push({
               type: 'ingredient',
               ingredientName: ingredient.name,
+              ingredientID: ingredient.ingredientID,
               quantity,
               unit: ingredient.purchaseUnit,
               purchaseAfter: purchaseAfter,

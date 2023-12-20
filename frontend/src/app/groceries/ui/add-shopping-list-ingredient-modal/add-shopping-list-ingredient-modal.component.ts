@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { lessThanValidator, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
 import { selectAdding } from '../../state/shopping-list-ingredient-selectors';
+import { IngredientService } from 'src/app/kitchen/feature/ingredients/data/ingredient.service';
 
 @Component({
   selector: 'dl-add-shopping-list-ingredient-modal',
@@ -34,12 +35,12 @@ export class AddShoppingListIngredientModalComponent {
 
   public shoppingListIngredients: WritableSignal<any> = signal([]);
   public ingredients: WritableSignal<any> = signal([]);
+  public enhancedIngredients: WritableSignal<any> = signal([]);
   private filteredIngredients = computed(() => {
     const searchFilter = this.searchFilter();
     const shoppingListIngredients = this.shoppingListIngredients();
-    const ingredients = this.ingredients();
     //return any ingredients that are not already in the shopping list and match the search filter
-    return ingredients.filter((ingredient) => {
+    return this.enhancedIngredients().filter((ingredient) => {
       const isInShoppingList = shoppingListIngredients.find(
         (shoppingListIngredient) => {
           return (
@@ -54,7 +55,12 @@ export class AddShoppingListIngredientModalComponent {
     });
   });
   public displayIngredients = computed(() => {
-    return this.filteredIngredients();
+    // sort filtered ingredients by name and return
+    return this.filteredIngredients().sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
   });
   searchFilter: WritableSignal<string> = signal('');
 
@@ -62,7 +68,8 @@ export class AddShoppingListIngredientModalComponent {
     public dialogRef: MatDialogRef<AddShoppingListIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private ingredientService: IngredientService
   ) {}
 
   setForm() {
@@ -77,6 +84,10 @@ export class AddShoppingListIngredientModalComponent {
   ngOnInit(): void {
     this.setForm();
     this.shoppingListIngredients.set(this.data.shoppingListIngredients);
+    this.ingredientService.addStockTotals(this.data.ingredients);
+    this.ingredientService.enhancedRows$.subscribe((enhancedIngredients) => {
+      this.enhancedIngredients.set(enhancedIngredients);
+    });
     this.ingredients.set(this.data.ingredients);
   }
 

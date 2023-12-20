@@ -14,6 +14,8 @@ import { SocialPageComponent } from './social/social-page.component';
 import { RecipesPageNewComponent } from './recipes/feature/recipes-page/recipes-page.component-new';
 import { PublicRecipeComponent } from './recipes/feature/recipe/public-recipe/public-recipe.component';
 import { GroceriesPageComponent } from './groceries/groceries-page/groceries-page.component';
+import { DraftPageComponent } from './groceries/feature/draft-page/draft-page.component';
+import { ShoppingPageComponent } from './groceries/feature/shopping-page/shopping-page.component';
 
 export const routes: Route[] = [
   {
@@ -25,6 +27,21 @@ export const routes: Route[] = [
     path: 'groceries',
     component: GroceriesPageComponent,
     canActivate: [ProfileGuard],
+    children: [
+      {
+        path: 'draft',
+        component: DraftPageComponent,
+      },
+      {
+        path: 'shopping',
+        component: ShoppingPageComponent,
+      },
+      {
+        path: '',
+        redirectTo: 'draft', // Default path or add a component for the default view
+        pathMatch: 'full',
+      },
+    ],
   },
   {
     path: 'home',

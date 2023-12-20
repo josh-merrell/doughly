@@ -61,6 +61,15 @@ export class ShoppingListEffects {
     )
   );
 
+  loadShoppingListAfterUpdate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.addShoppingListSuccess),
+      map((action) => {
+        return ShoppingListActions.loadShoppingLists();
+      })
+    )
+  );
+
   deleteShoppingList$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListActions.deleteShoppingList),

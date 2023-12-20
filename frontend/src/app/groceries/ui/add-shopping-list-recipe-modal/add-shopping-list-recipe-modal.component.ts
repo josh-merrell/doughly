@@ -81,7 +81,16 @@ export class AddShoppingListRecipeModalComponent {
         return slRecipe.recipeID === recipe.recipeID;
       });
     });
-    return filteredRecipes;
+    //sort by recipe name and return
+    return filteredRecipes.sort((a, b) => {
+      if (a.title < b.title) {
+        return -1;
+      } else if (b.title < a.title) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   });
   public categories: WritableSignal<RecipeCategory[]> = signal([]);
   public filteredCategories = computed(() => {
