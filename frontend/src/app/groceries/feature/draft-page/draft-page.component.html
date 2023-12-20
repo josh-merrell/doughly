@@ -72,7 +72,7 @@
           (click)="standaloneIngredientCardClick(item)"
           class="relative mx-dl-2 mb-dl-2 flex justify-between rounded-dl-1 border border-dl-grey-5 px-dl-3 py-dl-1 transition-all duration-200 ease-in-out"
           [ngClass]="{
-            'border-dl-grey-8':
+            'border-dl-grey-8 bg-white':
               item.shoppingListIngredientID !== selectedSLIngrID(),
             'border-dl-teal-10 bg-dl-teal-10':
               item.shoppingListIngredientID === selectedSLIngrID()
@@ -86,7 +86,7 @@
           </span>
         </div>
         } @empty {
-        <p class="italic pl-dl-3 text-dl-4 font-dl-2 text-dl-grey-5">None</p>
+        <p class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-5">None</p>
         }
       </div>
     </div>
@@ -99,7 +99,8 @@
         'border-dl-pink-4 bg-white text-dl-pink-4': selectedSLIngrID() !== 0,
       }"
     >
-      @if (selectedSLIngrID() === 0) { Add Other Item } @else { Remove Selected Item }
+      @if (selectedSLIngrID() === 0) { Add Other Item } @else { Remove Selected
+      Item }
     </button>
   </div>
   <!-- Spacer div -->
@@ -108,9 +109,11 @@
   <!-- Done Adding, Shop button-->
   <button
     type="button"
+    *ngIf="isLoading() === false"
     class="mb-dl-2 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
     (click)="onShopClick()"
   >
     Shop List
   </button>
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isLoading()"></mat-spinner>
 </div>

@@ -8,6 +8,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { selectShoppingListRecipes } from '../../state/shopping-list-recipe-selectors';
 import { RecipeCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/recipe-card/recipe-card.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 import { Store } from '@ngrx/store';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
@@ -18,9 +20,16 @@ import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-actions';
 import { AddShoppingListRecipeModalComponent } from '../../ui/add-shopping-list-recipe-modal/add-shopping-list-recipe-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { selectShoppingListIngredients } from '../../state/shopping-list-ingredient-selectors';
+import {
+  selectAdding,
+  selectError,
+  selectShoppingListIngredients,
+} from '../../state/shopping-list-ingredient-selectors';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
 import { AddShoppingListIngredientModalComponent } from '../../ui/add-shopping-list-ingredient-modal/add-shopping-list-ingredient-modal.component';
+import { combineLatest, first, map, take } from 'rxjs';
+import { ShoppingListActions } from '../../state/shopping-list-actions';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'dl-draft-page',
@@ -29,6 +38,7 @@ import { AddShoppingListIngredientModalComponent } from '../../ui/add-shopping-l
     CommonModule,
     RecipeCardComponent,
     AddShoppingListRecipeModalComponent,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './draft-page.component.html',
 })
@@ -101,6 +111,7 @@ export class DraftPageComponent {
 
   // **reactive state signals**
   individualShoppingLists: WritableSignal<Map<number, any>> = signal(new Map());
+  public isLoading: WritableSignal<boolean> = signal(false);
   allFetchesComplete: WritableSignal<boolean> = signal(false);
   selectedRecipeID: WritableSignal<number> = signal(0);
   selectedSLIngrID: WritableSignal<number> = signal(0);
@@ -108,7 +119,8 @@ export class DraftPageComponent {
   constructor(
     public dialog: MatDialog,
     private store: Store,
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    public router: Router
   ) {
     effect(
       () => {
@@ -290,7 +302,78 @@ export class DraftPageComponent {
     );
   }
 
-  onShopClick() {
-    console.log('onShopClick');
+  async onShopClick() {
+    this.isLoading.set(true);
+    try {
+      //for each of displaySLRecipeIngr, create a shoppingListIngredient. Wait for each to complete before creating the next one.
+      const displaySLRecipeIngr = this.displaySLRecipeIngr();
+      for (let i = 0; i < displaySLRecipeIngr.length; i++) {
+        const result = await this.createShoppingListIngredient(
+          this.shoppingLists()[0].shoppingListID,
+          displaySLRecipeIngr[i].ingredientID,
+          Math.ceil(displaySLRecipeIngr[i].quantity),
+          displaySLRecipeIngr[i].unit,
+          'recipe'
+        );
+        if (result === 'success') {
+        } else {
+          //throw the received error
+          throw result;
+        }
+      }
+
+      //update status of shoppingList to 'shopping'
+      this.store.dispatch(
+        ShoppingListActions.editShoppingList({
+          shoppingList: {
+            shoppingListID: this.shoppingLists()[0].shoppingListID,
+            status: 'shopping',
+          },
+        })
+      );
+
+      //navigate to root shopping page
+      this.router.navigate(['/groceries']);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async createShoppingListIngredient(
+    shoppingListID: number,
+    ingredientID: number,
+    needMeasurement: number,
+    needUnit: string,
+    source: string
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.store.dispatch(
+        ShoppingListIngredientActions.addShoppingListIngredient({
+          shoppingListID: shoppingListID,
+          ingredientID: ingredientID,
+          needMeasurement: needMeasurement,
+          needUnit: needUnit,
+          source: source,
+        })
+      );
+      combineLatest([
+        this.store.select(selectAdding).pipe(map((adding) => !adding)),
+        this.store.select(selectError),
+      ])
+        .pipe(
+          first(([isNotAdding, error]) => isNotAdding || error != null),
+          take(1) // Ensure the subscription completes after the first emission
+        )
+        .subscribe({
+          next: ([isNotAdding, error]) => {
+            if (error) {
+              reject(error);
+            } else if (isNotAdding) {
+              resolve('success');
+            }
+          },
+          error: (err) => reject(err),
+        });
+    });
   }
 }
