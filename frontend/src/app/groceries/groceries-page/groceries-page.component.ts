@@ -19,22 +19,34 @@ import {
   selectShoppingListRecipes,
 } from '../state/shopping-list-recipe-selectors';
 import { ShoppingListIngredientActions } from '../state/shopping-list-ingredient-actions';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
+
 
 @Component({
   selector: 'dl-groceries-page',
   standalone: true,
-  imports: [CommonModule, DraftPageComponent, ShoppingPageComponent],
+  imports: [
+    CommonModule,
+    DraftPageComponent,
+    ShoppingPageComponent,
+    RouterModule,
+  ],
   templateUrl: './groceries-page.component.html',
 })
 export class GroceriesPageComponent {
   menuOpen: boolean = false;
-  public status: WritableSignal<string> = signal('draft');
+  public status: WritableSignal<string> = signal('');
   @ViewChild('menu') rowItemMenu!: ElementRef;
   globalClickListener: () => void = () => {};
   public shoppingLists: WritableSignal<any> = signal([]);
   public listRecipes: WritableSignal<any> = signal([]);
 
-  constructor(private renderer: Renderer2, private store: Store) {
+  constructor(
+    private router: Router,
+    private renderer: Renderer2,
+    private store: Store
+  ) {
     effect(
       () => {
         const shoppingLists = this.shoppingLists();
@@ -53,6 +65,14 @@ export class GroceriesPageComponent {
       },
       { allowSignalWrites: true }
     );
+    effect(() => {
+      const status = this.status();
+      if (status === 'draft') {
+        this.router.navigate(['/groceries/draft']);
+      } else if (status === 'shopping') {
+        this.router.navigate(['/groceries/shopping']);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -61,7 +81,7 @@ export class GroceriesPageComponent {
       if (shoppingLists.length === 0) {
         this.status.set('noList');
       } else if (shoppingLists.length === 1) {
-        this.status.set('draft');
+        this.status.set(shoppingLists[0].status);
       } else {
         this.status.set('multipleLists');
       }

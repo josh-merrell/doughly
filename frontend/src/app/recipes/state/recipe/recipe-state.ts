@@ -60,6 +60,7 @@ export interface RecipeError {
 export interface ShoppingListIngredient {
   type: 'ingredient',
   ingredientName: string,
+  ingredientID: number,
   quantity: number,
   unit: string,
   purchaseAfter: string | null,

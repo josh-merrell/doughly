@@ -3,7 +3,7 @@
   class="relative flex h-full w-full flex-col items-center"
 >
   <!-- Search, Add-->
-  <div class="mx-dl-7 mt-dl-5 mb-dl-6 flex justify-between">
+  <div class="mx-dl-7 mb-dl-6 mt-dl-5 flex justify-between">
     <!-- Search Bar -->
     <div class="mt-dl-3 flex items-center">
       <svg
@@ -32,25 +32,33 @@
   </div>
 
   <!-- List -->
-  <div class="mb-dl-7 relative flex flex-col items-center">
+  <div class="relative mb-dl-7 flex flex-col items-center">
     <div class="flex h-dl-17 flex-col items-center overflow-y-auto">
       @for (ingredient of displayIngredients(); track ingredient.ingredientID) {
       <div
-        class="px-dl-3 py-dl-1 my-dl-4 flex border shadow-md w-dl-14 flex-col justify-start rounded-lg transition-all duration-200 ease-in-out"
+        class="my-dl-4 flex w-dl-14 flex-col justify-start rounded-lg border px-dl-3 py-dl-1 shadow-md transition-all duration-200 ease-in-out"
         (click)="ingredientCardClick(ingredient)"
         [ngClass]="{
-          'bg-dl-teal-10 border-dl-teal-10': ingredient.ingredientID === selectedIngredient().ingredientID,
-          'bg-white border-dl-grey-10': ingredient.ingredientID !== selectedIngredient().ingredientID
+          'border-dl-teal-10 bg-dl-teal-10':
+            ingredient.ingredientID === selectedIngredient().ingredientID,
+          'border-dl-grey-10 bg-white':
+            ingredient.ingredientID !== selectedIngredient().ingredientID
         }"
       >
         <p class="text-dl-6 font-dl-3 text-dl-grey-2">
           {{ ingredient.name }}
         </p>
         <p
-          *ngIf="ingredient.stockTotal"
-          class="text-dl-4 font-dl-2 text-dl-grey-5"
+          *ngIf="ingredient.totalStock > 0"
+          class="text-dl-5 font-dl-2 text-dl-grey-4"
         >
-          {{ ingredient.stockTotal }}
+          {{ ingredient.totalStock }} {{ ingredient.purchaseUnit }}
+        </p>
+        <p
+          *ngIf="ingredient.totalStock === 0"
+          class="text-dl-5 font-dl-2 italic text-dl-grey-4"
+        >
+          Out of Stock
         </p>
       </div>
       }
@@ -59,7 +67,7 @@
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
 
   <!-- Measurement -->
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="isAdding() === false">
+  <form [ngClass]="{'invisible': selectedIngredient().ingredientID === 0}" [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="isAdding() === false">
     <div id="form-measurement">
       <label class="text-dl-2 font-dl-3 text-dl-grey-4"
         >Measurement
@@ -75,12 +83,11 @@
     <button
       id="add-button"
       type="button"
-      class="mb-dl-5 mt-dl-3 block h-dl-4 w-dl-14 text-white whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3"
+      class="mb-dl-5 mt-dl-3 block h-dl-4 w-dl-14 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white"
       (click)="onSubmit()"
       [disabled]="!form.valid || form.pristine"
       [ngClass]="{
-        ' bg-dl-pink-4  shadow-lg ':
-          form.valid && !form.pristine,
+        ' bg-dl-pink-4  shadow-lg ': form.valid && !form.pristine,
         'bg-dl-grey-7': !form.valid || form.pristine,
         invisible: selectedIngredient().ingredientID === 0
       }"
