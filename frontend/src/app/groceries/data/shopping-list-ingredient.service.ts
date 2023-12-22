@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { HttpClient } from '@angular/common/http';
 import { IDService } from 'src/app/shared/utils/ID';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +39,28 @@ export class ShoppingListIngredientService {
       source,
     };
     return this.http.post<any>(`${this.API_URL}/${shoppingListID}`, body);
+  }
+
+  batchCreateShoppingListIngredients(
+    shoppingListID: number,
+    ingredients: {
+      ingredientID: number;
+      needMeasurement: number;
+      needUnit: string;
+      source: string;
+    }[]
+  ): Observable<any> {
+    const requests = ingredients.map((ingredient) =>
+      this.createShoppingListIngredient(
+        shoppingListID,
+        ingredient.ingredientID,
+        ingredient.needMeasurement,
+        ingredient.needUnit,
+        ingredient.source
+      )
+    );
+
+    return forkJoin(requests);
   }
 
   updateShoppingListIngredient(
