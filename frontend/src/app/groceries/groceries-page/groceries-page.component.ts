@@ -68,9 +68,9 @@ export class GroceriesPageComponent {
     effect(() => {
       const status = this.status();
       if (status === 'draft') {
-        this.router.navigate(['/groceries/draft']);
+        this.router.navigate(['/groceries/draft', this.shoppingLists()[0].shoppingListID]);
       } else if (status === 'shopping') {
-        this.router.navigate(['/groceries/shopping']);
+        this.router.navigate(['/groceries/shopping', this.shoppingLists()[0].shoppingListID]);
       }
     });
   }
