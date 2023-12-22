@@ -21,6 +21,16 @@ const addShoppingListIngredientFailure = createAction(
   props<{ error: any }>()
 );
 
+const batchAddShoppingListIngredients = createAction('[ShoppingListIngredients] Batch Add', props<{ shoppingListID: number, ingredients: { ingredientID: number, needMeasurement: number, needUnit: string, source: string }[] }>());
+const batchAddShoppingListIngredientsSuccess = createAction(
+  '[ShoppingListIngredients] Batch Add Success',
+  props<{ shoppingListIngredients: ShoppingListIngredient[] }>()
+);
+const batchAddShoppingListIngredientsFailure = createAction(
+  '[ShoppingListIngredients] Batch Add Failure',
+  props<{ error: any }>()
+);
+
 const updateShoppingListIngredient = createAction('[ShoppingListIngredients] Update', props<{ shoppingListIngredientID: number, shoppingListID: number, purchasedMeasurement: number, purchasedUnit: string, store: string }>());
 const updateShoppingListIngredientSuccess = createAction(
   '[ShoppingListIngredients] Update Success',
@@ -51,6 +61,9 @@ export const ShoppingListIngredientActions = {
   addShoppingListIngredient,
   addShoppingListIngredientSuccess,
   addShoppingListIngredientFailure,
+  batchAddShoppingListIngredients,
+  batchAddShoppingListIngredientsSuccess,
+  batchAddShoppingListIngredientsFailure,
   updateShoppingListIngredient,
   updateShoppingListIngredientSuccess,
   updateShoppingListIngredientFailure,

@@ -1,8 +1,8 @@
 <div class="relative mx-auto flex h-full w-full flex-col bg-white pt-dl-5">
   <!-- Heading ('Shopping' or 'Draft')-->
   <div class="relative mx-dl-5 flex justify-between">
-    <h2 class="text-dl-8 font-dl-3 text-dl-grey-2">
-      {{ status() === "shopping" ? "Currently Shopping" : "Draft List" }}
+    <h2 class="text-dl-8 font-dl-3 text-dl-grey-2" *ngIf="status() === 'draft'">
+      Draft List
     </h2>
     <svg
       *ngIf="status() === 'draft'"

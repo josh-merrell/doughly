@@ -29,11 +29,11 @@ export const routes: Route[] = [
     canActivate: [ProfileGuard],
     children: [
       {
-        path: 'draft',
+        path: 'draft/:shoppingListID',
         component: DraftPageComponent,
       },
       {
-        path: 'shopping',
+        path: 'shopping/:shoppingListID',
         component: ShoppingPageComponent,
       },
       {
