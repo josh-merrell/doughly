@@ -20,8 +20,8 @@ import { ShoppingPageComponent } from './groceries/feature/shopping-page/shoppin
 export const routes: Route[] = [
   {
     path: '',
-    component: HomeComponent,
-    canActivate: [ProfileGuard],
+    redirectTo: 'recipes',
+    pathMatch: 'full',
   },
   {
     path: 'groceries',
@@ -82,6 +82,7 @@ export const routes: Route[] = [
   {
     path: 'recipes',
     component: RecipesPageNewComponent,
+    canActivate: [ProfileGuard],
   },
   {
     path: 'register',

@@ -128,7 +128,7 @@ export class AddShoppingListRecipeModalComponent {
         const filteredCategories = this.filteredCategories();
         const displayRecipes = this.displayRecipes();
 
-        const newCategories = filteredCategories
+        let newCategories = filteredCategories
           .map((category) => {
             const recipeCount = displayRecipes.reduce((count, recipe) => {
               return (
@@ -140,6 +140,15 @@ export class AddShoppingListRecipeModalComponent {
             return { ...category, recipeCount };
           })
           .filter((category) => category.recipeCount > 0); // Include only categories with at least one recipe
+        newCategories.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          } else if (b.name < a.name) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
 
         this.displayCategories.set(newCategories);
       },

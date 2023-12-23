@@ -342,4 +342,13 @@ export class ShoppingListIngredientEffects {
       )
     )
   );
+
+  loadShoppingListAfterIngredientDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListIngredientActions.deleteShoppingListIngredientSuccess),
+      map((action) =>
+        ShoppingListActions.loadShoppingLists()
+      )
+    )
+  );
 }

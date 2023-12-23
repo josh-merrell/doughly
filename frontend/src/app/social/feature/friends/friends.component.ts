@@ -1,11 +1,20 @@
-import { Component, Signal, WritableSignal, computed, signal } from '@angular/core';
+import {
+  Component,
+  Signal,
+  WritableSignal,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Friendship } from '../../state/friendship-state';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { SocialService } from '../../data/social.service';
 import { selectFriendships } from '../../state/friendship-selectors';
-import { selectFriendRequests, selectFriends } from 'src/app/profile/state/profile-selectors';
+import {
+  selectFriendRequests,
+  selectFriends,
+} from 'src/app/profile/state/profile-selectors';
 import { FriendCardComponent } from './ui/friend-card/friend-card.component';
 import { FriendModalComponent } from './ui/friend-modal/friend-modal.component';
 import { Profile } from 'src/app/profile/state/profile-state';
@@ -24,10 +33,14 @@ export class FriendsComponent {
   public friends: WritableSignal<Profile[]> = signal([]);
   public filteredFriends = computed(() => {
     const searchFilter = this.searchFilter();
-    const friends = this.friends();
+    let friends = this.friends();
     if (searchFilter) {
       return friends.filter((friend) => {
-        return (friend.nameFirst.toLowerCase().includes(searchFilter.toLowerCase()) || friend.nameLast.toLowerCase().includes(searchFilter.toLowerCase()) || friend.username.toLowerCase().includes(searchFilter.toLowerCase()));
+        return (
+          friend.nameFirst.toLowerCase().includes(searchFilter.toLowerCase()) ||
+          friend.nameLast.toLowerCase().includes(searchFilter.toLowerCase()) ||
+          friend.username.toLowerCase().includes(searchFilter.toLowerCase())
+        );
       });
     } else {
       return friends;
@@ -43,13 +56,21 @@ export class FriendsComponent {
   ) {}
 
   ngOnInit(): void {
-
     this.store.select(selectFriendships).subscribe((friendships: any) => {
       this.friendships.set(friendships);
     });
 
     this.store.select(selectFriends).subscribe((friends: any) => {
-      this.friends.set(friends);
+      this.friends.set(
+        [...friends].sort((a, b) => {
+          const nameA = a.nameLast?.toLowerCase() || '';
+          const nameB = b.nameLast?.toLowerCase() || '';
+
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
+          return 0;
+        })
+      );
     });
 
     this.store.select(selectFriendRequests).subscribe((friendRequests) => {

@@ -2,7 +2,6 @@
 
 const { createShoppingLog } = require('../../../services/dbLogger');
 const { updater } = require('../../../db');
-const { getShoppingListByID } = require('./handler');
 const { default: axios } = require('axios');
 
 module.exports = ({ db }) => {
@@ -138,13 +137,58 @@ module.exports = ({ db }) => {
       return { error: 'shoppingList does not exist' };
     }
 
-    //delete the shoppingList
-    try {
-      await updater(userID, authorization, 'shoppingListID', shoppingListID, 'shoppingLists', { status: 'deleted' });
-    } catch (error) {
-      global.logger.info(`Error deleting shoppingList ID: ${shoppingListID}: ${error.message}`);
-      return { error: error.message };
+    //delete any shoppingListRecipes for this shoppingList using axios calls
+    const { data: shoppingListRecipes, error: shoppingListRecipesError } = await db.from('shoppingListRecipes').select('shoppingListRecipeID').filter('shoppingListID', 'eq', shoppingListID).filter('deleted', 'eq', false);
+    if (shoppingListRecipesError) {
+      global.logger.info(`Error getting shoppingListRecipes while clearing shoppingList ID: ${shoppingListID}: ${shoppingListRecipesError.message}`);
+      return { error: shoppingListRecipesError.message };
     }
+    if (shoppingListRecipes.length > 0) {
+      for (let i = 0; i < shoppingListRecipes.length; i++) {
+        const { error: deleteShoppingListRecipeError } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/shopping/listRecipes/${shoppingListRecipes[i].shoppingListRecipeID}`, {
+          data: {
+            userID: userID,
+            authorization: authorization,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        });
+        if (deleteShoppingListRecipeError) {
+          global.logger.info(`Error deleting shoppingListRecipe ID: ${shoppingListRecipes[i].shoppingListRecipeID}: ${deleteShoppingListRecipeError.message}`);
+          return { error: deleteShoppingListRecipeError.message };
+        }
+      }
+    }
+
+    //delete any standalone shoppingListIngredients for this shoppingList using axios calls
+    const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID').filter('shoppingListID', 'eq', shoppingListID).filter('deleted', 'eq', false).filter('source', 'eq', 'standalone');
+    if (shoppingListIngredientsError) {
+      global.logger.info(`Error getting standalone ingredients while clearing shoppingList ID: ${shoppingListID}: ${shoppingListIngredientsError.message}`);
+      return { error: shoppingListIngredientsError.message };
+    }
+    if (shoppingListIngredients.length > 0) {
+      for (let i = 0; i < shoppingListIngredients.length; i++) {
+        const { error: deleteShoppingListIngredientError } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/shopping/listIngredients/${shoppingListIngredients[i].shoppingListIngredientID}`, {
+          data: {
+            userID: userID,
+            authorization: authorization,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        });
+        if (deleteShoppingListIngredientError) {
+          global.logger.info(`Error deleting shoppingListIngredient ID: ${shoppingListIngredients[i].shoppingListIngredientID}: ${deleteShoppingListIngredientError.message}`);
+          return { error: deleteShoppingListIngredientError.message };
+        }
+      }
+    }
+
+    //we don't actually delete the list, we just remove the child recipes and standalone ingredients
+    return { shoppingListID: shoppingListID };
   }
 
   return {
