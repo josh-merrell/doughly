@@ -36,6 +36,18 @@ const addIngredientStockFailure = createAction(
   '[IngredientStocks] Add Failure',
   props<{ error: any }>()
 );
+const bulkAddIngredientStocks = createAction(
+  '[IngredientStocks] Bulk Add',
+  props<{ ingredientStocks: any[], shoppingListID }>()
+);
+const bulkAddIngredientStocksSuccess = createAction(
+  '[IngredientStocks] Bulk Add Success',
+  props<{ ingredientStocks: IngredientStock[], shoppingListID: number }>()
+);
+const bulkAddIngredientStocksFailure = createAction(
+  '[IngredientStocks] Bulk Add Failure',
+  props<{ error: any }>()
+);
 const deleteIngredientStock = createAction(
   '[IngredientStocks] Delete',
   props<{ ingredientStockID: number }>()
@@ -68,6 +80,9 @@ export const IngredientStockActions = {
   addIngredientStock,
   addIngredientStockSuccess,
   addIngredientStockFailure,
+  bulkAddIngredientStocks,
+  bulkAddIngredientStocksSuccess,
+  bulkAddIngredientStocksFailure,
   loadIngredientStock,
   loadIngredientStockSuccess,
   loadIngredientStockFailure,

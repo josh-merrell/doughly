@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Observable, combineLatest, forkJoin, map } from 'rxjs';
 const dayjs = require('dayjs');
 
 import { environment } from 'src/environments/environment';
@@ -82,6 +82,23 @@ export class IngredientStockService {
       ...ingredientStock,
     };
     return this.http.post<IngredientStock>(this.API_URL, ingredientStock);
+  }
+
+  bulkAdd(ingredientStocks: IngredientStock[]): Observable<IngredientStock[]> {
+    console.log(`BULK ADDING INGREDIENT STOCKS: `, ingredientStocks);
+    const requests = ingredientStocks.map((ingredientStock) =>
+      this.add(ingredientStock)
+    );
+
+    return forkJoin(requests).pipe(
+      map((results) => {
+        const failures = results.filter((result) => !result.ingredientStockID);
+        if (failures.length > 0) {
+          throw new Error('Some ingredient stocks failed to add');
+        }
+        return results;
+      })
+    );
   }
 
   update(ingredientStock: IngredientStock): Observable<IngredientStock> {

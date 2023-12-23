@@ -10,14 +10,22 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ActivatedRoute } from '@angular/router';
-import { selectShoppingListIngredients } from '../../state/shopping-list-ingredient-selectors';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  selectShoppingListIngredients,
+  selectTempPurchasing,
+  selectUpdating,
+} from '../../state/shopping-list-ingredient-selectors';
 import { Store } from '@ngrx/store';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
+import { MatDialog } from '@angular/material/dialog';
+import { PurchaseIngredientsModalComponent } from './ui/purchase-ingredients-modal/purchase-ingredients-modal.component';
+import { ListFulfilledModalComponent } from './ui/list-fulfilled-modal/list-fulfilled-modal.component';
 
 @Component({
   selector: 'dl-shopping-page',
@@ -50,17 +58,20 @@ export class ShoppingPageComponent {
       const matchingIngredient = ingredients.find(
         (ingredient: any) => ingredient.ingredientID === sling.ingredientID
       );
-      if (!sling.store && sling.purchasedMeasurement) {
+      const newSLI = {
+        ...sling,
+        name: matchingIngredient.name,
+      };
+      newSLI.valueValid = newSLI.purchasedMeasurement && newSLI.purchasedMeasurement < newSLI.needMeasurement ? false : true;
+      if (!sling.store && sling.purchasedMeasurement && newSLI.valueValid) {
         itemsToSave.push({
+          shoppingListIngredientID: sling.shoppingListIngredientID,
           ingredientID: sling.ingredientID,
           purchasedMeasurement: sling.purchasedMeasurement,
           purchasedUnit: sling.needUnit,
         });
       }
-      return {
-        ...sling,
-        name: matchingIngredient.name,
-      };
+      return newSLI;
     });
     return {
       items: items,
@@ -71,7 +82,9 @@ export class ShoppingPageComponent {
   constructor(
     private store: Store,
     private renderer: Renderer2,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private router: Router
   ) {
     effect(() => {
       const shoppingListID = this.shoppingListID();
@@ -83,14 +96,12 @@ export class ShoppingPageComponent {
       this.shoppingListID.set(Number(params.get('shoppingListID')!));
     });
     this.store.select(selectIngredients).subscribe((ingr: any) => {
-      console.log(`INGR: `, ingr);
       this.ingredients.set(ingr);
     });
     this.store
       .select(selectShoppingListIngredients)
       .subscribe((slIngr: any) => {
         this.isLoading.set(false);
-        console.log(`SLINGR: `, slIngr);
         this.shoppingListIngredients.set(slIngr);
       });
   }
@@ -126,21 +137,56 @@ export class ShoppingPageComponent {
 
   onSaveClick() {
     this.isLoading.set(true);
-    console.log('save clicked');
     // open storeSelect Modal
+    const ref = this.dialog.open(PurchaseIngredientsModalComponent, {
+      width: '50%',
+      maxWidth: '360px',
+    });
+    let modalResult;
+    ref.afterClosed().subscribe((result) => {
+      if (result.status === 'cancel') {
+        this.isLoading.set(false);
+        return;
+      } else if (result.status === 'confirm') {
+        modalResult = result;
 
-    // if result is not 'cancel', proceed
+        const itemsToSave = this.displaySLIngr().itemsToSave;
+        itemsToSave.forEach((item: any) => {
+          item.purchasedDate = new Date().toISOString();
+        });
+        const neededItemCount = this.displaySLIngr().items.filter(
+          (item: any) => !item.store
+        ).length;
+        this.store.dispatch(
+          ShoppingListIngredientActions.batchUpdateShoppingListIngredientStocks(
+            {
+              shoppingListID: this.shoppingListID(),
+              store: modalResult.store,
+              shoppingListIngredients: itemsToSave,
+              listComplete: itemsToSave.length === neededItemCount,
+            }
+          )
+        );
 
-    // bulkAddIngredientStocks action
-
-    // for any that succeeded, update shoppingListIngredient
-
-    // if any items still have no 'store' value, return
-
-    // update state of shoppingList to 'complete' (server will create new draft list)
-
-    // navigate to /groceries page
-    this.isLoading.set(false);
+        // subscribe to 'selectTempPurchase'. When it is false, then set isLoading to false and navigate navigate to /groceries page
+        this.store.select(selectTempPurchasing).subscribe((tempPurchasing: any) => {
+          if (!tempPurchasing) {
+            this.isLoading.set(false);
+            if (itemsToSave.length === neededItemCount) {
+              const successRef = this.dialog.open(ListFulfilledModalComponent, {
+                width: '50%',
+                maxWidth: '360px',
+              });
+            } else {
+              this.router.navigate(['/groceries']);
+            }
+          }
+        });
+      } else {
+        this.isLoading.set(false);
+        return;
+      }
+    });
   }
 
   onPurchasedAmountChange(ingredientID: number, newAmount: number): void {

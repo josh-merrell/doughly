@@ -74,6 +74,27 @@ export const ingredientStockReducer = createReducer(
     error,
     adding: false,
   })),
+  on(IngredientStockActions.bulkAddIngredientStocks, (state) => ({
+    ...state,
+    error: null,
+    adding: true,
+  })),
+  on(
+    IngredientStockActions.bulkAddIngredientStocksSuccess,
+    (state, { ingredientStocks }) => ({
+      ...state,
+      adding: false,
+      ingredientStocks: [...state.ingredientStocks, ...ingredientStocks],
+    })
+  ),
+  on(
+    IngredientStockActions.bulkAddIngredientStocksFailure,
+    (state, { error }) => ({
+      ...state,
+      error,
+      adding: false,
+    })
+  ),
   on(IngredientStockActions.updateIngredientStock, (state) => ({
     ...state,
     error: null,

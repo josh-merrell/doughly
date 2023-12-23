@@ -19,6 +19,7 @@ async function createShoppingList(req, res) {
   const p = require('./processor')({ db });
   const { authorization } = req.headers;
   const { customID } = req;
+  console.log(`CREATING LIST: ${customID} ${authorization} ${req.userID}`)
   const returner = await p.create({
     customID,
     authorization,

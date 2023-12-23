@@ -4,6 +4,7 @@ import { ShoppingListIngredientState } from './shopping-list-ingredient-state';
 
 export const initialState: ShoppingListIngredientState = {
   shoppingListIngredients: [],
+  tempPurchasing: null,
   loading: false,
   deleting: false,
   adding: false,
@@ -65,12 +66,6 @@ export const ShoppingListIngredientReducer = createReducer(
   })),
   on(ShoppingListIngredientActions.updateShoppingListIngredientSuccess, (state, { shoppingListIngredientID }) => ({
     ...state,
-    shoppingListIngredients: state.shoppingListIngredients.map((shoppingListIngredient) => {
-      if (shoppingListIngredient.shoppingListIngredientID === shoppingListIngredientID) {
-        return { ...shoppingListIngredient, purchasedMeasurement: shoppingListIngredient.purchasedMeasurement, purchasedUnit: shoppingListIngredient.purchasedUnit, store: shoppingListIngredient.store };
-      }
-      return shoppingListIngredient;
-    }),
     updating: false,
   })),
   on(ShoppingListIngredientActions.updateShoppingListIngredientFailure, (state, { error }) => ({
@@ -78,6 +73,16 @@ export const ShoppingListIngredientReducer = createReducer(
     error,
     updating: false,
   })),
+  on(ShoppingListIngredientActions.batchUpdateShoppingListIngredients, (state) => ({
+    ...state,
+    updating: true,
+    error: null,
+  })),
+  on(ShoppingListIngredientActions.batchUpdateShoppingListIngredientsSuccess, (state) => ({
+    ...state,
+    updating: false,
+  })),
+
   on(ShoppingListIngredientActions.deleteShoppingListIngredient, (state) => ({
     ...state,
     deleting: true,
@@ -92,5 +97,18 @@ export const ShoppingListIngredientReducer = createReducer(
     ...state,
     error,
     deleting: false,
+  })),
+  on(ShoppingListIngredientActions.addTempPurchasing, (state, { shoppingListID, store, shoppingListIngredients, listComplete }) => ({
+    ...state,
+    tempPurchasing: {
+      shoppingListID,
+      store,
+      shoppingListIngredients,
+      listComplete,
+    },
+  })),
+  on(ShoppingListIngredientActions.removeTempPurchasing, (state) => ({
+    ...state,
+    tempPurchasing: null,
   }))
 );

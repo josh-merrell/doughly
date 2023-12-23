@@ -74,10 +74,26 @@ export class ShoppingListIngredientService {
       purchasedUnit,
       store,
     };
-    return this.http.put<any>(
+    return this.http.patch<any>(
       `${this.API_URL}/${shoppingListIngredientID}`,
       body
     );
+  }
+
+  batchUpdateShoppingListIngredients(
+    shoppingListIngredients: any[],
+    store: string,
+  ): Observable<any> {
+    console.log(`BATCHUPDATESHOPPINGLISTINGR: `, shoppingListIngredients, ` - STORE: `, store)
+    const requests = shoppingListIngredients.map((shoppingListIngredient) =>
+      this.updateShoppingListIngredient(
+        shoppingListIngredient.shoppingListIngredientID,
+        shoppingListIngredient.purchasedMeasurement,
+        shoppingListIngredient.purchasedUnit ? shoppingListIngredient.purchasedUnit : shoppingListIngredient.needUnit,
+        store
+      )
+    );
+    return forkJoin(requests);
   }
 
   deleteShoppingListIngredient(
