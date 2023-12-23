@@ -1,16 +1,29 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import {
+  catchError,
+  filter,
+  map,
+  mergeMap,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { ShoppingListIngredientService } from '../data/shopping-list-ingredient.service';
 import { ShoppingListIngredientActions } from './shopping-list-ingredient-actions';
 import { ShoppingListIngredient } from './shopping-list-ingredient-state';
+import { IngredientStockActions } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 import { of } from 'rxjs';
+import { ShoppingListActions } from './shopping-list-actions';
+import { selectTempPurchasing } from './shopping-list-ingredient-selectors';
+import { Store } from '@ngrx/store';
 
 @Injectable()
 export class ShoppingListIngredientEffects {
   constructor(
     private actions$: Actions,
-    private shoppingListIngredientService: ShoppingListIngredientService
+    private shoppingListIngredientService: ShoppingListIngredientService,
+    private store: Store
   ) {}
 
   loadShoppingListIngredients$ = createEffect(() =>
@@ -27,9 +40,11 @@ export class ShoppingListIngredientEffects {
             ),
             catchError((error) =>
               of(
-                ShoppingListIngredientActions.loadShoppingListIngredientsFailure({
-                  error,
-                })
+                ShoppingListIngredientActions.loadShoppingListIngredientsFailure(
+                  {
+                    error,
+                  }
+                )
               )
             )
           )
@@ -89,15 +104,19 @@ export class ShoppingListIngredientEffects {
           )
           .pipe(
             map((shoppingListIngredients: ShoppingListIngredient[]) =>
-              ShoppingListIngredientActions.batchAddShoppingListIngredientsSuccess({
-                shoppingListIngredients,
-              })
+              ShoppingListIngredientActions.batchAddShoppingListIngredientsSuccess(
+                {
+                  shoppingListIngredients,
+                }
+              )
             ),
             catchError((error) =>
               of(
-                ShoppingListIngredientActions.batchAddShoppingListIngredientsFailure({
-                  error,
-                })
+                ShoppingListIngredientActions.batchAddShoppingListIngredientsFailure(
+                  {
+                    error,
+                  }
+                )
               )
             )
           )
@@ -107,7 +126,9 @@ export class ShoppingListIngredientEffects {
 
   loadShoppingListIngredientsAfterBatchCreate$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ShoppingListIngredientActions.batchAddShoppingListIngredientsSuccess),
+      ofType(
+        ShoppingListIngredientActions.batchAddShoppingListIngredientsSuccess
+      ),
       map((action) =>
         ShoppingListIngredientActions.loadShoppingListIngredients({
           shoppingListID: action.shoppingListIngredients[0].shoppingListID,
@@ -129,15 +150,20 @@ export class ShoppingListIngredientEffects {
           )
           .pipe(
             map(() =>
-              ShoppingListIngredientActions.updateShoppingListIngredientSuccess({
-                shoppingListIngredientID: action.shoppingListIngredientID, shoppingListID: action.shoppingListID,
-              })
+              ShoppingListIngredientActions.updateShoppingListIngredientSuccess(
+                {
+                  shoppingListIngredientID: action.shoppingListIngredientID,
+                  shoppingListID: action.shoppingListID,
+                }
+              )
             ),
             catchError((error) =>
               of(
-                ShoppingListIngredientActions.updateShoppingListIngredientFailure({
-                  error,
-                })
+                ShoppingListIngredientActions.updateShoppingListIngredientFailure(
+                  {
+                    error,
+                  }
+                )
               )
             )
           )
@@ -156,6 +182,127 @@ export class ShoppingListIngredientEffects {
     )
   );
 
+  //**************** Perform multiple when user confirms purchase of items
+  //First put the shoppingListIngredients in tempPurchasing, this state will be referenced by later effects
+  addTempPurchasing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        ShoppingListIngredientActions.batchUpdateShoppingListIngredientStocks
+      ),
+      map((action) =>
+        ShoppingListIngredientActions.addTempPurchasing({
+          shoppingListID: action.shoppingListID,
+          store: action.store,
+          shoppingListIngredients: action.shoppingListIngredients,
+          listComplete: action.listComplete,
+        })
+      )
+    )
+  );
+  // Initial call from component. We first try to add stock entries for each shoppingList ingredient
+  batchUpdateShoppingListIngredientStocks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        ShoppingListIngredientActions.batchUpdateShoppingListIngredientStocks
+      ),
+      map((action) =>
+        IngredientStockActions.bulkAddIngredientStocks({
+          ingredientStocks: action.shoppingListIngredients.map((sli) => {
+            return {
+              ingredientID: sli.ingredientID,
+              measurement: sli.purchasedMeasurement,
+              purchasedDate: sli.purchasedDate,
+            };
+          }),
+          shoppingListID: action.shoppingListID,
+        })
+      )
+    )
+  );
+  // UPDATE shoppingListIngredients AFTER STOCKS ADDED
+  bulkAddIngredientStocksSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientStockActions.bulkAddIngredientStocksSuccess),
+      withLatestFrom(this.store.select(selectTempPurchasing)),
+      map(([action, tempPurchasing]) =>
+        ShoppingListIngredientActions.batchUpdateShoppingListIngredients({
+          shoppingListIngredients: tempPurchasing?.shoppingListIngredients,
+          store: tempPurchasing?.store,
+        })
+      )
+    )
+  );
+  // CALL Service method to bulk update shoppingListIngredients
+  batchUpdateShoppingListIngredients$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListIngredientActions.batchUpdateShoppingListIngredients),
+      mergeMap((action) =>
+        this.shoppingListIngredientService
+          .batchUpdateShoppingListIngredients(
+            action.shoppingListIngredients,
+            action.store
+          )
+          .pipe(
+            map(() =>
+              ShoppingListIngredientActions.batchUpdateShoppingListIngredientsSuccess()
+            ),
+            catchError((error) =>
+              of(
+                ShoppingListIngredientActions.batchUpdateShoppingListIngredientsFailure(
+                  {
+                    error,
+                  }
+                )
+              )
+            )
+          )
+      )
+    )
+  );
+  // EDIT SHOPPING LIST AFTER STOCKS ADDED AND SLI UPDATED IF LIST COMPLETE. If List is not complete, immediately get rid of tempPurchasing
+  batchUpdateShoppingListIngredientsSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        ShoppingListIngredientActions.batchUpdateShoppingListIngredientsSuccess
+      ),
+      withLatestFrom(this.store.select(selectTempPurchasing)),
+      switchMap(([action, tempPurchasing]) => {
+        if (tempPurchasing?.listComplete) {
+          return of(
+            ShoppingListActions.editShoppingList({
+              shoppingListID: tempPurchasing.shoppingListID,
+              status: 'fulfilled',
+              fulfilledDate: new Date().toISOString(),
+              fulfilledMethod: 'manual',
+            })
+          );
+        } else {
+          return of(ShoppingListIngredientActions.removeTempPurchasing());
+        }
+      })
+    )
+  );
+  // 'shopping-list-effects' will remove tempPurchasing AFTER ShoppingList Updated
+  //CALL batchUpdateShoppingListIngredientStocksSuccess after we remove tempPurchasing
+  removeTempPurchasing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListIngredientActions.removeTempPurchasing),
+      map(() =>
+        ShoppingListIngredientActions.batchUpdateShoppingListIngredientStocksSuccess()
+      )
+    )
+  );
+
+  loadShoppingListsAfterPurchasing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        ShoppingListIngredientActions.batchUpdateShoppingListIngredientStocksSuccess
+      ),
+      map((action) => ShoppingListActions.loadShoppingLists())
+    )
+  );
+  // *************************************************************
+
   deleteShoppingListIngredient$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListIngredientActions.deleteShoppingListIngredient),
@@ -164,15 +311,20 @@ export class ShoppingListIngredientEffects {
           .deleteShoppingListIngredient(action.shoppingListIngredientID)
           .pipe(
             map(() =>
-              ShoppingListIngredientActions.deleteShoppingListIngredientSuccess({
-                shoppingListIngredientID: action.shoppingListIngredientID, shoppingListID: action.shoppingListID,
-              })
+              ShoppingListIngredientActions.deleteShoppingListIngredientSuccess(
+                {
+                  shoppingListIngredientID: action.shoppingListIngredientID,
+                  shoppingListID: action.shoppingListID,
+                }
+              )
             ),
             catchError((error) =>
               of(
-                ShoppingListIngredientActions.deleteShoppingListIngredientFailure({
-                  error,
-                })
+                ShoppingListIngredientActions.deleteShoppingListIngredientFailure(
+                  {
+                    error,
+                  }
+                )
               )
             )
           )
@@ -190,5 +342,4 @@ export class ShoppingListIngredientEffects {
       )
     )
   );
-
 }

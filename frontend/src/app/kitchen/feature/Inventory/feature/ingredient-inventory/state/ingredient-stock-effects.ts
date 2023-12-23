@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { IngredientStockService } from '../data/ingredient-stock.service';
 import { IngredientStockActions } from './ingredient-stock-actions';
 import { IngredientStock } from './ingredient-stock-state';
+import { ShoppingListActions } from 'src/app/groceries/state/shopping-list-actions';
 
 
 @Injectable()
@@ -40,6 +41,35 @@ export class IngredientStockEffects {
       )
     );
   });
+
+  bulkAddIngredientStocks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(IngredientStockActions.bulkAddIngredientStocks),
+      // pass the provided ingredientStocks to the 'bulkAdd' service method. Subscribe to the result. If result.success is true, dispatch the bulkAddIngredientStocksSuccess action with the ingredientStocks. If result.success is false, dispatch the bulkAddIngredientStocksFailure action with the result.error.
+      mergeMap((action) =>
+        this.ingredientStockService.bulkAdd(action.ingredientStocks).pipe(
+          map((ingredientStocks) =>
+            IngredientStockActions.bulkAddIngredientStocksSuccess({
+              ingredientStocks,
+              shoppingListID: action.shoppingListID,
+            })
+          ),
+          catchError((error) =>
+            of(
+              IngredientStockActions.bulkAddIngredientStocksFailure({
+                error: {
+                  errorType: 'BULK_ADD_INGREDIENT_STOCKS_FAILURE',
+                  message: 'Failed to bulk add ingredient stocks',
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
 
   loadIngredientStocks$ = createEffect(() =>
     this.actions$.pipe(

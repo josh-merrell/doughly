@@ -12,6 +12,12 @@ export interface ShoppingListIngredient {
 
 export interface ShoppingListIngredientState {
   shoppingListIngredients: ShoppingListIngredient[];
+  tempPurchasing: {
+    shoppingListID: number,
+    store: string,
+    shoppingListIngredients: any[],
+    listComplete: boolean,
+  } | null;
   loading: boolean;
   adding: boolean;
   updating: boolean;

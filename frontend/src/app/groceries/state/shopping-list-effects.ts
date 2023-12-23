@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { ShoppingListService } from '../data/shopping-list.service';
 import { ShoppingListActions } from './shopping-list-actions';
 import { ShoppingList } from './shopping-list-state';
 import { of } from 'rxjs';
+import { ShoppingListIngredientActions } from './shopping-list-ingredient-actions';
 
 @Injectable()
 export class ShoppingListEffects {
@@ -45,12 +46,22 @@ export class ShoppingListEffects {
     )
   );
 
+  loadShoppingListAfterCreate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.addShoppingListSuccess),
+      map((action) => {
+        return ShoppingListActions.loadShoppingLists();
+      })
+    )
+  );
+
   editShoppingList$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListActions.editShoppingList),
       mergeMap((action) =>
-        this.shoppingListService.updateShoppingList(action.shoppingList).pipe(
+        this.shoppingListService.updateShoppingList(action).pipe(
           map((shoppingList: ShoppingList) =>
+            
             ShoppingListActions.editShoppingListSuccess({ shoppingList })
           ),
           catchError((error) =>
@@ -61,9 +72,18 @@ export class ShoppingListEffects {
     )
   );
 
+  editShoppingListSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.editShoppingListSuccess),
+      map(() => {
+        return ShoppingListIngredientActions.removeTempPurchasing();
+      })
+    )
+  );
+
   loadShoppingListAfterUpdate$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ShoppingListActions.addShoppingListSuccess),
+      ofType(ShoppingListActions.editShoppingListSuccess),
       map((action) => {
         return ShoppingListActions.loadShoppingLists();
       })
@@ -74,18 +94,16 @@ export class ShoppingListEffects {
     this.actions$.pipe(
       ofType(ShoppingListActions.deleteShoppingList),
       mergeMap((action) =>
-        this.shoppingListService
-          .deleteShoppingList(action.shoppingListID)
-          .pipe(
-            map(() =>
-              ShoppingListActions.deleteShoppingListSuccess({
-                shoppingListID: action.shoppingListID,
-              })
-            ),
-            catchError((error) =>
-              of(ShoppingListActions.deleteShoppingListFailure({ error }))
-            )
+        this.shoppingListService.deleteShoppingList(action.shoppingListID).pipe(
+          map(() =>
+            ShoppingListActions.deleteShoppingListSuccess({
+              shoppingListID: action.shoppingListID,
+            })
+          ),
+          catchError((error) =>
+            of(ShoppingListActions.deleteShoppingListFailure({ error }))
           )
+        )
       )
     )
   );

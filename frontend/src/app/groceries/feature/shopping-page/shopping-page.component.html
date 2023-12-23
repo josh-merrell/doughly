@@ -86,7 +86,7 @@
         </svg>
         <!-- Grey Checkbox (only if item 'purchasedMeasurement' is not present)-->
         <svg
-          *ngIf="!item.purchasedMeasurement && !item.store"
+          *ngIf="!item.purchasedMeasurement && !item.store || !item.valueValid"
           xmlns:x="http://ns.adobe.com/Extensibility/1.0/"
           xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/"
           xmlns:graph="http://ns.adobe.com/Graphs/1.0/"
@@ -110,7 +110,7 @@
         </svg>
         <!-- Pink Checkbox (only if item 'purchasedMeasurement' is present but not yet saved)-->
         <svg
-          *ngIf="!item.store && item.purchasedMeasurement"
+          *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
           xmlns:x="http://ns.adobe.com/Extensibility/1.0/"
           xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/"
           xmlns:graph="http://ns.adobe.com/Graphs/1.0/"
@@ -134,7 +134,7 @@
         </svg>
         <!-- Box to cover Checkmark (only if item 'purchasedMeasurement' is present but not yet saved)-->
         <div
-          *ngIf="!item.store && item.purchasedMeasurement"
+          *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
           class="absolute left-12 top-4 z-20 h-4 w-4 bg-dl-pink-7"
         ></div>
 
@@ -145,17 +145,23 @@
           </span>
         </span>
       </div>
-      <div class="flex justify-between items-center">
+      <div class="relative flex justify-between items-center">
         <p class="text-dl-4 mr-dl-2 font-dl-2 italic text-dl-grey-4">
           {{ item.needUnit }}s
+        </p>
+        <p *ngIf="!item.valueValid" class="w-dl-10 absolute -left-24 text-dl-4 mr-dl-2 font-dl-3  text-dl-red-4">
+          buy more
         </p>
         <input
           class="rounded-dl-1 border-0"
           type="number"
-          min="0"
+          [min]="item.needMeasurement"
           max="999"
           placeholder="0"
           [(ngModel)]="item.purchasedAmount"
+          [ngClass]="{
+            'invisible': item.store
+          }"
           (ngModelChange)="
             onPurchasedAmountChange(item.ingredientID, item.purchasedAmount)
           "

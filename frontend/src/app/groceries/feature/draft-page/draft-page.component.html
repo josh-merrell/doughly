@@ -110,8 +110,20 @@
   <button
     type="button"
     *ngIf="isLoading() === false"
-    class="mb-dl-2 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+    class="mb-dl-2 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
     (click)="onShopClick()"
+    [ngClass]="{
+      'bg-dl-grey-7 ':
+        displaySLRecipeIngr().length === 0 &&
+        displaySLStandaloneIngr().length === 0,
+      'bg-dl-pink-4 ':
+        displaySLRecipeIngr().length !== 0 ||
+        displaySLStandaloneIngr().length !== 0
+    }"
+    [disabled]="
+      displaySLRecipeIngr().length === 0 &&
+      displaySLStandaloneIngr().length === 0
+    "
   >
     Shop List
   </button>

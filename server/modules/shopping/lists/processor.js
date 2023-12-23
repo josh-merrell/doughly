@@ -1,13 +1,14 @@
 ('use strict');
 
-const { createShoppingLog } = require ('../../../services/dbLogger');
+const { createShoppingLog } = require('../../../services/dbLogger');
 const { updater } = require('../../../db');
 const { getShoppingListByID } = require('./handler');
+const { default: axios } = require('axios');
 
 module.exports = ({ db }) => {
   async function getShoppingListByID(options) {
     const { shoppingListID } = options;
-    const { data: shoppingList, error } = await db.from('shoppingLists').select('shoppingListID, status, fulfilledDate, fulfilledMethod, store').where('shoppingListID', shoppingListID).single();
+    const { data: shoppingList, error } = await db.from('shoppingLists').select('shoppingListID, status, fulfilledDate, fulfilledMethod').where('shoppingListID', shoppingListID).single();
     if (error) {
       global.logger.info(`Error getting shopping list ${shoppingListID}: ${error.message}`);
       return { error: error.message };
@@ -18,7 +19,7 @@ module.exports = ({ db }) => {
 
   async function getShoppingLists(options) {
     const { userID, shoppingListIDs } = options;
-    let q = db.from('shoppingLists').select('shoppingListID, status, fulfilledDate, fulfilledMethod, store').filter('userID', 'eq', userID).neq('status', 'deleted').order('shoppingListID', { descending: true });
+    let q = db.from('shoppingLists').select('shoppingListID, status, fulfilledDate, fulfilledMethod').filter('userID', 'eq', userID).neq('status', 'deleted').neq('status', 'fulfilled').order('shoppingListID', { descending: true });
     if (shoppingListIDs) {
       q = q.in('shoppingListID', shoppingListIDs);
     }
@@ -63,7 +64,7 @@ module.exports = ({ db }) => {
   }
 
   async function updateShoppingList(options) {
-    const { userID, authorization, shoppingListID, status, fulfilledMethod, store } = options;
+    const { userID, authorization, shoppingListID, status, fulfilledMethod } = options;
 
     //verify that the provided shoppingListID exists
     const { data: existingShoppingList, error: existingShoppingListError } = await db.from('shoppingLists').select().filter('shoppingListID', 'eq', shoppingListID).single();
@@ -88,12 +89,6 @@ module.exports = ({ db }) => {
       return { error: 'fulfilledMethod must be "manual" or "pickup"' };
     }
 
-    //if status is 'fulfilled', verify that store exists
-    if (status === 'fulfilled' && !store) {
-      global.logger.info('Error updating shoppingList: store is missing');
-      return { error: 'store is missing' };
-    }
-
     //update the shoppingList
     const updateFields = {};
     for (let key in options) {
@@ -104,9 +99,27 @@ module.exports = ({ db }) => {
 
     try {
       const updatedShoppingList = await updater(userID, authorization, 'shoppingListID', shoppingListID, 'shoppingLists', updateFields);
+      //if the list was fulfilled, create a new draft list using axios
+      const { error: createListError } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/shopping/lists`,
+        {
+          userID: userID,
+          IDtype: 26,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        },
+      );
+      if (createListError) {
+        global.logger.info(`Error creating new shopping list after updating ${shoppingListID} to 'fulfilled': ${createListError.message}`);
+        return { error: createListError.message };
+      }
       return updatedShoppingList;
     } catch (error) {
-      global.logger.info(`Error updateding shoppingList ID: ${shoppingListID}: ${error.message}`);
+      global.logger.info(`Error updating shoppingList with ID: ${shoppingListID}: ${error.message}`);
       return { error: error.message };
     }
   }
@@ -142,5 +155,5 @@ module.exports = ({ db }) => {
     create: createShoppingList,
     update: updateShoppingList,
     delete: deleteShoppingList,
-  }
-}
+  };
+};
