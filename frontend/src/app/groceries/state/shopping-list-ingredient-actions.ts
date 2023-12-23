@@ -40,6 +40,22 @@ const updateShoppingListIngredientFailure = createAction(
   '[ShoppingListIngredients] Update Failure',
   props<{ error: any }>()
 );
+const batchUpdateShoppingListIngredientStocks = createAction('[ShoppingListIngredientStocks] Batch Update', props<{ shoppingListID: number, store: string, shoppingListIngredients: any[], listComplete: boolean }>());
+const batchUpdateShoppingListIngredientStocksSuccess = createAction(
+  '[ShoppingListIngredientStocks] Batch Update Success'
+);
+const batchUpdateShoppingListIngredientStocksFailure = createAction(
+  '[ShoppingListIngredientStocks] Batch Update Failure',
+  props<{ error: any }>()
+);
+const batchUpdateShoppingListIngredients = createAction('[ShoppingListIngredients] Batch Update', props<{shoppingListIngredients: any[], store: string }>());
+const batchUpdateShoppingListIngredientsSuccess = createAction(
+  '[ShoppingListIngredients] Batch Update Success'
+);
+const batchUpdateShoppingListIngredientsFailure = createAction(
+  '[ShoppingListIngredients] Batch Update Failure',
+  props<{ error: any }>()
+);
 
 const deleteShoppingListIngredient = createAction(
   '[ShoppingListIngredients] Delete',
@@ -53,6 +69,13 @@ const deleteShoppingListIngredientFailure = createAction(
   '[ShoppingListIngredients] Delete Failure',
   props<{ error: any }>()
 );
+const addTempPurchasing = createAction(
+  '[ShoppingListIngredients] Add Temp Purchasing',
+  props<{ shoppingListID: number, store: string, shoppingListIngredients: any[], listComplete: boolean }>()
+);
+const removeTempPurchasing = createAction(
+  '[ShoppingListIngredients] Remove Temp Purchasing'
+);
 
 export const ShoppingListIngredientActions = {
   loadShoppingListIngredients,
@@ -61,13 +84,21 @@ export const ShoppingListIngredientActions = {
   addShoppingListIngredient,
   addShoppingListIngredientSuccess,
   addShoppingListIngredientFailure,
+  batchUpdateShoppingListIngredients,
+  batchUpdateShoppingListIngredientsSuccess,
+  batchUpdateShoppingListIngredientsFailure,
   batchAddShoppingListIngredients,
   batchAddShoppingListIngredientsSuccess,
   batchAddShoppingListIngredientsFailure,
   updateShoppingListIngredient,
   updateShoppingListIngredientSuccess,
   updateShoppingListIngredientFailure,
+  batchUpdateShoppingListIngredientStocks,
+  batchUpdateShoppingListIngredientStocksSuccess,
+  batchUpdateShoppingListIngredientStocksFailure,
   deleteShoppingListIngredient,
   deleteShoppingListIngredientSuccess,
   deleteShoppingListIngredientFailure,
+  addTempPurchasing,
+  removeTempPurchasing,
 };

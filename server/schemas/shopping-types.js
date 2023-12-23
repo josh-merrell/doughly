@@ -19,7 +19,6 @@ const ShoppingListUpdateSchema_body = {
     status: { type: 'string' },
     fulfilledDate: { type: 'string' },
     fulfilledMethod: { type: 'string' },
-    store: { type: 'string' },
   },
 };
 

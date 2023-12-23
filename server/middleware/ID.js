@@ -44,10 +44,10 @@ async function generateID(req, res, next) {
   let type = req.body.IDtype;
 
   if (!type) {
-    return res.status(410).send('Type parameter is missing, cannot generate custom ID');
+    return res.status(490).send('Type parameter is missing, cannot generate custom ID');
   }
   if (type === 0) {
-    return res.status(411).send('Default Type of "0" is not allowed');
+    return res.status(491).send('Default Type of "0" is not allowed');
   }
   // if type is only 1 digit, prepend a 0
   if (type.length === 1) {

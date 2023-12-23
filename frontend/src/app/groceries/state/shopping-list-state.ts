@@ -5,7 +5,6 @@ export interface ShoppingList {
   status: string;
   fulfilledDate?: Date;
   fulfilledMethod?: string;
-  store?: string;
   ingredients: ShoppingListIngredient[];
   recipes: ShoppingListRecipe[];
 }

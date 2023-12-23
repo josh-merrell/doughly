@@ -310,47 +310,53 @@ export class DraftPageComponent {
         return {
           ingredientID: ingr.ingredientID,
           needMeasurement: Math.ceil(ingr.quantity),
-          needUnit: ingr.unit,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+          needUnit: ingr.unit,
           source: 'recipe',
         };
       });
-      this.store.dispatch(
-        ShoppingListIngredientActions.batchAddShoppingListIngredients({
-          shoppingListID: this.shoppingLists()[0].shoppingListID,
-          ingredients: ingredients,
-        })
-      );
-      //subscribe to selectAdding. When it is false, use selectError to check if there was an error. If there was, throw the error. If there wasn't, continue.
-      combineLatest([
-        this.store.select(selectAdding).pipe(map((adding) => !adding)),
-        this.store.select(selectError),
-      ])
-        .pipe(
-          first(([isNotAdding, error]) => isNotAdding || error != null),
-          take(1),
-          tap(([isNotAdding, error]) => {
-            if (error) {
-              // Handle the error here
-              console.error(error);
-              this.isLoading.set(false);
-              return;
-            }
-
-            if (isNotAdding) {
-              // Continue with your logic
-              this.store.dispatch(
-                ShoppingListActions.editShoppingList({
-                  shoppingList: {
+      if (ingredients.length) {
+        this.store.dispatch(
+          ShoppingListIngredientActions.batchAddShoppingListIngredients({
+            shoppingListID: this.shoppingLists()[0].shoppingListID,
+            ingredients: ingredients,
+          })
+        );
+        //subscribe to selectAdding. When it is false, use selectError to check if there was an error. If there was, throw the error. If there wasn't, continue.
+        combineLatest([
+          this.store.select(selectAdding).pipe(map((adding) => !adding)),
+          this.store.select(selectError),
+        ])
+          .pipe(
+            first(([isNotAdding, error]) => isNotAdding || error != null),
+            take(1),
+            tap(([isNotAdding, error]) => {
+              if (error) {
+                // Handle the error here
+                console.error(error);
+                this.isLoading.set(false);
+                return;
+              }
+              if (isNotAdding) {
+                this.store.dispatch(
+                  ShoppingListActions.editShoppingList({
                     shoppingListID: this.shoppingLists()[0].shoppingListID,
                     status: 'shopping',
-                  },
-                })
-              );
-              this.router.navigate(['/groceries']);
-            }
+                  })
+                );
+                this.router.navigate(['/groceries']);
+              }
+            })
+          )
+          .subscribe();
+      } else {
+        this.store.dispatch(
+          ShoppingListActions.editShoppingList({
+            shoppingListID: this.shoppingLists()[0].shoppingListID,
+            status: 'shopping',
           })
-        )
-        .subscribe();
+        );
+        this.router.navigate(['/groceries']);
+      }
     } catch (err) {
       console.log(err);
     }
