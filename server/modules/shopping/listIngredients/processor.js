@@ -2,6 +2,8 @@
 
 const { createShoppingLog } = require('../../../services/dbLogger');
 const { updater } = require('../../../db');
+const { default: axios } = require('axios');
+
 
 module.exports = ({ db }) => {
   async function getShoppingListIngredientByID (options) {
@@ -133,15 +135,15 @@ module.exports = ({ db }) => {
       return { error: 'shoppingListIngredient does not exist' };
     }
 
-    //verify that provided shoppingList exists and is in draft status
-    const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select('shoppingListID').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID).filter('status', 'eq', 'draft');
+    //verify that provided shoppingList exists
+    const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select('shoppingListID, status').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID);
     if (shoppingListError) {
       global.logger.info(`Error deleting shoppingListIngredient: ${shoppingListError.message}`);
       return { error: shoppingListError.message };
     }
     if (shoppingList.length === 0) {
-      global.logger.info('Error deleting shoppingListIngredient: shoppingList does not exist or is not in draft status');
-      return { error: 'shoppingList does not exist or is not in draft status' };
+      global.logger.info('Error deleting shoppingListIngredient: shoppingList does not exist');
+      return { error: 'shoppingList does not exist' };
     }
 
     //delete shoppingListIngredient
@@ -150,6 +152,76 @@ module.exports = ({ db }) => {
       global.logger.info(`Error deleting shoppingListIngredient: ${deleteError.message}`);
       return { error: deleteError.message };
     }
+
+    //if shoppingList is in 'shopping' status, get any remaining shoppingListIngredients
+    if (shoppingList[0].status === 'shopping') {
+      const { data: remainingShoppingListIngredients, error: remainingShoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID).filter('deleted', 'eq', false).is('store', null);
+      if (remainingShoppingListIngredientsError) {
+        global.logger.info(`Error deleting shoppingListIngredient: ${remainingShoppingListIngredientsError.message}`);
+        return { error: remainingShoppingListIngredientsError.message };
+      }
+      //if none remaining, delete any shoppingListRecipes and standalone ingredients, then set shoppingList status to 'draft'
+      if (remainingShoppingListIngredients.length === 0) {
+        //delete any shoppingListRecipes for this shoppingList using axios calls
+        const { data: shoppingListRecipes, error: shoppingListRecipesError } = await db.from('shoppingListRecipes').select('shoppingListRecipeID').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID).filter('deleted', 'eq', false);
+        if (shoppingListRecipesError) {
+          global.logger.info(`Error getting shoppingListRecipes while clearing shoppingList ID: ${shoppingListIngredient[0].shoppingListID}: ${shoppingListRecipesError.message}`);
+          return { error: shoppingListRecipesError.message };
+        }
+        if (shoppingListRecipes.length > 0) {
+          for (let i = 0; i < shoppingListRecipes.length; i++) {
+            const { error: deleteShoppingListRecipeError } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/shopping/listRecipes/${shoppingListRecipes[i].shoppingListRecipeID}`, {
+              data: {
+                userID: userID,
+                authorization: authorization,
+              },
+              headers: {
+                'Content-Type': 'application/json',
+                authorization: 'override',
+              },
+            });
+            if (deleteShoppingListRecipeError) {
+              global.logger.info(`Error deleting shoppingListRecipe ID: ${shoppingListRecipes[i].shoppingListRecipeID}: ${deleteShoppingListRecipeError.message}`);
+              return { error: deleteShoppingListRecipeError.message };
+            }
+          }
+        }
+
+        //delete any standalone shoppingListIngredients for this shoppingList using axios calls
+        const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db
+          .from('shoppingListIngredients')
+          .select('shoppingListIngredientID')
+          .filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID)
+          .filter('deleted', 'eq', false)
+        if (shoppingListIngredientsError) {
+          global.logger.info(`Error getting standalone ingredients while clearing shoppingList ID: ${shoppingListIngredient[0].shoppingListID}: ${shoppingListIngredientsError.message}`);
+          return { error: shoppingListIngredientsError.message };
+        }
+        if (shoppingListIngredients.length > 0) {
+          for (let i = 0; i < shoppingListIngredients.length; i++) {
+            const { error: deleteShoppingListIngredientError } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/shopping/listIngredients/${shoppingListIngredients[i].shoppingListIngredientID}`, {
+              data: {
+                userID: userID,
+                authorization: authorization,
+              },
+              headers: {
+                'Content-Type': 'application/json',
+                authorization: 'override',
+              },
+            });
+            if (deleteShoppingListIngredientError) {
+              global.logger.info(`Error deleting shoppingListIngredient ID: ${shoppingListIngredients[i].shoppingListIngredientID}: ${deleteShoppingListIngredientError.message}`);
+              return { error: deleteShoppingListIngredientError.message };
+            }
+          }
+        }
+
+        const updatedShoppingList = await updater(userID, authorization, 'shoppingListID', shoppingList[0].shoppingListID, 'shoppingLists', { status: 'draft' });
+        return updatedShoppingList;
+      }
+
+    }
+
     //add a 'deleted' log entry
     await createShoppingLog(userID, authorization, 'deleteIngredientFromShoppingList', Number(shoppingListIngredientID), Number(shoppingListIngredient[0].shoppingListID), null, null, `deletedIngredientFromShoppingList: ${shoppingListIngredientID}`);
   }

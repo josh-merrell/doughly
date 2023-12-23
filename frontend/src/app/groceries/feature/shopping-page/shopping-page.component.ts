@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  selectDeleting,
   selectShoppingListIngredients,
   selectTempPurchasing,
   selectUpdating,
@@ -42,6 +43,7 @@ import { ListFulfilledModalComponent } from './ui/list-fulfilled-modal/list-fulf
 })
 export class ShoppingPageComponent {
   Math = Math;
+  public isDeleting: WritableSignal<boolean> = signal(false);
   public isLoading: WritableSignal<boolean> = signal(true);
   @ViewChild('menu') rowItemMenu!: ElementRef;
   globalClickListener: () => void = () => {};
@@ -204,5 +206,20 @@ export class ShoppingPageComponent {
     const itemCount = this.displaySLIngr().itemsToSave.length;
     const itemText = itemCount > 1 ? 'Items' : 'Item';
     return `Add ${itemCount} ${itemText} to Kitchen`;
+  }
+
+  onDeleteItemClick(shoppingListIngredientID: number) {
+    this.isDeleting.set(true);
+    this.store.dispatch(
+      ShoppingListIngredientActions.deleteShoppingListIngredient({
+        shoppingListIngredientID,
+        shoppingListID: this.shoppingListID(),
+      })
+    );
+    this.store.select(selectDeleting).subscribe((deleting) => {
+      if (!deleting) {
+        this.isDeleting.set(false);
+      }
+    });
   }
 }

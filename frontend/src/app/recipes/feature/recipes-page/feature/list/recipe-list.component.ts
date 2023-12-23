@@ -87,7 +87,7 @@ export class RecipeListComponent {
   });
   public filteredRecipes = computed(() => {
     const searchFilter = this.searchFilter();
-    const recipes = this.displayRecipes();
+    const recipes = this.displayRecipes().sort((a, b) => a.title.localeCompare(b.title));
     if (searchFilter) {
       return recipes.filter((recipe) => {
         return (
@@ -126,7 +126,9 @@ export class RecipeListComponent {
         newCategories = newCategories.filter((category) => {
           return category.recipeCount !== 0;
         });
-        this.displayCategories.set(newCategories);
+        this.displayCategories.set(
+          newCategories.sort((a, b) => a.name.localeCompare(b.name))
+        );
       },
       { allowSignalWrites: true }
     );

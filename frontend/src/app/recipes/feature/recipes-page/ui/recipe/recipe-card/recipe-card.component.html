@@ -22,6 +22,12 @@
       >
         Draft
       </p>
+      <p
+        *ngIf="this.shoppingList()?.ingredients?.length === 0 && !shoppingPage"
+        class="ml-dl-4 text-dl-4 italic text-dl-teal-6"
+      >
+        Ready to Make!
+      </p>
     </div>
     <p *ngIf="recipe.plannedDate" class="text-dl-4 text-dl-grey-4">Planned: {{ recipe.plannedDate }}</p>
   </div>

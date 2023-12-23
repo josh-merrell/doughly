@@ -137,7 +137,6 @@ export class RecipeService {
     recipeID: number,
     date = new Date(),
   ): Observable<ShoppingList> {
-    // console.log(`IN getShoppingList: `, recipeID, date)
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
       switchMap((recipeIngredients) => {
