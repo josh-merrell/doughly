@@ -1,10 +1,6 @@
 import {
   Component,
-  ElementRef,
-  Renderer2,
-  ViewChild,
   WritableSignal,
-  computed,
   effect,
   signal,
 } from '@angular/core';
@@ -14,13 +10,13 @@ import { ShoppingPageComponent } from '../feature/shopping-page/shopping-page.co
 import { Store } from '@ngrx/store';
 import { selectShoppingLists } from '../state/shopping-list-selectors';
 import { ShoppingListRecipeActions } from '../state/shopping-list-recipe-actions';
-import {
-  selectLoading,
-  selectShoppingListRecipes,
-} from '../state/shopping-list-recipe-selectors';
+import { selectShoppingListRecipes } from '../state/shopping-list-recipe-selectors';
 import { ShoppingListIngredientActions } from '../state/shopping-list-ingredient-actions';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+
 
 
 @Component({
@@ -31,20 +27,20 @@ import { RouterModule } from '@angular/router';
     DraftPageComponent,
     ShoppingPageComponent,
     RouterModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './groceries-page.component.html',
 })
 export class GroceriesPageComponent {
+  public isDeleting: WritableSignal<boolean> = signal(false);
   menuOpen: boolean = false;
   public status: WritableSignal<string> = signal('');
-  @ViewChild('menu') rowItemMenu!: ElementRef;
-  globalClickListener: () => void = () => {};
   public shoppingLists: WritableSignal<any> = signal([]);
   public listRecipes: WritableSignal<any> = signal([]);
 
   constructor(
+    public dialog: MatDialog,
     private router: Router,
-    private renderer: Renderer2,
     private store: Store
   ) {
     effect(
@@ -68,9 +64,15 @@ export class GroceriesPageComponent {
     effect(() => {
       const status = this.status();
       if (status === 'draft') {
-        this.router.navigate(['/groceries/draft', this.shoppingLists()[0].shoppingListID]);
+        this.router.navigate([
+          '/groceries/draft',
+          this.shoppingLists()[0].shoppingListID,
+        ]);
       } else if (status === 'shopping') {
-        this.router.navigate(['/groceries/shopping', this.shoppingLists()[0].shoppingListID]);
+        this.router.navigate([
+          '/groceries/shopping',
+          this.shoppingLists()[0].shoppingListID,
+        ]);
       }
     });
   }
@@ -92,32 +94,4 @@ export class GroceriesPageComponent {
     });
   }
 
-  toggleMenu(event: any) {
-    event.stopPropagation();
-    this.menuOpen = !this.menuOpen;
-  }
-  closeMenu() {
-    this.menuOpen = false;
-  }
-
-  // LIFECYCLE HOOKS  *********************************
-  ngAfterViewInit() {
-    this.globalClickListener = this.renderer.listen(
-      'document',
-      'click',
-      (event) => {
-        const clickedInside = this.rowItemMenu?.nativeElement.contains(
-          event.target
-        );
-        if (!clickedInside && this.rowItemMenu) {
-          this.closeMenu();
-        }
-      }
-    );
-  }
-
-  // INTERACTIVITY FUNCTIONS **************************
-  onDeleteClick() {
-    console.log('delete clicked');
-  }
 }

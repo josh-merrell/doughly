@@ -1,5 +1,8 @@
 import {
   Component,
+  ElementRef,
+  Renderer2,
+  ViewChild,
   WritableSignal,
   computed,
   effect,
@@ -13,7 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { selectRecipeIngredients } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
-import { selectShoppingLists } from '../../state/shopping-list-selectors';
+import { selectDeleting, selectShoppingLists } from '../../state/shopping-list-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-actions';
@@ -43,6 +46,11 @@ import { Router } from '@angular/router';
 })
 export class DraftPageComponent {
   Math = Math;
+  public isDeleting: WritableSignal<boolean> = signal(false);
+  @ViewChild('menu') rowItemMenu!: ElementRef;
+  menuOpen: boolean = false;
+  globalClickListener: () => void = () => {};
+
   public shoppingLists: WritableSignal<any> = signal([]);
   public listRecipes: WritableSignal<any> = signal([]);
   public recipes: WritableSignal<any> = signal([]);
@@ -117,6 +125,7 @@ export class DraftPageComponent {
 
   constructor(
     public dialog: MatDialog,
+    private renderer: Renderer2,
     private store: Store,
     private recipeService: RecipeService,
     public router: Router
@@ -190,6 +199,7 @@ export class DraftPageComponent {
     }
   }
 
+  // LIFECYCLE HOOKS  *********************************
   ngOnInit(): void {
     this.store.select(selectShoppingLists).subscribe((shoppingLists: any) => {
       this.shoppingLists.set(shoppingLists);
@@ -215,6 +225,20 @@ export class DraftPageComponent {
     this.store.select(selectIngredients).subscribe((ingredients: any) => {
       this.ingredients.set(ingredients);
     });
+  }
+  ngAfterViewInit() {
+    this.globalClickListener = this.renderer.listen(
+      'document',
+      'click',
+      (event) => {
+        const clickedInside = this.rowItemMenu?.nativeElement.contains(
+          event.target
+        );
+        if (!clickedInside && this.rowItemMenu) {
+          this.closeMenu();
+        }
+      }
+    );
   }
 
   recipeCardClick(recipe) {
@@ -281,6 +305,30 @@ export class DraftPageComponent {
         );
       });
     }
+  }
+
+  // INTERACTIVITY FUNCTIONS **************************
+  onDeleteClick() {
+    this.closeMenu();
+    this.isDeleting.set(true);
+    this.store.dispatch(
+      ShoppingListActions.deleteShoppingList({
+        shoppingListID: this.shoppingLists()[0].shoppingListID,
+      })
+    );
+    this.store.select(selectDeleting).subscribe((deleting) => {
+      if (!deleting) {
+        this.isDeleting.set(false);
+      }
+    });
+  }
+
+  closeMenu() {
+    this.menuOpen = false;
+  }
+  toggleMenu(event: any) {
+    event.stopPropagation();
+    this.menuOpen = !this.menuOpen;
   }
 
   deleteListRecipe(shoppingListRecipeID: number) {

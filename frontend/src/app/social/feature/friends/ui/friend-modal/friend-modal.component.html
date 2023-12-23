@@ -60,7 +60,7 @@
   </div>
 
   <!-- Buttons, Friendship/Followship Status-->
-  <div *ngIf="isDeleting()" class="w-full flex flex-col items-center">
+  <div *ngIf="isDeleting()" class="flex w-full flex-col items-center">
     <mat-spinner class="my-app-custom-spinner"></mat-spinner>
   </div>
   <div class="mb-dl-5 flex items-center justify-between" *ngIf="!isDeleting()">
@@ -204,11 +204,18 @@
       [isSelected]="false"
     >
     </dl-recipe-card>
+    <span
+      *ngIf="friend.recipes.length > 0"
+      class="absolute bottom-3 left-1/2 -translate-x-1/2 text-dl-5 font-dl-2 text-dl-grey-2"
+      >{{ friend.recipes.length }} total</span
+    >
   </div>
 
-  <span
-    *ngIf="friend.recipes.length > 0 && view === 'recipes'"
-    class="absolute bottom-3 left-1/2 -translate-x-1/2 text-dl-5 font-dl-2 text-dl-grey-2"
-    >{{ friend.recipes.length }} total</span
+  <!-- Timeline -->
+  <div
+    *ngIf="view === 'timeline'"
+    class="mb-dl-7 flex justify-center h-dl-7 items-center rounded-dl-3 text-dl-6 font-dl-3 text-dl-grey-3 shadow-md"
   >
+    <p class="">Feature in Progress. Check back later!</p>
+  </div>
 </div>

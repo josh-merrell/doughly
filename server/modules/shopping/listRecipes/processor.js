@@ -91,17 +91,6 @@ module.exports = ({ db }) => {
       return { error: 'shoppingListRecipe does not exist' };
     }
 
-    //verify that provided shoppingListRecipe is in draft status
-    const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select('shoppingListID').filter('shoppingListID', 'eq', shoppingListRecipe[0].shoppingListID).filter('status', 'eq', 'draft');
-    if (shoppingListError) {
-      global.logger.info(`Error deleting shoppingListRecipe: ${shoppingListError.message}`);
-      return { error: shoppingListError.message };
-    }
-    if (shoppingList.length === 0) {
-      global.logger.info('Error deleting shoppingListRecipe: shoppingListRecipe is not in draft status');
-      return { error: 'shoppingListRecipe is not in draft status' };
-    }
-
     //delete the shoppingListRecipe
     const { error: deleteError } = await db.from('shoppingListRecipes').update({ deleted: true }).eq('shoppingListRecipeID', shoppingListRecipeID);
     if (deleteError) {

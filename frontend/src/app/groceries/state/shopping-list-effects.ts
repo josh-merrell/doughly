@@ -6,6 +6,7 @@ import { ShoppingListActions } from './shopping-list-actions';
 import { ShoppingList } from './shopping-list-state';
 import { of } from 'rxjs';
 import { ShoppingListIngredientActions } from './shopping-list-ingredient-actions';
+import { ShoppingListRecipeActions } from './shopping-list-recipe-actions';
 
 @Injectable()
 export class ShoppingListEffects {
@@ -105,6 +106,24 @@ export class ShoppingListEffects {
           )
         )
       )
+    )
+  );
+
+  loadShoppingListIngredientsAfterClear$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.deleteShoppingListSuccess),
+      map((action) => {
+        return ShoppingListIngredientActions.loadShoppingListIngredients({ shoppingListID: action.shoppingListID });
+      })
+    )
+  );
+
+  loadShoppingListRecipesAfterClear$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.deleteShoppingListSuccess),
+      map((action) => {
+        return ShoppingListRecipeActions.loadShoppingListRecipes({ shoppingListID: action.shoppingListID });
+      })
     )
   );
 }

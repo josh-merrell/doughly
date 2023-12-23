@@ -104,9 +104,6 @@ export const ShoppingListReducer = createReducer(
   on(ShoppingListActions.deleteShoppingListSuccess, (state, { shoppingListID }) => ({
     ...state,
     deleting: false,
-    shoppingLists: state.shoppingLists.filter(
-      (shoppingList) => shoppingList.shoppingListID !== shoppingListID
-    ),
   })),
   on(ShoppingListActions.deleteShoppingListFailure, (state, { error }) => ({
     ...state,
