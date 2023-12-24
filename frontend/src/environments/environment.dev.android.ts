@@ -7,5 +7,5 @@ export const environment = {
   SUPABASE_USER_PW: 'Ginger93!',
   SUPABASE_TEST_USER_EMAIL: 'jmerrell93@hotmail.com',
   SUPABASE_TEST_USER_PW: 'test123',
-  BACKEND: 'http://localhost:3000',
+  BACKEND: 'https://82c1-216-9-30-139.ngrok-free.app', //point to the host machine from the android emulator
 };
