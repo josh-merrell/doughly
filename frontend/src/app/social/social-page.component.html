@@ -1,6 +1,6 @@
 <div class="relative mx-auto w-full bg-white pt-dl-5">
   <!-- View Header -->
-  <div class="flex w-full justify-around h-dl-4 mb-dl-6">
+  <div class="mb-dl-6 flex h-dl-4 w-full justify-around">
     <!-- <span
       (click)="setView('timeline')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
@@ -16,9 +16,9 @@
       (click)="setView('friends')"
       class="inline-flex items-center py-1 font-dl-2 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
+        'border-b-2 border-dl-blue-6 text-dl-6 font-dl-3 text-dl-grey-2':
           view() === 'friends',
-        'text-dl-5 text-dl-grey-4 font-dl-2': view() !== 'friends'
+        'text-dl-5 font-dl-2 text-dl-grey-4': view() !== 'friends'
       }"
     >
       Friends
@@ -27,9 +27,9 @@
       (click)="setView('followers')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
+        'border-b-2 border-dl-blue-6 text-dl-6 font-dl-3 text-dl-grey-2':
           view() === 'followers',
-        'text-dl-5 text-dl-grey-4 font-dl-2': view() !== 'followers'
+        'text-dl-5 font-dl-2 text-dl-grey-4': view() !== 'followers'
       }"
     >
       Followers
@@ -38,8 +38,8 @@
 
   <!-- Main Content -->
   <div class="h-full">
-    <dl-timeline *ngIf="view() === 'timeline'"></dl-timeline>
-    <dl-friends *ngIf="view() === 'friends'"></dl-friends>
-    <dl-followers *ngIf="view() === 'followers'"></dl-followers>
+    <div class="relative h-full w-full">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

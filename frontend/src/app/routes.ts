@@ -16,6 +16,8 @@ import { PublicRecipeComponent } from './recipes/feature/recipe/public-recipe/pu
 import { GroceriesPageComponent } from './groceries/groceries-page/groceries-page.component';
 import { DraftPageComponent } from './groceries/feature/draft-page/draft-page.component';
 import { ShoppingPageComponent } from './groceries/feature/shopping-page/shopping-page.component';
+import { FriendsComponent } from './social/feature/friends/friends.component';
+import { FollowersComponent } from './social/feature/followers/followers.component';
 
 export const routes: Route[] = [
   {
@@ -92,6 +94,16 @@ export const routes: Route[] = [
     path: 'social',
     component: SocialPageComponent,
     canActivate: [ProfileGuard],
+    children: [
+      {
+        path: 'friends',
+        component: FriendsComponent,
+      },
+      {
+        path: 'followers',
+        component: FollowersComponent,
+      },
+    ],
   },
   {
     path: 'verify-account',

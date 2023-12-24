@@ -60,6 +60,9 @@ export class ShoppingPageComponent {
       const matchingIngredient = ingredients.find(
         (ingredient: any) => ingredient.ingredientID === sling.ingredientID
       );
+      if (!matchingIngredient) {
+        return sling;
+      }
       const newSLI = {
         ...sling,
         name: matchingIngredient.name,
