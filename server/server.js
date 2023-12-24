@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
 const cors = require('cors');
+const https = require('https');
 require('dotenv').config();
 const logger = winston.createLogger({
   level: 'info',
@@ -33,10 +34,12 @@ const requestLogStream = fs.createWriteStream(path.join(__dirname, 'request.log'
 app.use(
   cors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    methods: ['OPTIONS', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   }),
 );
+app.options('*', cors()); // Enable CORS for all OPTIONS requests
+
 // app.use(morgan('combined')); //send request logs to console
 app.use(morgan('combined', { stream: requestLogStream })); //also send request logs to file
 const { queryArrayParser } = require('./middleware/queryParsing');
@@ -58,7 +61,6 @@ app.use(express.json());
 if (process.env.NODE_ENV !== 'development') {
   app.use(verifyUser);
 }
-
 // Add the supabase client to the request object
 app.use((req, res, next) => {
   req.client = { db: supabase };
@@ -82,8 +84,16 @@ app.use('/ingredientStocks', ingredientStocksRouter);
 app.use('/logs', logsRouter);
 app.use('/profiles', profilesRouter);
 
+// Your SSL Certificate and Private Key
+const privateKey = fs.readFileSync('server.key', 'utf8');
+const certificate = fs.readFileSync('server.cert', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+
 // Start the server
 const port = 3000;
+// https.createServer(credentials, app).listen(port, () => {
+//   global.logger.info(`Server is running at https://localhost:${port}`);
+// });
 app.listen(port, () => {
   global.logger.info(`Server is running at http://localhost:${port}`);
 });
