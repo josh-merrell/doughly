@@ -7,5 +7,5 @@ export const environment = {
   SUPABASE_USER_PW: 'Ginger93!',
   SUPABASE_TEST_USER_EMAIL: 'jmerrell93@hotmail.com',
   SUPABASE_TEST_USER_PW: 'test123',
-  BACKEND: 'https://api.doughly.co:3000',
+  BACKEND: 'https://api.doughly.co',
 };
