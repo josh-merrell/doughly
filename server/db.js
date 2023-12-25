@@ -1,3 +1,4 @@
+//file adds supabase client to requests
 const { createClient } = require('@supabase/supabase-js');
 <<<<<<< HEAD
 =======
