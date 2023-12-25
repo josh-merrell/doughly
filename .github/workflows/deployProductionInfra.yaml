@@ -1,4 +1,4 @@
-name: AWS Infra Deploy draft
+name: AWS Infra Deploy v1
 
 on:
   pull_request:
