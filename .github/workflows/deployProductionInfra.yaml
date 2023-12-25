@@ -5,42 +5,51 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-deploy-api:
-    if: contains(github.event.pull_request.labels.*.name, 'deploy-back-api-production')
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+  - name: Deploy to EC2
+    env:
+      API_EC2_HOST: ${{ secrets.API_EC2_HOST }}
+      SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
+      DEST_PATH: '/home/ubuntu/dl/'
+      APP_NAME: 'doughly'
+    run: |
+      # Install SSH Client (if not present)
+      sudo apt-get update
+      sudo apt-get install -y openssh-client
 
-    - name: Set up SSH Known Hosts
-      env:
-        EC2_PUBLIC_KEY: ${{ secrets.API_EC2_PUBLIC_KEY }}  # Use the RSA public key
-      run: |
-        mkdir -p ~/.ssh
-        echo "$EC2_PUBLIC_KEY" >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
+      # Setup SSH Key
+      mkdir -p ~/.ssh
+      echo "$SSH_KEY" > ~/.ssh/id_rsa
+      chmod 600 ~/.ssh/id_rsa
 
-    - name: Copy Server Directory to EC2
-      env:
-        API_EC2_HOST: ${{ secrets.API_EC2_HOST }}  # Your EC2 IP or domain
-        SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}  # Your SSH private key
-        DEST_PATH: '/home/ubuntu/dl/'  # Destination path on EC2
-      run: |
-        # Install SSH Client (if not present)
-        sudo apt-get update
-        sudo apt-get install -y openssh-client
+      # SSH into the EC2 instance and run commands
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << 'EOF'
+        # Stop the server using PM2
+        pm2 stop ${APP_NAME} || true  # '|| true' to ignore if the app isn't found
 
-        # Setup SSH Key
-        mkdir -p ~/.ssh
-        echo "$SSH_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+        # Clean the directory
+        rm -rf ${DEST_PATH}/*
 
-        # Debugging output
-        echo "Attempting to Rsync to EC2..."
-        echo "EC2 Host: $API_EC2_HOST"
-        echo "Destination Path: $DEST_PATH"
+        # Exit SSH session
+      EOF
 
-        # Rsync with verbose SSH output
-        rsync -avz -e "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts -vvv" ./server/ ubuntu@${API_EC2_HOST}:${DEST_PATH}
+      # Rsync to EC2
+      rsync -avz -e "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts" ./server/ ubuntu@${API_EC2_HOST}:${DEST_PATH}
+
+      # SSH into the EC2 instance to restart the server
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << 'EOF'
+        # Navigate to the directory
+        cd ${DEST_PATH}
+
+        # Install dependencies
+        npm install
+
+        # Start the server using PM2
+        pm2 start app.js --name "${APP_NAME}"  # Replace 'app.js' with your entry file
+
+        # Save the PM2 process list to restart on server reboot
+        pm2 save
+
+        # Exit SSH session
+      EOF
 
 
