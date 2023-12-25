@@ -1,0 +1,78 @@
+<!-- 
+name: 'Chocolate Syrup',
+lifespanDays: 100,
+brand: 'Hersheys',
+purchaseUnit: 'bottles',
+gramRatio: 413, 
+-->
+
+<form
+  #ingredientForm="ngForm"
+  (ngSubmit)="addIngredient(ingredientForm)"
+  class="m-dl-3 bg-dl-gray-1 w-dl-15"
+>
+  <div class="text-dl-gray-10 p-dl-2 space-x-3">
+    <span>Ingredient Name</span>
+    <input
+      class="p-dl-1 bg-dl-gray-9 text-dl-gray-1 text-dl-3 font-dl-3 text-center"
+      #ingredientName="ngModel"
+      required
+      minlength="5"
+      maxLength="25"
+      [(ngModel)]="ingredient.name"
+      type="text"
+      name="ingredientName"
+    />
+    <div *ngIf="ingredientName.errors?.['minlength'] && ingredientName.dirty">name must be at least 5 characters long</div>
+  </div>
+  <div class="text-dl-gray-10 p-dl-2 space-x-3">
+    <span>Lifespan in Days</span>
+    <input
+      class="p-dl-1 bg-dl-gray-9 text-dl-gray-1 text-dl-3 font-dl-3 text-center"
+      #ingredientLifespanDays="ngModel"
+      required
+      [(ngModel)]="ingredient.lifespanDays"
+      type="number"
+      name="ingredientLifespanDays"
+    />
+  </div>
+  <div class="text-dl-gray-10 p-dl-2 space-x-3">
+    <span>Brand Name</span>
+    <input
+      class="p-dl-1 bg-dl-gray-9 text-dl-gray-1 text-dl-3 font-dl-3 text-center"
+      required
+      [(ngModel)]="ingredient.brand"
+      type="text"
+      name="ingredientBrand"
+    />
+  </div>
+  <div class="text-dl-gray-10 p-dl-2 space-x-3">
+    <span>Purchase Unit</span>
+    <input
+      class="p-dl-1 bg-dl-gray-9 text-dl-gray-1 text-dl-3 font-dl-3 text-center"
+      required
+      [(ngModel)]="ingredient.purchaseUnit"
+      type="text"
+      name="ingredientPurchaseUnit"
+    />
+  </div>
+  <div class="text-dl-gray-10 p-dl-2 space-x-3">
+    <span>Gram Ratio</span>
+    <input
+      class="p-dl-1 bg-dl-gray-9 text-dl-gray-1 text-dl-3 font-dl-3 text-center"
+      required
+      [(ngModel)]="ingredient.gramRatio"
+      type="number"
+      name="ingredientGramRatio"
+    />
+  </div>
+  <div>
+    <button
+      class="p-dl-2 text-dl-gray-10 hover:text-dl-blue-9"
+      [disabled]="ingredientForm.invalid"
+      type="submit"
+    >
+      Submit
+    </button>
+  </div>
+</form>

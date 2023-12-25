@@ -1,0 +1,33 @@
+<div
+  class="relative mx-auto max-w-7xl bg-white pt-dl-5"
+>
+  <!-- View Header -->
+  <div
+    class="flex border-b border-dl-grey-6 h-full"
+  >
+    <!-- Ingredients View -->
+    <div class="absolute flex items-center ml-dl-5" *ngIf="(view$ | async) === 'ingredients'">
+      <h1 (click)="updateView('ingredients')" class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
+          Ingredients
+      </h1>
+      <h2 (click)="updateView('tools')" class="ml-dl-4 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-4">
+          Tools
+      </h2>
+    </div>
+    <div class="absolute flex items-center ml-dl-5" *ngIf="(view$ | async) === 'tools'">
+      <h1 (click)="updateView('tools')" class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
+          Tools
+      </h1>
+      <h2 (click)="updateView('ingredients')" class="ml-dl-4 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-4">
+          Ingredients
+      </h2>
+    </div>
+
+  <!-- Main content -->
+  <main class="w-full">
+    <ng-container [ngSwitch]="view$ | async">
+      <dl-tools *ngSwitchCase="'tools'"></dl-tools>
+      <dl-ingredients *ngSwitchCase="'ingredients'"></dl-ingredients>
+    </ng-container>
+  </main>
+</div>

@@ -7,9 +7,10 @@
   "rules": {
     "no-console": "warn",
     "eqeqeq": "error",
-    "max-len": ["error", { "code": 180 }]
+    "max-len": ["error", { "code": 300 }]
   },
   "env": {
+    "es2020": true,
     "node": true,
     "es6": true
   }

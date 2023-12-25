@@ -1,0 +1,47 @@
+<div
+  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+>
+  <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
+    <div class="mb-dl-4 text-center">
+      <p class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4">Shopping List</p>
+    </div>
+
+    <!--List of Ingredients and needed quantities-->
+    <div class="mb-dl-5 mx-dl-2 flex flex-col">
+      <div class="mb-dl-2 flex w-dl-15 flex-wrap items-start">
+        <ng-container *ngFor="let item of shoppingList.ingredients">
+          <div
+            class="inline-block"
+          >
+            <div
+              class="mr-dl-3 mt-dl-2 inline-flex whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-4 text-dl-grey-2"
+            >
+              <span class="font-dl-3"
+                >{{ item.ingredientName }}&nbsp;&nbsp;&nbsp;</span
+              >
+              <span class="font-dl-2">
+                {{ item.quantity }}&nbsp;{{
+                  item.unit
+                }}</span
+              >
+              <span *ngIf="item.purchaseAfter" class="font-dl-2 italic text-dl-grey-2"
+                >&nbsp;&nbsp;&nbsp;Buy After {{item.purchaseAfter}}&nbsp;&nbsp;</span
+              >
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Cancel, Submit Buttons-->
+    <div class="mt-dl-3 flex flex-row-reverse">
+      <button
+        type="button"
+        class="mt-dl-3 inline-flex w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-3 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+        (click)="onCancel()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>

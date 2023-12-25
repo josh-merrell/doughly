@@ -1,0 +1,52 @@
+<div class="relative flex h-full w-full py-dl-2">
+  <div class="flex items-center px-dl-4">
+    <!-- Image -->
+    <div>
+      <img
+        *ngIf="friendRequest.imageURL"
+        class="h-dl-6 w-dl-6 rounded-full"
+        [src]="friendRequest.imageURL"
+        alt="friendRequest profile image"
+      />
+      <span
+        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
+        *ngIf="
+          !friendRequest.imageURL &&
+          friendRequest.nameFirst &&
+          friendRequest.nameLast
+        "
+      >
+        <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
+          initials
+        }}</span>
+      </span>
+    </div>
+  </div>
+  <!-- Name -->
+  <div class="flex text-dl-6 font-dl-3 text-dl-grey-2">
+    <span>{{ friendRequest.nameFirst }}</span>
+    <span class="mb-dl-2 ml-dl-1">{{ friendRequest.nameLast }}</span>
+  </div>
+
+  <!-- Request Buttons -->
+  <div class="absolute bottom-3 right-10 flex justify-end">
+    <!-- Accept Button-->
+    <button
+      type="button"
+      class="block h-dl-4 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out "
+      (click)="onAcceptRequest()"
+    >
+      Accept
+    </button>
+
+    <!-- Decline Button-->
+    <button
+      type="button"
+      id="declineRequest"
+      class="ml-dl-3 block h-dl-4 whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 text-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 bg-white shadow-sm transition-all duration-200 ease-in-out"
+      (click)="onDeclineRequest()"
+    >
+      Decline
+    </button>
+  </div>
+</div>

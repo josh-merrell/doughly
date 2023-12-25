@@ -1,0 +1,142 @@
+<div class="relative w-full">
+  <!-- header -->
+  <div class="mx-dl-5 mt-dl-7 flex justify-between">
+    <div class="flex flex-col ml-dl-2 ">
+      <p class="mt-dl-3 text-dl-6 font-dl-2 text-dl-grey-4">
+        {{ totalInStock$ | async }} of {{ (tools$ | async)?.length }} In Stock
+      </p>
+    </div>
+
+    <!-- Add Button -->
+    <button
+      id="test-button"
+      type="button"
+      class="block whitespace-nowrap rounded-dl-1 mt-dl-5 h-dl-4 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      (click)="onAddTool()"
+    >
+      Add Tool
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="flex flex-col items-center">
+    <!-- Search Bar -->
+    <div class="mb-dl-4 mt-dl-7 flex">
+      <svg
+        width="35"
+        height="35"
+        viewBox="0 0 15 15"
+        class="pt-dl-1 text-dl-grey-3"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z"
+          fill="currentColor"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+      <input
+        #searchInput
+        type="text"
+        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+        [placeholder]="
+          !searchFilters.length
+            ? 'Search by Tool Name...'
+            : searchFilters[0].operand1
+        "
+        (input)="updateSearchFilter(searchInput.value)"
+      />
+    </div>
+  </div>
+
+  <!-- Up Arrow for Tool Card Scrolling -->
+  <div
+    class="absolute left-1/2 top-36 -translate-x-1/2 rotate-180 transform"
+    *ngIf="showToolUpArrow"
+  >
+    <svg
+      class="throb-icon text-dl-blue-6 transition-transform duration-300"
+      width="45"
+      height="45"
+      viewBox="0 0 15 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
+        fill="currentColor"
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+      ></path>
+    </svg>
+  </div>
+  <div class="mb-dl-4 h-dl-2"></div>
+
+  <!-- Tool Rows -->
+  <div
+    #recipeContainer
+    class="tool-container mb-dl-3 flex h-full max-h-dl-20 w-full flex-col items-center overflow-auto scroll-smooth"
+    (scroll)="checkToolScroll($event.target)"
+  >
+    <div
+      *ngFor="let row of displayedRows$ | async"
+      class="flex w-full justify-between px-dl-5"
+    >
+      <!-- Tool Card -->
+      <div
+        *ngFor="let tool of row"
+        class="tool-card relative my-dl-2 mx-dl-2 flex h-dl-8 w-dl-12 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
+        [ngClass]="{
+          'bg-dl-grey-8 ': tool.totalStock === 0,
+          'bg-dl-grey-10': tool.totalStock > 0
+        }"
+        (click)="toolCardClick(tool)"
+        (touchstart)="toolCardTouchStart(tool.toolID)"
+        (touchend)="toolCardTouchEnd()"
+      >
+        <p class="text-dl-7 font-dl-3 text-dl-grey-2">
+          {{ tool.name }}
+        </p>
+        <p
+          *ngIf="tool.totalStock > 0"
+          class="text-dl-6 font-dl-2 text-dl-grey-2"
+        >
+          {{ tool.totalStock }} {{ tool.purchaseUnit }}
+        </p>
+        <p
+          *ngIf="tool.totalStock === 0"
+          class="text-dl-5 font-dl-2 italic text-dl-grey-1"
+        >
+          Out of Stock
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!--Empty Div to give space for arrow icon-->
+  <div class="mt-dl-2 h-dl-3"></div>
+
+  <!-- Down Arrow for Tool Card Scrolling -->
+  <div
+    class="absolute bottom-0 left-1/2 -translate-x-1/2 transform"
+    *ngIf="showToolDownArrow"
+  >
+    <svg
+      class="throb-icon text-dl-blue-6 transition-transform duration-300"
+      width="45"
+      height="45"
+      viewBox="0 0 15 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
+        fill="currentColor"
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+      ></path>
+    </svg>
+  </div>
+</div>

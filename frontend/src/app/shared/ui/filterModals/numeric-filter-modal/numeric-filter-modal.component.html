@@ -1,0 +1,86 @@
+<div
+  class="max-w-dl-14 sm:max-w-dl-14 relative my-dl-0 transform overflow-hidden bg-white px-dl-4 text-left transition-all sm:w-dl-12 sm:p-dl-6"
+>
+  <h3
+    class="leading-dl-4 mb-dl-3 text-dl-4 font-dl-2 text-dl-blue-4"
+    id="addNumericFilterTitle"
+  >
+    {{ data.filterOption.name }}...
+  </h3>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="relative flex flex-col">
+      <div
+        class="relative flex w-dl-13 max-w-full flex-col pb-dl-2"
+        *ngFor="let option of options; let i = index"
+      >
+        <div class="flex items-center">
+          <input
+            type="radio"
+            formControlName="selectedOption"
+            name="selectedOption"
+            [value]="option"
+            id="{{ option }}"
+            class="mr-2 h-3 w-3 text-dl-blue-6 focus:ring-dl-blue-6"
+          />
+          <label class="ml-dl-2 text-dl-2 text-dl-grey-4" for="{{ option }}">{{
+            option
+          }}</label>
+        </div>
+        <input
+          *ngIf="
+            form.get('selectedOption')?.value === option &&
+            option !== FilterOperatorEnum.hasAnyValue
+          "
+          class="mt-dl-2 block h-dl-4 w-full rounded-dl-2 border-2 border-dl-blue-8 text-dl-2 font-dl-3 text-dl-grey-1 ring-dl-blue-6 focus:border-dl-blue-6 focus:ring-transparent"
+          type="number"
+          formControlName="inputValue"
+        />
+        <p
+          *ngIf="
+            form.get('selectedOption')?.value === option &&
+            (option === FilterOperatorEnum.isBetween ||
+              option === FilterOperatorEnum.isNotBetween)
+          "
+          class="text-dl-2 text-dl-grey-4"
+        >
+          and...
+        </p>
+        <input
+          *ngIf="
+            form.get('selectedOption')?.value === option &&
+            (option === FilterOperatorEnum.isBetween ||
+              option === FilterOperatorEnum.isNotBetween)
+          "
+          class="mt-dl-2 block h-dl-4 w-full rounded-dl-2 border-2 border-dl-blue-8 text-dl-2 font-dl-3 text-dl-grey-1 ring-dl-blue-6 focus:border-dl-blue-6 focus:ring-transparent"
+          type="number"
+          formControlName="inputValue2"
+        />
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <button
+        type="button"
+        class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white sm:ml-dl-4"
+        [ngClass]="{
+          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+            form.valid && !form.pristine,
+          'bg-dl-grey-7': !form.valid || form.pristine
+        }"
+        [disabled]="!form.valid || form.pristine"
+        (click)="onSubmit()"
+      >
+        Apply Filter
+      </button>
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-4 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+      >
+        Cancel
+      </button>
+    </div>
+    <!---->
+  </form>
+</div>

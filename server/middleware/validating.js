@@ -1,20 +1,17 @@
 const Ajv = require('ajv');
 const ajv = new Ajv();
 
-function routeValidator(schema, location = 'body', paramID = '') {
+function routeValidator(schema, dataToValidate) {
   return (req, res, next) => {
-    const dataToValidate = location === 'query' ? req.query : req.body;
-    const valid = ajv.validate(schema, dataToValidate);
+    const data = req[dataToValidate];
+    const valid = ajv.validate(schema, data);
     if (!valid) {
-      global.logger.info(`Invalid ${location} error: ${ajv.errorsText()}`);
+      global.logger.info(`Invalid data in request ${dataToValidate}: ${ajv.errorsText()}`);
       return res.status(422).json(ajv.errors);
     }
-    if (paramID) {
-      const paramIDValid = ajv.validate(schema, { [paramID]: req.params[paramID] });
-      if (!paramIDValid) {
-        global.logger.info(`Invalid ${location} error: ${ajv.errorsText()}`);
-        return res.status(422).json(ajv.errors);
-      }
+    if (!req.userID) {
+      global.logger.info(`No userID in request`);
+      return res.status(401).json({ message: 'Unauthorized' });
     }
     next();
   };
