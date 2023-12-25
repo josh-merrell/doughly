@@ -30,12 +30,16 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
           # SSH into the EC2 instance and run commands
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
             # Stop the server using PM2
             pm2 stop ${APP_NAME} || true  # '|| true' to ignore if the app isn't found
 
             # Clean the directory
-            rm -rf ${DEST_PATH}/*
+            
+            if [ -n "${DEST_PATH}" ]; then
+              rm -rf ${DEST_PATH}/*
+            fi
+
 
             # Exit SSH session
           EOF
@@ -52,7 +56,7 @@ jobs:
             npm install
 
             # Start the server using PM2
-            pm2 start app.js --name "${APP_NAME}"  # Replace 'app.js' with your entry file
+            pm2 start server.js --name "${APP_NAME}"
 
             # Save the PM2 process list to restart on server reboot
             pm2 save
