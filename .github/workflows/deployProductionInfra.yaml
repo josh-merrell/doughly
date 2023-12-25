@@ -14,10 +14,10 @@ jobs:
 
     - name: Set up SSH Known Hosts
       env:
-        EC2_SSH_FINGERPRINT: ${{ secrets.EC2_SSH_FINGERPRINT }}
+        EC2_PUBLIC_KEY: ${{ secrets.API_EC2_PUBLIC_KEY }}  # Use the RSA public key
       run: |
         mkdir -p ~/.ssh
-        echo "$EC2_SSH_FINGERPRINT" >> ~/.ssh/known_hosts
+        echo "$EC2_PUBLIC_KEY" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
 
     - name: Copy Server Directory to EC2
