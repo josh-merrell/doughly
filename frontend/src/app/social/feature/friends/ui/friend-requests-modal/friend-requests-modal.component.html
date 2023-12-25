@@ -1,0 +1,16 @@
+<div
+  class="flex flex-col items-center relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+>
+  <h3 class="leading-dl-4 text-dl-5 font-dl-3 text-dl-grey-3">
+    Friend Requests
+  </h3>
+  <div class="flex flex-col w-full items-center max-h-dl-21">
+    <dl-request-card
+      *ngFor="let request of friendRequests(); let i = index"
+      class=" py-dl-3 h-dl-8 w-full border-dl-grey-9"
+      [ngClass]="{ 'border-b-2': i !== friendRequests().length - 1 }"
+      [friendRequest]="request"
+      (click)="onFriendCardClicked($event, request)"
+    ></dl-request-card>
+  </div>
+</div>

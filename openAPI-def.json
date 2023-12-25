@@ -586,6 +586,498 @@
         }
       }
     },
+    "/employees": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Retrieve a list of employees based on query parameters",
+        "operationId": "getEmployees",
+        "parameters": [
+          {
+            "name": "employeeIDs",
+            "in": "query",
+            "description": "Array of employee IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "personID",
+            "in": "query",
+            "description": "Person ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "payPerHourRange",
+            "in": "query",
+            "description": "Array of pay per hour range",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "double"
+              }
+            }
+          },
+          {
+            "name": "hireDateRange",
+            "in": "query",
+            "description": "Array of hire date range",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "style": "form",
+              "explode": true
+            }
+          },
+          {
+            "name": "position",
+            "in": "query",
+            "description": "Employee position",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Employee status (active, inactive, or leave)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive",
+                "leave"
+              ]
+            }
+          },
+          {
+            "name": "nameFirst",
+            "in": "query",
+            "description": "First name of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nameLast",
+            "in": "query",
+            "description": "Last name of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email address of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Phone number of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "description": "City of the employee",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "State of the employee",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "AL",
+                "AK",
+                "AZ",
+                "AR",
+                "AS",
+                "CA",
+                "CO",
+                "CT",
+                "DE",
+                "DC",
+                "FL",
+                "GA",
+                "GU",
+                "HI",
+                "ID",
+                "IL",
+                "IN",
+                "IA",
+                "KS",
+                "KY",
+                "LA",
+                "ME",
+                "MD",
+                "MA",
+                "MI",
+                "MN",
+                "MS",
+                "MO",
+                "MT",
+                "NE",
+                "NV",
+                "NH",
+                "NJ",
+                "NM",
+                "NY",
+                "NC",
+                "ND",
+                "MP",
+                "OH",
+                "OK",
+                "OR",
+                "PA",
+                "PR",
+                "RI",
+                "SC",
+                "SD",
+                "TN",
+                "TX",
+                "TT",
+                "UT",
+                "VT",
+                "VA",
+                "VI",
+                "WA",
+                "WV",
+                "WI",
+                "WY"
+              ]
+            }
+          },
+          {
+            "name": "zip",
+            "in": "query",
+            "description": "ZIP code of the employee",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Create a new employee",
+        "operationId": "createEmployee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "payPerHour",
+                  "hireDate",
+                  "position",
+                  "nameFirst",
+                  "email",
+                  "phone",
+                  "address1",
+                  "city",
+                  "state",
+                  "zip"
+                ],
+                "properties": {
+                  "payPerHour": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "hireDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "position": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "inactive",
+                      "leave"
+                    ],
+                    "default": "active"
+                  },
+                  "nameFirst": {
+                    "type": "string"
+                  },
+                  "nameLast": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "address1": {
+                    "type": "string"
+                  },
+                  "address2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "AL",
+                      "AK",
+                      "AZ",
+                      "AR",
+                      "CA",
+                      "CO",
+                      "CT",
+                      "DE",
+                      "DC",
+                      "FL",
+                      "GA",
+                      "HI",
+                      "ID",
+                      "IL",
+                      "IN",
+                      "IA",
+                      "KS",
+                      "KY",
+                      "LA",
+                      "ME",
+                      "MD",
+                      "MA",
+                      "MI",
+                      "MN",
+                      "MS",
+                      "MO",
+                      "MT",
+                      "NE",
+                      "NV",
+                      "NH",
+                      "NJ",
+                      "NM",
+                      "NY",
+                      "NC",
+                      "ND",
+                      "OH",
+                      "OK",
+                      "OR",
+                      "PA",
+                      "RI",
+                      "SC",
+                      "SD",
+                      "TN",
+                      "TX",
+                      "UT",
+                      "VT",
+                      "VA",
+                      "WA",
+                      "WV",
+                      "WI",
+                      "WY"
+                    ]
+                  },
+                  "zip": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/employees/{employeeID}": {
+      "patch": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Update an existing employee",
+        "operationId": "updateEmployee",
+        "parameters": [
+          {
+            "name": "employeeID",
+            "in": "path",
+            "description": "Employee ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payPerHour": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "hireDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "position": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "inactive",
+                      "leave"
+                    ]
+                  },
+                  "nameFirst": {
+                    "type": "string"
+                  },
+                  "nameLast": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "address1": {
+                    "type": "string"
+                  },
+                  "address2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "AL",
+                      "AK",
+                      "AZ",
+                      "AR",
+                      "CA",
+                      "CO",
+                      "CT",
+                      "DE",
+                      "DC",
+                      "FL",
+                      "GA",
+                      "HI",
+                      "ID",
+                      "IL",
+                      "IN",
+                      "IA",
+                      "KS",
+                      "KY",
+                      "LA",
+                      "ME",
+                      "MD",
+                      "MA",
+                      "MI",
+                      "MN",
+                      "MS",
+                      "MO",
+                      "MT",
+                      "NE",
+                      "NV",
+                      "NH",
+                      "NJ",
+                      "NM",
+                      "NY",
+                      "NC",
+                      "ND",
+                      "OH",
+                      "OK",
+                      "OR",
+                      "PA",
+                      "RI",
+                      "SC",
+                      "SD",
+                      "TN",
+                      "TX",
+                      "UT",
+                      "VT",
+                      "VA",
+                      "WA",
+                      "WV",
+                      "WI",
+                      "WY"
+                    ]
+                  },
+                  "zip": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Delete an employee",
+        "operationId": "deleteEmployee",
+        "parameters": [
+          {
+            "name": "employeeID",
+            "in": "path",
+            "description": "Employee ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
     "/orders": {
       "get": {
         "tags": [
@@ -624,30 +1116,45 @@
             }
           },
           {
-            "name": "deliveryDate",
+            "name": "scheduledDeliveryTimeRange",
             "in": "query",
-            "description": "Delivery date (YYYY-MM-DD format)",
+            "description": "Range of scheduled delivery dates to filter by (YYYY-MM-DD format)",
             "schema": {
-              "type": "string",
-              "format": "date"
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "style": "form",
+              "explode": true
             }
           },
           {
-            "name": "createdDate",
+            "name": "createdTimeRange",
             "in": "query",
-            "description": "Created date (YYYY-MM-DD format)",
+            "description": "Range of create dates to filter by (YYYY-MM-DD format)",
             "schema": {
-              "type": "string",
-              "format": "date"
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "style": "form",
+              "explode": true
             }
           },
           {
-            "name": "fulfilledDate",
+            "name": "fulfilledTimeRange",
             "in": "query",
-            "description": "Fulfilled date (YYYY-MM-DD format)",
+            "description": "Range of fulfillment dates to filter by (YYYY-MM-DD format)",
             "schema": {
-              "type": "string",
-              "format": "date"
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "style": "form",
+              "explode": true
             }
           },
           {
@@ -694,15 +1201,15 @@
                       "clientID": {
                         "type": "integer"
                       },
-                      "deliveryDate": {
+                      "scheduledDeliveryTime": {
                         "type": "string",
                         "format": "date"
                       },
-                      "createdDate": {
+                      "createdTime": {
                         "type": "string",
                         "format": "date"
                       },
-                      "fulfilledDate": {
+                      "fulfilledTime": {
                         "type": "string",
                         "format": "date"
                       },
@@ -748,16 +1255,15 @@
                 "type": "object",
                 "required": [
                   "clientID",
-                  "deliveryDate",
+                  "scheduledDeliveryTime",
                   "fulfillment",
-                  "invoiceID",
                   "name"
                 ],
                 "properties": {
                   "clientID": {
                     "type": "integer"
                   },
-                  "deliveryDate": {
+                  "scheduledDeliveryTime": {
                     "type": "string",
                     "format": "date"
                   },
@@ -767,9 +1273,6 @@
                       "pickup",
                       "delivery"
                     ]
-                  },
-                  "invoiceID": {
-                    "type": "integer"
                   },
                   "name": {
                     "type": "string"
@@ -817,65 +1320,62 @@
         "parameters": [
           {
             "name": "orderID",
+            "in": "path",
             "description": "ID of the order to update",
             "required": true,
             "schema": {
               "type": "integer"
             }
-          },
-          {
-            "name": "deliveryDate",
-            "in": "query",
-            "description": "Updated delivery date (YYYY-MM-DD format)",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "description": "Updated description",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "Updated name",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "fulfillment",
-            "in": "query",
-            "description": "Updated fulfillment type",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "pickup",
-                "delivery"
-              ]
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Updated status",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "created",
-                "inProgress",
-                "readyForDelivery",
-                "delivered",
-                "cancelled"
-              ]
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scheduledDeliveryTime": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Updated delivery date (YYYY-MM-DD format)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Updated description"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Updated name"
+                  },
+                  "fulfillment": {
+                    "type": "string",
+                    "enum": [
+                      "pickup",
+                      "delivery"
+                    ],
+                    "description": "Updated fulfillment type"
+                  },
+                  "fulfilledTime": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Updated fulfilled date (YYYY-MM-DD format)"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "created",
+                      "inProgress",
+                      "readyForDelivery",
+                      "delivered",
+                      "cancelled"
+                    ],
+                    "description": "Updated status"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Order updated successfully",
@@ -890,15 +1390,15 @@
                     "clientID": {
                       "type": "integer"
                     },
-                    "deliveryDate": {
+                    "scheduledDeliveryTime": {
                       "type": "string",
                       "format": "date"
                     },
-                    "createdDate": {
+                    "createdTime": {
                       "type": "string",
                       "format": "date"
                     },
-                    "fulfilledDate": {
+                    "fulfilledTime": {
                       "type": "string",
                       "format": "date"
                     },
@@ -968,16 +1468,29 @@
         }
       }
     },
-    "/orderStockProducts": {
+    "/orders/items/stock": {
       "get": {
         "tags": [
           "Orders"
         ],
         "summary": "Get Stock Product <> Order associations",
-        "operationId": "getOrderStockProducts",
+        "operationId": "getOrderStockItems",
         "parameters": [
           {
-            "name": "orderIDs",
+            "name": "stockItemIDs",
+            "in": "query",
+            "description": "IDs of the order stock item to filter by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "style": "form",
+            "explode": false
+          },
+          {
+            "name": "orderID",
             "in": "query",
             "description": "ID of the order",
             "schema": {
@@ -993,22 +1506,13 @@
             }
           },
           {
-            "name": "orderStockID",
+            "name": "stockStatus",
             "in": "query",
-            "description": "ID of the order stock",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Status of the order stock product",
+            "description": "Status of the order stock item",
             "schema": {
               "type": "string",
               "enum": [
                 "sufficient",
-                "conflict",
                 "insufficient"
               ]
             }
@@ -1024,22 +1528,27 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "stockItemID": {
+                        "type": "integer"
+                      },
                       "orderID": {
                         "type": "integer"
                       },
                       "stockProductID": {
                         "type": "integer"
                       },
-                      "orderStockID": {
-                        "type": "integer"
-                      },
-                      "status": {
+                      "stockStatus": {
                         "type": "string",
                         "enum": [
                           "sufficient",
-                          "confict",
                           "insufficient"
                         ]
+                      },
+                      "unitIncome": {
+                        "type": "number"
+                      },
+                      "quantity": {
+                        "type": "integer"
                       }
                     }
                   }
@@ -1059,8 +1568,8 @@
         "tags": [
           "Orders"
         ],
-        "summary": "Add an amount of a Stock Product to an order",
-        "operationId": "createOrderStockProduct",
+        "summary": "Add Stock Item to an order",
+        "operationId": "createOrderStockItem",
         "requestBody": {
           "required": true,
           "content": {
@@ -1093,7 +1602,7 @@
         },
         "responses": {
           "201": {
-            "description": "Order stock product created successfully",
+            "description": "Order stock item created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1105,16 +1614,21 @@
                     "stockProductID": {
                       "type": "integer"
                     },
-                    "orderStockID": {
+                    "stockItemID": {
                       "type": "integer"
                     },
-                    "status": {
+                    "stockStatus": {
                       "type": "string",
                       "enum": [
                         "sufficient",
-                        "confict",
                         "insufficient"
                       ]
+                    },
+                    "unitIncome": {
+                      "type": "number"
+                    },
+                    "quantity": {
+                      "type": "integer"
                     }
                   }
                 }
@@ -1130,18 +1644,100 @@
         }
       }
     },
-    "/orderStockProducts/{orderStockID}": {
+    "/orders/items/stock/{stockItemID}": {
+      "patch": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Update an Order Stock Item",
+        "operationId": "updateOrderStockItem",
+        "parameters": [
+          {
+            "name": "stockItemID",
+            "in": "path",
+            "description": "ID of the Order Stock Item to update",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "unitIncome": {
+                    "type": "number",
+                    "description": "Updated income per unit for this order"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "description": "Updated quantity of this order item"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order Stock Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stockItemID": {
+                      "type": "integer"
+                    },
+                    "orderID": {
+                      "type": "integer"
+                    },
+                    "stockProductID": {
+                      "type": "integer"
+                    },
+                    "unitIncome": {
+                      "type": "number"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "stockStatus": {
+                      "type": "string",
+                      "enum": [
+                        "sufficient",
+                        "insufficient"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Orders"
         ],
-        "summary": "Delete a Stock Product quantity association of an Order",
-        "operationId": "deleteOrderStockProduct",
+        "summary": "Delete a Stock Item quantity association from an Order",
+        "operationId": "deleteOrderStockItem",
         "parameters": [
           {
-            "name": "orderStockID",
+            "name": "stockItemID",
             "in": "path",
-            "description": "ID of the order stock product to delete",
+            "description": "ID of the order stock item to delete",
             "required": true,
             "schema": {
               "type": "integer"
@@ -1150,13 +1746,13 @@
         ],
         "responses": {
           "204": {
-            "description": "Order Stock Product association deleted successfully"
+            "description": "Order Stock Item deleted successfully"
           },
           "400": {
             "description": "Bad request"
           },
           "404": {
-            "description": "Order stock product not found"
+            "description": "Order stock item not found"
           },
           "500": {
             "description": "Internal server error"
@@ -1173,16 +1769,17 @@
         "operationId": "getStockProducts",
         "parameters": [
           {
-            "name": "stockProductID",
+            "name": "stockProductIDs",
             "in": "query",
             "description": "filter on ID(s) of stock product(s)",
             "schema": {
               "type": "array",
               "items": {
-                "type": "integer",
-                "minimum": 1
+                "type": "integer"
               }
-            }
+            },
+            "style": "form",
+            "explode": false
           },
           {
             "name": "productName",
@@ -1219,6 +1816,9 @@
                       },
                       "recipeID": {
                         "type": "integer"
+                      },
+                      "yield": {
+                        "type": "integer"
                       }
                     }
                   }
@@ -1248,7 +1848,8 @@
                 "type": "object",
                 "required": [
                   "recipeID",
-                  "productName"
+                  "productName",
+                  "yield"
                 ],
                 "properties": {
                   "recipeID": {
@@ -1256,6 +1857,9 @@
                   },
                   "productName": {
                     "type": "string"
+                  },
+                  "yield": {
+                    "type": "integer"
                   }
                 }
               }
@@ -1277,6 +1881,9 @@
                       "type": "string"
                     },
                     "recipeID": {
+                      "type": "integer"
+                    },
+                    "yield": {
                       "type": "integer"
                     }
                   }
@@ -1355,6 +1962,9 @@
                 "properties": {
                   "productName": {
                     "type": "string"
+                  },
+                  "yield": {
+                    "type": "integer"
                   }
                 }
               }
@@ -1376,6 +1986,9 @@
                       "type": "string"
                     },
                     "recipeID": {
+                      "type": "integer"
+                    },
+                    "yield": {
                       "type": "integer"
                     }
                   }
@@ -1404,7 +2017,7 @@
         "operationId": "getProductStocks",
         "parameters": [
           {
-            "name": "stockID",
+            "name": "productStockIDs",
             "in": "query",
             "description": "filter on ID(s) of product stock(s)",
             "schema": {
@@ -1424,7 +2037,7 @@
             }
           },
           {
-            "name": "produced",
+            "name": "producedDate",
             "in": "query",
             "description": "Date of production (YYYY-MM-DD format)",
             "schema": {
@@ -1463,13 +2076,13 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "stockID": {
+                      "productStockID": {
                         "type": "integer"
                       },
                       "stockProductID": {
                         "type": "integer"
                       },
-                      "produced": {
+                      "producedDate": {
                         "type": "string",
                         "format": "date"
                       },
@@ -1511,19 +2124,15 @@
                 "type": "object",
                 "required": [
                   "stockProductID",
-                  "produced",
-                  "daysRemaining"
+                  "producedDate"
                 ],
                 "properties": {
                   "stockProductID": {
                     "type": "integer"
                   },
-                  "produced": {
+                  "producedDate": {
                     "type": "string",
                     "format": "date"
-                  },
-                  "daysRemaining": {
-                    "type": "integer"
                   }
                 }
               }
@@ -1538,13 +2147,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "stockID": {
+                    "productStockID": {
                       "type": "integer"
                     },
                     "stockProductID": {
                       "type": "integer"
                     },
-                    "produced": {
+                    "producedDate": {
                       "type": "string",
                       "format": "date"
                     },
@@ -1572,7 +2181,7 @@
         }
       }
     },
-    "/productStocks/{stockID}": {
+    "/productStocks/{productStockID}": {
       "delete": {
         "tags": [
           "Stock Products"
@@ -1581,7 +2190,7 @@
         "operationId": "deleteProductStock",
         "parameters": [
           {
-            "name": "stockID",
+            "name": "productStockID",
             "in": "path",
             "description": "ID of the product stock to delete",
             "required": true,
@@ -1622,20 +2231,94 @@
             "description": "Internal server error"
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "Stock Products"
+        ],
+        "operationId": "updateProductStock",
+        "parameters": [
+          {
+            "name": "productStockID",
+            "in": "path",
+            "description": "The ID of the product stock to update.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "producedDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The updated produced date for this order task"
+                  },
+                  "daysRemaining": {
+                    "type": "integer",
+                    "description": "The number of days remaining before this product expires"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "fresh",
+                      "expired"
+                    ],
+                    "description": "The updated current status of this product stock"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "producedDate": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "daysRemaining": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "fresh",
+                        "expired"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/orderTaskProducts": {
+    "/orders/items/task": {
       "get": {
         "tags": [
           "Orders"
         ],
-        "summary": "Retrieve order task products",
-        "operationId": "getOrderTaskProducts",
+        "summary": "Retrieve order task items",
+        "operationId": "getOrderTaskItems",
         "parameters": [
           {
-            "name": "orderTaskID",
+            "name": "taskItemIDs",
             "in": "query",
-            "description": "Filter on ID(s) of orderTaskProducts.",
+            "description": "Filter on ID(s) of orderTaskItems.",
             "required": false,
             "schema": {
               "type": "array",
@@ -1666,15 +2349,6 @@
             }
           },
           {
-            "name": "productName",
-            "in": "query",
-            "description": "The name of the product.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "status",
             "in": "query",
             "description": "The status of the order task product.",
@@ -1700,9 +2374,9 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "orderTaskID": {
+                      "taskItemID": {
                         "type": "integer",
-                        "description": "The ID of the order task."
+                        "description": "The ID of the order task item."
                       },
                       "orderID": {
                         "type": "integer",
@@ -1711,10 +2385,6 @@
                       "recipeID": {
                         "type": "integer",
                         "description": "The ID of the recipe this task will follow."
-                      },
-                      "productName": {
-                        "type": "string",
-                        "description": "The name of product this task will produce."
                       },
                       "unitIncome": {
                         "type": "integer",
@@ -1742,8 +2412,8 @@
         "tags": [
           "Orders"
         ],
-        "summary": "Add a task product to an order",
-        "operationId": "addOrderStockProduct",
+        "summary": "Add a task item to an order",
+        "operationId": "addOrderStockItem",
         "requestBody": {
           "required": true,
           "content": {
@@ -1753,7 +2423,6 @@
                 "required": [
                   "orderID",
                   "recipeID",
-                  "productName",
                   "quantity",
                   "unitIncome"
                 ],
@@ -1766,17 +2435,13 @@
                     "type": "integer",
                     "description": "The ID of the recipe."
                   },
-                  "productName": {
-                    "type": "string",
-                    "description": "The name of the product."
-                  },
                   "quantity": {
                     "type": "integer",
-                    "description": "The quantity of the product."
+                    "description": "The quantity of the task product."
                   },
                   "unitIncome": {
                     "type": "integer",
-                    "description": "The unit income of the product."
+                    "description": "The unit income of the task product."
                   }
                 }
               }
@@ -1791,9 +2456,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "orderTaskID": {
+                    "taskItemID": {
                       "type": "integer",
-                      "description": "The ID of the order task."
+                      "description": "The ID of the order task item."
                     },
                     "orderID": {
                       "type": "integer",
@@ -1803,17 +2468,13 @@
                       "type": "integer",
                       "description": "The ID of the recipe this task will follow."
                     },
-                    "productName": {
-                      "type": "string",
-                      "description": "The name of product this task will produce."
-                    },
                     "unitIncome": {
                       "type": "integer",
                       "description": "Gross Income per unit from this order task"
                     },
                     "status": {
                       "type": "string",
-                      "description": "The status of the order task.",
+                      "description": "The status of the order task item.",
                       "enum": [
                         "created",
                         "inProgress",
@@ -1829,17 +2490,97 @@
         }
       }
     },
-    "/orderTaskProducts/{orderTaskID}": {
+    "/orders/items/task/{taskItemID}": {
+      "patch": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "updateOrderTaskItem",
+        "parameters": [
+          {
+            "name": "taskItemID",
+            "in": "path",
+            "description": "The ID of the order task item.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "unitIncome": {
+                    "type": "number",
+                    "description": "The updated income per unit for this order task item"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "description": "The updated number of products needed for this order task item"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "created",
+                      "inProgress",
+                      "done",
+                      "removed"
+                    ],
+                    "description": "The updated current status of this order task item"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "taskItemID": {
+                      "type": "integer"
+                    },
+                    "unitIncome": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "created",
+                        "inProgress",
+                        "done",
+                        "removed"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Orders"
         ],
-        "operationId": "deleteOrderTaskProduct",
+        "operationId": "deleteOrderTaskItem",
         "parameters": [
           {
-            "name": "orderTaskID",
+            "name": "taskItemID",
             "in": "path",
-            "description": "The ID of the order task.",
+            "description": "The ID of the order task item to delete.",
             "required": true,
             "schema": {
               "type": "integer"
@@ -1861,7 +2602,7 @@
         "operationId": "getInvoices",
         "parameters": [
           {
-            "name": "invoiceID",
+            "name": "invoiceIDs",
             "in": "query",
             "description": "The ID(s) of the invoice(s). Comma-separated list of integers.",
             "required": false,
@@ -1908,6 +2649,24 @@
                 "disputed"
               ]
             }
+          },
+          {
+            "name": "subtotalMin",
+            "in": "query",
+            "description": "A filter on the minimum invoice amount.",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "subtotalMax",
+            "in": "query",
+            "description": "A filter on the maximum invoice amount.",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
           }
         ],
         "responses": {
@@ -1944,6 +2703,21 @@
                           "refunded",
                           "disputed"
                         ]
+                      },
+                      "subtotal": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "The total billable amount for this invoice."
+                      },
+                      "taxesFees": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Taxes and Fees applied to subtotal."
+                      },
+                      "totalBillable": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Subtotal plus taxes and fees."
                       }
                     }
                   }
@@ -1966,7 +2740,8 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "status"
+                  "status",
+                  "billableAmount"
                 ],
                 "properties": {
                   "type": {
@@ -1992,6 +2767,11 @@
                       "disputed"
                     ],
                     "description": "The status of the invoice."
+                  },
+                  "subtotal": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "The total billable amount for this invoice."
                   }
                 }
               }
@@ -2030,6 +2810,21 @@
                         "refunded",
                         "disputed"
                       ]
+                    },
+                    "subtotal": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The total billable amount for this invoice."
+                    },
+                    "taxesFees": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "Taxes and Fees applied to subtotal."
+                    },
+                    "totalBillable": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "Subtotal plus taxes and fees."
                     }
                   }
                 }
@@ -2079,6 +2874,11 @@
                       "disputed"
                     ],
                     "description": "The status of the invoice."
+                  },
+                  "subtotal": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "The total billable amount for this invoice."
                   }
                 }
               }
@@ -2117,6 +2917,21 @@
                         "refunded",
                         "disputed"
                       ]
+                    },
+                    "subtotal": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The total billable amount for this invoice."
+                    },
+                    "taxesFees": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "Taxes and Fees applied to subtotal."
+                    },
+                    "totalBillable": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "Subtotal plus taxes and fees."
                     }
                   }
                 }
@@ -2126,7 +2941,7 @@
         }
       }
     },
-    "/invoiceNotes": {
+    "/invoices/notes": {
       "get": {
         "tags": [
           "Finance"
@@ -2142,21 +2957,6 @@
               "type": "array",
               "items": {
                 "type": "integer"
-              }
-            },
-            "style": "form",
-            "explode": false
-          },
-          {
-            "name": "dateRange",
-            "in": "query",
-            "description": "Start and end timestamps for filtering invoice notes. Array with two values (start and end timestamps).",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "format": "date-time"
               }
             },
             "style": "form",
@@ -2206,12 +3006,25 @@
             }
           }
         }
-      },
+      }
+    },
+    "/invoices/notes/{invoiceID}": {
       "post": {
         "tags": [
           "Finance"
         ],
         "operationId": "createInvoiceNote",
+        "parameters": [
+          {
+            "name": "invoiceID",
+            "in": "path",
+            "description": "The ID of the invoice.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2219,14 +3032,9 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "invoiceID",
                   "note"
                 ],
                 "properties": {
-                  "invoiceID": {
-                    "type": "integer",
-                    "description": "The ID of the invoice."
-                  },
                   "note": {
                     "type": "string",
                     "description": "The note for the invoice."
@@ -2269,7 +3077,7 @@
         }
       }
     },
-    "/invoiceLogs": {
+    "/invoices/logs": {
       "get": {
         "tags": [
           "Finance"
@@ -2367,12 +3175,25 @@
             }
           }
         }
-      },
+      }
+    },
+    "/invoices/logs/{invoiceID}": {
       "post": {
         "tags": [
           "Finance"
         ],
         "operationId": "createInvoiceLog",
+        "parameters": [
+          {
+            "name": "invoiceID",
+            "in": "path",
+            "description": "The ID of the invoice.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2380,15 +3201,10 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "invoiceID",
                   "type",
                   "log"
                 ],
                 "properties": {
-                  "invoiceID": {
-                    "type": "integer",
-                    "description": "The ID of the invoice."
-                  },
                   "type": {
                     "type": "string",
                     "enum": [
@@ -2450,7 +3266,7 @@
         "operationId": "getPayments",
         "parameters": [
           {
-            "name": "paymentID",
+            "name": "paymentIDs",
             "in": "query",
             "description": "Comma-separated list of payment IDs.",
             "required": false,
@@ -2535,6 +3351,11 @@
                         "type": "string",
                         "format": "date-time",
                         "description": "The timestamp when the payment was received."
+                      },
+                      "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "The amount of this payment."
                       }
                     }
                   }
@@ -2578,6 +3399,11 @@
                     "type": "string",
                     "format": "date-time",
                     "description": "The timestamp when the payment was received."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "The amount of this payment."
                   }
                 }
               }
@@ -2613,6 +3439,11 @@
                       "type": "string",
                       "format": "date-time",
                       "description": "The timestamp when the payment was received."
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The amount of this payment."
                     }
                   }
                 }
@@ -3150,7 +3981,7 @@
         "operationId": "getTags",
         "parameters": [
           {
-            "name": "tagID",
+            "name": "tagIDs",
             "in": "query",
             "description": "Comma-separated list of tag IDs",
             "required": false,
@@ -3332,7 +4163,7 @@
         }
       }
     },
-    "/orderTags": {
+    "/tags/order": {
       "get": {
         "tags": [
           "Tags"
@@ -3340,7 +4171,7 @@
         "operationId": "getOrderTags",
         "parameters": [
           {
-            "name": "orderTagID",
+            "name": "orderTagIDs",
             "in": "query",
             "description": "Comma-separated list of order tag IDs.",
             "required": false,
@@ -3459,7 +4290,7 @@
         }
       }
     },
-    "/orderTags/{orderTagID}": {
+    "/tags/order/{orderTagID}": {
       "delete": {
         "tags": [
           "Tags"
@@ -3483,7 +4314,7 @@
         }
       }
     },
-    "/recipeTags": {
+    "/tags/recipe": {
       "get": {
         "tags": [
           "Tags"
@@ -3491,7 +4322,7 @@
         "operationId": "getRecipeTags",
         "parameters": [
           {
-            "name": "recipeTagID",
+            "name": "recipeTagIDs",
             "in": "query",
             "description": "Comma-separated list of recipe tag IDs.",
             "required": false,
@@ -3569,7 +4400,7 @@
                   "tagID"
                 ],
                 "properties": {
-                  "orderID": {
+                  "recipeID": {
                     "type": "integer",
                     "description": "The ID of the recipe."
                   },
@@ -3610,7 +4441,7 @@
         }
       }
     },
-    "/recipeTags/{recipeTagID}": {
+    "/tags/recipe/{recipeTagID}": {
       "delete": {
         "tags": [
           "Tags"
@@ -3665,7 +4496,7 @@
             }
           },
           {
-            "name": "categoryID",
+            "name": "recipeCategoryID",
             "in": "query",
             "description": "The ID of the recipe category.",
             "required": false,
@@ -3688,7 +4519,7 @@
                         "type": "string",
                         "description": "The title of the recipe."
                       },
-                      "categoryID": {
+                      "recipeCategoryID": {
                         "type": "integer",
                         "description": "The ID of the recipe category."
                       },
@@ -3721,7 +4552,7 @@
                 "type": "object",
                 "required": [
                   "title",
-                  "categoryID",
+                  "recipeCategoryID",
                   "servings",
                   "lifespanDays"
                 ],
@@ -3730,7 +4561,7 @@
                     "type": "string",
                     "description": "The title of the recipe."
                   },
-                  "categoryID": {
+                  "recipeCategoryID": {
                     "type": "integer",
                     "description": "The ID of the recipe category."
                   },
@@ -3760,7 +4591,7 @@
                       "type": "string",
                       "description": "The title of the recipe."
                     },
-                    "categoryID": {
+                    "recipeCategoryID": {
                       "type": "integer",
                       "description": "The ID of the recipe category."
                     },
@@ -3812,7 +4643,7 @@
                     "type": "integer",
                     "description": "The updated number of servings the recipe yields."
                   },
-                  "categoryID": {
+                  "recipeCategoryID": {
                     "type": "integer",
                     "description": "The updated ID of the recipe category."
                   },
@@ -3837,7 +4668,7 @@
                       "type": "string",
                       "description": "The title of the recipe."
                     },
-                    "categoryID": {
+                    "recipeCategoryID": {
                       "type": "integer",
                       "description": "The ID of the recipe category."
                     },
@@ -3881,7 +4712,7 @@
         }
       }
     },
-    "/recipeComponents": {
+    "/recipes/components": {
       "get": {
         "tags": [
           "Recipes"
@@ -4013,7 +4844,7 @@
         }
       }
     },
-    "/recipeComponents/{recipeComponentID}": {
+    "/recipes/components/{recipeComponentID}": {
       "patch": {
         "tags": [
           "Recipes"
@@ -4100,7 +4931,7 @@
         }
       }
     },
-    "/recipeCategories": {
+    "/recipes/categories": {
       "get": {
         "tags": [
           "Recipes"
@@ -4116,7 +4947,7 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "categoryID": {
+                      "recipeCategoryID": {
                         "type": "integer",
                         "description": "The ID of the recipe category."
                       },
@@ -4126,7 +4957,7 @@
                       }
                     },
                     "required": [
-                      "categoryID",
+                      "recipeCategoryID",
                       "name"
                     ],
                     "additionalProperties": false
@@ -4170,7 +5001,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "categoryID": {
+                    "recipeCategoryID": {
                       "type": "integer",
                       "description": "The ID of the recipe category."
                     },
@@ -4180,7 +5011,7 @@
                     }
                   },
                   "required": [
-                    "categoryID",
+                    "recipeCategoryID",
                     "name"
                   ],
                   "additionalProperties": false
@@ -4191,7 +5022,7 @@
         }
       }
     },
-    "/recipeCategories/{categoryID}": {
+    "/recipes/categories/{recipeCategoryID}": {
       "patch": {
         "tags": [
           "Recipes"
@@ -4199,7 +5030,7 @@
         "operationId": "updateRecipeCategory",
         "parameters": [
           {
-            "name": "categoryID",
+            "name": "recipeCategoryID",
             "in": "path",
             "description": "The ID of the recipe category.",
             "required": true,
@@ -4236,7 +5067,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "categoryID": {
+                    "recipeCategoryID": {
                       "type": "integer",
                       "description": "The ID of the recipe category."
                     },
@@ -4246,7 +5077,7 @@
                     }
                   },
                   "required": [
-                    "categoryID",
+                    "recipeCategoryID",
                     "name"
                   ],
                   "additionalProperties": false
@@ -4263,7 +5094,7 @@
         "operationId": "deleteRecipeCategory",
         "parameters": [
           {
-            "name": "categoryID",
+            "name": "recipeCategoryID",
             "in": "path",
             "description": "The ID of the recipe category.",
             "required": true,
@@ -4488,7 +5319,7 @@
         }
       }
     },
-    "/recipeSteps": {
+    "/steps/recipe": {
       "post": {
         "tags": [
           "Recipe Steps"
@@ -4630,7 +5461,7 @@
         }
       }
     },
-    "/recipeSteps/{recipeStepID}": {
+    "/steps/recipe/{recipeStepID}": {
       "patch": {
         "tags": [
           "Recipe Steps"
@@ -4648,7 +5479,7 @@
           },
           {
             "name": "sequence",
-            "in": "query",
+            "in": "body",
             "description": "The updated sequence number of the recipe step.",
             "required": false,
             "schema": {
@@ -4906,7 +5737,7 @@
         }
       }
     },
-    "/recipeTools": {
+    "/tools/recipe": {
       "get": {
         "tags": [
           "Tools"
@@ -5049,7 +5880,7 @@
         }
       }
     },
-    "/recipeTools/{recipeToolID}": {
+    "/tools/recipe/{recipeToolID}": {
       "patch": {
         "tags": [
           "Tools"
@@ -5204,10 +6035,6 @@
                         "type": "string",
                         "format": "date",
                         "description": "The purchase date of the tool (YYYY-MM-DD)."
-                      },
-                      "quantity": {
-                        "type": "integer",
-                        "description": "The quantity of the tool purchased."
                       }
                     },
                     "additionalProperties": false
@@ -5232,8 +6059,7 @@
                 "required": [
                   "toolID",
                   "purchasedBy",
-                  "purchaseDate",
-                  "quantity"
+                  "purchaseDate"
                 ],
                 "properties": {
                   "toolID": {
@@ -5251,7 +6077,7 @@
                   },
                   "quantity": {
                     "type": "integer",
-                    "description": "The quantity of the tool purchased."
+                    "description": "The quantity of this tool acquired"
                   }
                 },
                 "additionalProperties": false
@@ -5283,10 +6109,6 @@
                       "type": "string",
                       "format": "date",
                       "description": "The purchase date of the tool (YYYY-MM-DD)."
-                    },
-                    "quantity": {
-                      "type": "integer",
-                      "description": "The quantity of the tool purchased."
                     }
                   },
                   "additionalProperties": false
@@ -5321,10 +6143,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "quantity": {
-                    "type": "integer",
-                    "description": "The updated quantity of the tool stock."
-                  },
                   "purchasedBy": {
                     "type": "string",
                     "description": "The updated purchaser of the tool stock."
@@ -5364,10 +6182,6 @@
                       "type": "string",
                       "format": "date",
                       "description": "The purchase date of the tool (YYYY-MM-DD)."
-                    },
-                    "quantity": {
-                      "type": "integer",
-                      "description": "The quantity of the tool purchased."
                     }
                   },
                   "additionalProperties": false
@@ -5454,6 +6268,18 @@
                       "lifespanDays": {
                         "type": "integer",
                         "description": "The lifespan of the ingredient in days."
+                      },
+                      "brand": {
+                        "type": "string",
+                        "description": "Brand of this ingredient."
+                      },
+                      "purchaseUnit": {
+                        "type": "string",
+                        "description": "The unit in which this ingredient will be purchased and stocked."
+                      },
+                      "gramRatio": {
+                        "type": "integer",
+                        "description": "The number of grams per purchaseUnit for this ingredient."
                       }
                     },
                     "additionalProperties": false
@@ -5477,7 +6303,9 @@
                 "type": "object",
                 "required": [
                   "name",
-                  "lifespanDays"
+                  "lifespanDays",
+                  "purchaseUnit",
+                  "gramRatio"
                 ],
                 "properties": {
                   "name": {
@@ -5487,6 +6315,18 @@
                   "lifespanDays": {
                     "type": "integer",
                     "description": "The lifespan of the ingredient in days."
+                  },
+                  "brand": {
+                    "type": "string",
+                    "description": "Brand of this ingredient."
+                  },
+                  "purchaseUnit": {
+                    "type": "string",
+                    "description": "The unit in which this ingredient will be purchased and stocked."
+                  },
+                  "gramRatio": {
+                    "type": "integer",
+                    "description": "The number of grams per purchaseUnit for this ingredient."
                   }
                 },
                 "additionalProperties": false
@@ -5513,6 +6353,18 @@
                     "lifespanDays": {
                       "type": "integer",
                       "description": "The lifespan of the ingredient in days."
+                    },
+                    "brand": {
+                      "type": "string",
+                      "description": "Brand of this ingredient."
+                    },
+                    "purchaseUnit": {
+                      "type": "string",
+                      "description": "The unit in which this ingredient will be purchased and stocked."
+                    },
+                    "gramRatio": {
+                      "type": "integer",
+                      "description": "The number of grams per purchaseUnit for this ingredient."
                     }
                   },
                   "additionalProperties": false
@@ -5554,6 +6406,18 @@
                   "lifespanDays": {
                     "type": "integer",
                     "description": "The updated lifespan of the ingredient in days."
+                  },
+                  "brand": {
+                    "type": "string",
+                    "description": "Brand of this ingredient."
+                  },
+                  "purchaseUnit": {
+                    "type": "string",
+                    "description": "The unit in which this ingredient will be purchased and stocked."
+                  },
+                  "gramRatio": {
+                    "type": "integer",
+                    "description": "The number of grams per purchaseUnit for this ingredient."
                   }
                 },
                 "additionalProperties": false
@@ -5580,6 +6444,18 @@
                     "lifespanDays": {
                       "type": "integer",
                       "description": "The lifespan of the ingredient in days."
+                    },
+                    "brand": {
+                      "type": "string",
+                      "description": "Brand of this ingredient."
+                    },
+                    "purchaseUnit": {
+                      "type": "string",
+                      "description": "The unit in which this ingredient will be purchased and stocked."
+                    },
+                    "gramRatio": {
+                      "type": "integer",
+                      "description": "The number of grams per purchaseUnit for this ingredient."
                     }
                   },
                   "additionalProperties": false
@@ -5612,7 +6488,7 @@
         }
       }
     },
-    "/recipeIngredients": {
+    "/ingredients/recipe": {
       "get": {
         "tags": [
           "Ingredients"
@@ -5792,7 +6668,7 @@
         }
       }
     },
-    "/recipeIngredients/{recipeIngredientID}": {
+    "/ingredients/recipe/{recipeIngredientID}": {
       "patch": {
         "tags": [
           "Ingredients"
@@ -5965,10 +6841,6 @@
                         "type": "integer",
                         "description": "The ID of the ingredient."
                       },
-                      "measurementUnit": {
-                        "type": "string",
-                        "description": "The measurement unit for the ingredient stock."
-                      },
                       "measurement": {
                         "type": "integer",
                         "description": "The measurement value for the ingredient stock."
@@ -6004,7 +6876,6 @@
                 "type": "object",
                 "required": [
                   "ingredientID",
-                  "measurementUnit",
                   "measurement",
                   "purchasedDate",
                   "purchasedBy"
@@ -6013,28 +6884,6 @@
                   "ingredientID": {
                     "type": "integer",
                     "description": "The ID of the ingredient."
-                  },
-                  "measurementUnit": {
-                    "type": "string",
-                    "description": "The measurement unit for the ingredient stock.",
-                    "enum": [
-                      "gram",
-                      "ounce",
-                      "pound",
-                      "teaspoon",
-                      "tablespoon",
-                      "cup",
-                      "quart",
-                      "gallon",
-                      "milliliter",
-                      "liter",
-                      "bags",
-                      "boxes",
-                      "cartons",
-                      "pallets",
-                      "bottles",
-                      "containers"
-                    ]
                   },
                   "measurement": {
                     "type": "integer",
@@ -6070,10 +6919,6 @@
                     "ingredientID": {
                       "type": "integer",
                       "description": "The ID of the ingredient."
-                    },
-                    "measurementUnit": {
-                      "type": "string",
-                      "description": "The measurement unit for the ingredient stock."
                     },
                     "measurement": {
                       "type": "integer",
@@ -6121,28 +6966,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "measurementUnit": {
-                    "type": "string",
-                    "description": "The updated measurement unit for the ingredient stock.",
-                    "enum": [
-                      "gram",
-                      "ounce",
-                      "pound",
-                      "teaspoon",
-                      "tablespoon",
-                      "cup",
-                      "quart",
-                      "gallon",
-                      "milliliter",
-                      "liter",
-                      "bags",
-                      "boxes",
-                      "cartons",
-                      "pallets",
-                      "bottles",
-                      "containers"
-                    ]
-                  },
                   "measurement": {
                     "type": "integer",
                     "description": "The updated measurement value for the ingredient stock."
@@ -6177,10 +7000,6 @@
                     "ingredientID": {
                       "type": "integer",
                       "description": "The ID of the ingredient."
-                    },
-                    "measurementUnit": {
-                      "type": "string",
-                      "description": "The measurement unit for the ingredient stock."
                     },
                     "measurement": {
                       "type": "integer",
@@ -6249,6 +7068,337 @@
   },
   "components": {
     "schemas": {
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "employeeID": {
+            "type": "integer"
+          },
+          "personID": {
+            "type": "string"
+          },
+          "payPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "position": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "leave"
+            ]
+          },
+          "nameFirst": {
+            "type": "string"
+          },
+          "nameLast": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "AL",
+              "AK",
+              "AZ",
+              "AR",
+              "CA",
+              "CO",
+              "CT",
+              "DE",
+              "DC",
+              "FL",
+              "GA",
+              "HI",
+              "ID",
+              "IL",
+              "IN",
+              "IA",
+              "KS",
+              "KY",
+              "LA",
+              "ME",
+              "MD",
+              "MA",
+              "MI",
+              "MN",
+              "MS",
+              "MO",
+              "MT",
+              "NE",
+              "NV",
+              "NH",
+              "NJ",
+              "NM",
+              "NY",
+              "NC",
+              "ND",
+              "OH",
+              "OK",
+              "OR",
+              "PA",
+              "RI",
+              "SC",
+              "SD",
+              "TN",
+              "TX",
+              "UT",
+              "VT",
+              "VA",
+              "WA",
+              "WV",
+              "WI",
+              "WY"
+            ]
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "NewEmployee": {
+        "type": "object",
+        "required": [
+          "payPerHour",
+          "hireDate",
+          "position",
+          "nameFirst",
+          "email",
+          "phone",
+          "address1",
+          "city",
+          "state",
+          "zip"
+        ],
+        "properties": {
+          "payPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "position": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "leave"
+            ],
+            "default": "active"
+          },
+          "nameFirst": {
+            "type": "string"
+          },
+          "nameLast": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "AL",
+              "AK",
+              "AZ",
+              "AR",
+              "CA",
+              "CO",
+              "CT",
+              "DE",
+              "DC",
+              "FL",
+              "GA",
+              "HI",
+              "ID",
+              "IL",
+              "IN",
+              "IA",
+              "KS",
+              "KY",
+              "LA",
+              "ME",
+              "MD",
+              "MA",
+              "MI",
+              "MN",
+              "MS",
+              "MO",
+              "MT",
+              "NE",
+              "NV",
+              "NH",
+              "NJ",
+              "NM",
+              "NY",
+              "NC",
+              "ND",
+              "OH",
+              "OK",
+              "OR",
+              "PA",
+              "RI",
+              "SC",
+              "SD",
+              "TN",
+              "TX",
+              "UT",
+              "VT",
+              "VA",
+              "WA",
+              "WV",
+              "WI",
+              "WY"
+            ]
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateEmployee": {
+        "type": "object",
+        "properties": {
+          "payPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "position": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "leave"
+            ]
+          },
+          "nameFirst": {
+            "type": "string"
+          },
+          "nameLast": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "AL",
+              "AK",
+              "AZ",
+              "AR",
+              "CA",
+              "CO",
+              "CT",
+              "DE",
+              "DC",
+              "FL",
+              "GA",
+              "HI",
+              "ID",
+              "IL",
+              "IN",
+              "IA",
+              "KS",
+              "KY",
+              "LA",
+              "ME",
+              "MD",
+              "MA",
+              "MI",
+              "MN",
+              "MS",
+              "MO",
+              "MT",
+              "NE",
+              "NV",
+              "NH",
+              "NJ",
+              "NM",
+              "NY",
+              "NC",
+              "ND",
+              "OH",
+              "OK",
+              "OR",
+              "PA",
+              "RI",
+              "SC",
+              "SD",
+              "TN",
+              "TX",
+              "UT",
+              "VT",
+              "VA",
+              "WA",
+              "WV",
+              "WI",
+              "WY"
+            ]
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
       "Order": {
         "type": "object",
         "properties": {
@@ -6258,15 +7408,15 @@
           "clientID": {
             "type": "integer"
           },
-          "deliveryDate": {
+          "scheduledDeliveryTime": {
             "type": "string",
             "format": "date"
           },
-          "createdDate": {
+          "createdTime": {
             "type": "string",
             "format": "date"
           },
-          "fulfilledDate": {
+          "fulfilledTime": {
             "type": "string",
             "format": "date"
           },
@@ -6303,14 +7453,13 @@
           "clientID",
           "deliveryDate",
           "fulfillment",
-          "invoiceID",
           "name"
         ],
         "properties": {
           "clientID": {
             "type": "integer"
           },
-          "deliveryDate": {
+          "scheduledDeliveryTime": {
             "type": "string",
             "format": "date"
           },
@@ -6321,9 +7470,6 @@
               "delivery"
             ]
           },
-          "invoiceID": {
-            "type": "integer"
-          },
           "name": {
             "type": "string"
           },
@@ -6332,7 +7478,7 @@
           }
         }
       },
-      "OrderStockProduct": {
+      "OrderStockItem": {
         "type": "object",
         "properties": {
           "orderID": {
@@ -6341,20 +7487,19 @@
           "stockProductID": {
             "type": "integer"
           },
-          "orderStockID": {
+          "stockItemID": {
             "type": "integer"
           },
           "status": {
             "type": "string",
             "enum": [
               "sufficient",
-              "confict",
               "insufficient"
             ]
           }
         }
       },
-      "NewOrderStockProduct": {
+      "NewOrderStockItem": {
         "type": "object",
         "required": [
           "orderID",
@@ -6388,6 +7533,9 @@
           },
           "recipeID": {
             "type": "integer"
+          },
+          "yield": {
+            "type": "integer"
           }
         }
       },
@@ -6403,6 +7551,9 @@
           },
           "productName": {
             "type": "string"
+          },
+          "yield": {
+            "type": "integer"
           }
         }
       },
@@ -6414,19 +7565,22 @@
         "properties": {
           "productName": {
             "type": "string"
+          },
+          "yield": {
+            "type": "integer"
           }
         }
       },
       "ProductStock": {
         "type": "object",
         "properties": {
-          "stockID": {
+          "productStockID": {
             "type": "integer"
           },
           "stockProductID": {
             "type": "integer"
           },
-          "produced": {
+          "producedDate": {
             "type": "string",
             "format": "date"
           },
@@ -6446,19 +7600,15 @@
         "type": "object",
         "required": [
           "stockProductID",
-          "produced",
-          "daysRemaining"
+          "producedDate"
         ],
         "properties": {
           "stockProductID": {
             "type": "integer"
           },
-          "produced": {
+          "producedDate": {
             "type": "string",
             "format": "date"
-          },
-          "daysRemaining": {
-            "type": "integer"
           }
         }
       },
@@ -6473,10 +7623,10 @@
           }
         }
       },
-      "OrderTaskProduct": {
+      "OrderTaskItem": {
         "type": "object",
         "properties": {
-          "orderTaskID": {
+          "taskItemID": {
             "type": "integer",
             "description": "The ID of the order task."
           },
@@ -6487,10 +7637,6 @@
           "recipeID": {
             "type": "integer",
             "description": "The ID of the recipe this task will follow."
-          },
-          "productName": {
-            "type": "string",
-            "description": "The name of product this task will produce."
           },
           "unitIncome": {
             "type": "integer",
@@ -6508,12 +7654,11 @@
           }
         }
       },
-      "NewOrderTaskProduct": {
+      "NewOrderTaskItem": {
         "type": "object",
         "required": [
           "orderID",
           "recipeID",
-          "productName",
           "quantity",
           "unitIncome"
         ],
@@ -6525,10 +7670,6 @@
           "recipeID": {
             "type": "integer",
             "description": "The ID of the recipe."
-          },
-          "productName": {
-            "type": "string",
-            "description": "The name of the product."
           },
           "quantity": {
             "type": "integer",
@@ -6913,6 +8054,21 @@
               "refunded",
               "disputed"
             ]
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double",
+            "description": "The total billable amount for this invoice."
+          },
+          "taxesFees": {
+            "type": "number",
+            "format": "double",
+            "description": "Taxes and Fees applied to subtotal."
+          },
+          "totalBillable": {
+            "type": "number",
+            "format": "double",
+            "description": "Subtotal plus taxes and fees."
           }
         }
       },
@@ -6920,7 +8076,8 @@
         "type": "object",
         "required": [
           "type",
-          "status"
+          "status",
+          "billableAmount"
         ],
         "properties": {
           "type": {
@@ -6946,6 +8103,11 @@
               "disputed"
             ],
             "description": "The status of the invoice."
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double",
+            "description": "The total billable amount for this invoice."
           }
         }
       },
@@ -6968,6 +8130,11 @@
               "disputed"
             ],
             "description": "The status of the invoice."
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double",
+            "description": "The total billable amount for this invoice."
           }
         }
       },
@@ -6978,10 +8145,6 @@
           "note"
         ],
         "properties": {
-          "invoiceID": {
-            "type": "integer",
-            "description": "The ID of the invoice."
-          },
           "note": {
             "type": "string",
             "description": "The note for the invoice."
@@ -7013,15 +8176,10 @@
       "NewInvoiceLog": {
         "type": "object",
         "required": [
-          "invoiceID",
           "type",
           "log"
         ],
         "properties": {
-          "invoiceID": {
-            "type": "integer",
-            "description": "The ID of the invoice."
-          },
           "type": {
             "type": "string",
             "enum": [
@@ -7086,6 +8244,11 @@
             "type": "string",
             "format": "date-time",
             "description": "The timestamp when the payment was received."
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "description": "The amount of this payment."
           }
         }
       },
@@ -7113,6 +8276,11 @@
             "type": "string",
             "format": "date-time",
             "description": "The timestamp when the payment was received."
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "description": "The amount of this payment."
           }
         }
       },
@@ -7406,7 +8574,7 @@
         "type": "object",
         "required": [
           "title",
-          "categoryID",
+          "recipeCategoryID",
           "servings",
           "lifespanDays"
         ],
@@ -7415,7 +8583,7 @@
             "type": "string",
             "description": "The title of the recipe."
           },
-          "categoryID": {
+          "recipeCategoryID": {
             "type": "integer",
             "description": "The ID of the recipe category."
           },
@@ -7437,7 +8605,7 @@
             "type": "string",
             "description": "The title of the recipe."
           },
-          "categoryID": {
+          "recipeCategoryID": {
             "type": "integer",
             "description": "The ID of the recipe category."
           },
@@ -7462,7 +8630,7 @@
             "type": "integer",
             "description": "The updated number of servings the recipe yields."
           },
-          "categoryID": {
+          "recipeCategoryID": {
             "type": "integer",
             "description": "The updated ID of the recipe category."
           },
@@ -7541,7 +8709,7 @@
       "RecipeCategory": {
         "type": "object",
         "properties": {
-          "categoryID": {
+          "recipeCategoryID": {
             "type": "integer",
             "description": "The ID of the recipe category."
           },
@@ -7551,7 +8719,7 @@
           }
         },
         "required": [
-          "categoryID",
+          "recipeCategoryID",
           "name"
         ],
         "additionalProperties": false
@@ -7746,8 +8914,7 @@
         "required": [
           "toolID",
           "purchasedBy",
-          "purchaseDate",
-          "quantity"
+          "purchaseDate"
         ],
         "properties": {
           "toolID": {
@@ -7765,7 +8932,7 @@
           },
           "quantity": {
             "type": "integer",
-            "description": "The quantity of the tool purchased."
+            "description": "The quantity of this tool acquired."
           }
         },
         "additionalProperties": false
@@ -7789,10 +8956,6 @@
             "type": "string",
             "format": "date",
             "description": "The purchase date of the tool (YYYY-MM-DD)."
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "The quantity of the tool purchased."
           }
         },
         "additionalProperties": false
@@ -7800,10 +8963,6 @@
       "ToolStockUpdateInput": {
         "type": "object",
         "properties": {
-          "quantity": {
-            "type": "integer",
-            "description": "The updated quantity of the tool stock."
-          },
           "purchasedBy": {
             "type": "string",
             "description": "The updated purchaser of the tool stock."
@@ -7820,7 +8979,9 @@
         "type": "object",
         "required": [
           "name",
-          "lifespanDays"
+          "lifespanDays",
+          "purchaseUnit",
+          "gramRatio"
         ],
         "properties": {
           "name": {
@@ -7830,6 +8991,18 @@
           "lifespanDays": {
             "type": "integer",
             "description": "The lifespan of the ingredient in days."
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of this ingredient."
+          },
+          "purchaseUnit": {
+            "type": "string",
+            "description": "The unit in which this ingredient will be purchased and stocked."
+          },
+          "gramRatio": {
+            "type": "integer",
+            "description": "The number of grams per purchaseUnit for this ingredient."
           }
         },
         "additionalProperties": false
@@ -7848,6 +9021,18 @@
           "lifespanDays": {
             "type": "integer",
             "description": "The lifespan of the ingredient in days."
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of this ingredient."
+          },
+          "purchaseUnit": {
+            "type": "string",
+            "description": "The unit in which this ingredient will be purchased and stocked."
+          },
+          "gramRatio": {
+            "type": "integer",
+            "description": "The number of grams per purchaseUnit for this ingredient."
           }
         },
         "additionalProperties": false
@@ -7862,6 +9047,18 @@
           "lifespanDays": {
             "type": "integer",
             "description": "The updated lifespan of the ingredient in days."
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of this ingredient."
+          },
+          "purchaseUnit": {
+            "type": "string",
+            "description": "The unit in which this ingredient will be purchased and stocked."
+          },
+          "gramRatio": {
+            "type": "integer",
+            "description": "The number of grams per purchaseUnit for this ingredient."
           }
         },
         "additionalProperties": false
@@ -7976,7 +9173,6 @@
         "type": "object",
         "required": [
           "ingredientID",
-          "measurementUnit",
           "measurement",
           "purchasedDate",
           "purchasedBy"
@@ -7985,28 +9181,6 @@
           "ingredientID": {
             "type": "integer",
             "description": "The ID of the ingredient."
-          },
-          "measurementUnit": {
-            "type": "string",
-            "description": "The measurement unit for the ingredient stock.",
-            "enum": [
-              "gram",
-              "ounce",
-              "pound",
-              "teaspoon",
-              "tablespoon",
-              "cup",
-              "quart",
-              "gallon",
-              "milliliter",
-              "liter",
-              "bags",
-              "boxes",
-              "cartons",
-              "pallets",
-              "bottles",
-              "containers"
-            ]
           },
           "measurement": {
             "type": "integer",
@@ -8035,10 +9209,6 @@
             "type": "integer",
             "description": "The ID of the ingredient."
           },
-          "measurementUnit": {
-            "type": "string",
-            "description": "The measurement unit for the ingredient stock."
-          },
           "measurement": {
             "type": "integer",
             "description": "The measurement value for the ingredient stock."
@@ -8058,28 +9228,6 @@
       "IngredientStockUpdateInput": {
         "type": "object",
         "properties": {
-          "measurementUnit": {
-            "type": "string",
-            "description": "The updated measurement unit for the ingredient stock.",
-            "enum": [
-              "gram",
-              "ounce",
-              "pound",
-              "teaspoon",
-              "tablespoon",
-              "cup",
-              "quart",
-              "gallon",
-              "milliliter",
-              "liter",
-              "bags",
-              "boxes",
-              "cartons",
-              "pallets",
-              "bottles",
-              "containers"
-            ]
-          },
           "measurement": {
             "type": "integer",
             "description": "The updated measurement value for the ingredient stock."

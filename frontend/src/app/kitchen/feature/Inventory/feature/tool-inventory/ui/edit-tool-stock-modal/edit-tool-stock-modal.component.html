@@ -1,0 +1,91 @@
+<div
+  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-lg sm:p-dl-6"
+>
+  <mat-spinner
+    class="my-app-custom-spinner"
+    *ngIf="isUpdating$ | async"
+  ></mat-spinner>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    *ngIf="(isUpdating$ | async) === false"
+  >
+    <div class="relative flex w-dl-13 max-w-full flex-col">
+      <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
+        <h3
+          class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4"
+          id="editToolStockModal"
+        >
+          Edit Inventory Item
+        </h3>
+        <div class="mt-dl-2 space-x-1 whitespace-nowrap">
+          <span class="text-dl-2 text-dl-grey-5">Edit</span
+          ><span class="text-dl-2 font-dl-3 text-dl-grey-2">{{
+            (tool$ | async)!.name
+          }}</span
+          ><span class="text-dl-2 text-dl-grey-5">stock details</span>
+        </div>
+      </div>
+      <div class="absolute right-0 top-0 hidden pr-dl-2 pt-dl-2 sm:block">
+        <button
+          type="button"
+          class="rounded-dl-2 bg-white text-dl-grey-6 hover:text-dl-grey-5 focus:outline-none"
+          (click)="onCancel()"
+        >
+          <span class="sr-only">Close</span>
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!--FORM FIELDS-->
+      <div class="mt-dl-6">
+        <div id="form-quantity">
+          <label class="text-dl-2 font-dl-3 text-dl-grey-4"
+            >Quantity</label
+          >
+          <mat-form-field class="w-full">
+            <input matInput formControlName="quantity" />
+          </mat-form-field>
+        </div>
+      </div>
+      <!---->
+
+      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+        <button
+          type="button"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white sm:ml-dl-4"
+          [class.cursor-pointer]="form.valid && !form.pristine"
+          [ngClass]="{
+            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+              form.valid && !form.pristine,
+            'bg-dl-grey-7': !form.valid || form.pristine
+          }"
+          [disabled]="!form.valid || form.pristine"
+          (click)="onSubmit()"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

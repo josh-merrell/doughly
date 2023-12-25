@@ -1,0 +1,34 @@
+Date : 2023-12-03 13:56:34
+Directory : c:\Users\Josh\repos\doughleap\server\services
+Total : 6 files,  336 codes, 43 comments, 31 blanks, all 410 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |          5 |        322 |         43 |         30 |        395 |
+| JSON       |          1 |         14 |          0 |          1 |         15 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                      | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                         |          6 |        336 |         43 |         31 |        410 |
+| . (Files)                                                                                 |          3 |        299 |         43 |         23 |        365 |
+| lambda                                                                                    |          3 |         37 |          0 |          8 |         45 |
+| lambda\resetSequencesForIDs                                                               |          3 |         37 |          0 |          8 |         45 |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                  | language   | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\Josh\repos\doughleap\server\services\dbLogger.js                                 | JavaScript |         93 |          1 |          6 |        100 |
+| c:\Users\Josh\repos\doughleap\server\services\lambda\resetSequencesForIDs\debug_bridge.js | JavaScript |          9 |          0 |          3 |         12 |
+| c:\Users\Josh\repos\doughleap\server\services\lambda\resetSequencesForIDs\index.js        | JavaScript |         14 |          0 |          4 |         18 |
+| c:\Users\Josh\repos\doughleap\server\services\lambda\resetSequencesForIDs\package.json    | JSON       |         14 |          0 |          1 |         15 |
+| c:\Users\Josh\repos\doughleap\server\services\supply.js                                   | JavaScript |        200 |         42 |         15 |        257 |
+| c:\Users\Josh\repos\doughleap\server\services\taxes.js                                    | JavaScript |          6 |          0 |          2 |          8 |
+| Total                                                                                     |            |        336 |         43 |         31 |        410 |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

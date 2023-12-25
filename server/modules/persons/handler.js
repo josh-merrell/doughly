@@ -6,6 +6,7 @@ async function getPersons(req, res) {
   const { cursor, limit } = req.query;
   const { personIDs, nameFirst, nameLast, phone, city, state, zip } = req.query;
   const returner = await p.get.all({
+    userID: req.userID,
     cursor,
     limit,
     personIDs,
@@ -23,7 +24,8 @@ async function getPersonByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { personID } = req.params;
-  const returner = await p.exists.by.personID({
+  const returner = await p.exists.by.ID({
+    userID: req.userID,
     personID,
   });
   return res.json(returner);
@@ -33,7 +35,12 @@ async function createPerson(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = req.body;
+  const { authorization } = req.headers;
+  const { customID } = req;
   const returner = await p.create({
+    customID,
+    authorization,
+    userID: req.userID,
     nameFirst,
     nameLast,
     email,
@@ -52,7 +59,10 @@ async function updatePerson(req, res) {
   const p = require('./processor')({ db });
   const { personID } = req.params;
   const { nameFirst, nameLast, email, phone, address1, address2, city, state, zip } = req.body;
+  const { authorization } = req.headers;
   const returner = await p.update({
+    userID: req.userID,
+    authorization,
     personID,
     nameFirst,
     nameLast,
@@ -71,7 +81,8 @@ async function deletePerson(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { personID } = req.params;
-  const returner = await p.delete({ personID });
+  const { authorization } = req.headers;
+  const returner = await p.delete({ authorization, userID: req.userID, personID });
   return res.json(returner);
 }
 

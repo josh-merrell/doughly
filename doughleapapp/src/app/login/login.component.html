@@ -1,0 +1,23 @@
+<form>
+  <div>
+    <input
+      type="email"
+      dlHover="blue"
+      name="email"
+      [(ngModel)]="email"
+      placeholder="your Email"
+    />
+  </div>
+  <div>
+    <input
+      type="password"
+      dlHover="steelblue"
+      name="password"
+      [(ngModel)]="password"
+      placeholder="your password"
+    />
+  </div>
+  <div>
+    <button (click)="login()">Login</button>
+  </div>
+</form>

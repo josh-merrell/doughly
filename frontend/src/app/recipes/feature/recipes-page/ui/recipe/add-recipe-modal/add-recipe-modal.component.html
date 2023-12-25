@@ -1,0 +1,237 @@
+<div
+  class="relative w-dl-16 transform overflow-hidden bg-white px-dl-5 pb-dl-3 pt-dl-4 text-left transition-all sm:my-dl-3 sm:w-dl-18 sm:p-dl-6"
+>
+  <mat-spinner
+    class="my-app-custom-spinner"
+    *ngIf="isAdding$ | async"
+  ></mat-spinner>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    *ngIf="(isAdding$ | async) === false"
+  >
+    <div class="relative flex flex-col">
+      <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
+        <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3">
+          Add Recipe
+        </h3>
+      </div>
+      <div class="absolute right-0 top-0 hidden pr-dl-2 pt-dl-2 sm:block">
+        <button
+          type="button"
+          class="rounded-dl-2 bg-white text-dl-grey-6 hover:text-dl-grey-5 focus:outline-none"
+          (click)="onCancel()"
+        >
+          <span class="sr-only">Close</span>
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!--FORM FIELDS-->
+      <div class="mt-dl-7">
+        <div id="form-title" class="relative flex flex-col">
+          <label class="text-dl-3 font-dl-3 text-dl-grey-4">Title</label>
+          <mat-form-field class="w-full">
+            <input matInput formControlName="title" />
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('title')?.hasError('duplicateString')"
+            >
+              Cannot reuse an existing Recipe title
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div id="form-recipeCategoryID" class="relative mt-dl-2 flex flex-col">
+          <label class="text-dl-3 font-dl-3 text-dl-grey-4">Category</label>
+          <mat-form-field>
+            <mat-select formControlName="recipeCategoryID">
+              <ng-container *ngFor="let category of categories$ | async">
+                <mat-option [value]="category.recipeCategoryID">
+                  {{ category.name }}
+                </mat-option>
+              </ng-container>
+              <!-- <mat-option
+                class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2"
+                (click)="onAddNewCategory()"
+              >
+                New Category
+              </mat-option> -->
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div
+          id="form-isPublicRecipe"
+          class="relative mt-dl-2 flex flex-row items-center"
+        >
+          <mat-slide-toggle
+            [(ngModel)]="isChecked"
+            formControlName="isPublicRecipe"
+            class="select-slider"
+          ></mat-slide-toggle>
+          <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
+            >Make public and track subscriber count</span
+          >
+        </div>
+        <div class="mt-dl-2 flex">
+          <div id="form-servings" class="mr-dl-4">
+            <label class="text-dl-3 font-dl-3 text-dl-grey-4">Servings</label>
+            <mat-form-field class="w-full">
+              <input matInput formControlName="servings" />
+              <mat-error
+                class="text-dl-3"
+                *ngIf="form.get('servings')?.hasError('notPositiveInteger')"
+              >
+                Must be a positive integer
+              </mat-error>
+              <mat-error
+                class="text-dl-3"
+                *ngIf="
+                  form.get('servings')?.hasError('notTwoByteInteger') &&
+                  !form.get('servings')?.hasError('notPositiveInteger')
+                "
+              >
+                Must be less than 32768
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div id="form-lifespanDays" class="ml-dl-1">
+            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+              >Lifespan Days</label
+            >
+            <mat-form-field class="w-full">
+              <input matInput formControlName="lifespanDays" />
+              <mat-error
+                class="text-dl-3"
+                *ngIf="form.get('lifespanDays')?.hasError('notPositiveInteger')"
+              >
+                Must be a positive integer
+              </mat-error>
+              <mat-error
+                class="text-dl-3"
+                *ngIf="
+                  form.get('lifespanDays')?.hasError('notTwoByteInteger') &&
+                  !form.get('lifespanDays')?.hasError('notPositiveInteger')
+                "
+              >
+                Must be less than 32768
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="mt-dl-2 flex">
+          <div id="form-timePrep" class="mr-dl-4">
+            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+              >Prep time in minutes</label
+            >
+            <mat-form-field class="w-full">
+              <input matInput formControlName="timePrep" />
+              <mat-error
+                class="text-dl-3"
+                *ngIf="form.get('timePrep')?.hasError('notPositiveInteger')"
+              >
+                Must be a positive integer
+              </mat-error>
+              <mat-error
+                class="text-dl-3"
+                *ngIf="
+                  form.get('timePrep')?.hasError('notTwoByteInteger') &&
+                  !form.get('timePrep')?.hasError('notPositiveInteger')
+                "
+              >
+                Must be less than 32768
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div id="form-timeBake" class="ml-dl-1">
+            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+              >Bake time in minutes</label
+            >
+            <mat-form-field class="w-full">
+              <input matInput formControlName="timeBake" />
+              <mat-error
+                class="text-dl-3"
+                *ngIf="form.get('timeBake')?.hasError('notPositiveInteger')"
+              >
+                Must be a positive integer
+              </mat-error>
+              <mat-error
+                class="text-dl-3"
+                *ngIf="
+                  form.get('timeBake')?.hasError('notTwoByteInteger') &&
+                  !form.get('timeBake')?.hasError('notPositiveInteger')
+                "
+              >
+                Must be less than 32768
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div id="form-photo-recipe" class="mt-dl-1">
+          <div class="relative inline-block w-64">
+            <input
+              type="file"
+              class="hidden"
+              id="fileInputRecipe"
+              (change)="recipeOnFileSelected($event)"
+              accept="image/png, image/jpeg"
+            />
+            <label
+              for="fileInputRecipe"
+              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-3 text-white hover:bg-dl-blue-5"
+            >
+              Choose Photo
+            </label>
+          </div>
+
+          <image-cropper
+            [imageChangedEvent]="recipeImageChangedEvent"
+            [maintainAspectRatio]="true"
+            [aspectRatio]="5 / 3"
+            (imageCropped)="recipeImageCropped($event)"
+            (imageLoaded)="recipeImageLoaded()"
+            (cropperReady)="recipeCropperReady()"
+            (loadImageFailed)="recipeLoadImageFailed()"
+          ></image-cropper>
+        </div>
+      </div>
+      <!---->
+
+      <div class="mt-dl-6 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+        <button
+          type="button"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white sm:ml-dl-4"
+          [class.cursor-pointer]="form.valid && !form.pristine && imagePresent"
+          [ngClass]="{
+            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+              form.valid && !form.pristine && imagePresent,
+            'bg-dl-grey-7': !form.valid || form.pristine || !imagePresent
+          }"
+          [disabled]="!form.valid || form.pristine || !imagePresent"
+          (click)="onSubmit()"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
