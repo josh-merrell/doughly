@@ -5,6 +5,13 @@ on:
     branches: [ main ]
 
 jobs:
+  name: AWS Infra Deploy v8
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
   deploy-api-ec2-prod:
     name: deploy-api-ec2-prod 
     if: contains(github.event.pull_request.labels.*.name, 'deploy-back-api-production')
@@ -14,13 +21,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+
       - name: Deploy to EC2
         env:
           API_EC2_HOST: ${{ secrets.API_EC2_HOST }}
           SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
           DEST_PATH: '/home/ubuntu/dl/'
           APP_NAME: 'doughly'
-          NODE_VERSION: '20'
         run: |
           # Install SSH Client (if not present)
           sudo apt-get update
@@ -33,14 +40,6 @@ jobs:
 
           # SSH into the EC2 instance and run commands
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
-            # Install NVM and Node.js
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install $NODE_VERSION
-            nvm use $NODE_VERSION
-            nvm alias default $NODE_VERSION
-
             # Stop the server using PM2
             pm2 stop ${APP_NAME} || true  # '|| true' to ignore if the app isn't found
 
@@ -60,11 +59,6 @@ jobs:
             # Navigate to the directory
             cd ${DEST_PATH}
 
-            # Ensure using correct Node version
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm use $NODE_VERSION
-
             # Install dependencies
             npm install
 
@@ -82,36 +76,36 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'deploy-front-production')
     runs-on: ubuntu-latest
     steps:
-      -name: Checkout code
-      uses: actions/checkout@v3.4.0
+      - name: Checkout code
+        uses: actions/checkout@v3.4.0
 
-      -name: Setup Node.js
-      uses: actions/setup-node@v3
-      with: node-version: 20.x
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with: node-version: 20.x
 
-      -name: Install Angular CLI
-      run: npm install -g @angular/cli
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
 
-      -name: Install dependencies
-      run: npm ci
-      working-directory: ./frontend
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./frontend
 
-      -name: Install Node.js type definitions
-      run: npm install --save-dev @types/node
-      working-directory: ./frontend
+      - name: Install Node.js type definitions
+        run: npm install --save-dev @types/node
+        working-directory: ./frontend
 
-      -name: Build Angular app
-      run: npm run build --configuration production
-      working-directory: ./frontend
+      - name: Build Angular app
+        run: npm run build --configuration production
+        working-directory: ./frontend
 
-      -name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with: 
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
 
-      -name: Deploy to S3
+      - name: Deploy to S3
         run: |
           aws s3 rm s3://doughly.co --recursive
           aws s3 sync ./frontend/dist/ s3://doughly.co 
@@ -120,7 +114,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-2
 
-      -name: Invalidate the cloudfront cache
+      - name: Invalidate the cloudfront cache
         run: |
           aws cloudfront create-invalidation --distribution-id E2Y7YH9KIYK07 --paths "/*"
         env:
