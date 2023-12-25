@@ -1,4 +1,4 @@
-name: AWS Infra Deploy v5
+name: AWS Infra Deploy v6
 
 on:
   pull_request:
@@ -21,6 +21,7 @@ jobs:
           SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
           DEST_PATH: '/home/ubuntu/dl/'
           APP_NAME: 'doughly'
+          NODE_VERSION: '20'
         run: |
           # Install SSH Client (if not present)
           sudo apt-get update
@@ -33,15 +34,21 @@ jobs:
 
           # SSH into the EC2 instance and run commands
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
+            # Install NVM and Node.js
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install $NODE_VERSION
+            nvm use $NODE_VERSION
+            nvm alias default $NODE_VERSION
+
             # Stop the server using PM2
             pm2 stop ${APP_NAME} || true  # '|| true' to ignore if the app isn't found
 
             # Clean the directory
-            
             if [ -n "${DEST_PATH}" ]; then
               rm -rf ${DEST_PATH}/*
             fi
-
 
             # Exit SSH session
           EOF
@@ -53,6 +60,11 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
             # Navigate to the directory
             cd ${DEST_PATH}
+
+            # Ensure using correct Node version
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use $NODE_VERSION
 
             # Install dependencies
             npm install
