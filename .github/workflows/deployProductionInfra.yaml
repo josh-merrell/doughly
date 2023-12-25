@@ -1,4 +1,4 @@
-name: AWS Infra Deploy v3
+name: AWS Infra Deploy v4
 
 on:
   pull_request:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Deploy to EC2
         env:
