@@ -1,11 +1,4 @@
-name: AWS Infra Deploy v8
-
-on:
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  name: AWS Infra Deploy v8
+name: AWS Infra Deploy v9
 
 on:
   pull_request:
@@ -81,7 +74,8 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
-        with: node-version: 20.x
+        with: 
+          node-version: 20.x
 
       - name: Install Angular CLI
         run: npm install -g @angular/cli
