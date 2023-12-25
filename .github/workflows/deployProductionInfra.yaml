@@ -22,8 +22,8 @@ jobs:
 
     - name: Copy Server Directory to EC2
       env:
-        API_EC2_HOST: ${{ secrets.API_EC2_HOST }}  # Your EC2 IP or domain
-        SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}  # Your SSH private key
+        API_EC2_HOST: ${{secrets.API_EC2_HOST}}  # Your EC2 IP or domain
+        SSH_KEY: ${{secrets.API_SSH_PRIVATE_KEY}}  # Your SSH private key
         DEST_PATH: '/home/ubuntu/dl/'  # Destination path on EC2
       run: |
         # Install SSH Client (if not present)
