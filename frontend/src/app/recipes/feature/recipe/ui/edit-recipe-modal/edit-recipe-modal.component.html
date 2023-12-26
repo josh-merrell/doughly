@@ -1,5 +1,5 @@
 <div
-  class="relative w-full transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="relative h-dl-21 w-full transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -12,7 +12,7 @@
   >
     <div class="flex w-full max-w-full flex-col">
       <div class="text-center">
-        <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4">
+        <h3 class="leading-dl-4 text-dl-7 font-dl-3 text-dl-grey-4">
           Edit Recipe
         </h3>
       </div>
@@ -37,7 +37,7 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div id="form-recipeCategoryID" class="relative mt-dl-2 flex flex-col">
+        <div id="form-recipeCategoryID" class="relative flex flex-col">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Category</label>
           <mat-form-field>
             <mat-select formControlName="recipeCategoryID">
@@ -59,7 +59,7 @@
             formControlName="isHeirloomRecipe"
             class="select-slider"
           ></mat-slide-toggle>
-          <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
+          <span class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4"
             >Allow friends to view and use</span
           >
         </div>
@@ -73,12 +73,12 @@
             formControlName="isPublicRecipe"
             class="select-slider"
           ></mat-slide-toggle>
-          <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
-            >Make public and track subscriber count</span
+          <span class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4"
+            >Make public</span
           >
         </div>
-        <div class="mt-dl-2 flex">
-          <div id="form-servings" class="mr-dl-4">
+        <div class="mt-dl-2 flex flex-col">
+          <div id="form-servings" class="relative flex flex-col">
             <label class="text-dl-5 font-dl-3 text-dl-grey-4">Servings</label>
             <mat-form-field class="w-full">
               <input matInput formControlName="servings" />
@@ -99,7 +99,7 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div id="form-lifespanDays" class="ml-dl-1">
+          <div id="form-lifespanDays" class="relative flex flex-col">
             <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Lifespan Days</label
             >
@@ -123,8 +123,8 @@
             </mat-form-field>
           </div>
         </div>
-        <div class="mt-dl-2 flex">
-          <div id="form-timePrep" class="mr-dl-4">
+        <div class="mt-dl-2 flex flex-col">
+          <div id="form-timePrep" class="relative flex flex-col">
             <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Prep time in minutes</label
             >
@@ -147,7 +147,7 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div id="form-timeBake" class="ml-dl-1">
+          <div id="form-timeBake" class="relative flex flex-col">
             <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Bake time in minutes</label
             >
