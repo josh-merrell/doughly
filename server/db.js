@@ -1,28 +1,12 @@
 //file adds supabase client to requests
 const { createClient } = require('@supabase/supabase-js');
-<<<<<<< HEAD
-=======
 const { createKitchenLog, createRecipeLog, createUserLog, createShoppingLog } = require('./services/dbLogger');
->>>>>>> staging
 
 const url = process.env.SUPABASE_DOUGHLEAP_URL;
 const key = process.env.SUPABASE_DOUGHLEAP_KEY;
 
 const supabase = createClient(url, key, { db: { schema: 'bakery' } });
 
-<<<<<<< HEAD
-const verifyUser = async (req, res, next) => {
-  const token = req.headers.token;
-  const { data: payload, error } = await supabase.auth.api.getUser(token);
-  if (error) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-  req.user = payload;
-  next();
-};
-
-const updater = async (IDfield, ID, table, updateFields) => {
-=======
 const supabaseDefault = createClient(url, key);
 
 const updater = async (userID, authorization, IDfield, ID, table, updateFields) => {
@@ -37,7 +21,6 @@ const updater = async (userID, authorization, IDfield, ID, table, updateFields) 
     return { error: existingRowError.message };
   }
 
->>>>>>> staging
   //make a query to supabase to update the record
   const updateQuery = supabase
     .from(table)
@@ -49,15 +32,6 @@ const updater = async (userID, authorization, IDfield, ID, table, updateFields) 
   if (error) {
     global.logger.info(`Error updating ID:${ID} in table:${table} ${error.message}`);
     return { error: error.message };
-<<<<<<< HEAD
-  } else {
-    global.logger.info(`Updated ${table}, ID: ${ID}`);
-    return data;
-  }
-};
-
-module.exports = { supabase, verifyUser, updater };
-=======
   }
   let recipeVersion;
   if (existingRow.recipeID) {
@@ -149,4 +123,3 @@ const incrementVersion = async (table, IDfield, ID, currentVersion) => {
 };
 
 module.exports = { supabase, supabaseDefault, updater, incrementVersion, getRecipeVersion };
->>>>>>> staging
