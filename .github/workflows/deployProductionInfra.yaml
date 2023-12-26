@@ -1,4 +1,4 @@
-name: AWS Infra Deploy v12
+name: AWS Infra Deploy v13
 
 on:
   pull_request:
