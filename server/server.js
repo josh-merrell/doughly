@@ -58,6 +58,11 @@ const shoppingRouter = require('./modules/shopping/router');
 
 app.use(express.json());
 
+//endpoing for EC2 health checks
+app.use('/ping', (req, res) => {
+  res.send('pong');
+});
+
 if (process.env.NODE_ENV !== 'development') {
   app.use(verifyUser);
 }
@@ -69,9 +74,6 @@ app.use((req, res, next) => {
 });
 app.use(queryArrayParser);
 
-app.use('/ping', (req, res) => {
-  res.send('pong');
-});
 app.use('/uploads', uploadsRouter);
 app.use('/persons', personsRouter);
 app.use('/recipes', recipesRouter);
