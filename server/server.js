@@ -58,14 +58,15 @@ const shoppingRouter = require('./modules/shopping/router');
 
 app.use(express.json());
 
-//endpoing for EC2 health checks
+//endpoint for EC2 health checks
 app.use('/ping', (req, res) => {
   res.send('pong');
 });
 
-if (process.env.NODE_ENV !== 'development') {
-  app.use(verifyUser);
-}
+// CURRENTLY BORKED
+// if (process.env.NODE_ENV !== 'development') {
+//   app.use(verifyUser);
+// }
 // Add the supabase client to the request object
 app.use((req, res, next) => {
   req.client = { db: supabase };
