@@ -40,8 +40,7 @@ app.use(
 );
 app.options('*', cors()); // Enable CORS for all OPTIONS requests
 
-// app.use(morgan('combined')); //send request logs to console
-app.use(morgan('combined', { stream: requestLogStream })); //also send request logs to file
+
 const { queryArrayParser } = require('./middleware/queryParsing');
 
 const personsRouter = require('./modules/persons/router');
@@ -62,6 +61,8 @@ app.use(express.json());
 app.use('/ping', (req, res) => {
   res.send('pong');
 });
+
+app.use(morgan('combined', { stream: requestLogStream })); //also send request logs to file (other than health checks)
 
 // CURRENTLY BORKED
 // if (process.env.NODE_ENV !== 'development') {

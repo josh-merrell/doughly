@@ -26,7 +26,7 @@ const getNextSequence = async (type) => {
 
     return sequence;
   } catch (err) {
-    console.log('Could not get next sequence:', err);
+    global.logger.info('Could not get next sequence:', err);
     return null;
   }
 };
