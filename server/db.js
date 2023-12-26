@@ -9,22 +9,23 @@ const supabase = createClient(url, key, { db: { schema: 'bakery' } });
 
 const supabaseDefault = createClient(url, key);
 
-const verifyUser = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization;
-    if (!token) {
-      return res.status(401).send({ error: 'No authorization token provided' });
-    }
-    const { user, error } = await supabase.auth.api.getUser(token);
-    if (error || !user) {
-      return res.status(401).send({ error: 'Invalid or expired token' });
-    }
-    req.user = user;
-    next();
-  } catch (err) {
-    return res.status(500).send({ error: 'Internal Server Error while verifying user: ', err });
-  }
-};
+// BORKED, TURNING OFF FOR NOW
+// const verifyUser = async (req, res, next) => {
+//   try {
+//     const token = req.headers.authorization;
+//     if (!token) {
+//       return res.status(401).send({ error: 'No authorization token provided' });
+//     }
+//     const { user, error } = await supabase.auth.api.getUser(token);
+//     if (error || !user) {
+//       return res.status(401).send({ error: 'Invalid or expired token' });
+//     }
+//     req.user = user;
+//     next();
+//   } catch (err) {
+//     return res.status(500).send({ error: 'Internal Server Error while verifying user: ', err });
+//   }
+// };
 
 const updater = async (userID, authorization, IDfield, ID, table, updateFields) => {
   //get existing values of updateFields from supabase
