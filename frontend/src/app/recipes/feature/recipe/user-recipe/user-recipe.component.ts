@@ -384,7 +384,7 @@ export class UserRecipeComponent {
     this.closeMenu();
     const dialogRef = this.dialog.open(EditRecipeModalComponent, {
       data: this.recipe(),
-      width: '75%',
+      width: '90%'
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result instanceof HttpErrorResponse) {
