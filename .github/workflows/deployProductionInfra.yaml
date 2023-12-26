@@ -1,4 +1,4 @@
-name: AWS Infra Deploy v10
+name: AWS Infra Deploy v12
 
 on:
   pull_request:
@@ -89,7 +89,7 @@ jobs:
         working-directory: ./frontend
 
       - name: Build Angular app
-        run: npm run build --configuration production
+        run: ng build --configuration production
         working-directory: ./frontend
 
       - name: Configure AWS Credentials
