@@ -58,7 +58,7 @@ module.exports = ({ db }) => {
     //verify no other shoppingListRecipe exists for this shoppingList and recipe
     const { data: existingShoppingListRecipe, error: existingShoppingListRecipeError } = await db.from('shoppingListRecipes').select('shoppingListRecipeID').filter('shoppingListID', 'eq', shoppingListID).filter('recipeID', 'eq', recipeID);
     if (existingShoppingListRecipeError) {
-      global.logger.info(`Error creating shoppingListRecipe: ${existingShoppingListRecipeError.message}`);
+      global.logger.info(`Error getting existingShoppingListRecipes: ${existingShoppingListRecipeError.message}`);
       return { error: existingShoppingListRecipeError.message };
     }
     if (existingShoppingListRecipe.length > 0 && existingShoppingListRecipe[0].deleted === 'true') {
@@ -77,7 +77,7 @@ module.exports = ({ db }) => {
     //create the shoppingListRecipe
     const { data: shoppingListRecipe, error: shoppingListRecipeError } = await db.from('shoppingListRecipes').insert({ userID, shoppingListRecipeID: customID, shoppingListID, recipeID, plannedDate }).select('shoppingListRecipeID, shoppingListID, recipeID, plannedDate').single();
     if (shoppingListRecipeError) {
-      global.logger.info(`Error creating shoppingListRecipe: ${shoppingListRecipeError.message}`);
+      global.logger.info(`Error creating shoppingListRecipe with ID ${customID}: ${shoppingListRecipeError.message}`);
       return { error: shoppingListRecipeError.message };
     }
     //add a 'created' log entry
