@@ -76,7 +76,7 @@ module.exports = ({ db }) => {
       return { error: 'shoppingListIngredient already exists' };
     }
 
-    //create shoppingListIngredient
+    // create shoppingListIngredient
     const { data: shoppingListIngredient, error: shoppingListIngredientError } = await db.from('shoppingListIngredients').insert({ userID, shoppingListIngredientID: customID, shoppingListID, ingredientID, needMeasurement, needUnit, source }).select('*').single();
     if (shoppingListIngredientError) {
       global.logger.info(`Error creating shoppingListIngredient with ID ${customID}: ${shoppingListIngredientError.message}`);
