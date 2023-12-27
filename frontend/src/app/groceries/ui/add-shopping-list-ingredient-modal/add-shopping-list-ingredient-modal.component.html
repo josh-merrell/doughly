@@ -1,6 +1,6 @@
 <div
   *ngIf="displayIngredients().length > 0 || searchFilter() !== ''"
-  class="relative flex h-full w-full flex-col items-center"
+  class="relative flex w-full flex-col items-center overflow-y-auto"
 >
   <!-- Search, Add-->
   <div class="mx-dl-7 mb-dl-6 mt-dl-5 flex justify-between">
@@ -32,11 +32,11 @@
   </div>
 
   <!-- List -->
-  <div class="relative mb-dl-7 flex flex-col items-center">
-    <div class="flex h-dl-17 pr-dl-3 flex-col items-center overflow-y-auto">
+  <div class="relative mb-dl-5 flex flex-col items-center">
+    <div class="flex max-h-dl-17 pr-dl-3 flex-col items-center overflow-y-auto">
       @for (ingredient of displayIngredients(); track ingredient.ingredientID) {
       <div
-        class="my-dl-4 flex w-dl-14 flex-col justify-start rounded-lg border px-dl-3 py-dl-1 shadow-md transition-all duration-200 ease-in-out"
+        class="my-dl-3 flex w-dl-14 flex-col justify-start rounded-lg border px-dl-3 py-dl-1 shadow-md transition-all duration-200 ease-in-out"
         (click)="ingredientCardClick(ingredient)"
         [ngClass]="{
           'border-dl-teal-10 bg-dl-teal-10':
@@ -67,7 +67,7 @@
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
 
   <!-- Measurement -->
-  <form class="w-11/12" [ngClass]="{'invisible': selectedIngredient().ingredientID === 0}" [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="isAdding() === false">
+  <form class="w-10/12" [ngClass]="{'invisible': selectedIngredient().ingredientID === 0}" [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="isAdding() === false">
     <div id="form-measurement">
       <label class="text-dl-4 font-dl-3 text-dl-grey-4"
         >Measurement
