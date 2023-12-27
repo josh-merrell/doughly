@@ -14,13 +14,13 @@
               version="1.1"
               [ngClass]="{
                 'border-dl-blue-6 text-dl-grey-1':
-                  (currentUrl$ | async) === '/groceries',
+                  getURL()  === 'groceries',
                 'border-transparent text-dl-grey-5 ':
-                  (currentUrl$ | async) !== '/groceries'
+                  getURL()  !== 'groceries'
               }"
               class="ml-dl-1 inline-flex items-center"
-              height="65"
-              width="65"
+              height="48"
+              width="48"
               viewBox="-14 0 67 71"
               enable-background="new 0 0 84 64"
               xml:space="preserve"
@@ -33,9 +33,9 @@
             <a
               [ngClass]="{
                 'border-dl-blue-6 text-dl-grey-1':
-                  (currentUrl$ | async) === '/groceries',
+                  getURL() === 'groceries',
                 'border-transparent text-dl-grey-4 ':
-                  (currentUrl$ | async) !== '/groceries'
+                  getURL() !== 'groceries'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -50,14 +50,14 @@
               data-name="Layer 1"
               [ngClass]="{
                 'border-dl-blue-6 text-dl-grey-1':
-                  (currentUrl$ | async) === '/recipes',
+                  getURL() === 'recipes',
                 'border-transparent text-dl-grey-5 ':
-                  (currentUrl$ | async) !== '/recipes'
+                  getURL()  !== 'recipes'
               }"
               class="inline-flex items-center"
               viewBox="-5 0 58 70"
-              height="65"
-              width="65"
+              height="48"
+              width="48"
             >
               <path
                 [attr.fill]="'hsl(209, 20%, 25%)'"
@@ -83,9 +83,9 @@
             <a
               [ngClass]="{
                 'border-dl-blue-6 text-dl-grey-1':
-                  (currentUrl$ | async) === '/recipes',
+                  getURL()  === 'recipes',
                 'border-transparent text-dl-grey-4 ':
-                  (currentUrl$ | async) !== '/recipes'
+                  getURL()  !== 'recipes'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -100,8 +100,8 @@
               data-name="Layer 1"
               viewBox="10 14 80 75"
               class="inline-flex items-center"
-              height="65"
-              width="65"
+              height="48"
+              width="48"
             >
               <path
                 [attr.fill]="'hsl(209, 14%, 37%)'"
@@ -111,9 +111,9 @@
             <a
               [ngClass]="{
                 'border-dl-blue-6 text-dl-grey-1':
-                  (currentUrl$ | async) === '/social',
+                  getURL()  === 'social',
                 'border-transparent text-dl-grey-4 ':
-                  (currentUrl$ | async) !== '/social'
+                  getURL()  !== 'social'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -133,8 +133,8 @@
               xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
               viewBox="-2 1 18 18"
               version="1.1"
-              height="65"
-              width="65"
+              height="48"
+              width="48"
               class="inline-flex items-center"
             >
               <g transform="translate(0,6.35)">
@@ -148,9 +148,9 @@
             <a
               [ngClass]="{
                 'border-dl-blue-6 text-dl-grey-1':
-                  (currentUrl$ | async) === '/kitchen',
+                  getURL()  === 'kitchen',
                 'border-transparent text-dl-grey-4 ':
-                  (currentUrl$ | async) !== '/kitchen'
+                  getURL()  !== 'kitchen'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >

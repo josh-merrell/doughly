@@ -1,4 +1,4 @@
-import { Renderer2, ElementRef, ViewChild, Component } from '@angular/core';
+import { Renderer2, ElementRef, ViewChild, Component, WritableSignal, signal } from '@angular/core';
 import {
   NavigationEnd,
   Router,
@@ -24,7 +24,7 @@ export class AppFooterComponent {
   @ViewChild('menu') menu!: ElementRef;
   globalClickListener: () => void = () => {};
   isMenuOpen = false;
-  currentUrl$: Observable<string> = this.store.select(selectCurrentUrl);
+  currentURL: WritableSignal<string> = signal('');
   private destroy$ = new Subject<void>();
   public profileImageLink: string | undefined;
   public initials: string = '';
@@ -40,6 +40,9 @@ export class AppFooterComponent {
   ) {}
 
   ngOnInit() {
+    this.store.select(selectCurrentUrl).subscribe((url) => {
+      this.currentURL.set(url);
+    });
     this.authService.$profile.subscribe((profile) => {
       this.profile = profile;
       this.profileImageLink = profile?.photo_url;
@@ -93,6 +96,20 @@ export class AppFooterComponent {
   profileNavigate(link: string) {
     this.closeMenu();
     this.router.navigate([link]);
+  }
+
+  getURL() {
+    const currentURL = this.currentURL();
+    if (currentURL.includes('groceries')) {
+      return 'groceries';
+    } else if (currentURL.includes('recipes')) {
+      return 'recipes';
+    } else if (currentURL.includes('social')) {
+      return 'social';
+    } else if (currentURL.includes('kitchen')) {
+      return 'kitchen';
+    } 
+    return '';
   }
 
   logout() {
