@@ -4,11 +4,15 @@ const { createShoppingLog } = require('../../../services/dbLogger');
 const { updater } = require('../../../db');
 const { default: axios } = require('axios');
 
-
 module.exports = ({ db }) => {
-  async function getShoppingListIngredientByID (options) {
+  async function getShoppingListIngredientByID(options) {
     const { shoppingListIngredientID } = options;
-    const { data: shoppingListIngredient, error } = await db.from('shoppingListIngredients').select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store').filter('shoppingListIngredientID', 'eq', shoppingListIngredientID).filter('deleted', 'eq', false).single();
+    const { data: shoppingListIngredient, error } = await db
+      .from('shoppingListIngredients')
+      .select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store')
+      .filter('shoppingListIngredientID', 'eq', shoppingListIngredientID)
+      .filter('deleted', 'eq', false)
+      .single();
     if (error) {
       global.logger.info(`Error getting shopping list ingredient ${shoppingListIngredientID}: ${error.message}`);
       return { error: error.message };
@@ -17,9 +21,13 @@ module.exports = ({ db }) => {
     return shoppingListIngredient;
   }
 
-  async function getIngredientsByShoppingList (options) {
+  async function getIngredientsByShoppingList(options) {
     const { userID, shoppingListID } = options;
-    const { data: shoppingListIngredients, error } = await db.from('shoppingListIngredients').select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store').filter('shoppingListID', 'eq', shoppingListID).filter('deleted', 'eq', false);
+    const { data: shoppingListIngredients, error } = await db
+      .from('shoppingListIngredients')
+      .select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store')
+      .filter('shoppingListID', 'eq', shoppingListID)
+      .filter('deleted', 'eq', false);
     if (error) {
       global.logger.info(`Error getting shopping list ingredients: ${error.message}`);
       return { error: error.message };
@@ -28,7 +36,7 @@ module.exports = ({ db }) => {
     return shoppingListIngredients;
   }
 
-  async function createShoppingListIngredient (options) {
+  async function createShoppingListIngredient(options) {
     const { userID, customID, authorization, shoppingListID, ingredientID, needMeasurement, needUnit, source } = options;
     if (!customID) {
       global.logger.info('Error creating shoppingListIngredient: customID is missing');
@@ -38,7 +46,7 @@ module.exports = ({ db }) => {
     //verify that provided shoppingList exists and is in draft status
     const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select('shoppingListID').filter('shoppingListID', 'eq', shoppingListID).filter('status', 'eq', 'draft');
     if (shoppingListError) {
-      global.logger.info(`Error creating shoppingListIngredient: ${shoppingListError.message}`);
+      global.logger.info(`Error creating shoppingListIngredient with ID ${customID}: ${shoppingListError.message}`);
       return { error: shoppingListError.message };
     }
     if (shoppingList.length === 0) {
@@ -49,11 +57,11 @@ module.exports = ({ db }) => {
     //verify that provided ingredient exists
     const { data: ingredient, error: ingredientError } = await db.from('ingredients').select('ingredientID').filter('ingredientID', 'eq', ingredientID).filter('deleted', 'eq', false);
     if (ingredientError) {
-      global.logger.info(`Error creating shoppingListIngredient: ${ingredientError.message}`);
+      global.logger.info(`Error creating shoppingListIngredient with ID ${customID}: ${ingredientError.message}`);
       return { error: ingredientError.message };
     }
     if (ingredient.length === 0) {
-      global.logger.info('Error creating shoppingListIngredient: ingredient does not exist');
+      global.logger.info(`Error creating shoppingListIngredient with ID ${customID}: ingredient does not exist`);
       return { error: 'ingredient does not exist' };
     }
 
@@ -64,14 +72,14 @@ module.exports = ({ db }) => {
       return { error: existingShoppingListIngredientError.message };
     }
     if (existingShoppingListIngredient.length > 0) {
-      global.logger.info('Error creating shoppingListIngredient: shoppingListIngredient already exists');
+      global.logger.info(`Error creating shoppingListIngredient with ID ${customID}: shoppingListIngredient already exists`);
       return { error: 'shoppingListIngredient already exists' };
     }
 
     //create shoppingListIngredient
     const { data: shoppingListIngredient, error: shoppingListIngredientError } = await db.from('shoppingListIngredients').insert({ userID, shoppingListIngredientID: customID, shoppingListID, ingredientID, needMeasurement, needUnit, source }).select('*').single();
     if (shoppingListIngredientError) {
-      global.logger.info(`Error creating shoppingListIngredient: ${shoppingListIngredientError.message}`);
+      global.logger.info(`Error creating shoppingListIngredient with ID ${customID}: ${shoppingListIngredientError.message}`);
       return { error: shoppingListIngredientError.message };
     }
     //add a 'addedIngredientToShoppingList' log
@@ -80,7 +88,7 @@ module.exports = ({ db }) => {
     return { shoppingListIngredientID: shoppingListIngredient.shoppingListIngredientID };
   }
 
-  async function updateShoppingListIngredient (options) {
+  async function updateShoppingListIngredient(options) {
     const { userID, authorization, shoppingListIngredientID, purchasedMeasurement, purchasedUnit, store } = options;
 
     //verify that provided shoppingListIngredient exists
@@ -121,7 +129,7 @@ module.exports = ({ db }) => {
     //add a 'updatedIngredientInShoppingList' log entry
   }
 
-  async function deleteShoppingListIngredient (options) {
+  async function deleteShoppingListIngredient(options) {
     const { userID, authorization, shoppingListIngredientID } = options;
 
     //verify that provided shoppingListIngredient exists
@@ -155,7 +163,12 @@ module.exports = ({ db }) => {
 
     //if shoppingList is in 'shopping' status, get any remaining shoppingListIngredients
     if (shoppingList[0].status === 'shopping') {
-      const { data: remainingShoppingListIngredients, error: remainingShoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID).filter('deleted', 'eq', false).is('store', null);
+      const { data: remainingShoppingListIngredients, error: remainingShoppingListIngredientsError } = await db
+        .from('shoppingListIngredients')
+        .select('shoppingListIngredientID')
+        .filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID)
+        .filter('deleted', 'eq', false)
+        .is('store', null);
       if (remainingShoppingListIngredientsError) {
         global.logger.info(`Error deleting shoppingListIngredient: ${remainingShoppingListIngredientsError.message}`);
         return { error: remainingShoppingListIngredientsError.message };
@@ -188,11 +201,7 @@ module.exports = ({ db }) => {
         }
 
         //delete any standalone shoppingListIngredients for this shoppingList using axios calls
-        const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db
-          .from('shoppingListIngredients')
-          .select('shoppingListIngredientID')
-          .filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID)
-          .filter('deleted', 'eq', false)
+        const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID).filter('deleted', 'eq', false);
         if (shoppingListIngredientsError) {
           global.logger.info(`Error getting standalone ingredients while clearing shoppingList ID: ${shoppingListIngredient[0].shoppingListID}: ${shoppingListIngredientsError.message}`);
           return { error: shoppingListIngredientsError.message };
@@ -219,7 +228,6 @@ module.exports = ({ db }) => {
         const updatedShoppingList = await updater(userID, authorization, 'shoppingListID', shoppingList[0].shoppingListID, 'shoppingLists', { status: 'draft' });
         return updatedShoppingList;
       }
-
     }
 
     //add a 'deleted' log entry
@@ -231,10 +239,10 @@ module.exports = ({ db }) => {
       by: {
         ID: getShoppingListIngredientByID,
         shoppingList: getIngredientsByShoppingList,
-      }
+      },
     },
     create: createShoppingListIngredient,
     update: updateShoppingListIngredient,
     delete: deleteShoppingListIngredient,
-  }
-}
+  };
+};
