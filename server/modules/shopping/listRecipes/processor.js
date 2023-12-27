@@ -56,7 +56,7 @@ module.exports = ({ db }) => {
     }
 
     //verify no other shoppingListRecipe exists for this shoppingList and recipe
-    const { data: existingShoppingListRecipe, error: existingShoppingListRecipeError } = await db.from('shoppingListRecipes').select('shoppingListRecipeID').filter('shoppingListID', 'eq', shoppingListID).filter('recipeID', 'eq', recipeID);
+    const { data: existingShoppingListRecipe, error: existingShoppingListRecipeError } = await db.from('shoppingListRecipes').select('shoppingListRecipeID, deleted').filter('shoppingListID', 'eq', shoppingListID).filter('recipeID', 'eq', recipeID);
     if (existingShoppingListRecipeError) {
       global.logger.info(`Error getting existingShoppingListRecipes: ${existingShoppingListRecipeError.message}`);
       return { error: existingShoppingListRecipeError.message };
