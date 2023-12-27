@@ -61,7 +61,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Error getting existingShoppingListRecipes: ${existingShoppingListRecipeError.message}`);
       return { error: existingShoppingListRecipeError.message };
     }
-    if (existingShoppingListRecipe.length > 0 && existingShoppingListRecipe[0].deleted === 'true') {
+    if (existingShoppingListRecipe.length > 0 && existingShoppingListRecipe[0].deleted == true) {
       //undelete the existing shoppingListRecipe
       const { error: undeleteError } = await db.from('shoppingListRecipes').update({ deleted: false }).eq('shoppingListRecipeID', existingShoppingListRecipe[0].shoppingListRecipeID);
       //log it
