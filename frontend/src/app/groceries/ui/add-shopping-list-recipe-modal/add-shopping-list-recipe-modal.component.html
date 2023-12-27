@@ -1,9 +1,9 @@
 <div
   *ngIf="displayRecipes().length > 0"
-  class="relative flex h-full w-full flex-col items-center overflow-x-hidden"
+  class="relative flex w-full flex-col items-center overflow-x-hidden overflow-y-auto"
 >
   <!-- List View Header -->
-  <div class="mb-dl-6 flex h-dl-4 w-full justify-around">
+  <div class="mb-dl-6 flex h-dl-4 mt-dl-3 w-full justify-around">
     <span
       (click)="onViewClick('byCategory')"
       class="inline-flex items-center border-b-2 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
@@ -92,7 +92,7 @@
   <div class="relative mb-dl-3 flex w-full flex-col items-center">
     <div
       *ngIf="view() === 'byCategory'"
-      class="flex h-dl-20 w-full flex-col items-center"
+      class="flex max-h-dl-19 w-full flex-col items-center"
       #scrollContainer
       (scroll)="checkScroll($event.target)"
     >
@@ -105,7 +105,7 @@
     </div>
     <div
       *ngIf="view() === 'all'"
-      class="flex h-dl-20 w-full flex-col items-center"
+      class="flex max-h-dl-19 w-full flex-col items-center"
       #scrollContainer
       (scroll)="checkScroll($event.target)"
     >
