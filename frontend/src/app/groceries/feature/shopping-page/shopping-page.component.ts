@@ -67,7 +67,11 @@ export class ShoppingPageComponent {
         ...sling,
         name: matchingIngredient.name,
       };
-      newSLI.valueValid = newSLI.purchasedMeasurement && newSLI.purchasedMeasurement < newSLI.needMeasurement ? false : true;
+      newSLI.valueValid =
+        newSLI.purchasedMeasurement &&
+        newSLI.purchasedMeasurement < newSLI.needMeasurement
+          ? false
+          : true;
       if (!sling.store && sling.purchasedMeasurement && newSLI.valueValid) {
         itemsToSave.push({
           shoppingListIngredientID: sling.shoppingListIngredientID,
@@ -79,7 +83,15 @@ export class ShoppingPageComponent {
       return newSLI;
     });
     return {
-      items: items,
+      items: items.sort((a: any, b: any) => {
+        if (a.name && !b.name) {
+          return -1;
+        }
+        if (!a.name && b.name) {
+          return 1;
+        }
+        return a.name.localeCompare(b.name);
+      }),
       itemsToSave,
     };
   });
@@ -174,19 +186,24 @@ export class ShoppingPageComponent {
         );
 
         // subscribe to 'selectTempPurchase'. When it is false, then set isLoading to false and navigate navigate to /groceries page
-        this.store.select(selectTempPurchasing).subscribe((tempPurchasing: any) => {
-          if (!tempPurchasing) {
-            this.isLoading.set(false);
-            if (itemsToSave.length === neededItemCount) {
-              const successRef = this.dialog.open(ListFulfilledModalComponent, {
-                width: '50%',
-                maxWidth: '360px',
-              });
-            } else {
-              this.router.navigate(['/groceries']);
+        this.store
+          .select(selectTempPurchasing)
+          .subscribe((tempPurchasing: any) => {
+            if (!tempPurchasing) {
+              this.isLoading.set(false);
+              if (itemsToSave.length === neededItemCount) {
+                const successRef = this.dialog.open(
+                  ListFulfilledModalComponent,
+                  {
+                    width: '50%',
+                    maxWidth: '360px',
+                  }
+                );
+              } else {
+                this.router.navigate(['/groceries']);
+              }
             }
-          }
-        });
+          });
       } else {
         this.isLoading.set(false);
         return;

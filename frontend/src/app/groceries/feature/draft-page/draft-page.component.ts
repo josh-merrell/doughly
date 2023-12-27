@@ -16,7 +16,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { selectRecipeIngredients } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
-import { selectDeleting, selectShoppingLists } from '../../state/shopping-list-selectors';
+import {
+  selectDeleting,
+  selectShoppingLists,
+} from '../../state/shopping-list-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-actions';
@@ -113,7 +116,14 @@ export class DraftPageComponent {
         name: matchingIngredient.name,
       };
     });
-    return result;
+    return result.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1;
+      } else if (a.name > b.name) {
+        return 1;
+      }
+      return 0;
+    });
   });
 
   // **reactive state signals**
@@ -195,7 +205,14 @@ export class DraftPageComponent {
         });
       });
 
-      return result;
+      return result.sort((a, b) => {
+        if (a.ingredientName < b.ingredientName) {
+          return -1;
+        } else if (a.ingredientName > b.ingredientName) {
+          return 1;
+        }
+        return 0;
+      });
     }
   }
 
@@ -263,8 +280,7 @@ export class DraftPageComponent {
       this.selectedRecipeID.set(0);
     } else {
       const ref = this.dialog.open(AddShoppingListRecipeModalComponent, {
-        width: '80%',
-        maxWidth: '540px',
+        width: '90%',
         data: {
           shoppingListRecipes: this.listRecipes(),
           recipes: this.recipes(),

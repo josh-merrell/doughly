@@ -1,7 +1,7 @@
 <div class="flex h-full flex-col items-center">
   <!-- Title and Edit Icon-->
   <div class="mb-dl-6 flex w-full justify-between px-dl-5">
-    <p class="mb-dl-3 mt-dl-6 text-dl-7 font-dl-3 text-dl-grey-2">
+    <p class="mb-dl-3 pt-dl-3 text-dl-7 font-dl-3 text-dl-grey-2">
       Shopping In Progress
     </p>
     <svg
@@ -69,8 +69,8 @@
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
           version="1.1"
-          height="25"
-          width="25"
+          height="22"
+          width="22"
           viewBox="-949 951 110 105"
         >
           <switch>
@@ -84,14 +84,14 @@
             </g>
           </switch>
         </svg>
-        <!-- Grey Checkbox (only if item 'purchasedMeasurement' is not present)-->
+        <!-- Grey Trashcan (only if item 'purchasedMeasurement' is not present)-->
         <svg
-          *ngIf="!item.store && !item.purchasedMeasurement"
+          *ngIf="!item.store && !item.purchasedMeasurement || item.purchasedMeasurement < item.needMeasurement"
           xmlns="http://www.w3.org/2000/svg"
           data-name="Layer 1"
           viewBox="20 20 70 75"
-          height="25"
-          width="25"
+          height="22"
+          width="22"
           (click)="onDeleteItemClick(item.shoppingListIngredientID)"
         >
           <path
@@ -109,8 +109,8 @@
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
           version="1.1"
-          height="25"
-          width="25"
+          height="22"
+          width="22"
           viewBox="-949 951 110 105"
         >
           <switch>
@@ -127,7 +127,7 @@
         <!-- Box to cover Checkmark (only if item 'purchasedMeasurement' is present but not yet saved)-->
         <div
           *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
-          class="absolute left-7 top-4 z-20 h-4 w-4 bg-dl-pink-7"
+          class="absolute left-5 top-4 z-20 h-3 w-4 bg-dl-pink-7"
         ></div>
 
         <span class="ml-dl-4 text-dl-5 font-dl-3 text-dl-grey-1">
@@ -149,6 +149,7 @@
         </p>
         <input
           class="rounded-dl-1 border-0"
+          *ngIf="!item.store"
           type="number"
           [min]="item.needMeasurement"
           max="999"
@@ -161,6 +162,11 @@
             onPurchasedAmountChange(item.ingredientID, item.purchasedAmount)
           "
         />
+        <div class="w-dl-6 mr-dl-3 flex flex-col items-center" *ngIf="item.store">
+          <p class="text-dl-5 font-dl-3 text-dl-grey-2">
+            {{ Math.ceil(item.purchasedMeasurement) }}
+          </p>
+        </div>
       </div>
     </div>
   </div>
