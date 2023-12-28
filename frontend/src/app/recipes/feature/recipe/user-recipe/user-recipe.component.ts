@@ -458,6 +458,7 @@ export class UserRecipeComponent {
     });
   }
   private mapRecipeTools(recipeTools: any, tools: any) {
+    console.log(`RECIPE TOOLS: `, recipeTools);
     if (!recipeTools.length || !tools.length) return [];
     return recipeTools.map((recipeTool: any) => {
       const tool = tools.find((tool: any) => tool.toolID === recipeTool.toolID);
@@ -537,7 +538,9 @@ export class UserRecipeComponent {
     } else if (usageDate === tomorrowString) {
       return 'Tomorrow';
     } else {
-      return usageDate;
+      // return usageDate;
+      // return 'usageDate' without the year
+      return usageDate.split(',').slice(0, 1).join(',');
     }
   }
   updateLogsAfterDate(event: MatDatepickerInputEvent<Date>) {
@@ -617,6 +620,7 @@ export class UserRecipeComponent {
         usageDate: this.usageDate,
         recipeName: this.recipe().title,
       },
+      width: '90%',
     });
   }
   useRecipe() {
