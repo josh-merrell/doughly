@@ -1,32 +1,32 @@
-<div class="relative h-full w-full">
+<div class="relative w-full flex flex-col flex-grow">
   <!-- List View Header -->
-  <div class="mb-dl-6 flex h-dl-4 w-full justify-around">
+  <div class="mx-dl-4 mb-dl-6 flex w-full">
     <span
       (click)="setListView('byCategory')"
-      class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
+      class="inline-flex items-center mr-dl-3 border-b-2 px-dl-1 pt-dl-1 text-dl-6 font-dl-2 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 font-dl-3 text-dl-grey-2':
+        ' border-dl-blue-6  font-dl-3 text-dl-grey-2':
           listView() === 'byCategory',
-        'text-dl-5 font-dl-2 text-dl-grey-4': listView() !== 'byCategory'
+        'border-transparent font-dl-2 text-dl-grey-4':
+          listView() !== 'byCategory'
       }"
     >
       By Category
     </span>
     <span
       (click)="setListView('all')"
-      class="inline-flex items-center py-1 font-dl-2 transition-all duration-200 ease-in-out"
+      class="inline-flex items-center border-b-2 px-dl-1 pt-dl-1 text-dl-6 font-dl-2 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 font-dl-3 text-dl-grey-2':
-          listView() === 'all',
-        'text-dl-5 font-dl-2 text-dl-grey-4': listView() !== 'all'
+        ' border-dl-blue-6 font-dl-3 text-dl-grey-2': listView() === 'all',
+        'border-transparent font-dl-2 text-dl-grey-4': listView() !== 'all'
       }"
     >
-      All
+      All Recipes
     </span>
   </div>
 
   <!-- Search, Add-->
-  <div class="mx-dl-7 mb-dl-6 flex justify-between">
+  <div class="ml-dl-2 mr-dl-1 mb-dl-6 flex justify-between">
     <!-- Search Bar -->
     <div class="mt-dl-3 flex items-center">
       <svg
@@ -47,7 +47,7 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+        class="w-dl-13 border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
         [placeholder]="
           !searchFilter()
             ? listView() === 'byCategory'
@@ -62,7 +62,7 @@
     <button
       id="add-button"
       type="button"
-      class="mt-dl-5 block h-dl-4 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      class="mt-dl-5 mr-dl-3 block h-dl-4 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
       (click)="onAddClick()"
       [ngClass]="{ invisible: listView() !== 'all' }"
     >
@@ -71,23 +71,22 @@
   </div>
 
   <!-- List -->
-  <div class="relative mb-dl-3 flex flex-col items-center">
+  <div class="relative mb-dl-3 flex flex-grow overflow-y-auto flex-col items-center">
     <div
       *ngIf="listView() === 'byCategory'"
-      class="flex h-dl-21 flex-col items-center"
+      class="flex flex-col flex-grow items-center"
       #scrollContainer
       (scroll)="checkScroll($event.target)"
     >
       <dl-recipe-category-card
         *ngFor="let category of displayCategories()"
         (click)="categoryCardClick(category)"
-        class="recipe-card m-dl-3 h-dl-7 w-dl-17 rounded-lg shadow-md"
         [category]="category"
       ></dl-recipe-category-card>
     </div>
     <div
       *ngIf="listView() === 'all'"
-      class="flex h-dl-21 flex-col items-center"
+      class="flex flex-col flex-grow items-center"
       #scrollContainer
       (scroll)="checkScroll($event.target)"
     >
@@ -99,7 +98,7 @@
         [isSelected]="false"
       ></dl-recipe-card>
     </div>
-    <span class="absolute -bottom-10 text-dl-5 font-dl-2 text-dl-grey-2"
+    <span class="text-dl-5 font-dl-2 text-dl-grey-2"
       >{{
         listView() === "byCategory"
           ? displayCategories().length

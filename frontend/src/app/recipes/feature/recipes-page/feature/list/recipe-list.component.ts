@@ -183,6 +183,7 @@ export class RecipeListComponent {
       data: {
         recipeCategories: this.categories(),
       },
+      width: '90%'
     });
     dialogRef.afterClosed().subscribe((result) => {
       const message = 'Recipe';

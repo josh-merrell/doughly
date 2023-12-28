@@ -20,6 +20,7 @@ export class RecipeCardComponent implements OnInit {
   @Input() isUserRecipe!: boolean;
   @Input() isSelected!: boolean;
   @Input() shoppingPage: boolean = false;
+  @Input() inModal: boolean = false;
   shoppingList: WritableSignal<ShoppingList | null> = signal(null);
 
   constructor(

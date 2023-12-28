@@ -1,35 +1,37 @@
 <div
-  class="relative transition-all duration-200 ease-in-out my-dl-4 flex h-dl-7 w-dl-15 items-center justify-between rounded-dl-3 "
+  class="relative transition-all duration-200 ease-in-out my-dl-4 flex h-dl-7 items-center justify-between rounded-dl-3 "
   [ngClass]="{
     'bg-dl-teal-10 shadow-lg': isSelected == true,
-    'bg-white shadow-md': isSelected == false
+    'bg-white shadow-md': isSelected == false,
+    'w-dl-15': inModal === true,
+    'w-dl-16': inModal === false
   }"
 >
   <div class="flex flex-col pl-dl-3">
-    <p class="text-dl-6 font-dl-3 text-dl-grey-2">
+    <p class="text-dl-6 font-dl-3 text-dl-grey-1">
       {{ recipe.title }}
     </p>
-    <div class="mt-dl-2 flex">
+    <div class="mt-dl-2 flex items-baseline">
       <p
         *ngIf="recipe.recipeCategoryName"
-        class="text-dl-4 font-dl-2 text-dl-grey-5"
+        class="text-dl-5 font-dl-2 text-dl-grey-5"
       >
         {{ recipe.recipeCategoryName }}
       </p>
       <p
         *ngIf="recipe.status !== 'published'"
-        class="ml-dl-4 text-dl-4 italic text-dl-yellow-4"
+        class="ml-dl-4 text-dl-5 italic text-dl-yellow-4"
       >
         Draft
       </p>
       <p
         *ngIf="this.shoppingList()?.ingredients?.length === 0 && !shoppingPage"
-        class="ml-dl-4 text-dl-4 italic text-dl-teal-6"
+        class="ml-dl-4 text-dl-5 italic text-dl-teal-6"
       >
         Ready to Make!
       </p>
     </div>
-    <p *ngIf="recipe.plannedDate" class="text-dl-4 text-dl-grey-4">Planned: {{ recipe.plannedDate }}</p>
+    <p *ngIf="recipe.plannedDate" class="text-dl-5 text-dl-grey-4">Planned: {{ recipe.plannedDate }}</p>
   </div>
   <img
     *ngIf="recipe.photoURL"

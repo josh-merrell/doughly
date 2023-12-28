@@ -1,11 +1,20 @@
-<div class="flex h-full">
+<div
+  class="relative my-dl-4 shadow-md flex h-dl-7 items-center justify-between rounded-dl-3 transition-all duration-200 ease-in-out"
+  [ngClass]="{
+    'w-dl-15': inModal === true,
+    'w-dl-16': inModal === false
+  }"
+>
   <div class="relative flex h-full w-full items-center justify-between">
-    <div class="flex flex-col pl-dl-3">
-        <p class="text-dl-6 font-dl-3 text-dl-grey-2">
-          {{ category.name }}
-        </p>
-      <div class="mt-dl-2 flex">
-        <span class="text-dl-4 font-dl-2 text-dl-grey-4"> Recipes: {{ category.recipeCount }}</span>
+    <div class="flex flex-col pl-dl-3 ">
+      <p class="text-dl-6 font-dl-3 text-dl-grey-1">
+        {{ category.name }}
+      </p>
+      <div class="mt-dl-2 flex items-baseline">
+        <span class="text-dl-5 font-dl-2 text-dl-grey-4">
+  {{ category.recipeCount }} {{countText()}}
+</span>
+
       </div>
     </div>
     <img

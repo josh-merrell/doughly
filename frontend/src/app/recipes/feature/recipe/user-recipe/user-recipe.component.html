@@ -1,5 +1,5 @@
 <div class="overflow-y-scroll">
-  <div *ngIf="recipe()" class="overflow-y-auto" >
+  <div *ngIf="recipe()" class="overflow-y-auto">
     <img
       *ngIf="recipe().photoURL"
       [src]="recipe().photoURL"
@@ -9,11 +9,11 @@
     <!-- Overview -->
     <div class="relative mx-dl-5 mb-dl-5 mt-dl-3 rounded-lg shadow-md">
       <div class="mx-dl-5 mb-dl-3 mt-dl-5 flex justify-between">
-        <h1 class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
+        <h1 class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-1">
           {{ recipe().title }}
         </h1>
         <svg
-          class="mt-dl-4"
+          class=""
           width="35"
           height="35"
           viewBox="0 0 15 15"
@@ -29,12 +29,14 @@
           ></path>
         </svg>
         <svg
-          *ngIf="recipeSubscription() && sourceRecipeVersion() !== recipe().version"
+          *ngIf="
+            recipeSubscription() && sourceRecipeVersion() !== recipe().version
+          "
           (click)="toggleSyncMessage($event)"
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
           version="1.1"
-          class="absolute top-4 right-14"
+          class="absolute right-14 top-4"
           height="38"
           width="38"
           viewBox="0 0 30 37.5"
@@ -53,13 +55,13 @@
         <div
           #menu
           *ngIf="menuOpen"
-          class="focus:outling-none absolute right-16 rounded-dl-1 top-2 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
+          class="focus:outling-none absolute right-16 top-2 z-10 flex flex-col rounded-dl-1 bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
         >
           <button
             *ngIf="!recipeSubscription()"
             (click)="onUpdateClick()"
             type="button"
-            class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+            class="block cursor-pointer px-dl-3 py-dl-2 text-dl-6 text-dl-grey-3 hover:bg-dl-grey-10"
           >
             Edit
           </button>
@@ -67,7 +69,7 @@
             *ngIf="!recipeSubscription()"
             (click)="onDeleteClick()"
             type="button"
-            class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+            class="block cursor-pointer px-dl-3 py-dl-2 text-dl-6 text-dl-grey-3 hover:bg-dl-grey-10"
           >
             Delete
           </button>
@@ -75,7 +77,7 @@
             *ngIf="recipeSubscription()"
             (click)="onUnsubscribeClick()"
             type="button"
-            class="block cursor-pointer rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+            class="block cursor-pointer rounded-dl-1 px-dl-3 py-dl-2 text-dl-6 text-dl-grey-3 hover:bg-dl-grey-10"
           >
             Unsubscribe
           </button>
@@ -83,14 +85,19 @@
         <span
           #syncMessage
           *ngIf="syncMessageOpen"
-          class="absolute p-dl-2 right-24 rounded-dl-1 top-2 z-10 bg-white shadow-md text-dl-grey-3 text-dl-5 ease-out"
+          class="absolute right-24 top-2 z-10 rounded-dl-1 bg-white p-dl-2 text-dl-5 text-dl-grey-3 shadow-md ease-out"
         >
-          The source recipe authored by <span class="text-dl-grey-2 font-dl-3 text-dl-5 ">{{recipeSubscription().authorUsername}}</span> has been updated. To accept the changes unsubscribe, then subscribe again from the source recipe.
-      </span>
+          The source recipe authored by
+          <span class="text-dl-5 font-dl-3 text-dl-grey-2">{{
+            recipeSubscription().authorUsername
+          }}</span>
+          has been updated. To accept the changes, unsubscribe then subscribe
+          again from the source recipe.
+        </span>
       </div>
       <!-- Category, Servings , Subscriber Count-->
       <div class="mx-dl-5 mb-dl-3 flex items-center justify-between">
-        <p class="ml-dl-2 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-6">
+        <p class="ml-dl-1 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-2">
           {{ recipeCategory()?.name }}
         </p>
         <div class="flex pt-dl-2">
@@ -100,8 +107,8 @@
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
               version="1.1"
-              height="45"
-              width="45"
+              height="35"
+              width="35"
               viewBox="0 0 90 112.5"
               style="enable-background: new 0 0 90 90"
               xml:space="preserve"
@@ -127,8 +134,8 @@
               width="512"
               xmlns="http://www.w3.org/2000/svg"
               id="fi_2118701"
-              height="36"
-              width="36"
+              height="32"
+              width="32"
               class=""
             >
               <path
@@ -148,10 +155,10 @@
         <!-- IF Public -->
         <div *ngIf="recipe().type === 'public'" class="flex justify-between">
           <svg
-            class="ml-dl-4 text-dl-grey-4"
-            width="50"
-            height="50"
-            viewBox="0 0 30 30"
+            class="ml-dl-2 text-dl-grey-4"
+            width="32"
+            height="32"
+            viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -180,7 +187,7 @@
               clip-rule="evenodd"
             ></path>
           </svg>
-          <span class="text-dl-5 font-dl-2 text-dl-grey-4"
+          <span class="ml-dl-1 pt-dl-1 text-dl-5 font-dl-2 text-dl-grey-4"
             >Anyone can view and use this recipe</span
           >
         </div>
@@ -190,11 +197,12 @@
           class="flex items-center justify-between"
         >
           <svg
+            class="ml-dl-2"
             xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
             version="1.1"
-            height="60"
-            width="60"
+            height="45"
+            width="45"
             viewBox="10 -15 80 125"
             style="enable-background: new 0 0 100 100"
             xml:space="preserve"
@@ -213,9 +221,9 @@
         <div *ngIf="recipe().type === 'private'" class="flex justify-between">
           <svg
             class="ml-dl-4 text-dl-grey-4"
-            width="50"
-            height="50"
-            viewBox="0 0 30 30"
+            width="32"
+            height="32"
+            viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -226,7 +234,7 @@
               clip-rule="evenodd"
             ></path>
           </svg>
-          <span class="text-dl-5 font-dl-2 text-dl-grey-4"
+          <span class="ml-dl-2 pt-dl-2 text-dl-5 font-dl-2 text-dl-grey-4"
             >Only you can view this recipe</span
           >
         </div>
@@ -270,7 +278,7 @@
             alt="author profile image"
           />
           <span
-            class="ml-dl-3 text-dl-5 font-dl-2 italic leading-dl-2 text-dl-grey-4"
+            class="ml-dl-3 text-dl-5 font-dl-2 italic leading-dl-2 text-dl-grey-3"
           >
             By {{ recipeSubscription().authorName }}
           </span>
@@ -351,10 +359,10 @@
         >
           <p *ngIf=""></p>
           <div class="flex">
-            <p class="text-dl-5 font-dl-2 text-dl-grey-4">Making it</p>
+            <p class="text-dl-6 font-dl-2 text-dl-grey-4">Make it</p>
             <div
               style="position: relative"
-              class="ml-dl-2 text-dl-5 font-dl-2 text-dl-blue-6"
+              class="ml-dl-2 text-dl-6 font-dl-2 text-dl-blue-5"
             >
               <div (click)="picker.open()">
                 {{ displayUsageDate }}
@@ -381,7 +389,7 @@
               displayUsageDate === 'Today'
             "
             type="button"
-            class="block w-dl-8 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            class="block w-dl-8 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
             (click)="useRecipe()"
           >
             Use it Now
@@ -389,7 +397,7 @@
           <button
             *ngIf="shoppingList()?.ingredients?.length !== 0"
             type="button"
-            class="block w-dl-10 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            class="block w-dl-10 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
             (click)="viewShoppingList()"
           >
             View Shopping List
@@ -399,7 +407,7 @@
               shoppingList()?.ingredients?.length === 0 &&
               displayUsageDate !== 'Today'
             "
-            class="ml-dl-4 text-dl-4 italic text-dl-teal-7"
+            class="ml-dl-4 text-dl-5 italic text-dl-teal-7"
           >
             Ready to Make!
           </p>
@@ -423,8 +431,8 @@
             viewBox="0 -100 512 612"
             style="enable-background: new 0 0 512 512"
             xml:space="preserve"
-            height="29"
-            width="29"
+            height="26"
+            width="26"
             class="text-dl-grey-4"
           >
             <g>
@@ -478,8 +486,8 @@
             width="512"
             xmlns="http://www.w3.org/2000/svg"
             id="fi_2118701"
-            height="36"
-            width="36"
+            height="31"
+            width="31"
             class="ml-dl-2"
           >
             <path
@@ -525,25 +533,25 @@
 
     <!-- Ingredients -->
     <div class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md">
-      <div class="flex justify-between">
-        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+      <div class="flex items-center justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
           Ingredients
         </p>
         <button
           *ngIf="!recipeSubscription()"
           id="edit-recipe-ingredients-button"
           type="button"
-          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          class="mr-dl-4 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="editRecipeIngredients()"
         >
           Edit
         </button>
       </div>
       <div *ngFor="let ingredient of displayIngredients()" class="mt-dl-2 flex">
-        <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+        <span class="min-w-dl-7 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ ingredient.name }}
         </span>
-        <span class="ml-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+        <span class="ml-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
           {{ ingredient.measurement }} {{ ingredient.measurementUnit }}
         </span>
       </div>
@@ -554,47 +562,53 @@
       *ngIf="displayTools()"
       class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md"
     >
-      <div class="flex justify-between">
-        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+      <div class="flex items-center justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
           Tools
         </p>
         <button
           *ngIf="!recipeSubscription()"
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          class="mr-dl-4 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="editRecipeTools()"
         >
           Edit
         </button>
       </div>
       <div *ngFor="let tool of displayTools()" class="mt-dl-2 flex">
-        <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+        <span class="min-w-dl-7 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ tool.name }}
         </span>
         <span
           *ngIf="tool.quantity > 0"
-          class="ml-dl-3 text-dl-5 font-dl-2 text-dl-grey-3"
+          class="ml-dl-3 text-dl-6 font-dl-2 text-dl-grey-3"
         >
           {{ tool.quantity }}
         </span>
       </div>
+      <span
+        *ngIf="!displayTools().length || displayTools()[0].quantity === -1"
+        class="pl-dl-5 text-dl-6 font-dl-2 italic text-dl-grey-3"
+      >
+        None required
+      </span>
     </div>
 
     <!-- Steps -->
     <div
       *ngIf="displaySteps()"
-      class="mx-dl-5 mt-dl-5 flex flex-col items-center rounded-lg pb-dl-5 shadow-md"
+      class="mx-dl-5 mt-dl-5 mb-dl-2 flex flex-col items-center rounded-lg pb-dl-5 shadow-md"
     >
-      <div class="mb-dl-6 flex w-full justify-between">
-        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+      <div class="mb-dl-4 flex w-full items-center justify-between">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
           Steps
         </p>
         <button
           *ngIf="!recipeSubscription()"
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-7 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 text-center text-dl-4 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+          class="mr-dl-4 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
           (click)="editRecipeSteps()"
         >
           Edit
@@ -602,22 +616,34 @@
       </div>
       <div
         *ngFor="let step of displaySteps(); let i = index"
-        class="mb-dl-7 flex w-full flex-col items-center justify-center"
+        class="flex w-full flex-col items-center justify-center"
+        [ngClass]="{
+          'mb-dl-6': i !== displaySteps().length - 1,
+        }"
       >
         <div class="mb-dl-2 flex w-full items-start">
           <!-- Step number with consistent width and padding -->
-          <div class="ml-dl-3 mr-dl-1 w-dl-4 px-dl-3 text-dl-5 text-dl-grey-2">
-            {{ i + 1 }}.
+          <div
+            class="mr-dl-1 w-dl-4 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-3"
+          >
+            {{ i + 1 }})
           </div>
           <!-- Title taking the remaining width -->
           <div class="flex-1">
             <p
-              class="mr-dl-6 overflow-hidden whitespace-normal text-dl-5 font-dl-2 text-dl-grey-2"
+              class="ml-dl-2 mr-dl-6 overflow-hidden whitespace-normal italic text-dl-6 font-dl-3 text-dl-grey-3"
             >
               {{ step.title }}
             </p>
           </div>
         </div>
+        <!-- Step Description -->
+        <p
+          class="my-dl-1 w-full px-dl-5 text-left text-dl-5 font-dl-2 text-dl-grey-4"
+          style="text-indent: 20px; text-align: justify"
+        >
+          {{ step.description }}
+        </p>
         <!-- Step photo -->
         <img
           *ngIf="step.photoURL"
