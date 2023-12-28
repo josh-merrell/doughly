@@ -1,6 +1,6 @@
-<div class="relative mx-auto w-full bg-white pt-dl-5">
+<div class="relative mx-auto h-full w-full bg-white pt-dl-5 flex flex-col overflow-x-hidden">
   <!-- View Header -->
-  <div class="flex w-full justify-around h-dl-4 mb-dl-5">
+  <div class="mx-dl-4 mb-dl-5 flex h-dl-4 w-full">
     <!-- <span
       (click)="setView('discover')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
@@ -14,22 +14,22 @@
     </span> -->
     <span
       (click)="setView('created')"
-      class="inline-flex items-center py-1 font-dl-2 transition-all duration-200 ease-in-out"
+      class="mr-dl-3 inline-flex items-center border-b-2 px-dl-1 pt-dl-1 text-dl-7 font-dl-2 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
+        ' border-dl-blue-6 text-dl-grey-2 font-dl-3':
           view() === 'created',
-        'text-dl-5 text-dl-grey-4 font-dl-2': view() !== 'created'
+        ' text-dl-grey-4 border-transparent font-dl-2': view() !== 'created'
       }"
     >
       Created
     </span>
     <span
       (click)="setView('subscribed')"
-      class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
+      class="inline-flex items-center border-b-2 px-dl-1 pt-dl-1 text-dl-7 font-dl-2 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
+        ' border-dl-blue-6  text-dl-grey-2 font-dl-3':
           view() === 'subscribed',
-        'text-dl-5 text-dl-grey-4 font-dl-2': view() !== 'subscribed'
+        ' text-dl-grey-4 border-transparent font-dl-2': view() !== 'subscribed'
       }"
     >
       Subscribed
@@ -37,9 +37,17 @@
   </div>
 
   <!-- Main Content -->
-  <div class="h-full">
+  <div class="flex flex-grow flex-col">
     <dl-discover-recipes *ngIf="view() === 'discover'"></dl-discover-recipes>
-    <dl-recipe-list [type]="'created'" *ngIf="view() === 'created'"></dl-recipe-list>
-    <dl-recipe-list [type]="'subscription'" *ngIf="view() === 'subscribed'"></dl-recipe-list>
+    <dl-recipe-list
+      [type]="'created'"
+      *ngIf="view() === 'created'"
+      class="flex-grow"
+    ></dl-recipe-list>
+    <dl-recipe-list
+      [type]="'subscription'"
+      *ngIf="view() === 'subscribed'"
+      class="flex-grow"
+    ></dl-recipe-list>
   </div>
 </div>

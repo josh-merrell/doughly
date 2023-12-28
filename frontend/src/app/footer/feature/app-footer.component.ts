@@ -102,7 +102,7 @@ export class AppFooterComponent {
     const currentURL = this.currentURL();
     if (currentURL.includes('groceries')) {
       return 'groceries';
-    } else if (currentURL.includes('recipes')) {
+    } else if (currentURL.includes('recipe')) {
       return 'recipes';
     } else if (currentURL.includes('social')) {
       return 'social';

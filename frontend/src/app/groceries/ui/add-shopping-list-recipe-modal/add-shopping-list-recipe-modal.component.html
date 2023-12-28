@@ -101,6 +101,7 @@
         (click)="categoryCardClick(category)"
         class="recipe-card my-dl-4 h-dl-7 w-11/12 rounded-lg shadow-md"
         [category]="category"
+        [inModal]="true"
       ></dl-recipe-category-card>
     </div>
     <div
@@ -116,6 +117,7 @@
         [recipe]="recipe"
         [isUserRecipe]="true"
         [isSelected]="recipe.recipeID === selectedRecipeID()"
+        [inModal]="true"
       ></dl-recipe-card>
     </div>
   </div>

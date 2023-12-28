@@ -16,7 +16,12 @@ import { UpdateRequestConfirmationModalComponent } from 'src/app/shared/ui/updat
 })
 export class RecipeCategoryCardComponent {
   @Input() category!: RecipeCategory;
+  @Input() inModal: boolean = false;
   constructor(public dialog: MatDialog, private renderer: Renderer2) {}
+
+  countText(): string {
+    return this.category.recipeCount === 1 ? 'recipe' : 'recipes';
+  }
 
   ngOnInit(): void {}
 }

@@ -1,5 +1,5 @@
 <div
-  class="relative w-dl-16 transform overflow-hidden bg-white px-dl-5 pb-dl-3 pt-dl-4 text-left transition-all sm:my-dl-3 sm:w-dl-18 sm:p-dl-6"
+  class="relative w-full h-dl-21 overflow-y-auto transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all sm:my-dl-3 sm:w-dl-18 sm:p-dl-6"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -10,9 +10,9 @@
     (ngSubmit)="onSubmit()"
     *ngIf="(isAdding$ | async) === false"
   >
-    <div class="relative flex flex-col">
-      <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
-        <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3">
+    <div class="relative flex flex-col w-full">
+      <div class="text-center">
+        <h3 class="leading-dl-4 text-dl-7 font-dl-3 text-dl-grey-4">
           Add Recipe
         </h3>
       </div>
@@ -41,10 +41,10 @@
       </div>
 
       <!--FORM FIELDS-->
-      <div class="mt-dl-7">
+      <div class="mt-dl-6">
         <div id="form-title" class="relative flex flex-col">
-          <label class="text-dl-3 font-dl-3 text-dl-grey-4">Title</label>
-          <mat-form-field class="w-full">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Title</label>
+          <mat-form-field class="text-dl-4">
             <input matInput formControlName="title" />
             <mat-error
               class="text-dl-3"
@@ -54,8 +54,8 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div id="form-recipeCategoryID" class="relative mt-dl-2 flex flex-col">
-          <label class="text-dl-3 font-dl-3 text-dl-grey-4">Category</label>
+        <div id="form-recipeCategoryID" class="relative flex flex-col">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Category</label>
           <mat-form-field>
             <mat-select formControlName="recipeCategoryID">
               <ng-container *ngFor="let category of categories$ | async">
@@ -63,12 +63,6 @@
                   {{ category.name }}
                 </mat-option>
               </ng-container>
-              <!-- <mat-option
-                class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2"
-                (click)="onAddNewCategory()"
-              >
-                New Category
-              </mat-option> -->
             </mat-select>
           </mat-form-field>
         </div>
@@ -81,13 +75,13 @@
             formControlName="isPublicRecipe"
             class="select-slider"
           ></mat-slide-toggle>
-          <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
-            >Make public and track subscriber count</span
+          <span class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4"
+            >Make public</span
           >
         </div>
-        <div class="mt-dl-2 flex">
-          <div id="form-servings" class="mr-dl-4">
-            <label class="text-dl-3 font-dl-3 text-dl-grey-4">Servings</label>
+        <div class="mt-dl-2 flex flex-col">
+          <div id="form-servings" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Servings</label>
             <mat-form-field class="w-full">
               <input matInput formControlName="servings" />
               <mat-error
@@ -107,8 +101,8 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div id="form-lifespanDays" class="ml-dl-1">
-            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+          <div id="form-lifespanDays" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Lifespan Days</label
             >
             <mat-form-field class="w-full">
@@ -131,9 +125,9 @@
             </mat-form-field>
           </div>
         </div>
-        <div class="mt-dl-2 flex">
-          <div id="form-timePrep" class="mr-dl-4">
-            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+        <div class="mt-dl-2 flex flex-col">
+          <div id="form-timePrep" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Prep time in minutes</label
             >
             <mat-form-field class="w-full">
@@ -155,8 +149,8 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div id="form-timeBake" class="ml-dl-1">
-            <label class="text-dl-3 font-dl-3 text-dl-grey-4"
+          <div id="form-timeBake" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
               >Bake time in minutes</label
             >
             <mat-form-field class="w-full">
@@ -190,7 +184,7 @@
             />
             <label
               for="fileInputRecipe"
-              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-3 text-white hover:bg-dl-blue-5"
+              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-5 text-white hover:bg-dl-blue-5"
             >
               Choose Photo
             </label>
@@ -212,7 +206,7 @@
       <div class="mt-dl-6 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white sm:ml-dl-4"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
           [class.cursor-pointer]="form.valid && !form.pristine && imagePresent"
           [ngClass]="{
             'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
@@ -226,7 +220,7 @@
         </button>
         <button
           type="button"
-          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
           (click)="onCancel()"
         >
           Cancel

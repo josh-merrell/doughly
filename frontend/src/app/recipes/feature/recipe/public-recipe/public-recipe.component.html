@@ -8,9 +8,9 @@
       class="w-full object-cover"
     />
     <!-- Overview -->
-    <div class="relative mx-dl-5 mb-dl-3 mt-dl-3 rounded-lg shadow-md">
-      <div class="mx-dl-5 mb-dl-2 mt-dl-4 flex justify-between">
-        <h1 class="mt-dl-1 text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-2">
+    <div class="relative mx-dl-5 mb-dl-5 mt-dl-3 rounded-lg shadow-md">
+      <div class="mx-dl-5 mb-dl-4 mt-dl-5 flex justify-between">
+        <h1 class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-1">
           {{ recipe().title }}
         </h1>
         <div class="" *ngIf="author()">
@@ -34,8 +34,8 @@
         </div>
       </div>
       <!-- Category, Servings , Subscriber Count-->
-      <div class="mx-dl-5 mb-dl-6 flex items-center justify-between">
-        <p class="ml-dl-2 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-6">
+      <div class="mx-dl-5 mb-dl-5 flex items-center justify-between">
+        <p class="ml-dl-1 text-dl-6 font-dl-2 leading-dl-2 text-dl-grey-2">
           {{ recipeCategory()?.name }}
         </p>
         <div class="flex pt-dl-2">
@@ -45,8 +45,8 @@
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
               version="1.1"
-              height="45"
-              width="45"
+              height="35"
+              width="35"
               viewBox="0 0 90 112.5"
               style="enable-background: new 0 0 90 90"
               xml:space="preserve"
@@ -69,8 +69,8 @@
               width="512"
               xmlns="http://www.w3.org/2000/svg"
               id="fi_2118701"
-              height="36"
-              width="36"
+              height="32"
+              width="32"
               class=""
             >
               <path
@@ -87,9 +87,9 @@
       </div>
 
       <!--Times -->
-      <div class="mx-dl-3 mb-dl-5 flex items-center justify-between px-dl-1">
+      <div class="mx-dl-5 mb-dl-6 flex items-center justify-between px-dl-1">
         <svg
-          class="ml-dl-4 text-dl-grey-4"
+          class="text-dl-grey-4"
           width="22"
           height="22"
           viewBox="0 0 15 15"
@@ -120,12 +120,10 @@
         *ngIf="recipeSubscription()"
         class="mx-dl-5 mb-dl-5 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
-        <p class="text-dl-4 font-dl-2 text-dl-grey-4">
-          Your subscription is tracking updates
-        </p>
+        <p class="text-dl-5 font-dl-2 text-dl-grey-4">You are subscribed</p>
         <button
           type="button"
-          class="block w-dl-9 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+          class="block w-dl-9 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
           (click)="onSubscribeClick()"
         >
           My Subscription
@@ -135,12 +133,12 @@
         *ngIf="!recipeSubscription()"
         class="mx-dl-5 mb-dl-5 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
-        <p class="text-dl-4 font-dl-2 text-dl-grey-4">
+        <p class="text-dl-5 font-dl-2 text-dl-grey-4">
           Subscribe to use this recipe in your kitchen
         </p>
         <button
           type="button"
-          class="block w-dl-7 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+          class="block w-dl-7 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
           (click)="onSubscribeClick()"
         >
           Subscribe
@@ -154,15 +152,15 @@
       class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md"
     >
       <div class="flex justify-between">
-        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
           Ingredients
         </p>
       </div>
       <div *ngFor="let ingredient of displayIngredients()" class="mt-dl-2 flex">
-        <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+        <span class="min-w-dl-7 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ ingredient.name }}
         </span>
-        <span class="ml-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+        <span class="ml-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
           {{ ingredient.measurement }} {{ ingredient.measurementUnit }}
         </span>
       </div>
@@ -171,50 +169,68 @@
     <!-- Tools -->
     <div class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md">
       <div class="flex justify-between">
-        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
           Tools
         </p>
       </div>
       <div *ngFor="let tool of tools()" class="mt-dl-2 flex">
-        <span class="pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-3">
+        <span class="min-w-dl-7 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ tool.name }}
         </span>
         <span
           *ngIf="tool.quantity > 0"
-          class="ml-dl-3 text-dl-5 font-dl-2 text-dl-grey-3"
+          class="ml-dl-3 text-dl-6 font-dl-2 text-dl-grey-3"
         >
           {{ tool.quantity }}
         </span>
       </div>
+      <span
+        *ngIf="!tools().length || tools()[0].quantity === -1"
+        class="pl-dl-5 text-dl-6 font-dl-2 italic text-dl-grey-3"
+      >
+        None required
+      </span>
     </div>
 
     <!-- Steps -->
     <div
-      class="mx-dl-5 mt-dl-5 flex flex-col items-center rounded-lg pb-dl-5 shadow-md"
+      class="mx-dl-5 mb-dl-2 mt-dl-5 flex flex-col items-center rounded-lg pb-dl-5 shadow-md"
     >
       <div class="mb-dl-4 flex w-full justify-between">
-        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-6 font-dl-3 text-dl-grey-2">
+        <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
           Steps
         </p>
       </div>
       <div
         *ngFor="let step of steps(); let i = index"
-        class="mb-dl-3 flex w-full flex-col items-center justify-center"
+        class="flex w-full flex-col items-center justify-center"
+        [ngClass]="{
+          'mb-dl-6': i !== steps().length - 1,
+        }"
       >
         <div class="mb-dl-2 flex w-full items-start">
-          <div class="flex flex-col">
+          <!-- Step number with consistent width and padding -->
+          <div
+            class="mr-dl-1 w-dl-4 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-3"
+          >
+            {{ i + 1 }})
+          </div>
+          <!-- Title taking the remaining width -->
+          <div class="flex-1">
             <p
-              class="mb-dl-2 mr-dl-6 overflow-hidden whitespace-normal pl-dl-4 text-dl-6 font-dl-3 text-dl-grey-2"
+              class="ml-dl-2 mr-dl-6 overflow-hidden whitespace-normal text-dl-6 font-dl-3 italic text-dl-grey-3"
             >
-              {{ i + 1 }}. {{ step.title }}
-            </p>
-            <p
-              class="mr-dl-6 overflow-y-auto whitespace-normal pl-dl-7 text-dl-4 font-dl-3 text-dl-grey-4"
-            >
-              {{ step.description }}
+              {{ step.title }}
             </p>
           </div>
         </div>
+        <!-- Step Description -->
+        <p
+          class="my-dl-1 w-full px-dl-5 text-left text-dl-5 font-dl-2 text-dl-grey-4"
+          style="text-indent: 20px; text-align: justify"
+        >
+          {{ step.description }}
+        </p>
         <!-- Step photo -->
         <img
           *ngIf="step.photoURL"
