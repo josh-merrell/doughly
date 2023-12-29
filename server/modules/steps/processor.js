@@ -93,7 +93,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Error validating title: ${title} while updating step ${error2.message}`);
       return { error: error2.message };
     }
-    if (steps.length > 0) {
+    if (steps.length > 1) {
       global.logger.info(`Step with title ${title} already exists, can't use this title`);
       return { error: `Step with title ${title} already exists, can't use this title` };
     }
