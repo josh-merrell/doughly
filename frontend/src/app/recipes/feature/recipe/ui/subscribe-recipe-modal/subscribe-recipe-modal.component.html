@@ -38,9 +38,9 @@
   </div>
 
   <!-- Header Bar -->
-  <div class="mb-dl-5 flex w-dl-16 justify-between">
-    <label class="text-dl-6 font-dl-3 text-dl-grey-4">Recipe</label>
-    <label class="mr-dl-4 text-dl-6 font-dl-3 text-dl-grey-4"
+  <div class="mb-dl-5 flex w-full justify-between">
+    <label class="pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-4">Recipe</label>
+    <label class="mr-dl-5 text-dl-6 font-dl-3 text-dl-grey-4"
       >Your Kitchen</label
     >
   </div>
@@ -53,18 +53,15 @@
       class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9"
     >
       <!-- Recipe Ingredient-->
-      <div class="flex">
-        <label class="pl-dl-6 text-dl-5 font-dl-3 text-dl-grey-6">{{
-          i.name
-        }}</label>
+      <div class="flex items-center justify-start flex-grow">
         <div
           [ngClass]="{ invisible: !ingredientStatuses()[idx] }"
-          class="ml-dl-3 pt-dl-1"
+          class="ml-dl-1 mr-dl-1 "
         >
           <svg
             class="rounded-full bg-dl-teal-7"
-            width="26"
-            height="26"
+            width="22"
+            height="22"
             viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -78,15 +75,17 @@
             ></path>
           </svg>
         </div>
+        <label class="mr-dl-3 pl-dl-1 text-dl-5 font-dl-3 text-dl-grey-6">{{
+          i.name
+        }}</label>
       </div>
 
       <!-- Kitchen Mapping -->
-      <div class="flex flex-col mr-dl-4">
-        <mat-form-field class="mt-dl-4 text-dl-4">
+      <div class="mr-dl-4 flex flex-col">
+        <mat-form-field [style.width.rem]="11.25" class="mt-dl-4 text-dl-4">
           <mat-select
             [placeholder]="getIngredientPlaceholder(i)"
             (selectionChange)="onIngredientSelectChange($event.value, i)"
-            class="w-dl-10"
           >
             <ng-container *ngFor="let ui of userIngredients()">
               <mat-option [value]="ui.ingredientID">
@@ -101,7 +100,10 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="i.userIngredientID && i.userIngredientID !== 0">
+        <mat-form-field
+          [style.width.rem]="11.25"
+          *ngIf="i.userIngredientID && i.userIngredientID !== 0"
+        >
           <input
             [value]="i.userPurchaseUnitRatio || ''"
             (input)="onPurchaseUnitRatioChange($event.target, i)"
@@ -123,18 +125,12 @@
       class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9"
     >
       <!-- Recipe Tool-->
-      <div class="flex">
-        <label class="pl-dl-6 text-dl-5 font-dl-3 text-dl-grey-6">{{
-          t.name
-        }}</label>
-        <div
-          [ngClass]="{ invisible: !toolStatuses()[idx] }"
-          class="ml-dl-3 pt-dl-1"
-        >
+      <div class="flex items-center justify-start flex-grow">
+        <div [ngClass]="{ invisible: !toolStatuses()[idx] }" class="ml-dl-1 mr-dl-1">
           <svg
             class="rounded-full bg-dl-teal-7"
-            width="26"
-            height="26"
+            width="22"
+            height="22"
             viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -148,10 +144,13 @@
             ></path>
           </svg>
         </div>
+        <label class="mr-dl-3 pl-dl-1 text-dl-5 font-dl-3 text-dl-grey-6">{{
+          t.name
+        }}</label>
       </div>
       <!-- Kitchen Mapping -->
-      <div class="flex flex-col mr-dl-4 ">
-        <mat-form-field class="mt-dl-4 text-dl-4">
+      <div class="mr-dl-4 flex flex-col">
+        <mat-form-field [style.width.rem]="11.25" class="mt-dl-4 text-dl-4">
           <mat-select
             [placeholder]="getToolPlaceholder(t)"
             (selectionChange)="onToolSelectChange($event.value, t)"
@@ -175,39 +174,15 @@
   </div>
 
   <div class="flex h-dl-6 w-full items-center justify-between">
-    <div class="relative mt-dl-2 flex w-full items-center">
-      <mat-progress-bar
-        mode="determinate"
-        [value]="progressValue"
-        color="green"
-      ></mat-progress-bar>
-      <p
-        class="absolute -top-7 left-28 text-dl-4"
-        [ngClass]="{
-          'font-dl-3 text-dl-grey-2': ingredientsReady(),
-          'font-dl-2 text-dl-grey-7': !ingredientsReady()
-        }"
-      >
-        Ingredients
-      </p>
-      <p
-        class="absolute -top-7 left-72 text-dl-4"
-        [ngClass]="{
-          'font-dl-3 text-dl-grey-2': toolsReady(),
-          'font-dl-2 text-dl-grey-7': !toolsReady()
-        }"
-      >
-        Tools
-      </p>
-    </div>
     <button
       type="button"
-      class="ml-dl-6 block h-dl-4 w-dl-7 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 shadow-sm transition-all duration-200 ease-in-out"
+      class="mb-dl-2 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
       (click)="onSubscribeClick()"
       [ngClass]="{
         'bg-dl-pink-4 text-white': ingredientsReady() && toolsReady(),
         'bg-dl-grey-9 text-dl-grey-4': !ingredientsReady() || !toolsReady()
       }"
+      [disabled]="!ingredientsReady() || !toolsReady()"
     >
       Subscribe
     </button>
