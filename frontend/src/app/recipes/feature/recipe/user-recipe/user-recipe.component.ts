@@ -470,7 +470,7 @@ export class UserRecipeComponent {
   }
   private mapRecipeSteps(recipeSteps: any, steps: any) {
     if (!recipeSteps.length || !steps.length) return [];
-    return recipeSteps.map((recipeStep: any) => {
+    const mappedSteps = recipeSteps.map((recipeStep: any) => {
       const step = steps.find((step: any) => step.stepID === recipeStep.stepID);
       return {
         ...recipeStep,
@@ -478,6 +478,7 @@ export class UserRecipeComponent {
         description: step ? step.description : 'Unknown',
       };
     });
+    return mappedSteps.sort((a: any, b: any) => a.sequence - b.sequence);
   }
   filterPastDates(date: Date | null): boolean {
     const today = new Date();
