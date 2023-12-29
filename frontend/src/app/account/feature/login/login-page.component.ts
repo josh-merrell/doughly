@@ -43,6 +43,7 @@ import { ShoppingListActions } from '../../.././groceries/state/shopping-list-ac
   templateUrl: './login-page.component.html',
 })
 export class LoginPageComponent {
+  private googleScriptId = 'google-signin-script';
   constructor(
     private store: Store,
     private router: Router,
@@ -52,6 +53,14 @@ export class LoginPageComponent {
     // Expose the Google Login callback function to the global scope
     window['handleSignInWithGoogle'] = (response) =>
       this.handleSignInWithGoogle(response);
+  }
+
+  ngOnInit() {
+    this.loadGoogleSignInScript();
+  }
+
+  ngOnDestroy() {
+    this.removeGoogleSignInScript();
   }
 
   handleSignInWithGoogle(response: any) {
@@ -74,6 +83,36 @@ export class LoginPageComponent {
           this.error = error.message;
         });
     });
+  }
+
+  private loadGoogleSignInScript() {
+    if (document.getElementById(this.googleScriptId)) {
+      // If the script is already present, there's no need to load it again
+      return;
+    }
+
+    const scriptElement = document.createElement('script');
+    scriptElement.src = 'https://accounts.google.com/gsi/client';
+    scriptElement.async = true;
+    scriptElement.defer = true;
+    scriptElement.id = this.googleScriptId;
+    document.body.appendChild(scriptElement);
+
+    scriptElement.onload = () => {
+      // Initialize the Google sign-in functionality here, if needed
+      // For example:
+      // google.accounts.id.initialize({
+      //   client_id: '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
+      //   callback: (response) => this.handleSignInWithGoogle(response)
+      // });
+    };
+  }
+
+  private removeGoogleSignInScript() {
+    const scriptElement = document.getElementById(this.googleScriptId);
+    if (scriptElement) {
+      document.body.removeChild(scriptElement);
+    }
   }
 
   login_form = new FormGroup({
