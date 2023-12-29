@@ -57,7 +57,7 @@ async function generateID(req, res, next) {
   // get current UTC time date
   const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
   let year = now.getUTCFullYear().toString().slice(-2);
-  if (env.NODE_ENV === 'development') {year -= 20};
+  if (process.env.NODE_ENV === 'development') {year -= 20};
   const month = String(now.getUTCMonth() + 1).padStart(2, '0');
   const day = String(now.getUTCDate()).padStart(2, '0');
   let sequence = await getNextSequence(type);
