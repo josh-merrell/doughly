@@ -1,5 +1,5 @@
 <div
-  class="relative w-full transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-5 text-left transition-all"
+  class="relative w-full transform overflow-hidden bg-white px-dl-4 pb-dl-4 pt-dl-5 text-left transition-all"
 >
   <!-- Joined, Image, Counts-->
   <div class="mb-dl-3 flex justify-between px-dl-2">
@@ -63,7 +63,7 @@
   <div *ngIf="isDeleting()" class="flex w-full flex-col items-center">
     <mat-spinner class="my-app-custom-spinner"></mat-spinner>
   </div>
-  <div class="mb-dl-5 flex items-center justify-between" *ngIf="!isDeleting()">
+  <div class="mb-dl-6 flex items-center justify-between" *ngIf="!isDeleting()">
     <!-- Status Icons -->
     <div class="flex">
       <!-- Friendship Status-->
@@ -78,8 +78,8 @@
           class="rounded-full p-dl-1"
         >
           <svg
-            width="24"
-            height="24"
+            width="21"
+            height="21"
             viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -112,8 +112,8 @@
           class="p-dl-1"
         >
           <svg
-            width="24"
-            height="24"
+            width="21"
+            height="21"
             viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +136,7 @@
     <div class="flex">
       <button
         type="button"
-        class="mr-dl-3 block h-dl-4 whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 shadow-sm"
+        class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
           'bg-dl-pink-4 text-white':
@@ -152,7 +152,7 @@
       </button>
       <button
         type="button"
-        class="block h-dl-4 whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+        class="block whitespace-nowrap rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
         [ngClass]="{
           'bg-dl-pink-4 text-white': buttonTexts().followButton === 'Follow',
           'border-2 border-dl-pink-4 bg-white text-dl-pink-4':
@@ -167,24 +167,22 @@
 
   <!-- View Tabs -->
   <div>
-    <div class="mb-dl-4 flex h-dl-4 justify-around">
+    <div class="mb-dl-5 flex justify-around">
       <span
-        class="items-center px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+        class="items-center border-b-4 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
         [ngClass]="{
-          'border-b-2 border-dl-blue-6 font-dl-3 text-dl-grey-2':
-            view === 'recipes',
-          'font-dl-2 text-dl-grey-4': view !== 'recipes'
+          ' border-dl-blue-6 font-dl-3 text-dl-grey-2': view === 'recipes',
+          'border-transparent font-dl-2 text-dl-grey-4': view !== 'recipes'
         }"
         (click)="view = 'recipes'"
       >
         Recipes
       </span>
       <span
-        class="items-center px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+        class="items-center border-b-4 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
         [ngClass]="{
-          'border-b-2 border-dl-blue-6 font-dl-3 text-dl-grey-2':
-            view === 'timeline',
-          'font-dl-2 text-dl-grey-4': view !== 'timeline'
+          ' border-dl-blue-6 font-dl-3 text-dl-grey-2': view === 'timeline',
+          'border-transparent font-dl-2 text-dl-grey-4': view !== 'timeline'
         }"
         (click)="view = 'timeline'"
       >
@@ -194,7 +192,7 @@
   </div>
 
   <!-- Recipes -->
-  <div *ngIf="view === 'recipes'" class="mb-dl-7">
+  <div *ngIf="view === 'recipes'" class="mb-dl-6 h-dl-11 overflow-y-auto">
     <dl-recipe-card
       *ngFor="let recipe of friend.recipes"
       [friendUserID]="friend.userID"
@@ -213,10 +211,11 @@
   </div>
 
   <!-- Timeline -->
-  <div
-    *ngIf="view === 'timeline'"
-    class="mb-dl-7 flex justify-center h-dl-7 items-center rounded-dl-3 text-dl-6 font-dl-3 text-dl-grey-3 shadow-md"
-  >
-    <p class="">Feature in Progress. Check back later!</p>
+  <div *ngIf="view === 'timeline'" class="mb-dl-6 h-dl-11">
+    <div
+      class="flex h-dl-7 items-center justify-center rounded-dl-3 text-dl-6 font-dl-3 text-dl-grey-3 shadow-md"
+    >
+      <p class="px-dl-4">Feature coming soon!</p>
+    </div>
   </div>
 </div>

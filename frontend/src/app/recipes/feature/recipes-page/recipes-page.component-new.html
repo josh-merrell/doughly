@@ -1,6 +1,6 @@
-<div class="relative mx-auto h-full w-full bg-white pt-dl-5 flex flex-col overflow-x-hidden">
+<div class="relative flex h-full w-full flex-col bg-white pt-dl-5">
   <!-- View Header -->
-  <div class="mx-dl-4 mb-dl-5 flex h-dl-4 w-full">
+  <div class="mb-dl-5 flex w-full flex-row-reverse pr-dl-5">
     <!-- <span
       (click)="setView('discover')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
@@ -14,9 +14,9 @@
     </span> -->
     <span
       (click)="setView('created')"
-      class="mr-dl-3 inline-flex items-center border-b-2 px-dl-1 pt-dl-1 text-dl-7 font-dl-2 transition-all duration-100 ease-in-out"
+      class="inline-flex items-center border-b-4 text-dl-7 font-dl-2 transition-all duration-100 ease-in-out "
       [ngClass]="{
-        ' border-dl-blue-6 text-dl-grey-2 font-dl-3':
+        ' border-dl-blue-7 text-dl-grey-2 font-dl-3':
           view() === 'created',
         ' text-dl-grey-4 border-transparent font-dl-2': view() !== 'created'
       }"
@@ -25,9 +25,9 @@
     </span>
     <span
       (click)="setView('subscribed')"
-      class="inline-flex items-center border-b-2 px-dl-1 pt-dl-1 text-dl-7 font-dl-2 transition-all duration-100 ease-in-out"
+      class="mr-dl-5 inline-flex items-center border-b-4 text-dl-7 font-dl-2 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-6  text-dl-grey-2 font-dl-3':
+        ' border-dl-blue-7  text-dl-grey-2 font-dl-3':
           view() === 'subscribed',
         ' text-dl-grey-4 border-transparent font-dl-2': view() !== 'subscribed'
       }"

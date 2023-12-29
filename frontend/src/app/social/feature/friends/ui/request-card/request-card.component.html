@@ -1,5 +1,5 @@
 <div class="relative flex h-full w-full py-dl-2">
-  <div class="flex items-center px-dl-4">
+  <div class="flex items-center pr-dl-4">
     <!-- Image -->
     <div>
       <img
@@ -22,31 +22,33 @@
       </span>
     </div>
   </div>
-  <!-- Name -->
-  <div class="flex text-dl-6 font-dl-3 text-dl-grey-2">
-    <span>{{ friendRequest.nameFirst }}</span>
-    <span class="mb-dl-2 ml-dl-1">{{ friendRequest.nameLast }}</span>
-  </div>
+  <!-- Name & Buttons -->
+  <div class="flex flex-col items-center">
+    <!-- Name -->
+    <div class="flex pt-dl-2 text-dl-6 font-dl-3 text-dl-grey-2">
+      <span>{{ friendRequest.nameFirst }}</span>
+      <span class="mb-dl-2 ml-dl-1">{{ friendRequest.nameLast }}</span>
+    </div>
+    <!-- Buttons -->
+    <div class="flex justify-end">
+      <!-- Accept Button-->
+      <button
+        type="button"
+        class="mr-dl-2 block w-dl-8 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+        (click)="onAcceptRequest()"
+      >
+        Accept
+      </button>
 
-  <!-- Request Buttons -->
-  <div class="absolute bottom-3 right-10 flex justify-end">
-    <!-- Accept Button-->
-    <button
-      type="button"
-      class="block h-dl-4 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out "
-      (click)="onAcceptRequest()"
-    >
-      Accept
-    </button>
-
-    <!-- Decline Button-->
-    <button
-      type="button"
-      id="declineRequest"
-      class="ml-dl-3 block h-dl-4 whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 text-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 bg-white shadow-sm transition-all duration-200 ease-in-out"
-      (click)="onDeclineRequest()"
-    >
-      Decline
-    </button>
+      <!-- Decline Button-->
+      <button
+        type="button"
+        id="declineRequest"
+        class="ml-dl-3 block whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 bg-white px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out"
+        (click)="onDeclineRequest()"
+      >
+        Decline
+      </button>
+    </div>
   </div>
 </div>

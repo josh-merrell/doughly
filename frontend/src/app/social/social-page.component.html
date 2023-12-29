@@ -1,6 +1,6 @@
-<div class="relative mx-auto w-full bg-white pt-dl-5">
+<div class="relative flex flex-col h-full mx-auto w-full bg-white pt-dl-5">
   <!-- View Header -->
-  <div class="mb-dl-6 flex h-dl-4 w-full justify-around">
+  <div class="mb-dl-4 flex w-full flex-row-reverse pr-dl-5">
     <!-- <span
       (click)="setView('timeline')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
@@ -14,22 +14,20 @@
     </span> -->
     <span
       (click)="setView('friends')"
-      class="inline-flex items-center py-1 font-dl-2 transition-all duration-200 ease-in-out"
+      class="inline-flex items-center border-b-4 text-dl-7 font-dl-2 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 font-dl-3 text-dl-grey-2':
-          view() === 'friends',
-        'text-dl-5 font-dl-2 text-dl-grey-4': view() !== 'friends'
+        ' border-dl-blue-7 font-dl-3 text-dl-grey-2': view() === 'friends',
+        'border-transparent font-dl-2 text-dl-grey-4': view() !== 'friends'
       }"
     >
       Friends
     </span>
     <span
       (click)="setView('followers')"
-      class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
+      class="mr-dl-5 inline-flex items-center border-b-4 text-dl-7 font-dl-2 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 font-dl-3 text-dl-grey-2':
-          view() === 'followers',
-        'text-dl-5 font-dl-2 text-dl-grey-4': view() !== 'followers'
+        ' border-dl-blue-7 font-dl-3 text-dl-grey-2': view() === 'followers',
+        'border-transparent font-dl-2 text-dl-grey-4': view() !== 'followers'
       }"
     >
       Followers
