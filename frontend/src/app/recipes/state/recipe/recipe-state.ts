@@ -48,6 +48,7 @@ export interface Recipe {
   status: RecipeStatus;
   photoURL?: string;
   version?: number;
+  subscription?: RecipeSubscription;
 }
 
 export interface RecipeError {

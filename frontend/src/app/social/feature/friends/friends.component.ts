@@ -3,6 +3,7 @@ import {
   Signal,
   WritableSignal,
   computed,
+  effect,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -53,7 +54,8 @@ export class FriendsComponent {
     private store: Store,
     public dialog: MatDialog,
     private socialService: SocialService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.store.select(selectFriendships).subscribe((friendships: any) => {
