@@ -49,8 +49,8 @@
   </div>
 
   <!-- Friend List -->
-  <div class="relative mb-dl-3 flex flex-col items-center">
-    <div class="flex h-dl-20 flex-col items-center">
+  <div class="relative mb-dl-4 flex flex-col flex-grow items-center">
+    <div class="flex flex-col items-center">
       <dl-friend-card
         (click)="onFriendClick(friend)"
         *ngFor="let friend of filteredFriends(); let i = index"
@@ -63,7 +63,7 @@
     </div>
     <span
       *ngIf="friends().length > 0"
-      class="absolute -bottom-5 text-dl-5 font-dl-2 text-dl-grey-2"
+      class="absolute -bottom-3 text-dl-5 font-dl-2 text-dl-grey-2"
       >{{ friends().length }} total</span
     >
   </div>
