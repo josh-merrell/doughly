@@ -54,8 +54,8 @@
   </div>
 
   <!-- Person Card List -->
-  <div class="relative mb-dl-3 flex flex-col items-center">
-    <div class="flex h-dl-21 flex-col items-center">
+  <div class="relative mb-dl-3 flex flex-col flex-grow items-center">
+    <div class="flex flex-col items-center">
       <dl-friend-card
         *ngFor="let person of filteredPersons()"
         (click)="onPersonClick(person)"
