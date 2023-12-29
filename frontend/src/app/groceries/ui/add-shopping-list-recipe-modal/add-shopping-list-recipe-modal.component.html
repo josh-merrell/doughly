@@ -99,7 +99,6 @@
       <dl-recipe-category-card
         *ngFor="let category of displayCategories()"
         (click)="categoryCardClick(category)"
-        class="recipe-card my-dl-4 h-dl-7 w-11/12 rounded-lg shadow-md"
         [category]="category"
         [inModal]="true"
       ></dl-recipe-category-card>
@@ -113,7 +112,7 @@
       <dl-recipe-card
         *ngFor="let recipe of displayRecipes()"
         (click)="recipeCardClick(recipe)"
-        class="w-11/12"
+        
         [recipe]="recipe"
         [isUserRecipe]="true"
         [isSelected]="recipe.recipeID === selectedRecipeID()"

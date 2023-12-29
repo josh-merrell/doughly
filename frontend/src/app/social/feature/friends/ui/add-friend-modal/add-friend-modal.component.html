@@ -1,7 +1,7 @@
 <div class="flex flex-col items-center px-dl-5 pb-dl-3 pt-dl-4">
-  <h3 class="leading-dl-4 text-dl-5 font-dl-3 text-dl-grey-3">Find People</h3>
+  <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3">Find People</h3>
   <!-- Search Bar-->
-  <div class="mb-dl-4 mt-dl-6 flex w-full items-center justify-around">
+  <div class="mb-dl-3 mt-dl-5 flex w-full items-center justify-around">
     <div class="flex items-center">
       <svg
         width="35"
@@ -29,7 +29,7 @@
     <button
       type="button"
       [disabled]="searchedQuery() === searchFilter()"
-      class="block h-dl-4 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+      class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
       [ngClass]="{ invisible: searchedQuery() === searchFilter() }"
       (click)="onSearch()"
     >
@@ -42,11 +42,11 @@
   ></mat-spinner>
 
   <!-- Profile List -->
-  <div *ngIf="searchResults() && !isLoading()" class="w-dl-16">
-    <div class="pb-dl-5 max-h-dl-18 overflow-auto">
+  <div *ngIf="searchResults() && !isLoading()" class="w-full">
+    <div class="max-h-dl-18 overflow-auto pb-dl-5">
       <dl-profile-card
         *ngFor="let profile of searchResults(); let i = index"
-        class="h-dl-8 w-full border-dl-grey-9 py-dl-3"
+        class="h-dl-9 w-full border-dl-grey-9 py-dl-3"
         (click)="onCardClick(i)"
         [ngClass]="{
           'bg-dl-blue-10': selectedCard() === i,
@@ -60,10 +60,10 @@
       ></dl-profile-card>
     </div>
     <!-- Buttons -->
-    <div class="mt-dl-3 flex w-full flex-row-reverse px-dl-5 pb-dl-3">
+    <div class="mt-dl-3 flex w-full justify-between pb-dl-3">
       <button
         type="button"
-        class="block h-dl-4 whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+        class="block w-dl-9 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
         [ngClass]="{
           'bg-dl-pink-4 text-white':
             buttonTexts()[selectedCard()].followButton === 'Follow',
@@ -77,7 +77,7 @@
       </button>
       <button
         type="button"
-        class="mr-dl-3 block h-dl-4 whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 shadow-sm"
+        class="block w-dl-9 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
           'bg-dl-pink-4 text-white':
