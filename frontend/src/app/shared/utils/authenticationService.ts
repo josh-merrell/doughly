@@ -333,7 +333,7 @@ export class AuthService {
   updateField(field: string, value: string | null) {
     const update = {
       [field]: value,
-      updated_at: new Date()
+      updated_at: new Date(),
     };
     return from(
       this.supabase.supabase
@@ -354,10 +354,40 @@ export class AuthService {
             joined_at: data[0].joined_at,
             city: data[0].city,
             state: data[0].state,
-          }
+          };
           this._$profile.next(newProfile);
           return data;
         })
     );
+  }
+
+  async signInWithGoogle(token: string): Promise<void> {
+    try {
+      // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
+      this._$profile.next(undefined);
+
+      // Use the token to sign in with Supabase
+      const { data, error } =
+        await this.supabase.supabase.auth.signInWithIdToken({
+          provider: 'google',
+          token: token,
+        });
+
+      if (error) throw error;
+
+      // Check if the user is successfully returned
+      if (data && data.user) {
+        this._$user.next(data.user);
+
+        // Wait for $profile to be set again.
+        // We don't want to proceed until our API request for the user's profile has completed
+        this.$profile.pipe(first()).subscribe(() => {
+          // User profile is now set
+        });
+      }
+    } catch (error) {
+      console.error('Error during Google sign-in:', error);
+      throw error;
+    }
   }
 }

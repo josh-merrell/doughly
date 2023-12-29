@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { AuthService } from '../../../shared/utils/authenticationService';
@@ -43,7 +43,38 @@ import { ShoppingListActions } from '../../.././groceries/state/shopping-list-ac
   templateUrl: './login-page.component.html',
 })
 export class LoginPageComponent {
-  constructor(private store: Store, private router: Router, private authService: AuthService) {}
+  constructor(
+    private store: Store,
+    private router: Router,
+    private authService: AuthService,
+    private ngZone: NgZone
+  ) {
+    // Expose the Google Login callback function to the global scope
+    window['handleSignInWithGoogle'] = (response) =>
+      this.handleSignInWithGoogle(response);
+  }
+
+  handleSignInWithGoogle(response: any) {
+    // Extract the credential (token) from the response
+    const token = response.credential;
+
+    // Optional: You might want to handle nonce here if you use it
+
+    // Use the token to sign in with Supabase
+    this.ngZone.run(() => {
+      this.authService
+        .signInWithGoogle(token)
+        .then(() => {
+          // Handle successful sign in
+          this.loadState();
+          this.router.navigate(['/recipes']);
+        })
+        .catch((error) => {
+          // Handle sign in error
+          this.error = error.message;
+        });
+    });
+  }
 
   login_form = new FormGroup({
     // email: new FormControl('', [Validators.required, Validators.email]),
