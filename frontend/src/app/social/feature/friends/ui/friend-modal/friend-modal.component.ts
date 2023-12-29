@@ -1,8 +1,8 @@
 import {
   Component,
   Inject,
-  Input,
   WritableSignal,
+  effect,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Store } from '@ngrx/store';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { SocialService } from 'src/app/social/data/social.service';
+import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { Profile } from 'src/app/profile/state/profile-state';
 import { RecipeCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/recipe-card/recipe-card.component';
 import {
@@ -20,7 +20,6 @@ import {
 } from 'src/app/social/state/friendship-selectors';
 import { selectFollowshipByFollowingID } from 'src/app/social/state/followship-selectors';
 import { FriendshipActions } from 'src/app/social/state/friendship-actions';
-import { Subscription } from 'rxjs';
 import { FollowshipActions } from 'src/app/social/state/followship-actions';
 import { Followship } from 'src/app/social/state/followship-state';
 import { Router } from '@angular/router';
@@ -39,6 +38,9 @@ export class FriendModalComponent {
   public followship: WritableSignal<Followship | null> = signal(null);
   public buttonTexts: WritableSignal<any> = signal({});
   public isDeleting: WritableSignal<boolean> = signal(false);
+  public recipesFromMe: WritableSignal<any[]> = signal([]);
+  public otherRecipes: WritableSignal<any[]> = signal([]);
+  private myRecipes: WritableSignal<any[]> = signal([]);
 
   constructor(
     private store: Store,
@@ -47,14 +49,44 @@ export class FriendModalComponent {
     public router: Router
   ) {
     this.buttonTexts.set({ friendButton: '', followButton: '' });
+    
+    effect(() => {
+      const myRecipes = this.myRecipes();
+      const friendRecipes = this.friend.recipes;
+      const recipesFromMe: any[] = [];
+      const otherRecipes: any[] = [];
+      for (let fr of friendRecipes) {
+        if (fr.subscription) {
+          //if myRecipes contains recipe where recipeID matches 'fr.subscription.sourceRecipeID', push to recipesFromMe
+          const recipeFromMe = myRecipes.find(
+            (r) => r.recipeID === fr.subscription?.sourceRecipeID
+          );
+          if (recipeFromMe) {
+            recipesFromMe.push(fr);
+          } else {
+            //else push to otherRecipes
+            otherRecipes.push(fr);
+          }
+        } else {
+          //else push to otherRecipes
+          otherRecipes.push(fr);
+        }
+      }
+      this.recipesFromMe.set(recipesFromMe);
+      this.otherRecipes.set(otherRecipes);
+    }, { allowSignalWrites: true })
   }
 
   ngOnInit(): void {
+    this.store.select(selectRecipes).subscribe((recipes) => {
+      this.myRecipes.set(recipes);
+    });
     this.store.select(selectDeleting).subscribe((deleting) => {
       this.isDeleting.set(deleting);
     });
 
     this.friend = this.data;
+    console.log(`FRIEND RECIPES: `, this.friend.recipes)
     this.initials = this.friend.nameFirst[0] + this.friend.nameLast[0];
 
     this.store

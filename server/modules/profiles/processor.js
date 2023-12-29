@@ -53,6 +53,22 @@ module.exports = ({ db, dbPublic }) => {
     });
     const recipesWithCategoryNames = await Promise.all(promises);
 
+    // for each recipe, if it has 'type' of 'subscription', get the recipeSubscription where newRecipeID = recipeID and deleted = false. Select sourceRecipeID and subscriptionID. Append these in a 'subscription' object to the recipe object
+    const promises2 = recipesWithCategoryNames.map(async (recipe) => {
+      if (recipe.type === 'subscription') {
+        const { data: recipeSubscription, error: errorRecipeSubscription } = await db.from('recipeSubscriptions').select('sourceRecipeID, subscriptionID, startDate').eq('userID', userID).eq('newRecipeID', recipe.recipeID).eq('deleted', false).single();
+        if (errorRecipeSubscription) {
+          global.logger.info(`Error getting recipe subscription for newRecipeID ${recipe.recipeID}: ${errorRecipeSubscription.message}`);
+          return { error: errorRecipeSubscription };
+        }
+        const recipeWithSubscription = recipe;
+        recipeWithSubscription.subscription = recipeSubscription;
+        return recipeWithSubscription;
+      }
+      return recipe;
+    });
+    const recipesWithSubscriptions = await Promise.all(promises2);
+
     const result = {
       userID,
       nameFirst: profile.name_first,
@@ -65,7 +81,7 @@ module.exports = ({ db, dbPublic }) => {
       state: profile.state,
       friendCount: friendshipIDs.length ? friendshipIDs.length : 0,
       followerCount: followerIDs.length ? followerIDs.length : 0,
-      recipes: recipesWithCategoryNames,
+      recipes: recipesWithSubscriptions,
       timelineEvents: [],
     };
     return result;
