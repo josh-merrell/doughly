@@ -45,6 +45,13 @@ import { RecipeStep } from 'src/app/recipes/state/recipe-step/recipe-step-state'
 import { DeleteRecipeStepModalComponent } from '../delete-recipe-step-modal/delete-recipe-step-modal.component';
 import { EditRecipeStepModalComponent } from '../edit-recipe-step-modal/edit-recipe-step-modal.component';
 
+interface RecipeStepToUpdate {
+  recipeStepID: any; // Replace 'any' with a more specific type if possible
+  recipeID: any; // Replace 'any' with a more specific type if possible
+  sequence: any; // Replace 'any' with a more specific type if possible
+  stepID: number;
+  photoURL?: string; // The '?' makes this property optional
+}
 @Component({
   selector: 'dl-recipe-steps-modal',
   standalone: true,
@@ -452,13 +459,15 @@ export class RecipeStepsModalComponent {
       take(1),
       concatMap((action) => {
         const updatedStep = action.step;
-        const recipeStepToUpdate = {
+        const recipeStepToUpdate: RecipeStepToUpdate = {
           recipeStepID: recipeStep.recipeStepID,
           recipeID: this.recipe.recipeID,
           sequence: recipeStep.sequence,
           stepID: updatedStep.stepID!,
-          photoURL: recipeStep.photoURL,
         };
+        if (recipeStep.photoURL) {
+          recipeStepToUpdate.photoURL = recipeStep.photoURL;
+        }
         this.store.dispatch(
           RecipeStepActions.updateRecipeStep({ recipeStep: recipeStepToUpdate })
         );
