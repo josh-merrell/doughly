@@ -1,5 +1,6 @@
 import {
   Component,
+  Signal,
   WritableSignal,
   computed,
   effect,
@@ -105,6 +106,10 @@ export class PublicRecipeComponent {
   tools: WritableSignal<any[]> = signal([]);
   recipeTools: WritableSignal<any[]> = signal([]);
   steps: WritableSignal<any[]> = signal([]);
+  public displaySteps: Signal<any> = computed(() => {
+    const steps = this.steps();
+    return steps.sort((a, b) => a.sequence - b.sequence);
+  })
   recipeSteps: WritableSignal<any[]> = signal([]);
 
   public subscriptions: WritableSignal<any[]> = signal([]);
