@@ -3,11 +3,11 @@
   <div class="mb-dl-6 pr-dl-5 flex flex-row-reverse w-full">
     <span
       (click)="setListView('byCategory')"
-      class="inline-flex items-center mr-dl-3 border-b-4 px-dl-1 py-dl-1 text-dl-6 font-dl-2 transition-all duration-100 ease-in-out"
+      class="inline-flex items-center mr-dl-3 border-b-4 px-dl-1 py-dl-1 text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-7  font-dl-3 text-dl-grey-2':
+        ' border-dl-blue-7  text-dl-grey-2':
           listView() === 'byCategory',
-        'border-transparent font-dl-2 text-dl-grey-4':
+        'border-transparent text-dl-grey-4':
           listView() !== 'byCategory'
       }"
     >
@@ -15,10 +15,10 @@
     </span>
     <span
       (click)="setListView('all')"
-      class="inline-flex items-center border-b-4 mr-dl-5 py-dl-1 text-dl-6 font-dl-2 transition-all duration-100 ease-in-out"
+      class="inline-flex items-center border-b-4 mr-dl-5 py-dl-1 text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-7 font-dl-3 text-dl-grey-2': listView() === 'all',
-        'border-transparent font-dl-2 text-dl-grey-4': listView() !== 'all'
+        ' border-dl-blue-7 text-dl-grey-2': listView() === 'all',
+        'border-transparent text-dl-grey-4': listView() !== 'all'
       }"
     >
       All Recipes
@@ -26,14 +26,14 @@
   </div>
 
   <!-- Search, Add-->
-  <div class="px-dl-4 mb-dl-6 flex justify-between">
+  <div class="px-dl-4 mb-dl-6 flex w-full">
     <!-- Search Bar -->
-    <div class="mt-dl-3 flex items-center">
+    <div class="mt-dl-3 flex flex-grow items-center">
       <svg
-        width="35"
-        height="35"
+        width="28"
+        height="28"
         viewBox="0 0 15 15"
-        class="pt-dl-1 text-dl-grey-3"
+        class="ml-dl-2 text-dl-grey-3"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -47,7 +47,7 @@
       <input
         #searchInput
         type="text"
-        class="w-dl-13 border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+        class="flex flex-grow border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
         [placeholder]="
           !searchFilter()
             ? listView() === 'byCategory'
