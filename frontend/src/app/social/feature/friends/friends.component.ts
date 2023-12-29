@@ -80,7 +80,7 @@ export class FriendsComponent {
 
   onRequestsClick(): void {
     const dialogRef = this.dialog.open(FriendRequestsModalComponent, {
-      width: '75%',
+      width: '90%',
       maxWidth: '500px',
     });
 
@@ -97,7 +97,7 @@ export class FriendsComponent {
 
   onAddFriend(): void {
     this.dialog.open(AddFriendModalComponent, {
-      width: '75%',
+      width: '90%',
       maxWidth: '500px',
     });
   }
