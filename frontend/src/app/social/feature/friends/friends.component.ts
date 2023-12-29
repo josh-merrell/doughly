@@ -89,8 +89,7 @@ export class FriendsComponent {
       if (result?.profile) {
         this.dialog.open(FriendModalComponent, {
           data: result.profile,
-          width: '80%',
-          maxWidth: '540px',
+          width: '90%',
         });
       }
     });
@@ -106,8 +105,7 @@ export class FriendsComponent {
   onFriendClick(friend: any): void {
     this.dialog.open(FriendModalComponent, {
       data: friend,
-      width: '80%',
-      maxWidth: '540px',
+      width: '90%',
     });
   }
 
