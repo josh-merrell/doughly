@@ -19,33 +19,33 @@
     <input
       #searchInput
       type="text"
-      class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+      class="ml-dl-2 w-dl-13 border-none text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
       [placeholder]="
-        !searchFilter() ? 'Search by First or Last Name...' : searchFilter()
+        !searchFilter() ? 'Filter by First or Last Name...' : searchFilter()
       "
       (input)="updateSearchFilter(searchInput.value)"
     />
   </div>
 
   <!-- View Selection -->
-  <div class="mb-dl-5 flex h-dl-4 w-full justify-around">
+  <div class="mb-dl-5 flex w-full justify-around">
     <span
-      class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
+      class="inline-flex border-b-4 items-center text-dl-6 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 font-dl-3 text-dl-grey-2':
+        ' border-dl-blue-8 text-dl-grey-2':
           view() === 'followers',
-        'text-dl-5 font-dl-2 text-dl-grey-4': view() !== 'followers'
+        'text-dl-grey-5 border-transparent': view() !== 'followers'
       }"
       (click)="view.set('followers')"
     >
       Followers
     </span>
     <span
-      class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
+      class="inline-flex border-b-4 items-center text-dl-6 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 font-dl-3 text-dl-grey-2':
+        ' border-dl-blue-8 text-dl-grey-2':
           view() === 'following',
-        'text-dl-5 font-dl-2 text-dl-grey-4': view() !== 'following'
+        'text-dl-grey-5 border-transparent': view() !== 'following'
       }"
       (click)="view.set('following')"
     >
