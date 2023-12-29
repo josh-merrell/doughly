@@ -46,7 +46,8 @@ export class LoginPageComponent {
   constructor(private store: Store, private router: Router, private authService: AuthService) {}
 
   login_form = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
+    // email: new FormControl('', [Validators.required, Validators.email]),
+    email: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
   });
 
