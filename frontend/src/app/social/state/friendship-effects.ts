@@ -38,6 +38,13 @@ export class FriendshipEffects {
     );
   });
 
+  loadFriendshipsAfterAdd$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FriendshipActions.addFriendshipSuccess),
+      mergeMap(() => of(FriendshipActions.loadFriendships()))
+    )
+  );
+
   loadFriendships$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FriendshipActions.loadFriendships),
