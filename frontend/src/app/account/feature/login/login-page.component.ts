@@ -30,6 +30,7 @@ import { RecipeStepActions } from '../../.././recipes/state/recipe-step/recipe-s
 import { ShoppingListActions } from '../../.././groceries/state/shopping-list-actions';
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 
+declare const google: any;
 @Component({
   selector: 'dl-login-page',
   standalone: true,
@@ -52,31 +53,71 @@ export class LoginPageComponent {
     private ngZone: NgZone
   ) {}
 
-  ngOnInit() {
-    // @ts-ignore
-    window.onGoogleLibraryLoad = () => {
-      console.log("Google's One-tap sign in script loaded!");
+  // ngOnInit() {
+  //   // @ts-ignore
+  //   window.onGoogleLibraryLoad = () => {
+  //     console.log("Google's One-tap sign in script loaded!");
 
-      // @ts-ignore
-      google.accounts.id.initialize({
-        // Ref: https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration
-        client_id:
-          '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
-        callback: this.handleSignInWithGoogle.bind(this), //this callback will use supabase method
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      });
-      // @ts-ignore
-      google.accounts!.id.renderButton(document!.getElementById('g_loginBtn'), {
-        theme: 'outline',
-        size: 'large',
-        type: 'icon',
-        shape: 'rectangular',
-        width: "100"
-      });
-      // @ts-ignore
-      google.accounts.id.prompt();
-    };
+  //     // @ts-ignore
+  //     google.accounts.id.initialize({
+  //       // Ref: https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration
+  //       client_id:
+  //         '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
+  //       callback: this.handleSignInWithGoogle.bind(this), //this callback will use supabase method
+  //       auto_select: false,
+  //       cancel_on_tap_outside: true,
+  //     });
+  //     // @ts-ignore
+  //     google.accounts!.id.renderButton(document!.getElementById('g_loginBtn'), {
+  //       theme: 'outline',
+  //       size: 'large',
+  //       type: 'icon',
+  //       shape: 'rectangular',
+  //       width: "100"
+  //     });
+  //     // @ts-ignore
+  //     google.accounts.id.prompt();
+  //   };
+  // }
+
+  ngOnInit() {
+    this.initGoogleSignIn();
+  }
+
+  private initGoogleSignIn() {
+    if (
+      typeof google !== 'undefined' &&
+      google.accounts &&
+      google.accounts.id
+    ) {
+      this.renderGoogleSignInButton();
+    } else {
+      // Handle case where google script is not loaded yet
+      window.addEventListener(
+        'google-script-loaded',
+        this.renderGoogleSignInButton.bind(this)
+      );
+    }
+  }
+
+  private renderGoogleSignInButton() {
+    google.accounts.id.initialize({
+      client_id:
+        '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
+      callback: this.handleSignInWithGoogle.bind(this),
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+
+    google.accounts.id.renderButton(document.getElementById('g_loginBtn'), {
+      theme: 'outline',
+      size: 'large',
+      type: 'icon',
+      shape: 'rectangular',
+      width: 100,
+    });
+
+    google.accounts.id.prompt();
   }
 
   handleSignInWithGoogle(response: CredentialResponse) {
