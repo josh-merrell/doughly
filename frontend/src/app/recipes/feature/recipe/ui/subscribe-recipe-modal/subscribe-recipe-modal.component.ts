@@ -346,6 +346,8 @@ export class SubscribeRecipeModalComponent {
         this.store.dispatch(RecipeToolActions.loadRecipeTools());
         this.store.dispatch(StepActions.loadSteps());
         this.store.dispatch(RecipeStepActions.loadRecipeSteps());
+        this.store.dispatch(IngredientActions.loadIngredients());
+        this.store.dispatch(ToolActions.loadTools());
         this.dialogRef.close(data);
       });
     }

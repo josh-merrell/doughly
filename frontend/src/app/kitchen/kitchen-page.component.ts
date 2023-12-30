@@ -1,31 +1,35 @@
-import { Component } from '@angular/core';
+import { Component, WritableSignal, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToolsComponent } from './feature/tools/tools.component';
-import { selectView, selectInventoryView } from './state/kitchen-selectors';
-import { Observable } from 'rxjs';
-import { AppState } from  '../shared/state/app-state';
-import { Store } from '@ngrx/store';
-import { setView, setInventoryView } from './state/kitchen-actions';
 import { IngredientsComponent } from './feature/ingredients/ingredients.component';
+import { Router, RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'dl-kitchen-page',
   standalone: true,
-  imports: [CommonModule, ToolsComponent, IngredientsComponent],
+  imports: [RouterModule, CommonModule, ToolsComponent, IngredientsComponent],
   templateUrl: './kitchen-page.component.html',
 })
 export class KitchenPageComponent {
-  view$: Observable<string> = this.store.select(selectView);
-  inventoryView$: Observable<string> = this.store.select(selectInventoryView);
+  view: WritableSignal<string> = signal('ingredients');
 
-  constructor(private store: Store<AppState>) {}
-
-  updateView(view: string) {
-    this.store.dispatch(setView({ view }))
+  constructor(private router: Router) {
+    effect(() => {
+      const view = this.view();
+      if (view === 'tools') {
+        this.router.navigate(['kitchen/tools']);
+      } else if (view === 'ingredients') {
+        this.router.navigate(['kitchen/ingredients']);
+      }
+    })
   }
 
-  updateInventoryView(inventoryView: string) {
-    this.store.dispatch(setInventoryView({ inventoryView }))
+  updateView(view: string) {
+    this.view.set(view);
+  }
+
+  ngOnInit(): void {
+
   }
 }

@@ -1,6 +1,6 @@
 <div class="relative w-full">
   <!-- header -->
-  <div class="mx-dl-5 mt-dl-7 flex justify-between">
+  <div class="mx-dl-5 mt-dl-7 flex justify-between items-center">
     <div class="flex flex-col ml-dl-2 ">
       <p class="mt-dl-3 text-dl-6 font-dl-2 text-dl-grey-4">
         {{ totalInStock$ | async }} of {{ (tools$ | async)?.length }} In Stock
@@ -11,7 +11,7 @@
     <button
       id="test-button"
       type="button"
-      class="block whitespace-nowrap rounded-dl-1 mt-dl-5 h-dl-4 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-4 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      class="block whitespace-nowrap rounded-dl-1 mt-dl-5 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
       (click)="onAddTool()"
     >
       Add Tool
@@ -40,39 +40,16 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
         [placeholder]="
           !searchFilters.length
-            ? 'Search by Tool Name...'
+            ? 'Filter by Tool'
             : searchFilters[0].operand1
         "
         (input)="updateSearchFilter(searchInput.value)"
       />
     </div>
   </div>
-
-  <!-- Up Arrow for Tool Card Scrolling -->
-  <div
-    class="absolute left-1/2 top-36 -translate-x-1/2 rotate-180 transform"
-    *ngIf="showToolUpArrow"
-  >
-    <svg
-      class="throb-icon text-dl-blue-6 transition-transform duration-300"
-      width="45"
-      height="45"
-      viewBox="0 0 15 15"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
-        fill="currentColor"
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-      ></path>
-    </svg>
-  </div>
-  <div class="mb-dl-4 h-dl-2"></div>
 
   <!-- Tool Rows -->
   <div
@@ -113,30 +90,5 @@
         </p>
       </div>
     </div>
-  </div>
-
-  <!--Empty Div to give space for arrow icon-->
-  <div class="mt-dl-2 h-dl-3"></div>
-
-  <!-- Down Arrow for Tool Card Scrolling -->
-  <div
-    class="absolute bottom-0 left-1/2 -translate-x-1/2 transform"
-    *ngIf="showToolDownArrow"
-  >
-    <svg
-      class="throb-icon text-dl-blue-6 transition-transform duration-300"
-      width="45"
-      height="45"
-      viewBox="0 0 15 15"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
-        fill="currentColor"
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-      ></path>
-    </svg>
   </div>
 </div>
