@@ -1,5 +1,5 @@
 <div
-  class="relative w-full max-h-dl-21 transform overflow-hidden bg-white px-dl-6 overflow-y-auto pb-dl-4 pt-dl-3 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+  class="relative w-full max-h-full transform bg-white px-dl-5 overflow-y-auto pb-dl-4 pt-dl-4 text-left transition-all"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -11,36 +11,10 @@
     *ngIf="(isAddingRecipeStep$ | async) === false"
   >
     <div class="relative flex w-full max-w-full flex-col">
-      <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
-        <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-blue-4">
+      <div class="mt-dl-1 text-center">
+        <span class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-2">
           Add Recipe Step
-        </h3>
-        <div class="mt-dl-3">
-          <p class="text-dl-4 text-dl-grey-5">Add a new Step to this recipe.</p>
-        </div>
-      </div>
-      <div class="absolute right-0 top-0 hidden pr-dl-3 pt-dl-4 sm:block">
-        <button
-          type="button"
-          class="rounded-dl-2 bg-white text-dl-grey-6 hover:text-dl-grey-5 focus:outline-none"
-          (click)="onCancel()"
-        >
-          <span class="sr-only">Close</span>
-          <svg
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+        </span>
       </div>
 
       <!--FORM FIELDS-->

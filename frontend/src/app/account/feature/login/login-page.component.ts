@@ -53,33 +53,6 @@ export class LoginPageComponent {
     private ngZone: NgZone
   ) {}
 
-  // ngOnInit() {
-  //   // @ts-ignore
-  //   window.onGoogleLibraryLoad = () => {
-  //     console.log("Google's One-tap sign in script loaded!");
-
-  //     // @ts-ignore
-  //     google.accounts.id.initialize({
-  //       // Ref: https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration
-  //       client_id:
-  //         '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
-  //       callback: this.handleSignInWithGoogle.bind(this), //this callback will use supabase method
-  //       auto_select: false,
-  //       cancel_on_tap_outside: true,
-  //     });
-  //     // @ts-ignore
-  //     google.accounts!.id.renderButton(document!.getElementById('g_loginBtn'), {
-  //       theme: 'outline',
-  //       size: 'large',
-  //       type: 'icon',
-  //       shape: 'rectangular',
-  //       width: "100"
-  //     });
-  //     // @ts-ignore
-  //     google.accounts.id.prompt();
-  //   };
-  // }
-
   ngOnInit() {
     this.initGoogleSignIn();
   }
