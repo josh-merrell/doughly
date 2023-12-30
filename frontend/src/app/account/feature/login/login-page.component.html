@@ -1,6 +1,6 @@
 <script src="https://accounts.google.com/gsi/client" async></script>
 <div
-  class="flex h-full flex-col  bg-white py-dl-8 sm:px-dl-6 lg:px-dl-8"
+  class="flex h-full flex-col flex-grow bg-white py-dl-8 sm:px-dl-6 lg:px-dl-8"
 >
   <div class="xm:w-full sm:mx-auto sm:max-w-md">
     <img
@@ -86,28 +86,10 @@
     </button>
   </form>
   <!-- Google Sign In -->
-  <div
-    id="g_id_onload"
-    data-client_id="911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com"
-    data-context="signin"
-    data-ux_mode="popup"
-    data-callback="handleSignInWithGoogle"
-    data-nonce=""
-    data-auto_select="true"
-    data-itp_support="true"
-  ></div>
-
-  <div class="mt-dl-4 flex w-full flex-col items-center">
-    <div
-      class="g_id_signin"
-      data-type="standard"
-      data-shape="rectangular"
-      data-theme="outline"
-      data-text="signin_with"
-      data-size="large"
-      data-logo_alignment="center"
-      data-width="296"
-    ></div>
+  <div class="mt-dl-5 flex w-full items-center justify-between px-dl-10">
+    <div id="g_loginBtn"></div>
+    <div id="fb_loginBtn" class="w-9 h-9 border border-dl-grey-9 rounded-dl-1"></div>
+    <div id="a_loginBtn" class="w-9 h-9 border border-dl-grey-9 rounded-dl-1"></div>
   </div>
 
   <div style="color: red" *ngIf="error">{{ error }}</div>

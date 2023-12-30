@@ -30,6 +30,7 @@
     "@supabase/supabase-js": "^2.25.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",
+    "@types/google-one-tap": "^1.2.6",
     "aws-sdk": "^2.1415.0",
     "dayjs": "^1.11.9",
     "lodash.memoize": "^4.1.2",
