@@ -22,14 +22,44 @@ module.exports = ({ db }) => {
     if (shoppingListIDs) {
       q = q.in('shoppingListID', shoppingListIDs);
     }
+    let returnData;
     const { data: shoppingLists, error } = await q;
 
     if (error) {
       global.logger.info(`Error getting shopping lists: ${error.message}`);
       return { error: error.message };
     }
-    global.logger.info(`Got ${shoppingLists.length} shopping lists`);
-    return shoppingLists;
+    if (shoppingLists.length === 0) {
+      // create a new shopping list if none exist with new axios call
+      const { error: createListError } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/shopping/lists`,
+        {
+          userID: userID,
+          IDtype: 26,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        },
+      );
+
+      if (createListError) {
+        global.logger.info(`Error creating new shopping list: ${createListError.message}`);
+        return { error: createListError.message };
+      }
+      const { data: newShoppingLists, error: newShoppingListsError } = await q;
+      if (newShoppingListsError) {
+        global.logger.info(`Error getting shopping lists: ${newShoppingListsError.message}`);
+        return { error: newShoppingListsError.message };
+      }
+      returnData = newShoppingLists;
+    } else {
+      returnData = shoppingLists;
+    }
+    global.logger.info(`Got ${returnData.length} shopping lists`);
+    return returnData;
   }
 
   async function createShoppingList(options) {
