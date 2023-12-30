@@ -1,6 +1,6 @@
 <script src="https://accounts.google.com/gsi/client" async></script>
 <div
-  class="flex h-full flex-col  bg-white py-dl-8 sm:px-dl-6 lg:px-dl-8"
+  class="flex h-full flex-grow flex-col bg-white py-dl-8 sm:px-dl-6 lg:px-dl-8"
 >
   <div class="xm:w-full sm:mx-auto sm:max-w-md">
     <img
@@ -16,10 +16,22 @@
     (ngSubmit)="onSubmit()"
     class="flex flex-col items-center"
   >
-    <div class="relative mb-dl-7 flex flex-col">
+    <div class="relative mb-dl-5 flex flex-col">
       <div class="mt-dl-4 text-center">
         <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3">Sign In</h3>
       </div>
+    </div>
+    <!-- OAuth Sign In -->
+    <div class="mb-dl-7 flex w-full items-center justify-between px-dl-10">
+      <div id="g_loginBtn"></div>
+      <div
+        id="fb_loginBtn"
+        class="h-9 w-9 rounded-dl-1 border border-dl-grey-9"
+      ></div>
+      <div
+        id="a_loginBtn"
+        class="h-9 w-9 rounded-dl-1 border border-dl-grey-9"
+      ></div>
     </div>
     <!--FORM FIELDS-->
     <div id="form-email">
@@ -85,30 +97,6 @@
       Sign In with Email
     </button>
   </form>
-  <!-- Google Sign In -->
-  <div
-    id="g_id_onload"
-    data-client_id="911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com"
-    data-context="signin"
-    data-ux_mode="popup"
-    data-callback="handleSignInWithGoogle"
-    data-nonce=""
-    data-auto_select="true"
-    data-itp_support="true"
-  ></div>
-
-  <div class="mt-dl-4 flex w-full flex-col items-center">
-    <div
-      class="g_id_signin"
-      data-type="standard"
-      data-shape="rectangular"
-      data-theme="outline"
-      data-text="signin_with"
-      data-size="large"
-      data-logo_alignment="center"
-      data-width="296"
-    ></div>
-  </div>
 
   <div style="color: red" *ngIf="error">{{ error }}</div>
 
