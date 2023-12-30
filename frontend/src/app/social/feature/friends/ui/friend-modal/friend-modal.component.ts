@@ -32,6 +32,7 @@ import { Router } from '@angular/router';
 })
 export class FriendModalComponent {
   public friend!: Profile;
+  public displayDate: WritableSignal<string> = signal('');
   public initials: string = '';
   public view: string = 'recipes';
   public friendship: WritableSignal<Friendship | null> = signal(null);
@@ -86,6 +87,11 @@ export class FriendModalComponent {
     });
 
     this.friend = this.data;
+    const joinDate = new Date(this.friend.joinDate);
+    const month = joinDate.toLocaleString('default', { month: 'short' });
+    const year = joinDate.getFullYear();
+    this.displayDate.set(`${month} ${year}`);
+
     console.log(`FRIEND RECIPES: `, this.friend.recipes)
     this.initials = this.friend.nameFirst[0] + this.friend.nameLast[0];
 
