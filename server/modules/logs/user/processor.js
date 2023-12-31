@@ -1,4 +1,5 @@
 ('use strict');
+const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -22,8 +23,8 @@ module.exports = ({ db }) => {
     const { data: logs, error } = await q;
 
     if (error) {
-      global.logger.info(`Error getting logs: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting logs: ${error.message}`);
+      throw errorGen('Error getting logs', 400);
     }
     global.logger.info(`Got ${logs.length} user logs`);
     return logs;
@@ -34,8 +35,8 @@ module.exports = ({ db }) => {
     const { data: log, error } = await db.from('userLogs').select().eq('userLogID', logID);
 
     if (error) {
-      global.logger.info(`Error getting log: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting log: ${error.message}`);
+      throw errorGen(`Error getting log: ${error.message}`, 400);
     }
     global.logger.info(`Got log`);
     return log;
@@ -48,8 +49,8 @@ module.exports = ({ db }) => {
     const { data: log, error } = await db.from('userLogs').insert({ userLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
     if (error) {
-      global.logger.info(`Error creating userLog: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error creating userLog: ${error.message}`);
+      throw errorGen(`Error creating userLog: ${error.message}`, 400);
     }
     return {
       userLogID: log.userLogID,

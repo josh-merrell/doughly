@@ -3,6 +3,7 @@
 const { default: axios } = require('axios');
 const { createKitchenLog, createRecipeLog } = require('../../services/dbLogger');
 const { updater } = require('../../db');
+const { errorGen } = require('../../middleware/errorHandling');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -18,8 +19,8 @@ module.exports = ({ db }) => {
     const { data: ingredients, error } = await q;
 
     if (error) {
-      global.logger.info(`Error getting ingredients: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting ingredients: ${error.message}`);
+      throw errorGen('Error getting ingredients', 400);
     }
     global.logger.info(`Got ${ingredients.length} ingredients`);
     return ingredients;
@@ -30,8 +31,8 @@ module.exports = ({ db }) => {
     const { data: ingredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
 
     if (error) {
-      global.logger.info(`Error getting ingredient ID: ${ingredientID}: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting ingredient ID: ${ingredientID}: ${error.message}`);
+      throw errorGen(`Error getting ingredient ID: ${ingredientID}`, 400);
     }
     global.logger.info(`Got ingredient`);
     return ingredient;
@@ -42,38 +43,38 @@ module.exports = ({ db }) => {
 
     //verify that 'customID' exists on the request
     if (!customID) {
-      global.logger.info(`Error creating ingredient: customID is missing`);
-      return { error: 'customID is missing' };
+      global.logger.error(`customID is missing`);
+      throw errorGen(`customID is missing`, 400);
     }
 
     //verify that the provided lifespanDays is a positive integer, return error if not
     if (!lifespanDays || lifespanDays < 0) {
-      global.logger.info(`positive LifespanDays integer is required`);
-      return { error: `positive LifespanDays integer is required` };
+      global.logger.error(`positive LifespanDays integer is required`);
+      throw errorGen(`positive LifespanDays integer is required`, 400);
     }
 
     //verify that the provided name is unique, return error if not
     const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('name', 'eq', name).filter('deleted', 'eq', false);
     if (error) {
-      global.logger.info(`Error validating provided ingredient name: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error validating provided ingredient name: ${error.message}`);
+      throw errorGen(`Error validating provided ingredient name`, 400);
     }
     if (existingIngredient.length > 0) {
-      global.logger.info(`Ingredient name ${existingIngredient[0].name} already exists, cannot create ingredient`);
-      return { error: `Ingredient name already exists, cannot cretae ingredient` };
+      global.logger.error(`Ingredient name ${existingIngredient[0].name} already exists, cannot create ingredient`);
+      throw errorGen(`Ingredient name already exists, cannot create ingredient`, 400);
     }
 
     //verify that gramRatio is a positive number
     if (!gramRatio || gramRatio <= 0) {
-      global.logger.info(`positive gramRatio number is required`);
-      return { error: `positive gramRatio number is required` };
+      global.logger.error(`positive gramRatio number is required`);
+      throw errorGen(`positive gramRatio number is required`, 400);
     }
 
     //create the ingredient
     const { data: ingredient, error: createError } = await db.from('ingredients').insert({ ingredientID: customID, userID, name, lifespanDays, brand, purchaseUnit, gramRatio }).select().single();
     if (createError) {
-      global.logger.info(`Error creating ingredient: ${createError.message}`);
-      return { error: createError.message };
+      global.logger.error(`Error creating ingredient: ${createError.message}`);
+      throw errorGen(`Error creating ingredient`, 400);
     }
 
     //add a 'created' log entry
@@ -94,35 +95,35 @@ module.exports = ({ db }) => {
     //verify that the provided ingredientID exists, return error if not
     const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
     if (error) {
-      global.logger.info(`Error validating provided ingredientID: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error validating provided ingredientID: ${error.message}`);
+      throw errorGen(`Error validating provided ingredientID`, 400);
     }
     if (existingIngredient.length === 0) {
-      global.logger.info(`Ingredient ID does not exist, cannot update ingredient`);
-      return { error: `Ingredient ID does not exist, cannot update ingredient` };
+      global.logger.error(`Ingredient ID does not exist, cannot update ingredient`);
+      throw errorGen(`Ingredient ID does not exist, cannot update ingredient`, 400);
     }
 
     //verify that the provided lifespanDays is a positive integer, return error if not
     if (lifespanDays && lifespanDays < 0) {
-      global.logger.info(`positive LifespanDays integer is required`);
-      return { error: `positive LifespanDays integer is required` };
+      global.logger.error(`positive LifespanDays integer is required`);
+      throw errorGen(`positive LifespanDays integer is required`, 400);
     }
 
     //verify that the provided name is unique, return error if not
     const { data: existingIngredientName, error: nameError } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('name', 'eq', name);
     if (nameError) {
-      global.logger.info(`Error validating provided ingredient name: ${nameError.message}`);
-      return { error: nameError.message };
+      global.logger.error(`Error validating provided ingredient name: ${nameError.message}`);
+      throw errorGen(`Error validating provided ingredient name`, 400);
     }
     if (existingIngredientName.length > 0) {
-      global.logger.info(`Ingredient name already exists, cannot update ingredient`);
-      return { error: `Ingredient name already exists, cannot update ingredient` };
+      global.logger.error(`Ingredient name already exists, cannot update ingredient`);
+      throw errorGen(`Ingredient name already exists, cannot update ingredient`, 400);
     }
 
     //verify that gramRatio is a positive number if provided
     if (gramRatio && gramRatio <= 0) {
-      global.logger.info(`positive gramRatio number is required, cannot update ingredient`);
-      return { error: `positive gramRatio number is required, cannot update ingredient` };
+      global.logger.error(`positive gramRatio number is required, cannot update ingredient`);
+      throw errorGen(`positive gramRatio number is required, cannot update ingredient`, 400);
     }
 
     //update the ingredient
@@ -144,8 +145,8 @@ module.exports = ({ db }) => {
         gramRatio: updatedIngredient.gramRatio,
       };
     } catch (error) {
-      global.logger.info(`Error updating ingredient: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error updating ingredient: ${error.message}`);
+      throw errorGen(`Error updating ingredient`, 400);
     }
   }
 
@@ -154,20 +155,20 @@ module.exports = ({ db }) => {
     //verify that the provided ingredientID exists, return error if not
     const { data: existingIngredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
     if (error) {
-      global.logger.info(`Error validating provided ingredientID: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error validating provided ingredientID: ${error.message}`);
+      throw errorGen(`Error validating provided ingredientID`, 400);
     }
     if (existingIngredient.length === 0) {
-      global.logger.info(`Ingredient ID does not exist, cannot delete ingredient`);
-      return { error: `Ingredient ID does not exist, cannot delete ingredient` };
+      global.logger.error(`Ingredient ID does not exist, cannot delete ingredient`);
+      throw errorGen(`Ingredient ID does not exist, cannot delete ingredient`, 400);
     }
 
     //get list of related stock entries
     try {
       const { data: relatedStockEntries, error: stockError } = await db.from('ingredientStocks').select().eq('ingredientID', ingredientID).eq('deleted', false);
       if (stockError) {
-        global.logger.info(`Error getting related stock entries prior to deleting ingredient ID: ${ingredientID} : ${stockError.message}`);
-        return { error: stockError.message };
+        global.logger.error(`Error getting related stock entries prior to deleting ingredient ID: ${ingredientID} : ${stockError.message}`);
+        throw errorGen(`Error getting related stock entries prior to deleting ingredient ID: ${ingredientID}`, 400);
       }
 
       //delete any associated ingredient stock entries;
@@ -178,24 +179,24 @@ module.exports = ({ db }) => {
           },
         });
         if (ingredientStockDeleteResult.error) {
-          global.logger.info(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
-          return { error: ingredientStockDeleteResult.error };
+          global.logger.error(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
+          throw errorGen(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID}`, 400);
         }
 
         //add a 'deleted' log entry
         createKitchenLog(userID, authorization, 'deleteIngredient', Number(relatedStockEntries[i].ingredientStockID), ingredientID, null, null, `Ingredient stock deleted: ${relatedStockEntries[i].name}`);
       }
     } catch (error) {
-      global.logger.info(`Error deleting related stock entries: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error deleting related stock entries: ${error.message}`);
+      throw errorGen(`Error deleting related stock entries`, 400);
     }
 
     //get list of related recipeIngredients
     try {
       const { data: recipeIngredients, error: recipeError } = await db.from('recipeIngredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
       if (recipeError) {
-        global.logger.info(`Error getting related recipeIngredients prior to deleting ingredient ID: ${ingredientID} : ${recipeError.message}`);
-        return { error: recipeError.message };
+        global.logger.error(`Error getting related recipeIngredients prior to deleting ingredient ID: ${ingredientID} : ${recipeError.message}`);
+        throw errorGen(`Error getting related recipeIngredients prior to deleting ingredient ID: ${ingredientID}`, 400);
       }
 
       //delete any associated recipeIngredients;
@@ -206,30 +207,29 @@ module.exports = ({ db }) => {
           },
         });
         if (recipeIngredientDeleteResult.error) {
-          global.logger.info(`Error deleting recipeIngredientID: ${recipeIngredients[i].recipeIngredientID} prior to deleting ingredient ID: ${ingredientID} : ${recipeIngredientDeleteResult.error}`);
-          return { error: recipeIngredientDeleteResult.error };
+          global.logger.error(`Error deleting recipeIngredientID: ${recipeIngredients[i].recipeIngredientID} prior to deleting ingredient ID: ${ingredientID} : ${recipeIngredientDeleteResult.error}`);
+          throw errorGen(`Error deleting recipeIngredientID: ${recipeIngredients[i].recipeIngredientID} prior to deleting ingredient ID: ${ingredientID}`, 400);
         }
 
         //add a 'deleted' log entry
         createRecipeLog(userID, authorization, 'recipeIngredientDeleted', Number(recipeIngredients[i].recipeIngredientID), Number(recipeIngredients[i].recipeID), null, null, `Recipe ingredient deleted: ${recipeIngredients[i].recipeIngredientID}`);
       }
     } catch (error) {
-      global.logger.info(`Error deleting related recipeIngredients: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error deleting related recipeIngredients: ${error.message}`);
+      throw errorGen(`Error deleting related recipeIngredients`, 400);
     }
 
     //delete the ingredient;
     const { error: deleteError } = await db.from('ingredients').update({ deleted: true }).eq('ingredientID', ingredientID).single();
     if (deleteError) {
-      global.logger.info(`Error deleting ingredient: ${deleteError.message}`);
-      return { error: deleteError.message };
+      global.logger.error(`Error deleting ingredient: ${deleteError.message}`);
+      throw errorGen(`Error deleting ingredient`, 400);
     }
 
     //add a 'deleted' log entry
     createKitchenLog(userID, authorization, 'ingredientDeleted', Number(ingredientID), null, null, null, `Ingredient deleted: ${ingredientID}`);
 
     global.logger.info(`Deleted ingredient ID: ${ingredientID}`);
-
     return { success: true };
   }
 

@@ -1,30 +1,30 @@
 ('use strict');
+const { errorGen } = require('../../middleware/errorHandling');
 
 module.exports = ({ db, dbPublic }) => {
   async function retrieveProfile(userID, friendStatus = 'confirmed') {
     // get all columns from dbPublic.profiles where userID = userID
     const { data: profile, error } = await dbPublic.from('profiles').select('*').eq('user_id', userID).single();
     if (error) {
-      global.logger.info(`Error getting profile for userID ${userID}: ${error.message}`);
-      return { error };
+      global.logger.error(`Error getting profile for userID ${userID}: ${error.message}`);
+      throw errorGen(`Error getting profile for userID ${userID}: ${error.message}`, 400);
     }
     if (!profile) {
-      global.logger.info(`No profile found for userID ${userID}`);
-      return { error: { message: `No profile found for userID ${userID}` } };
+      global.logger.error(`No profile found for userID ${userID}`);
     }
 
     // get count of rows from db.friendships where userID = userID, deleted = false and status = 'confirmed'
     const { data: friendshipIDs, error: errorFriendCount } = await db.from('friendships').select('friendshipID').eq('userID', userID).eq('deleted', false).eq('status', friendStatus);
     if (errorFriendCount) {
-      global.logger.info(`Error getting friend count for userID ${userID}: ${errorFriendCount.message}`);
-      return { error: errorFriendCount };
+      global.logger.error(`Error getting friend count for userID ${userID}: ${errorFriendCount.message}`);
+      throw errorGen(`Error getting friend count for userID ${userID}: ${errorFriendCount.message}`, 400);
     }
 
     // get count of rows from db.followships where following = userID and deleted = false
     const { data: followerIDs, error: errorFollowerCount } = await db.from('followships').select('followshipID').eq('following', userID).eq('deleted', false);
     if (errorFollowerCount) {
-      global.logger.info(`Error getting follower count for userID ${userID}: ${errorFollowerCount.message}`);
-      return { error: errorFollowerCount };
+      global.logger.error(`Error getting follower count for userID ${userID}: ${errorFollowerCount.message}`);
+      throw errorGen(`Error getting follower count for userID ${userID}: ${errorFollowerCount.message}`, 400);
     }
 
     // get public recipes for this user. If the friendStatus is confirmed, get any recipes not equal to private
@@ -36,16 +36,16 @@ module.exports = ({ db, dbPublic }) => {
     }
     const { data: recipes, error: errorRecipes } = await q;
     if (errorRecipes) {
-      global.logger.info(`Error getting recipes for userID ${userID}: ${errorRecipes.message}`);
-      return { error: errorRecipes };
+      global.logger.error(`Error getting recipes for userID ${userID}: ${errorRecipes.message}`);
+      throw errorGen(`Error getting recipes for userID ${userID}: ${errorRecipes.message}`, 400);
     }
 
     // for each recipe, get the recipeCategoryName from the recipeCategoryID, then update the recipe object with recipeCategoryName
     const promises = recipes.map(async (recipe) => {
       const { data: recipeCategory, error: errorRecipeCategory } = await db.from('recipeCategories').select('name').eq('recipeCategoryID', recipe.recipeCategoryID).single();
       if (errorRecipeCategory) {
-        global.logger.info(`Error getting recipe category for recipeCategoryID ${recipe.recipeCategoryID}: ${errorRecipeCategory.message}`);
-        return { error: errorRecipeCategory };
+        global.logger.error(`Error getting recipe category for recipeCategoryID ${recipe.recipeCategoryID}: ${errorRecipeCategory.message}`);
+        throw errorGen(`Error getting recipe category for recipeCategoryID ${recipe.recipeCategoryID}: ${errorRecipeCategory.message}`, 400);
       }
       const recipeWithCategoryName = recipe;
       recipeWithCategoryName.recipeCategoryName = recipeCategory.name;
@@ -58,8 +58,8 @@ module.exports = ({ db, dbPublic }) => {
       if (recipe.type === 'subscription') {
         const { data: recipeSubscription, error: errorRecipeSubscription } = await db.from('recipeSubscriptions').select('sourceRecipeID, subscriptionID, startDate').eq('userID', userID).eq('newRecipeID', recipe.recipeID).eq('deleted', false).single();
         if (errorRecipeSubscription) {
-          global.logger.info(`Error getting recipe subscription for newRecipeID ${recipe.recipeID}: ${errorRecipeSubscription.message}`);
-          return { error: errorRecipeSubscription };
+          global.logger.error(`Error getting recipe subscription for newRecipeID ${recipe.recipeID}: ${errorRecipeSubscription.message}`);
+          throw errorGen(`Error getting recipe subscription for newRecipeID ${recipe.recipeID}: ${errorRecipeSubscription.message}`, 400);
         }
         const recipeWithSubscription = recipe;
         recipeWithSubscription.subscription = recipeSubscription;
@@ -89,8 +89,13 @@ module.exports = ({ db, dbPublic }) => {
 
   async function getProfile(options) {
     const { userID } = options;
-    global.logger.info(`Successfully retrieved profile for userID ${userID}`);
-    return retrieveProfile(userID);
+    try {
+      global.logger.info(`Successfully retrieved profile for userID ${userID}`);
+      return retrieveProfile(userID);
+    } catch (error) {
+      global.logger.error(`Error retrieving profile for userID ${userID}: ${error.message}`);
+      throw errorGen(`Error retrieving profile for userID ${userID}: ${error.message}`, 400);
+    }
   }
 
   async function getFriends(options) {
@@ -99,12 +104,12 @@ module.exports = ({ db, dbPublic }) => {
     //get friendshipIDs of userID where deleted = false and status as requested
     const { data: friendshipIDs, error } = await db.from('friendships').select('friend').eq('userID', userID).eq('deleted', false).eq('status', friendStatus);
     if (error) {
-      global.logger.info(`Error getting friendshipIDs for userID ${userID}: ${error.message}`);
-      return { error };
+      global.logger.error(`Error getting friendshipIDs for userID ${userID}: ${error.message}`);
+      throw errorGen(`Error getting friendshipIDs for userID ${userID}: ${error.message}`, 400);
     }
     if (!friendshipIDs) {
-      global.logger.info(`User with userID ${userID} has no friends`);
-      return { error: { message: `User with userID ${userID} has no friends` } };
+      global.logger.error(`User with userID ${userID} has no friends`);
+      throw errorGen(`User with userID ${userID} has no friends`, 400);
     }
 
     // Map over friendshipIDs and return a promise for each friend's profile
@@ -114,7 +119,7 @@ module.exports = ({ db, dbPublic }) => {
         return friendProfile;
       } catch (error) {
         global.logger.error(`Error retrieving profile for userID ${friendship.friend}: ${error.message}`);
-        return null;
+        throw errorGen(`Error retrieving profile for userID ${friendship.friend}: ${error.message}`, 400);
       }
     });
     const friendProfiles = await Promise.all(promises);
@@ -130,23 +135,23 @@ module.exports = ({ db, dbPublic }) => {
     //get friendshipID of userID and friendUserID where deleted = false and status as 'confirmed'
     const { data: friendshipID, error } = await db.from('friendships').select('friendshipID').eq('userID', userID).eq('friend', friendUserID).eq('deleted', false).eq('status', 'confirmed').single();
     if (error) {
-      global.logger.info(`Error getting friendshipID for userID ${userID} and friendUserID ${friendUserID}: ${error.message}`);
-      return { error };
+      global.logger.error(`Error getting friendshipID for userID ${userID} and friendUserID ${friendUserID}: ${error.message}`);
+      throw errorGen(`Error getting friendshipID for userID ${userID} and friendUserID ${friendUserID}: ${error.message}`, 400);
     }
     if (!friendshipID) {
-      global.logger.info(`No friendship found for userID ${userID} and friendUserID ${friendUserID}`);
-      return { error: { message: `No friendship found for userID ${userID} and friendUserID ${friendUserID}` } };
+      global.logger.error(`No friendship found for userID ${userID} and friendUserID ${friendUserID}`);
+      throw errorGen(`No friendship found for userID ${userID} and friendUserID ${friendUserID}`, 400);
     }
 
     //get friend's profile
-    const { data: friendProfile, error: errorFriendProfile } = await retrieveProfile(friendUserID);
-    if (errorFriendProfile) {
-      global.logger.info(`Error getting profile for userID ${friendUserID}: ${errorFriendProfile.message}`);
-      return { error: errorFriendProfile };
+    try {
+      const friendProfile = await retrieveProfile(friendUserID);
+      global.logger.info(`Successfully retrieved friend for userID ${userID} and friendUserID ${friendUserID}`);
+      return friendProfile;
+    } catch (error) {
+      global.logger.error(`Error retrieving profile for userID ${friendUserID}: ${error.message}`);
+      throw errorGen(`Error retrieving profile for userID ${friendUserID}: ${error.message}`, 400);
     }
-
-    global.logger.info(`Successfully retrieved friend for userID ${userID} and friendUserID ${friendUserID}`);
-    return friendProfile;
   }
 
   async function getFollowers(options) {
@@ -155,12 +160,12 @@ module.exports = ({ db, dbPublic }) => {
     //get followshipIDs of userID where deleted = false
     const { data: followshipIDs, error } = await db.from('followships').select('userID').eq('following', userID).eq('deleted', false);
     if (error) {
-      global.logger.info(`Error getting followshipIDs for userID ${userID}: ${error.message}`);
-      return { error };
+      global.logger.error(`Error getting followshipIDs for userID ${userID}: ${error.message}`);
+      throw errorGen(`Error getting followshipIDs for userID ${userID}: ${error.message}`, 400);
     }
     if (!followshipIDs) {
-      global.logger.info(`No followers found for userID ${userID}`);
-      return { error: { message: `No followers found for userID ${userID}` } };
+      global.logger.error(`No followers found for userID ${userID}`);
+      throw errorGen(`No followers found for userID ${userID}`, 400);
     }
 
     const promises = followshipIDs.map(async (followship) => {
@@ -169,7 +174,7 @@ module.exports = ({ db, dbPublic }) => {
         return friendProfile;
       } catch (error) {
         global.logger.error(`Error retrieving profile for userID ${followship.userID}: ${error.message}`);
-        return null;
+        throw errorGen(`Error retrieving profile for userID ${followship.userID}: ${error.message}`, 400);
       }
     });
     const followerProfiles = await Promise.all(promises);
@@ -185,23 +190,23 @@ module.exports = ({ db, dbPublic }) => {
     //get followshipID of userID and followerUserID where deleted = false
     const { data: followshipID, error } = await db.from('followships').select('followshipID').eq('following', userID).eq('userID', followerUserID).eq('deleted', false).single();
     if (error) {
-      global.logger.info(`Error getting followshipID for userID ${userID} and followerUserID ${followerUserID}: ${error.message}`);
-      return { error };
+      global.logger.error(`Error getting followshipID for userID ${userID} and followerUserID ${followerUserID}: ${error.message}`);
+      throw errorGen(`Error getting followshipID for userID ${userID} and followerUserID ${followerUserID}: ${error.message}`, 400);
     }
     if (!followshipID) {
-      global.logger.info(`No followship found for userID ${userID} and followerUserID ${followerUserID}`);
-      return { error: { message: `No followship found for userID ${userID} and followerUserID ${followerUserID}` } };
+      global.logger.error(`No followship found for userID ${userID} and followerUserID ${followerUserID}`);
+      throw errorGen(`No followship found for userID ${userID} and followerUserID ${followerUserID}`, 400);
     }
 
     //get follower's profile
-    const { data: followerProfile, error: errorFollowerProfile } = await retrieveProfile(followerUserID);
-    if (errorFollowerProfile) {
-      global.logger.info(`Error getting profile for userID ${followerUserID}: ${errorFollowerProfile.message}`);
-      return { error: errorFollowerProfile };
+    try {
+      const followerProfile = await retrieveProfile(followerUserID);
+      global.logger.info(`Successfully retrieved follower for userID ${userID} and followerUserID ${followerUserID}`);
+      return followerProfile;
+    } catch (error) {
+      global.logger.error(`Error retrieving profile for userID ${followerUserID}: ${error.message}`);
+      throw errorGen(`Error retrieving profile for userID ${followerUserID}: ${error.message}`, 400);
     }
-
-    global.logger.info(`Successfully retrieved follower for userID ${userID} and followerUserID ${followerUserID}`);
-    return followerProfile;
   }
 
   async function getFollowing(options) {
@@ -210,12 +215,12 @@ module.exports = ({ db, dbPublic }) => {
     //get followshipIDs where userID = userID and deleted = false
     const { data: followships, error } = await db.from('followships').select('following').eq('userID', userID).eq('deleted', false);
     if (error) {
-      global.logger.info(`Error getting followshipIDs for userID ${userID}: ${error.message}`);
-      return { error };
+      global.logger.error(`Error getting followshipIDs for userID ${userID}: ${error.message}`);
+      throw errorGen(`Error getting followshipIDs for userID ${userID}: ${error.message}`, 400);
     }
     if (!followships) {
-      global.logger.info(`No followships found for userID ${userID}`);
-      return { error: { message: `No followships found for userID ${userID}` } };
+      global.logger.error(`No followships found for userID ${userID}`);
+      throw errorGen(`No followships found for userID ${userID}`, 400);
     }
 
     const promises = followships.map(async (followship) => {
@@ -224,7 +229,7 @@ module.exports = ({ db, dbPublic }) => {
         return friendProfile;
       } catch (error) {
         global.logger.error(`Error retrieving profile for userID ${followship.following}: ${error.message}`);
-        return null;
+        throw errorGen(`Error retrieving profile for userID ${followship.following}: ${error.message}`, 400);
       }
     });
     const followingProfiles = await Promise.all(promises);
@@ -249,8 +254,8 @@ module.exports = ({ db, dbPublic }) => {
     // get all userID's from dbPublic.profiles where name_first or name_last or username contains searchQuery
     const { data: profileIDs, error } = await dbPublic.from('profiles').select('user_id').textSearch(`first_last_username`, `${q}`);
     if (error) {
-      global.logger.info(`Error getting profileIDs for searchQuery ${searchQuery}: ${error.message}`);
-      return { error };
+      global.logger.error(`Error getting profileIDs for searchQuery ${searchQuery}: ${error.message}`);
+      throw errorGen(`Error getting profileIDs for searchQuery ${searchQuery}: ${error.message}`, 400);
     }
 
     // Map over profileIDs and return a promise for each profile
@@ -260,7 +265,7 @@ module.exports = ({ db, dbPublic }) => {
         return profile;
       } catch (error) {
         global.logger.error(`Error retrieving profile for userID ${profileID.user_id}: ${error.message}`);
-        return null;
+        throw errorGen(`Error retrieving profile for userID ${profileID.user_id}: ${error.message}`, 400);
       }
     });
     const profiles = await Promise.all(promises);

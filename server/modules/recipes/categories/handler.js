@@ -5,8 +5,13 @@ async function getRecipeCategories(req, res) {
   const p = require('./processor')({ db });
   const { cursor, limit } = req.query;
   const userID = 'ade96f70-4ec5-4ab9-adfe-0645b16e1ced';
-  const returner = await p.get.all({ userID, cursor, limit });
-  return res.json(returner);
+  try {
+    const returner = await p.get.all({ userID, cursor, limit });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'recipeCategories' 'getRecipeCategories': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 // async function createRecipeCategory(req, res) {
