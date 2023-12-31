@@ -1,4 +1,5 @@
 ('use strict');
+const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -28,8 +29,8 @@ module.exports = ({ db }) => {
     const { data: logs, error } = await q;
 
     if (error) {
-      global.logger.info(`Error getting recipeFeedback logs: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipeFeedback logs: ${error.message}`);
+      throw errorGen('Error getting recipeFeedback logs', 400);
     }
     global.logger.info(`Got ${logs.length} recipeFeedback logs`);
     return logs;
@@ -40,8 +41,8 @@ module.exports = ({ db }) => {
     const { data: log, error } = await db.from('recipeFeedbacks').select().eq('recipeFeedbackID', logID);
 
     if (error) {
-      global.logger.info(`Error getting recipeFeedback log: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipeFeedback log: ${error.message}`);
+      throw errorGen(`Error getting recipeFeedback log: ${error.message}`, 400);
     }
     global.logger.info(`Got recipeFeedback log`);
     return log;
@@ -54,8 +55,8 @@ module.exports = ({ db }) => {
     const { data: log, error } = await db.from('recipeFeedbacks').insert({ recipeFeedbackID: customID, userID, logTime, recipeID, satisfaction, difficulty, note }).select('*').single();
 
     if (error) {
-      global.logger.info(`Error creating recipeFeedback log: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error creating recipeFeedback log: ${error.message}`);
+      throw errorGen(`Error creating recipeFeedback log: ${error.message}`, 400);
     }
     return {
       recipeFeedbackID: log.recipeFeedbackID,

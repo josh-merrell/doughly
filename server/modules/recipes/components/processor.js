@@ -2,6 +2,7 @@
 
 const { createRecipeLog } = require('../../../services/dbLogger');
 const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
+const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -18,8 +19,8 @@ module.exports = ({ db }) => {
     const { data: recipeComponents, error } = await q;
 
     if (error) {
-      global.logger.info(`Error getting recipeComponents: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipeComponents: ${error.message}`);
+      throw errorGen('Error getting recipeComponents', 400);
     }
     global.logger.info(`Got recipeComponents`);
     return recipeComponents;
@@ -30,40 +31,39 @@ module.exports = ({ db }) => {
 
     //if params are not present, return error
     if (!recipeID || !componentID || !componentAdvanceDays) {
-      global.logger.info(`RecipeID, componentID, and componentAdvanceDays are required`);
-      return { error: `RecipeID, componentID, and componentAdvanceDays are required` };
+      global.logger.error(`RecipeID, componentID, and componentAdvanceDays are required`);
+      throw errorGen(`RecipeID, componentID, and componentAdvanceDays are required`, 400);
     }
 
     if (recipeID === componentID) {
-      global.logger.info(`RecipeID and componentID cannot be the same`);
-      return { error: `RecipeID and componentID cannot be the same` };
+      global.logger.error(`RecipeID and componentID cannot be the same`);
+      throw errorGen(`RecipeID and componentID cannot be the same`, 400);
     }
 
     //verify that provided recipeID and compomentID (recipe) exist, return error if not
     const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (error) {
-      global.logger.info(`Error getting recipe: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipe: ${error.message}`);
+      throw errorGen(`Error getting recipe`, 400);
     }
     if (!recipe.length) {
-      global.logger.info(`Recipe with provided ID (${recipeID}) does not exist`);
-      return { error: `Recipe with provided ID (${recipeID}) does not exist` };
+      global.logger.error(`Recipe with provided ID (${recipeID}) does not exist`);
+      throw errorGen(`Recipe with provided ID (${recipeID}) does not exist`, 400);
     }
     const { data: component, error: error2 } = await db.from('recipes').select().eq('recipeID', componentID);
     if (error2) {
-      global.logger.info(`Error getting component Recipe: ${error2.message}`);
-      return { error: error2.message };
+      global.logger.error(`Error getting component Recipe: ${error2.message}`);
+      throw errorGen(`Error getting component Recipe`, 400);
     }
     if (!component.length) {
-      global.logger.info(`Component Recipe with provided ID (${componentID}) does not exist`);
-      return { error: `Component Recipe with provided ID (${componentID}) does not exist` };
+      global.logger.error(`Component Recipe with provided ID (${componentID}) does not exist`);
+      throw errorGen(`Component Recipe with provided ID (${componentID}) does not exist`, 400);
     }
 
     const { data, errorInsert } = await db.from('recipeComponents').insert({ recipeComponentID: customID, userID, recipeID, componentID, componentAdvanceDays }).select().single();
-
     if (error) {
-      global.logger.info(`Error creating recipeComponent: ${errorInsert.message}`);
-      return { error: errorInsert.message };
+      global.logger.error(`Error creating recipeComponent: ${errorInsert.message}`);
+      throw errorGen(`Error creating recipeComponent`, 400);
     }
 
     //add a 'created' log entry
@@ -80,12 +80,12 @@ module.exports = ({ db }) => {
     const { data: recipeComponent, error } = await db.from('recipeComponents').select().eq('recipeComponentID', options.recipeComponentID);
 
     if (error) {
-      global.logger.info(`Error getting recipeComponent: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipeComponent: ${error.message}`);
+      throw errorGen(`Error getting recipeComponent`, 400);
     }
     if (!recipeComponent.length) {
-      global.logger.info(`RecipeComponent with provided ID (${options.recipeComponentID}) does not exist`);
-      return { error: `RecipeComponent with provided ID (${options.recipeComponentID}) does not exist` };
+      global.logger.error(`RecipeComponent with provided ID (${options.recipeComponentID}) does not exist`);
+      throw errorGen(`RecipeComponent with provided ID (${options.recipeComponentID}) does not exist`, 400);
     }
 
     //update recipeComponent
@@ -100,8 +100,8 @@ module.exports = ({ db }) => {
       const updatedRecipeComponent = await updater(options.userID, options.authorization, 'recipeComponentID', options.recipeComponentID, 'recipeComponents', updateFields);
       return updatedRecipeComponent;
     } catch (error) {
-      global.logger.info(`Error updating recipeComponent ID: ${options.recipeComponentID}: ${error.message}`);
-      return { error: `Error updating recipeComponent: ${error.message}` };
+      global.logger.error(`Error updating recipeComponent ID: ${options.recipeComponentID}: ${error.message}`);
+      throw errorGen(`Error updating recipeComponent`, 400);
     }
   }
 
@@ -110,20 +110,19 @@ module.exports = ({ db }) => {
     const { data: recipeComponent, error } = await db.from('recipeComponents').select().eq('recipeComponentID', options.recipeComponentID).eq('deleted', false);
 
     if (error) {
-      global.logger.info(`Error getting recipeComponent: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipeComponent: ${error.message}`);
+      throw errorGen(`Error getting recipeComponent`, 400);
     }
     if (!recipeComponent.length) {
-      global.logger.info(`RecipeComponent with provided ID (${options.recipeComponentID}) does not exist`);
-      return { error: `RecipeComponent with provided ID (${options.recipeComponentID}) does not exist` };
+      global.logger.error(`RecipeComponent with provided ID (${options.recipeComponentID}) does not exist`);
+      throw errorGen(`RecipeComponent with provided ID (${options.recipeComponentID}) does not exist`, 400);
     }
 
     //delete recipeComponent
     const { data, error: deleteError } = await db.from('recipeComponents').update({ deleted: true }).match({ recipeComponentID: options.recipeComponentID });
-
     if (deleteError) {
-      global.logger.info(`Error deleting recipeComponent: ${deleteError.message}`);
-      return { error: deleteError.message };
+      global.logger.error(`Error deleting recipeComponent: ${deleteError.message}`);
+      throw errorGen(`Error deleting recipeComponent`, 400);
     }
     //add a 'deleted' log entry
     const logID1 = await createRecipeLog(options.userID, options.authorization, 'deleteRecipeComponent', Number(options.recipeComponentID), Number(recipeComponent[0].recipeID), null, null, `deleted recipeComponent with ID: ${options.recipeComponentID}`);

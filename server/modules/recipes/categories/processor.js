@@ -3,6 +3,7 @@
 const axios = require('axios');
 const { createRecipeLog } = require('../../../services/dbLogger');
 const { updater } = require('../../../db');
+const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -11,8 +12,8 @@ module.exports = ({ db }) => {
     const { data: recipeCategories, error } = await q;
 
     if (error) {
-      global.logger.info(`Error getting recipeCategories: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipeCategories: ${error.message}`);
+      throw errorGen('Error getting recipeCategories', 400);
     }
     global.logger.info(`Got ${recipeCategories.length} recipeCategories`);
     return recipeCategories;

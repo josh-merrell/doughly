@@ -2,16 +2,26 @@ async function getRecipeIngredients(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeIngredientIDs, recipeID, ingredientID } = req.query;
-  const returner = await p.get.all({ userID: req.userID, recipeIngredientIDs, recipeID, ingredientID });
-  return res.json(returner);
+  try {
+    const returner = await p.get.all({ userID: req.userID, recipeIngredientIDs, recipeID, ingredientID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredients' 'getRecipeIngredients': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function getRecipeIngredientByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeIngredientID } = req.params;
-  const returner = await p.get.byID({ userID: req.userID, recipeIngredientID });
-  return res.json(returner);
+  try {
+    const returner = await p.get.byID({ userID: req.userID, recipeIngredientID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredients' 'getRecipeIngredientByID': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function createRecipeIngredient(req, res) {
@@ -26,17 +36,22 @@ async function createRecipeIngredient(req, res) {
     userID = req.userID;
   }
   const { customID } = req;
-  const returner = await p.create({
-    customID,
-    authorization,
-    userID,
-    recipeID,
-    ingredientID,
-    measurementUnit,
-    measurement,
-    purchaseUnitRatio,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.create({
+      customID,
+      authorization,
+      userID,
+      recipeID,
+      ingredientID,
+      measurementUnit,
+      measurement,
+      purchaseUnitRatio,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredients' 'createRecipeIngredient': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function updateRecipeIngredient(req, res) {
@@ -45,15 +60,20 @@ async function updateRecipeIngredient(req, res) {
   const { recipeIngredientID } = req.params;
   const { measurementUnit, measurement, purchaseUnitRatio } = req.body;
   const { authorization } = req.headers;
-  const returner = await p.update({
-    userID: req.userID,
-    authorization,
-    recipeIngredientID,
-    measurementUnit,
-    measurement,
-    purchaseUnitRatio,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.update({
+      userID: req.userID,
+      authorization,
+      recipeIngredientID,
+      measurementUnit,
+      measurement,
+      purchaseUnitRatio,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredients' 'updateRecipeIngredient': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function deleteRecipeIngredient(req, res) {
@@ -61,8 +81,13 @@ async function deleteRecipeIngredient(req, res) {
   const p = require('./processor')({ db });
   const { recipeIngredientID } = req.params;
   const { authorization } = req.headers;
-  const returner = await p.delete({ userID: req.userID, recipeIngredientID, authorization });
-  return res.json(returner);
+  try {
+    const returner = await p.delete({ userID: req.userID, recipeIngredientID, authorization });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredients' 'deleteRecipeIngredient': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 module.exports = {

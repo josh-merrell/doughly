@@ -6,16 +6,26 @@ async function getToolStocks(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolStockIDs, toolID, purchasedBy } = req.query;
-  const returner = await p.get.all({ userID: req.userID, toolStockIDs, toolID, purchasedBy });
-  return res.json(returner);
+  try {
+    const returner = await p.get.all({ userID: req.userID, toolStockIDs, toolID, purchasedBy });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'toolStocks' 'getToolStocks': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function getToolStockByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { toolStockID } = req.params;
-  const returner = await p.get.byID({ userID: req.userID, toolStockID });
-  return res.json(returner);
+  try {
+    const returner = await p.get.byID({ userID: req.userID, toolStockID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'toolStocks' 'getToolStockByID': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 // ** CREATE ONE ENTRY FOR EACH QUANTITY PROVIDED **
@@ -75,14 +85,19 @@ async function createToolStock(req, res) {
   const { toolID, quantity } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
-  const returner = await p.create({
-    userID: req.userID,
-    customID,
-    authorization,
-    toolID,
-    quantity,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.create({
+      userID: req.userID,
+      customID,
+      authorization,
+      toolID,
+      quantity,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'toolStocks' 'createToolStock': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function updateToolStock(req, res) {
@@ -91,15 +106,20 @@ async function updateToolStock(req, res) {
   const { toolStockID } = req.params;
   const { authorization } = req.headers;
   const { purchasedBy, purchaseDate, quantity } = req.body;
-  const returner = await p.update({
-    userID: req.userID,
-    authorization,
-    toolStockID,
-    purchasedBy,
-    purchaseDate,
-    quantity,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.update({
+      userID: req.userID,
+      authorization,
+      toolStockID,
+      purchasedBy,
+      purchaseDate,
+      quantity,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'toolStocks' 'updateToolStock': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function deleteToolStock(req, res) {
@@ -107,12 +127,17 @@ async function deleteToolStock(req, res) {
   const p = require('./processor')({ db });
   const { toolStockID } = req.params;
   const { authorization } = req.headers;
-  const returner = await p.delete({
-    userID: req.userID,
-    toolStockID,
-    authorization,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.delete({
+      userID: req.userID,
+      toolStockID,
+      authorization,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'toolStocks' 'deleteToolStock': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 module.exports = {

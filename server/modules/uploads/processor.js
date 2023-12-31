@@ -1,5 +1,6 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const { errorGen } = require('../../middleware/errorHandling');
 
 ('use strict');
 
@@ -85,7 +86,7 @@ module.exports = ({ db, dbDefault }) => {
       return { message: 'Successfully deleted file', data };
     } catch (err) {
       global.logger.error(`Error deleting file from S3. Key:${decodedKey}, Error:`, err);
-      throw err;
+      throw errorGen(`Error deleting file from S3. Key:${decodedKey}`, 400);
     }
   }
 
