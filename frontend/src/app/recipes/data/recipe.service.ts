@@ -257,6 +257,7 @@ export class RecipeService {
     const usageLogs = onlyMe === 'true' ? this.myUses : this.allUses;
     return usageLogs ? usageLogs.length : 0;
   }
+  
   useRecipe(
     recipeID: number,
     satisfaction: number,

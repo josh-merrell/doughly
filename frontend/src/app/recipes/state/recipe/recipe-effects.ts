@@ -203,4 +203,31 @@ export class RecipeEffects {
       )
     )
   );
+
+  useRecipe$ = createEffect(() => 
+    this.actions$.pipe(
+      ofType(RecipeActions.useRecipe),
+      mergeMap((action) => 
+        this.recipeService.useRecipe(action.recipeID, action.satisfaction, action.difficulty, action.note).pipe(
+          map(() => 
+            RecipeActions.useRecipeSuccess(),
+            RecipeActions.loadRecipe({ recipeID: action.recipeID })
+          ),
+          catchError((error) => 
+            of(
+              RecipeActions.useRecipeFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  )
+
+  
 }

@@ -113,21 +113,29 @@ async function deleteRecipe(req, res) {
   return res.json(returner);
 }
 
-async function useRecipe(req, res) {
+async function useRecipe(req, res, next) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeID } = req.params;
   const { satisfaction, difficulty, note } = req.body;
   const { authorization } = req.headers;
-  const returner = await p.use({
-    authorization,
-    userID: req.userID,
-    recipeID,
-    satisfaction: parseInt(satisfaction),
-    difficulty: parseInt(difficulty),
-    note,
-  });
-  return res.json(returner);
+
+  try {
+    const returner = await p.use({
+      authorization,
+      userID: req.userID,
+      recipeID,
+      satisfaction: parseInt(satisfaction),
+      difficulty: parseInt(difficulty),
+      note,
+    });
+    return res.json(returner);
+  } catch (err) {
+    // handle the error, for example, log it and send a response
+    global.logger.error(`'recipes' 'useRecipe': ${err.message}`);
+    // If you have a specific error format or a specific status code, use them here
+    return res.status(err.code || 500).json({ error: err.message });
+  }
 }
 
 async function constructRecipe(req, res) {
@@ -136,7 +144,7 @@ async function constructRecipe(req, res) {
   const { title, sourceRecipeID, servings, recipeCategoryID, lifespanDays, timePrep, timeBake, photoURL, type, components, ingredients, tools, steps } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
-  const returner = await p.construct({
+  const returner = await p.constructRecipe({
     authorization,
     userID: req.userID,
     sourceRecipeID,
