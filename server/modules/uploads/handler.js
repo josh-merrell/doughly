@@ -4,12 +4,17 @@ async function createPresignedURL(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { fileName, fileType } = req.body;
-  const returner = await p.create({
-    userID: req.userID,
-    fileName,
-    fileType,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.create({
+      userID: req.userID,
+      fileName,
+      fileType,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'uploads' 'createPresignedURL': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function deleteS3Photo(req, res) {
@@ -17,13 +22,18 @@ async function deleteS3Photo(req, res) {
   const dbDefault = req.defaultClient.db;
   const p = require('./processor')({ db, dbDefault });
   const { photoURL, type, id } = req.body;
-  const returner = await p.remove({
-    userID: req.userID,
-    photoURL,
-    type,
-    id, //optional
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.remove({
+      userID: req.userID,
+      photoURL,
+      type,
+      id, //optional
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'uploads' 'deleteS3Photo': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 module.exports = {

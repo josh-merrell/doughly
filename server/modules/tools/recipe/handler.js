@@ -4,16 +4,26 @@ async function getRecipeTools(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeToolIDs, recipeID, toolID } = req.query;
-  const returner = await p.get.all({ userID: req.userID, recipeToolIDs, recipeID, toolID });
-  return res.json(returner);
+  try {
+    const returner = await p.get.all({ userID: req.userID, recipeToolIDs, recipeID, toolID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'recipeTools' 'getTools': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function getRecipeToolByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeToolID } = req.params;
-  const returner = await p.get.byID({ userID: req.userID, recipeToolID });
-  return res.json(returner);
+  try {
+    const returner = await p.get.byID({ userID: req.userID, recipeToolID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'recipeTools' 'getToolByID': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function createRecipeTool(req, res) {
@@ -22,15 +32,20 @@ async function createRecipeTool(req, res) {
   const { recipeID, toolID, quantity } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
-  const returner = await p.create({
-    customID,
-    authorization,
-    userID: req.userID,
-    recipeID,
-    toolID,
-    quantity,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.create({
+      customID,
+      authorization,
+      userID: req.userID,
+      recipeID,
+      toolID,
+      quantity,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'recipeTools' 'createTool': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function updateRecipeTool(req, res) {
@@ -39,13 +54,18 @@ async function updateRecipeTool(req, res) {
   const { recipeToolID } = req.params;
   const { authorization } = req.headers;
   const { quantity } = req.body;
-  const returner = await p.update({
-    userID: req.userID,
-    authorization,
-    recipeToolID,
-    quantity,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.update({
+      userID: req.userID,
+      authorization,
+      recipeToolID,
+      quantity,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'recipeTools' 'updateTool': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function deleteRecipeTool(req, res) {
@@ -53,12 +73,17 @@ async function deleteRecipeTool(req, res) {
   const p = require('./processor')({ db });
   const { recipeToolID } = req.params;
   const { authorization } = req.headers;
-  const returner = await p.delete({
-    userID: req.userID,
-    recipeToolID,
-    authorization,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.delete({
+      userID: req.userID,
+      recipeToolID,
+      authorization,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'recipeTools' 'deleteTool': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 module.exports = {

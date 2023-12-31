@@ -1,4 +1,5 @@
 const { default: axios } = require('axios');
+const { errorGen } = require('../middleware/errorHandling');
 
 async function createKitchenLog(userID, authorization, eventType, subjectID, associatedID = null, oldValue = null, newValue = null, message = null) {
   try {
@@ -24,8 +25,7 @@ async function createKitchenLog(userID, authorization, eventType, subjectID, ass
     return log.data.kitchenLogID;
   } catch (error) {
     global.logger.error(`Error creating kitchen log: ${error.message}`);
-
-    return null;
+    throw errorGen(`Error creating kitchen log: ${error.message}`, 400);
   }
 }
 
@@ -53,7 +53,7 @@ async function createRecipeLog(userID, authorization, eventType, subjectID, asso
     return log.data.recipeLogID;
   } catch (error) {
     global.logger.error(`Error creating recipe log: ${error.message}`);
-    return null;
+    throw errorGen(`Error creating recipe log: ${error.message}`, 400);
   }
 }
 
@@ -82,7 +82,7 @@ async function createUserLog(userID, authorization, eventType, subjectID, associ
     return log.data.userLogID;
   } catch (error) {
     global.logger.error(`Error creating user log: ${error.message}`);
-    return null;
+    throw errorGen(`Error creating user log: ${error.message}`, 400);
   }
 }
 
@@ -110,7 +110,7 @@ async function createShoppingLog(userID, authorization, eventType, subjectID, as
     return log.data.shoppingLogID;
   } catch (error) {
     global.logger.error(`Error creating shopping log: ${error.message}`);
-    return null;
+    throw errorGen(`Error creating shopping log: ${error.message}`, 400);
   }
 }
 
@@ -136,8 +136,7 @@ async function createRecipeFeedbackLog(userID, authorization, recipeID, satisfac
     return log.data.recipeFeedbackID;
   } catch (error) {
     global.logger.error(`Error creating recipe feedback log: ${error.message}`);
-
-    return null;
+    throw errorGen(`Error creating recipe feedback log: ${error.message}`, 400);
   }
 }
 

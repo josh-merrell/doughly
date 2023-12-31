@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-
+const { errorGen } = require('../../middleware/errorHandling');
 const { createUserLog } = require('../../services/dbLogger');
 
 ('use strict');
@@ -39,8 +39,8 @@ module.exports = ({ db }) => {
     const { data: persons, error } = await q;
 
     if (error) {
-      global.logger.info(`Error getting persons: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting persons: ${error.message}`);
+      throw errorGen('Error getting persons', 400);
     }
     global.logger.info(`Got ${persons.length} persons`);
     return persons;
@@ -53,11 +53,11 @@ module.exports = ({ db }) => {
     const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').eq('email', email);
 
     if (emailExistsError) {
-      global.logger.info(`Error checking whether email ${email} exists: ${emailExistsError.message}`);
-      return { error: emailExistsError.message };
+      global.logger.error(`Error checking whether email ${email} exists: ${emailExistsError.message}`);
+      throw errorGen(`Error checking whether email ${email} exists`, 400);
     } else if (emailExists.length > 0) {
-      global.logger.info(`Email ${email} already exists`);
-      return { error: `Email ${email} already exists` };
+      global.logger.error(`Email ${email} already exists`);
+      throw errorGen(`Email ${email} already exists`, 400);
     }
 
     //if the email is new, add the new person to the 'persons' table,
@@ -81,8 +81,8 @@ module.exports = ({ db }) => {
       .single();
 
     if (error) {
-      global.logger.info(`Error creating person ${nameFirst} ${nameLast}: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error creating person ${nameFirst} ${nameLast}: ${error.message}`);
+      throw errorGen(`Error creating person ${nameFirst} ${nameLast}`, 400);
     } else {
       //add a 'created' log entry
       createUserLog(userID, authorization, 'createPerson', data.personID, null, null, null, `created Person: ${data.nameFirst} ${data.nameLast}, ${data.email}`);
@@ -102,25 +102,21 @@ module.exports = ({ db }) => {
       const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email', 'version').match({ email: updateFields.email });
 
       if (emailExistsError) {
-        global.logger.info(`Error checking whether email ${updateFields.email} exists: ${emailExistsError.message}`);
-        return { error: emailExistsError.message };
+        global.logger.error(`Error checking whether email ${updateFields.email} exists: ${emailExistsError.message}`);
+        throw errorGen(`Error checking whether email ${updateFields.email} exists`, 400);
       } else if (emailExists.length > 0) {
-        global.logger.info(`Email ${updateFields.email} already exists`);
-        return { error: `Email ${updateFields.email} already exists` };
+        global.logger.error(`Email ${updateFields.email} already exists`);
+        throw errorGen(`Email ${updateFields.email} already exists`, 400);
       }
     }
 
     //if the email is unique, update provided fields in the 'persons' table,
     try {
       const updatedPerson = await updater(options.userID, options.authorization, 'personID', options.personID, 'persons', updateFields);
-      // //increment version of person
-      // const newVersion = await incrementVersion('persons', 'personID', options.personID, updatedPerson.version);
-      // //add an 'updated' log entry
-      // createUserLog(options.userID, options.authorization, 'updatedPersonVersion', Number(options.personID), null, String(updatedPerson.version), String(newVersion), `Updated Person, ID: ${options.personID}, new version: ${newVersion}`);
       return updatedPerson;
     } catch (error) {
-      global.logger.info(`Error updating persons ID:${options.personID}: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error updating person ID:${options.personID}: ${error.message}`);
+      throw errorGen(`Error updating person ID:${options.personID}`, 400);
     }
   }
 
@@ -129,18 +125,18 @@ module.exports = ({ db }) => {
     const { data: personExists, error: personExistsError } = await db.from('persons').select().match({ personID: options.personID }).single();
 
     if (personExistsError) {
-      global.logger.info(`Error checking whether personID to del: ${options.personID} exists: ${personExistsError.message}`);
-      return { error: personExistsError.message };
+      global.logger.error(`Error checking whether personID to del: ${options.personID} exists: ${personExistsError.message}`);
+      throw errorGen(`Error checking whether personID to del: ${options.personID} exists`, 400);
     } else if (!personExists) {
-      global.logger.info(`Person to delete ${options.personID} does not exist`);
-      return { error: `Person to delete ${options.personID} does not exist` };
+      global.logger.error(`Person to delete ${options.personID} does not exist`);
+      throw errorGen(`Person to delete ${options.personID} does not exist`, 400);
     }
 
     //if the person exists, delete the person from the 'persons' table,
     let { data, error } = await db.from('persons').update({ deleted: true }).eq('personID', options.personID);
     if (error) {
-      global.logger.info(`Error deleting personID: ${options.personID}: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error deleting personID: ${options.personID}: ${error.message}`);
+      throw errorGen(`Error deleting personID: ${options.personID}`, 400);
     }
 
     //add a 'deleted' log entry
@@ -151,20 +147,18 @@ module.exports = ({ db }) => {
   async function getPersonByID(options) {
     const { data, error } = await db.from('persons').select('personID').match({ personID: options.personID });
     if (error) {
-      global.logger.info(`Error getting person by ID:${options.personID}: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting person by ID:${options.personID}: ${error.message}`);
+      throw errorGen(`Error getting person by ID:${options.personID}`, 400);
     }
     return data;
   }
 
   async function existsByPersonID(options) {
     const { data, error } = await db.from('persons').select('personID').match({ personID: options.personID });
-
     if (error) {
-      global.logger.info(`Error checking whether person ${options.personID} exists: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error checking whether person ${options.personID} exists: ${error.message}`);
+      throw errorGen(`Error checking whether person ${options.personID} exists`, 400);
     }
-
     return data.length > 0;
   }
 

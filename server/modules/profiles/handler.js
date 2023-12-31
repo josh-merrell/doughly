@@ -8,10 +8,15 @@ async function getProfile(req, res) {
   if (!userID) {
     userID = req.userID;
   }
-  const returner = await p.getProfile({
-    userID
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.getProfile({
+      userID,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'getProfile': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function getFriends(req, res) {
@@ -22,11 +27,16 @@ async function getFriends(req, res) {
   if (!friendStatus) {
     friendStatus = 'confirmed';
   }
-  const returner = await p.getFriends({
-    userID: req.userID,
-    friendStatus,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.getFriends({
+      userID: req.userID,
+      friendStatus,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'getFriends': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function getFriend(req, res) {
@@ -34,21 +44,31 @@ async function getFriend(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { friendUserID } = req.params;
-  const returner = await p.getFriend({
-    userID: req.userID,
-    friendUserID,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.getFriend({
+      userID: req.userID,
+      friendUserID,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'getFriend': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function getFollowers(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
-  const returner = await p.getFollowers({
-    userID: req.userID,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.getFollowers({
+      userID: req.userID,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'getFollowers': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function getFollower(req, res) {
@@ -56,21 +76,31 @@ async function getFollower(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { followerUserID } = req.params;
-  const returner = await p.getFollower({
-    userID: req.userID,
-    followerUserID,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.getFollower({
+      userID: req.userID,
+      followerUserID,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'getFollower': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function getFollowing(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
-  const returner = await p.getFollowing({
-    userID: req.userID,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.getFollowing({
+      userID: req.userID,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'getFollowing': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 async function searchProfiles(req, res) {
@@ -78,11 +108,16 @@ async function searchProfiles(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { searchQuery } = req.query;
-  const returner = await p.searchProfiles({
-    userID: req.userID,
-    searchQuery,
-  });
-  return res.json(returner);
+  try {
+    const returner = await p.searchProfiles({
+      userID: req.userID,
+      searchQuery,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'searchProfiles': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
 }
 
 module.exports = {

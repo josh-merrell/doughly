@@ -3,13 +3,14 @@ const axios = require('axios');
 ('use strict');
 const { createRecipeLog } = require('../../../services/dbLogger');
 const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
+const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = ({ db }) => {
   const sequenceShifter = async (userID, authorization, recipeStepID, newSeq) => {
     const { err } = await updater(userID, authorization, 'recipeStepID', recipeStepID, 'recipeSteps', { sequence: newSeq });
     if (err) {
-      global.logger.info(`Error shifting sequence of recipeStep ID: ${recipeStepID} while updating recipeStep ${err.message}`);
-      return { error: err.message };
+      global.logger.error(`Error shifting sequence of recipeStep ID: ${recipeStepID} while updating recipeStep ${err.message}`);
+      throw errorGen(`Error shifting sequence of recipeStep ID: ${recipeStepID} while updating recipeStep`, 400);
     }
   };
 
@@ -31,8 +32,8 @@ module.exports = ({ db }) => {
     const { data: recipeSteps, error } = await q;
 
     if (error) {
-      global.logger.info(`Error getting recipeSteps: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipeSteps: ${error.message}`);
+      throw errorGen('Error getting recipeSteps', 400);
     }
     global.logger.info(`Got ${recipeSteps.length} recipeSteps`);
     return recipeSteps;
@@ -41,8 +42,8 @@ module.exports = ({ db }) => {
   async function getStepByID(options) {
     const { data, error } = await db.from('recipeSteps').select().eq('recipeStepID', options.recipeStepID).eq('deleted', false).single();
     if (error) {
-      global.logger.info(`Error getting recipeStep by ID: ${options.recipeStepID}:${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting recipeStep by ID: ${options.recipeStepID}:${error.message}`);
+      throw errorGen(`Error getting recipeStep by ID: ${options.recipeStepID}`, 400);
     }
     global.logger.info(`Got recipeStep ${options.recipeStepID}`);
     return data;
@@ -53,47 +54,47 @@ module.exports = ({ db }) => {
     //validate that provided recipeID exists
     const { data: recipe, validationError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (validationError) {
-      global.logger.info(`Error validating recipe ID: ${recipeID} while creating recipeStep ${validationError.message}`);
-      return { error: validationError.message };
+      global.logger.error(`Error validating recipe ID: ${recipeID} while creating recipeStep ${validationError.message}`);
+      throw errorGen(`Error validating recipe ID: ${recipeID} while creating recipeStep`, 400);
     }
     if (!recipe.length) {
-      global.logger.info(`Provided recipe ID: ${recipeID} does not exist, cannot create recipeStep`);
-      return { error: `Provided recipe ID: ${recipeID} does not exist, cannot create recipeStep` };
+      global.logger.error(`Provided recipe ID: ${recipeID} does not exist, cannot create recipeStep`);
+      throw errorGen(`Provided recipe ID: ${recipeID} does not exist, cannot create recipeStep`, 400);
     }
 
     //validate that provided stepID exists
     const { data: step, error: stepError } = await db.from('steps').select().eq('stepID', stepID);
     if (stepError) {
-      global.logger.info(`Error validating step ID: ${stepID} while creating recipeStep ${stepError.message}`);
-      return { error: stepError.message };
+      global.logger.error(`Error validating step ID: ${stepID} while creating recipeStep ${stepError.message}`);
+      throw errorGen(`Error validating step ID: ${stepID} while creating recipeStep`, 400);
     }
     if (!step.length) {
-      global.logger.info(`Provided step ID: ${stepID} does not exist, cannot create recipeStep`);
-      return { error: `Provided step ID: ${stepID} does not exist, cannot create recipeStep` };
+      global.logger.error(`Provided step ID: ${stepID} does not exist, cannot create recipeStep`);
+      throw errorGen(`Provided step ID: ${stepID} does not exist, cannot create recipeStep`, 400);
     }
 
     //if provided recipeID and stepID exist, validate that there is not already a recipeStep with the same recipeID and stepID
     const { data: existingRecipeStep, error: existingRecipeStepError } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('stepID', stepID).eq('deleted', false);
     if (existingRecipeStepError) {
-      global.logger.info(`Error getting existing recipeStep for recipe ID: ${recipeID} and step ID: ${stepID} while creating recipeStep ${existingRecipeStepError.message}`);
-      return { error: existingRecipeStepError.message };
+      global.logger.error(`Error getting existing recipeStep for recipe ID: ${recipeID} and step ID: ${stepID} while creating recipeStep ${existingRecipeStepError.message}`);
+      throw errorGen(`Error getting existing recipeStep for recipe ID: ${recipeID} and step ID: ${stepID} while creating recipeStep`, 400);
     }
     if (existingRecipeStep.length) {
-      global.logger.info(`RecipeStep with recipe ID: ${recipeID} and step ID: ${stepID} already exists, cannot duplicate recipeStep`);
-      return { error: `RecipeStep with recipe ID: ${recipeID} and step ID: ${stepID} already exists, cannot duplicate recipeStep` };
+      global.logger.error(`RecipeStep with recipe ID: ${recipeID} and step ID: ${stepID} already exists, cannot duplicate recipeStep`);
+      throw errorGen(`RecipeStep with recipe ID: ${recipeID} and step ID: ${stepID} already exists, cannot duplicate recipeStep`, 400);
     }
 
     //if provided recipeID and stepID exists but is deleted, undelete it and return it
     const { data: deletedRecipeStep, error: deletedRecipeStepError } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('stepID', stepID).eq('deleted', true);
     if (deletedRecipeStepError) {
-      global.logger.info(`Error getting deleted recipeStep for recipe ID: ${recipeID} and step ID: ${stepID} while creating recipeStep ${deletedRecipeStepError.message}`);
-      return { error: deletedRecipeStepError.message };
+      global.logger.error(`Error getting deleted recipeStep for recipe ID: ${recipeID} and step ID: ${stepID} while creating recipeStep ${deletedRecipeStepError.message}`);
+      throw errorGen(`Error getting deleted recipeStep for recipe ID: ${recipeID} and step ID: ${stepID} while creating recipeStep`, 400);
     }
     if (deletedRecipeStep.length) {
       const { error: undeleteError } = await db.from('recipeSteps').update({ deleted: false }).eq('recipeStepID', deletedRecipeStep[0].recipeStepID).single();
       if (undeleteError) {
-        global.logger.info(`Error undeleting recipeStep: ${undeleteError.message}`);
-        return { error: undeleteError.message };
+        global.logger.error(`Error undeleting recipeStep: ${undeleteError.message}`);
+        throw errorGen(`Error undeleting recipeStep: ${undeleteError.message}`, 400);
       }
       if (recipe[0].status === 'noSteps') {
         await publish(recipeID, deletedRecipeStep[0].recipeStepID, userID, authorization);
@@ -114,13 +115,13 @@ module.exports = ({ db }) => {
     //get existing steps, order by sequence ascending
     const { error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeID).order('sequence', { ascending: true });
     if (existingRecipeStepsError) {
-      global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeID} while creating recipeStep ${existingRecipeStepsError.message}`);
-      return { error: existingRecipeStepsError.message };
+      global.logger.error(`Error getting existing recipeSteps for recipe ID: ${recipeID} while creating recipeStep ${existingRecipeStepsError.message}`);
+      throw errorGen(`Error getting existing recipeSteps for recipe ID: ${recipeID} while creating recipeStep`, 400);
     }
     //validate that provided sequence is positive integer
     if (sequence < 1) {
-      global.logger.info(`Provided sequence: ${sequence} is less than 1, cannot create recipeStep`);
-      return { error: `Provided sequence: ${sequence} is less than 1, cannot create recipeStep` };
+      global.logger.error(`Provided sequence: ${sequence} is less than 1, cannot create recipeStep`);
+      throw errorGen(`Provided sequence: ${sequence} is less than 1, cannot create recipeStep`, 400);
     }
 
     /** FOR NOW WE ARE NOT USING THIS SMART SEQUENCE SHIFTING LOGIC, THE FRONTEND WILL CALL EACH NEEDED SHIFT DIRECTLY
@@ -137,10 +138,9 @@ module.exports = ({ db }) => {
 
     //create recipeStep
     const { data: newRecipeStep, error } = await db.from('recipeSteps').insert({ recipeStepID: customID, userID, recipeID, stepID, sequence, photoURL }).select().single();
-
     if (error) {
-      global.logger.info(`Error creating recipeStep: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error creating recipeStep: ${error.message}`);
+      throw errorGen(`Error creating recipeStep: ${error.message}`, 400);
     }
 
     //add a 'created' log entry
@@ -150,7 +150,12 @@ module.exports = ({ db }) => {
     createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID2), String(recipe[0].version), String(newVersion), `updated recipe, ID: ${recipeID} version from ${recipe[0].version} to ${newVersion}`);
 
     if (recipe[0].status === 'noSteps') {
-      await publish(recipeID, newRecipeStep.recipeStepID, userID, authorization);
+      try {
+        await publish(recipeID, newRecipeStep.recipeStepID, userID, authorization);
+      } catch (err) {
+        global.logger.error(`Error publishing recipe: ${err.message}`);
+        throw errorGen(`Error publishing recipe: ${err.message}`, 400);
+      }
     }
     global.logger.info(`Created recipeStep ${newRecipeStep.recipeStepID}`);
     // return newRecipeStep;
@@ -166,14 +171,14 @@ module.exports = ({ db }) => {
   async function publish(recipeID, recipeStepID, userID, authorization) {
     const { error: recipeUpdateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
     if (recipeUpdateError) {
-      global.logger.info(`Error updating recipe status: ${recipeUpdateError.message}`);
+      global.logger.error(`Error updating recipe status: ${recipeUpdateError.message}`);
       //rollback recipeStep creation
       const { error: rollbackError } = await db.from('recipeSteps').delete().eq('recipeStepID', recipeStepID);
       if (rollbackError) {
-        global.logger.info(`Error rolling back recipeStep: ${rollbackError.message}`);
-        return { error: rollbackError.message };
+        global.logger.error(`Error rolling back recipeStep: ${rollbackError.message}`);
+        throw errorGen(`Error rolling back recipeStep: ${rollbackError.message}`, 400);
       }
-      return { error: recipeUpdateError.message };
+      throw errorGen(`Error updating recipe status: ${recipeUpdateError.message}`, 400);
     }
     //add 'recipePublished' log entry
     createRecipeLog(userID, authorization, 'updatedRecipeStatus', Number(recipeID), null, null, 'published', `updated recipe status to published`);
@@ -185,31 +190,31 @@ module.exports = ({ db }) => {
     //validate that provided recipeStepID exists
     const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID);
     if (validationError) {
-      global.logger.info(`Error validating recipeStep ID: ${recipeStepID} while updating recipeStep ${validationError.message}`);
-      return { error: validationError.message };
+      global.logger.error(`Error validating recipeStep ID: ${recipeStepID} while updating recipeStep ${validationError.message}`);
+      throw errorGen(`Error validating recipeStep ID: ${recipeStepID} while updating recipeStep`, 400);
     }
     if (!recipeStep.length) {
-      global.logger.info(`Provided recipeStep ID: ${recipeStepID} does not exist, cannot update recipeStep`);
-      return { error: `Provided recipeStep ID: ${recipeStepID} does not exist, cannot update recipeStep` };
+      global.logger.error(`Provided recipeStep ID: ${recipeStepID} does not exist, cannot update recipeStep`);
+      throw errorGen(`Provided recipeStep ID: ${recipeStepID} does not exist, cannot update recipeStep`, 400);
     }
 
     if (sequence) {
       //if provided sequence is same as existing sequence and no photoURL provided, do nothing
       if (sequence === recipeStep[0].sequence && !photoURL) {
-        global.logger.info(`Provided sequence: ${sequence} is the same as existing sequence, no update needed`);
-        return recipeStep[0];
+        global.logger.error(`Provided sequence: ${sequence} is the same as existing sequence, no update needed`);
+        throw errorGen(`Provided sequence: ${sequence} is the same as existing sequence, no update needed`, 400);
       }
       //validate that provided sequence is positive integer
       if (sequence < 1) {
-        global.logger.info(`Provided sequence: ${sequence} is less than 1, cannot update recipeStep`);
-        return { error: `Provided sequence: ${sequence} is less than 1, cannot update recipeStep` };
+        global.logger.error(`Provided sequence: ${sequence} is less than 1, cannot update recipeStep`);
+        throw errorGen(`Provided sequence: ${sequence} is less than 1, cannot update recipeStep`, 400);
       }
 
       //get existing steps, order by sequence ascending
       const { error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeStep[0].recipeID).order('sequence', { ascending: true });
       if (existingRecipeStepsError) {
-        global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while updating recipeStep ${existingRecipeStepsError.message}`);
-        return { error: existingRecipeStepsError.message };
+        global.logger.error(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while updating recipeStep ${existingRecipeStepsError.message}`);
+        throw errorGen(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while updating recipeStep`, 400);
       }
     }
 
@@ -246,23 +251,22 @@ module.exports = ({ db }) => {
       const updatedRecipeStep = await updater(options.userID, authorization, 'recipeStepID', recipeStepID, 'recipeSteps', updateFields);
       return updatedRecipeStep;
     } catch (err) {
-      global.logger.info(`Error updating recipeStep ${recipeStepID}: ${err.message}`);
-      return { error: err.message };
+      global.logger.error(`Error updating recipeStep ${recipeStepID}: ${err.message}`);
+      throw errorGen(`Error updating recipeStep ${recipeStepID}: ${err.message}`, 400);
     }
   }
 
   async function deleteStep(options) {
     const { recipeStepID, authorization, userID } = options;
-    console.log(`DELETE RECIPE STEP. USERID: ${userID}, AUTH: ${authorization}, RECIPESTEPID: ${recipeStepID}`)
     //validate that provided recipeStepID exists
     const { data: recipeStep, validationError } = await db.from('recipeSteps').select().eq('recipeStepID', recipeStepID).eq('deleted', false);
     if (validationError) {
-      global.logger.info(`Error validating recipeStep ID: ${recipeStepID} while deleting recipeStep ${validationError.message}`);
-      return { error: validationError.message };
+      global.logger.error(`Error validating recipeStep ID: ${recipeStepID} while deleting recipeStep ${validationError.message}`);
+      throw errorGen(`Error validating recipeStep ID: ${recipeStepID} while deleting recipeStep`, 400);
     }
     if (!recipeStep.length) {
-      global.logger.info(`Provided recipeStep ID: ${recipeStepID} does not exist, cannot delete recipeStep`);
-      return { error: `Provided recipeStep ID: ${recipeStepID} does not exist, cannot delete recipeStep` };
+      global.logger.error(`Provided recipeStep ID: ${recipeStepID} does not exist, cannot delete recipeStep`);
+      throw errorGen(`Provided recipeStep ID: ${recipeStepID} does not exist, cannot delete recipeStep`, 400);
     }
 
     //if recipeStep has photoURL, delete the photo first by calling router.delete('/uploads/image', routeValidator(deleteImageSchema_body, 'body'), errorCatcher(h.deleteS3Photo));
@@ -281,8 +285,8 @@ module.exports = ({ db }) => {
         });
         global.logger.info(`Deleted photo for recipeStepID ${recipeStepID}`);
       } catch (err) {
-        global.logger.info(`Error deleting photo for recipeStep ${recipeStepID}: ${err.message}`);
-        return { error: err.message };
+        global.logger.error(`Error deleting photo for recipeStep ${recipeStepID}: ${err.message}`);
+        throw errorGen(`Error deleting photo for recipeStep ${recipeStepID}: ${err.message}`, 400);
       }
     }
 
@@ -290,15 +294,15 @@ module.exports = ({ db }) => {
     const { data: existingRecipeSteps, error: existingRecipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeStep[0].recipeID).eq('deleted', false).order('sequence', { ascending: true });
 
     if (existingRecipeStepsError) {
-      global.logger.info(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while deleting recipeStep ${existingRecipeStepsError.message}`);
-      return { error: existingRecipeStepsError.message };
+      global.logger.error(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while deleting recipeStep ${existingRecipeStepsError.message}`);
+      throw errorGen(`Error getting existing recipeSteps for recipe ID: ${recipeStep[0].recipeID} while deleting recipeStep`, 400);
     }
 
     //delete recipeStep
     const { error: deleteError } = await db.from('recipeSteps').update({ deleted: true }).eq('recipeStepID', recipeStepID);
     if (deleteError) {
-      global.logger.info(`Error deleting recipeStep ${recipeStepID}: ${deleteError.message}`);
-      return { error: deleteError.message };
+      global.logger.error(`Error deleting recipeStep ${recipeStepID}: ${deleteError.message}`);
+      throw errorGen(`Error deleting recipeStep ${recipeStepID}: ${deleteError.message}`, 400);
     }
     //add a 'deleted' log entry
     const logID1 = await createRecipeLog(userID, authorization, 'deleteRecipeStep', Number(recipeStepID), Number(recipeStep[0].recipeID), null, null, `deleted recipeStep with ID: ${recipeStepID}`);
@@ -311,8 +315,8 @@ module.exports = ({ db }) => {
     //delete step associated with recipeStep
     const { error: deleteStepError } = await db.from('steps').update({ deleted: true }).eq('stepID', recipeStep[0].stepID);
     if (deleteStepError) {
-      global.logger.info(`Error deleting associated step ${recipeStep[0].stepID}: ${deleteStepError.message}`);
-      return { error: deleteStepError.message };
+      global.logger.error(`Error deleting associated step ${recipeStep[0].stepID}: ${deleteStepError.message}`);
+      throw errorGen(`Error deleting associated step ${recipeStep[0].stepID}: ${deleteStepError.message}`, 400);
     }
     //add a 'deleted' log entry
     createRecipeLog(userID, authorization, 'deleteStep', Number(recipeStep[0].stepID), null, null, null, `deleted step with ID: ${recipeStep[0].stepID}`);
@@ -321,8 +325,8 @@ module.exports = ({ db }) => {
     if (existingRecipeSteps.length === 1) {
       const { error: recipeUpdateError } = await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeStep[0].recipeID);
       if (recipeUpdateError) {
-        global.logger.info(`Error updating recipe status: ${recipeUpdateError.message}`);
-        return { error: recipeUpdateError.message };
+        global.logger.error(`Error updating recipe status: ${recipeUpdateError.message}`);
+        throw errorGen(`Error updating recipe status: ${recipeUpdateError.message}`, 400);
       }
       global.logger.info(`Recipe now has no Steps. Updated recipe status to noSteps`);
     }

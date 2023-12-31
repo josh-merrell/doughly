@@ -2,6 +2,7 @@
 
 const { updater } = require('../../db');
 const { createKitchenLog } = require('../../services/dbLogger');
+const { errorGen } = require('../../middleware/errorHandling');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -20,8 +21,8 @@ module.exports = ({ db }) => {
     const { data: toolStocks, error } = await q;
 
     if (error) {
-      global.logger.info(`Error getting toolStocks: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting toolStocks: ${error.message}`);
+      throw errorGen('Error getting toolStocks', 400);
     }
     global.logger.info(`Got ${toolStocks.length} toolStocks`);
     return toolStocks;
@@ -32,8 +33,8 @@ module.exports = ({ db }) => {
     const { data: toolStock, error } = await db.from('toolStocks').select().eq('toolStockID', toolStockID).eq('deleted', false);
 
     if (error) {
-      global.logger.info(`Error getting toolStock: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error getting toolStock: ${error.message}`);
+      throw errorGen('Error getting toolStock', 400);
     }
     global.logger.info(`Got toolStock ID: ${toolStockID}`);
     return toolStock;
@@ -44,25 +45,25 @@ module.exports = ({ db }) => {
 
     //validate that the provided quantity is valid integer
     if (quantity < 1 || !Number.isInteger(quantity)) {
-      global.logger.info(`Invalid quantity for new Tool Stock: ${quantity}`);
-      return { error: `Invalid quantity for new Tool Stock: ${quantity}` };
+      global.logger.error(`Invalid quantity for new Tool Stock: ${quantity}`);
+      throw errorGen(`Invalid quantity for new Tool Stock: ${quantity}`, 400);
     }
 
     //validate that the provided toolID is valid
     const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID);
     if (existingToolError) {
-      global.logger.info(`Error validating tool ID: ${toolID}: ${existingToolError.message}`);
-      return { error: existingToolError.message };
+      global.logger.error(`Error validating tool ID: ${toolID}: ${existingToolError.message}`);
+      throw errorGen(`Error validating tool ID: ${toolID}`, 400);
     }
     if (existingTool.length === 0) {
-      global.logger.info(`Tool ID ${toolID} does not exist, cannot create toolStock`);
-      return { error: `Tool ID ${toolID} does not exist, cannot create toolStock` };
+      global.logger.error(`Tool ID ${toolID} does not exist, cannot create toolStock`);
+      throw errorGen(`Tool ID ${toolID} does not exist, cannot create toolStock`, 400);
     }
 
     const { data: toolStock, error } = await db.from('toolStocks').insert({ toolStockID: customID, userID, toolID, quantity }).select().single();
     if (error) {
-      global.logger.info(`Error creating toolStock: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error creating toolStock: ${error.message}`);
+      throw errorGen('Error creating toolStock', 400);
     }
     createKitchenLog(userID, authorization, 'createToolStock', Number(toolStock.toolStockID), Number(toolID), null, null, `created toolStock with ID: ${toolStock.toolStockID}`);
     return {
@@ -77,19 +78,19 @@ module.exports = ({ db }) => {
 
     //validate that the provided quantity is valid integer
     if (quantity < 1 || !Number.isInteger(quantity)) {
-      global.logger.info(`Invalid quantity for Tool Stock. Can't Update: ${quantity}`);
-      return { error: `Invalid quantity for new Tool Stock. Can't Update: ${quantity}` };
+      global.logger.error(`Invalid quantity for Tool Stock. Can't Update: ${quantity}`);
+      throw errorGen(`Invalid quantity for Tool Stock. Can't Update: ${quantity}`, 400);
     }
 
     //validate that the provided toolStockID exists
     const { data: existingToolStock, error: existingToolStockError } = await db.from('toolStocks').select().eq('toolStockID', toolStockID);
     if (existingToolStockError) {
-      global.logger.info(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`);
-      return { error: existingToolStockError.message };
+      global.logger.error(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`);
+      throw errorGen(`Error validating toolStock ID: ${toolStockID}`, 400);
     }
     if (existingToolStock.length === 0) {
-      global.logger.info(`ToolStock ID ${toolStockID} does not exist, cannot update toolStock`);
-      return { error: `ToolStock ID ${toolStockID} does not exist, cannot update toolStock` };
+      global.logger.error(`ToolStock ID ${toolStockID} does not exist, cannot update toolStock`);
+      throw errorGen(`ToolStock ID ${toolStockID} does not exist, cannot update toolStock`, 400);
     }
 
     //update toolStock
@@ -104,8 +105,8 @@ module.exports = ({ db }) => {
       const updatedToolStock = await updater(userID, authorization, 'toolStockID', toolStockID, 'toolStocks', updateFields);
       return updatedToolStock;
     } catch (error) {
-      global.logger.info(`Error updating toolStock ID: ${toolStockID}: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error updating toolStock ID: ${toolStockID}: ${error.message}`);
+      throw errorGen(`Error updating toolStock ID: ${toolStockID}`, 400);
     }
   }
 
@@ -115,20 +116,20 @@ module.exports = ({ db }) => {
     //validate that the provided toolStockID exists
     const { data: existingToolStock, error: existingToolStockError } = await db.from('toolStocks').select().eq('toolStockID', toolStockID).eq('deleted', false);
     if (existingToolStockError) {
-      global.logger.info(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`);
-      return { error: existingToolStockError.message };
+      global.logger.error(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`);
+      throw errorGen(`Error validating toolStock ID: ${toolStockID}`, 400);
     }
     if (existingToolStock.length === 0) {
-      global.logger.info(`ToolStock ID ${toolStockID} does not exist, cannot delete toolStock`);
-      return { error: `ToolStock ID ${toolStockID} does not exist, cannot delete toolStock` };
+      global.logger.error(`ToolStock ID ${toolStockID} does not exist, cannot delete toolStock`);
+      throw errorGen(`ToolStock ID ${toolStockID} does not exist, cannot delete toolStock`, 400);
     }
 
     //delete toolStock
     const { error } = await db.from('toolStocks').update({ deleted: true }).eq('toolStockID', toolStockID);
 
     if (error) {
-      global.logger.info(`Error deleting toolStock ID: ${toolStockID}: ${error.message}`);
-      return { error: error.message };
+      global.logger.error(`Error deleting toolStock ID: ${toolStockID}: ${error.message}`);
+      throw errorGen(`Error deleting toolStock ID: ${toolStockID}`, 400);
     }
 
     //add a 'deleted' log entry
