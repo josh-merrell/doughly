@@ -138,5 +138,19 @@ export const recipeReducer = createReducer(
         ? { ...recipe, status: status as RecipeStatus }
         : recipe
     ),
+  })),
+  on(RecipeActions.useRecipe, (state) => ({
+    ...state,
+    error: null,
+    updating: true,
+  })),
+  on(RecipeActions.useRecipeSuccess, (state) => ({
+    ...state,
+    updating: false,
+  })),
+  on(RecipeActions.useRecipeFailure, (state, { error }) => ({
+    ...state,
+    error,
+    updating: false,
   }))
 );

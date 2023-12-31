@@ -7,9 +7,10 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "doughleap server",
+      "name": "doughly server",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\server\\server.js"
+      "program": "${workspaceFolder}/server/server.js",
+      "envFile": "${workspaceFolder}/server/.env",
     },
     {
       "type": "node",

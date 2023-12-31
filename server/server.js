@@ -40,7 +40,6 @@ app.use(
 );
 app.options('*', cors()); // Enable CORS for all OPTIONS requests
 
-
 const { queryArrayParser } = require('./middleware/queryParsing');
 
 const personsRouter = require('./modules/persons/router');
@@ -88,16 +87,8 @@ app.use('/ingredientStocks', ingredientStocksRouter);
 app.use('/logs', logsRouter);
 app.use('/profiles', profilesRouter);
 
-// Your SSL Certificate and Private Key
-const privateKey = fs.readFileSync('server.key', 'utf8');
-const certificate = fs.readFileSync('server.cert', 'utf8');
-const credentials = { key: privateKey, cert: certificate };
-
 // Start the server
 const port = 3000;
-// https.createServer(credentials, app).listen(port, () => {
-//   global.logger.info(`Server is running at https://localhost:${port}`);
-// });
 app.listen(port, () => {
   global.logger.info(`Server is running at http://localhost:${port}`);
 });
