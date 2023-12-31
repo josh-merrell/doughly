@@ -22,9 +22,9 @@ import {
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { Store } from '@ngrx/store';
 import { IngredientStockActions } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
-import { selectError, selectLoading } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { concatMap, filter, switchMap, take, tap } from 'rxjs';
+import { selectUpdating, selectError } from 'src/app/recipes/state/recipe/recipe-selectors';
 
 
 
@@ -75,43 +75,22 @@ export class UseRecipeModalComponent {
     const difficulty = this.form.get('difficulty')?.value;
     const note = this.form.get('note')?.value;
 
-    this.recipeService
-      .useRecipe(this.data.recipeID, satisfaction, difficulty, note)
-      .pipe(
-        tap(() => {
-          // Update uses
-          this.recipeService.loadUses(
-            this.data.recipeID,
-            this.data.logsAfterDate
-          );
-        }),
-        tap(() => {
-          // Dispatch action to update ingredient stocks
-          // this.store.dispatch(IngredientStockActions.loadIngredientStocks());
-        }),
-        switchMap(() =>
-          // Wait for ingredient stocks loading to finish
-          this.store.select(selectLoading).pipe(
-            filter((loading) => !loading),
-            take(1)
-          )
-        ),
-        tap(() => {
-          // After stocks are updated, dispatch action to reload recipe state
-          // this.store.dispatch(RecipeActions.loadRecipe({ recipeID: this.data.recipeID }));
-        }),
+    this.store.dispatch(RecipeActions.useRecipe({ recipeID: this.data.recipeID, satisfaction, difficulty, note }));
+    this.store.select(selectUpdating).pipe(
+      filter(updating => !updating),
+      take(1)
+    ).subscribe(() => {
+      this.store.select(selectError).pipe(
         take(1)
-      )
-      .subscribe(
-        () => {
-          this.isSubmitting = false;
-          this.dialogRef.close('success');
-        },
-        (err) => {
-          this.isSubmitting = false;
-          this.dialogRef.close(false);
+      ).subscribe((error) => {
+        if (error) {
+          console.error(`Recipe use failed: ${error.message}, CODE: ${error.statusCode}`)
+        } else {
+          console.log(`Recipe successfully used`);
         }
-      );
+        this.isSubmitting = false;
+      })
+    })
   }
 
   onCancel() {

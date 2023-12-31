@@ -82,11 +82,23 @@ const updateRecipeFailure = createAction(
   '[Recipes] Edit Failure',
   props<{ error: any }>()
 );
-
 const updateRecipeStatus = createAction(
   '[Recipes] Update Status',
   props<{ recipeID: number; status: RecipeStatus }>()
 );
+const useRecipe = createAction(
+  '[Recipes] Use',
+  props<{ recipeID: number; satisfaction: number; difficulty: number; note: string }>()
+);
+const useRecipeSuccess = createAction(
+  '[Recipes] Use Success'
+);
+const useRecipeFailure = createAction(
+  '[Recipes] Use Failure',
+  props<{ error: any }>()
+);
+
+
 
 export const RecipeActions = {
   loadRecipes,
@@ -110,5 +122,8 @@ export const RecipeActions = {
   updateRecipe,
   updateRecipeSuccess,
   updateRecipeFailure,
-  updateRecipeStatus
+  updateRecipeStatus,
+  useRecipe,
+  useRecipeSuccess,
+  useRecipeFailure,
 };

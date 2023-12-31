@@ -147,7 +147,7 @@ const newIngredientStockSchema_body = {
 const IngredientStockUpdateSchema_body = {
   type: 'object',
   properties: {
-    measurement: { type: 'number' },
+    grams: { type: 'number' },
     purchasedDate: { type: 'string' },
   },
 };
