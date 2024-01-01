@@ -3,10 +3,10 @@
 >
   <mat-spinner
     class="my-app-custom-spinner"
-    *ngIf="isAdding$ | async"
+    *ngIf="isAdding"
   ></mat-spinner>
   <div
-    *ngIf="!(isAdding$ | async)"
+    *ngIf="!isAdding"
     class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left"
   >
     <div class="mb-dl-4 text-center">

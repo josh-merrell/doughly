@@ -1,11 +1,20 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, Subscription } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Observable, Subscription, filter, take } from 'rxjs';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { selectDeleting, selectError, selectRecipeByID } from 'src/app/recipes/state/recipe/recipe-selectors';
+import {
+  selectDeleting,
+  selectError,
+  selectRecipeByID,
+} from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-delete-recipe-modal',
@@ -15,21 +24,26 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class DeleteRecipeModalComponent {
   isDeleting$!: Observable<boolean>;
+  isDeleting: boolean = false;
   private deletingSubscription!: Subscription;
   public recipe$!: Observable<any>;
 
   constructor(
     public dialogRef: MatDialogRef<DeleteRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private store: Store
+    private store: Store,
+    public dialog: MatDialog
   ) {}
-  
+
   ngOnInit(): void {
-    this.isDeleting$ = this.store.select(selectDeleting);
+    this.store.select(selectDeleting).subscribe((deleting) => {
+      this.isDeleting = deleting;
+    });
     this.recipe$ = this.store.select(selectRecipeByID(this.data.recipeID));
   }
 
   onSubmit(): void {
+    this.isDeleting = true;
     this.store.dispatch(
       RecipeActions.deleteRecipe({
         recipeID: this.data.recipeID,
@@ -39,16 +53,28 @@ export class DeleteRecipeModalComponent {
     // Initiate the subscription after dispatching the action
     this.deletingSubscription = this.store
       .select(selectDeleting)
-      .subscribe((deleting) => {
-        if (!deleting) {
-          this.store.select(selectError).subscribe((error) => {
+      .pipe(filter((deleting) => !deleting))
+      .subscribe(() => {
+        this.store
+          .select(selectError)
+          .pipe(take(1))
+          .subscribe((error) => {
             if (error) {
-              this.dialogRef.close(error);
+              console.error(
+                `Recipe deletion failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
             } else {
               this.dialogRef.close('success');
             }
+            this.isDeleting = false;
           });
-        }
       });
   }
 

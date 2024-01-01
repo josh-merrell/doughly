@@ -1,14 +1,14 @@
 <div
-  class="relative h-dl-21 w-full transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="relative h-dl-21 w-full flex flex-col items-center transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
 >
   <mat-spinner
-    class="my-app-custom-spinner"
-    *ngIf="isUploadingPhoto"
+    class="my-app-custom-spinner w-full"
+    *ngIf="isUploadingPhoto || isSubmitting"
   ></mat-spinner>
   <form
     [formGroup]="form"
     (ngSubmit)="onSubmit()"
-    *ngIf="isUploadingPhoto === false"
+    *ngIf="isUploadingPhoto === false && isSubmitting === false"
   >
     <div class="flex w-full flex-col">
       <div class="text-center">
