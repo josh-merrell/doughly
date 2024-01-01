@@ -13,18 +13,34 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { Observable, Subject, Subscription, takeUntil } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  Observable,
+  Subject,
+  Subscription,
+  filter,
+  take,
+  takeUntil,
+} from 'rxjs';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
-import { selectError, selectRecipes, selectUpdating } from 'src/app/recipes/state/recipe/recipe-selectors';
+import {
+  selectError,
+  selectRecipes,
+  selectUpdating,
+} from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import {
   positiveIntegerValidator,
   twoByteInteger,
 } from 'src/app/shared/utils/formValidator';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-edit-recipe-modal',
@@ -42,6 +58,7 @@ import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/re
   templateUrl: './edit-recipe-modal.component.html',
 })
 export class EditRecipeModalComponent {
+  public isSubmitting: boolean = false;
   form!: FormGroup;
   isUploadingPhoto: boolean = false;
   private recipe$: Observable<any> = new Observable();
@@ -78,7 +95,10 @@ export class EditRecipeModalComponent {
 
   ngOnInit(): void {
     this.isPublic = this.data.type === 'public' ? true : false;
-    this.isHeirloom = this.data.type === 'heirloom' || this.data.type === 'public' ? true : false;
+    this.isHeirloom =
+      this.data.type === 'heirloom' || this.data.type === 'public'
+        ? true
+        : false;
     this.store
       .select(selectRecipes)
       .pipe(takeUntil(this.unsubscribe$))
@@ -99,7 +119,11 @@ export class EditRecipeModalComponent {
     this.form = this.fb.group({
       title: [this.data.title, [Validators.required, this.titleValidator()]],
       recipeCategoryID: [this.data.recipeCategoryID, [Validators.required]],
-      isHeirloomRecipe: [this.data.type === 'heirloom' || this.data.type === 'public' ? true : false],
+      isHeirloomRecipe: [
+        this.data.type === 'heirloom' || this.data.type === 'public'
+          ? true
+          : false,
+      ],
       isPublicRecipe: [this.data.type === 'public' ? true : false],
       servings: [
         this.data.servings,
@@ -216,7 +240,11 @@ export class EditRecipeModalComponent {
       timeBake: this.form.value.timeBake
         ? parseInt(this.form.value.timeBake)
         : null,
-      type: this.form.value.isHeirloomRecipe ? this.form.value.isPublicRecipe ? 'public' : 'heirloom' : 'private',
+      type: this.form.value.isHeirloomRecipe
+        ? this.form.value.isPublicRecipe
+          ? 'public'
+          : 'heirloom'
+        : 'private',
       photoURL: this.photoURL,
       recipeID: this.data.recipeID,
     };
@@ -226,20 +254,36 @@ export class EditRecipeModalComponent {
       newRecipe.photoURL = this.newPhotoURL;
     }
 
+    this.isSubmitting = true;
     this.store.dispatch(RecipeActions.updateRecipe({ recipe: newRecipe }));
 
     this.updatingSubscription = this.store
       .select(selectUpdating)
-      .subscribe((updating) => {
-        if (!updating) {
-          this.store.select(selectError).subscribe((error) => {
+      .pipe(
+        filter((updating) => !updating),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectError)
+          .pipe(take(1))
+          .subscribe((error) => {
             if (error) {
-              this.dialogRef.close(error);
+              console.error(
+                `Recipe update failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
             } else {
               this.dialogRef.close('success');
             }
+            this.isSubmitting = false;
           });
-        }
       });
   }
 

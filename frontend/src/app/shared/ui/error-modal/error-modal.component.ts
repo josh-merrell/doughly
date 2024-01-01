@@ -7,13 +7,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   selector: 'dl-error',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './error.component.html',
+  templateUrl: './error-modal.component.html',
 })
-export class ErrorComponent {
+export class ErrorModalComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA)
     public data: { errorMessage: string; statusCode: number },
-    public dialogRef: MatDialogRef<ErrorComponent>
+    public dialogRef: MatDialogRef<ErrorModalComponent>
   ) {}
 
   onDismiss(): void {
