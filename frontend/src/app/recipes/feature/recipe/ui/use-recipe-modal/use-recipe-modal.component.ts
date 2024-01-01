@@ -1,14 +1,12 @@
-import { NgModule, Inject, Component } from '@angular/core';
+import { Inject, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -21,15 +19,13 @@ import {
 } from '@angular/material/dialog';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { Store } from '@ngrx/store';
-import { IngredientStockActions } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
-import { concatMap, filter, switchMap, take, tap } from 'rxjs';
+import { filter, take } from 'rxjs';
 import {
   selectUpdating,
   selectError,
 } from 'src/app/recipes/state/recipe/recipe-selectors';
-import { ErrorComponent } from 'src/app/shared/ui/error/error.component';
-import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-use-recipe-modal',
@@ -101,7 +97,7 @@ export class UseRecipeModalComponent {
               console.error(
                 `Recipe use failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorComponent, {
+              this.dialog.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,

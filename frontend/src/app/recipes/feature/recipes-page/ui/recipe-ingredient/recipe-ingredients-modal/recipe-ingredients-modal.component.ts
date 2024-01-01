@@ -9,6 +9,7 @@ import {
 } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
 import {
   BehaviorSubject,
+  EMPTY,
   Observable,
   Subscription,
   combineLatest,
@@ -17,6 +18,7 @@ import {
   from,
   map,
   take,
+  tap,
 } from 'rxjs';
 import {
   MAT_DIALOG_DATA,
@@ -30,6 +32,8 @@ import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ing
 import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
 import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
 import { DeleteRecipeIngredientModalComponent } from '../delete-recipe-ingredient-modal/delete-recipe-ingredient-modal.component';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-recipe-ingredients-modal',
@@ -44,7 +48,7 @@ export class RecipeIngredientsModalComponent {
   ingredientsToAdd: any[] = [];
   private ingredientsToAddSubject = new BehaviorSubject<any[]>([]);
   displayedIngredients$!: Observable<any[]>;
-  isAdding$: Observable<boolean>;
+  isAdding: boolean = false;
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   private recipeIngredientsSubscription: Subscription = new Subscription();
@@ -56,7 +60,6 @@ export class RecipeIngredientsModalComponent {
     private store: Store
   ) {
     this.recipe = this.data.recipe;
-    this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
     this.recipeIngredients$ = this.store.select(
       selectRecipeIngredientsByRecipeID(this.data.recipe.recipeID)
@@ -88,7 +91,6 @@ export class RecipeIngredientsModalComponent {
           } else {
             ri.measurementUnit = ri.measurementUnit + 's';
           }
-          
         });
         return [...enrichedRecipeIngredients, ...ingredientsToAdd];
       })
@@ -99,30 +101,59 @@ export class RecipeIngredientsModalComponent {
     this.ingredients$ = this.store.select(selectIngredients);
   }
 
+  /**
+  - Iterates over each ingredient using concatMap to ensure sequential processing.
+  - Dispatches the action for each ingredient unless an error has already occurred.
+  - If an error is detected, sets hasErrorOccurred to true, displays the error modal, and stops processing further actions.
+  - Once all actions are processed without errors, closes the modal with a success message. 
+  **/
   onSubmit() {
-    // Submit all added ingredients. Wait for each to process before calling next.
+    this.isAdding = true;
+    let hasErrorOccurred = false;
+
     from(this.ingredientsToAdd)
       .pipe(
         concatMap((ingredient) => {
-          this.store.dispatch(
-            RecipeIngredientActions.addRecipeIngredient({
-              recipeIngredient: ingredient,
-            })
-          );
+          // Only dispatch if no error has occurred
+          if (!hasErrorOccurred) {
+            this.store.dispatch(
+              RecipeIngredientActions.addRecipeIngredient({
+                recipeIngredient: ingredient,
+              })
+            );
 
-          return this.store.select(selectAdding).pipe(
-            filter((isAdding) => !isAdding),
-            take(1),
-            concatMap(() => this.store.select(selectError).pipe(take(1)))
-          );
+            return this.store.select(selectAdding).pipe(
+              filter((isAdding) => !isAdding),
+              take(1),
+              concatMap(() => this.store.select(selectError).pipe(take(1))),
+              tap((error) => {
+                if (error) {
+                  this.isAdding = false;
+                  hasErrorOccurred = true; // Set flag on error
+                  // Show error modal
+                  this.dialog.open(ErrorModalComponent, {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
+                  });
+                  this.dialogRef.close(); // Close the current modal
+                }
+              })
+            );
+          } else {
+            // Immediately complete the observable if an error has occurred
+            return EMPTY;
+          }
         })
       )
-      .subscribe((error) => {
-        if (!error) {
-          this.dialogRef.close('success');
-        } else {
-          this.dialogRef.close();
-        }
+      .subscribe({
+        complete: () => {
+          if (!hasErrorOccurred) {
+            this.dialogRef.close('success');
+          }
+        },
       });
   }
 
@@ -137,16 +168,9 @@ export class RecipeIngredientsModalComponent {
 
       dialogRef.afterClosed().subscribe((result) => {
         if (result === 'success') {
-          this.dialog.open(DeleteRequestConfirmationModalComponent, {
+          this.dialog.open(ConfirmationModalComponent, {
             data: {
-              deleteSuccessMessage: `Ingredient successfully removed from recipe!`,
-            },
-          });
-        } else if (result) {
-          this.dialog.open(DeleteRequestErrorModalComponent, {
-            data: {
-              error: result,
-              deleteFailureMessage: `Ingredient could not be removed from recipe.`,
+              confirmationMessage: `Ingredient successfully removed from recipe!`,
             },
           });
         }
