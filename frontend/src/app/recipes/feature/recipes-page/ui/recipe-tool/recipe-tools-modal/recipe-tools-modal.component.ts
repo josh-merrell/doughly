@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   selectAdding,
-  selectLoading,
   selectError,
   selectRecipeToolsByRecipeID,
 } from 'src/app/recipes/state/recipe-tool/recipe-tool-selectors';
 import {
   BehaviorSubject,
+  EMPTY,
   Observable,
   Subscription,
   combineLatest,
@@ -17,6 +17,7 @@ import {
   from,
   map,
   take,
+  tap,
 } from 'rxjs';
 import {
   MAT_DIALOG_DATA,
@@ -27,10 +28,9 @@ import { Store } from '@ngrx/store';
 import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool-actions';
 import { AddRecipeToolModalComponent } from '../add-recipe-tool-modal/add-recipe-tool-modal.component';
 import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
-import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
-import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
 import { DeleteRecipeToolModalComponent } from '../delete-recipe-tool-modal/delete-recipe-tool-modal.component';
-import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'dl-recipe-tools-modal',
@@ -39,14 +39,13 @@ import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
   templateUrl: './recipe-tools-modal.component.html',
 })
 export class RecipeToolsModalComponent {
+  isLoading = false;
   recipe;
   recipeTools$!: Observable<any[]>;
   tools$!: Observable<any[]>;
   toolsToAdd: any[] = [];
   private toolsToAddSubject = new BehaviorSubject<any[]>([]);
   displayedTools$!: Observable<any[]>;
-  isAdding$: Observable<boolean>;
-  isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   private recipeToolsSubscription: Subscription = new Subscription();
   submitMessage = 'No tools needed';
@@ -58,8 +57,6 @@ export class RecipeToolsModalComponent {
     private store: Store
   ) {
     this.recipe = this.data.recipe;
-    this.isAdding$ = this.store.select(selectAdding);
-    this.isLoading$ = this.store.select(selectLoading);
     this.recipeTools$ = this.store.select(
       selectRecipeToolsByRecipeID(this.recipe.recipeID)
     );
@@ -91,6 +88,8 @@ export class RecipeToolsModalComponent {
   }
 
   onSubmit() {
+    this.isLoading = true;
+    let hasErrorOccurred = false;
     if (this.toolsToAdd.length === 0) {
       this.store.dispatch(
         RecipeToolActions.addRecipeTool({
@@ -105,41 +104,76 @@ export class RecipeToolsModalComponent {
       //wait for the adding to complete before closing the modal
       this.addingSubscription = this.store
         .select(selectAdding)
-        .subscribe((adding: boolean) => {
-          if (!adding) {
-            this.store.select(selectError).subscribe((error) => {
-              if (error) {
-                this.dialogRef.close(error);
-              } else {
+        .pipe(
+          filter((adding) => !adding),
+          take(1)
+        )
+        .subscribe(() => {
+          this.store
+            .select(selectError)
+            .pipe(take(1))
+            .subscribe((error) => {
+              if (!error) {
                 this.dialogRef.close('success');
+              } else {
+                console.log(
+                  `Error adding default recipe tool: ${error.message}, CODE: ${error.statusCode}`
+                );
+                this.dialog.open(ErrorModalComponent, {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
+                });
+                this.isLoading = false;
               }
             });
-          }
         });
     } else {
       // Submit all added tools. Wait for each to process before calling next.
       from(this.toolsToAdd)
         .pipe(
           concatMap((tool) => {
-            this.store.dispatch(
-              RecipeToolActions.addRecipeTool({
-                recipeTool: tool,
-              })
-            );
+            // Only dispatch if no error has occurred
+            if (!hasErrorOccurred) {
+              this.store.dispatch(
+                RecipeToolActions.addRecipeTool({
+                  recipeTool: tool,
+                })
+              );
 
-            return this.store.select(selectAdding).pipe(
-              filter((adding) => !adding),
-              take(1),
-              concatMap(() => this.store.select(selectError).pipe(take(1)))
-            );
+              return this.store.select(selectAdding).pipe(
+                filter((isAdding) => !isAdding),
+                take(1),
+                concatMap(() => this.store.select(selectError).pipe(take(1))),
+                tap((error) => {
+                  if (error) {
+                    this.isLoading = false;
+                    hasErrorOccurred = true; // Set flag on error
+                    this.dialog.open(ErrorModalComponent, {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
+                    });
+                    this.dialogRef.close(); // Close the current modal
+                  }
+                })
+              );
+            } else {
+              // Immediately complete the observable if an error has occurred
+              return EMPTY;
+            }
           })
         )
-        .subscribe((error) => {
-          if (!error) {
-            this.dialogRef.close('success');
-          } else {
-            this.dialogRef.close();
-          }
+        .subscribe({
+          complete: () => {
+            if (!hasErrorOccurred) {
+              this.dialogRef.close('success');
+            }
+          },
         });
     }
   }
@@ -155,16 +189,9 @@ export class RecipeToolsModalComponent {
 
       dialogRef.afterClosed().subscribe((result) => {
         if (result === 'success') {
-          this.dialog.open(DeleteRequestConfirmationModalComponent, {
+          this.dialog.open(ConfirmationModalComponent, {
             data: {
-              deleteSuccessMessage: `Tool successfully removed from recipe!`,
-            },
-          });
-        } else if (result) {
-          this.dialog.open(DeleteRequestErrorModalComponent, {
-            data: {
-              error: result,
-              deleteErrorMessage: `Error: ${result}`,
+              confirmationMessage: `Tool successfully removed from recipe!`,
             },
           });
         }

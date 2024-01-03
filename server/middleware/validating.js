@@ -7,11 +7,11 @@ function routeValidator(schema, dataToValidate) {
     const valid = ajv.validate(schema, data);
     if (!valid) {
       global.logger.info(`Invalid data in request ${dataToValidate}: ${ajv.errorsText()}`);
-      return res.status(422).json(ajv.errors);
+      return res.status(422).json({ error: `${ajv.errors[0].dataPath.slice(1)} ${ajv.errors[0].message}` });
     }
     if (!req.userID) {
       global.logger.info(`No userID in request`);
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
     next();
   };

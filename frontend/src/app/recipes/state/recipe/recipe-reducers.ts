@@ -98,7 +98,20 @@ export const recipeReducer = createReducer(
     error,
     adding: false,
   })),
-
+  on(RecipeActions.constructRecipe, (state) => ({
+    ...state,
+    error: null,
+    adding: true,
+  })),
+  on(RecipeActions.constructRecipeSuccess, (state) => ({
+    ...state,
+    adding: false,
+  })),
+  on(RecipeActions.constructRecipeFailure, (state, { error }) => ({
+    ...state,
+    error,
+    adding: false,
+  })),
   on(RecipeActions.updateRecipe, (state) => ({
     ...state,
     error: null,

@@ -1,16 +1,20 @@
 import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, Subscription } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Observable, Subscription, filter, take } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { selectDeleting, selectError, selectRecipeByID } from 'src/app/recipes/state/recipe/recipe-selectors';
+import {
+  selectDeleting,
+  selectError,
+  selectRecipeByID,
+} from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
 import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool-actions';
 import { StepActions } from 'src/app/recipes/state/step/step-actions';
 import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
-
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-unsubscribe-recipe-modal',
@@ -19,7 +23,7 @@ import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step
   templateUrl: './unsubscribe-recipe-modal.component.html',
 })
 export class UnsubscribeRecipeModalComponent {
-  isDeleting$!: Observable<boolean>;
+  public isDeleting: boolean = false;
   private deletingSubscription!: Subscription;
   public recipeTitle: WritableSignal<string> = signal('');
   public authorName: WritableSignal<string> = signal('');
@@ -27,42 +31,49 @@ export class UnsubscribeRecipeModalComponent {
   constructor(
     public dialogRef: MatDialogRef<UnsubscribeRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private store: Store
+    private store: Store,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.isDeleting$ = this.store.select(selectDeleting);
     this.recipeTitle.set(this.data.title);
     this.authorName.set(this.data.authorName);
   }
 
   onSubmit(): void {
+    this.isDeleting = true;
     this.store.dispatch(
       RecipeActions.deleteRecipeSubscription({
         subscriptionID: this.data.subscriptionID,
       })
     );
-
-    this.deletingSubscription = this.store
+    this.store
       .select(selectDeleting)
-      .subscribe((deleting) => {
-        if (!deleting) {
-          this.store.select(selectError).subscribe((error) => {
+      .pipe(
+        filter((deleting) => !deleting),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectError)
+          .pipe(take(1))
+          .subscribe((error) => {
             if (error) {
-              this.dialogRef.close(error);
-            } else {
-              this.store.dispatch(RecipeActions.loadRecipes());
-              this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
-              this.store.dispatch(
-                RecipeIngredientActions.loadRecipeIngredients()
+              console.error(
+                `Error deleting recipe subscription: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.store.dispatch(RecipeToolActions.loadRecipeTools());
-              this.store.dispatch(StepActions.loadSteps());
-              this.store.dispatch(RecipeStepActions.loadRecipeSteps());
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
+            } else {
               this.dialogRef.close('success');
             }
+            this.isDeleting = false;
           });
-        }
       });
   }
 

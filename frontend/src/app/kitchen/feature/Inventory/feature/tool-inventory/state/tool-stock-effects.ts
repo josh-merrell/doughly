@@ -27,8 +27,7 @@ export class ToolStockEffects {
             of(
               ToolStockActions.addToolStockFailure({
                 error: {
-                  errorType: 'ADD_INGREDIENT_STOCK_FAILURE',
-                  message: 'Failed to add tool stock',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -51,7 +50,15 @@ export class ToolStockEffects {
             })
           ),
           catchError((error) =>
-            of(ToolStockActions.loadToolStocksFailure({ error }))
+            of(
+              ToolStockActions.loadToolStocksFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -69,7 +76,15 @@ export class ToolStockEffects {
             })
           ),
           catchError((error) =>
-            of(ToolStockActions.loadToolStockFailure({ error }))
+            of(
+              ToolStockActions.loadToolStockFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -90,8 +105,7 @@ export class ToolStockEffects {
             of(
               ToolStockActions.updateToolStockFailure({
                 error: {
-                  errorType: 'UPDATE_INGREDIENT_STOCK_FAILURE',
-                  message: 'Failed to update tool stock',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -117,8 +131,7 @@ export class ToolStockEffects {
             of(
               ToolStockActions.deleteToolStockFailure({
                 error: {
-                  errorType: 'DELETE_INGREDIENT_STOCK_FAILURE',
-                  message: 'Failed to delete tool stock',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },

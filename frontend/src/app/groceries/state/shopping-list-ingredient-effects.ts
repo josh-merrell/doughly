@@ -42,7 +42,11 @@ export class ShoppingListIngredientEffects {
               of(
                 ShoppingListIngredientActions.loadShoppingListIngredientsFailure(
                   {
-                    error,
+                    error: {
+                      message: error.error.error,
+                      statusCode: error.status,
+                      rawError: error,
+                    },
                   }
                 )
               )
@@ -73,7 +77,11 @@ export class ShoppingListIngredientEffects {
             catchError((error) =>
               of(
                 ShoppingListIngredientActions.addShoppingListIngredientFailure({
-                  error,
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
                 })
               )
             )
@@ -114,7 +122,11 @@ export class ShoppingListIngredientEffects {
               of(
                 ShoppingListIngredientActions.batchAddShoppingListIngredientsFailure(
                   {
-                    error,
+                    error: {
+                      message: error.error.error,
+                      statusCode: error.status,
+                      rawError: error,
+                    },
                   }
                 )
               )
@@ -161,7 +173,11 @@ export class ShoppingListIngredientEffects {
               of(
                 ShoppingListIngredientActions.updateShoppingListIngredientFailure(
                   {
-                    error,
+                    error: {
+                      message: error.error.error,
+                      statusCode: error.status,
+                      rawError: error,
+                    },
                   }
                 )
               )
@@ -250,7 +266,11 @@ export class ShoppingListIngredientEffects {
               of(
                 ShoppingListIngredientActions.batchUpdateShoppingListIngredientsFailure(
                   {
-                    error,
+                    error: {
+                      message: error.error.error,
+                      statusCode: error.status,
+                      rawError: error,
+                    },
                   }
                 )
               )
@@ -322,7 +342,11 @@ export class ShoppingListIngredientEffects {
               of(
                 ShoppingListIngredientActions.deleteShoppingListIngredientFailure(
                   {
-                    error,
+                    error: {
+                      message: error.error.error,
+                      statusCode: error.status,
+                      rawError: error,
+                    },
                   }
                 )
               )
@@ -346,9 +370,7 @@ export class ShoppingListIngredientEffects {
   loadShoppingListAfterIngredientDelete$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListIngredientActions.deleteShoppingListIngredientSuccess),
-      map((action) =>
-        ShoppingListActions.loadShoppingLists()
-      )
+      map((action) => ShoppingListActions.loadShoppingLists())
     )
   );
 }

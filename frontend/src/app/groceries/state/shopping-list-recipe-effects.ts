@@ -28,7 +28,11 @@ export class ShoppingListRecipeEffects {
             catchError((error) =>
               of(
                 ShoppingListRecipeActions.loadShoppingListRecipesFailure({
-                  error,
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
                 })
               )
             )
@@ -56,7 +60,11 @@ export class ShoppingListRecipeEffects {
             catchError((error) =>
               of(
                 ShoppingListRecipeActions.addShoppingListRecipeFailure({
-                  error,
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
                 })
               )
             )
@@ -92,7 +100,11 @@ export class ShoppingListRecipeEffects {
             catchError((error) =>
               of(
                 ShoppingListRecipeActions.deleteShoppingListRecipeFailure({
-                  error,
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
                 })
               )
             )

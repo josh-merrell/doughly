@@ -130,7 +130,6 @@ export class RecipeIngredientsModalComponent {
                 if (error) {
                   this.isAdding = false;
                   hasErrorOccurred = true; // Set flag on error
-                  // Show error modal
                   this.dialog.open(ErrorModalComponent, {
                     maxWidth: '380px',
                     data: {

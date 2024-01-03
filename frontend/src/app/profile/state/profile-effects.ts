@@ -19,7 +19,15 @@ export class ProfileEffects {
         this.profileService.getFriends().pipe(
           map((friends) => ProfileActions.loadFriendsSuccess({ friends })),
           catchError((error) =>
-            of(ProfileActions.loadFriendsFailure({ error }))
+            of(
+              ProfileActions.loadFriendsFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -35,7 +43,15 @@ export class ProfileEffects {
             ProfileActions.loadFriendRequestsSuccess({ friendRequestProfiles })
           ),
           catchError((error) =>
-            of(ProfileActions.loadFriendRequestsFailure({ error }))
+            of(
+              ProfileActions.loadFriendRequestsFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -53,7 +69,15 @@ export class ProfileEffects {
             })
           ),
           catchError((error) =>
-            of(ProfileActions.loadFriendRequestsSentFailure({ error }))
+            of(
+              ProfileActions.loadFriendRequestsSentFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -69,7 +93,15 @@ export class ProfileEffects {
             ProfileActions.loadFollowersSuccess({ followers })
           ),
           catchError((error) =>
-            of(ProfileActions.loadFollowersFailure({ error }))
+            of(
+              ProfileActions.loadFollowersFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -85,7 +117,15 @@ export class ProfileEffects {
             ProfileActions.loadFollowingSuccess({ following })
           ),
           catchError((error) =>
-            of(ProfileActions.loadFollowingFailure({ error }))
+            of(
+              ProfileActions.loadFollowingFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -98,31 +138,48 @@ export class ProfileEffects {
       mergeMap((action) =>
         this.profileService.getFriendByID(action.friendUserID).pipe(
           map((friend) => ProfileActions.loadFriendSuccess({ friend })),
-          catchError((error) => of(ProfileActions.loadFriendFailure({ error })))
+          catchError((error) =>
+            of(
+              ProfileActions.loadFriendFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
         )
       )
     )
   );
 
-
   loadProfile$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(ProfileActions.loadProfile),
-    mergeMap((action) => {
-      // Check if userID is provided
-      const call$ = action.userID
-        ? this.profileService.getProfile(action.userID)
-        : this.profileService.getProfile();
+    this.actions$.pipe(
+      ofType(ProfileActions.loadProfile),
+      mergeMap((action) => {
+        // Check if userID is provided
+        const call$ = action.userID
+          ? this.profileService.getProfile(action.userID)
+          : this.profileService.getProfile();
 
-      return call$.pipe(
-        map((profile) => ProfileActions.loadProfileSuccess({ profile })),
-        catchError((error) =>
-          of(ProfileActions.loadProfileFailure({ error }))
-        )
-      );
-    })
-  )
-);
+        return call$.pipe(
+          map((profile) => ProfileActions.loadProfileSuccess({ profile })),
+          catchError((error) =>
+            of(
+              ProfileActions.loadProfileFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        );
+      })
+    )
+  );
 
   searchProfiles$ = createEffect(() =>
     this.actions$.pipe(
@@ -133,7 +190,15 @@ export class ProfileEffects {
             ProfileActions.searchProfilesSuccess({ searchResults })
           ),
           catchError((error) =>
-            of(ProfileActions.searchProfilesFailure({ error }))
+            of(
+              ProfileActions.searchProfilesFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
