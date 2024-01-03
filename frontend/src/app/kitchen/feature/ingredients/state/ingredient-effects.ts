@@ -21,14 +21,13 @@ export class IngredientEffects {
       mergeMap((action) =>
         this.ingredientService.add(action.ingredient).pipe(
           map((ingredient) =>
-            IngredientActions.addIngredientSuccess({ingredient})
+            IngredientActions.addIngredientSuccess({ ingredient })
           ),
           catchError((error) =>
             of(
               IngredientActions.addIngredientFailure({
                 error: {
-                  errorType: 'ADD_INGREDIENT_FAILURE',
-                  message: 'Failed to add ingredient',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -49,7 +48,15 @@ export class IngredientEffects {
             IngredientActions.loadIngredientsSuccess({ ingredients })
           ),
           catchError((error) =>
-            of(IngredientActions.loadIngredientsFailure({ error }))
+            of(
+              IngredientActions.loadIngredientsFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -65,7 +72,15 @@ export class IngredientEffects {
             IngredientActions.loadIngredientSuccess({ ingredient })
           ),
           catchError((error) =>
-            of(IngredientActions.loadIngredientFailure({ error }))
+            of(
+              IngredientActions.loadIngredientFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -83,7 +98,15 @@ export class IngredientEffects {
             })
           ),
           catchError((error) =>
-            of(IngredientActions.deleteIngredientFailure({ error }))
+            of(
+              IngredientActions.deleteIngredientFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -120,7 +143,15 @@ export class IngredientEffects {
             IngredientActions.editIngredientSuccess({ ingredient })
           ),
           catchError((error) =>
-            of(IngredientActions.editIngredientFailure({ error }))
+            of(
+              IngredientActions.editIngredientFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )

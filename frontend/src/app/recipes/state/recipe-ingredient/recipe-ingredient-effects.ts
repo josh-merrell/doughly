@@ -54,8 +54,7 @@ export class RecipeIngredientEffects {
             of(
               RecipeIngredientActions.addRecipeIngredientFailure({
                 error: {
-                  errorType: 'ADD_RECIPE_INGREDIENT_FAILURE',
-                  message: 'Failed to add recipe ingredient',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -81,8 +80,7 @@ export class RecipeIngredientEffects {
             of(
               RecipeIngredientActions.loadRecipeIngredientsFailure({
                 error: {
-                  errorType: 'LOAD_RECIPE_INGREDIENTS_FAILURE',
-                  message: 'Failed to load recipe ingredients',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -108,8 +106,7 @@ export class RecipeIngredientEffects {
             of(
               RecipeIngredientActions.loadRecipeIngredientFailure({
                 error: {
-                  errorType: 'LOAD_RECIPE_INGREDIENT_FAILURE',
-                  message: 'Failed to load recipe ingredient',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -152,8 +149,7 @@ export class RecipeIngredientEffects {
                 of(
                   RecipeIngredientActions.deleteRecipeIngredientFailure({
                     error: {
-                      errorType: 'DELETE_RECIPE_INGREDIENT_FAILURE',
-                      message: 'Failed to delete recipe ingredient',
+                      message: error.error.error,
                       statusCode: error.status,
                       rawError: error,
                     },
@@ -188,8 +184,7 @@ export class RecipeIngredientEffects {
             of(
               RecipeIngredientActions.updateRecipeIngredientFailure({
                 error: {
-                  errorType: 'UPDATE_RECIPE_INGREDIENT_FAILURE',
-                  message: 'Failed to update recipe ingredient',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },

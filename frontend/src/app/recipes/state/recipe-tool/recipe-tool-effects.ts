@@ -51,8 +51,7 @@ export class RecipeToolEffects {
             of(
               RecipeToolActions.addRecipeToolFailure({
                 error: {
-                  errorType: 'ADD_RECIPE_TOOL_FAILURE',
-                  message: 'Failed to add recipe tool',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -78,8 +77,7 @@ export class RecipeToolEffects {
             of(
               RecipeToolActions.loadRecipeToolsFailure({
                 error: {
-                  errorType: 'LOAD_RECIPE_TOOLS_FAILURE',
-                  message: 'Failed to load recipe tools',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -105,8 +103,7 @@ export class RecipeToolEffects {
             of(
               RecipeToolActions.loadRecipeToolFailure({
                 error: {
-                  errorType: 'LOAD_RECIPE_TOOL_FAILURE',
-                  message: 'Failed to load recipe tool',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -132,8 +129,7 @@ export class RecipeToolEffects {
             of(
               RecipeToolActions.updateRecipeToolFailure({
                 error: {
-                  errorType: 'UPDATE_RECIPE_TOOL_FAILURE',
-                  message: 'Failed to update recipe tool',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -174,8 +170,7 @@ export class RecipeToolEffects {
                 of(
                   RecipeToolActions.deleteRecipeToolFailure({
                     error: {
-                      errorType: 'DELETE_RECIPE_TOOL_FAILURE',
-                      message: 'Failed to delete recipe tool',
+                      message: error.error.error,
                       statusCode: error.status,
                       rawError: error,
                     },

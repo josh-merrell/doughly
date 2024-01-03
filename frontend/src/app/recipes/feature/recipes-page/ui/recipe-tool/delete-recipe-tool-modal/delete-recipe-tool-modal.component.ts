@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription, filter, take } from 'rxjs';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -14,6 +14,7 @@ import {
 } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool-actions'
 import { selectToolByID } from 'src/app/kitchen/feature/tools/state/tool-selectors'
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-delete-recipe-tool-modal',
@@ -22,16 +23,16 @@ import { selectToolByID } from 'src/app/kitchen/feature/tools/state/tool-selecto
   templateUrl: './delete-recipe-tool-modal.component.html',
 })
 export class DeleteRecipeToolModalComponent {
-  isDeleting$: Observable<boolean>;
+  isDeleting: boolean = false;
   private deletingSubscription!: Subscription;
   tool: any;
 
   constructor(
     public dialogRef: MatDialogRef<DeleteRecipeToolModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private store: Store
+    private store: Store,
+    public dialog: MatDialog
   ) {
-    this.isDeleting$ = this.store.select(selectDeleting);
     if (this.data.toolID) {
       this.store.select(selectToolByID(this.data.toolID)).subscribe((tool) => this.tool = tool);
     } else {
@@ -40,6 +41,7 @@ export class DeleteRecipeToolModalComponent {
   }
 
   onSubmit(): void {
+    this.isDeleting = true;
     this.store.dispatch(
       RecipeToolActions.deleteRecipeTool({
         recipeToolID: this.data.recipeToolID,
@@ -49,16 +51,22 @@ export class DeleteRecipeToolModalComponent {
     // Initiate the subscription after dispatching the action
     this.deletingSubscription = this.store
       .select(selectDeleting)
-      .subscribe((deleting: boolean) => {
-        if (!deleting) {
-          this.store.select(selectError).subscribe((error) => {
-            if (error) {
-              this.dialogRef.close(error);
-            } else {
-              this.dialogRef.close('success');
-            }
-          });
-        }
+      .pipe(filter((isDeleting) => !isDeleting), take(1)).subscribe(() => {
+        this.store.select(selectError).pipe(take(1)).subscribe((error) => {
+          if (error) {
+            console.error(`Error deleting recipe tool: ${error.message}, CODE: ${error.statusCode}`);
+            this.dialog.open(ErrorModalComponent, {
+              maxWidth: '380px',
+              data: {
+                errorMessage: error.message,
+                statusCode: error.statusCode,
+              },
+            });
+          } else {
+            this.dialogRef.close('success');
+          }
+          this.isDeleting = false;
+        });
       });
   }
 

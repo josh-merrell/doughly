@@ -26,8 +26,7 @@ export class RecipeCategoryEffects {
             of(
               RecipeCategoryActions.loadRecipeCategoriesFailure({
                 error: {
-                  errorType: 'LOAD_RECIPE_CATEGORIES_FAILURE',
-                  message: 'Failed to load recipe categories',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -38,5 +37,4 @@ export class RecipeCategoryEffects {
       )
     )
   );
-
 }

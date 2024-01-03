@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, filter, take } from 'rxjs';
 import {
   AbstractControl,
   FormBuilder,
@@ -38,6 +38,7 @@ import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/re
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-add-recipe-modal',
@@ -55,10 +56,10 @@ import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-cat
   templateUrl: './add-recipe-modal.component.html',
 })
 export class AddRecipeModalComponent {
+  isAdding: boolean = false;
   recipes!: Recipe[];
   categories$!: Observable<any[]>;
   form!: FormGroup;
-  isAdding$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   recipeCategories: RecipeCategory[] = [];
@@ -82,7 +83,6 @@ export class AddRecipeModalComponent {
     private photoUploadService: PhotoService,
     public dialog: MatDialog
   ) {
-    this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
     this.store.select(selectRecipes).subscribe((recipes) => {
       this.recipes = recipes;
@@ -163,6 +163,7 @@ export class AddRecipeModalComponent {
   }
   
   async onSubmit() {
+    this.isAdding = true;
     //first upload the cropped image
     await this.uploadCroppedImage();
 
@@ -182,16 +183,22 @@ export class AddRecipeModalComponent {
 
     this.store.dispatch(RecipeActions.addRecipe({ recipe: newRecipe }));
 
-    this.addingSubscription = this.isAdding$.subscribe((isAdding) => {
-      if (!isAdding) {
-        this.store.select(selectError).subscribe((error) => {
-          if (error) {
-            this.dialogRef.close(error);
-          } else {
-            this.dialogRef.close('success');
-          }
-        });
-      }
+    this.store.select(selectAdding).pipe(filter((adding) => !adding), take(1)).subscribe(() => {
+      this.store.select(selectError).pipe(take(1)).subscribe((error) => {
+        if (error) {
+          console.error(`Recipe addition failed: ${error.message}, CODE: ${error.statusCode}`);
+          this.dialog.open(ErrorModalComponent, {
+            maxWidth: '380px',
+            data: {
+              errorMessage: error.message,
+              statusCode: error.statusCode,
+            },
+          });
+        } else {
+          this.dialogRef.close('success');
+        }
+        this.isAdding = false;
+      });
     });
   }
 

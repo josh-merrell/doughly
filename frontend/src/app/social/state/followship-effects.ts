@@ -25,8 +25,7 @@ export class FollowshipEffects {
             of(
               FollowshipActions.addFollowshipFailure({
                 error: {
-                  errorType: 'ADD_FOLLOWSHIP_FAILURE',
-                  message: 'Failed to add followship',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -47,7 +46,15 @@ export class FollowshipEffects {
             FollowshipActions.loadFollowshipsSuccess({ followships })
           ),
           catchError((error) =>
-            of(FollowshipActions.loadFollowshipsFailure({ error }))
+            of(
+              FollowshipActions.loadFollowshipsFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -63,7 +70,15 @@ export class FollowshipEffects {
             FollowshipActions.loadFollowshipSuccess({ followship })
           ),
           catchError((error) =>
-            of(FollowshipActions.loadFollowshipFailure({ error }))
+            of(
+              FollowshipActions.loadFollowshipFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -79,7 +94,15 @@ export class FollowshipEffects {
             FollowshipActions.loadFollowersSuccess({ followers })
           ),
           catchError((error) =>
-            of(FollowshipActions.loadFollowersFailure({ error }))
+            of(
+              FollowshipActions.loadFollowersFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -99,7 +122,15 @@ export class FollowshipEffects {
             ProfileActions.loadFollowing(),
           ]),
           catchError((error) =>
-            of(FollowshipActions.deleteFollowshipFailure({ error }))
+            of(
+              FollowshipActions.deleteFollowshipFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )

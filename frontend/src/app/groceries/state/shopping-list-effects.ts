@@ -24,7 +24,15 @@ export class ShoppingListEffects {
             ShoppingListActions.loadShoppingListsSuccess({ shoppingLists })
           ),
           catchError((error) =>
-            of(ShoppingListActions.loadShoppingListsFailure({ error }))
+            of(
+              ShoppingListActions.loadShoppingListsFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -40,7 +48,15 @@ export class ShoppingListEffects {
             ShoppingListActions.addShoppingListSuccess({ shoppingList })
           ),
           catchError((error) =>
-            of(ShoppingListActions.addShoppingListFailure({ error }))
+            of(
+              ShoppingListActions.addShoppingListFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -62,11 +78,18 @@ export class ShoppingListEffects {
       mergeMap((action) =>
         this.shoppingListService.updateShoppingList(action).pipe(
           map((shoppingList: ShoppingList) =>
-            
             ShoppingListActions.editShoppingListSuccess({ shoppingList })
           ),
           catchError((error) =>
-            of(ShoppingListActions.editShoppingListFailure({ error }))
+            of(
+              ShoppingListActions.editShoppingListFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -102,7 +125,15 @@ export class ShoppingListEffects {
             })
           ),
           catchError((error) =>
-            of(ShoppingListActions.deleteShoppingListFailure({ error }))
+            of(
+              ShoppingListActions.deleteShoppingListFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -113,7 +144,9 @@ export class ShoppingListEffects {
     this.actions$.pipe(
       ofType(ShoppingListActions.deleteShoppingListSuccess),
       map((action) => {
-        return ShoppingListIngredientActions.loadShoppingListIngredients({ shoppingListID: action.shoppingListID });
+        return ShoppingListIngredientActions.loadShoppingListIngredients({
+          shoppingListID: action.shoppingListID,
+        });
       })
     )
   );
@@ -122,7 +155,9 @@ export class ShoppingListEffects {
     this.actions$.pipe(
       ofType(ShoppingListActions.deleteShoppingListSuccess),
       map((action) => {
-        return ShoppingListRecipeActions.loadShoppingListRecipes({ shoppingListID: action.shoppingListID });
+        return ShoppingListRecipeActions.loadShoppingListRecipes({
+          shoppingListID: action.shoppingListID,
+        });
       })
     )
   );
