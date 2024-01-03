@@ -1,21 +1,38 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-import { Observable, Subscription } from 'rxjs';
-import { selectAdding, selectIngredients, selectLoading } from '../../state/ingredient-selectors';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Observable, Subscription, filter, take } from 'rxjs';
+import {
+  selectAdding,
+  selectIngredients,
+  selectLoading,
+} from '../../state/ingredient-selectors';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { nonDuplicateString, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import {
+  nonDuplicateString,
+  positiveIntegerValidator,
+} from 'src/app/shared/utils/formValidator';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
 import { IngredientActions } from '../../state/ingredient-actions';
 import { Ingredient } from '../../state/ingredient-state';
 import { selectError } from '../../state/ingredient-selectors';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-add-ingredient-modal',
@@ -33,10 +50,10 @@ import { selectError } from '../../state/ingredient-selectors';
   templateUrl: './add-ingredient-modal.component.html',
 })
 export class AddIngredientModalComponent {
+  isAdding: boolean = false;
   ingredients$!: Observable<Ingredient[]>;
   ingredients: Ingredient[] = [];
   form!: FormGroup;
-  isAdding$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
   private addingSubscription!: Subscription;
@@ -46,10 +63,10 @@ export class AddIngredientModalComponent {
     public dialogRef: MatDialogRef<AddIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
-    this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
   }
 
@@ -81,6 +98,7 @@ export class AddIngredientModalComponent {
   }
 
   onSubmit() {
+    this.isAdding = true;
     const payload = this.form.value;
 
     payload.lifespanDays = parseInt(payload.lifespanDays);
@@ -92,16 +110,26 @@ export class AddIngredientModalComponent {
 
     this.addingSubscription = this.store
       .select(selectAdding)
-      .subscribe((adding: boolean) => {
-        if (!adding) {
-          this.store.select(selectError).subscribe((error) => {
-            if (error) {
-              this.dialogRef.close(error);
-            } else {
-              this.dialogRef.close('success');
-            }
-          });
-        }
+      .pipe(
+        filter((adding) => !adding),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store.select(selectError).subscribe((error) => {
+          if (error) {
+            this.dialogRef.close(error);
+            this.dialog.open(ErrorModalComponent, {
+              maxWidth: '380px',
+              data: {
+                errorMessage: error.message,
+                statusCode: error.statusCode,
+              },
+            });
+          } else {
+            this.dialogRef.close('success');
+          }
+          this.isAdding = false;
+        });
       });
   }
 

@@ -50,7 +50,7 @@
           <div class="py-dl-1 flex flex-col items-start justify-between">
             <div class="flex mb-dl-2">
               <p class="text-dl-6 font-dl-3 text-dl-grey-1">
-                {{ stock.grams / ingredient.gramRatio }}
+                {{ (stock.grams / ingredient.gramRatio) | number: "1.0-2" }}
               </p>
               <p class="ml-dl-2 text-dl-6 font-dl-3 text-dl-grey-1">
                 {{ ingredient.purchaseUnit
