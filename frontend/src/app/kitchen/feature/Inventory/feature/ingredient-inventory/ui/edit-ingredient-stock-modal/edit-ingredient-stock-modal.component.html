@@ -3,18 +3,18 @@
 >
   <mat-spinner
     class="my-app-custom-spinner"
-    *ngIf="isUpdating$ | async"
+    *ngIf="isUpdating"
   ></mat-spinner>
   <form
     [formGroup]="form"
     (ngSubmit)="onSubmit()"
-    *ngIf="(isUpdating$ | async) === false"
+    *ngIf="!isUpdating"
   >
     <div class="flex w-full flex-col">
       <div class="mt-dl-2 text-center space-x-1 whitespace-nowrap">
         <span class="text-dl-6 text-dl-grey-5">Edit</span
         ><span class="text-dl-6 font-dl-3 text-dl-grey-2">{{
-          (ingredient$ | async)!.name
+          ingredient()?.name
         }}</span
         ><span class="text-dl-6 text-dl-grey-5">stock</span>
       </div>
@@ -49,7 +49,7 @@
         <div id="form-measurement">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4"
             >Measurement in
-            <ng-container *ngIf="ingredient$ | async as ingredient"
+            <ng-container *ngIf="ingredient() as ingredient"
               >{{ ingredient.purchaseUnit }}s</ng-container
             ></label
           >

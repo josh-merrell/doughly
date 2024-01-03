@@ -1,4 +1,4 @@
-import { Component, WritableSignal, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableFullComponent } from 'src/app/shared/ui/dl-table-full/dl-table-full.component';
 import {
@@ -11,22 +11,13 @@ import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { IngredientService } from './data/ingredient.service';
 import { AddIngredientModalComponent } from './ui/add-ingredient-modal/add-ingredient-modal.component';
 import { EditIngredientModalComponent } from './ui/edit-ingredient-modal/edit-ingredient-modal.component';
-import { DeleteIngredientModalComponent } from './ui/delete-ingredient-modal/delete-ingredient-modal.component';
 import { Ingredient } from './state/ingredient-state';
 import { MatDialog } from '@angular/material/dialog';
-import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
-import { HttpErrorResponse } from '@angular/common/http';
-import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddIngredientStockModalComponent } from '../Inventory/feature/ingredient-inventory/ui/add-ingredient-stock-modal/add-ingredient-stock-modal.component';
 import { SortingService } from 'src/app/shared/utils/sortingService';
 import { FilterService } from 'src/app/shared/utils/filterService';
-import { Store } from '@ngrx/store';
-import { IngredientActions } from './state/ingredient-actions';
-import { IngredientStockActions } from '../Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 import { IngredientDetailsModalComponent } from './ui/ingredient-details-modal/ingredient-details-modal.component';
-import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
-import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
-import { Profile } from 'src/app/profile/state/profile-state';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'dl-ingredients',
@@ -41,7 +32,6 @@ import { Profile } from 'src/app/profile/state/profile-state';
 })
 export class IngredientsComponent {
   constructor(
-    private store: Store,
     private dialog: MatDialog,
     private ingredientService: IngredientService,
     private sortingService: SortingService,
@@ -58,9 +48,6 @@ export class IngredientsComponent {
   public filteredIngredients$ = new BehaviorSubject<any[]>([]);
   sorts: Sort[] = [];
   public displayedRows$ = new BehaviorSubject<any[]>([]);
-
-  // ** NEW, USING SIGNALS
-  private profile: WritableSignal<Profile | null> = signal(null);
 
   ingredientsPerRow: number = 2;
   public totalInStock$!: Observable<Number>;
@@ -138,17 +125,9 @@ export class IngredientsComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            result: result,
-            addSuccessMessage: `Added Ingredient: ${result.name}`,
-          },
-        });
-      } else if (result instanceof HttpErrorResponse) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            result: result,
-            addFailureMessage: `Failed to add Ingredient. Error: ${result.message}`,
+            confirmationMessage: `Added Ingredient`,
           },
         });
       }
@@ -162,17 +141,9 @@ export class IngredientsComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            result: result,
-            addSuccessMessage: `Added Ingredient Stock: ${result.ingredientStockID}`,
-          },
-        });
-      } else if (result instanceof HttpErrorResponse) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            result: result,
-            addFailureMessage: `Failed to add Ingredient. Error: ${result.message}`,
+            confirmationMessage: `Added Ingredient Stock`,
           },
         });
       }

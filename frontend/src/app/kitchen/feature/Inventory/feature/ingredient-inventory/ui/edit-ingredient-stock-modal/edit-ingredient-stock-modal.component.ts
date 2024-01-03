@@ -1,17 +1,37 @@
-import { Component, Inject } from '@angular/core';
+import {
+  Component,
+  Inject,
+  WritableSignal,
+  effect,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
+  MatDialog,
 } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectIngredientStockByID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { Store, select } from '@ngrx/store';
-import { Observable, Subscription, combineLatest, map, of, switchMap } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  combineLatest,
+  filter,
+  map,
+  of,
+  switchMap,
+  take,
+} from 'rxjs';
 import { IngredientStock } from '../../state/ingredient-stock-state';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
-import { selectError, selectIngredientByID, selectUpdating } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
+import {
+  selectError,
+  selectIngredientByID,
+  selectUpdating,
+} from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import {
   AbstractControl,
   FormBuilder,
@@ -27,6 +47,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-edit-ingredient-stock-modal',
@@ -44,13 +65,14 @@ import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
   templateUrl: './edit-ingredient-stock-modal.component.html',
 })
 export class EditIngredientStockModalComponent {
-  ingredientStock$!: Observable<IngredientStock>;
+  isUpdating: boolean = false;
+  // ingredientStock$!: Observable<IngredientStock>;
+  ingredientStock: WritableSignal<IngredientStock | null> = signal(null);
   form!: FormGroup;
   submittingChanges: boolean = false;
-  ingredient$!: Observable<Ingredient>;
+  ingredient: WritableSignal<Ingredient | null> = signal(null);
+  // ingredient$!: Observable<Ingredient>;
   originalIngredientStock!: any;
-
-  isUpdating$!: Observable<boolean>;
 
   private updatingSubscription!: Subscription;
 
@@ -58,9 +80,38 @@ export class EditIngredientStockModalComponent {
     public dialogRef: MatDialogRef<EditIngredientStockModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog
   ) {
-    this.isUpdating$ = this.store.pipe(select(selectUpdating));
+    this.setForm();
+    effect(
+      () => {
+        const ingredientStock = this.ingredientStock();
+        if (ingredientStock) {
+          this.store
+            .select(selectIngredientByID(ingredientStock.ingredientID))
+            .subscribe((ingredient) => {
+              this.ingredient.set(ingredient);
+            });
+        }
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(() => {
+      const ingredientStock = this.ingredientStock();
+      const ingredient = this.ingredient();
+
+      if (ingredientStock && ingredient) {
+        const newMeasurement = (
+          ingredientStock.grams / ingredient.gramRatio
+        ).toFixed(2);
+        this.form.patchValue({
+          purchasedDate: ingredientStock.purchasedDate,
+          measurement: newMeasurement,
+        });
+      }
+    });
   }
 
   setForm() {
@@ -71,40 +122,11 @@ export class EditIngredientStockModalComponent {
   }
 
   ngOnInit(): void {
-    this.setForm();
-    this.ingredientStock$ = this.store.pipe(
-      select(selectIngredientStockByID(this.data.itemID))
-    );
-
-    this.ingredientStock$.subscribe((ingredientStock) => {
-      this.originalIngredientStock = ingredientStock;
-      this.form.patchValue({
-        purchasedDate: ingredientStock.purchasedDate,
-        measurement: ingredientStock.grams,
-      });
-    });
-    
-    const purchasedByControl = this.form.get('purchasedBy')!;
-    const purchasedDateControl = this.form.get('purchasedDate')!;
-
-    this.ingredientStock$
-      .pipe(
-        switchMap((ingredientStock) => {
-          this.ingredient$ = this.store.pipe(
-            select(selectIngredientByID(ingredientStock.ingredientID))
-          );
-          return combineLatest([of(ingredientStock), this.ingredient$]);
-        })
-      )
-      .subscribe(([ingredientStock, ingredient]) => {
-        const newMeasurement = (
-          ingredientStock.grams / ingredient.gramRatio
-        ).toFixed(2);
-
-        this.form.patchValue({
-          purchasedDate: ingredientStock.purchasedDate,
-          measurement: newMeasurement,
-        });
+    this.store
+      .pipe(select(selectIngredientStockByID(this.data.itemID)))
+      .subscribe((ingredientStock) => {
+        this.ingredientStock.set(ingredientStock);
+        this.originalIngredientStock = ingredientStock;
       });
   }
 
@@ -124,40 +146,59 @@ export class EditIngredientStockModalComponent {
 
     const formValues = this.form.value;
 
-    for (let key in formValues) { 
-      if (key === 'measurement') {
-        updatedIngredientStock['measurement'] = parseFloat(formValues[key]);
-      } else if (
-        key in this.originalIngredientStock &&
-        formValues[key] !== this.originalIngredientStock[key]
-      ) {
-        if (key === 'purchasedBy') {
-          updatedIngredientStock[key] = parseInt(formValues[key], 10);
-        } else if (key === 'purchasedDate') {
-          updatedIngredientStock[key] = new Date(formValues[key]).toISOString();
-        } else {
-          updatedIngredientStock[key] = formValues[key];
+    if (this.ingredient()) {
+      for (let key in formValues) {
+        if (key === 'measurement') {
+          updatedIngredientStock['grams'] =
+            parseFloat(formValues[key]) * this.ingredient()!.gramRatio;
+        } else if (
+          key in this.originalIngredientStock &&
+          formValues[key] !== this.originalIngredientStock[key]
+        ) {
+          if (key === 'purchasedBy') {
+            updatedIngredientStock[key] = parseInt(formValues[key], 10);
+          } else if (key === 'purchasedDate') {
+            updatedIngredientStock[key] = new Date(
+              formValues[key]
+            ).toISOString();
+          } else {
+            updatedIngredientStock[key] = formValues[key];
+          }
         }
       }
-    }
 
-    this.store.dispatch(
-      IngredientStockActions.updateIngredientStock({ ingredientStock: updatedIngredientStock })
-    );
-
-    this.updatingSubscription = this.store
-      .select(selectUpdating)
-      .subscribe((updating: boolean) => {
-        if (!updating) {
+      this.isUpdating = true;
+      this.store.dispatch(
+        IngredientStockActions.updateIngredientStock({
+          ingredientStock: updatedIngredientStock,
+        })
+      );
+      this.store
+        .select(selectUpdating)
+        .pipe(
+          filter((updating: boolean) => !updating),
+          take(1)
+        )
+        .subscribe(() => {
           this.store.select(selectError).subscribe((error) => {
             if (error) {
-              this.dialogRef.close(error);
+              console.error(
+                `Updating Ingredient Stock failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  message: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
             } else {
               this.dialogRef.close('success');
             }
+            this.isUpdating = false;
           });
-        }
-      });
+        });
+    }
   }
 
   onCancel(): void {

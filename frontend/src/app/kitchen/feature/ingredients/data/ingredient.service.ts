@@ -54,7 +54,7 @@ export class IngredientService {
           (sum: number, stock: any) => sum + stock.grams,
           0
         );
-        const totalStock = totalGrams / ingredient.gramRatio;
+        const totalStock = Math.round((totalGrams / ingredient.gramRatio) * 100) / 100;
 
         return {
           ...ingredient,
