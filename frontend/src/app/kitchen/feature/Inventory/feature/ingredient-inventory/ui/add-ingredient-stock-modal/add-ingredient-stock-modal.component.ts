@@ -15,9 +15,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { Observable, Subscription, map } from 'rxjs';
+import { Observable, Subscription, filter, map, take } from 'rxjs';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
 import {
   selectAdding,
@@ -29,6 +29,7 @@ import {
 } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
 import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-add-ingredient-stock-modal',
@@ -46,13 +47,12 @@ import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
   templateUrl: './add-ingredient-stock-modal.component.html',
 })
 export class AddIngredientStockModalComponent {
+  isAdding: boolean = false;
   form!: FormGroup;
 
   ingredients$!: Observable<Ingredient[]>;
   ingredient$!: Observable<Ingredient>;
   employees$!: Observable<any>;
-
-  isAdding$: Observable<boolean>;
 
   private ingredientIDSubscription!: Subscription;
   private addingSubscription!: Subscription;
@@ -62,10 +62,9 @@ export class AddIngredientStockModalComponent {
     public dialogRef: MatDialogRef<AddIngredientStockModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
-  ) {
-    this.isAdding$ = this.store.select(selectAdding);
-  }
+    private fb: FormBuilder,
+    public dialog: MatDialog
+  ) {}
 
   setForm() {
     this.form = this.fb.group({
@@ -123,6 +122,7 @@ export class AddIngredientStockModalComponent {
   }
 
   onSubmit(): void {
+    this.isAdding = true;
     const date = new Date(this.form.value.purchasedDate);
 
     const payload = {
@@ -135,19 +135,31 @@ export class AddIngredientStockModalComponent {
     this.store.dispatch(
       IngredientStockActions.addIngredientStock({ ingredientStock: payload })
     );
-
-    this.addingSubscription = this.store
+    this.store
       .select(selectAdding)
-      .subscribe((adding: boolean) => {
-        if (!adding) {
-          this.store.select(selectError).subscribe((error) => {
-            if (error) {
-              this.dialogRef.close(error);
-            } else {
-              this.dialogRef.close('success');
-            }
-          });
-        }
+      .pipe(
+        filter((adding) => !adding),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store.select(selectError).subscribe((error) => {
+          if (error) {
+            // this.dialogRef.close(error);
+            console.error(
+              `Ingredient Stock add failed: ${error.message}, CODE: ${error.statusCode}`
+            );
+            this.dialog.open(ErrorModalComponent, {
+              maxWidth: '380px',
+              data: {
+                errorMessage: error.message,
+                statusCode: error.statusCode,
+              },
+            });
+          } else {
+            this.dialogRef.close('success');
+          }
+          this.isAdding = false;
+        });
       });
   }
 

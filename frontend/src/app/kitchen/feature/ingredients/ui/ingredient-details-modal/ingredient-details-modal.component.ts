@@ -1,8 +1,24 @@
-import { Inject, Component, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import {
+  Inject,
+  Component,
+  Renderer2,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, combineLatest, forkJoin, map, switchMap, take, tap } from 'rxjs';
-import { IngredientStock } from '../../../Inventory/feature/ingredient-inventory/state/ingredient-stock-state';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  Observable,
+  combineLatest,
+  forkJoin,
+  map,
+  switchMap,
+  take,
+} from 'rxjs';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { selectIngredientStocksByIngredientID } from '../../../Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { selectRecipeIDsByIngredientID } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
@@ -16,7 +32,7 @@ import { EditIngredientModalComponent } from '../edit-ingredient-modal/edit-ingr
 import { DeleteIngredientModalComponent } from '../delete-ingredient-modal/delete-ingredient-modal.component';
 import { EditIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/edit-ingredient-stock-modal/edit-ingredient-stock-modal.component';
 import { DeleteIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/delete-ingredient-stock-modal/delete-ingredient-stock-modal.component';
-
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'dl-ingredient-details-modal',
@@ -172,17 +188,9 @@ export class IngredientDetailsModalComponent {
 
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Ingredient Stock edited successfully!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Ingredient Stock failed to update.`,
+            confirmationMessage: `Ingredient Stock updated`,
           },
         });
       }
@@ -195,20 +203,11 @@ export class IngredientDetailsModalComponent {
         itemID: this.ingredient.ingredientID,
       },
     });
-
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Ingredient: ${this.ingredient.name} edited successfully!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Ingredient: ${this.ingredient.name} failed to update.`,
+            confirmationMessage: `Ingredient updated`,
           },
         });
       }
@@ -222,20 +221,11 @@ export class IngredientDetailsModalComponent {
         ingredientName: this.ingredient.name,
       },
     });
-
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Ingredient Stock deleted successfully!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Ingredient Stock failed to delete.`,
+            confirmationMessage: `Ingredient Stock deleted`,
           },
         });
       }
@@ -252,17 +242,9 @@ export class IngredientDetailsModalComponent {
 
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Ingredient: ${this.ingredient.name} deleted successfully!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Ingredient: ${this.ingredient.name} failed to delete.`,
+            confirmationMessage: `Ingredient deleted`,
           },
         });
       }

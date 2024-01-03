@@ -44,6 +44,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { RecipeStep } from 'src/app/recipes/state/recipe-step/recipe-step-state';
 import { DeleteRecipeStepModalComponent } from '../delete-recipe-step-modal/delete-recipe-step-modal.component';
 import { EditRecipeStepModalComponent } from '../edit-recipe-step-modal/edit-recipe-step-modal.component';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 interface RecipeStepToUpdate {
   recipeStepID: any; // Replace 'any' with a more specific type if possible
@@ -536,7 +537,6 @@ export class RecipeStepsModalComponent {
       (recipeStep) => recipeStep.sequenceChanged
     );
 
-    // Directly call your existing updateSequences function
     return this.updateSequences(stepsToResequence).pipe(
       catchError((error) => {
         console.error('An error occurred while resequencing the steps:', error);
@@ -572,6 +572,13 @@ export class RecipeStepsModalComponent {
                   console.error(
                     `Failed to update Recipe Step: ${error.message}`
                   );
+                  this.dialog.open(ErrorModalComponent, {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
+                  });
                 }
               })
             );

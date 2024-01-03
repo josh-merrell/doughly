@@ -12,9 +12,11 @@ import {
   Observable,
   Subscription,
   combineLatest,
+  filter,
   map,
   of,
   switchMap,
+  take,
 } from 'rxjs';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
 import {
@@ -46,6 +48,7 @@ import {
   positiveIntegerValidator,
 } from 'src/app/shared/utils/formValidator';
 import { IngredientActions } from '../../state/ingredient-actions';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-edit-ingredient-modal',
@@ -63,13 +66,12 @@ import { IngredientActions } from '../../state/ingredient-actions';
   templateUrl: './edit-ingredient-modal.component.html',
 })
 export class EditIngredientModalComponent {
+  isUpdating: boolean = false;
   ingredients$!: Observable<Ingredient[]>;
   ingredients: Ingredient[] = [];
   ingredient$!: Observable<Ingredient>;
   originalIngredient!: any;
   form!: FormGroup;
-  isEditing$: Observable<boolean>;
-  isLoading$: Observable<boolean>;
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
   private updatingSubscription!: Subscription;
   private ingredientsSubscription: Subscription = new Subscription();
@@ -78,11 +80,10 @@ export class EditIngredientModalComponent {
     public dialogRef: MatDialogRef<EditIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store<any>,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
-    this.isEditing$ = this.store.select(selectUpdating);
-    this.isLoading$ = this.store.select(selectLoading);
   }
 
   ngOnInit(): void {
@@ -138,22 +139,34 @@ export class EditIngredientModalComponent {
       }
     }
 
+    this.isUpdating = true;
     this.store.dispatch(
       IngredientActions.editIngredient({ ingredient: updatedIngredient })
     );
-
-    this.updatingSubscription = this.store
+    this.store
       .select(selectUpdating)
-      .subscribe((updating) => {
-        if (!updating) {
-          this.store.select(selectError).subscribe((error) => {
-            if (error) {
-              this.dialogRef.close(error);
-            } else {
-              this.dialogRef.close('success');
-            }
-          });
-        }
+      .pipe(
+        filter((updating) => !updating),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store.select(selectError).subscribe((error) => {
+          if (error) {
+            console.error(
+              `Ingredient update failed: ${error.message}, CODE: ${error.statusCode}`
+            );
+            this.dialog.open(ErrorModalComponent, {
+              maxWidth: '380px',
+              data: {
+                errorMessage: error.message,
+                statusCode: error.statusCode,
+              },
+            });
+          } else {
+            this.dialogRef.close('success');
+          }
+          this.isUpdating = false;
+        });
       });
   }
 
