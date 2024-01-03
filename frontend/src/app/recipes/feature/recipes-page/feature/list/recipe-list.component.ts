@@ -29,6 +29,7 @@ import { RecipeIngredientsModalComponent } from '../../ui/recipe-ingredient/reci
 import { RecipeToolsModalComponent } from '../../ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
 import { RecipeStepsModalComponent } from '../../ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
 import { Router } from '@angular/router';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -87,7 +88,9 @@ export class RecipeListComponent {
   });
   public filteredRecipes = computed(() => {
     const searchFilter = this.searchFilter();
-    const recipes = this.displayRecipes().sort((a, b) => a.title.localeCompare(b.title));
+    const recipes = this.displayRecipes().sort((a, b) =>
+      a.title.localeCompare(b.title)
+    );
     if (searchFilter) {
       return recipes.filter((recipe) => {
         return (
@@ -183,22 +186,13 @@ export class RecipeListComponent {
       data: {
         recipeCategories: this.categories(),
       },
-      width: '90%'
+      width: '90%',
     });
     dialogRef.afterClosed().subscribe((result) => {
-      const message = 'Recipe';
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `${message} added successfully.`,
-          },
-        });
-      } else if (isRecipeCategoryError(result)) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `${message} could not be added. Try again later.`,
+            confirmationMessage: `Recipe added successfully.`,
           },
         });
       }

@@ -343,10 +343,10 @@ export class UserRecipeComponent {
       dialogRef.afterClosed().subscribe((result) => {
         if (result === 'success') {
           const confirmDialogRef = this.dialog.open(
-            DeleteRequestConfirmationModalComponent,
+            ConfirmationModalComponent,
             {
               data: {
-                deleteSuccessMessage: `Unsubscribed from ${
+                confirmationMessage: `Unsubscribed from ${
                   this.recipe().title
                 }!}`,
               },
@@ -354,13 +354,6 @@ export class UserRecipeComponent {
           );
           confirmDialogRef.afterClosed().subscribe(() => {
             this.router.navigate(['/recipes']);
-          });
-        } else if (result === 'error') {
-          this.dialog.open(DeleteRequestErrorModalComponent, {
-            data: {
-              error: result,
-              deleteFailureMessage: `Subscription could not be deleted. Try again later.`,
-            },
           });
         }
       });
@@ -574,13 +567,6 @@ export class UserRecipeComponent {
           data: {
             results: result,
             addSuccessMessage: 'Recipe Tools edited successfully!',
-          },
-        });
-      } else if (isRecipeIngredientError(result)) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: 'Error submitting Tool changes.',
           },
         });
       }

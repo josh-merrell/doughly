@@ -19,14 +19,13 @@ export class FriendshipEffects {
       mergeMap((action) =>
         this.socialService.addFriendship(action.friend).pipe(
           map((friendship) =>
-            FriendshipActions.addFriendshipSuccess({friendship})
+            FriendshipActions.addFriendshipSuccess({ friendship })
           ),
           catchError((error) =>
             of(
               FriendshipActions.addFriendshipFailure({
                 error: {
-                  errorType: 'ADD_FRIENDSHIP_FAILURE',
-                  message: 'Failed to add friendship',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -54,7 +53,15 @@ export class FriendshipEffects {
             FriendshipActions.loadFriendshipsSuccess({ friendships })
           ),
           catchError((error) =>
-            of(FriendshipActions.loadFriendshipsFailure({ error }))
+            of(
+              FriendshipActions.loadFriendshipsFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -70,7 +77,15 @@ export class FriendshipEffects {
             FriendshipActions.loadFriendshipSuccess({ friendship })
           ),
           catchError((error) =>
-            of(FriendshipActions.loadFriendshipFailure({ error }))
+            of(
+              FriendshipActions.loadFriendshipFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -90,7 +105,15 @@ export class FriendshipEffects {
               ProfileActions.loadFriendRequests(),
             ]),
             catchError((error) =>
-              of(FriendshipActions.editFriendshipFailure({ error }))
+              of(
+                FriendshipActions.editFriendshipFailure({
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
+                })
+              )
             )
           )
       )
@@ -110,7 +133,15 @@ export class FriendshipEffects {
             ProfileActions.loadFriendRequests(),
           ]),
           catchError((error) =>
-            of(FriendshipActions.deleteFriendshipFailure({ error }))
+            of(
+              FriendshipActions.deleteFriendshipFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )

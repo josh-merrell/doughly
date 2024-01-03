@@ -4,6 +4,12 @@ import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { RecipeService } from '../../data/recipe.service';
 import { RecipeActions } from './recipe-actions';
+import { RecipeIngredientActions } from '../recipe-ingredient/recipe-ingredient-actions';
+import { RecipeToolActions } from '../recipe-tool/recipe-tool-actions';
+import { StepActions } from '../step/step-actions';
+import { RecipeStepActions } from '../recipe-step/recipe-step-actions';
+import { IngredientActions } from 'src/app/kitchen/feature/ingredients/state/ingredient-actions';
+import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
 
 @Injectable()
 export class RecipeEffects {
@@ -26,8 +32,7 @@ export class RecipeEffects {
             of(
               RecipeActions.addRecipeFailure({
                 error: {
-                  errorType: 'ADD_RECIPE_FAILURE',
-                  message: 'Failed to add recipe',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -38,6 +43,44 @@ export class RecipeEffects {
       )
     );
   });
+
+  constructRecipe$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.constructRecipe),
+      mergeMap((action) =>
+        this.recipeService.constructRecipe(action.constructBody).pipe(
+          map(() => RecipeActions.constructRecipeSuccess()),
+          catchError((error) =>
+            of(
+              RecipeActions.constructRecipeFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
+  loadDataAfterConstruct$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.constructRecipeSuccess),
+      mergeMap(() => [
+        RecipeActions.loadRecipes(),
+        RecipeActions.loadRecipeSubscriptions(),
+        RecipeIngredientActions.loadRecipeIngredients(),
+        RecipeToolActions.loadRecipeTools(),
+        StepActions.loadSteps(),
+        RecipeStepActions.loadRecipeSteps(),
+        IngredientActions.loadIngredients(),
+        ToolActions.loadTools(),
+      ])
+    )
+  );
 
   loadRecipes$ = createEffect(() =>
     this.actions$.pipe(
@@ -53,8 +96,7 @@ export class RecipeEffects {
             of(
               RecipeActions.loadRecipesFailure({
                 error: {
-                  errorType: 'LOAD_RECIPES_FAILURE',
-                  message: 'Failed to load recipes',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -80,8 +122,7 @@ export class RecipeEffects {
             of(
               RecipeActions.loadRecipeFailure({
                 error: {
-                  errorType: 'LOAD_RECIPE_FAILURE',
-                  message: 'Failed to load recipe',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -107,8 +148,7 @@ export class RecipeEffects {
             of(
               RecipeActions.loadRecipeSubscriptionsFailure({
                 error: {
-                  errorType: 'LOAD_RECIPE_SUBSCRIPTIONS_FAILURE',
-                  message: 'Failed to load recipe subscriptions',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -125,18 +165,18 @@ export class RecipeEffects {
       ofType(RecipeActions.deleteRecipeSubscription),
       mergeMap((action) =>
         this.recipeService.deleteSubscription(action.subscriptionID).pipe(
-          map(() =>
-            RecipeActions.deleteRecipeSubscriptionSuccess({
-              subscriptionID: action.subscriptionID,
-            }),
+          map(
+            () =>
+              RecipeActions.deleteRecipeSubscriptionSuccess({
+                subscriptionID: action.subscriptionID,
+              }),
             RecipeActions.loadRecipeSubscriptions()
           ),
           catchError((error) =>
             of(
               RecipeActions.deleteRecipeSubscriptionFailure({
                 error: {
-                  errorType: 'DELETE_RECIPE_SUBSCRIPTION_FAILURE',
-                  message: 'Failed to delete recipe subscription',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -153,18 +193,18 @@ export class RecipeEffects {
       ofType(RecipeActions.deleteRecipe),
       mergeMap((action) =>
         this.recipeService.delete(action.recipeID).pipe(
-          map(() =>
-            RecipeActions.deleteRecipeSuccess({
-              recipeID: action.recipeID,
-            }),
+          map(
+            () =>
+              RecipeActions.deleteRecipeSuccess({
+                recipeID: action.recipeID,
+              }),
             RecipeActions.loadRecipes()
           ),
           catchError((error) =>
             of(
               RecipeActions.deleteRecipeFailure({
                 error: {
-                  errorType: 'DELETE_RECIPE_FAILURE',
-                  message: 'Failed to delete recipe',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -181,41 +221,16 @@ export class RecipeEffects {
       ofType(RecipeActions.updateRecipe),
       mergeMap((action) =>
         this.recipeService.update(action.recipe).pipe(
-          map((recipe) =>
-            RecipeActions.updateRecipeSuccess({
-              recipe,
-            }),
+          map(
+            (recipe) =>
+              RecipeActions.updateRecipeSuccess({
+                recipe,
+              }),
             RecipeActions.loadRecipes()
           ),
           catchError((error) =>
             of(
               RecipeActions.updateRecipeFailure({
-                error: {
-                  errorType: 'UPDATE_RECIPE_FAILURE',
-                  message: 'Failed to update recipe',
-                  statusCode: error.status,
-                  rawError: error,
-                },
-              })
-            )
-          )
-        )
-      )
-    )
-  );
-
-  useRecipe$ = createEffect(() => 
-    this.actions$.pipe(
-      ofType(RecipeActions.useRecipe),
-      mergeMap((action) => 
-        this.recipeService.useRecipe(action.recipeID, action.satisfaction, action.difficulty, action.note).pipe(
-          map(() => 
-            RecipeActions.useRecipeSuccess(),
-            RecipeActions.loadRecipe({ recipeID: action.recipeID })
-          ),
-          catchError((error) => 
-            of(
-              RecipeActions.useRecipeFailure({
                 error: {
                   message: error.error.error,
                   statusCode: error.status,
@@ -227,7 +242,37 @@ export class RecipeEffects {
         )
       )
     )
-  )
+  );
 
-  
+  useRecipe$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.useRecipe),
+      mergeMap((action) =>
+        this.recipeService
+          .useRecipe(
+            action.recipeID,
+            action.satisfaction,
+            action.difficulty,
+            action.note
+          )
+          .pipe(
+            map(
+              () => RecipeActions.useRecipeSuccess(),
+              RecipeActions.loadRecipe({ recipeID: action.recipeID })
+            ),
+            catchError((error) =>
+              of(
+                RecipeActions.useRecipeFailure({
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
+                })
+              )
+            )
+          )
+      )
+    )
+  );
 }

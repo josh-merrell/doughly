@@ -8,25 +8,19 @@ import { Tool } from './tool-state';
 
 @Injectable()
 export class ToolEffects {
-  constructor(
-    private actions$: Actions,
-    private toolService: ToolService
-  ) {}
+  constructor(private actions$: Actions, private toolService: ToolService) {}
 
   addTool$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ToolActions.addTool),
       mergeMap((action) =>
         this.toolService.add(action.tool).pipe(
-          map((tool: Tool) =>
-            ToolActions.addToolSuccess({tool})
-          ),
+          map((tool: Tool) => ToolActions.addToolSuccess({ tool })),
           catchError((error) =>
             of(
               ToolActions.addToolFailure({
                 error: {
-                  errorType: 'ADD_TOOL_FAILURE',
-                  message: 'Failed to add tool',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -43,18 +37,17 @@ export class ToolEffects {
       ofType(ToolActions.loadTools),
       mergeMap(() =>
         this.toolService.getAll().pipe(
-          map((tools: Tool[]) =>
-            ToolActions.loadToolsSuccess({ tools })
-          ),
+          map((tools: Tool[]) => ToolActions.loadToolsSuccess({ tools })),
           catchError((error) =>
-            of(ToolActions.loadToolsFailure({ 
-              error: {
-                errorType: 'LOAD_TOOLS_FAILURE',
-                message: 'Failed to load tools',
-                statusCode: error.status,
-                rawError: error,
-              },
-            }))
+            of(
+              ToolActions.loadToolsFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -66,18 +59,17 @@ export class ToolEffects {
       ofType(ToolActions.loadTool),
       mergeMap((action) =>
         this.toolService.getByID(action.toolID).pipe(
-          map((tool: Tool) =>
-            ToolActions.loadToolSuccess({ tool })
-          ),
+          map((tool: Tool) => ToolActions.loadToolSuccess({ tool })),
           catchError((error) =>
-            of(ToolActions.loadToolFailure({ 
-              error: {
-                errorType: 'LOAD_TOOL_FAILURE',
-                message: 'Failed to load tool',
-                statusCode: error.status,
-                rawError: error,
-              },
-            }))
+            of(
+              ToolActions.loadToolFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -89,18 +81,17 @@ export class ToolEffects {
       ofType(ToolActions.updateTool),
       mergeMap((action) =>
         this.toolService.update(action.tool).pipe(
-          map((tool: Tool) =>
-            ToolActions.updateToolSuccess({ tool })
-          ),
+          map((tool: Tool) => ToolActions.updateToolSuccess({ tool })),
           catchError((error) =>
-            of(ToolActions.updateToolFailure({
-              error: {
-                errorType: 'UPDATE_TOOL_FAILURE',
-                message: 'Failed to update tool',
-                statusCode: error.status,
-                rawError: error,
-              },
-            }))
+            of(
+              ToolActions.updateToolFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )
@@ -112,18 +103,17 @@ export class ToolEffects {
       ofType(ToolActions.deleteTool),
       mergeMap((action) =>
         this.toolService.delete(action.toolID).pipe(
-          map(() =>
-            ToolActions.deleteToolSuccess({ toolID: action.toolID })
-          ),
+          map(() => ToolActions.deleteToolSuccess({ toolID: action.toolID })),
           catchError((error) =>
-            of(ToolActions.deleteToolFailure({
-              error: {
-                errorType: 'DELETE_TOOL_FAILURE',
-                message: 'Failed to delete tool',
-                statusCode: error.status,
-                rawError: error,
-              },
-            }))
+            of(
+              ToolActions.deleteToolFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
           )
         )
       )

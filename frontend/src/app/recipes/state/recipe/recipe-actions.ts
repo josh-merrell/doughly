@@ -57,6 +57,16 @@ const addRecipeFailure = createAction(
   props<{ error: any }>()
 );
 
+const constructRecipe = createAction('[Recipes] Construct', props<{constructBody: any}>());
+const constructRecipeSuccess = createAction(
+  '[Recipes] Construct Success'
+);
+const constructRecipeFailure = createAction(
+  '[Recipes] Construct Failure',
+  props<{ error: any }>()
+);
+
+
 const deleteRecipe = createAction(
   '[Recipes] Delete',
   props<{ recipeID: number }>()
@@ -116,6 +126,9 @@ export const RecipeActions = {
   addRecipe,
   addRecipeSuccess,
   addRecipeFailure,
+  constructRecipe,
+  constructRecipeSuccess,
+  constructRecipeFailure,
   deleteRecipe,
   deleteRecipeSuccess,
   deleteRecipeFailure,

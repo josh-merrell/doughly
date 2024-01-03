@@ -31,6 +31,7 @@ import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-requ
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { selectSubscriptionBySourceRecipeID } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'dl-public-recipe',
@@ -262,19 +263,10 @@ export class PublicRecipeComponent {
       });
 
       dialogRef.afterClosed().subscribe((result) => {
-        if (result.recipeID) {
-          this.dialog.open(AddRequestConfirmationModalComponent, {
+        if (result === 'success') {
+          this.dialog.open(ConfirmationModalComponent, {
             data: {
-              result: result,
-              addSuccessMessage: `Subscribed to recipe. Find it in your 'Recipes' page!`,
-            },
-          });
-        } else if (result) {
-          this.dialog.open(AddRequestErrorModalComponent, {
-            data: {
-              error: result,
-              addFailureMessage:
-                'Failed to subscribe to recipe. Refresh and try again.',
+              confirmationMessage: `Subscribed to recipe. Find it in your 'Recipes' page!`,
             },
           });
         }

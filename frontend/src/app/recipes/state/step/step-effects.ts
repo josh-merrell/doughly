@@ -20,8 +20,7 @@ export class StepEffects {
             of(
               StepActions.addStepFailure({
                 error: {
-                  errorType: 'ADD_STEP_FAILURE',
-                  message: 'Failed to add step',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -43,8 +42,7 @@ export class StepEffects {
             of(
               StepActions.loadStepsFailure({
                 error: {
-                  errorType: 'LOAD_STEPS_FAILURE',
-                  message: 'Failed to load steps',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -66,8 +64,7 @@ export class StepEffects {
             of(
               StepActions.loadStepFailure({
                 error: {
-                  errorType: 'LOAD_STEP_FAILURE',
-                  message: 'Failed to load step',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -89,8 +86,7 @@ export class StepEffects {
             of(
               StepActions.updateStepFailure({
                 error: {
-                  errorType: 'UPDATE_STEP_FAILURE',
-                  message: 'Failed to update step',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },
@@ -112,8 +108,7 @@ export class StepEffects {
             of(
               StepActions.deleteStepFailure({
                 error: {
-                  errorType: 'DELETE_STEP_FAILURE',
-                  message: 'Failed to delete step',
+                  message: error.error.error,
                   statusCode: error.status,
                   rawError: error,
                 },

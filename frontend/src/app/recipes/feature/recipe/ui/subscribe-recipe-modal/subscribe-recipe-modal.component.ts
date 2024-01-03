@@ -28,6 +28,9 @@ import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool
 import { StepActions } from 'src/app/recipes/state/step/step-actions';
 import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
+import { selectAdding, selectError } from 'src/app/recipes/state/recipe/recipe-selectors';
+import { filter, take } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-subscribe-recipe-modal',
@@ -64,7 +67,8 @@ export class SubscribeRecipeModalComponent {
     public dialogRef: MatDialogRef<SubscribeRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public store: Store,
-    public recipeService: RecipeService
+    public recipeService: RecipeService,
+    public dialog: MatDialog
   ) {
     effect(
       () => {
@@ -338,17 +342,29 @@ export class SubscribeRecipeModalComponent {
       }
 
       this.loading.set(true);
-      this.recipeService.constructRecipe(constructBody).subscribe((data) => {
-        this.loading.set(false);
-        this.store.dispatch(RecipeActions.loadRecipes());
-        this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
-        this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
-        this.store.dispatch(RecipeToolActions.loadRecipeTools());
-        this.store.dispatch(StepActions.loadSteps());
-        this.store.dispatch(RecipeStepActions.loadRecipeSteps());
-        this.store.dispatch(IngredientActions.loadIngredients());
-        this.store.dispatch(ToolActions.loadTools());
-        this.dialogRef.close(data);
+      this.store.dispatch(
+        RecipeActions.constructRecipe({
+          constructBody,
+        })
+      );
+      this.store.select(selectAdding).pipe(filter((adding) => !adding)).subscribe(() => {
+        this.store.select(selectError).pipe(take(1)).subscribe((error) => {
+          if (error) {
+            console.error(
+              `Recipe add failed: ${error.message}, CODE: ${error.statusCode}`
+            );
+            this.dialog.open(ErrorModalComponent, {
+              maxWidth: '380px',
+              data: {
+                errorMessage: error.message,
+                statusCode: error.statusCode,
+              },
+            });
+          } else {
+            this.dialogRef.close('success');
+          }
+          this.loading.set(false);
+        });
       });
     }
   }
