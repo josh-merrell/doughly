@@ -1,6 +1,14 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, Subscription, combineLatest, of, switchMap } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  combineLatest,
+  filter,
+  of,
+  switchMap,
+  take,
+} from 'rxjs';
 import { ToolStock } from '../../../tool-inventory/state/tool-stock-state';
 import {
   FormBuilder,
@@ -14,13 +22,22 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { Tool } from 'src/app/kitchen/feature/tools/state/tool-state';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store, select } from '@ngrx/store';
-import { selectError, selectToolStockByID, selectUpdating } from '../../state/tool-stock-selectors';
+import {
+  selectError,
+  selectToolStockByID,
+  selectUpdating,
+} from '../../state/tool-stock-selectors';
 import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 import { selectToolByID } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { ToolStockActions } from '../../state/tool-stock-actions';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-edit-tool-stock-modal',
@@ -44,7 +61,7 @@ export class EditToolStockModalComponent {
   tool$!: Observable<Tool>;
   originalToolStock!: any;
 
-  isUpdating$!: Observable<boolean>;
+  isUpdating: boolean = false;
 
   private updatingSubscription!: Subscription;
 
@@ -52,10 +69,9 @@ export class EditToolStockModalComponent {
     public dialogRef: MatDialogRef<EditToolStockModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
-  ) {
-    this.isUpdating$ = this.store.pipe(select(selectUpdating));
-  }
+    private fb: FormBuilder,
+    public dialog: MatDialog
+  ) {}
 
   setForm() {
     this.form = this.fb.group({
@@ -110,24 +126,39 @@ export class EditToolStockModalComponent {
       }
     }
 
+    this.isUpdating = true;
     this.store.dispatch(
       ToolStockActions.updateToolStock({
         toolStock: updatedToolStock,
       })
     );
-
-    this.updatingSubscription = this.store
+    this.store
       .select(selectUpdating)
-      .subscribe((updating: boolean) => {
-        if (!updating) {
-          this.store.select(selectError).subscribe((error) => {
+      .pipe(
+        filter((updating) => !updating),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectError)
+          .pipe(take(1))
+          .subscribe((error) => {
             if (error) {
-              this.dialogRef.close(error);
+              console.error(
+                `Tool stock update failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
             } else {
               this.dialogRef.close('success');
             }
+            this.isUpdating = false;
           });
-        }
       });
   }
 

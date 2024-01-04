@@ -1,5 +1,5 @@
 const { createUserLog } = require('../../../services/dbLogger');
-const { errorGen } = require('../../middleware/errorHandling');
+const { errorGen } = require('../../../middleware/errorHandling');
 
 ('use strict');
 
@@ -93,7 +93,6 @@ module.exports = ({ db, dbPublic }) => {
     }
     if (existingFriendship.length && existingFriendship[0].deleted === false) {
       global.logger.error(`Friendship ${existingFriendship.friendshipID} already exists`);
-      
     } else if (existingFriendship.length && existingFriendship[0].deleted === true) {
       // reset status of existing friendship to 'requesting', undelete and return
       const { data, error } = await db.from('friendships').update({ deleted: false, status }).eq('friendshipID', existingFriendship[0].friendshipID).select('*').single();
@@ -103,25 +102,27 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Reset friendship ${existingFriendship[0].friendshipID}`);
       createUserLog(userID, authorization, 'requestedFriendship', existingFriendship[0].friendshipID, null, null, null, 'requested friendship with: ' + profile.name_first + ' ' + profile.name_last);
-      // need to call function again, creating inverse of friendship request
-      const { error: inverseFriendshipError } = await axios.post(
-        `${process.env.NODE_HOST}:${process.env.PORT}/persons/friendships`,
-        {
-          userID: friend,
-          friend: userID,
-          status: 'receivedRequest',
-          IDtype: 23,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: 'override',
+      // need to call function again, creating inverse of friendship request ONLY if status is 'requesting'
+      if (status === 'requesting') {
+        const { error: inverseFriendshipError } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/persons/friendships`,
+          {
+            userID: friend,
+            friend: userID,
+            status: 'receivedRequest',
+            IDtype: 23,
           },
-        },
-      );
-      if (inverseFriendshipError) {
-        global.logger.error(`Error creating inverse friendship: ${inverseFriendshipError.message}`);
-        throw errorGen(`Error creating inverse friendship`, 400);
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              authorization: 'override',
+            },
+          },
+        );
+        if (inverseFriendshipError) {
+          global.logger.error(`Error creating inverse friendship: ${inverseFriendshipError.message}`);
+          throw errorGen(`Error creating inverse friendship`, 400);
+        }
       }
       return {
         friendshipID: data.friendshipID,
