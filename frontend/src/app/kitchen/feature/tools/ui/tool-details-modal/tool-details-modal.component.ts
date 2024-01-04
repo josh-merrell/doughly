@@ -1,7 +1,24 @@
-import { Component, ElementRef, Inject, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, combineLatest, forkJoin, map, switchMap, take } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  Observable,
+  combineLatest,
+  forkJoin,
+  map,
+  switchMap,
+  take,
+} from 'rxjs';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { Router } from '@angular/router';
@@ -17,8 +34,6 @@ import { DeleteToolStockModalComponent } from '../../../Inventory/feature/tool-i
 import { DeleteToolModalComponent } from '../delete-tool-modal/delete-tool-modal.component';
 import { selectRecipeIDsByToolID } from 'src/app/recipes/state/recipe-tool/recipe-tool-selectors';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
-
-
 
 @Component({
   selector: 'dl-tool-details-modal',
@@ -111,7 +126,7 @@ export class ToolDetailsModalComponent {
       })
     );
   }
-  
+
   updateMenuOpenForIndex(index: number) {
     if (this.menuOpenForIndex === index) {
       this.menuOpenForIndex = -1;
@@ -143,17 +158,9 @@ export class ToolDetailsModalComponent {
     });
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Tool Stock added successfully!`,
-          },
-        });
-      } else if (result === 'error') {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Tool Stock could not be added.`,
+            confirmationMessage: `Tool Stock added`,
           },
         });
       }
@@ -166,20 +173,11 @@ export class ToolDetailsModalComponent {
         itemID: toolStockID,
       },
     });
-
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Tool Stock edited successfully!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Tool Stock failed to update.`,
+            confirmationMessage: `Tool Stock edited`,
           },
         });
       }
@@ -210,20 +208,11 @@ export class ToolDetailsModalComponent {
         toolName: this.tool.name,
       },
     });
-
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Tool Stock deleted successfully!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Tool Stock failed to delete.`,
+            confirmationMessage: `Tool Stock deleted`,
           },
         });
       }
