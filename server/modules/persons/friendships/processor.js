@@ -1,5 +1,5 @@
 const { createUserLog } = require('../../../services/dbLogger');
-const { errorGen } = require('../../middleware/errorHandling');
+const { errorGen } = require('../../../middleware/errorHandling');
 
 ('use strict');
 

@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, filter, take } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -9,11 +9,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { Tool } from '../../state/tool-state';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { selectAdding, selectLoading, selectTools } from '../../state/tool-selectors';
+import { selectAdding, selectError, selectLoading, selectTools } from '../../state/tool-selectors';
 import { nonDuplicateString } from 'src/app/shared/utils/formValidator';
 import { ToolActions } from '../../state/tool-actions';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-add-tool-modal',
@@ -31,10 +32,10 @@ import { ToolActions } from '../../state/tool-actions';
   templateUrl: './add-tool-modal.component.html',
 })
 export class AddToolModalComponent {
+  isAdding: boolean = false;
   tools$!: Observable<Tool[]>;
   tools: Tool[] = [];
   form!: FormGroup;
-  isAdding$: Observable<boolean>;
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   private toolsSubscription: Subscription = new Subscription();
@@ -43,10 +44,10 @@ export class AddToolModalComponent {
     public dialogRef: MatDialogRef<AddToolModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog
   ) {
     this.tools$ = this.store.select(selectTools);
-    this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
   }
 
@@ -67,24 +68,32 @@ export class AddToolModalComponent {
   }
 
   onSubmit() {
+    this.isAdding = true;
     const payload = this.form.value;
 
     this.store.dispatch(
       ToolActions.addTool({ tool: payload })
     );
-
-    this.addingSubscription = this.store
+    this.store
       .select(selectAdding)
-      .subscribe((adding:boolean) => {
-        if (!adding) {
-          this.store.select(selectLoading).subscribe((error) => {
-            if (error) {
-              this.dialogRef.close(error);
-            } else {
-              this.dialogRef.close('success');
-            }
-          })
-        }
+      .pipe(filter((adding) => !adding), take(1)).subscribe(() => {
+        this.store.select(selectError).pipe(take(1)).subscribe((error) => {
+          if (error) {
+            console.error(
+              `Error adding tool: ${error.message}, CODE: ${error.statusCode}`
+            );
+            this.dialog.open(ErrorModalComponent, {
+              maxWidth: '380px',
+              data: {
+                errorMessage: error.message,
+                statusCode: error.statusCode,
+              },
+            });
+          } else {
+            this.dialogRef.close('success');
+          }
+          this.isAdding = false;
+        });
       });
   }
 

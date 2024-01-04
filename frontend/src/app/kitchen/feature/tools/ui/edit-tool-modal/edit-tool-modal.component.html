@@ -3,12 +3,12 @@
 >
   <mat-spinner
     class="my-app-custom-spinner"
-    *ngIf="isUpdating$ | async"
+    *ngIf="isUpdating"
   ></mat-spinner>
   <form
     [formGroup]="form"
     (ngSubmit)="onSubmit()"
-    *ngIf="(isUpdating$ | async) === false"
+    *ngIf="!isUpdating"
   >
     <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">

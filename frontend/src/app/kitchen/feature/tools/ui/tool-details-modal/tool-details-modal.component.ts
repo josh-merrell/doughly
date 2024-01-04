@@ -16,6 +16,7 @@ import { EditToolModalComponent } from '../edit-tool-modal/edit-tool-modal.compo
 import { DeleteToolStockModalComponent } from '../../../Inventory/feature/tool-inventory/ui/delete-tool-stock-modal/delete-tool-stock-modal.component';
 import { DeleteToolModalComponent } from '../delete-tool-modal/delete-tool-modal.component';
 import { selectRecipeIDsByToolID } from 'src/app/recipes/state/recipe-tool/recipe-tool-selectors';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 
 
@@ -191,20 +192,11 @@ export class ToolDetailsModalComponent {
         itemID: this.tool.toolID,
       },
     });
-
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Tool: ${this.tool.name} edited successfully!`,
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Tool: ${this.tool.name} failed to update.`,
+            confirmationMessage: `Tool edited successfully`,
           },
         });
       }
@@ -245,22 +237,14 @@ export class ToolDetailsModalComponent {
         itemName: this.tool.name,
       },
     });
-
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: `Tool: ${this.tool.name} deleted successfully!`,
+            confirmationMessage: `Tool deleted successfully`,
           },
         });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Tool: ${this.tool.name} failed to delete.`,
-          },
-        });
+        this.dialogRef.close();
       }
     });
   }
