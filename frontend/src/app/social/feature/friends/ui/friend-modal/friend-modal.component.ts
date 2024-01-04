@@ -10,19 +10,32 @@ import { Friendship } from 'src/app/social/state/friendship-state';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Store } from '@ngrx/store';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { Profile } from 'src/app/profile/state/profile-state';
 import { RecipeCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/recipe-card/recipe-card.component';
 import {
-  selectDeleting,
+  selectDeleting as selectDeletingFriendship,
+  selectError as selectErrorFriendship,
   selectFriendshipByFriendID,
+  selectUpdating as selectUpdatingFriendship,
 } from 'src/app/social/state/friendship-selectors';
-import { selectFollowshipByFollowingID } from 'src/app/social/state/followship-selectors';
+import {
+  selectFollowshipByFollowingID,
+  selectDeleting as selectDeletingFollowship,
+  selectAdding as selectAddingFollowship,
+  selectError as selectErrorFollowship,
+} from 'src/app/social/state/followship-selectors';
 import { FriendshipActions } from 'src/app/social/state/friendship-actions';
 import { FollowshipActions } from 'src/app/social/state/followship-actions';
 import { Followship } from 'src/app/social/state/followship-state';
 import { Router } from '@angular/router';
+import { filter, take } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-friend-modal',
@@ -31,6 +44,7 @@ import { Router } from '@angular/router';
   templateUrl: './friend-modal.component.html',
 })
 export class FriendModalComponent {
+  public isLoading: WritableSignal<boolean> = signal(false);
   public friend!: Profile;
   public displayDate: WritableSignal<string> = signal('');
   public initials: string = '';
@@ -47,42 +61,46 @@ export class FriendModalComponent {
     private store: Store,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<FriendModalComponent>,
-    public router: Router
+    public router: Router,
+    public dialog: MatDialog
   ) {
     this.buttonTexts.set({ friendButton: '', followButton: '' });
-    
-    effect(() => {
-      const myRecipes = this.myRecipes();
-      const friendRecipes = this.friend.recipes;
-      const recipesFromMe: any[] = [];
-      const otherRecipes: any[] = [];
-      for (let fr of friendRecipes) {
-        if (fr.subscription) {
-          //if myRecipes contains recipe where recipeID matches 'fr.subscription.sourceRecipeID', push to recipesFromMe
-          const recipeFromMe = myRecipes.find(
-            (r) => r.recipeID === fr.subscription?.sourceRecipeID
-          );
-          if (recipeFromMe) {
-            recipesFromMe.push(fr);
+
+    effect(
+      () => {
+        const myRecipes = this.myRecipes();
+        const friendRecipes = this.friend.recipes;
+        const recipesFromMe: any[] = [];
+        const otherRecipes: any[] = [];
+        for (let fr of friendRecipes) {
+          if (fr.subscription) {
+            //if myRecipes contains recipe where recipeID matches 'fr.subscription.sourceRecipeID', push to recipesFromMe
+            const recipeFromMe = myRecipes.find(
+              (r) => r.recipeID === fr.subscription?.sourceRecipeID
+            );
+            if (recipeFromMe) {
+              recipesFromMe.push(fr);
+            } else {
+              //else push to otherRecipes
+              otherRecipes.push(fr);
+            }
           } else {
             //else push to otherRecipes
             otherRecipes.push(fr);
           }
-        } else {
-          //else push to otherRecipes
-          otherRecipes.push(fr);
         }
-      }
-      this.recipesFromMe.set(recipesFromMe);
-      this.otherRecipes.set(otherRecipes);
-    }, { allowSignalWrites: true })
+        this.recipesFromMe.set(recipesFromMe);
+        this.otherRecipes.set(otherRecipes);
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit(): void {
     this.store.select(selectRecipes).subscribe((recipes) => {
       this.myRecipes.set(recipes);
     });
-    this.store.select(selectDeleting).subscribe((deleting) => {
+    this.store.select(selectDeletingFriendship).subscribe((deleting) => {
       this.isDeleting.set(deleting);
     });
 
@@ -92,7 +110,7 @@ export class FriendModalComponent {
     const year = joinDate.getFullYear();
     this.displayDate.set(`${month} ${year}`);
 
-    console.log(`FRIEND RECIPES: `, this.friend.recipes)
+    console.log(`FRIEND RECIPES: `, this.friend.recipes);
     this.initials = this.friend.nameFirst[0] + this.friend.nameLast[0];
 
     this.store
@@ -129,40 +147,113 @@ export class FriendModalComponent {
   }
 
   onFriendButtonClick(): void {
+    if (!this.friendship()) {
+      return;
+    }
     switch (this.friendship()?.status) {
       case 'confirmed':
+        this.isLoading.set(true);
         this.store.dispatch(
           FriendshipActions.deleteFriendship({
             friendshipID: this.friendship()!.friendshipID,
           })
         );
-        this.isDeleting.set(true);
-        this.store.select(selectDeleting).subscribe((deleting) => {
-          if (!deleting) {
-            this.dialogRef.close();
-          }
-        });
+        this.store
+          .select(selectDeletingFriendship)
+          .pipe(
+            filter((deleting) => !deleting),
+            take(1)
+          )
+          .subscribe(() => {
+            this.store
+              .select(selectErrorFriendship)
+              .pipe(take(1))
+              .subscribe((error) => {
+                if (error) {
+                  console.error(
+                    `Error deleting friendship: ${error.message}, CODE: ${error.statusCode}`
+                  );
+                  this.dialog.open(ErrorModalComponent, {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
+                  });
+                }
+                this.isLoading.set(false);
+              });
+          });
         break;
       case 'receivedRequest':
+        this.isLoading.set(true);
         this.store.dispatch(
           FriendshipActions.editFriendship({
             friendshipID: this.friendship()!.friendshipID,
             newStatus: 'confirmed',
           })
         );
+        this.store
+          .select(selectUpdatingFriendship)
+          .pipe(
+            filter((updating) => !updating),
+            take(1)
+          )
+          .subscribe(() => {
+            this.store
+              .select(selectErrorFriendship)
+              .pipe(take(1))
+              .subscribe((error) => {
+                if (error) {
+                  console.error(
+                    `Error accepting friendship: ${error.message}, CODE: ${error.statusCode}`
+                  );
+                  this.dialog.open(ErrorModalComponent, {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
+                  });
+                }
+                this.isLoading.set(false);
+              });
+          });
         break;
       case 'requesting':
+        this.isLoading.set(true);
         this.store.dispatch(
           FriendshipActions.deleteFriendship({
             friendshipID: this.friendship()!.friendshipID,
           })
         );
-        this.isDeleting.set(true);
-        this.store.select(selectDeleting).subscribe((deleting) => {
-          if (!deleting) {
-            this.dialogRef.close();
-          }
-        });
+        this.store
+          .select(selectDeletingFriendship)
+          .pipe(
+            filter((deleting) => !deleting),
+            take(1)
+          )
+          .subscribe(() => {
+            this.store
+              .select(selectErrorFriendship)
+              .pipe(take(1))
+              .subscribe((error) => {
+                if (error) {
+                  console.error(
+                    `Error canceling friendship request: ${error.message}, CODE: ${error.statusCode}`
+                  );
+                  this.dialog.open(ErrorModalComponent, {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
+                  });
+                }
+                this.isLoading.set(false);
+                this.dialogRef.close();
+              });
+          });
         break;
       default:
         console.log(`No friend to add!`);
@@ -172,17 +263,71 @@ export class FriendModalComponent {
 
   onFollowButtonClick(): void {
     if (this.followship()) {
+      this.isLoading.set(true);
       this.store.dispatch(
         FollowshipActions.deleteFollowship({
           followshipID: this.followship()!.followshipID,
         })
       );
+      this.store
+        .select(selectDeletingFollowship)
+        .pipe(
+          filter((deleting) => !deleting),
+          take(1)
+        )
+        .subscribe(() => {
+          this.store
+            .select(selectErrorFollowship)
+            .pipe(take(1))
+            .subscribe((error) => {
+              if (error) {
+                console.error(
+                  `Error deleting followship: ${error.message}, CODE: ${error.statusCode}`
+                );
+                this.dialog.open(ErrorModalComponent, {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
+                });
+              }
+              this.isLoading.set(false);
+            });
+        });
     } else {
+      this.isLoading.set(true);
       this.store.dispatch(
         FollowshipActions.addFollowship({
           following: this.friend.userID,
         })
       );
+      this.store
+        .select(selectAddingFollowship)
+        .pipe(
+          filter((adding) => !adding),
+          take(1)
+        )
+        .subscribe(() => {
+          this.store
+            .select(selectErrorFollowship)
+            .pipe(take(1))
+            .subscribe((error) => {
+              if (error) {
+                console.error(
+                  `Error adding followship: ${error.message}, CODE: ${error.statusCode}`
+                );
+                this.dialog.open(ErrorModalComponent, {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
+                });
+              }
+              this.isLoading.set(false);
+            });
+        });
     }
   }
 

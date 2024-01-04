@@ -133,7 +133,7 @@
     </div>
 
     <!-- Buttons -->
-    <div class="flex">
+    <div class="flex" *ngIf="!isLoading()">
       <button
         type="button"
         class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
@@ -163,6 +163,10 @@
         {{ buttonTexts().followButton }}
       </button>
     </div>
+    <mat-spinner
+      class="my-app-custom-spinner mb-dl-5"
+      *ngIf="isLoading()"
+    ></mat-spinner>
   </div>
 
   <!-- View Tabs -->
@@ -219,7 +223,7 @@
     class="mb-dl-6 flex h-dl-11 flex-col items-center overflow-y-auto"
   >
     <span
-      class="items-center px-1 pt-1 text-dl-5 text-dl-grey-2 font-dl-3 transition-all duration-200 ease-in-out"
+      class="items-center px-1 pt-1 text-dl-5 font-dl-3 text-dl-grey-2 transition-all duration-200 ease-in-out"
       (click)="view = 'recipes'"
     >
       Subscribed from My Recipes

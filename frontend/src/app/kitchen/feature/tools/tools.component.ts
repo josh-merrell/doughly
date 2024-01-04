@@ -24,6 +24,7 @@ import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-err
 import { HttpErrorResponse } from '@angular/common/http';
 import { AddToolStockModalComponent } from '../Inventory/feature/tool-inventory/ui/add-tool-stock-modal/add-tool-stock-modal.component';
 import { ToolDetailsModalComponent } from './ui/tool-details-modal/tool-details-modal.component';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'dl-tools',
@@ -131,17 +132,9 @@ export class ToolsComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            result: result,
-            addSuccessMessage: `Added Tool: ${result.name}`,
-          },
-        });
-      } else if (result instanceof HttpErrorResponse) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            result: result,
-            addFailureMessage: `Failed to add Tool. Error: ${result.message}`,
+            confirmationMessage: `Added Tool`,
           },
         });
       }

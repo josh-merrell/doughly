@@ -15,14 +15,25 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { Observable, Subscription, map } from 'rxjs';
-import { positiveFloatValidator, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import { Observable, Subscription, filter, map, take } from 'rxjs';
+import {
+  positiveFloatValidator,
+  positiveIntegerValidator,
+} from 'src/app/shared/utils/formValidator';
 import { Tool } from 'src/app/kitchen/feature/tools/state/tool-state';
 import { selectAdding, selectError } from '../../state/tool-stock-selectors';
-import { selectToolByID, selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
+import {
+  selectToolByID,
+  selectTools,
+} from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { ToolStockActions } from '../../state/tool-stock-actions';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-add-tool-stock-modal',
@@ -46,7 +57,7 @@ export class AddToolStockModalComponent {
   tool$!: Observable<Tool>;
   employees$!: Observable<any>;
 
-  isAdding$: Observable<boolean>;
+  isAdding: boolean = false;
 
   private toolIDSubscription!: Subscription;
   private addingSubscription!: Subscription;
@@ -56,10 +67,9 @@ export class AddToolStockModalComponent {
     public dialogRef: MatDialogRef<AddToolStockModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
-  ) {
-    this.isAdding$ = this.store.select(selectAdding);
-  }
+    private fb: FormBuilder,
+    public dialog: MatDialog
+  ) {}
 
   setForm() {
     this.form = this.fb.group({
@@ -83,9 +93,7 @@ export class AddToolStockModalComponent {
       .valueChanges.subscribe((toolID) => {
         if (toolID) {
           this.form.get('quantity')!.enable();
-          this.tool$ = this.store.pipe(
-            select(selectToolByID(toolID))
-          );
+          this.tool$ = this.store.pipe(select(selectToolByID(toolID)));
         } else {
           this.form.get('quantity')!.disable();
         }
@@ -108,25 +116,38 @@ export class AddToolStockModalComponent {
     const payload = {
       ...this.form.value,
       toolID: parseInt(this.form.value.toolID, 10),
-      quantity: parseInt(this.form.value.quantity)
+      quantity: parseInt(this.form.value.quantity),
     };
 
-    this.store.dispatch(
-      ToolStockActions.addToolStock({ toolStock: payload })
-    );
-
-    this.addingSubscription = this.store
+    this.isAdding = true;
+    this.store.dispatch(ToolStockActions.addToolStock({ toolStock: payload }));
+    this.store
       .select(selectAdding)
-      .subscribe((adding: boolean) => {
-        if (!adding) {
-          this.store.select(selectError).subscribe((error) => {
+      .pipe(
+        filter((adding) => !adding),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectError)
+          .pipe(take(1))
+          .subscribe((error) => {
             if (error) {
-              this.dialogRef.close(error);
+              console.error(
+                `Tool stock add failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
             } else {
               this.dialogRef.close('success');
             }
+            this.isAdding = false;
           });
-        }
       });
   }
 

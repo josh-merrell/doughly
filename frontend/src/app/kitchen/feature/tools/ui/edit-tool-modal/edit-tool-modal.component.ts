@@ -7,12 +7,23 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, filter, take } from 'rxjs';
 import { Tool } from '../../state/tool-state';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { selectError, selectLoading, selectToolByID, selectTools, selectUpdating } from '../../state/tool-selectors';
+import {
+  selectError,
+  selectLoading,
+  selectToolByID,
+  selectTools,
+  selectUpdating,
+} from '../../state/tool-selectors';
 import { ToolActions } from '../../state/tool-actions';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-edit-tool-modal',
@@ -35,7 +46,7 @@ export class EditToolModalComponent {
   tool$!: Observable<Tool>;
   originalTool!: any;
   form!: FormGroup;
-  isUpdating$: Observable<boolean>;
+  isUpdating: boolean = false;
   isLoading$: Observable<boolean>;
   private updatingSubscription!: Subscription;
   private toolsSubscription: Subscription = new Subscription();
@@ -44,18 +55,16 @@ export class EditToolModalComponent {
     public dialogRef: MatDialogRef<EditToolModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store<any>,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog
   ) {
     this.tools$ = this.store.select(selectTools);
-    this.isUpdating$ = this.store.select(selectUpdating);
     this.isLoading$ = this.store.select(selectLoading);
   }
 
   ngOnInit(): void {
     this.setForm();
-    this.tool$ = this.store.select(
-      selectToolByID(this.data.itemID)
-    );
+    this.tool$ = this.store.select(selectToolByID(this.data.itemID));
 
     this.tool$.subscribe((tool) => {
       this.originalTool = tool;
@@ -80,29 +89,45 @@ export class EditToolModalComponent {
       toolID: this.data.itemID,
       name: this.data.name,
     };
-
     const formValues = this.form.value;
-
     for (let key in formValues) {
-      if (key in this.originalTool && formValues[key] !== this.originalTool[key]) {
+      if (
+        key in this.originalTool &&
+        formValues[key] !== this.originalTool[key]
+      ) {
         updatedTool[key] = formValues[key];
       }
     }
 
+    this.isUpdating = true;
     this.store.dispatch(ToolActions.updateTool({ tool: updatedTool }));
-
-    this.updatingSubscription = this.store
+    this.store
       .select(selectUpdating)
-      .subscribe((updating) => {
-        if (!updating) {
-          this.store.select(selectError).subscribe((error) => {
+      .pipe(
+        filter((updating) => !updating),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectError)
+          .pipe(take(1))
+          .subscribe((error) => {
             if (error) {
-              this.dialogRef.close(error);
+              console.error(
+                `Tool update failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
             } else {
               this.dialogRef.close('success');
             }
+            this.isUpdating = false;
           });
-        }
       });
   }
 
@@ -111,12 +136,11 @@ export class EditToolModalComponent {
   }
 
   onDestroy() {
-    if(this.updatingSubscription) {
+    if (this.updatingSubscription) {
       this.updatingSubscription.unsubscribe();
     }
-    if(this.toolsSubscription) {
+    if (this.toolsSubscription) {
       this.toolsSubscription.unsubscribe();
     }
   }
-
 }
