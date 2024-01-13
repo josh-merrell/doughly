@@ -81,6 +81,19 @@ const searchProfilesFailure = createAction(
   props<{ error: any }>()
 );
 
+const updateProfile = createAction(
+  '[Profile] Update',
+  props<{ property: string; value: any }>()
+);
+const updateProfileSuccess = createAction(
+  '[Profile] Update Success',
+  props<{ profile: any }>()
+);
+const updateProfileFailure = createAction(
+  '[Profile] Update Failure',
+  props<{ error: any }>()
+);
+
 const deleteFriend = createAction('[Profile] Delete Friend', props<{ friendUserID: string }>());
 const deleteFriendSuccess = createAction(
   '[Profile] Delete Friend Success',
@@ -126,6 +139,9 @@ export const ProfileActions = {
   searchProfiles,
   searchProfilesSuccess,
   searchProfilesFailure,
+  updateProfile,
+  updateProfileSuccess,
+  updateProfileFailure,
   deleteFriend,
   deleteFriendSuccess,
   deleteFriendFailure,

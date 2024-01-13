@@ -1,9 +1,9 @@
 <div
   *ngIf="displayRecipes().length > 0"
-  class="relative flex w-full flex-col items-center overflow-x-hidden overflow-y-auto"
+  class="relative flex w-full flex-col items-center overflow-y-auto overflow-x-hidden"
 >
   <!-- List View Header -->
-  <div class="mb-dl-6 flex h-dl-4 mt-dl-3 w-full justify-around">
+  <div *ngIf="!isLoading" class="mb-dl-6 mt-dl-3 flex h-dl-4 w-full justify-around">
     <span
       (click)="onViewClick('byCategory')"
       class="inline-flex items-center border-b-2 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
@@ -112,7 +112,6 @@
       <dl-recipe-card
         *ngFor="let recipe of displayRecipes()"
         (click)="recipeCardClick(recipe)"
-        
         [recipe]="recipe"
         [isUserRecipe]="true"
         [isSelected]="recipe.recipeID === selectedRecipeID()"
@@ -125,12 +124,18 @@
   <button
     id="add-button"
     type="button"
-    class="mb-dl-4 block h-dl-4 w-11/12 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+    class="mb-dl-4 block h-dl-5 w-11/12 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
     (click)="onAddClick()"
-    [ngClass]="{ invisible: view() !== 'all' || selectedRecipeID() === 0 }"
+    [ngClass]="{ invisible: view() !== 'all' || selectedRecipeID() === 0 || isLoading === true }"
   >
     Add to Shopping List
   </button>
+  <div
+    *ngIf="isLoading === true"
+    class="flex h-full w-full items-center justify-center"
+  >
+    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+  </div>
 </div>
 <div class="flex flex-col items-center" *ngIf="displayRecipes().length === 0">
   <p class="p-dl-3 text-dl-7 font-dl-3 text-dl-grey-2">

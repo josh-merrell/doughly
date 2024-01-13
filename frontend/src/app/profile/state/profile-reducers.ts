@@ -149,6 +149,21 @@ export const ProfileReducer = createReducer(
     error,
     loading: false,
   })),
+  on(ProfileActions.updateProfile, (state) => ({
+    ...state,
+    updating: true,
+    error: null,
+  })),
+  on(ProfileActions.updateProfileSuccess, (state, { profile }) => ({
+    ...state,
+    profile,
+    updating: false,
+  })),
+  on(ProfileActions.updateProfileFailure, (state, { error }) => ({
+    ...state,
+    error,
+    updating: false,
+  })),
   on(ProfileActions.deleteFriend, (state) => ({
     ...state,
     deleting: true,

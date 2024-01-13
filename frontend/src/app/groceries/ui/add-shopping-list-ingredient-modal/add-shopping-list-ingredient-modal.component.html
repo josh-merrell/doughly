@@ -33,7 +33,7 @@
 
   <!-- List -->
   <div class="relative mb-dl-5 flex flex-col items-center">
-    <div class="flex max-h-dl-17 pr-dl-3 flex-col items-center overflow-y-auto">
+    <div class="flex max-h-dl-17 flex-col items-center overflow-y-auto pr-dl-3">
       @for (ingredient of displayIngredients(); track ingredient.ingredientID) {
       <div
         class="my-dl-3 flex w-dl-14 flex-col justify-start rounded-lg border px-dl-3 py-dl-1 shadow-md transition-all duration-200 ease-in-out"
@@ -64,10 +64,15 @@
       }
     </div>
   </div>
-  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
 
   <!-- Measurement -->
-  <form class="w-10/12" [ngClass]="{'invisible': selectedIngredient().ingredientID === 0}" [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="isAdding() === false">
+  <form
+    class="w-10/12"
+    [ngClass]="{ invisible: selectedIngredient().ingredientID === 0 }"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    *ngIf="isLoading === false"
+  >
     <div id="form-measurement">
       <label class="text-dl-4 font-dl-3 text-dl-grey-4"
         >Measurement
@@ -84,9 +89,9 @@
   <button
     id="add-button"
     type="button"
-    class="mb-dl-5 mt-dl-3 block h-dl-4 w-11/12 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white"
+    class="mb-dl-5 mt-dl-3 block h-dl-5 w-11/12 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white"
     (click)="onSubmit()"
-    [disabled]="!form.valid || form.pristine"
+    [disabled]="!form.valid || form.pristine || isLoading === true"
     [ngClass]="{
       ' bg-dl-pink-4  shadow-lg ': form.valid && !form.pristine,
       'bg-dl-grey-7': !form.valid || form.pristine,
@@ -95,6 +100,12 @@
   >
     Add to Shopping List
   </button>
+  <div
+    *ngIf="isLoading === true"
+    class="flex h-full w-full items-center justify-center"
+  >
+    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+  </div>
 </div>
 <div
   class="flex flex-col items-center"

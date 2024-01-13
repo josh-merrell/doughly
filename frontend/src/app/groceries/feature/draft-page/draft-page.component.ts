@@ -17,8 +17,10 @@ import { Store } from '@ngrx/store';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { selectRecipeIngredients } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
 import {
-  selectDeleting,
+  selectDeleting as selectDeletingShoppingList,
   selectShoppingLists,
+  selectError as selectErrorShoppingList,
+  selectUpdating as selectUpdatingShoppingList,
 } from '../../state/shopping-list-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
@@ -26,15 +28,22 @@ import { ShoppingListRecipeActions } from '../../state/shopping-list-recipe-acti
 import { AddShoppingListRecipeModalComponent } from '../../ui/add-shopping-list-recipe-modal/add-shopping-list-recipe-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  selectAdding,
-  selectError,
+  selectAdding as selectAddingShoppingListIngredient,
+  selectError as selectErrorShoppingListIngredient,
+  selectDeleting as selectDeletingShoppingListIngredient,
   selectShoppingListIngredients,
 } from '../../state/shopping-list-ingredient-selectors';
+import {
+  selectError as selectErrorShoppingListRecipe,
+  selectDeleting as selectDeletingShoppingListRecipe,
+} from '../../state/shopping-list-recipe-selectors';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
 import { AddShoppingListIngredientModalComponent } from '../../ui/add-shopping-list-ingredient-modal/add-shopping-list-ingredient-modal.component';
-import { combineLatest, first, map, take, tap } from 'rxjs';
+import { combineLatest, filter, first, map, take, tap } from 'rxjs';
 import { ShoppingListActions } from '../../state/shopping-list-actions';
 import { Router } from '@angular/router';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-draft-page',
@@ -288,7 +297,15 @@ export class DraftPageComponent {
         },
       });
       // after the modal closes, trigger the 'loadShoppingListRecipes' action
-      ref.afterClosed().subscribe(() => {
+      ref.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialog.open(ConfirmationModalComponent, {
+            maxWidth: '380px',
+            data: {
+              confirmationMessage: 'Recipe added to shopping list',
+            },
+          });
+        }
         this.store.dispatch(
           ShoppingListRecipeActions.loadShoppingListRecipes({
             shoppingListID: this.shoppingLists()[0].shoppingListID,
@@ -313,7 +330,16 @@ export class DraftPageComponent {
         },
       });
       // after the modal closes, trigger the 'loadShoppingListIngredients' action
-      ref.afterClosed().subscribe(() => {
+      ref.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialog.open(ConfirmationModalComponent, {
+            maxWidth: '380px',
+            data: {
+              confirmationMessage:
+                'Standalone Ingredient added to shopping list',
+            },
+          });
+        }
         this.store.dispatch(
           ShoppingListIngredientActions.loadShoppingListIngredients({
             shoppingListID: this.shoppingLists()[0].shoppingListID,
@@ -332,11 +358,39 @@ export class DraftPageComponent {
         shoppingListID: this.shoppingLists()[0].shoppingListID,
       })
     );
-    this.store.select(selectDeleting).subscribe((deleting) => {
-      if (!deleting) {
-        this.isDeleting.set(false);
-      }
-    });
+    this.store
+      .select(selectDeletingShoppingList)
+      .pipe(
+        filter((deleting) => !deleting),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectErrorShoppingList)
+          .pipe(take(1))
+          .subscribe((error) => {
+            if (error) {
+              console.error(
+                `Failed to delete shopping list: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
+            } else {
+              this.dialog.open(ConfirmationModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  confirmationMessage: 'Shopping list deleted',
+                },
+              });
+            }
+            this.isDeleting.set(false);
+          });
+      });
   }
 
   closeMenu() {
@@ -348,21 +402,90 @@ export class DraftPageComponent {
   }
 
   deleteListRecipe(shoppingListRecipeID: number) {
+    this.isDeleting.set(true);
     this.store.dispatch(
       ShoppingListRecipeActions.deleteShoppingListRecipe({
         shoppingListRecipeID: shoppingListRecipeID,
         shoppingListID: this.shoppingLists()[0].shoppingListID,
       })
     );
+    this.store
+      .select(selectDeletingShoppingListRecipe)
+      .pipe(
+        filter((deleting) => !deleting),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectErrorShoppingListRecipe)
+          .pipe(take(1))
+          .subscribe((error) => {
+            if (error) {
+              console.error(
+                `Failed to remove recipe from shopping list: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
+            } else {
+              this.dialog.open(ConfirmationModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  confirmationMessage: 'Recipe removed from shopping list',
+                },
+              });
+            }
+            this.isDeleting.set(false);
+          });
+      });
   }
 
   deleteStandaloneItem(shoppingListIngredientID: number) {
+    this.isDeleting.set(true);
     this.store.dispatch(
       ShoppingListIngredientActions.deleteShoppingListIngredient({
         shoppingListIngredientID: shoppingListIngredientID,
         shoppingListID: this.shoppingLists()[0].shoppingListID,
       })
     );
+    this.store
+      .select(selectDeletingShoppingListIngredient)
+      .pipe(
+        filter((deleting) => !deleting),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectErrorShoppingListIngredient)
+          .pipe(take(1))
+          .subscribe((error) => {
+            if (error) {
+              console.error(
+                `Failed to remove standalone ingredient from shopping list: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
+            } else {
+              this.dialog.open(ConfirmationModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  confirmationMessage:
+                    'Standalone ingredient removed from shopping list',
+                },
+              });
+            }
+            this.isDeleting.set(false);
+          });
+      });
   }
 
   async onShopClick() {
@@ -387,8 +510,10 @@ export class DraftPageComponent {
         );
         //subscribe to selectAdding. When it is false, use selectError to check if there was an error. If there was, throw the error. If there wasn't, continue.
         combineLatest([
-          this.store.select(selectAdding).pipe(map((adding) => !adding)),
-          this.store.select(selectError),
+          this.store
+            .select(selectAddingShoppingListIngredient)
+            .pipe(map((adding) => !adding)),
+          this.store.select(selectErrorShoppingListIngredient),
         ])
           .pipe(
             first(([isNotAdding, error]) => isNotAdding || error != null),
@@ -396,9 +521,21 @@ export class DraftPageComponent {
             tap(([isNotAdding, error]) => {
               if (error) {
                 // Handle the error here
-                console.error(error);
+                console.error(
+                  `Error creating shopping list ingredients for recipes on list: ${JSON.stringify(
+                    error
+                  )}`
+                );
                 this.isLoading.set(false);
-                return;
+                this.dialog.open(ErrorModalComponent, {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: `Error creating shopping list ingredients for recipes on list: ${JSON.stringify(
+                      error
+                    )}`,
+                    statusCode: '500',
+                  },
+                });
               }
               if (isNotAdding) {
                 this.store.dispatch(
@@ -407,7 +544,38 @@ export class DraftPageComponent {
                     status: 'shopping',
                   })
                 );
-                this.router.navigate(['/groceries']);
+                this.store
+                  .select(selectUpdatingShoppingList)
+                  .pipe(
+                    filter((updating) => !updating),
+                    take(1)
+                  )
+                  .subscribe(() => {
+                    this.store
+                      .select(selectErrorShoppingList)
+                      .pipe(take(1))
+                      .subscribe((error) => {
+                        if (error) {
+                          console.error(
+                            `Error updating shopping list status to 'shopping': ${JSON.stringify(
+                              error
+                            )}`
+                          );
+                          this.isLoading.set(false);
+                          this.dialog.open(ErrorModalComponent, {
+                            maxWidth: '380px',
+                            data: {
+                              errorMessage: `Error updating shopping list status to 'shopping': ${JSON.stringify(
+                                error
+                              )}`,
+                              statusCode: '500',
+                            },
+                          });
+                        } else {
+                          this.router.navigate(['/groceries']);
+                        }
+                      });
+                  });
               }
             })
           )
@@ -422,7 +590,19 @@ export class DraftPageComponent {
         this.router.navigate(['/groceries']);
       }
     } catch (err) {
-      console.log(err);
+      console.error(
+        `Error creating shopping list ingredients: ${JSON.stringify(err)}`
+      );
+      this.isLoading.set(false);
+      this.dialog.open(ErrorModalComponent, {
+        maxWidth: '380px',
+        data: {
+          errorMessage: `Error creating shopping list ingredients: ${JSON.stringify(
+            err
+          )}`,
+          statusCode: '500',
+        },
+      });
     }
   }
 }

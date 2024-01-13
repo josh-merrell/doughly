@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { RecipeCategoryCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe-category/recipe-category-card/recipe-category-card.component';
@@ -20,6 +20,11 @@ import { selectAdding } from '../../state/shopping-list-recipe-selectors';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { filter, take } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { selectError as selectErrorShoppingListRecipe } from '../../state/shopping-list-recipe-selectors';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 @Component({
   selector: 'dl-add-shopping-list-recipe-modal',
@@ -30,11 +35,13 @@ import { MatNativeDateModule } from '@angular/material/core';
     RecipeCardComponent,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './add-shopping-list-recipe-modal.component.html',
 })
 export class AddShoppingListRecipeModalComponent {
   @ViewChild('scrollContainer', { static: false })
+  public isLoading: boolean = false;
   scrollContainer!: ElementRef;
   showScrollDownArrow = false;
   showScrollUpArrow = false;
@@ -121,7 +128,8 @@ export class AddShoppingListRecipeModalComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private dialogRef: MatDialogRef<AddShoppingListRecipeModalComponent>
+    private dialogRef: MatDialogRef<AddShoppingListRecipeModalComponent>,
+    public dialog: MatDialog
   ) {
     effect(
       () => {
@@ -282,6 +290,7 @@ export class AddShoppingListRecipeModalComponent {
     }
   }
   onAddClick(): void {
+    this.isLoading = true;
     this.store.dispatch(
       ShoppingListRecipeActions.addShoppingListRecipe({
         shoppingListID: this.data.shoppingListID,
@@ -289,10 +298,33 @@ export class AddShoppingListRecipeModalComponent {
         plannedDate: this.plannedDate(),
       })
     );
-    this.store.select(selectAdding).subscribe((adding) => {
-      if (!adding) {
-        this.dialogRef.close();
-      }
-    });
+    this.store
+      .select(selectAdding)
+      .pipe(
+        filter((adding) => !adding),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectErrorShoppingListRecipe)
+          .pipe(take(1))
+          .subscribe((error) => {
+            if (error) {
+              console.error(
+                `Shopping list recipe add failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
+            } else {
+              this.dialogRef.close('success');
+            }
+            this.isLoading = false;
+          });
+      });
   }
 }

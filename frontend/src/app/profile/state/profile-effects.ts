@@ -4,12 +4,14 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ProfileService } from '../data/profile.service';
 import { ProfileActions } from './profile-actions';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 @Injectable()
 export class ProfileEffects {
   constructor(
     private actions$: Actions,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private authService: AuthService
   ) {}
 
   loadFriends$ = createEffect(() =>
@@ -192,6 +194,28 @@ export class ProfileEffects {
           catchError((error) =>
             of(
               ProfileActions.searchProfilesFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
+  updateProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.updateProfile),
+      mergeMap((action) =>
+        this.authService.updateField(action.property, action.value).pipe(
+          map((profile) => ProfileActions.updateProfileSuccess({ profile })),
+          catchError((error) =>
+            of(
+              ProfileActions.updateProfileFailure({
                 error: {
                   message: error.error.error,
                   statusCode: error.status,
