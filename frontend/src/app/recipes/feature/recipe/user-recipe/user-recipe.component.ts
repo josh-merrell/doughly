@@ -25,7 +25,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { MatDialog } from '@angular/material/dialog';
 import { RecipeIngredientsModalComponent } from '../../recipes-page/ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
-import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import {
   RecipeIngredient,
@@ -35,13 +34,10 @@ import { RecipeToolsModalComponent } from '../../recipes-page/ui/recipe-tool/rec
 import { selectSteps } from '../../../state/step/step-selectors';
 import { selectRecipeStepsByID } from '../../../state/recipe-step/recipe-step-selectors';
 import { RecipeStepsModalComponent } from '../../recipes-page/ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
-import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
 import { DeleteRecipeModalComponent } from './../ui/delete-recipe-modal/delete-recipe-modal.component';
-import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
 import { EditRecipeModalComponent } from './../ui/edit-recipe-modal/edit-recipe-modal.component';
 import { UpdateRequestErrorModalComponent } from 'src/app/shared/ui/update-request-error/update-request-error-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UpdateRequestConfirmationModalComponent } from 'src/app/shared/ui/update-request-confirmation/update-request-confirmation-modal.component';
 import { RecipeService } from '../../../data/recipe.service';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -56,9 +52,6 @@ import { Profile } from 'src/app/profile/state/profile-state';
 import { UnsubscribeRecipeModalComponent } from '../ui/unsubscribe-recipe-modal/unsubscribe-recipe-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
-function isRecipeIngredientError(obj: any): obj is RecipeIngredientError {
-  return obj && obj.errorType !== undefined && obj.message !== undefined;
-}
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
@@ -374,10 +367,9 @@ export class UserRecipeComponent {
           },
         });
       } else if (result === 'success') {
-        this.dialog.open(UpdateRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            result: result,
-            updateSuccessMessage: `Recipe updated!`,
+            confirmationMessage: `Recipe updated!`,
           },
         });
       }
@@ -563,10 +555,9 @@ export class UserRecipeComponent {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: 'Recipe Tools edited successfully!',
+            confirmationMessage: 'Recipe Tools edited successfully!',
           },
         });
       }
@@ -596,7 +587,7 @@ export class UserRecipeComponent {
         this.dialog.open(ConfirmationModalComponent, {
           maxWidth: '380px',
           data: {
-            confirmationMessage: 'Recipe used successfully!',
+            confirmationMessage: 'Recipe used successfully',
           },
         });
       }
@@ -612,10 +603,9 @@ export class UserRecipeComponent {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addSuccessMessage: 'Recipe Steps edited successfully!',
+            confirmationMessage: 'Recipe Steps edited successfully!',
           },
         });
       } else if (isRecipeStepError(result)) {

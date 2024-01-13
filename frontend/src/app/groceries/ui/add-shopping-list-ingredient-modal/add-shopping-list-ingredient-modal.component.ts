@@ -1,7 +1,17 @@
-import { Component, Inject, WritableSignal, computed, signal } from '@angular/core';
+import {
+  Component,
+  Inject,
+  WritableSignal,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog,
+} from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   FormBuilder,
@@ -11,10 +21,16 @@ import {
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { lessThanValidator, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import {
+  lessThanValidator,
+  positiveIntegerValidator,
+} from 'src/app/shared/utils/formValidator';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
 import { selectAdding } from '../../state/shopping-list-ingredient-selectors';
 import { IngredientService } from 'src/app/kitchen/feature/ingredients/data/ingredient.service';
+import { filter, take } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { selectError as selectErrorShoppingListIngredient } from '../../state/shopping-list-ingredient-selectors';
 
 @Component({
   selector: 'dl-add-shopping-list-ingredient-modal',
@@ -31,7 +47,7 @@ import { IngredientService } from 'src/app/kitchen/feature/ingredients/data/ingr
 export class AddShoppingListIngredientModalComponent {
   form!: FormGroup;
   public selectedIngredient: WritableSignal<any> = signal({ ingredientID: 0 });
-  public isAdding: WritableSignal<boolean> = signal(false);
+  public isLoading: boolean = false;
 
   public shoppingListIngredients: WritableSignal<any> = signal([]);
   public ingredients: WritableSignal<any> = signal([]);
@@ -69,14 +85,19 @@ export class AddShoppingListIngredientModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    private ingredientService: IngredientService
+    private ingredientService: IngredientService,
+    public dialog: MatDialog
   ) {}
 
   setForm() {
     this.form = this.fb.group({
       measurement: [
         '',
-        [Validators.required, positiveIntegerValidator(), lessThanValidator(100)],
+        [
+          Validators.required,
+          positiveIntegerValidator(),
+          lessThanValidator(100),
+        ],
       ],
     });
   }
@@ -97,11 +118,11 @@ export class AddShoppingListIngredientModalComponent {
     } else {
       this.selectedIngredient.set(ingredient);
     }
-
   }
 
   onSubmit(): void {
     const formValues = this.form.value;
+    this.isLoading = true;
 
     this.store.dispatch(
       ShoppingListIngredientActions.addShoppingListIngredient({
@@ -112,12 +133,34 @@ export class AddShoppingListIngredientModalComponent {
         source: 'standalone',
       })
     );
-    this.isAdding.set(true);
-    this.store.select(selectAdding).subscribe((adding) => {
-      if (!adding) {
-        this.dialogRef.close();
-      }
-    });
+    this.store
+      .select(selectAdding)
+      .pipe(
+        filter((adding) => !adding),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectErrorShoppingListIngredient)
+          .pipe(take(1))
+          .subscribe((error) => {
+            if (error) {
+              console.error(
+                `Shopping List Ingredient add failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
+            } else {
+              this.dialogRef.close('success');
+            }
+            this.isLoading = false;
+          });
+      });
   }
 
   updateSearchFilter(searchFilter: string): void {

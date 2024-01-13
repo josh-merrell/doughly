@@ -180,6 +180,7 @@ module.exports = ({ db }) => {
       }
       throw errorGen(`Error updating recipe status: ${recipeUpdateError.message}`, 400);
     }
+    global.logger.info(`Recipe moved to "published" status`);
     //add 'recipePublished' log entry
     createRecipeLog(userID, authorization, 'updatedRecipeStatus', Number(recipeID), null, null, 'published', `updated recipe status to published`);
   }
