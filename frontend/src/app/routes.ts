@@ -19,6 +19,8 @@ import { ShoppingPageComponent } from './groceries/feature/shopping-page/shoppin
 import { FriendsComponent } from './social/feature/friends/friends.component';
 import { FollowersComponent } from './social/feature/followers/followers.component';
 import { ToolsComponent } from './kitchen/feature/tools/tools.component';
+import { CreatedRecipesComponent } from './recipes/feature/created-recipes/created-recipes.component';
+import { SubscribedRecipesComponent } from './recipes/feature/subscribed-recipes/subscribed-recipes.component';
 
 export const routes: Route[] = [
   {
@@ -98,6 +100,25 @@ export const routes: Route[] = [
     path: 'recipes',
     component: RecipesPageNewComponent,
     canActivate: [ProfileGuard],
+    children: [
+      {
+        path: 'created',
+        component: CreatedRecipesComponent,
+      },
+      {
+        path: 'discover',
+        component: NotfoundComponent,
+      },
+      {
+        path: 'subscribed',
+        component: SubscribedRecipesComponent,
+      },
+      {
+        path: '',
+        redirectTo: 'created', // Default path or add a component for the default view
+        pathMatch: 'full',
+      },
+    ],
   },
   {
     path: 'register',

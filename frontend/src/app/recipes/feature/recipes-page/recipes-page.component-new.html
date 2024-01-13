@@ -38,7 +38,8 @@
 
   <!-- Main Content -->
   <div class="flex flex-grow flex-col">
-    <dl-discover-recipes *ngIf="view() === 'discover'"></dl-discover-recipes>
+    <router-outlet></router-outlet>
+    <!-- <dl-discover-recipes *ngIf="view() === 'discover'"></dl-discover-recipes>
     <dl-recipe-list
       [type]="'created'"
       *ngIf="view() === 'created'"
@@ -48,6 +49,6 @@
       [type]="'subscription'"
       *ngIf="view() === 'subscribed'"
       class="flex-grow"
-    ></dl-recipe-list>
+    ></dl-recipe-list> -->
   </div>
 </div>
