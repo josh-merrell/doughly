@@ -1,31 +1,35 @@
-import { Component, WritableSignal, effect, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  WritableSignal,
+  effect,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Store } from '@ngrx/store';
-import { FriendshipActions } from './state/friendship-actions';
-import { FollowshipActions } from './state/followship-actions';
 import { FriendsComponent } from './feature/friends/friends.component';
 import { FollowersComponent } from './feature/followers/followers.component';
-import { TimelineComponent } from './feature/timeline/timeline.component';
-import { RecipeActions } from '../recipes/state/recipe/recipe-actions';
-import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import {
+  Router,
+  RouterModule,
+  ActivatedRoute,
+  NavigationEnd,
+} from '@angular/router';
+import { Subject, filter, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'dl-social-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    FriendsComponent,
-    FollowersComponent,
-    TimelineComponent,
-    RouterModule,
-  ],
+  imports: [CommonModule, FriendsComponent, FollowersComponent, RouterModule],
   templateUrl: './social-page.component.html',
 })
-export class SocialPageComponent {
-  public view: WritableSignal<string> = signal('friends');
+export class SocialPageComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  public view: WritableSignal<string>;
 
-  constructor(private router: Router, private store: Store) {
+  constructor(private router: Router, private route: ActivatedRoute) {
+    this.view = signal('friends'); // Default view
+
     effect(() => {
       const view = this.view();
       if (view === 'friends') {
@@ -36,9 +40,30 @@ export class SocialPageComponent {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    this.checkAndUpdateView();
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.checkAndUpdateView();
+      });
+  }
+
+  private checkAndUpdateView() {
+    const childRoute = this.route.snapshot.firstChild;
+    const childSegment = childRoute ? childRoute.url[0]?.path : 'friends';
+    this.view.set(childSegment);
+  }
 
   setView(view: string) {
     this.view.set(view);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
