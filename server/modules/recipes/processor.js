@@ -51,7 +51,7 @@ module.exports = ({ db }) => {
 
         if (!tools.length) {
           // dummy recipeTool case
-          constructRecipeTool({ quantity: -1 }, authorization, userID, recipe.recipeID);
+          await constructRecipeTool({ quantity: -1 }, authorization, userID, recipe.recipeID);
         } else {
           const toolPromises = tools.map((t) => constructRecipeTool(t, authorization, userID, recipe.recipeID));
           const toolResults = await Promise.allSettled(toolPromises);
@@ -109,6 +109,7 @@ module.exports = ({ db }) => {
           throw errorGen(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`, 400);
         }
 
+        global.logger.info(`Successfully constructed recipe ${recipe.recipeID}`);
         return { recipeID: recipe.recipeID };
       } catch (error) {
         //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)

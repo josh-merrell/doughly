@@ -130,22 +130,24 @@ module.exports = ({ db }) => {
     try {
       const updatedShoppingList = await updater(userID, authorization, 'shoppingListID', shoppingListID, 'shoppingLists', updateFields);
       //if the list was fulfilled, create a new draft list using axios
-      const { error: createListError } = await axios.post(
-        `${process.env.NODE_HOST}:${process.env.PORT}/shopping/lists`,
-        {
-          userID: userID,
-          IDtype: 26,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: 'override',
+      if (status === 'fulfilled') {
+        const { error: createListError } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/shopping/lists`,
+          {
+            userID: userID,
+            IDtype: 26,
           },
-        },
-      );
-      if (createListError) {
-        global.logger.error(`Error creating new shopping list after updating ${shoppingListID} to 'fulfilled': ${createListError.message}`);
-        throw errorGen(`Error creating new shopping list after updating ${shoppingListID} to 'fulfilled'`, 400);
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              authorization: 'override',
+            },
+          },
+        );
+        if (createListError) {
+          global.logger.error(`Error creating new shopping list after updating ${shoppingListID} to 'fulfilled': ${createListError.message}`);
+          throw errorGen(`Error creating new shopping list after updating ${shoppingListID} to 'fulfilled'`, 400);
+        }
       }
       return updatedShoppingList;
     } catch (error) {

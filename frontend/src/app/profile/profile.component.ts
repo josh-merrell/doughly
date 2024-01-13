@@ -1,15 +1,13 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService, Profile } from '../shared/utils/authenticationService';
-import { AddRequestConfirmationModalComponent } from '../shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
+import { AuthService } from '../shared/utils/authenticationService';
 import { MatDialog } from '@angular/material/dialog';
-import { AddRequestErrorModalComponent } from '../shared/ui/add-request-error/add-request-error-modal.component';
 import { EditProfileModalComponent } from './ui/edit-profile-modal/edit-profile-modal.component';
 import { PhotoService } from '../shared/utils/photoService';
-import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
-import { Observable } from 'rxjs';
+import { ImageCropperModule } from 'ngx-image-cropper';
 import { Store } from '@ngrx/store';
 import { EditPhotoModalComponent } from './ui/edit-photo-modal/edit-photo-modal.component';
+import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'dl-profile',
@@ -77,18 +75,10 @@ export class ProfileComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'cancel' || !result) return;
-      if (result?.error) {
-        this.dialog.open(AddRequestErrorModalComponent, {
+      if (result === 'success') {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addFailureMessage: `Error updating Profile: ${result.error}`,
-          },
-        });
-      } else if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: {
-            results: result,
-            addSuccessMessage: 'Profile updated successfully!',
+            confirmationMessage: 'Profile updated successfully!',
           },
         });
       }
@@ -104,18 +94,10 @@ export class ProfileComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'cancel' || !result)
-      if (result?.error) {
-        this.dialog.open(AddRequestErrorModalComponent, {
+      if (result === 'success') {
+        this.dialog.open(ConfirmationModalComponent, {
           data: {
-            results: result,
-            addFailureMessage: `Error updating Profile photo: ${result.error}`,
-          },
-        });
-      } else if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: {
-            results: result,
-            addSuccessMessage: 'Profile photo updated successfully!',
+            confirmationMessage: 'Profile photo updated successfully!',
           },
         });
       }

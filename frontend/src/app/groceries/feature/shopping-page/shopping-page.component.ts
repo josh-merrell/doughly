@@ -12,10 +12,11 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  selectDeleting,
+  selectDeleting as selectDeletingShoppingListIngredient,
   selectShoppingListIngredients,
   selectTempPurchasing,
-  selectUpdating,
+  selectUpdating as selectUpdatingShoppingListIngredient,
+  selectError as selectErrorShoppingListIngredient,
 } from '../../state/shopping-list-ingredient-selectors';
 import { Store } from '@ngrx/store';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
@@ -26,7 +27,9 @@ import { FormsModule } from '@angular/forms';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
 import { MatDialog } from '@angular/material/dialog';
 import { PurchaseIngredientsModalComponent } from './ui/purchase-ingredients-modal/purchase-ingredients-modal.component';
-import { ListFulfilledModalComponent } from './ui/list-fulfilled-modal/list-fulfilled-modal.component';
+import { filter, take } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'dl-shopping-page',
@@ -53,19 +56,20 @@ export class ShoppingPageComponent {
   private shoppingListIngredients: WritableSignal<any> = signal([]);
   private ingredients: WritableSignal<any> = signal([]);
   public displaySLIngr = computed(() => {
-    const ingredients = this.ingredients();
-    const slIngr = this.shoppingListIngredients();
+    const ingredients = this.ingredients() || [];
+    const slIngr = this.shoppingListIngredients() || [];
     let itemsToSave: any[] = [];
     const items = slIngr.map((sling: any) => {
+      if (!sling || typeof sling !== 'object') return sling;
       const matchingIngredient = ingredients.find(
         (ingredient: any) => ingredient.ingredientID === sling.ingredientID
       );
-      if (!matchingIngredient) {
-        return sling;
-      }
       const newSLI = {
         ...sling,
-        name: matchingIngredient.name,
+        name:
+          matchingIngredient && matchingIngredient.name
+            ? matchingIngredient.name
+            : '',
       };
       newSLI.valueValid =
         newSLI.purchasedMeasurement &&
@@ -84,13 +88,10 @@ export class ShoppingPageComponent {
     });
     return {
       items: items.sort((a: any, b: any) => {
-        if (a.name && !b.name) {
-          return -1;
-        }
-        if (!a.name && b.name) {
-          return 1;
-        }
-        return a.name.localeCompare(b.name);
+        // Additional check for undefined or null names
+        const nameA = a.name || '';
+        const nameB = b.name || '';
+        return nameA.localeCompare(nameB);
       }),
       itemsToSave,
     };
@@ -102,11 +103,7 @@ export class ShoppingPageComponent {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private router: Router
-  ) {
-    effect(() => {
-      const shoppingListID = this.shoppingListID();
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -192,13 +189,11 @@ export class ShoppingPageComponent {
             if (!tempPurchasing) {
               this.isLoading.set(false);
               if (itemsToSave.length === neededItemCount) {
-                const successRef = this.dialog.open(
-                  ListFulfilledModalComponent,
-                  {
-                    width: '50%',
-                    maxWidth: '360px',
-                  }
-                );
+                this.dialog.open(ConfirmationModalComponent, {
+                  data: {
+                    confirmationMessage: 'Shopping List Completed',
+                  },
+                });
               } else {
                 this.router.navigate(['/groceries']);
               }
@@ -236,10 +231,38 @@ export class ShoppingPageComponent {
         shoppingListID: this.shoppingListID(),
       })
     );
-    this.store.select(selectDeleting).subscribe((deleting) => {
-      if (!deleting) {
-        this.isDeleting.set(false);
-      }
-    });
+    this.store
+      .select(selectDeletingShoppingListIngredient)
+      .pipe(
+        filter((deleting) => !deleting),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectErrorShoppingListIngredient)
+          .pipe(take(1))
+          .subscribe((error) => {
+            if (error) {
+              console.error(
+                `Shopping List Ingredient delete failed: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.dialog.open(ErrorModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
+              });
+            } else {
+              this.dialog.open(ConfirmationModalComponent, {
+                maxWidth: '380px',
+                data: {
+                  confirmationMessage: 'Item removed from Shopping List.',
+                },
+              });
+            }
+            this.isDeleting.set(false);
+          });
+      });
   }
 }

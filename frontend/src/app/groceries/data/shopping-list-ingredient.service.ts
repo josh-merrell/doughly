@@ -1,6 +1,5 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Store } from '@ngrx/store';
 import { HttpClient } from '@angular/common/http';
 import { IDService } from 'src/app/shared/utils/ID';
 import { Observable, forkJoin } from 'rxjs';
@@ -59,7 +58,6 @@ export class ShoppingListIngredientService {
         ingredient.source
       )
     );
-
     return forkJoin(requests);
   }
 

@@ -85,7 +85,6 @@ export class IngredientStockService {
   }
 
   bulkAdd(ingredientStocks: IngredientStock[]): Observable<IngredientStock[]> {
-    console.log(`BULK ADDING INGREDIENT STOCKS: `, ingredientStocks);
     const requests = ingredientStocks.map((ingredientStock) =>
       this.add(ingredientStock)
     );

@@ -1,12 +1,16 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
-import { States } from 'src/app/shared/utils/types';
 import { isState } from 'src/app/shared/utils/formValidator';
+import { Store } from '@ngrx/store';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { selectError as selectErrorProfile, selectUpdating as selectUpdatingProfile } from 'src/app/profile/state/profile-selectors';
+import { filter, take } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
 @Component({
   selector: 'dl-edit-profile-modal',
@@ -20,7 +24,7 @@ import { isState } from 'src/app/shared/utils/formValidator';
   templateUrl: './edit-profile-modal.component.html',
 })
 export class EditProfileModalComponent {
-  isEditing: boolean;
+  isEditing: boolean = false;
   form!: FormGroup;
   field: string = '';
   currVal: string = '';
@@ -38,9 +42,10 @@ export class EditProfileModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<EditProfileModalComponent>,
-    public authService: AuthService
+    public authService: AuthService,
+    private store: Store,
+    private dialog: MatDialog
   ) {
-    this.isEditing = false;
   }
 
   ngOnInit(): void {
@@ -70,18 +75,34 @@ export class EditProfileModalComponent {
   onSubmit() {
     this.isEditing = true;
     const formValues = this.form.value;
-    this.authService
-      .updateField(this.data.property, formValues[this.data.property])
-      .subscribe({
-        next: (result) => {
-          this.dialogRef.close('success');
+    this.store.dispatch(
+      ProfileActions.updateProfile({
+        property: this.data.property,
+        value: formValues[this.data.property],
+      })
+    );
+    this.store.select(selectUpdatingProfile).pipe(filter((updating) => !updating), take(1)).subscribe(() => {
+      this.store
+        .select(selectErrorProfile)
+        .pipe(take(1))
+        .subscribe((error) => {
+          if (error) {
+            console.error(
+              `Error updating profile: ${error.message}, CODE: ${error.statusCode}`
+            );
+            this.dialog.open(ErrorModalComponent, {
+              maxWidth: '380px',
+              data: {
+                errorMessage: error.message,
+                statusCode: error.statusCode,
+              },
+            });
+          } else {
+            this.dialogRef.close('success');
+          }
           this.isEditing = false;
-        },
-        error: (error) => {
-          this.dialogRef.close({ error: error });
-          this.isEditing = false;
-        },
-      });
+        });
+    });
   }
 
   onCancel() {
