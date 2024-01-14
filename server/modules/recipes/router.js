@@ -17,7 +17,7 @@ const {
   useRecipeSchema_body,
   constructRecipeSchema_body,
   SubscriptionDeleteSchema_params,
-  syncRecipe_body,
+  newRecipeVisionSchema_body,
 } = require('../../schemas/recipe-types');
 const recipeCategoriesRouter = require('./categories/router');
 const recipeComponentsRouter = require('./components/router');
@@ -30,6 +30,7 @@ router.use('/components', recipeComponentsRouter);
 
 router.use(authenticateJWT);
 
+router.post('/vision', routeValidator(newRecipeVisionSchema_body, 'body'), errorCatcher(h.createRecipeVision));
 router.post('/constructed', routeValidator(constructRecipeSchema_body, 'body'), errorCatcher(h.constructRecipe));
 router.post('/use/:recipeID', routeValidator(useRecipeSchema_params, 'params'), routeValidator(useRecipeSchema_body, 'body'), errorCatcher(h.useRecipe));
 router.post('/subscribe', generateID, routeValidator(subscribeRecipe_body, 'body'), errorCatcher(h.subscribeRecipe));

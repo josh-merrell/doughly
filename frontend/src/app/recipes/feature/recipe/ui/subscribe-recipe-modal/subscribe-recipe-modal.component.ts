@@ -28,7 +28,10 @@ import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool
 import { StepActions } from 'src/app/recipes/state/step/step-actions';
 import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
-import { selectAdding, selectError } from 'src/app/recipes/state/recipe/recipe-selectors';
+import {
+  selectAdding,
+  selectError,
+} from 'src/app/recipes/state/recipe/recipe-selectors';
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 
@@ -299,7 +302,7 @@ export class SubscribeRecipeModalComponent {
         else {
           newIngredient['ingredientID'] = ingredients[i].userIngredientID;
           newIngredient['purchaseUnitRatio'] = Number(
-            ingredients[i].userPurchaseUnitRatio
+            1/ingredients[i].userPurchaseUnitRatio
           );
           newIngredient['measurementUnit'] = ingredients[i].measurementUnit;
           newIngredient['measurement'] = Number(ingredients[i].measurement);
@@ -347,25 +350,31 @@ export class SubscribeRecipeModalComponent {
           constructBody,
         })
       );
-      this.store.select(selectAdding).pipe(filter((adding) => !adding)).subscribe(() => {
-        this.store.select(selectError).pipe(take(1)).subscribe((error) => {
-          if (error) {
-            console.error(
-              `Recipe add failed: ${error.message}, CODE: ${error.statusCode}`
-            );
-            this.dialog.open(ErrorModalComponent, {
-              maxWidth: '380px',
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
-              },
+      this.store
+        .select(selectAdding)
+        .pipe(filter((adding) => !adding))
+        .subscribe(() => {
+          this.store
+            .select(selectError)
+            .pipe(take(1))
+            .subscribe((error) => {
+              if (error) {
+                console.error(
+                  `Recipe add failed: ${error.message}, CODE: ${error.statusCode}`
+                );
+                this.dialog.open(ErrorModalComponent, {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
+                });
+              } else {
+                this.dialogRef.close('success');
+              }
+              this.loading.set(false);
             });
-          } else {
-            this.dialogRef.close('success');
-          }
-          this.loading.set(false);
         });
-      });
     }
   }
 }

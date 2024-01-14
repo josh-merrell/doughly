@@ -188,6 +188,16 @@ export class RecipeEffects {
     )
   );
 
+  loadRecipesAfterUnsubscribe$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.deleteRecipeSubscriptionSuccess),
+      mergeMap(() => [
+        RecipeActions.loadRecipes(),
+        RecipeActions.loadRecipeSubscriptions(),
+      ])
+    )
+  );
+
   deleteRecipe$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeActions.deleteRecipe),

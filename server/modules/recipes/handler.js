@@ -118,6 +118,24 @@ async function createRecipe(req, res) {
   }
 }
 
+async function createRecipeVision(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { base64_image } = req.body;
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.createVision({
+      authorization,
+      userID: req.userID,
+      base64_image,
+    });
+    return res.json(returner);
+  } catch (err) {
+    global.logger.error(`'recipes' 'createRecipeVision': ${err.message}`);
+    return res.status(err.code || 500).json({ error: err.message });
+  }
+}
+
 async function updateRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -193,7 +211,6 @@ async function constructRecipe(req, res) {
   const p = require('./processor')({ db });
   const { title, sourceRecipeID, servings, recipeCategoryID, lifespanDays, timePrep, timeBake, photoURL, type, components, ingredients, tools, steps } = req.body;
   const { authorization } = req.headers;
-  const { customID } = req;
   try {
     const returner = await p.constructRecipe({
       authorization,
@@ -267,6 +284,7 @@ module.exports = {
   getRecipeByID,
   getRecipeSubscriptions,
   createRecipe,
+  createRecipeVision,
   updateRecipe,
   deleteRecipe,
   useRecipe,
