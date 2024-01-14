@@ -341,7 +341,7 @@ export class UserRecipeComponent {
               data: {
                 confirmationMessage: `Unsubscribed from ${
                   this.recipe().title
-                }!}`,
+                }`,
               },
             }
           );

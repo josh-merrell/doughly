@@ -32,6 +32,14 @@ const newRecipeSchema_body = {
   },
 };
 
+const newRecipeVisionSchema_body = {
+  type: 'object',
+  required: ['base64_image'],
+  properties: {
+    base64_image: { type: 'string' },
+  },
+};
+
 const RecipeUpdateSchema_body = {
   type: 'object',
   properties: {
@@ -184,6 +192,7 @@ module.exports = {
   getRecipesSchema_query,
   getRecipeSchema_params,
   newRecipeSchema_body,
+  newRecipeVisionSchema_body,
   RecipeUpdateSchema_body,
   RecipeUpdateSchema_params,
   RecipeDeleteSchema_params,

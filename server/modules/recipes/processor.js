@@ -5,11 +5,14 @@ const { createRecipeLog, createRecipeFeedbackLog } = require('../../services/dbL
 const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
+const { visionRequest, matchRecipeItemRequest } = require('../../services/openai');
 
 module.exports = ({ db }) => {
   async function constructRecipe(options) {
     try {
-      const { customID, sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type, timePrep, timeBake, photoURL, components, ingredients, tools, steps } = options;
+      //start timer
+      const constructStartTime = new Date();
+      const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, components, ingredients, tools, steps } = options;
 
       console.log();
       let recipeID;
@@ -24,7 +27,7 @@ module.exports = ({ db }) => {
             title,
             servings,
             lifespanDays,
-            type: 'subscription',
+            type,
             timePrep,
             timeBake,
             photoURL,
@@ -78,38 +81,45 @@ module.exports = ({ db }) => {
           }
         }
 
-        //make axios call to add recipeSubscription
-        const { data: subscriptionID, error: subscriptionError } = await axios.post(
-          `${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe`,
-          {
-            authorization,
-            userID,
-            IDtype: 25,
-            sourceRecipeID: sourceRecipeID,
-            newRecipeID: recipe.recipeID,
-          },
-          { headers: { authorization } },
-        );
-        if (subscriptionError) {
-          // throw subscriptionError;
-          global.logger.error(`'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`);
-          throw errorGen(`'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`, 400);
-        }
-        createdItems.push({ subscriptionID: subscriptionID });
+        // if this is a subscription, create a recipeSubscription and sync the version of new recipe to match source recipe
+        if (type === 'subscription') {
+          //make axios call to add recipeSubscription
+          const { data: subscriptionID, error: subscriptionError } = await axios.post(
+            `${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe`,
+            {
+              authorization,
+              userID,
+              IDtype: 25,
+              sourceRecipeID: sourceRecipeID,
+              newRecipeID: recipe.recipeID,
+            },
+            { headers: { authorization } },
+          );
+          if (subscriptionError) {
+            // throw subscriptionError;
+            global.logger.error(`'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`);
+            throw errorGen(`'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`, 400);
+          }
+          createdItems.push({ subscriptionID: subscriptionID });
 
-        //get current version of source recipe and update newRecipe version to match
-        const { data: sourceRecipe, error: sourceRecipeError } = await db.from('recipes').select('version').eq('recipeID', sourceRecipeID).eq('deleted', false).single();
-        if (sourceRecipeError) {
-          global.logger.error(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`);
-          throw errorGen(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`, 400);
-        }
-        const { error: updateError } = await db.from('recipes').update({ version: sourceRecipe.version }).eq('recipeID', recipe.recipeID);
-        if (updateError) {
-          global.logger.error(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`);
-          throw errorGen(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`, 400);
+          //get current version of source recipe and update newRecipe version to match
+          const { data: sourceRecipe, error: sourceRecipeError } = await db.from('recipes').select('version').eq('recipeID', sourceRecipeID).eq('deleted', false).single();
+          if (sourceRecipeError) {
+            global.logger.error(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`);
+            throw errorGen(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`, 400);
+          }
+          const { error: updateError } = await db.from('recipes').update({ version: sourceRecipe.version }).eq('recipeID', recipe.recipeID);
+          if (updateError) {
+            global.logger.error(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`);
+            throw errorGen(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`, 400);
+          }
         }
 
+        // Stop timer and calculate duration
+        const constructEndTime = new Date();
+        const constructDuration = constructEndTime - constructStartTime;
         global.logger.info(`Successfully constructed recipe ${recipe.recipeID}`);
+        global.logger.info(`*TIME* constructRecipe: ${constructDuration / 1000} seconds`);
         return { recipeID: recipe.recipeID };
       } catch (error) {
         //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
@@ -482,9 +492,6 @@ module.exports = ({ db }) => {
     try {
       const { customID, authorization, userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = options;
       const status = 'noIngredients';
-      console.log(
-        `creating recipe. customID: ${customID} authorization: ${authorization}, userID: ${userID}, title: ${title}, servings: ${servings}, lifespanDays: ${lifespanDays}, type: ${type}, timePrep: ${timePrep}, timeBake: ${timeBake}, photoURL: ${photoURL}, recipeCategoryID: ${recipeCategoryID}`,
-      );
 
       if (!title) {
         global.logger.error(`Title is required`);
@@ -549,6 +556,269 @@ module.exports = ({ db }) => {
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    }
+  }
+
+  async function createVision(options) {
+    try {
+      const { userID, base64_image, authorization } = options;
+
+      // call openaiHandler to build recipe json
+      global.logger.info(`Calling visionRequest`);
+      const visionStartTime = new Date();
+      const { response, error } = await visionRequest(base64_image, userID, authorization, 'generateRecipeFromImage');
+      if (error) {
+        global.logger.error(`Error creating recipe from vision: ${error.message}`);
+        throw errorGen(`Error creating recipe from vision: ${error.message}`, 400);
+      }
+      const recipeJSON = JSON.parse(response);
+      // Stop timer and calculate duration
+      const visionEndTime = new Date();
+      const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
+      global.logger.info(`*TIME* recipe visionRequest: ${visionDuration / 1000} seconds`);
+
+      // validate resulting json, return if it lacks minimum requirements
+      if (recipeJSON.error) {
+        global.logger.error(`AI could not return valid recipe: ${recipeJSON.error}`);
+        throw errorGen(`AI could not return valid recipe: ${recipeJSON.error}`, 400);
+      }
+      if (!recipeJSON.title) {
+        global.logger.error(`no recipe title found in image`);
+        throw errorGen(`no recipe title found in image`, 400);
+      }
+      if (!recipeJSON.category) {
+        global.logger.error(`no recipe category found in image`);
+        throw errorGen(`no recipe category found in image`, 400);
+      }
+
+      // validate returned ingredients
+      if (recipeJSON.ingredients.length < 1) {
+        global.logger.error(`no ingredients found in image`);
+        throw errorGen(`no ingredients found in image`, 400);
+      }
+      for (let i = 0; i < recipeJSON.ingredients.length; i++) {
+        if (!recipeJSON.ingredients[i].name) {
+          global.logger.error(`ingredient missing name`);
+          throw errorGen(`ingredient missing name`, 400);
+        }
+        if (!recipeJSON.ingredients[i].measurement || recipeJSON.ingredients[i].measurement < 0) {
+          global.logger.error(`missing or invalid ingredient measurement`);
+          throw errorGen(`missing or invalid ingredient measurement`, 400);
+        }
+        if (!recipeJSON.ingredients[i].measurementUnit) {
+          global.logger.error(`missing ingredient measurementUnit`);
+          throw errorGen(`missing ingredient measurementUnit`, 400);
+        }
+      }
+
+      //validate returned tools
+      if (!recipeJSON.tools || recipeJSON.tools.length < 1) {
+        recipeJSON['tools'] = [{ quantity: -1 }];
+      } else {
+        for (let i = 0; i < recipeJSON.tools.length; i++) {
+          if (!recipeJSON.tools[i].name) {
+            global.logger.error(`tool missing name`);
+            throw errorGen(`tool missing name`, 400);
+          }
+          if (recipeJSON.tools[i].quantity < 0) {
+            global.logger.error(`invalid tool quantity`);
+            throw errorGen(`invalid tool quantity`, 400);
+          }
+          if (!recipeJSON.tools[i].quantity) {
+            recipeJSON.tools[i]['quantity'] = 1;
+          }
+        }
+      }
+
+      //validate return steps
+      if (recipeJSON.steps.length < 1) {
+        global.logger.error(`no steps found in image`);
+        throw errorGen(`no steps found in image`, 400);
+      } else {
+        for (let i = 0; i < recipeJSON.steps.length; i++) {
+          if (!recipeJSON.steps[i].title) {
+            global.logger.error(`step missing title`);
+            throw errorGen(`step missing title`, 400);
+          }
+          if (!recipeJSON.steps[i].description) {
+            global.logger.error(`step missing description`);
+            throw errorGen(`step missing description`, 400);
+          }
+          if (!recipeJSON.steps[i].sequence || recipeJSON.steps[i].sequence < 1) {
+            global.logger.error(`missing or invalid step sequence`);
+            throw errorGen(`missing or invalid step sequence`, 400);
+          }
+          recipeJSON.steps[i].stepID = 0;
+        }
+      }
+
+      //match ingredients with user Ingredients
+      matchedIngredients = await matchIngredients(recipeJSON.ingredients, authorization, userID);
+
+      // //match tools with user tools
+      matchedTools = await matchTools(recipeJSON.tools, authorization, userID);
+
+      // //match category
+      matchedCategoryID = await matchCategory(recipeJSON.category, authorization, userID);
+
+      // prepare constructRecipe body
+      const constructBody = {
+        title: recipeJSON.title,
+        servings: recipeJSON.servings || 1,
+        lifespanDays: recipeJSON.lifespanDays || 1,
+        timePrep: recipeJSON.timePrep || 1,
+        type: 'private',
+        sourceRecipeID: 0,
+        recipeCategoryID: matchedCategoryID,
+        ingredients: matchedIngredients,
+        tools: matchedTools,
+        steps: recipeJSON.steps,
+        //include 'timeBake' if it isn't null on the recipeJSON
+        ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }),
+      };
+      // // call constructRecipe with body
+      // const { data: recipe, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
+      // if (constructError) {
+      //   global.logger.error(`Error constructing recipe from AI json: ${constructError.message}`);
+      //   throw errorGen(`Error constructing recipe from AI json: ${constructError.message}`, 400);
+      // }
+      // recipeID = recipe.recipeID;
+      // return recipeID;
+
+      const endTime = new Date();
+      const totalDuration = endTime - visionStartTime;
+      // global.logger.info(`Time taken to decipher and construct recipe: ${totalDuration / 1000} seconds`);
+      global.logger.info(`*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`);
+      return constructBody;
+    } catch (error) {
+      global.logger.error(`Unhandled Error: ${error.message}`);
+      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    }
+  }
+
+  async function matchIngredients(ingredients, authorization, userID) {
+    // get user ingredients from supabase
+    const { data: userIngredients, error: userIngredientsError } = await db.from('ingredients').select('name, purchaseUnit, ingredientID, gramRatio').eq('userID', userID).eq('deleted', false);
+    if (userIngredientsError) {
+      global.logger.error(`Error getting userIngredients: ${userIngredientsError.message}`);
+      throw errorGen(`Error getting userIngredients: ${userIngredientsError.message}`, 400);
+    }
+    const userIngredientNames = userIngredients.map((i) => {
+      return { name: i.name, ingredientID: i.ingredientID, purchaseUnit: i.purchaseUnit };
+    });
+    const matchedIngredients = [];
+
+    // Create an array of promises
+    const promises = ingredients.map((ingredient) =>
+      matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', { name: ingredient.name, measurementUnit: ingredient.measurementUnit }, userIngredientNames)
+        .then((data) => {
+          const ingredientJSON = JSON.parse(data.response);
+
+          if (ingredientJSON.lifespanDays) {
+            return {
+              ...ingredient,
+              ingredientID: 0,
+              lifespanDays: ingredientJSON.lifespanDays,
+              purchaseUnit: ingredientJSON.purchaseUnit,
+              gramRatio: ingredient.gramRatio,
+              purchaseUnitRatio: ingredientJSON.purchaseUnitRatio,
+            };
+          } else {
+            return {
+              ...ingredient,
+              ingredientID: ingredientJSON.ingredientID,
+              purchaseUnitRatio: ingredientJSON.purchaseUnitRatio,
+            };
+          }
+        })
+        .catch((error) => {
+          global.logger.error(`Error matching ingredient: ${error.message}`);
+          return null;
+        }),
+    );
+    const results = await Promise.allSettled(promises);
+
+    // Filter successful responses and add to matchedIngredients
+    results.forEach((result) => {
+      if (result.status === 'fulfilled' && result.value) {
+        matchedIngredients.push(result.value);
+      }
+    });
+
+    // combine multiple instances of the same ingredientID using reduce, except where it is 0
+    const combinedIngredients = matchedIngredients.reduce((acc, curr) => {
+      if (curr.ingredientID === 0) {
+        acc.push(curr);
+        return acc;
+      }
+      const existingIngredient = acc.find((i) => i.ingredientID === curr.ingredientID);
+      //only combine if the measurementUnit is the same
+      if (existingIngredient && existingIngredient.measurementUnit === curr.measurementUnit) {
+        existingIngredient.measurement += curr.measurement;
+        return acc;
+      }
+      acc.push(curr);
+      return acc;
+    }, []);
+    return combinedIngredients;
+  }
+
+  async function matchTools(tools, authorization, userID) {
+    // get user tools from supabase
+    const { data: userTools, error: userToolsError } = await db.from('tools').select('name, toolID').eq('userID', userID).eq('deleted', false);
+    if (userToolsError) {
+      global.logger.error(`Error getting userTools: ${userToolsError.message}`);
+      throw errorGen(`Error getting userTools: ${userToolsError.message}`, 400);
+    }
+    const matchedTools = [];
+
+    // Create an array of promises
+    const promises = tools.map((tool) => {
+      if (tool.quantity === -1) {
+        // Return a resolved promise for dummy tools
+        return Promise.resolve({ quantity: -1 });
+      }
+      return matchRecipeItemRequest(userID, authorization, 'findMatchingTool', tool.name, userTools)
+        .then((data) => {
+          const toolJSON = JSON.parse(data.response);
+          return toolJSON.toolID ? { toolID: toolJSON.toolID, name: tool.name, quantity: tool.quantity } : { toolID: 0, quantity: tool.quantity, name: tool.name };
+        })
+        .catch((error) => {
+          global.logger.error(`Error matching tool: ${error.message}`);
+          return null;
+        });
+    });
+    const results = await Promise.allSettled(promises);
+
+    // Filter successful responses and add to matchedTools
+    results.forEach((result) => {
+      if (result.status === 'fulfilled' && result.value) {
+        matchedTools.push(result.value);
+      }
+    });
+
+    return matchedTools;
+  }
+
+  async function matchCategory(recipeCategory, authorization, userID) {
+    // get categories from supabase
+    const { data: categories, error: categoriesError } = await db.from('recipeCategories').select('recipeCategoryID, name');
+    if (categoriesError) {
+      global.logger.error(`Error getting categories: ${categoriesError.message}`);
+      throw errorGen(`Error getting categories: ${categoriesError.message}`, 400);
+    }
+    const { response, error } = await matchRecipeItemRequest(userID, authorization, 'findMatchingCategory', recipeCategory, categories);
+    if (error) {
+      global.logger.error(`Error matching category: ${error.message}`);
+      throw errorGen(`Error matching category: ${error.message}`, 400);
+    }
+    const categoryJSON = JSON.parse(response);
+
+    if (categoryJSON.recipeCategoryID) {
+      return categoryJSON.recipeCategoryID;
+    } else {
+      // return categoryID for 'Other'
+      return 2023112900000005;
     }
   }
 
@@ -991,6 +1261,7 @@ module.exports = ({ db }) => {
     },
     constructRecipe,
     create,
+    createVision,
     update,
     delete: deleteRecipe,
     use: useRecipe,
