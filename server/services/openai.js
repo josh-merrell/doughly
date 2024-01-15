@@ -36,7 +36,7 @@ const visionRequest = async (base64_image, userID, authorization, messageType) =
     throw errorGen('Content Omitted due to filter being flagged', 400);
   }
 
-  console.log(`RAW RECIPEJSON: ${chatCompletionObject.choices[0].message.content}`);
+  // console.log(`RAW RECIPEJSON: ${chatCompletionObject.choices[0].message.content}`);
   //Clean up the response JSON
   let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');
   responseJSON = responseJSON.trim().replace(/^`{3}|`{3}$/g, '');
@@ -116,7 +116,7 @@ const requestMessages = {
 'ingredient' <object>: An object with properties: 
 -'name' <string> (The name should not include any descriptive words and should be capitalized, for example 'stemmed broccoli' should be 'Broccoli', and 'dry yeast' should be 'Yeast'), 
 -'measurement' <number-decimal>, 
--'measurementUnit' <string> (required, find the closest match from this array for the measurement Unit defined in the recipe: ['gram', 'kilogram', 'pint', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'quart', 'gallon', 'milliliter', 'liter', 'packet', 'bag', 'box', 'carton', 'pallet', 'bottle', 'container', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen']), 
+-'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe: ['gram', 'kilogram', 'pint', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'quart', 'gallon', 'milliliter', 'liter', 'packet', 'bag', 'box', 'carton', 'pallet', 'bottle', 'container', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen']). Example valid selection is 'container', example invalid selection is 'package', 
 -'preparation' <string>. 'preparation' is optional and describes how the ingredient should be prepared, for example, 'chopped' or 'minced'.
 'tools' <array>: An array of objects, each one a 'tool'
 'tool' <object>: An object with properties 'name' <string> and 'quantity' <number> (default 1).
@@ -143,7 +143,7 @@ Do not include any other properties in the JSON object response. If an optional 
           type: 'text',
           text: `You are provided a recipe ingredient, which includes 'name', 'measurement', and 'measurementUnit'. You are also provided an array of user ingredients. each includes a 'name', 'ingredientID', and 'purchaseUnit'. Using only the 'name' property, attempt to find a matching user ingredient for the provided recipe ingredient. For example, 'flour' would be a match for 'wheat flour', but 'rose water' would not be a match for 'water' If no close match is found, return the following json:
           'lifespanDays' <number>: estimate of number of days ingredient will stay usable if stored properly, 
-          'purchaseUnit' <string>: a string chosen from purchaseUnitOptions array in which this ingredient is likely to be purchased. This may be different from the measurementUnit of the ingredient itself. Must be a value from this array: ['gram', 'kilogram', 'pint', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'quart', 'gallon', 'milliliter', 'liter', 'packet', 'bag', 'box', 'carton', 'pallet', 'bottle', 'container', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen'].
+          'purchaseUnit' <string>: (required, choose the unit from this list that most closely matches how the ingredient might be purchased: ['gram', 'kilogram', 'pint', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'quart', 'gallon', 'milliliter', 'liter', 'packet', 'bag', 'box', 'carton', 'pallet', 'bottle', 'container', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen']). Example valid selection is 'container', example invalid selection is 'package', 
           'gramRatio' <number>: an estimate of how many grams the chosen purchaseUnit of this ingredient would weigh,
           'purchaseUnitRatio' <number>: an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient.
           
