@@ -143,18 +143,20 @@ module.exports = ({ db }) => {
     try {
       if (ingredient.ingredientID === 0) {
         // If ingredientID is not provided, create a new ingredient
+        const body = {
+          authorization,
+          userID,
+          IDtype: 12,
+          name: ingredient.name,
+          lifespanDays: Math.round(Number(ingredient.lifespanDays)),
+          purchaseUnit: ingredient.purchaseUnit,
+          gramRatio: Math.round(Number(ingredient.gramRatio)),
+          brand: ingredient.brand,
+        }
+        console.log(`CREATING NEW INGREDIENT BODY: ${JSON.stringify(body)}`)
         const { data } = await axios.post(
           `${process.env.NODE_HOST}:${process.env.PORT}/ingredients`,
-          {
-            authorization,
-            userID,
-            IDtype: 12,
-            name: ingredient.name,
-            lifespanDays: ingredient.lifespanDays,
-            purchaseUnit: ingredient.purchaseUnit,
-            gramRatio: ingredient.gramRatio,
-            brand: ingredient.brand,
-          },
+          body,
           { headers: { authorization } },
         );
         ingredientID = data.ingredientID;
@@ -676,20 +678,22 @@ module.exports = ({ db }) => {
         //include 'timeBake' if it isn't null on the recipeJSON
         ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }),
       };
-      // // call constructRecipe with body
-      // const { data: recipe, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
-      // if (constructError) {
-      //   global.logger.error(`Error constructing recipe from AI json: ${constructError.message}`);
-      //   throw errorGen(`Error constructing recipe from AI json: ${constructError.message}`, 400);
-      // }
-      // recipeID = recipe.recipeID;
-      // return recipeID;
+      console.log(`CONSTRUCT BODY: ${JSON.stringify(constructBody)}`)
+      // return constructBody;
+
+      // call constructRecipe with body
+      const { data: recipe, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
+      if (constructError) {
+        global.logger.error(`Error constructing recipe from AI json: ${constructError.message}`);
+        throw errorGen(`Error constructing recipe from AI json: ${constructError.message}`, 400);
+      }
+      recipeID = recipe.recipeID;
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;
       // global.logger.info(`Time taken to decipher and construct recipe: ${totalDuration / 1000} seconds`);
       global.logger.info(`*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`);
-      return constructBody;
+      return recipeID;
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);
@@ -713,6 +717,7 @@ module.exports = ({ db }) => {
       matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', { name: ingredient.name, measurementUnit: ingredient.measurementUnit }, userIngredientNames)
         .then((data) => {
           const ingredientJSON = JSON.parse(data.response);
+          console.log(`MAPPED INGREDIENT JSON: ${JSON.stringify(ingredientJSON)}`);
 
           if (ingredientJSON.lifespanDays) {
             return {
@@ -720,7 +725,7 @@ module.exports = ({ db }) => {
               ingredientID: 0,
               lifespanDays: ingredientJSON.lifespanDays,
               purchaseUnit: ingredientJSON.purchaseUnit,
-              gramRatio: ingredient.gramRatio,
+              gramRatio: ingredientJSON.gramRatio,
               purchaseUnitRatio: ingredientJSON.purchaseUnitRatio,
             };
           } else {
