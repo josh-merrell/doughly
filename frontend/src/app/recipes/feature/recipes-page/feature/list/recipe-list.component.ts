@@ -19,7 +19,6 @@ import {
 import { Store } from '@ngrx/store';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
-import { EffectSources } from '@ngrx/effects';
 import { MatDialog } from '@angular/material/dialog';
 import { AddRecipeModalComponent } from '../../ui/recipe/add-recipe-modal/add-recipe-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
@@ -186,7 +185,7 @@ export class RecipeListComponent {
       data: {
         recipeCategories: this.categories(),
       },
-      width: '90%',
+      width: '50%',
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
