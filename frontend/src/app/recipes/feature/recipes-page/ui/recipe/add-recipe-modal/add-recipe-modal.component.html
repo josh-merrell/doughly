@@ -1,32 +1,39 @@
 <div
-  class="relative h-dl-14 w-full overflow-y-auto bg-white px-dl-5 py-dl-4 text-left transition-all"
+  class="relative h-dl-17 w-full overflow-y-auto bg-white px-dl-5 py-dl-4 text-left transition-all"
 >
-  <div class="relative flex w-full flex-col">
+  <div class="relative flex w-full h-full flex-col items-center">
     <!-- Title -->
-    <h3 class="leading-dl-4 text-dl-7 mb-dl-5 font-dl-3 text-dl-grey-4">
-      Add Recipe - Choose Method
+    <h3 class="leading-dl-4 mb-dl-7 text-dl-7 font-dl-3 text-dl-grey-4">
+      Add Recipe
     </h3>
 
     <!-- Vision Add Button -->
     <button
       type="button"
-      *ngIf="isLoading() === false"
-      class="mb-dl-2 bg-dl-pink-4 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-2 block h-dl-5 w-dl-14 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
       (click)="onVisionAddClick()"
     >
-      Use Smart View
+      Import With Smart View
     </button>
-    <p class="mb-dl-4 pl-dl-3 text-dl-4 font-dl-2 text-dl-grey-5">Share a photo of a physical recipe or a screenshot of a digital recipe and let us do the heavy lifting</p>
+    <p class=" px-dl-4 text-dl-5 font-dl-2 text-dl-grey-2">
+      Share a photo of a physical recipe or a screenshot of a digital recipe and
+      let us do the heavy lifting.
+    </p>
+
+    <!-- Spacer div -->
+    <div class="flex-grow"></div>
 
     <!-- Manual Add Button -->
     <button
       type="button"
-      *ngIf="isLoading() === false"
-      class="mb-dl-2 bg-white block border-2 border-dl-pink-4 h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-2 block h-dl-5 w-dl-14 whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onManualAddClick()"
     >
-      Add Manually
+      Build Manually
     </button>
-    <p class="mb-dl-4 pl-dl-3 text-dl-4 font-dl-2 text-dl-grey-5">Build a new recipe from scratch. Include General Info, Ingredients, Tools, and Steps</p>
+    <p class="mb-dl-4 px-dl-4 text-dl-5 font-dl-2 text-dl-grey-2">
+      Build a new recipe from scratch. Include General Info, Ingredients, Tools,
+      and Steps.
+    </p>
   </div>
 </div>

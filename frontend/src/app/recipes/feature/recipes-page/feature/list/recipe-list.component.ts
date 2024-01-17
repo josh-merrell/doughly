@@ -185,7 +185,7 @@ export class RecipeListComponent {
       data: {
         recipeCategories: this.categories(),
       },
-      width: '50%',
+      width: '80%',
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
