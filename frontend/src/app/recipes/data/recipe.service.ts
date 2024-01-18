@@ -20,7 +20,6 @@ import {
 import { selectRecipeCategories } from '../state/recipe-category/recipe-category-selectors';
 import { RecipeCategory } from '../state/recipe-category/recipe-category-state';
 import { selectRecipeIngredientsByRecipeID } from '../state/recipe-ingredient/recipe-ingredient-selectors';
-import { selectRecipeToolsByRecipeID } from '../state/recipe-tool/recipe-tool-selectors';
 import { selectIngredientByID } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectIngredientStocksByIngredientID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { IDService } from 'src/app/shared/utils/ID';
@@ -102,7 +101,9 @@ export class RecipeService {
   //     `${this.API_URL}/subscriptions/${subscriptionID}`
   //   );
   // }
-  getSubscriptionsByRecipeID(recipeID: number): Observable<RecipeSubscription[]> {
+  getSubscriptionsByRecipeID(
+    recipeID: number
+  ): Observable<RecipeSubscription[]> {
     return this.http.get<any[]>(`${this.API_URL}/${recipeID}/subscriptions`);
   }
 
@@ -122,6 +123,10 @@ export class RecipeService {
     return this.http.post<Recipe>(this.API_URL, body);
   }
 
+  visionAdd(recipeImageURL): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/vision`, { recipeImageURL });
+  }
+
   delete(recipeID: number): Observable<Recipe> {
     return this.http.delete<Recipe>(`${this.API_URL}/${recipeID}`);
   }
@@ -135,7 +140,7 @@ export class RecipeService {
 
   getShoppingList(
     recipeID: number,
-    date = new Date(),
+    date = new Date()
   ): Observable<ShoppingList> {
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
@@ -257,7 +262,7 @@ export class RecipeService {
     const usageLogs = onlyMe === 'true' ? this.myUses : this.allUses;
     return usageLogs ? usageLogs.length : 0;
   }
-  
+
   useRecipe(
     recipeID: number,
     satisfaction: number,
@@ -281,7 +286,7 @@ export class RecipeService {
     const body = {
       sourceRecipeID: sourceRecipeID,
       childRecipeID: recipeID,
-    }
+    };
     return this.http.post<any>(`${this.API_URL}/sync`, body);
   }
 
