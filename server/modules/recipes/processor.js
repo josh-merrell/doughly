@@ -6,6 +6,7 @@ const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
 const { visionRequest, matchRecipeItemRequest } = require('../../services/openai');
+const { sendSSEMessage } = require('../../server.js');
 
 module.exports = ({ db }) => {
   async function constructRecipe(options) {
@@ -563,12 +564,13 @@ module.exports = ({ db }) => {
 
   async function createVision(options) {
     try {
-      const { userID, base64_image, authorization } = options;
+      const { userID, recipeImageURL, authorization } = options;
 
       // call openaiHandler to build recipe json
+      sendSSEMessage(userID, { message: `Validated image, analyzing...`})
       global.logger.info(`Calling visionRequest`);
       const visionStartTime = new Date();
-      const { response, error } = await visionRequest(base64_image, userID, authorization, 'generateRecipeFromImage');
+      const { response, error } = await visionRequest(recipeImageURL, userID, authorization, 'generateRecipeFromImage');
       if (error) {
         global.logger.error(`Error creating recipe from vision: ${error.message}`);
         throw errorGen(`Error creating recipe from vision: ${error.message}`, 400);
@@ -577,6 +579,7 @@ module.exports = ({ db }) => {
       // Stop timer and calculate duration
       const visionEndTime = new Date();
       const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
+      sendSSEMessage(userID, { message: `Got recipe details from image in ${visionDuration} seconds` });
       global.logger.info(`*TIME* recipe visionRequest: ${visionDuration / 1000} seconds`);
 
       // validate resulting json, return if it lacks minimum requirements
@@ -593,6 +596,7 @@ module.exports = ({ db }) => {
         throw errorGen(`no recipe category found in image`, 400);
       }
 
+      sendSSEMessage(userID, { message: `Recipe General details look good, checking ingredient details...` });
       // validate returned ingredients
       if (recipeJSON.ingredients.length < 1) {
         global.logger.error(`no ingredients found in image`);
@@ -613,6 +617,7 @@ module.exports = ({ db }) => {
         }
       }
 
+      sendSSEMessage(userID, { message: `Checking tool details...` });
       //validate returned tools
       if (!recipeJSON.tools || recipeJSON.tools.length < 1) {
         recipeJSON['tools'] = [{ quantity: -1 }];
@@ -633,6 +638,7 @@ module.exports = ({ db }) => {
       }
 
       //validate return steps
+      sendSSEMessage(userID, { message: `Checking step details...` });
       if (recipeJSON.steps.length < 1) {
         global.logger.error(`no steps found in image`);
         throw errorGen(`no steps found in image`, 400);
@@ -655,12 +661,15 @@ module.exports = ({ db }) => {
       }
 
       //match ingredients with user Ingredients
+      sendSSEMessage(userID, { message: `Matching recipe Ingredients with User Ingredients` });
       matchedIngredients = await matchIngredients(recipeJSON.ingredients, authorization, userID);
 
       // //match tools with user tools
+      sendSSEMessage(userID, { message: `Matching recipe Tools with User Tools` });
       matchedTools = await matchTools(recipeJSON.tools, authorization, userID);
 
       // //match category
+      sendSSEMessage(userID, { message: `Finding Appropriate Category for new Recipe` });
       matchedCategoryID = await matchCategory(recipeJSON.category, authorization, userID);
 
       // prepare constructRecipe body
@@ -678,10 +687,10 @@ module.exports = ({ db }) => {
         //include 'timeBake' if it isn't null on the recipeJSON
         ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }),
       };
-      console.log(`CONSTRUCT BODY: ${JSON.stringify(constructBody)}`)
-      // return constructBody;
+      // console.log(`CONSTRUCT BODY: ${JSON.stringify(constructBody)}`)
 
       // call constructRecipe with body
+      sendSSEMessage(userID, { message: `Details ready, building new Recipe` });
       const { data: recipe, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
       if (constructError) {
         global.logger.error(`Error constructing recipe from AI json: ${constructError.message}`);
@@ -693,6 +702,7 @@ module.exports = ({ db }) => {
       const totalDuration = endTime - visionStartTime;
       // global.logger.info(`Time taken to decipher and construct recipe: ${totalDuration / 1000} seconds`);
       global.logger.info(`*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`);
+      sendSSEMessage(userID, { message: `done` });
       return recipeID;
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
@@ -712,8 +722,11 @@ module.exports = ({ db }) => {
     });
     const matchedIngredients = [];
 
+    console.log(`USER INGREDIENT NAMES: ${JSON.stringify(userIngredientNames)}`)
+    console.log(`RECIPE INGREDIENT NAMES: ${JSON.stringify(ingredients)}`)
     // Create an array of promises
     const promises = ingredients.map((ingredient) =>
+      // console.log(`RI: ${ingredient.name}, USER INGREDIENTS: ${JSON.stringify(userIngredientNames)}`),
       matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', { name: ingredient.name, measurementUnit: ingredient.measurementUnit }, userIngredientNames)
         .then((data) => {
           const ingredientJSON = JSON.parse(data.response);

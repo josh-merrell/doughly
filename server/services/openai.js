@@ -11,7 +11,7 @@ const getClient = async () => {
   return openai;
 };
 
-const visionRequest = async (base64_image, userID, authorization, messageType) => {
+const visionRequest = async (recipeImageURL, userID, authorization, messageType) => {
   const client = await getClient();
   const body = {
     messages: [requestMessages[messageType].message],
@@ -19,7 +19,7 @@ const visionRequest = async (base64_image, userID, authorization, messageType) =
     model: 'gpt-4-vision-preview',
     max_tokens: 2000,
   };
-  body.messages[0].content[1].image_url.url = base64_image;
+  body.messages[0].content[1].image_url.url = recipeImageURL;
 
   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
     throw errorGen(`OpenAI request failed: ${err.message}`, 500);

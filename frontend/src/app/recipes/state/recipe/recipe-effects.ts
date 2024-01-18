@@ -44,6 +44,48 @@ export class RecipeEffects {
     );
   });
 
+  visionAddRecipe$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.visionAddRecipe),
+      mergeMap((action) =>
+        this.recipeService.visionAdd(action.recipeImageURL).pipe(
+          map((recipeID) =>
+            RecipeActions.visionAddRecipeSuccess({
+              recipeID,
+            })
+          ),
+          catchError((error) =>
+            of(
+              RecipeActions.visionAddRecipeFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
+  //load recipe items after vision add
+  loadRecipesAfterVisionAdd$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.visionAddRecipeSuccess),
+      mergeMap(() => [
+        RecipeActions.loadRecipes(),
+        RecipeIngredientActions.loadRecipeIngredients(),
+        RecipeToolActions.loadRecipeTools(),
+        StepActions.loadSteps(),
+        RecipeStepActions.loadRecipeSteps(),
+        IngredientActions.loadIngredients(),
+        ToolActions.loadTools(),
+      ])
+    )
+  );
+
   constructRecipe$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeActions.constructRecipe),
