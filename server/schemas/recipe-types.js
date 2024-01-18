@@ -34,9 +34,9 @@ const newRecipeSchema_body = {
 
 const newRecipeVisionSchema_body = {
   type: 'object',
-  required: ['base64_image'],
+  required: ['recipeImageURL'],
   properties: {
-    base64_image: { type: 'string' },
+    recipeImageURL: { type: 'string' },
   },
 };
 
@@ -174,7 +174,7 @@ const subscribeRecipe_body = {
     sourceRecipeID: { type: 'integer' },
     newRecipeID: { type: 'integer' },
   },
-}
+};
 
 const syncRecipe_body = {
   type: 'object',
@@ -185,8 +185,7 @@ const syncRecipe_body = {
     newIngredientMappings: { type: 'array', items: { type: 'object' } },
     newToolMappings: { type: 'array', items: { type: 'object' } },
   },
-}
-
+};
 
 module.exports = {
   getRecipesSchema_query,

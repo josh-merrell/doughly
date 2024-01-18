@@ -6,6 +6,7 @@ const winston = require('winston');
 const cors = require('cors');
 const https = require('https');
 require('dotenv').config();
+
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -75,6 +76,33 @@ app.use((req, res, next) => {
 });
 app.use(queryArrayParser);
 
+// Maintain map of connected clients, used for Server-Sent Events
+const activeConnections = new Map();
+// endpoint for Frontend to open new SSE connection
+app.use('/recipe-progress', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  // Add this client to the map
+  const userID = req.query.userID;
+  global.logger.info(`*SSE Session* connected userID: ${userID}`);
+  activeConnections.set(userID, res);
+
+  // Remove the connection from the map when the client closes the connection
+  req.on('close', () => {
+    global.logger.info(`*SSE Session* disconnected userID: ${userID}`);
+    activeConnections.delete(req.userID);
+  });
+});
+// Function to send a message to connected client
+const sendSSEMessage = (userID, message) => {
+  const res = activeConnections.get(userID);
+  if (res) {
+    res.write(`data: ${JSON.stringify(message)}\n\n`);
+  }
+};
+
 app.use('/uploads', uploadsRouter);
 app.use('/persons', personsRouter);
 app.use('/recipes', recipesRouter);
@@ -92,3 +120,5 @@ const port = 3000;
 app.listen(port, () => {
   global.logger.info(`Server is running at http://localhost:${port}`);
 });
+
+module.exports.sendSSEMessage = sendSSEMessage;

@@ -98,6 +98,20 @@ export const recipeReducer = createReducer(
     error,
     adding: false,
   })),
+  on(RecipeActions.visionAddRecipe, (state) => ({
+    ...state,
+    error: null,
+    adding: true,
+  })),
+  on(RecipeActions.visionAddRecipeSuccess, (state, { recipeID }) => ({
+    ...state,
+    adding: false,
+  })),
+  on(RecipeActions.visionAddRecipeFailure, (state, { error }) => ({
+    ...state,
+    error,
+    adding: false,
+  })),
   on(RecipeActions.constructRecipe, (state) => ({
     ...state,
     error: null,

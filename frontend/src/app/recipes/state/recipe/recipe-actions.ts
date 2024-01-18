@@ -57,15 +57,28 @@ const addRecipeFailure = createAction(
   props<{ error: any }>()
 );
 
-const constructRecipe = createAction('[Recipes] Construct', props<{constructBody: any}>());
-const constructRecipeSuccess = createAction(
-  '[Recipes] Construct Success'
+const visionAddRecipe = createAction(
+  '[Recipes] Vision Add',
+  props<{ recipeImageURL: string }>()
 );
+const visionAddRecipeSuccess = createAction(
+  '[Recipes] Vision Add Success',
+  props<{ recipeID: number }>()
+);
+const visionAddRecipeFailure = createAction(
+  '[Recipes] Vision Add Failure',
+  props<{ error: any }>()
+);
+
+const constructRecipe = createAction(
+  '[Recipes] Construct',
+  props<{ constructBody: any }>()
+);
+const constructRecipeSuccess = createAction('[Recipes] Construct Success');
 const constructRecipeFailure = createAction(
   '[Recipes] Construct Failure',
   props<{ error: any }>()
 );
-
 
 const deleteRecipe = createAction(
   '[Recipes] Delete',
@@ -98,17 +111,18 @@ const updateRecipeStatus = createAction(
 );
 const useRecipe = createAction(
   '[Recipes] Use',
-  props<{ recipeID: number; satisfaction: number; difficulty: number; note: string }>()
+  props<{
+    recipeID: number;
+    satisfaction: number;
+    difficulty: number;
+    note: string;
+  }>()
 );
-const useRecipeSuccess = createAction(
-  '[Recipes] Use Success'
-);
+const useRecipeSuccess = createAction('[Recipes] Use Success');
 const useRecipeFailure = createAction(
   '[Recipes] Use Failure',
   props<{ error: any }>()
 );
-
-
 
 export const RecipeActions = {
   loadRecipes,
@@ -126,6 +140,9 @@ export const RecipeActions = {
   addRecipe,
   addRecipeSuccess,
   addRecipeFailure,
+  visionAddRecipe,
+  visionAddRecipeSuccess,
+  visionAddRecipeFailure,
   constructRecipe,
   constructRecipeSuccess,
   constructRecipeFailure,
