@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AppFooterComponent } from './footer/feature/app-footer.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { Store } from '@ngrx/store';
@@ -18,6 +18,7 @@ import { ToolStockActions } from './kitchen/feature/Inventory/feature/tool-inven
 import { RecipeToolActions } from './recipes/state/recipe-tool/recipe-tool-actions';
 import { RecipeStepActions } from './recipes/state/recipe-step/recipe-step-actions';
 import { ShoppingListActions } from './groceries/state/shopping-list-actions';
+import { App, URLOpenListenerEvent } from '@capacitor/app';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -32,7 +33,27 @@ import { ShoppingListActions } from './groceries/state/shopping-list-actions';
 export class AppComponent {
   title = 'frontend';
 
-  constructor(public store: Store) {}
+  constructor(public store: Store, private router: Router, private zone: NgZone) {
+    // listense for deep-links
+    this.initializeApp();
+  }
+
+  initializeApp() {
+    App.addListener('appUrlOpen', (event: URLOpenListenerEvent ) => {
+      this.zone.run(() => {
+        // Example url: https://beerswift.app/tabs/tab2
+        // slug = /tabs/tab2
+
+        // Our app url: https://doughly.co
+        const slug = event.url.split(".co").pop();
+        if (slug) {
+          this.router.navigateByUrl(slug);
+        }
+        // If no match, do nothing - let regular routing
+        // logic take over
+      })
+    })
+  }
 
   ngOnInit() {
     //** LOAD STATE **

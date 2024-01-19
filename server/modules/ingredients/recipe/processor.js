@@ -67,8 +67,8 @@ module.exports = ({ db }) => {
       throw errorGen(`Error validating provided ingredientID`, 400);
     }
     if (existingIngredient.length === 0) {
-      global.logger.error(`IngredientID does not exist, cannot create recipeIngredient`);
-      throw errorGen(`IngredientID does not exist, cannot create recipeIngredient`, 400);
+      global.logger.error(`IngredientID ${ingredientID} does not exist, cannot create recipeIngredient`);
+      throw errorGen(`IngredientID ${ingredientID} does not exist, cannot create recipeIngredient`, 400);
     }
 
     //verify that the provided measurement is a positive number, return error if not

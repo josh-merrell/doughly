@@ -5,7 +5,7 @@ const { createRecipeLog, createRecipeFeedbackLog } = require('../../services/dbL
 const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
-const { visionRequest, matchRecipeItemRequest } = require('../../services/openai');
+const { visionRequest, matchRecipeItemRequest, getUnitRatio } = require('../../services/openai');
 const { sendSSEMessage } = require('../../server.js');
 
 module.exports = ({ db }) => {
@@ -153,13 +153,8 @@ module.exports = ({ db }) => {
           purchaseUnit: ingredient.purchaseUnit,
           gramRatio: Math.round(Number(ingredient.gramRatio)),
           brand: ingredient.brand,
-        }
-        console.log(`CREATING NEW INGREDIENT BODY: ${JSON.stringify(body)}`)
-        const { data } = await axios.post(
-          `${process.env.NODE_HOST}:${process.env.PORT}/ingredients`,
-          body,
-          { headers: { authorization } },
-        );
+        };
+        const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
         ingredientID = data.ingredientID;
       } else {
         ingredientID = ingredient.ingredientID;
@@ -567,7 +562,11 @@ module.exports = ({ db }) => {
       const { userID, recipeImageURL, authorization } = options;
 
       // call openaiHandler to build recipe json
-      sendSSEMessage(userID, { message: `Validated image, analyzing...`})
+      let elapsedTime = 0;
+      const timer = setInterval(() => {
+        elapsedTime += 1;
+        sendSSEMessage(userID, { message: `Searching image for recipe details. This should take around 16 seconds. Elapsed Time: ${elapsedTime}` });
+      }, 1000); // Send progress update every second
       global.logger.info(`Calling visionRequest`);
       const visionStartTime = new Date();
       const { response, error } = await visionRequest(recipeImageURL, userID, authorization, 'generateRecipeFromImage');
@@ -575,17 +574,22 @@ module.exports = ({ db }) => {
         global.logger.error(`Error creating recipe from vision: ${error.message}`);
         throw errorGen(`Error creating recipe from vision: ${error.message}`, 400);
       }
+      clearInterval(timer);
       const recipeJSON = JSON.parse(response);
       // Stop timer and calculate duration
       const visionEndTime = new Date();
       const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
-      sendSSEMessage(userID, { message: `Got recipe details from image in ${visionDuration} seconds` });
+      sendSSEMessage(userID, { message: `Got recipe details from image in ${visionDuration / 1000} seconds` });
       global.logger.info(`*TIME* recipe visionRequest: ${visionDuration / 1000} seconds`);
 
       // validate resulting json, return if it lacks minimum requirements
       if (recipeJSON.error) {
-        global.logger.error(`AI could not return valid recipe: ${recipeJSON.error}`);
-        throw errorGen(`AI could not return valid recipe: ${recipeJSON.error}`, 400);
+        if (recipeJSON.error === 10) {
+          global.logger.error(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image.`);
+          throw errorGen(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image.`, 400);
+        }
+        global.logger.error(`Could not analyze the provided image: ${recipeJSON.error}. Please try again later`);
+        throw errorGen(`Could not analyze the provided image: ${recipeJSON.error}. Please try again later`, 400);
       }
       if (!recipeJSON.title) {
         global.logger.error(`no recipe title found in image`);
@@ -596,7 +600,7 @@ module.exports = ({ db }) => {
         throw errorGen(`no recipe category found in image`, 400);
       }
 
-      sendSSEMessage(userID, { message: `Recipe General details look good, checking ingredient details...` });
+      sendSSEMessage(userID, { message: `General Recipe details look good, checking ingredient details...` });
       // validate returned ingredients
       if (recipeJSON.ingredients.length < 1) {
         global.logger.error(`no ingredients found in image`);
@@ -640,8 +644,8 @@ module.exports = ({ db }) => {
       //validate return steps
       sendSSEMessage(userID, { message: `Checking step details...` });
       if (recipeJSON.steps.length < 1) {
-        global.logger.error(`no steps found in image`);
-        throw errorGen(`no steps found in image`, 400);
+        global.logger.error(`no recipe steps found in image`);
+        throw errorGen(`no recipe steps found in image`, 400);
       } else {
         for (let i = 0; i < recipeJSON.steps.length; i++) {
           if (!recipeJSON.steps[i].title) {
@@ -660,15 +664,15 @@ module.exports = ({ db }) => {
         }
       }
 
-      //match ingredients with user Ingredients
+      // match ingredients with user Ingredients
       sendSSEMessage(userID, { message: `Matching recipe Ingredients with User Ingredients` });
       matchedIngredients = await matchIngredients(recipeJSON.ingredients, authorization, userID);
 
-      // //match tools with user tools
+      // match tools with user tools
       sendSSEMessage(userID, { message: `Matching recipe Tools with User Tools` });
       matchedTools = await matchTools(recipeJSON.tools, authorization, userID);
 
-      // //match category
+      // match category
       sendSSEMessage(userID, { message: `Finding Appropriate Category for new Recipe` });
       matchedCategoryID = await matchCategory(recipeJSON.category, authorization, userID);
 
@@ -693,8 +697,8 @@ module.exports = ({ db }) => {
       sendSSEMessage(userID, { message: `Details ready, building new Recipe` });
       const { data: recipe, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
       if (constructError) {
-        global.logger.error(`Error constructing recipe from AI json: ${constructError.message}`);
-        throw errorGen(`Error constructing recipe from AI json: ${constructError.message}`, 400);
+        global.logger.error(`Error constructing recipe from image details: ${constructError.message}`);
+        throw errorGen(`Error constructing recipe from image details: ${constructError.message}`, 400);
       }
       recipeID = recipe.recipeID;
 
@@ -705,6 +709,7 @@ module.exports = ({ db }) => {
       sendSSEMessage(userID, { message: `done` });
       return recipeID;
     } catch (error) {
+      clearInterval(timer);
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);
     }
@@ -722,11 +727,8 @@ module.exports = ({ db }) => {
     });
     const matchedIngredients = [];
 
-    console.log(`USER INGREDIENT NAMES: ${JSON.stringify(userIngredientNames)}`)
-    console.log(`RECIPE INGREDIENT NAMES: ${JSON.stringify(ingredients)}`)
-    // Create an array of promises
+    // First, try using AI to find matches
     const promises = ingredients.map((ingredient) =>
-      // console.log(`RI: ${ingredient.name}, USER INGREDIENTS: ${JSON.stringify(userIngredientNames)}`),
       matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', { name: ingredient.name, measurementUnit: ingredient.measurementUnit }, userIngredientNames)
         .then((data) => {
           const ingredientJSON = JSON.parse(data.response);
@@ -757,11 +759,18 @@ module.exports = ({ db }) => {
     const results = await Promise.allSettled(promises);
 
     // Filter successful responses and add to matchedIngredients
-    results.forEach((result) => {
-      if (result.status === 'fulfilled' && result.value) {
-        matchedIngredients.push(result.value);
+    for (let i = 0; i < results.length; i++) {
+      // results.forEach((result) => {
+      if (results[i].status === 'fulfilled' && results[i].value) {
+        if (results[i].value.ingredientID !== 0) {
+          matchedIngredients.push(results[i].value);
+        } else {
+          // fallback match attempt looking for exact string match on name
+          const secondaryMatchResult = await secondaryIngredientMatch(userID, authorization, results[i].value, userIngredientNames);
+          matchedIngredients.push(secondaryMatchResult);
+        }
       }
-    });
+    }
 
     // combine multiple instances of the same ingredientID using reduce, except where it is 0
     const combinedIngredients = matchedIngredients.reduce((acc, curr) => {
@@ -781,6 +790,50 @@ module.exports = ({ db }) => {
     return combinedIngredients;
   }
 
+  async function secondaryIngredientMatch(userID, authorization, recipeIngredient, userIngredientNames) {
+    global.logger.info(`IN SECONDARY INGREDIENT MATCH. RI: ${JSON.stringify(recipeIngredient)}`);
+
+    const userIngredientMatch = userIngredientNames.find((i) => i.name.toLowerCase() === recipeIngredient.name.toLowerCase());
+
+    if (userIngredientMatch) {
+      global.logger.info(`FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`);
+
+      try {
+        const data = await getUnitRatio(userID, authorization, recipeIngredient.name, recipeIngredient.measurementUnit, userIngredientMatch.purchaseUnit);
+        const parsedData = JSON.parse(data.response);
+
+        if (!parsedData.unitRatio) {
+          throw new Error(`Error getting unitRatioEstimate from openAI for ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
+        }
+
+        const unitRatioEst = parsedData.unitRatio;
+
+        return {
+          name: recipeIngredient.name,
+          measurement: recipeIngredient.measurement,
+          measurementUnit: recipeIngredient.measurementUnit,
+          ingredientID: userIngredientMatch.ingredientID,
+          purchaseUnitRatio: unitRatioEst,
+        };
+      } catch (error) {
+        global.logger.error(`Error getting unitRatioEstimate from openAI: ${error.message}`);
+        throw errorGen(`Error in secondaryIngredientMatch: ${error.message}`, 400);
+      }
+    }
+
+    global.logger.info(`NO MATCH FOUND FOR ${recipeIngredient.name}`);
+    return {
+      name: recipeIngredient.name,
+      measurement: recipeIngredient.measurement,
+      measurementUnit: recipeIngredient.measurementUnit,
+      ingredientID: 0,
+      lifespanDays: recipeIngredient.lifespanDays,
+      purchaseUnit: recipeIngredient.purchaseUnit,
+      gramRatio: recipeIngredient.gramRatio,
+      purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+    };
+  }
+
   async function matchTools(tools, authorization, userID) {
     // get user tools from supabase
     const { data: userTools, error: userToolsError } = await db.from('tools').select('name, toolID').eq('userID', userID).eq('deleted', false);
@@ -790,7 +843,7 @@ module.exports = ({ db }) => {
     }
     const matchedTools = [];
 
-    // Create an array of promises
+    // First, try using AI to find matches
     const promises = tools.map((tool) => {
       if (tool.quantity === -1) {
         // Return a resolved promise for dummy tools
@@ -809,13 +862,30 @@ module.exports = ({ db }) => {
     const results = await Promise.allSettled(promises);
 
     // Filter successful responses and add to matchedTools
-    results.forEach((result) => {
-      if (result.status === 'fulfilled' && result.value) {
-        matchedTools.push(result.value);
+    for (let i = 0; i < results.length; i++) {
+      if (results[i].status === 'fulfilled' && results[i].value) {
+        if (results[i].value.toolID !== 0) {
+          matchedTools.push(results[i].value);
+        } else {
+          // fallback match attempt looking for exact string match on name
+          const secondaryMatchResult = await secondaryToolsMatch(results[i].value, userTools);
+          matchedTools.push(secondaryMatchResult);
+        }
       }
-    });
+    }
 
     return matchedTools;
+  }
+
+  async function secondaryToolsMatch(recipeTool, userTools) {
+    global.logger.info(`IN SECONDARY TOOLS MATCH. RT: ${JSON.stringify(recipeTool)}`);
+    const userToolMatch = userTools.find((t) => t.name.toLowerCase() === recipeTool.name.toLowerCase());
+    if (userToolMatch) {
+      global.logger.info(`FOUND MATCH FOR ${recipeTool.name} in ${JSON.stringify(userToolMatch)}`);
+      return { toolID: userToolMatch.toolID, name: recipeTool.name, quantity: recipeTool.quantity };
+    }
+    global.logger.info(`NO MATCH FOUND FOR ${recipeTool.name}`);
+    return { toolID: 0, name: recipeTool.name, quantity: recipeTool.quantity };
   }
 
   async function matchCategory(recipeCategory, authorization, userID) {
