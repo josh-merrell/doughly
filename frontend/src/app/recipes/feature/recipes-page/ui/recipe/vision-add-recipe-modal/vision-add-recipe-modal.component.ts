@@ -71,6 +71,7 @@ export class VisionAddRecipeModalComponent {
 
   async onSubmit() {
     this.isAdding = true;
+    this.statusMessage.set('Loading Image');
     //first upload the cropped image
     await this.uploadCroppedImage();
 
@@ -83,7 +84,7 @@ export class VisionAddRecipeModalComponent {
             if (message === 'done') {
               this.recipeProgressService.stopListening();
             } else {
-              this.statusMessage.set(message);
+              this.statusMessage.set(JSON.parse(message).message);
             }
           })
         },

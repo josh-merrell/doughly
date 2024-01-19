@@ -98,6 +98,118 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
   };
 };
 
+const getUnitRatio = async (userID, authorization, substance, measurementUnit_A, measurementUnit_B) => {
+  const client = await getClient();
+  const body = {
+    messages: [requestMessages['estimateUnitRatio'].message],
+    user: userID,
+    model: 'gpt-4-1106-preview',
+    max_tokens: 1500,
+    response_format: {
+      type: requestMessages['estimateUnitRatio'].response_format,
+    },
+  };
+  // add the substance to the request
+  body.messages.push({
+    role: 'user',
+    content: [
+      {
+        type: 'text',
+        text: `Here is 'substance': ${substance}`,
+      },
+    ],
+  });
+  // add the first measurementUnit to the request
+  body.messages.push({
+    role: 'user',
+    content: [
+      {
+        type: 'text',
+        text: `Here is 'measurementUnit_A': ${measurementUnit_A}`,
+      },
+    ],
+  });
+  // add the second measurementUnit to the request
+  body.messages.push({
+    role: 'user',
+    content: [
+      {
+        type: 'text',
+        text: `Here is 'measurementUnit_B': ${measurementUnit_B}`,
+      },
+    ],
+  });
+  const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
+    throw errorGen(`OpenAI request failed: ${err.message}`, 500);
+  });
+
+  //log token usage
+  createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to estimate unit ratio between ${measurementUnit_A} and ${measurementUnit_B}`);
+
+  //Check for unsuccessful completions
+  if (chatCompletionObject.choices[0].finish_reason === 'length') {
+    throw errorGen('OpenAI request or response too long. Consider increasing "max_tokens" request property', 400);
+  }
+  if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
+    throw errorGen('Content Omitted due to filter being flagged', 400);
+  }
+  let responseJSON = chatCompletionObject.choices[0].message.content;
+  return {
+    response: responseJSON,
+  };
+};
+
+const getGramRatio = async (userID, authorization, substance, measurementUnit) => {
+  const client = await getClient();
+  const body = {
+    messages: [requestMessages['estimateGramRatio'].message],
+    user: userID,
+    model: 'gpt-3.5-turbo-1106',
+    max_tokens: 1500,
+    response_format: {
+      type: requestMessages['estimateGramRatio'].response_format,
+    },
+  };
+  // add the substance to the request
+  body.messages.push({
+    role: 'user',
+    content: [
+      {
+        type: 'text',
+        text: `Here is 'substance': ${substance}`,
+      },
+    ],
+  });
+  // add the measurementUnit to the request
+  body.messages.push({
+    role: 'user',
+    content: [
+      {
+        type: 'text',
+        text: `Here is 'measurementUnit': ${measurementUnit}`,
+      },
+    ],
+  });
+  const chatCompletionObject = await client.completions.create(body).catch((err) => {
+    throw errorGen(`OpenAI request failed: ${err.message}`, 500);
+  });
+
+  //log token usage
+  createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to estimate gram ratio of ${substance} in ${measurementUnit}`);
+
+  //Check for unsuccessful completions
+  if (chatCompletionObject.choices[0].finish_reason === 'length') {
+    throw errorGen('OpenAI request or response too long. Consider increasing "max_tokens" request property', 400);
+  }
+  if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
+    throw errorGen('Content Omitted due to filter being flagged', 400);
+  }
+  let responseJSON = chatCompletionObject.choices[0].message.content;
+  return {
+    response: responseJSON,
+  };
+};
+
 const requestMessages = {
   generateRecipeFromImage: {
     message: {
@@ -105,7 +217,7 @@ const requestMessages = {
       content: [
         {
           type: 'text',
-          text: `Attempt to gather information from this image depicting a recipe. Return a JSON object. If the image does not depict a recipe, or if any of the required properties can't be reasonably estimated, the JSON should include a single property 'error' with a value describing the problem. Otherwise, include the following properties:
+          text: `Attempt to gather information from this image depicting a recipe. Return a JSON object. If the image does not depict a recipe, or if any of the required properties can't be reasonably estimated, the JSON should include a single property 'error' with a number value of 10. Otherwise, include the following properties:
 'title' <string> (required): The title of the recipe,
 'servings' <number>: The number of servings the recipe makes. estimate if not provided,
 'lifespanDays' <number>: The number of days the dish can be stored after being made,
@@ -183,9 +295,35 @@ Do not include any other properties in the JSON object response. If an optional 
     },
     response_format: 'json_object',
   },
+  estimateUnitRatio: {
+    message: {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: `You are provided 'substance', 'measurementUnit_A', and 'measurementUnit_B'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> with a value of the estimated number of 'measurementUnit_A' that fit in a single 'measurementUnit_B'. Use two decimal accuracy. For example, if 'measurementUnit_A' is 'tablespoon' and 'measurementUnit_B' is liter, return {unitRatio: 67.63}. If an estimate cannot be made with the provided units, return {error: 10}, but even a low-confidence estimate is preferable.`,
+        },
+      ],
+    },
+    response_format: 'json_object',
+  },
+  estimateGramRatio: {
+    message: {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: `You are provided 'substance' and 'measurementUnit'. Provide a json response with a single property 'gramRatio' <number> with a value of the estimated number of grams in a single 'measurementUnit' of 'substance'. Use two decimal accuracy. For example, if 'substance' is 'flour' and 'measurementUnit' is 'cup', return {gramRatio: 120}. If an estimate cannot be made with the provided units, return {error: 10}, but even a low-confidence estimate is preferable.`,
+        },
+      ],
+    },
+    response_format: 'json_object',
+  },
 };
 
 module.exports = {
   visionRequest,
   matchRecipeItemRequest,
+  getUnitRatio,
+  getGramRatio,
 };
