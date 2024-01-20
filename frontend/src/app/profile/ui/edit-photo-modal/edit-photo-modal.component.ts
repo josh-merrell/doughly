@@ -128,7 +128,7 @@ export class EditPhotoModalComponent {
     if (this.croppedImage && this.selectedFile) {
       try {
         const url: string = await this.photoService
-          .getPreSignedPostUrl(this.selectedFile.name, this.selectedFile.type)
+          .getPreSignedPostUrl('profile', this.selectedFile.name, this.selectedFile.type)
           .toPromise();
 
         const uploadResponse = await this.photoService.uploadFileToS3(

@@ -6,14 +6,14 @@ const { errorGen } = require('../../middleware/errorHandling');
 
 module.exports = ({ db, dbDefault }) => {
   async function create(options) {
-    const { userID, fileName, fileType } = options;
+    const { userID, type ,fileName, fileType } = options;
 
     const s3Client = new S3Client({ region: 'us-west-2' });
-    const key = `${userID}/${fileName}`;
+    const key = `${type}/${userID}/${fileName}`;
     const contentType = fileType;
 
     const command = new PutObjectCommand({
-      Bucket: process.env.AWS_RECIPE_PHOTO_BUCKET_NAME,
+      Bucket: process.env.AWS_IMAGE_BUCKET_NAME,
       Key: key,
       ContentType: contentType,
     });
@@ -30,21 +30,24 @@ module.exports = ({ db, dbDefault }) => {
 
     const urlParts = photoURL.split('/');
     const fileName = urlParts[urlParts.length - 1];
-    const key = `${userID}/${fileName}`;
+    const key = `${type}/${userID}/${fileName}`;
 
     const decodedKey = decodeURIComponent(key);
 
     const s3Client = new S3Client({ region: 'us-west-2' });
 
     const deleteParams = {
-      Bucket: process.env.AWS_RECIPE_PHOTO_BUCKET_NAME,
+      Bucket: process.env.AWS_IMAGE_BUCKET_NAME,
       Key: decodedKey,
     };
 
     const deleteCommand = new DeleteObjectCommand(deleteParams);
 
     try {
+      // remove file from S3
       await s3Client.send(deleteCommand);
+
+      // remove url from database
       let data;
       if (type === 'recipeStep') {
         // delete photo from recipeStep
