@@ -12,8 +12,8 @@ export class PhotoService {
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
-  getPreSignedPostUrl(fileName: string, fileType: string): Observable<any> {
-    const body = { fileName, fileType };
+  getPreSignedPostUrl(type: string, fileName: string, fileType: string): Observable<any> {
+    const body = { type, fileName, fileType };
     return this.http.post<{ url: string }>(`${this.API_URL}/presigned`, body);
   }
 

@@ -53,7 +53,7 @@ export class VisionAddRecipeModalComponent {
     if (this.selectedFile) {
       try {
         const url: string = await this.photoUploadService
-          .getPreSignedPostUrl(this.selectedFile.name, this.selectedFile.type)
+          .getPreSignedPostUrl('temp', this.selectedFile.name, this.selectedFile.type)
           .toPromise();
 
         const uploadResponse = await this.photoUploadService.uploadFileToS3(
