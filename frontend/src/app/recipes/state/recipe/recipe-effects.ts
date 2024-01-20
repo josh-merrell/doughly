@@ -48,7 +48,7 @@ export class RecipeEffects {
     this.actions$.pipe(
       ofType(RecipeActions.visionAddRecipe),
       mergeMap((action) =>
-        this.recipeService.visionAdd(action.recipeImageURL).pipe(
+        this.recipeService.visionAdd(action.recipeSourceImageURL, action.recipePhotoURL ).pipe(
           map((recipeID) =>
             RecipeActions.visionAddRecipeSuccess({
               recipeID,

@@ -22,13 +22,14 @@ async function deleteS3Photo(req, res) {
   const db = req.client.db;
   const dbDefault = req.defaultClient.db;
   const p = require('./processor')({ db, dbDefault });
-  const { photoURL, type, id } = req.body;
+  const { photoURL, type, id } = req.query;
+
   try {
     const returner = await p.remove({
       userID: req.userID,
       photoURL,
       type,
-      id, //optional
+      id: id ? parseInt(id, 10) : undefined,
     });
     return res.json(returner);
   } catch (e) {

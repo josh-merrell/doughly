@@ -7,28 +7,40 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { RecipeProgressService } from 'src/app/recipes/data/recipeVisionProgress.service';
-import { filter, take } from 'rxjs';
+import { Observable, filter, take } from 'rxjs';
 import {
   selectAdding,
   selectError,
 } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, ImageCropperModule, MatProgressSpinnerModule],
   templateUrl: './vision-add-recipe-modal.component.html',
 })
 export class VisionAddRecipeModalComponent {
   isAdding: boolean = false;
   statusMessage: WritableSignal<string> = signal('');
 
-  //photo upload
+  // source image upload
+  sourceImageURL!: string;
+  public sourceImageSelectedFile: File | null = null;
+  public sourceImageSelectedFileUrl: string | null = null;
+  public sourceImagePresent: boolean = false;
+
+  // recipe photo upload
   photoURL!: string;
+  public recipeImageChangedEvent: any = '';
+  public croppedImage: any = '';
   public selectedFile: File | null = null;
-  public selectedFileUrl: string | null = null;
+  public isImageLoaded: boolean = false;
+  public isCropperReady: boolean = false;
+  public imageLoadFailed: boolean = false;
   public imagePresent: boolean = false;
+  public isChecked = true;
 
   constructor(
     public dialogRef: MatDialogRef<VisionAddRecipeModalComponent>,
@@ -39,41 +51,91 @@ export class VisionAddRecipeModalComponent {
     private ngZone: NgZone
   ) {}
 
-  recipeOnFileSelected(event: Event): void {
-    this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
-    this.imagePresent = !!this.selectedFile;
-    if (this.selectedFile) {
-      this.selectedFileUrl = URL.createObjectURL(this.selectedFile);
+  // for recipe source image
+  recipeSourceImageOnFileSelected(event: Event): void {
+    this.sourceImageSelectedFile =
+      (event.target as HTMLInputElement).files?.[0] || null;
+    this.sourceImagePresent = true;
+    if (this.sourceImageSelectedFile) {
+      this.sourceImageSelectedFileUrl = URL.createObjectURL(
+        this.sourceImageSelectedFile
+      );
     } else {
-      this.selectedFileUrl = null;
+      this.sourceImageSelectedFileUrl = null;
     }
   }
 
-  async uploadCroppedImage() {
-    if (this.selectedFile) {
+  // for recipe photo
+  recipeOnFileSelected(event: Event): void {
+    this.recipeImageChangedEvent = event; // For the cropping UI
+    this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
+  }
+  recipeImageCropped(event: ImageCroppedEvent) {
+    this.croppedImage = event.blob;
+    this.imagePresent = true;
+  }
+  recipeImageLoaded() {
+    this.isImageLoaded = true;
+  }
+  recipeCropperReady() {
+    this.isCropperReady = true;
+  }
+  recipeLoadImageFailed() {
+    this.imageLoadFailed = true;
+  }
+
+  async uploadCroppedImage(variableName) {
+    if (this[variableName]) {
       try {
+        const type =
+          variableName === 'sourceImageSelectedFile' ? 'temp' : 'recipe';
         const url: string = await this.photoUploadService
-          .getPreSignedPostUrl('temp', this.selectedFile.name, this.selectedFile.type)
+          .getPreSignedPostUrl(
+            type,
+            this[variableName].name,
+            this[variableName].type
+          )
           .toPromise();
 
         const uploadResponse = await this.photoUploadService.uploadFileToS3(
           url,
-          this.selectedFile
+          this[variableName]
         );
         console.log('Upload Successful:', uploadResponse.url);
 
-        this.photoURL = uploadResponse.url.split('?')[0];
+        if (variableName === 'selectedFile')
+          this.photoURL = uploadResponse.url.split('?')[0];
+        else {
+          this.sourceImageURL = uploadResponse.url.split('?')[0];
+        }
       } catch (error) {
         console.log('An error occurred:', error);
       }
     }
   }
 
+  deleteFile(url: string, type: string): Observable<any> {
+    return this.photoUploadService.deleteFileFromS3(url, type);
+  }
+
+  async removeFiles(removeRecipePhoto: boolean = false) {
+    if (this.photoURL && removeRecipePhoto) {
+      const result = await this.deleteFile(this.photoURL, 'recipe').toPromise();
+      console.log(`deleted recipe photo: ${result}`)
+    }
+    if (this.sourceImageURL) {
+      const result = await this.deleteFile(this.sourceImageURL, 'temp').toPromise();
+      console.log(`deleted source Image: ${result}`)
+    }
+  }
+
   async onSubmit() {
     this.isAdding = true;
     this.statusMessage.set('Loading Image');
-    //first upload the cropped image
-    await this.uploadCroppedImage();
+    //first upload the recipe source image to temp
+    await this.uploadCroppedImage('sourceImageSelectedFile');
+    //if recipe photo present, upload it also
+    await this.uploadCroppedImage('selectedFile');
 
     try {
       // Start listening for SSE messages relating to the recipe vision progress
@@ -86,7 +148,7 @@ export class VisionAddRecipeModalComponent {
             } else {
               this.statusMessage.set(JSON.parse(message).message);
             }
-          })
+          });
         },
         error: (error) => {
           this.recipeProgressService.stopListening();
@@ -96,7 +158,10 @@ export class VisionAddRecipeModalComponent {
 
       // Start the vision add recipe process
       this.store.dispatch(
-        RecipeActions.visionAddRecipe({ recipeImageURL: this.photoURL })
+        RecipeActions.visionAddRecipe({
+          recipeSourceImageURL: this.sourceImageURL,
+          recipePhotoURL: this.photoURL,
+        })
       );
       this.store
         .select(selectAdding)
@@ -113,6 +178,9 @@ export class VisionAddRecipeModalComponent {
                 console.error(
                   `Vision add recipe failed: ${error.message}, CODE: ${error.statusCode}`
                 );
+                // remove the image and photo
+                this.removeFiles(true);
+                // show the error modal
                 this.dialog.open(ErrorModalComponent, {
                   maxWidth: '380px',
                   data: {
@@ -121,6 +189,7 @@ export class VisionAddRecipeModalComponent {
                   },
                 });
               } else {
+                this.removeFiles(false);
                 this.recipeProgressService.stopListening();
                 this.dialogRef.close('success');
               }
@@ -130,7 +199,9 @@ export class VisionAddRecipeModalComponent {
     } catch (error) {
       console.error(`Error when adding recipe: ${error}`);
       this.isAdding = false;
+      this.removeFiles(true);
     }
+
   }
 
   onCancel() {
