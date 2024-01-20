@@ -3,10 +3,11 @@
 async function createPresignedURL(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { fileName, fileType } = req.body;
+  const { type, fileName, fileType } = req.body;
   try {
     const returner = await p.create({
       userID: req.userID,
+      type,
       fileName,
       fileType,
     });
