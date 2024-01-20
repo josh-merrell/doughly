@@ -559,17 +559,17 @@ module.exports = ({ db }) => {
 
   async function createVision(options) {
     try {
-      const { userID, recipeImageURL, authorization } = options;
+      const { userID, recipeSourceImageURL, recipePhotoURL, authorization } = options;
 
       // call openaiHandler to build recipe json
       let elapsedTime = 0;
       const timer = setInterval(() => {
         elapsedTime += 1;
-        sendSSEMessage(userID, { message: `Searching image for recipe details. This should take around 16 seconds. Elapsed Time: ${elapsedTime}` });
+        sendSSEMessage(userID, { message: `Searching image for recipe details. This should take around 15 seconds. Elapsed Time: ${elapsedTime}` });
       }, 1000); // Send progress update every second
       global.logger.info(`Calling visionRequest`);
       const visionStartTime = new Date();
-      const { response, error } = await visionRequest(recipeImageURL, userID, authorization, 'generateRecipeFromImage');
+      const { response, error } = await visionRequest(recipeSourceImageURL, userID, authorization, 'generateRecipeFromImage');
       if (error) {
         global.logger.error(`Error creating recipe from vision: ${error.message}`);
         throw errorGen(`Error creating recipe from vision: ${error.message}`, 400);
@@ -688,9 +688,11 @@ module.exports = ({ db }) => {
         ingredients: matchedIngredients,
         tools: matchedTools,
         steps: recipeJSON.steps,
-        //include 'timeBake' if it isn't null on the recipeJSON
-        ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }),
+        ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }), //include 'timeBake' if not null
       };
+      if (recipePhotoURL) {
+        constructBody['photoURL'] = recipePhotoURL;
+      }
       // console.log(`CONSTRUCT BODY: ${JSON.stringify(constructBody)}`)
 
       // call constructRecipe with body
@@ -709,7 +711,6 @@ module.exports = ({ db }) => {
       sendSSEMessage(userID, { message: `done` });
       return recipeID;
     } catch (error) {
-      clearInterval(timer);
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);
     }
@@ -774,17 +775,16 @@ module.exports = ({ db }) => {
 
     // combine multiple instances of the same ingredientID using reduce, except where it is 0
     const combinedIngredients = matchedIngredients.reduce((acc, curr) => {
-      if (curr.ingredientID === 0) {
-        acc.push(curr);
-        return acc;
-      }
-      const existingIngredient = acc.find((i) => i.ingredientID === curr.ingredientID);
-      //only combine if the measurementUnit is the same
-      if (existingIngredient && existingIngredient.measurementUnit === curr.measurementUnit) {
+      // Find an existing ingredient with the same name
+      const existingIngredient = acc.find((i) => i.name === curr.name);
+
+      if (existingIngredient) {
+        // Sum the measurements if the name is the same
         existingIngredient.measurement += curr.measurement;
-        return acc;
+      } else {
+        // If no existing ingredient with the same name, add the current one to the accumulator
+        acc.push(curr);
       }
-      acc.push(curr);
       return acc;
     }, []);
     return combinedIngredients;
@@ -999,7 +999,8 @@ module.exports = ({ db }) => {
       //if recipe has photoURL, delete photo from s3
       if (recipe[0].photoURL) {
         try {
-          await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/uploads/image`, { data: { userID: options.userID, photoURL: recipe[0].photoURL, type: 'recipe', id: options.recipeID }, headers: { authorization: options.authorization } });
+          const url = `${process.env.NODE_HOST}:${process.env.PORT}/uploads/image?userID=${encodeURIComponent(options.userID)}&photoURL=${encodeURIComponent(recipe[0].photoURL)}&type=recipe&id=${options.recipeID}`;
+          await axios.delete(url, { headers: { authorization: options.authorization } });
           global.logger.info(`Deleted photo for recipeID ${options.recipeID}`);
         } catch (error) {
           global.logger.error(`Error deleting recipe photo: ${error.message}`);

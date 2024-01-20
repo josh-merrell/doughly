@@ -121,13 +121,14 @@ async function createRecipe(req, res) {
 async function createRecipeVision(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { recipeImageURL } = req.body;
+  const { recipeSourceImageURL, recipePhotoURL } = req.body;
   const { authorization } = req.headers;
   try {
     const returner = await p.createVision({
       authorization,
       userID: req.userID,
-      recipeImageURL,
+      recipeSourceImageURL,
+      recipePhotoURL
     });
     return res.json(returner);
   } catch (err) {
