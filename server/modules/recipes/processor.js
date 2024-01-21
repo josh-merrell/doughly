@@ -157,9 +157,9 @@ module.exports = ({ db }) => {
           brand: ingredient.brand,
         };
         const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
-        ingredientID = data.ingredientID;
+        ingredientID = Number(data.ingredientID);
       } else {
-        ingredientID = ingredient.ingredientID;
+        ingredientID = Number(ingredient.ingredientID);
       }
     } catch (error) {
       global.logger.error(`'constructRecipeIngredient' Failed when creating new ingredient. Failure: ${error.message}`);
@@ -221,9 +221,9 @@ module.exports = ({ db }) => {
           },
           { headers: { authorization } },
         );
-        toolID = data.toolID;
+        toolID = Number(data.toolID);
       } else {
-        toolID = tool.toolID;
+        toolID = Number(tool.toolID);
       }
     } catch (error) {
       global.logger.error(`'constructRecipeTool' Failed when creating new tool. Failure: ${error.message}`);
@@ -770,7 +770,7 @@ module.exports = ({ db }) => {
           } else {
             return {
               ...ingredient,
-              ingredientID: ingredientJSON.ingredientID,
+              ingredientID: Number(ingredientJSON.ingredientID),
               purchaseUnitRatio: ingredientJSON.purchaseUnitRatio,
             };
           }
@@ -837,7 +837,7 @@ module.exports = ({ db }) => {
           name: recipeIngredient.name,
           measurement: recipeIngredient.measurement,
           measurementUnit: recipeIngredient.measurementUnit,
-          ingredientID: userIngredientMatch.ingredientID,
+          ingredientID: Number(userIngredientMatch.ingredientID),
           purchaseUnitRatio: unitRatioEst,
         };
       } catch (error) {
@@ -877,7 +877,7 @@ module.exports = ({ db }) => {
       return matchRecipeItemRequest(userID, authorization, 'findMatchingTool', tool.name, userTools)
         .then((data) => {
           const toolJSON = JSON.parse(data.response);
-          return toolJSON.toolID ? { toolID: toolJSON.toolID, name: tool.name, quantity: tool.quantity } : { toolID: 0, quantity: tool.quantity, name: tool.name };
+          return toolJSON.toolID ? { toolID: Number(toolJSON.toolID), name: tool.name, quantity: tool.quantity } : { toolID: 0, quantity: tool.quantity, name: tool.name };
         })
         .catch((error) => {
           global.logger.error(`Error matching tool: ${error.message}`);
@@ -907,7 +907,7 @@ module.exports = ({ db }) => {
     const userToolMatch = userTools.find((t) => t.name.toLowerCase() === recipeTool.name.toLowerCase());
     if (userToolMatch) {
       global.logger.info(`FOUND MATCH FOR ${recipeTool.name} in ${JSON.stringify(userToolMatch)}`);
-      return { toolID: userToolMatch.toolID, name: recipeTool.name, quantity: recipeTool.quantity };
+      return { toolID: Number(userToolMatch.toolID), name: recipeTool.name, quantity: recipeTool.quantity };
     }
     global.logger.info(`NO MATCH FOUND FOR ${recipeTool.name}`);
     return { toolID: 0, name: recipeTool.name, quantity: recipeTool.quantity };
