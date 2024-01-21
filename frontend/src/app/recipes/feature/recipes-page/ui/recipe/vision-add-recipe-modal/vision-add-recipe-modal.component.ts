@@ -178,8 +178,9 @@ export class VisionAddRecipeModalComponent {
                 console.error(
                   `Vision add recipe failed: ${error.message}, CODE: ${error.statusCode}`
                 );
-                // remove the image and photo
+                // remove the image and photo, and stop listening for SSE messages
                 this.removeFiles(true);
+                this.recipeProgressService.stopListening();
                 // show the error modal
                 this.dialog.open(ErrorModalComponent, {
                   maxWidth: '380px',
@@ -206,5 +207,10 @@ export class VisionAddRecipeModalComponent {
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  onDestroy() {
+    this.removeFiles(false);
+    this.recipeProgressService.stopListening();
   }
 }
