@@ -759,6 +759,11 @@ module.exports = ({ db }) => {
           global.logger.info(`MAPPED INGREDIENT JSON: ${JSON.stringify(ingredientJSON)}`);
 
           if (ingredientJSON.lifespanDays) {
+            const validUnits = process.env.MEASUREMENT_UNITS.split(',');
+            if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
+              global.logger.error(`Invalid purchaseUnit: ${ingredientJSON.purchaseUnit}`);
+              return null;
+            }
             return {
               ...ingredient,
               ingredientID: 0,
