@@ -209,7 +209,9 @@ const requestMessages = {
 'ingredients' <array> (required): An array of objects, each one an 'ingredient'
 'ingredient' <object>: An object with properties: 
 -'name' <string> (Disregard any adjective words and capitalize, for example 'stemmed broccoli' should be 'Broccoli', and 'dry yeast' should be 'Yeast'), 
--'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe: ${JSON.stringify(units)}. Example if recipe calls for 2 medium onions, the best measurementUnit would be "single" with a measurement of 2. Disregard adjectives like "medium"), 
+-'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe: ${JSON.stringify(
+            units,
+          )}. Example if recipe calls for 2 medium onions, the best measurementUnit would be "single" with a measurement of 2. Disregard adjectives like "medium"), 
 -'measurement' <number> (required) estimate based on chosen measurementUnit if no measurement provided, 
 -'preparation' <string>. 'preparation' is optional and describes how the ingredient should be prepared, for example, 'chopped' or 'thinly sliced minced'.
 'tools' <array>: An array of objects, each one a 'tool'
@@ -237,7 +239,7 @@ Do not include any other properties in the JSON object response. If an optional 
           type: 'text',
           text: `You are provided a recipe ingredient, which includes 'name', 'measurement', and 'measurementUnit'. You are also provided an array of user ingredients. each includes a 'name', 'ingredientID', and 'purchaseUnit'. Using only the 'name' property, attempt to find a matching user ingredient for the provided recipe ingredient. For example, 'flour' would be a match for 'wheat flour', but 'rose water' would not be a match for 'water' If no close match is found, return the following json:
           'lifespanDays' <number>: (required) estimate of number of days ingredient will stay usable if stored properly, 
-          'purchaseUnit' <string>: (required) choose the unit from this list that most closely matches how the ingredient might be purchased: ${units}. Example valid selection is 'container', example invalid selection is 'package', 
+          'purchaseUnit' <string>: (required) choose the unit from this list that most closely matches how the ingredient might be purchased: ${units}. The selection should be relavent to the ingredient. For example, 'flour' might be purchased in 'pounds', while 'milk' might be purchased in 'gallons'. Only use generic units like 'single' or 'package' as a last resort., 
           'gramRatio' <positive integer>: (required) an estimate of how many grams the chosen purchaseUnit of this ingredient would weigh,
           'purchaseUnitRatio' <number>: (required) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient.
           
@@ -283,7 +285,7 @@ Do not include any other properties in the JSON object response. If an optional 
       content: [
         {
           type: 'text',
-          text: `You are provided 'substance', 'measurementUnit_A', and 'measurementUnit_B'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> with a value of the estimated number of 'measurementUnit_A' that fit in a single 'measurementUnit_B'. Use two decimal accuracy. For example, if 'measurementUnit_A' is 'tablespoon' and 'measurementUnit_B' is liter, return {unitRatio: 67.63}. If an estimate cannot be made with the provided units, return {error: 10}, but even a low-confidence estimate is preferable.`,
+          text: `You are provided 'substance', 'measurementUnit_A', and 'measurementUnit_B'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> with a value of the estimated number of 'measurementUnit_A' that fit in a single 'measurementUnit_B'. Use two decimal accuracy. For example, if 'measurementUnit_A' is 'tablespoon' and 'measurementUnit_B' is liter, return {unitRatio: 67.63}. Always return a value, even if it is just an educated guess.`,
         },
       ],
     },
