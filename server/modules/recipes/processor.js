@@ -761,7 +761,11 @@ module.exports = ({ db }) => {
           if (ingredientJSON.lifespanDays) {
             const validUnits = process.env.MEASUREMENT_UNITS.split(',');
             if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
-              global.logger.error(`Invalid purchaseUnit: ${ingredientJSON.purchaseUnit}`);
+              global.logger.error(`Invalid purchaseUnit for ingredient ${ingredient.name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
+              return null;
+            }
+            if (ingredientJSON.gramRatio <= 0) {
+              global.logger.error(`Invalid gramRatio for ingredient ${ingredient.name}: ${ingredientJSON.gramRatio}, removing from recipe.`);
               return null;
             }
             return {
