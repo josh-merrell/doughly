@@ -756,7 +756,7 @@ module.exports = ({ db }) => {
       matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', { name: ingredient.name, measurementUnit: ingredient.measurementUnit }, userIngredientNames)
         .then((data) => {
           const ingredientJSON = JSON.parse(data.response);
-          console.log(`MAPPED INGREDIENT JSON: ${JSON.stringify(ingredientJSON)}`);
+          global.logger.info(`MAPPED INGREDIENT JSON: ${JSON.stringify(ingredientJSON)}`);
 
           if (ingredientJSON.lifespanDays) {
             return {
@@ -822,10 +822,10 @@ module.exports = ({ db }) => {
       global.logger.info(`FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`);
 
       try {
-        console.log(`GETTING UNIT RATIO FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`)
+        global.logger.info(`GETTING UNIT RATIO FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
         const data = await getUnitRatio(userID, authorization, recipeIngredient.name, recipeIngredient.measurementUnit, userIngredientMatch.purchaseUnit);
         const parsedData = JSON.parse(data.response);
-        console.log(`UNIT RATIO RESULT: ${JSON.stringify(parsedData)}`)
+        global.logger.info(`UNIT RATIO RESULT: ${JSON.stringify(parsedData)}`);
 
         if (!parsedData.unitRatio) {
           throw new Error(`Error getting unitRatioEstimate from openAI for ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
