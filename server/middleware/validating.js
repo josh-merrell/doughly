@@ -6,7 +6,7 @@ function routeValidator(schema, dataToValidate) {
     const data = req[dataToValidate];
     const valid = ajv.validate(schema, data);
     if (!valid) {
-      global.logger.info(`Invalid data in request ${dataToValidate}: ${ajv.errorsText()}`);
+      global.logger.info(`INVALID DATA '${JSON.stringify(data)}' IN REQUEST ${data}. ${ajv.errorsText()}.`);
       return res.status(422).json({ error: `${ajv.errors[0].dataPath.slice(1)} ${ajv.errors[0].message}` });
     }
     if (!req.userID) {
