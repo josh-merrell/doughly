@@ -444,7 +444,7 @@ module.exports = ({ db }) => {
           global.logger.error(`Error getting sourceRecipe for subscriptionID: ${subscriptions[i].subscriptionID}: ${sourceRecipeError.message}`);
           throw errorGen(`Error getting sourceRecipe for subscriptionID: ${subscriptions[i].subscriptionID}: ${sourceRecipeError.message}`, 400);
         }
-        console.log(`sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`);
+        global.logger.info(`sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`);
 
         // get profile using axios endpoint providing userID in query
         const { data: profile, error: profileError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/profiles?userID=${sourceRecipe[0].userID}`, { headers: { authorization } });
