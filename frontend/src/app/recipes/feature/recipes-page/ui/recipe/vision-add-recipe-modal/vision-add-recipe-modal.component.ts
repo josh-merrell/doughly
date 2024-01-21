@@ -85,7 +85,8 @@ export class VisionAddRecipeModalComponent {
   }
 
   async uploadCroppedImage(variableName) {
-    if (this[variableName]) {
+    const imageToUpload = variableName === 'selectedFile' ? this.croppedImage : this.sourceImageSelectedFile;
+    if (imageToUpload) {
       try {
         const type =
           variableName === 'sourceImageSelectedFile' ? 'temp' : 'recipe';
@@ -99,7 +100,7 @@ export class VisionAddRecipeModalComponent {
 
         const uploadResponse = await this.photoUploadService.uploadFileToS3(
           url,
-          this[variableName]
+          imageToUpload
         );
         console.log('Upload Successful:', uploadResponse.url);
 
@@ -142,7 +143,6 @@ export class VisionAddRecipeModalComponent {
       this.recipeProgressService.startListening().subscribe({
         next: (message) => {
           this.ngZone.run(() => {
-            console.log(message);
             if (message === 'done') {
               this.recipeProgressService.stopListening();
             } else {

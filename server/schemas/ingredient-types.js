@@ -1,5 +1,4 @@
-const unitEnum = ['gram', 'kilogram', 'pint', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'quart', 'gallon', 'milliliter', 'liter', 'packet', 'bag', 'box', 'carton', 'pallet', 'bottle', 'container', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen'];
-
+const unitEnum = process.env.MEASUREMENT_UNITS.split(',');
 // INGREDIENTS
 const getIngredientsSchema_query = {
   type: 'object',
