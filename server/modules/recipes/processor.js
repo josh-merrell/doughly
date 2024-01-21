@@ -7,6 +7,8 @@ const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supp
 const { errorGen } = require('../../middleware/errorHandling');
 const { visionRequest, matchRecipeItemRequest, getUnitRatio } = require('../../services/openai');
 const { sendSSEMessage } = require('../../server.js');
+const path = require('path');
+const fs = require('fs');
 
 module.exports = ({ db }) => {
   async function constructRecipe(options) {
@@ -565,7 +567,7 @@ module.exports = ({ db }) => {
       let elapsedTime = 0;
       const timer = setInterval(() => {
         elapsedTime += 1;
-        sendSSEMessage(userID, { message: `Searching image for recipe details. This should take around 15 seconds. Elapsed Time: ${elapsedTime}` });
+        sendSSEMessage(userID, { message: `Searching image for recipe details. This should take around twenty seconds. Elapsed Time: ${elapsedTime}` });
       }, 1000); // Send progress update every second
       global.logger.info(`Calling visionRequest`);
       const visionStartTime = new Date();
@@ -595,6 +597,15 @@ module.exports = ({ db }) => {
         global.logger.error(`no recipe title found in image`);
         throw errorGen(`no recipe title found in image`, 400);
       }
+      // save recipeJSON to file
+      const sanitizedTitle = recipeJSON.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const recipeJSONPath = path.join(__dirname, `../../data/recipes/${sanitizedTitle}.json`);
+      if (!fs.existsSync(path.dirname(recipeJSONPath))) {
+        fs.mkdirSync(path.dirname(recipeJSONPath), { recursive: true });
+      }
+      global.logger.info(`RECIPE JSON: ${JSON.stringify(recipeJSON)}`);
+      fs.writeFileSync(recipeJSONPath, JSON.stringify(recipeJSON));
+
       if (!recipeJSON.category) {
         global.logger.error(`no recipe category found in image`);
         throw errorGen(`no recipe category found in image`, 400);
@@ -606,19 +617,31 @@ module.exports = ({ db }) => {
         global.logger.error(`no ingredients found in image`);
         throw errorGen(`no ingredients found in image`, 400);
       }
+      const units = process.env.MEASUREMENT_UNITS.split(',');
+
+      const indexesToRemove = new Set();
       for (let i = 0; i < recipeJSON.ingredients.length; i++) {
         if (!recipeJSON.ingredients[i].name) {
-          global.logger.error(`ingredient missing name`);
-          throw errorGen(`ingredient missing name`, 400);
+          global.logger.error(`ingredient missing name. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
+          indexesToRemove.add(i);
         }
-        if (!recipeJSON.ingredients[i].measurement || recipeJSON.ingredients[i].measurement < 0) {
-          global.logger.error(`missing or invalid ingredient measurement`);
-          throw errorGen(`missing or invalid ingredient measurement`, 400);
+        if (!recipeJSON.ingredients[i].measurement || recipeJSON.ingredients[i].measurement <= 0) {
+          global.logger.error(`missing or invalid ingredient measurement, removing from array. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
+          indexesToRemove.add(i);
         }
         if (!recipeJSON.ingredients[i].measurementUnit) {
-          global.logger.error(`missing ingredient measurementUnit`);
-          throw errorGen(`missing ingredient measurementUnit`, 400);
+          global.logger.error(`missing ingredient measurementUnit: JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
+          indexesToRemove.add(i);
         }
+        if (!units.includes(recipeJSON.ingredients[i].measurementUnit)) {
+          global.logger.error(`invalid ingredient measurementUnit, removing from array. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
+          indexesToRemove.add(i);
+          continue;
+        }
+      }
+      // remove invalid ingredients from array
+      for (let i of Array.from(indexesToRemove).sort((a, b) => b - a)) {
+        recipeJSON.ingredients.splice(i, 1);
       }
 
       sendSSEMessage(userID, { message: `Checking tool details...` });
@@ -799,8 +822,10 @@ module.exports = ({ db }) => {
       global.logger.info(`FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`);
 
       try {
+        console.log(`GETTING UNIT RATIO FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`)
         const data = await getUnitRatio(userID, authorization, recipeIngredient.name, recipeIngredient.measurementUnit, userIngredientMatch.purchaseUnit);
         const parsedData = JSON.parse(data.response);
+        console.log(`UNIT RATIO RESULT: ${JSON.stringify(parsedData)}`)
 
         if (!parsedData.unitRatio) {
           throw new Error(`Error getting unitRatioEstimate from openAI for ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
@@ -905,7 +930,7 @@ module.exports = ({ db }) => {
     if (categoryJSON.recipeCategoryID) {
       return categoryJSON.recipeCategoryID;
     } else {
-      // return categoryID for 'Other'
+      // return recipeCategoryID for 'Other'
       return 2023112900000005;
     }
   }

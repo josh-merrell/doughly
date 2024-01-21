@@ -423,7 +423,6 @@ export class UserRecipeComponent {
     });
   }
   private mapRecipeTools(recipeTools: any, tools: any) {
-    console.log(`RECIPE TOOLS: `, recipeTools);
     if (!recipeTools.length || !tools.length) return [];
     return recipeTools.map((recipeTool: any) => {
       const tool = tools.find((tool: any) => tool.toolID === recipeTool.toolID);

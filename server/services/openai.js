@@ -1,6 +1,7 @@
 const { OpenAI } = require('openai');
 const { createUserLog } = require('./dbLogger');
 const { errorGen } = require('../middleware/errorHandling');
+const units = process.env.MEASUREMENT_UNITS.split(',');
 
 const getClient = async () => {
   const openai = new OpenAI({
@@ -46,6 +47,7 @@ const visionRequest = async (recipeImageURL, userID, authorization, messageType)
 };
 
 const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, userItems) => {
+  console.log(`MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS: ${JSON.stringify(userItems)}`);
   const client = await getClient();
   const body = {
     messages: [requestMessages[type].message],
@@ -109,33 +111,13 @@ const getUnitRatio = async (userID, authorization, substance, measurementUnit_A,
       type: requestMessages['estimateUnitRatio'].response_format,
     },
   };
-  // add the substance to the request
+  // add the params to the request
   body.messages.push({
     role: 'user',
     content: [
       {
         type: 'text',
-        text: `Here is 'substance': ${substance}`,
-      },
-    ],
-  });
-  // add the first measurementUnit to the request
-  body.messages.push({
-    role: 'user',
-    content: [
-      {
-        type: 'text',
-        text: `Here is 'measurementUnit_A': ${measurementUnit_A}`,
-      },
-    ],
-  });
-  // add the second measurementUnit to the request
-  body.messages.push({
-    role: 'user',
-    content: [
-      {
-        type: 'text',
-        text: `Here is 'measurementUnit_B': ${measurementUnit_B}`,
+        text: `'substance': ${substance}, 'measurementUnit_A': ${measurementUnit_A}, 'measurementUnit_B': ${measurementUnit_B}`,
       },
     ],
   });
@@ -218,7 +200,7 @@ const requestMessages = {
         {
           type: 'text',
           text: `Attempt to gather information from this image depicting a recipe. Return a JSON object. If the image does not depict a recipe, or if any of the required properties can't be reasonably estimated, the JSON should include a single property 'error' with a number value of 10. Otherwise, include the following properties:
-'title' <string> (required): The title of the recipe,
+'title' <string> (required): The title of the recipe converted to title case,
 'servings' <number>: The number of servings the recipe makes. estimate if not provided,
 'lifespanDays' <number>: The number of days the dish can be stored after being made,
 'timePrep' <number> (estimate): The number of minutes it takes to complete the steps, not including waiting time.
@@ -226,10 +208,10 @@ const requestMessages = {
 'category' <string> (required): An appropriate one-word category for the recipe based on the title
 'ingredients' <array> (required): An array of objects, each one an 'ingredient'
 'ingredient' <object>: An object with properties: 
--'name' <string> (The name should not include any descriptive words and should be capitalized, for example 'stemmed broccoli' should be 'Broccoli', and 'dry yeast' should be 'Yeast'), 
--'measurement' <number-decimal>, 
--'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe: ['gram', 'kilogram', 'pint', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'quart', 'gallon', 'milliliter', 'liter', 'packet', 'bag', 'box', 'carton', 'pallet', 'bottle', 'container', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen']). Example valid selection is 'container', example invalid selection is 'package', 
--'preparation' <string>. 'preparation' is optional and describes how the ingredient should be prepared, for example, 'chopped' or 'minced'.
+-'name' <string> (Disregard any adjective words and capitalize, for example 'stemmed broccoli' should be 'Broccoli', and 'dry yeast' should be 'Yeast'), 
+-'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe: ${JSON.stringify(units)}. Example if recipe calls for 2 medium onions, the best measurementUnit would be "single" with a measurement of 2. Disregard adjectives like "medium"), 
+-'measurement' <number> (required) estimate based on chosen measurementUnit if no measurement provided, 
+-'preparation' <string>. 'preparation' is optional and describes how the ingredient should be prepared, for example, 'chopped' or 'thinly sliced minced'.
 'tools' <array>: An array of objects, each one a 'tool'
 'tool' <object>: An object with properties 'name' <string> and 'quantity' <number> (default 1).
 'steps' <array> (required): An array of objects, each one a 'step'
@@ -254,15 +236,15 @@ Do not include any other properties in the JSON object response. If an optional 
         {
           type: 'text',
           text: `You are provided a recipe ingredient, which includes 'name', 'measurement', and 'measurementUnit'. You are also provided an array of user ingredients. each includes a 'name', 'ingredientID', and 'purchaseUnit'. Using only the 'name' property, attempt to find a matching user ingredient for the provided recipe ingredient. For example, 'flour' would be a match for 'wheat flour', but 'rose water' would not be a match for 'water' If no close match is found, return the following json:
-          'lifespanDays' <number>: estimate of number of days ingredient will stay usable if stored properly, 
-          'purchaseUnit' <string>: (required, choose the unit from this list that most closely matches how the ingredient might be purchased: ['gram', 'kilogram', 'pint', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'quart', 'gallon', 'milliliter', 'liter', 'packet', 'bag', 'box', 'carton', 'pallet', 'bottle', 'container', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen']). Example valid selection is 'container', example invalid selection is 'package', 
-          'gramRatio' <number>: an estimate of how many grams the chosen purchaseUnit of this ingredient would weigh,
-          'purchaseUnitRatio' <number>: an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient.
+          'lifespanDays' <number>: (required) estimate of number of days ingredient will stay usable if stored properly, 
+          'purchaseUnit' <string>: (required) choose the unit from this list that most closely matches how the ingredient might be purchased: ${units}. Example valid selection is 'container', example invalid selection is 'package', 
+          'gramRatio' <positive integer>: (required) an estimate of how many grams the chosen purchaseUnit of this ingredient would weigh,
+          'purchaseUnitRatio' <number>: (required) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient.
           
           
           If a match is found, return the following json:
-          'ingredientID' <number>: The ingredientID of the matching user ingredient,
-          'purchaseUnitRatio' <number>: an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient. 
+          'ingredientID' <number>: (required) The ingredientID of the matching user ingredient,
+          'purchaseUnitRatio' <number>: (required) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient. 
           
           Do not include any properties in the JSON object responses except those defined for the two cases. Convert any fractions to decimals.`,
         },
@@ -289,7 +271,7 @@ Do not include any other properties in the JSON object response. If an optional 
       content: [
         {
           type: 'text',
-          text: `You are provided a recipe Category name. You are also provided an array of user Categories. each includes a 'name' and 'categoryID'. Using only the 'name' property, attempt to find a matching user Category for the provided recipe Category. For example, 'Soups' would be a match for 'Soup', but 'Soups' would not be a match for 'Japanese' If no close match is found, return the ID of the category 'Other'. The returned value must be in JSON format, with nothing else returned. The JSON should have a single property 'categoryID'.`,
+          text: `You are provided a recipe Category name. You are also provided an array of user Categories. each includes a 'name' and 'recipeCategoryID'. Using only the 'name' property, attempt to find a matching user Category for the provided recipe Category. For example, 'Soups' would be a match for 'Soup', but 'Soups' would not be a match for 'Japanese' If no close match is found, return the ID of the category 'Other'. The returned value must be in JSON format, with nothing else returned. The JSON should have a single property 'recipeCategoryID'.`,
         },
       ],
     },
