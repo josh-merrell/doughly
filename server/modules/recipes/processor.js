@@ -143,6 +143,7 @@ module.exports = ({ db }) => {
 
   async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
     let ingredientID;
+    global.logger.info(`CONSTRUCT RI. PREPARATION: ${ingredient.preparation}`)
     try {
       if (ingredient.ingredientID === 0) {
         // If ingredientID is not provided, create a new ingredient
@@ -178,6 +179,7 @@ module.exports = ({ db }) => {
           measurementUnit: ingredient.measurementUnit,
           measurement: ingredient.measurement,
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
+          preparation: ingredient.preparation,
         },
         { headers: { authorization } },
       );
@@ -713,6 +715,7 @@ module.exports = ({ db }) => {
         steps: recipeJSON.steps,
         ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }), //include 'timeBake' if not null
       };
+      // global.logger.info(`CALLING CONSTRUCT WITH INGREDIENTS: ${JSON.stringify(constructBody.ingredients)}`)
       if (recipePhotoURL) {
         constructBody['photoURL'] = recipePhotoURL;
       }
@@ -755,6 +758,7 @@ module.exports = ({ db }) => {
     const promises = ingredients.map((ingredient) =>
       matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', { name: ingredient.name, measurementUnit: ingredient.measurementUnit }, userIngredientNames)
         .then((data) => {
+          global.logger.info(`INPUT INGREDIENT: ${JSON.stringify(ingredient)}`)
           const ingredientJSON = JSON.parse(data.response);
           global.logger.info(`MAPPED INGREDIENT JSON: ${JSON.stringify(ingredientJSON)}`);
 
@@ -848,6 +852,7 @@ module.exports = ({ db }) => {
           measurementUnit: recipeIngredient.measurementUnit,
           ingredientID: Number(userIngredientMatch.ingredientID),
           purchaseUnitRatio: unitRatioEst,
+          preparation: recipeIngredient.preparation,
         };
       } catch (error) {
         global.logger.error(`Error getting unitRatioEstimate from openAI: ${error.message}`);
@@ -865,6 +870,7 @@ module.exports = ({ db }) => {
       purchaseUnit: recipeIngredient.purchaseUnit,
       gramRatio: recipeIngredient.gramRatio,
       purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+      preparation: recipeIngredient.preparation,
     };
   }
 

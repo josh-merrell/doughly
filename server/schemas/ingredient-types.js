@@ -88,6 +88,7 @@ const newRecipeIngredientSchema_body = {
     measurementUnit: { type: 'string', enum: unitEnum },
     measurement: { type: 'number' },
     purchaseUnitRatio: { type: 'number' },
+    preparation: { type: 'string' },
   },
 };
 
@@ -105,6 +106,10 @@ const RecipeIngredientUpdateSchema_params = {
   required: ['recipeIngredientID'],
   properties: {
     recipeIngredientID: { type: 'string' },
+    measurementUnit: { type: 'string', enum: unitEnum },
+    measurement: { type: 'number' },
+    purchaseUnitRatio: { type: 'number' },
+    preparation: { type: 'string' },
   },
 };
 

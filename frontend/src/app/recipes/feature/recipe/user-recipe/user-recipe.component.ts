@@ -39,6 +39,7 @@ import { EditRecipeModalComponent } from './../ui/edit-recipe-modal/edit-recipe-
 import { UpdateRequestErrorModalComponent } from 'src/app/shared/ui/update-request-error/update-request-error-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RecipeService } from '../../../data/recipe.service';
+import { FractionService } from 'src/app/shared/utils/fractionService';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -125,7 +126,8 @@ export class UserRecipeComponent {
     private router: Router,
     private recipeService: RecipeService,
     private photoService: PhotoService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private fractionService: FractionService
   ) {
     effect(
       () => {
@@ -339,9 +341,7 @@ export class UserRecipeComponent {
             ConfirmationModalComponent,
             {
               data: {
-                confirmationMessage: `Unsubscribed from ${
-                  this.recipe().title
-                }`,
+                confirmationMessage: `Unsubscribed from ${this.recipe().title}`,
               },
             }
           );
@@ -407,18 +407,32 @@ export class UserRecipeComponent {
       const ingredient = ingredients.find(
         (ing: any) => ing.ingredientID === recipeIngredient.ingredientID
       );
+      // Convert the measurement to a fraction if it's not a 'single' unit
+      let measurement = this.fractionService.decimalToFraction(
+        recipeIngredient.measurement
+      );
+
+      if (recipeIngredient.measurementUnit === 'single') {
+        return {
+          ...recipeIngredient,
+          name: ingredient ? ingredient.name : 'Unknown',
+          measurement: measurement,
+          measurementUnit: '',
+        };
+      }
       return {
         ...recipeIngredient,
         name: ingredient ? ingredient.name : 'Unknown',
+        measurement: measurement,
         measurementUnit:
-          Number(recipeIngredient.measurement) < 2
-            ? recipeIngredient.measurementUnit
-            : recipeIngredient.measurementUnit === 'box' ||
+          Number(recipeIngredient.measurement) > 1
+            ? recipeIngredient.measurementUnit === 'box' ||
               recipeIngredient.measurementUnit === 'bunch' ||
               recipeIngredient.measurementUnit === 'pinch' ||
               recipeIngredient.measurementUnit === 'dash'
-            ? recipeIngredient.measurementUnit + 'es'
-            : recipeIngredient.measurementUnit + 's',
+              ? recipeIngredient.measurementUnit + 'es'
+              : recipeIngredient.measurementUnit + 's'
+            : recipeIngredient.measurementUnit,
       };
     });
   }
