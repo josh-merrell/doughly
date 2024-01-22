@@ -88,7 +88,7 @@ export class AddRecipeIngredientModalComponent {
       ingredientID: [initialIngredientID, Validators.required],
       measurement: [
         { value: '', disabled: !initialIngredientID },
-        [Validators.required, positiveIntegerValidator()],
+        [Validators.required, positiveFloatValidator()],
       ],
       measurementUnit: [initialMeasurementUnit, Validators.required],
       purchaseUnitRatio: [

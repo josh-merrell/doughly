@@ -6,16 +6,11 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { selectIngredientStockByID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import {
   Observable,
   Subscription,
-  combineLatest,
   filter,
-  map,
-  of,
-  switchMap,
   take,
 } from 'rxjs';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
@@ -24,19 +19,13 @@ import {
   selectError,
   selectIngredientByID,
   selectIngredients,
-  selectLoading,
 } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -44,7 +33,6 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
 import {
-  nonDuplicateString,
   positiveIntegerValidator,
 } from 'src/app/shared/utils/formValidator';
 import { IngredientActions } from '../../state/ingredient-actions';
