@@ -159,10 +159,15 @@
       </div>
       <div
         *ngFor="let ingredient of displayIngredients()"
-        class="justify-between mt-dl-2 w-full flex"
+        class="mt-dl-2 flex w-full justify-between"
       >
         <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ ingredient.name }}
+          <span
+            *ngIf="ingredient.preparation"
+            class="pl-dl-3 text-dl-5 font-dl-2 italic text-dl-grey-2"
+            >{{ ingredient.preparation }}</span
+          >
         </span>
         <div class="flex justify-end">
           <span class="mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">

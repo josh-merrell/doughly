@@ -34,6 +34,7 @@ import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-reque
 import { DeleteRecipeIngredientModalComponent } from '../delete-recipe-ingredient-modal/delete-recipe-ingredient-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { EditRecipeIngredientModalComponent } from '../edit-recipe-ingredient-modal/edit-recipe-ingredient-modal.component';
 
 @Component({
   selector: 'dl-recipe-ingredients-modal',
@@ -78,23 +79,31 @@ export class RecipeIngredientsModalComponent {
           name: allIngredients.find(
             (ing: any) => ing.ingredientID === ri.ingredientID
           )?.name,
+          purchaseUnit: allIngredients.find(
+            (ing: any) => ing.ingredientID === ri.ingredientID
+          )?.purchaseUnit,
         }));
         enrichedRecipeIngredients.forEach((ri) => {
           // if the ingredient measurementUnit is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
-          if (
-            ri.measurementUnit === 'box' ||
-            ri.measurementUnit === 'bunch' ||
-            ri.measurementUnit === 'pinch' ||
-            ri.measurementUnit === 'dash'
-          ) {
-            ri.measurementUnit = ri.measurementUnit + 'es';
-          } else {
-            ri.measurementUnit = ri.measurementUnit + 's';
-          }
+          ri.measurementUnit = this.enrichMeasurementUnit(ri.measurementUnit);
         });
         return [...enrichedRecipeIngredients, ...ingredientsToAdd];
       })
     );
+  }
+
+  enrichMeasurementUnit(measurementUnit) {
+    if (
+      measurementUnit === 'box' ||
+      measurementUnit === 'bunch' ||
+      measurementUnit === 'pinch' ||
+      measurementUnit === 'dash'
+    ) {
+      measurementUnit += 'es';
+    } else {
+      measurementUnit += 's';
+    }
+    return measurementUnit;
   }
 
   ngOnInit() {
@@ -238,6 +247,32 @@ export class RecipeIngredientsModalComponent {
           }
         });
       });
+  }
+
+  onIngredientClick(recipeIngredient: any) {
+    const dialogRef = this.dialog.open(EditRecipeIngredientModalComponent, {
+      data: {
+        recipeIngredient: {
+          ingredient: recipeIngredient.name,
+          recipeID: this.recipe.recipeID,
+          recipeIngredientID: recipeIngredient.recipeIngredientID,
+          ingredientID: recipeIngredient.ingredientID,
+          measurement: recipeIngredient.measurement,
+          measurementUnit: recipeIngredient.measurementUnit,
+          purchaseUnit: recipeIngredient.purchaseUnit,
+          purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+        },
+      },
+    });
+    dialogRef!.afterClosed().subscribe((result: any) => {
+      if (result === 'success') {
+        this.dialog.open(ConfirmationModalComponent, {
+          data: {
+            confirmationMessage: `Recipe Ingredient updated`,
+          },
+        });
+      }
+    });
   }
 
   onCancel() {
