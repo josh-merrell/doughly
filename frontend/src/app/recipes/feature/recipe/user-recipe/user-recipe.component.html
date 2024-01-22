@@ -547,13 +547,26 @@
           Edit
         </button>
       </div>
-      <div *ngFor="let ingredient of displayIngredients()" class="mt-dl-2 flex">
-        <span class="min-w-dl-7 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
+      <div
+        *ngFor="let ingredient of displayIngredients()"
+        class="mt-dl-2 flex w-full justify-between"
+      >
+        <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ ingredient.name }}
+          <span
+            *ngIf="ingredient.preparation"
+            class="pl-dl-3 text-dl-5 font-dl-2 italic text-dl-grey-2"
+            >{{ ingredient.preparation }}</span
+          >
         </span>
-        <span class="ml-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
-          {{ ingredient.measurement }} {{ ingredient.measurementUnit }}
-        </span>
+        <div class="flex justify-end">
+          <span class="mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
+            {{ ingredient.measurement }}
+          </span>
+          <span class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2">{{
+            ingredient.measurementUnit
+          }}</span>
+        </div>
       </div>
     </div>
 
@@ -598,7 +611,7 @@
     <!-- Steps -->
     <div
       *ngIf="displaySteps()"
-      class="mx-dl-5 mt-dl-5 mb-dl-2 flex flex-col items-center rounded-lg pb-dl-5 shadow-md"
+      class="mx-dl-5 mb-dl-2 mt-dl-5 flex flex-col items-center rounded-lg pb-dl-5 shadow-md"
     >
       <div class="mb-dl-4 flex w-full items-center justify-between">
         <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
@@ -631,7 +644,7 @@
           <!-- Title taking the remaining width -->
           <div class="flex-1">
             <p
-              class="ml-dl-2 mr-dl-6 overflow-hidden whitespace-normal italic text-dl-6 font-dl-3 text-dl-grey-3"
+              class="ml-dl-2 mr-dl-6 overflow-hidden whitespace-normal text-dl-6 font-dl-3 italic text-dl-grey-3"
             >
               {{ step.title }}
             </p>

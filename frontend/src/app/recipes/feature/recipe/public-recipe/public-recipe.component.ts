@@ -32,6 +32,7 @@ import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-err
 import { selectSubscriptionBySourceRecipeID } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { FractionService } from 'src/app/shared/utils/fractionService';
 
 @Component({
   selector: 'dl-public-recipe',
@@ -78,19 +79,34 @@ export class PublicRecipeComponent {
   displayIngredients = computed(() => {
     const enhancedIngredients = this.enhancedIngredients();
     if (!enhancedIngredients) return [];
+
     return enhancedIngredients.map((i) => {
       if (!i) return null;
-      let newMeasurementUnit = i.measurementUnit;
-      if (i.measurement > 1) {
-        if (['box', 'bunch', 'pinch', 'dash'].includes(i.measurementUnit)) {
-          newMeasurementUnit += 'es';
-        } else {
-          newMeasurementUnit += 's';
-        }
+
+      // Convert the measurement to a fraction
+      let newMeasurement = this.fractionService.decimalToFraction(
+        i.measurement
+      );
+      if (i.measurementUnit === 'single') {
+        return {
+          ...i,
+          measurement: newMeasurement,
+          measurementUnit: '',
+        };
       }
+
       return {
         ...i,
-        measurementUnit: newMeasurementUnit,
+        measurement: newMeasurement,
+        measurementUnit:
+          Number(i.measurement) > 1
+            ? i.measurementUnit === 'box' ||
+              i.measurementUnit === 'bunch' ||
+              i.measurementUnit === 'pinch' ||
+              i.measurementUnit === 'dash'
+              ? i.measurementUnit + 'es'
+              : i.measurementUnit + 's'
+            : i.measurementUnit,
       };
     });
   });
@@ -110,7 +126,7 @@ export class PublicRecipeComponent {
   public displaySteps: Signal<any> = computed(() => {
     const steps = this.steps();
     return steps.sort((a, b) => a.sequence - b.sequence);
-  })
+  });
   recipeSteps: WritableSignal<any[]> = signal([]);
 
   public subscriptions: WritableSignal<any[]> = signal([]);
@@ -127,7 +143,8 @@ export class PublicRecipeComponent {
     private toolService: ToolService,
     private recipeToolService: RecipeToolService,
     private recipeStepService: RecipeStepService,
-    private stepService: StepService
+    private stepService: StepService,
+    private fractionService: FractionService
   ) {
     effect(
       () => {
