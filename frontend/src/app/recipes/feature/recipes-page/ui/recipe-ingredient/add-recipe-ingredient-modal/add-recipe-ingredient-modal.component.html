@@ -75,13 +75,13 @@
             <input
               matInput
               formControlName="measurement"
-              placeholder="ex: 2"
+              placeholder="ex: 2.5"
             />
             <mat-error
               class="text-dl-3"
-              *ngIf="form.get('measurement')?.hasError('notPositiveInteger')"
+              *ngIf="form.get('measurement')?.hasError('notPositiveFloat')"
             >
-              Must be a positive integer
+              Must be a positive number, ex "1.45"
             </mat-error>
           </mat-form-field>
         </div>
