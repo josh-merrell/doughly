@@ -157,13 +157,21 @@
           Ingredients
         </p>
       </div>
-      <div *ngFor="let ingredient of displayIngredients()" class="mt-dl-2 flex">
-        <span class="min-w-dl-7 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
+      <div
+        *ngFor="let ingredient of displayIngredients()"
+        class="justify-between mt-dl-2 w-full flex"
+      >
+        <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ ingredient.name }}
         </span>
-        <span class="ml-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
-          {{ ingredient.measurement }} {{ ingredient.measurementUnit }}
-        </span>
+        <div class="flex justify-end">
+          <span class="mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
+            {{ ingredient.measurement }}
+          </span>
+          <span class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2">{{
+            ingredient.measurementUnit
+          }}</span>
+        </div>
       </div>
     </div>
 

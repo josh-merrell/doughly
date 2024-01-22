@@ -41,7 +41,8 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio } = options;
+    const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation } = options;
+    global.logger.info(`CREATING RECIPE INGREDIENT, PREPARATION: ${preparation}`)
 
     //verify that 'customID' exists on the request
     if (!customID) {
@@ -84,7 +85,7 @@ module.exports = ({ db }) => {
     }
 
     //create the recipeIngredient
-    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, version: 1 }).select().single();
+    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, version: 1, preparation }).select().single();
 
     if (error3) {
       global.logger.error(`Error creating recipeIngredient: ${error3.message}`);
@@ -118,6 +119,7 @@ module.exports = ({ db }) => {
       measurementUnit: recipeIngredient.measurementUnit,
       measurement: recipeIngredient.measurement,
       purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+      preparation,
     };
   }
 
