@@ -27,7 +27,7 @@ async function getRecipeIngredientByID(req, res) {
 async function createRecipeIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation } = req.body;
+  const { recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation, needsReview } = req.body;
   const { authorization } = req.headers;
   let userID;
   if (req.body.userID) {
@@ -47,6 +47,7 @@ async function createRecipeIngredient(req, res) {
       measurement,
       purchaseUnitRatio,
       preparation,
+      needsReview,
     });
     return res.json(returner);
   } catch (e) {

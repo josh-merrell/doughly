@@ -21,7 +21,6 @@ import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ing
 import { selectRecipeToolsByRecipeID } from '../../../state/recipe-tool/recipe-tool-selectors';
 import { selectRecipeCategoryByID } from '../../../state/recipe-category/recipe-category-selectors';
 import { ProfileCardComponent } from 'src/app/social/feature/friends/ui/profile-card/profile-card.component';
-import { DomSanitizer } from '@angular/platform-browser';
 import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { MatDialog } from '@angular/material/dialog';
 import { RecipeIngredientsModalComponent } from '../../recipes-page/ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
@@ -46,7 +45,6 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ShoppingList } from '../../../state/recipe/recipe-state';
 import { RecipeShoppingListModalComponent } from './../ui/recipe-shopping-list-modal/recipe-shopping-list-modal.component';
 import { UseRecipeModalComponent } from './../ui/use-recipe-modal/use-recipe-modal.component';
-import { PhotoService } from 'src/app/shared/utils/photoService';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { ProfileService } from 'src/app/profile/data/profile.service';
 import { Profile } from 'src/app/profile/state/profile-state';
@@ -86,6 +84,8 @@ export class UserRecipeComponent {
   displaySteps: WritableSignal<any[]> = signal([]);
   public subscriptions: WritableSignal<any[]> = signal([]);
   public sourceRecipeVersion: WritableSignal<number> = signal(0);
+  public ingredientsNeedReview: WritableSignal<boolean> = signal(false);
+  public recipeIngredientsNeedReview: WritableSignal<boolean> = signal(false);
 
   //****** Usage Logs ******
   //default datestring 30 days prior
@@ -121,11 +121,9 @@ export class UserRecipeComponent {
     private renderer: Renderer2,
     private route: ActivatedRoute,
     private store: Store,
-    private sanitizer: DomSanitizer,
     public dialog: MatDialog,
     private router: Router,
     private recipeService: RecipeService,
-    private photoService: PhotoService,
     private profileService: ProfileService,
     private fractionService: FractionService
   ) {
@@ -243,12 +241,12 @@ export class UserRecipeComponent {
     );
 
     //FOR USAGE LOGS
-    effect(() => {
-      const relevantUses =
-        this.onlyMe() === 'true'
-          ? this.recipeService.myUses().length
-          : this.recipeService.allUses().length;
-    });
+    // effect(() => {
+    //   const relevantUses =
+    //     this.onlyMe() === 'true'
+    //       ? this.recipeService.myUses().length
+    //       : this.recipeService.allUses().length;
+    // });
     effect(() => {
       this.recipeService.loadUses(this.recipeID(), this.logsAfterDate());
     });
@@ -257,6 +255,7 @@ export class UserRecipeComponent {
   ngOnInit(): void {
     this.store.select(selectIngredients).subscribe((ingredients) => {
       this.ingredients.set(ingredients);
+      this.ingredientsNeedReview.set(ingredients.some((ing) => ing.needsReview));
     });
     this.store.select(selectTools).subscribe((tools) => {
       this.tools.set(tools);
@@ -403,6 +402,10 @@ export class UserRecipeComponent {
     ingredients: any[]
   ) {
     if (!recipeIngredients.length || !ingredients.length) return [];
+    //update recipeIngredientsNeedReview
+    this.recipeIngredientsNeedReview.set(
+      recipeIngredients.some((ri) => ri.needsReview)
+    );
     return recipeIngredients.map((recipeIngredient: any) => {
       const ingredient = ingredients.find(
         (ing: any) => ing.ingredientID === recipeIngredient.ingredientID
@@ -630,6 +633,18 @@ export class UserRecipeComponent {
         });
       }
     });
+  }
+
+  reviewIngredients() {
+    // if any ingredients need review, navigate to the ingredients page
+    if (this.ingredientsNeedReview()) {
+      this.router.navigate(['/ingredients']);
+    }
+
+    // else only recipeIngredients need review so call editRecipeIngredients()
+    else {
+      this.editRecipeIngredients();
+    }
   }
 
   //***************************************************

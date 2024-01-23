@@ -95,7 +95,6 @@ export class SocialService {
   }
 
   updateFriendship(friendshipID: Number, status: string): Observable<Friendship> {
-    console.log(`IN SERVICE FRIENDSHIP ID: ${friendshipID}, STATUS: ${status}`)
     return this.http.patch<Friendship>(
       `${this.API_URL}/friendships/${friendshipID}`,
       { status }

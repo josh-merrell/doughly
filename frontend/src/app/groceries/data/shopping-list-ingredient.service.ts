@@ -82,7 +82,6 @@ export class ShoppingListIngredientService {
     shoppingListIngredients: any[],
     store: string,
   ): Observable<any> {
-    console.log(`BATCHUPDATESHOPPINGLISTINGR: `, shoppingListIngredients, ` - STORE: `, store)
     const requests = shoppingListIngredients.map((shoppingListIngredient) =>
       this.updateShoppingListIngredient(
         shoppingListIngredient.shoppingListIngredientID,

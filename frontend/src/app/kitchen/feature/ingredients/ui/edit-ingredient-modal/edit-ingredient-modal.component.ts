@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   MatDialog,
@@ -25,6 +25,7 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  FormControl,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -63,6 +64,7 @@ export class EditIngredientModalComponent {
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
   private updatingSubscription!: Subscription;
   private ingredientsSubscription: Subscription = new Subscription();
+  public pUnit: WritableSignal<string> = signal('');
 
   constructor(
     public dialogRef: MatDialogRef<EditIngredientModalComponent>,
@@ -72,6 +74,13 @@ export class EditIngredientModalComponent {
     public dialog: MatDialog
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
+
+    // // Subscribe to the valueChanges observable of purchaseUnit form control
+    // const purchaseUnitControl = this.form.get('purchaseUnit') as FormControl;
+    // purchaseUnitControl.valueChanges.subscribe((newValue) => {
+    //   // Update pUnit with the new value
+    //   this.pUnit.set(newValue);
+    // });
   }
 
   ngOnInit(): void {
@@ -160,6 +169,10 @@ export class EditIngredientModalComponent {
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  onConfirm() {
+    this.onSubmit();
   }
 
   ngOnDestroy(): void {
