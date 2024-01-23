@@ -39,6 +39,7 @@ export class IngredientService {
           gramRatio: ingredient.gramRatio,
           purchaseUnit: ingredient.purchaseUnit,
           lifespanDays: ingredient.lifespanDays,
+          needsReview: ingredient.needsReview,
         };
       });
     })

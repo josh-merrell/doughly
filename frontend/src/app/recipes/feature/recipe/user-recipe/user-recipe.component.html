@@ -537,15 +537,24 @@
         <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
           Ingredients
         </p>
-        <button
-          *ngIf="!recipeSubscription()"
-          id="edit-recipe-ingredients-button"
-          type="button"
-          class="mr-dl-4 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
-          (click)="editRecipeIngredients()"
-        >
-          Edit
-        </button>
+        <div class="flex items-center">
+          <button
+            *ngIf="ingredientsNeedReview() || recipeIngredientsNeedReview()"
+            class="block h-dl-4 w-dl-7 text-centerpl-dl-5 mr-dl-3 min-w-dl-9 rounded-dl-1 border border-dl-yellow-4 px-dl-1 py-dl-1 text-dl-5 font-dl-3 text-dl-yellow-2"
+            (click)="reviewIngredients()"
+          >
+            Needs Review
+          </button>
+          <button
+            *ngIf="!recipeSubscription()"
+            id="edit-recipe-ingredients-button"
+            type="button"
+            class="mr-dl-4 block h-dl-4 w-dl-6 whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+            (click)="editRecipeIngredients()"
+          >
+            Edit
+          </button>
+        </div>
       </div>
       <div
         *ngFor="let ingredient of displayIngredients()"

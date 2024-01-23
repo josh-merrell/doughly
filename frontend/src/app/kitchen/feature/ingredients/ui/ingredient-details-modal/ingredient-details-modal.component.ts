@@ -123,6 +123,9 @@ export class IngredientDetailsModalComponent {
         return forkJoin(shoppingListObservables);
       })
     );
+    if (this.data.openEdit) {
+      this.openEditIngredientDialog();
+    }
   }
 
   getExpirationDate(purchasedDate: string, lifespanDays: number): Date {
@@ -199,6 +202,7 @@ export class IngredientDetailsModalComponent {
 
   openEditIngredientDialog() {
     const dialogRef = this.dialog.open(EditIngredientModalComponent, {
+      width: '440px',
       data: {
         itemID: this.ingredient.ingredientID,
       },

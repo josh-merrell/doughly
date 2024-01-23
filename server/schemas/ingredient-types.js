@@ -28,6 +28,7 @@ const newIngredientSchema_body = {
     },
     gramRatio: { type: 'integer' },
     brand: { type: 'string' },
+    needsReview: { type: 'boolean' },
   },
 };
 

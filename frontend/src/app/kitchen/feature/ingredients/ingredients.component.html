@@ -3,8 +3,7 @@
   <div class="mx-dl-5 mt-dl-7 flex items-center justify-between">
     <div class="ml-dl-2 flex flex-col">
       <p class="mt-dl-3 text-dl-6 font-dl-2 text-dl-grey-4">
-        {{ totalInStock$ | async }} of {{ (ingredients$ | async)?.length }} In
-        Stock
+        {{ totalInStock() }} of {{ ingredients().length }} In Stock
       </p>
     </div>
 
@@ -52,20 +51,62 @@
     </div>
   </div>
 
-  <!-- Ingredient Rows -->
   <div
     #recipeContainer
     class="ingredient-container mb-dl-2 flex h-full max-h-dl-20 w-full flex-col items-center overflow-auto scroll-smooth"
     (scroll)="checkIngredientScroll($event.target)"
   >
+    <!-- Ingredient Rows Needs Review -->
+    <p
+      *ngIf="displayedRowsNeedsReview().length"
+      class="text-dl-5 font-dl-3 text-dl-yellow-4"
+    >
+      AI Created Ingredients, Need Review
+    </p>
     <div
-      *ngFor="let row of displayedRows$ | async"
+      *ngFor="let row of displayedRowsNeedsReview()"
       class="flex w-full justify-between px-dl-5"
     >
       <!-- Ingredient Card -->
       <div
         *ngFor="let ingredient of row"
-        class="ingredient-card relative mx-dl-2 my-dl-2 flex h-dl-8 w-dl-12 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
+        class="ingredient-card relative mx-dl-2 my-dl-2 flex h-dl-8 min-w-dl-11 max-w-1/2 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
+        [ngClass]="{
+          'border-2 border-dl-yellow-9 bg-dl-yellow-10': ingredient.needsReview,
+          'bg-dl-grey-8 ': ingredient.totalStock === 0,
+          'bg-dl-grey-10': ingredient.totalStock > 0
+        }"
+        (click)="ingredientCardClick(ingredient)"
+        (touchstart)="ingredientCardTouchStart(ingredient.ingredientID)"
+        (touchend)="ingredientCardTouchEnd()"
+      >
+        <p class="text-dl-7 font-dl-3 text-dl-grey-2">
+          {{ ingredient.name }}
+        </p>
+        <p
+          *ngIf="ingredient.totalStock > 0"
+          class="text-dl-6 font-dl-2 text-dl-grey-2"
+        >
+          {{ ingredient.totalStock }} {{ ingredient.purchaseUnit }}
+        </p>
+        <p
+          *ngIf="ingredient.totalStock === 0"
+          class="text-dl-5 font-dl-2 italic text-dl-grey-1"
+        >
+          Out of Stock
+        </p>
+      </div>
+    </div>
+
+    <!-- Ingredient Rows No Review -->
+    <div
+      *ngFor="let row of displayedRowsNoReview()"
+      class="flex w-full justify-between px-dl-5"
+    >
+      <!-- Ingredient Card -->
+      <div
+        *ngFor="let ingredient of row"
+        class="ingredient-card relative mx-dl-2 my-dl-2 flex h-dl-8 min-w-dl-11 max-w-1/2 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
         [ngClass]="{
           'bg-dl-grey-8 ': ingredient.totalStock === 0,
           'bg-dl-grey-10': ingredient.totalStock > 0
