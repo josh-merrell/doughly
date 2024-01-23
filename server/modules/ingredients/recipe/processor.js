@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation } = options;
+    const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation, needsReview=false } = options;
     global.logger.info(`CREATING RECIPE INGREDIENT, PREPARATION: ${preparation}`)
 
     //verify that 'customID' exists on the request
@@ -85,7 +85,7 @@ module.exports = ({ db }) => {
     }
 
     //create the recipeIngredient
-    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, version: 1, preparation }).select().single();
+    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, version: 1, preparation, needsReview }).select().single();
 
     if (error3) {
       global.logger.error(`Error creating recipeIngredient: ${error3.message}`);
@@ -120,6 +120,7 @@ module.exports = ({ db }) => {
       measurement: recipeIngredient.measurement,
       purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
       preparation,
+      needsReview
     };
   }
 
@@ -157,6 +158,9 @@ module.exports = ({ db }) => {
         updateFields[key] = options[key];
       }
     }
+
+    // always set needsReview to false when updating
+    updateFields['needsReview'] = false;
 
     try {
       const updatedRecipeIngredient = await updater(userID, authorization, 'recipeIngredientID', recipeIngredientID, 'recipeIngredients', updateFields);

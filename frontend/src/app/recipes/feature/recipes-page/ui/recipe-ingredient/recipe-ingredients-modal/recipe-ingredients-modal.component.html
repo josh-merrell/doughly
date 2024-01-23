@@ -15,7 +15,58 @@
       <div
         class="mb-dl-2 flex max-h-dl-13 w-dl-15 flex-wrap items-start overflow-y-auto"
       >
-        <ng-container *ngFor="let ingredient of displayedIngredients$ | async">
+        <p *ngIf="(displayNeedsReview$ | async)!.length" class="text-dl-5 font-dl-3 text-dl-yellow-4">AI Created Ingredients, Need Review</p>
+        <!-- Show Ingredients that need reviewing -->
+        <ng-container *ngFor="let ingredient of displayNeedsReview$ | async">
+          <div class="inline-block">
+            <div
+              class="mr-dl-3 mb-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-yellow-10 border-2 border-dl-yellow-8 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4"
+            >
+              <div (click)="onIngredientClick(ingredient)">
+                <span class="font-dl-3"
+                  >{{ ingredient.name }}&nbsp;&nbsp;&nbsp;</span
+                >
+                <span class="font-dl-2">
+                  {{ ingredient.measurement }}&nbsp;{{
+                    ingredient.measurementUnit
+                  }}</span
+                >
+                <span
+                  *ngIf="ingredient.toAdd"
+                  class="font-dl-2 italic text-dl-grey-5"
+                  >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
+                >
+              </div>
+              <button
+                type="button"
+                class="ml-dl-2 rounded-dl-2 bg-dl-yellow-10 text-dl-grey-3 "
+                (click)="
+                  onDeleteClick(
+                    ingredient.recipeIngredientID,
+                    ingredient.ingredientID
+                  )
+                "
+              >
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="-8 -3 30 30"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+        <!-- Show Ingredients that don't need reviewing -->
+        <ng-container *ngFor="let ingredient of displayNoReview$ | async">
           <div class="inline-block">
             <div
               class="mr-dl-3 mt-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4"

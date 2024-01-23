@@ -89,6 +89,7 @@ const newRecipeIngredientSchema_body = {
     measurement: { type: 'number' },
     purchaseUnitRatio: { type: 'number' },
     preparation: { type: 'string' },
+    needsReview: { type: 'boolean' },
   },
 };
 

@@ -33,6 +33,7 @@ export class RecipeIngredientService {
             measurement: recipeIngredient.measurement,
             measurementUnit: recipeIngredient.measurementUnit,
             purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+            needsReview: recipeIngredient.needsReview,
           };
         });
       })

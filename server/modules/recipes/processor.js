@@ -180,6 +180,7 @@ module.exports = ({ db }) => {
           measurement: ingredient.measurement,
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
           preparation: ingredient.preparation,
+          needsReview: ingredient.needsReview,
         },
         { headers: { authorization } },
       );
@@ -750,7 +751,7 @@ module.exports = ({ db }) => {
       throw errorGen(`Error getting userIngredients: ${userIngredientsError.message}`, 400);
     }
     const userIngredientNames = userIngredients.map((i) => {
-      return { name: i.name, ingredientID: i.ingredientID, purchaseUnit: i.purchaseUnit };
+      return { name: i.name, ingredientID: i.ingredientID, purchaseUnit: i.purchaseUnit, needsReview: true };
     });
     const matchedIngredients = [];
 
@@ -779,12 +780,14 @@ module.exports = ({ db }) => {
               purchaseUnit: ingredientJSON.purchaseUnit,
               gramRatio: ingredientJSON.gramRatio,
               purchaseUnitRatio: ingredientJSON.purchaseUnitRatio,
+              needsReview: true,
             };
           } else {
             return {
               ...ingredient,
               ingredientID: Number(ingredientJSON.ingredientID),
               purchaseUnitRatio: ingredientJSON.purchaseUnitRatio,
+              needsReview: true,
             };
           }
         })
