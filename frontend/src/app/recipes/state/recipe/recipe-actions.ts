@@ -70,6 +70,8 @@ const visionAddRecipeFailure = createAction(
   props<{ error: any }>()
 );
 
+const clearNewRecipeID = createAction('[Recipes] Clear New Recipe ID');
+
 const constructRecipe = createAction(
   '[Recipes] Construct',
   props<{ constructBody: any }>()
@@ -143,6 +145,7 @@ export const RecipeActions = {
   visionAddRecipe,
   visionAddRecipeSuccess,
   visionAddRecipeFailure,
+  clearNewRecipeID,
   constructRecipe,
   constructRecipeSuccess,
   constructRecipeFailure,
