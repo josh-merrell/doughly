@@ -1,4 +1,10 @@
-import { Component, Inject } from '@angular/core';
+import {
+  Component,
+  effect,
+  Inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -29,8 +35,6 @@ import { Store } from '@ngrx/store';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
 import { AddRecipeIngredientModalComponent } from '../add-recipe-ingredient-modal/add-recipe-ingredient-modal.component';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
-import { DeleteRequestConfirmationModalComponent } from 'src/app/shared/ui/delete-request-confirmation/delete-request-confirmation-modal.component';
-import { DeleteRequestErrorModalComponent } from 'src/app/shared/ui/delete-request-error/delete-request-error-modal.component';
 import { DeleteRecipeIngredientModalComponent } from '../delete-recipe-ingredient-modal/delete-recipe-ingredient-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
@@ -53,6 +57,10 @@ export class RecipeIngredientsModalComponent {
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   private recipeIngredientsSubscription: Subscription = new Subscription();
+  displayNeedsReview: WritableSignal<any> = signal([]);
+  displayNoReview: WritableSignal<any> = signal([]);
+  displayNeedsReview$!: Observable<any[]>;
+  displayNoReview$!: Observable<any[]>;
 
   constructor(
     public dialog: MatDialog,
@@ -87,7 +95,20 @@ export class RecipeIngredientsModalComponent {
           // if the ingredient measurementUnit is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
           ri.measurementUnit = this.enrichMeasurementUnit(ri.measurementUnit);
         });
-        return [...enrichedRecipeIngredients, ...ingredientsToAdd];
+        const fullList = [...enrichedRecipeIngredients, ...ingredientsToAdd];
+        const sortedOne = fullList.sort((a, b) => {
+          // sort by ingredient name
+          if (a.name < b.name) {
+            return -1;
+          } else return 1;
+        });
+        this.displayNeedsReview.set(
+          sortedOne.filter((ri) => ri.needsReview === true)
+        );
+        this.displayNoReview.set(
+          sortedOne.filter((ri) => ri.needsReview === false)
+        );
+        return sortedOne;
       })
     );
   }
@@ -108,6 +129,16 @@ export class RecipeIngredientsModalComponent {
 
   ngOnInit() {
     this.ingredients$ = this.store.select(selectIngredients);
+    this.displayNeedsReview$ = this.displayedIngredients$.pipe(
+      map((ingredients) =>
+        ingredients.filter((ingredient) => ingredient.needsReview === true)
+      )
+    );
+    this.displayNoReview$ = this.displayedIngredients$.pipe(
+      map((ingredients) =>
+        ingredients.filter((ingredient) => ingredient.needsReview === false)
+      )
+    );
   }
 
   /**
@@ -261,6 +292,7 @@ export class RecipeIngredientsModalComponent {
           measurementUnit: recipeIngredient.measurementUnit,
           purchaseUnit: recipeIngredient.purchaseUnit,
           purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+          needsReview: recipeIngredient.needsReview,
         },
       },
     });

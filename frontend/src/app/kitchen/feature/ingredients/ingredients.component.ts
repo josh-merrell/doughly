@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, WritableSignal, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableFullComponent } from 'src/app/shared/ui/dl-table-full/dl-table-full.component';
 import {
@@ -7,8 +7,6 @@ import {
   FilterTypeEnum,
   Sort,
 } from 'src/app/shared/state/shared-state';
-import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
-import { IngredientService } from './data/ingredient.service';
 import { AddIngredientModalComponent } from './ui/add-ingredient-modal/add-ingredient-modal.component';
 import { EditIngredientModalComponent } from './ui/edit-ingredient-modal/edit-ingredient-modal.component';
 import { Ingredient } from './state/ingredient-state';
@@ -18,6 +16,9 @@ import { SortingService } from 'src/app/shared/utils/sortingService';
 import { FilterService } from 'src/app/shared/utils/filterService';
 import { IngredientDetailsModalComponent } from './ui/ingredient-details-modal/ingredient-details-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { Store } from '@ngrx/store';
+import { selectIngredients } from './state/ingredient-selectors';
+import { selectIngredientStocks } from '../Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 
 @Component({
   selector: 'dl-ingredients',
@@ -31,75 +32,141 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
   templateUrl: './ingredients.component.html',
 })
 export class IngredientsComponent {
-  constructor(
-    private dialog: MatDialog,
-    private ingredientService: IngredientService,
-    private sortingService: SortingService,
-    private filterService: FilterService
-  ) {}
+  public ingredients: WritableSignal<Ingredient[]> = signal([]);
+  public enhancedIngredients: WritableSignal<Ingredient[]> = signal([]);
+  public totalInStock: WritableSignal<Number> = signal(0);
+  public filters: WritableSignal<Filter[]> = signal([]);
+  public filteredIngredientsNoReview: WritableSignal<any[]> = signal([]);
+  public filteredIngredientsNeedsReview: WritableSignal<any[]> = signal([]);
+  public displayedRowsNoReview: WritableSignal<any[]> = signal([]);
+  public displayedRowsNeedsReview: WritableSignal<any[]> = signal([]);
 
-  public ingredients$: Observable<Ingredient[]> = this.ingredientService.rows$;
-  public enhancedIngredients$: Observable<Ingredient[]> =
-    this.ingredientService.enhancedRows$;
-  public enhancedIngredients: any[] = [];
-  public rows$!: Observable<any[]>;
-  public filters$ = new BehaviorSubject<Filter[]>([]);
-  public filters: Filter[] = [];
-  public filteredIngredients$ = new BehaviorSubject<any[]>([]);
   sorts: Sort[] = [];
-  public displayedRows$ = new BehaviorSubject<any[]>([]);
 
   ingredientsPerRow: number = 2;
-  public totalInStock$!: Observable<Number>;
   public searchFilters: Filter[] = [];
   showIngredientUpArrow: boolean = false;
   showIngredientDownArrow: boolean = false;
   modalActiveForIngredientID: number | null = null;
 
+  constructor(
+    private dialog: MatDialog,
+    private sortingService: SortingService,
+    private filterService: FilterService,
+    private store: Store
+  ) {
+    effect(
+      () => {
+        const ingredients = this.ingredients();
+        this.addStockTotals(ingredients);
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(
+      () => {
+        const enhancedIngredients = this.enhancedIngredients();
+        this.totalInStock.set(
+          enhancedIngredients.filter(
+            (ingredient) => ingredient.totalStock && ingredient.totalStock > 0
+          ).length
+        );
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(
+      () => {
+        const filters = this.filters();
+        const enhancedIngredients = this.enhancedIngredients();
+        const noReview = enhancedIngredients.filter((ingredient) => {
+          return !ingredient.needsReview;
+        });
+        const needsReview = enhancedIngredients.filter((ingredient) => {
+          return ingredient.needsReview;
+        });
+        this.filteredIngredientsNoReview.set(
+          this.filterService.applyFilters(noReview, filters)
+        );
+        this.filteredIngredientsNeedsReview.set(
+          this.filterService.applyFilters(needsReview, filters)
+        );
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(
+      () => {
+        const filteredIngredientsNoReview = this.filteredIngredientsNoReview();
+        if (
+          filteredIngredientsNoReview &&
+          filteredIngredientsNoReview.length > 0
+        ) {
+          const sortedIngredientsNoReview = this.sortingService.applySorts(
+            filteredIngredientsNoReview,
+            [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
+          );
+          const sortedRowsNoReview = this.arrangeInRows(
+            sortedIngredientsNoReview
+          );
+
+          this.displayedRowsNoReview.set(sortedRowsNoReview);
+        } else {
+          this.displayedRowsNoReview.set([]);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(
+      () => {
+        const filteredIngredientsNeedsReview = this.filteredIngredientsNeedsReview();
+        if (
+          filteredIngredientsNeedsReview &&
+          filteredIngredientsNeedsReview.length > 0
+        ) {
+          const sortedIngredientsNeedsReview = this.sortingService.applySorts(
+            filteredIngredientsNeedsReview,
+            [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
+          );
+          const sortedRowsNeedsReview = this.arrangeInRows(
+            sortedIngredientsNeedsReview
+          );
+
+          this.displayedRowsNeedsReview.set(sortedRowsNeedsReview);
+        } else {
+          this.displayedRowsNeedsReview.set([]);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
+
   ngOnInit(): void {
-
-    this.ingredients$.subscribe((ingredients) => {
-      this.ingredientService.addStockTotals(ingredients);
+    this.store.select(selectIngredients).subscribe((ingredients) => {
+      this.ingredients.set(ingredients);
     });
+  }
 
-    this.totalInStock$ = this.enhancedIngredients$.pipe(
-      map((enhancedIngredients: Ingredient[]) => {
-        return enhancedIngredients.filter(
-          (ingredient) => ingredient.totalStock && ingredient.totalStock > 0
-        ).length;
-      })
-    );
-
-    this.enhancedIngredients$.subscribe((enhancedIngredients) => {
-      this.enhancedIngredients = enhancedIngredients;
-    });
-
-    combineLatest([this.filters$, this.enhancedIngredients$]).subscribe(
-      ([filters, enhancedIngredients]) => {
-        this.filters = filters;
-
-        const filteredIngredients = this.filterService.applyFilters(
-          enhancedIngredients,
-          filters
+  addStockTotals(ingredients: Ingredient[]): void {
+    this.store.select(selectIngredientStocks).subscribe((ingredientStocks) => {
+      const updatedIngredients = ingredients.map((ingredient) => {
+        const matchingStocks = ingredientStocks.filter(
+          (stock: any) => stock.ingredientID === ingredient.ingredientID
         );
-
-        this.filteredIngredients$.next(filteredIngredients);
-      }
-    );
-
-    this.filteredIngredients$.subscribe((filteredIngredients) => {
-      // Check if filteredRows is defined and not empty
-      if (filteredIngredients && filteredIngredients.length > 0) {
-        const sortedIngredients = this.sortingService.applySorts(
-          filteredIngredients,
-          [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
+        const totalGrams = matchingStocks.reduce(
+          (sum: number, stock: any) => sum + stock.grams,
+          0
         );
-        const sortedRows = this.arrangeInRows(sortedIngredients);
+        const totalStock =
+          Math.round((totalGrams / ingredient.gramRatio) * 100) / 100;
 
-        this.displayedRows$.next(sortedRows);
-      } else {
-        this.displayedRows$.next([]);
-      }
+        return {
+          ...ingredient,
+          totalStock: totalStock,
+        };
+      });
+      this.enhancedIngredients.set(updatedIngredients);
     });
   }
 
@@ -160,12 +227,22 @@ export class IngredientsComponent {
     if (value === '') {
       this.searchFilters = [];
     } else this.searchFilters = [newFilter];
-    // const filtered = this.applyFilter(this.rows$, this.searchFilter);
-    const filteredIngredients = this.filterService.applyFilters(
-      this.enhancedIngredients,
+    const noReview = this.enhancedIngredients().filter((ingredient) => {
+      return !ingredient.needsReview;
+    });
+    const needsReview = this.enhancedIngredients().filter((ingredient) => {
+      return ingredient.needsReview;
+    });
+    const filteredIngredientsNoReview = this.filterService.applyFilters(
+      noReview,
       this.searchFilters
     );
-    this.filteredIngredients$.next(filteredIngredients);
+    this.filteredIngredientsNoReview.set(filteredIngredientsNoReview);
+    const filteredIngredientsNeedsReview = this.filterService.applyFilters(
+      needsReview,
+      this.searchFilters
+    );
+    this.filteredIngredientsNeedsReview.set(filteredIngredientsNeedsReview);
   }
 
   checkIngredientScroll(target: EventTarget | null) {
@@ -178,9 +255,11 @@ export class IngredientsComponent {
   }
 
   ingredientCardClick(ingredient: any) {
+    const openEdit = ingredient.needsReview ? true : false;
     this.dialog.open(IngredientDetailsModalComponent, {
       data: {
         ingredient: ingredient,
+        openEdit,
       },
       width: '75%',
     });

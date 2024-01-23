@@ -28,6 +28,7 @@ const newIngredientSchema_body = {
     },
     gramRatio: { type: 'integer' },
     brand: { type: 'string' },
+    needsReview: { type: 'boolean' },
   },
 };
 
@@ -89,6 +90,7 @@ const newRecipeIngredientSchema_body = {
     measurement: { type: 'number' },
     purchaseUnitRatio: { type: 'number' },
     preparation: { type: 'string' },
+    needsReview: { type: 'boolean' },
   },
 };
 

@@ -22,7 +22,7 @@ async function getIngredientByID(req, res) {
 async function createIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { name, lifespanDays, brand, purchaseUnit, gramRatio } = req.body;
+  const { name, lifespanDays, brand, purchaseUnit, gramRatio, needsReview } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
   try {
@@ -35,6 +35,7 @@ async function createIngredient(req, res) {
       brand,
       purchaseUnit,
       gramRatio,
+      needsReview,
     });
     return res.json(returner);
   } catch (err) {

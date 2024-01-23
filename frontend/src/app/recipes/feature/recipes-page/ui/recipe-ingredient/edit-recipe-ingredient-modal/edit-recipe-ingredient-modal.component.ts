@@ -155,6 +155,10 @@ export class EditRecipeIngredientModalComponent {
       );
   }
 
+  onConfirm() {
+    this.onSubmit();
+  }
+
   onCancel() {
     this.dialogRef.close();
   }

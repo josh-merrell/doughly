@@ -39,7 +39,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, authorization, userID, name, lifespanDays, brand, purchaseUnit, gramRatio } = options;
+    const { customID, authorization, userID, name, lifespanDays, brand, purchaseUnit, gramRatio, needsReview=false } = options;
 
     //verify that 'customID' exists on the request
     if (!customID) {
@@ -71,7 +71,7 @@ module.exports = ({ db }) => {
     }
 
     //create the ingredient
-    const { data: ingredient, error: createError } = await db.from('ingredients').insert({ ingredientID: customID, userID, name, lifespanDays, brand, purchaseUnit, gramRatio }).select().single();
+    const { data: ingredient, error: createError } = await db.from('ingredients').insert({ ingredientID: customID, userID, name, lifespanDays, brand, purchaseUnit, gramRatio, needsReview }).select().single();
     if (createError) {
       global.logger.error(`Error creating ingredient: ${createError.message}`);
       throw errorGen(`Error creating ingredient`, 400);
@@ -87,6 +87,7 @@ module.exports = ({ db }) => {
       brand: ingredient.brand,
       purchaseUnit: ingredient.purchaseUnit,
       gramRatio: ingredient.gramRatio,
+      needsReview: ingredient.needsReview,
     };
   }
 
@@ -134,6 +135,9 @@ module.exports = ({ db }) => {
       }
     }
 
+    // always set needsReview to false when updating
+    updateFields['needsReview'] = false;
+
     try {
       const updatedIngredient = await updater(userID, authorization, 'ingredientID', ingredientID, 'ingredients', updateFields);
       return {
@@ -143,6 +147,7 @@ module.exports = ({ db }) => {
         brand: updatedIngredient.brand,
         purchaseUnit: updatedIngredient.purchaseUnit,
         gramRatio: updatedIngredient.gramRatio,
+        needsReview: updatedIngredient.needsReview,
       };
     } catch (error) {
       global.logger.error(`Error updating ingredient: ${error.message}`);

@@ -110,7 +110,6 @@ export class FriendModalComponent {
     const year = joinDate.getFullYear();
     this.displayDate.set(`${month} ${year}`);
 
-    console.log(`FRIEND RECIPES: `, this.friend.recipes);
     this.initials = this.friend.nameFirst[0] + this.friend.nameLast[0];
 
     this.store
