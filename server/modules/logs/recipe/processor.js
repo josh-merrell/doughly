@@ -4,21 +4,22 @@ const { errorGen } = require('../../../middleware/errorHandling');
 module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, logIDs, subjectID, eventType, createdAfter, createdBefore } = options;
+    console.log(`RECIPE LOGS: ${JSON.stringify(options)}`)
     let q = db.from('recipeLogs').select().filter('userID', 'eq', userID).order('recipeLogID', { ascending: true });
-    if (logIDs) {
+    if (logIDs && logIDs !== 'undefined') {
       q = q.in('recipeLogID', logIDs);
     }
-    if (subjectID) {
+    if (subjectID && subjectID !== 'undefined') {
       q = q.filter('subjectID', 'eq', subjectID);
     }
-    if (eventType) {
+    if (eventType && eventType !== 'undefined') {
       q = q.like('eventType', eventType);
     }
-    if (createdAfter) {
-      q = q.gte('createdTime', createdAfter);
+    if (createdAfter && createdAfter !== 'undefined') {
+      q = q.gte('logTime', createdAfter);
     }
-    if (createdBefore) {
-      q = q.lte('createdTime', createdBefore);
+    if (createdBefore && createdBefore !== 'undefined') {
+      q = q.lte('logTime', createdBefore);
     }
     const { data: logs, error } = await q;
 

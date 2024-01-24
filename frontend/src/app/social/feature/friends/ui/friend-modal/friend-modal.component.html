@@ -247,10 +247,8 @@
 
   <!-- Timeline -->
   <div *ngIf="view === 'timeline'" class="mb-dl-6 h-dl-11">
-    <div
-      class="flex h-dl-7 items-center justify-center rounded-dl-3 text-dl-6 font-dl-3 text-dl-grey-3 shadow-md"
-    >
-      <p class="px-dl-4">Feature coming soon!</p>
-    </div>
+    <dl-timeline
+      [userID]="friend.userID">
+    </dl-timeline>
   </div>
 </div>

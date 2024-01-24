@@ -16,9 +16,9 @@ async function getLogByID(req, res) {
 async function getLogs(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { logIDs, subjectID, eventType, createdAfter, createdBefore } = req.query;
+  const { userID, logIDs, subjectID, eventType, createdAfter, createdBefore } = req.query;
   try {
-    const returner = await p.get.all({ userID: req.userID, logIDs, subjectID, eventType, createdAfter, createdBefore });
+    const returner = await p.get.all({ userID, logIDs, subjectID, eventType, createdAfter, createdBefore });
     return res.json(returner);
   } catch (e) {
     global.logger.error(`'kitchenLogs' 'getLogs': ${e.message}`);
