@@ -125,8 +125,9 @@ export const recipeReducer = createReducer(
     error: null,
     adding: true,
   })),
-  on(RecipeActions.constructRecipeSuccess, (state) => ({
+  on(RecipeActions.constructRecipeSuccess, (state, { recipeID }) => ({
     ...state,
+    newRecipeID: recipeID,
     adding: false,
   })),
   on(RecipeActions.constructRecipeFailure, (state, { error }) => ({

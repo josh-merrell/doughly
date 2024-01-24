@@ -155,8 +155,10 @@ module.exports = ({ db }) => {
           lifespanDays: Math.round(Number(ingredient.lifespanDays)),
           purchaseUnit: ingredient.purchaseUnit,
           gramRatio: Math.round(Number(ingredient.gramRatio)),
-          brand: ingredient.brand,
         };
+        if (ingredient.brand) {
+          body.brand = ingredient.brand;
+        }
         if (ingredient.needsReview) {
           body.needsReview = ingredient.needsReview;
         }

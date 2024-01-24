@@ -276,7 +276,7 @@ export class UserRecipeComponent {
     this.displayUsageDate = this.updateDisplayUsageData(this.usageDate);
     this.store.select(selectNewRecipeID).subscribe((recipeID) => {
       if (recipeID) {
-        //this means this page was rendered after vision create of new recipe, so let's throw confetti then remove newRecipeID from store
+        //this means this page was rendered after vision create of new recipe or subscribe, so let's throw confetti then remove newRecipeID from store
         const jsConfetti = new JSConfetti();
         jsConfetti.addConfetti({
           confettiColors: ['#5cd0fa', '#d9127c', '#ffb8d2'],

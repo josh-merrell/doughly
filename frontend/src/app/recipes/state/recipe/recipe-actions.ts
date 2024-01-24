@@ -76,7 +76,7 @@ const constructRecipe = createAction(
   '[Recipes] Construct',
   props<{ constructBody: any }>()
 );
-const constructRecipeSuccess = createAction('[Recipes] Construct Success');
+const constructRecipeSuccess = createAction('[Recipes] Construct Success', props<{ recipeID: number }>());
 const constructRecipeFailure = createAction(
   '[Recipes] Construct Failure',
   props<{ error: any }>()

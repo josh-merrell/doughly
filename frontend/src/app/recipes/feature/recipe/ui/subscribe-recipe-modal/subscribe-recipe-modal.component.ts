@@ -17,23 +17,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { IngredientActions } from 'src/app/kitchen/feature/ingredients/state/ingredient-actions';
 import { Store } from '@ngrx/store';
-import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
-import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool-actions';
-import { StepActions } from 'src/app/recipes/state/step/step-actions';
-import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
-import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
 import {
   selectAdding,
   selectError,
+  selectNewRecipeID,
 } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'dl-subscribe-recipe-modal',
@@ -71,7 +67,8 @@ export class SubscribeRecipeModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public store: Store,
     public recipeService: RecipeService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private router: Router
   ) {
     effect(
       () => {
@@ -302,7 +299,7 @@ export class SubscribeRecipeModalComponent {
         else {
           newIngredient['ingredientID'] = ingredients[i].userIngredientID;
           newIngredient['purchaseUnitRatio'] = Number(
-            1/ingredients[i].userPurchaseUnitRatio
+            1 / ingredients[i].userPurchaseUnitRatio
           );
           newIngredient['measurementUnit'] = ingredients[i].measurementUnit;
           newIngredient['measurement'] = Number(ingredients[i].measurement);
@@ -370,7 +367,12 @@ export class SubscribeRecipeModalComponent {
                   },
                 });
               } else {
-                this.dialogRef.close('success');
+                this.store.select(selectNewRecipeID).subscribe((recipeID) => {
+                  if (recipeID) {
+                    this.router.navigate(['/recipe', recipeID]);
+                  }
+                  this.dialogRef.close('success');
+                });
               }
               this.loading.set(false);
             });
