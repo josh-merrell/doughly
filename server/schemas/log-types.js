@@ -8,7 +8,9 @@ const getLogSchema_params = {
 
 const getLogsSchema_query = {
   type: 'object',
+  required: ['userID'],
   properties: {
+    userID: { type: 'string' },
     logIDs: { type: 'array', items: { type: 'integer' } },
     subjectID: { type: 'integer' },
     eventType: { type: 'string' },

@@ -93,10 +93,25 @@ async function deleteRecipeIngredient(req, res) {
   }
 }
 
+async function getPurEst(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { ingredientName, measurementUnit, purchaseUnit } = req.body;
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.get.purEst({ userID: req.userID, authorization, ingredientName, measurementUnit, purchaseUnit});
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredients' 'getPurEst': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 module.exports = {
   getRecipeIngredients,
   getRecipeIngredientByID,
   createRecipeIngredient,
   updateRecipeIngredient,
   deleteRecipeIngredient,
+  getPurEst,
 };

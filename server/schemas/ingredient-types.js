@@ -123,6 +123,16 @@ const RecipeIngredientDeleteSchema_params = {
   },
 };
 
+const getPurEstSchema_query = {
+  type: 'object',
+  required: ['ingredientName', 'measurementUnit', 'purchaseUnit'],
+  properties: {
+    ingredientName: { type: 'string' },
+    measurementUnit: { type: 'string', enum: unitEnum },
+    purchaseUnit: { type: 'string', enum: unitEnum },
+  },
+};
+
 // INGREDIENT STOCKS
 const getIngredientStocksSchema_query = {
   type: 'object',
@@ -187,6 +197,7 @@ module.exports = {
   RecipeIngredientUpdateSchema_body,
   RecipeIngredientUpdateSchema_params,
   RecipeIngredientDeleteSchema_params,
+  getPurEstSchema_query,
   getIngredientStocksSchema_query,
   getIngredientStockSchema_params,
   newIngredientStockSchema_body,

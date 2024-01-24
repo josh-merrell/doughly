@@ -91,7 +91,7 @@ export class RecipeEffects {
       ofType(RecipeActions.constructRecipe),
       mergeMap((action) =>
         this.recipeService.constructRecipe(action.constructBody).pipe(
-          map(() => RecipeActions.constructRecipeSuccess()),
+          map((result) => RecipeActions.constructRecipeSuccess({ recipeID: result.recipeID })),
           catchError((error) =>
             of(
               RecipeActions.constructRecipeFailure({

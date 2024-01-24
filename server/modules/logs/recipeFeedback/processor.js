@@ -8,22 +8,22 @@ module.exports = ({ db }) => {
     if (onlyMe === 'true') {
       q = q.filter('userID', 'eq', userID);
     }
-    if (logIDs) {
+    if (logIDs && logIDs !== 'undefined') {
       q = q.in('recipeFeedbackID', logIDs);
     }
-    if (satisfaction) {
+    if (satisfaction && satisfaction !== 'undefined') {
       q = q.filter('satisfaction', 'eq', satisfaction);
     }
-    if (difficulty) {
+    if (difficulty && difficulty !== 'undefined') {
       q = q.like('difficulty', difficulty);
     }
-    if (recipeID) {
+    if (recipeID && recipeID !== 'undefined') {
       q = q.filter('recipeID', 'eq', recipeID);
     }
-    if (createdAfter) {
+    if (createdAfter && createdAfter !== 'undefined') {
       q = q.gte('logTime', createdAfter);
     }
-    if (createdBefore) {
+    if (createdBefore && createdBefore !== 'undefined') {
       q = q.lte('logTime', createdBefore);
     }
     const { data: logs, error } = await q;

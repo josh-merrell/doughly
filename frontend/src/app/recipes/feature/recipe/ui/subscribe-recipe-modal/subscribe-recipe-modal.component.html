@@ -53,10 +53,10 @@
       class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9"
     >
       <!-- Recipe Ingredient-->
-      <div class="flex items-center justify-start flex-grow">
+      <div class="flex flex-grow items-center justify-start">
         <div
           [ngClass]="{ invisible: !ingredientStatuses()[idx] }"
-          class="ml-dl-1 mr-dl-1 "
+          class="ml-dl-1 mr-dl-1"
         >
           <svg
             class="rounded-full bg-dl-teal-7"
@@ -87,17 +87,17 @@
             [placeholder]="getIngredientPlaceholder(i)"
             (selectionChange)="onIngredientSelectChange($event.value, i)"
           >
-            <ng-container *ngFor="let ui of userIngredients()">
-              <mat-option [value]="ui.ingredientID">
-                {{ ui.name }}
-              </mat-option>
-            </ng-container>
             <mat-option
               class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
               [value]="0"
             >
               Copy to Kitchen
             </mat-option>
+            <ng-container *ngFor="let ui of userIngredients()">
+              <mat-option [value]="ui.ingredientID">
+                {{ ui.name }}
+              </mat-option>
+            </ng-container>
           </mat-select>
         </mat-form-field>
         <mat-form-field
@@ -108,7 +108,7 @@
             [value]="i.userPurchaseUnitRatio || ''"
             (input)="onPurchaseUnitRatioChange($event.target, i)"
             matInput
-            name="userPurchaseUnitRatio{{ idx }}"
+            name="userPurchaseUnitRatio-{{ i.userIngredientID }}"
             type="text"
             placeholder="{{ ingredientMeasurementUnitString(i) }} per {{
               i.measurementUnit
@@ -125,8 +125,11 @@
       class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9"
     >
       <!-- Recipe Tool-->
-      <div class="flex items-center justify-start flex-grow">
-        <div [ngClass]="{ invisible: !toolStatuses()[idx] }" class="ml-dl-1 mr-dl-1">
+      <div class="flex flex-grow items-center justify-start">
+        <div
+          [ngClass]="{ invisible: !toolStatuses()[idx] }"
+          class="ml-dl-1 mr-dl-1"
+        >
           <svg
             class="rounded-full bg-dl-teal-7"
             width="22"
@@ -156,17 +159,17 @@
             (selectionChange)="onToolSelectChange($event.value, t)"
             class="w-dl-10"
           >
-            <ng-container *ngFor="let ut of userTools()">
-              <mat-option [value]="ut.toolID">
-                {{ ut.name }}
-              </mat-option>
-            </ng-container>
             <mat-option
               class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
               [value]="0"
             >
               Copy to Kitchen
             </mat-option>
+            <ng-container *ngFor="let ut of userTools()">
+              <mat-option [value]="ut.toolID">
+                {{ ut.name }}
+              </mat-option>
+            </ng-container>
           </mat-select>
         </mat-form-field>
       </div>
@@ -176,7 +179,7 @@
   <div class="flex h-dl-6 w-full items-center justify-between">
     <button
       type="button"
-      class="mb-dl-2 block h-dl-4 w-dl-16 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
       (click)="onSubscribeClick()"
       [ngClass]="{
         'bg-dl-pink-4 text-white': ingredientsReady() && toolsReady(),

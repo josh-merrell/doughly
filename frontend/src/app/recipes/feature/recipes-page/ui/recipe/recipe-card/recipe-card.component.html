@@ -26,7 +26,7 @@
         Draft
       </p>
       <p
-        *ngIf="this.recipe.status === 'published' && this.shoppingList()?.ingredients?.length === 0 && !shoppingPage && fromMyRecipes === false"
+        *ngIf="this.recipe.status === 'published' && this.shoppingList()?.ingredients?.length === 0 && !shoppingPage && fromMyRecipes === true"
         class="ml-dl-4 text-dl-5 italic text-dl-teal-7"
       >
         Make now!
