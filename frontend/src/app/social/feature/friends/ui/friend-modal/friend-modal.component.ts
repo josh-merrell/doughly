@@ -89,6 +89,16 @@ export class FriendModalComponent {
             otherRecipes.push(fr);
           }
         }
+        // sort by recipe title
+        otherRecipes.sort((a, b) => {
+          if (a.title < b.title) {
+            return -1;
+          } else if (a.title > b.title) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
         this.recipesFromMe.set(recipesFromMe);
         this.otherRecipes.set(otherRecipes);
       },

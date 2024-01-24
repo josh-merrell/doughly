@@ -57,7 +57,7 @@ export class SubscribeRecipeModalComponent {
   public initials: string = '';
   public progressValue: number = 10;
   public loading: WritableSignal<boolean> = signal(false);
-
+  
   // User Kitchen Items
   public userIngredients: WritableSignal<any[]> = signal([]);
   public userTools: WritableSignal<any[]> = signal([]);
@@ -184,7 +184,7 @@ export class SubscribeRecipeModalComponent {
     }
     return 'Select Ingredient';
   }
-  getToolPlaceholder(sourceTool: any): string {
+    getToolPlaceholder(sourceTool: any): string {
     if (sourceTool.userToolID) {
       const matchedTool = this.userTools().find(
         (ut) => ut.toolID === sourceTool.userToolID
@@ -287,12 +287,14 @@ export class SubscribeRecipeModalComponent {
           newIngredient['lifespanDays'] = Number(ingredients[i].lifespanDays);
           newIngredient['purchaseUnit'] = ingredients[i].purchaseUnit;
           newIngredient['gramRatio'] = Number(ingredients[i].gramRatio);
-          newIngredient['brand'] = ingredients[i].brand;
           newIngredient['purchaseUnitRatio'] = Number(
             ingredients[i].purchaseUnitRatio
           );
           newIngredient['measurementUnit'] = ingredients[i].measurementUnit;
           newIngredient['measurement'] = Number(ingredients[i].measurement);
+        }
+        if (ingredients[i].brand) {
+          newIngredient['brand'] = ingredients[i].brand;
         }
 
         // if userIngredientID is not 0, this ingredient needs 'userIngredientID', 'userPurchaseUnitRatio', 'measurementUnit', 'measurement'
