@@ -26,7 +26,7 @@ const newIngredientSchema_body = {
       type: 'string',
       enum: unitEnum,
     },
-    gramRatio: { type: 'integer' },
+    gramRatio: { type: 'number' },
     brand: { type: 'string' },
     needsReview: { type: 'boolean' },
   },
@@ -41,7 +41,7 @@ const IngredientUpdateSchema_body = {
       type: 'string',
       enum: unitEnum,
     },
-    gramRatio: { type: 'integer' },
+    gramRatio: { type: 'numer' },
     brand: { type: 'string' },
   },
 };
