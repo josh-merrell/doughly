@@ -43,13 +43,13 @@ module.exports = ({ db }) => {
 
     //verify that 'customID' exists on the request
     if (!customID) {
-      global.logger.error(`customID is missing`);
+      global.logger.error(`customID is missing. Ingredient name: ${name}`);
       throw errorGen(`customID is missing`, 400);
     }
 
     //verify that the provided lifespanDays is a positive integer, return error if not
     if (!lifespanDays || lifespanDays < 0) {
-      global.logger.error(`positive LifespanDays integer is required`);
+      global.logger.error(`positive LifespanDays integer is required. Ingredient name: ${name}`);
       throw errorGen(`positive LifespanDays integer is required`, 400);
     }
 
@@ -66,7 +66,7 @@ module.exports = ({ db }) => {
 
     //verify that gramRatio is a positive number
     if (!gramRatio || gramRatio <= 0) {
-      global.logger.error(`positive gramRatio number is required`);
+      global.logger.error(`positive gramRatio number is required. Ingredient name: ${name}`);
       throw errorGen(`positive gramRatio number is required`, 400);
     }
 
