@@ -143,7 +143,7 @@ module.exports = ({ db }) => {
 
   async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
     let ingredientID;
-    global.logger.info(`CONSTRUCT RI. PREPARATION: ${ingredient.preparation}`)
+    global.logger.info(`CONSTRUCT RI: ${ingredient}`)
     try {
       if (ingredient.ingredientID === 0) {
         // If ingredientID is not provided, create a new ingredient
@@ -155,15 +155,19 @@ module.exports = ({ db }) => {
           lifespanDays: Math.round(Number(ingredient.lifespanDays)),
           purchaseUnit: ingredient.purchaseUnit,
           gramRatio: Math.round(Number(ingredient.gramRatio)),
-          brand: ingredient.brand,
         };
+        if (ingredient.brand) {
+          body.brand = ingredient.brand;
+        }
         if (ingredient.needsReview) {
           body.needsReview = ingredient.needsReview;
         }
         const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
         ingredientID = Number(data.ingredientID);
+        global.logger.info(`CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`)
       } else {
         ingredientID = Number(ingredient.ingredientID);
+        global.logger.info(`INGREDIENTID IS: ${ingredientID}`)
       }
     } catch (error) {
       global.logger.error(`'constructRecipeIngredient' Failed when creating new ingredient. Failure: ${error.message}`);
@@ -171,6 +175,15 @@ module.exports = ({ db }) => {
     }
     // Then, create the recipeIngredient
     try {
+      global.logger.info(`CALLING RI CREATE WITH BODY: ${JSON.stringify({
+        recipeID,
+        ingredientID,
+        measurementUnit: ingredient.measurementUnit,
+        measurement: ingredient.measurement,
+        purchaseUnitRatio: ingredient.purchaseUnitRatio,
+        preparation: ingredient.preparation,
+        needsReview: ingredient.needsReview,
+      })}`)
       const { data } = await axios.post(
         `${process.env.NODE_HOST}:${process.env.PORT}/ingredients/recipe`,
         {
@@ -195,6 +208,7 @@ module.exports = ({ db }) => {
   }
 
   async function constructRecipeTool(tool, authorization, userID, recipeID) {
+    global.logger.info(`CONSTRUCT RT: ${tool}`)
     let toolID;
     try {
       if (tool.quantity === -1) {
@@ -211,6 +225,7 @@ module.exports = ({ db }) => {
           },
           { headers: { authorization } },
         );
+        global.logger.info(`CREATED DUMMY RT AND RETURNING`)
         return { recipeToolID: data.recipeToolID, toolID: toolID };
       }
 
@@ -228,8 +243,10 @@ module.exports = ({ db }) => {
           { headers: { authorization } },
         );
         toolID = Number(data.toolID);
+        global.logger.info(`CREATED TOOL, NOW TOOLID IS: ${toolID}`)
       } else {
         toolID = Number(tool.toolID);
+        global.logger.info(`TOOLID IS: ${toolID}`)
       }
     } catch (error) {
       global.logger.error(`'constructRecipeTool' Failed when creating new tool. Failure: ${error.message}`);
@@ -237,6 +254,11 @@ module.exports = ({ db }) => {
     }
     // Then, create the recipeTool
     try {
+      global.logger.info(`CALLING RT CREATE WITH BODY: ${JSON.stringify({
+        recipeID,
+        toolID,
+        quantity: tool.quantity,
+      })}`)
       const { data } = await axios.post(
         `${process.env.NODE_HOST}:${process.env.PORT}/tools/recipe`,
         {
@@ -844,13 +866,13 @@ module.exports = ({ db }) => {
         global.logger.info(`GETTING UNIT RATIO FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
         const data = await getUnitRatio(userID, authorization, recipeIngredient.name, recipeIngredient.measurementUnit, userIngredientMatch.purchaseUnit);
         const parsedData = JSON.parse(data.response);
-        global.logger.info(`UNIT RATIO RESULT: ${JSON.stringify(parsedData)}`);
+        global.logger.info(`UNIT RATIO EST RESULT: ${JSON.stringify(parsedData)}`);
 
         if (!parsedData.unitRatio) {
           throw new Error(`Error getting unitRatioEstimate from openAI for ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
         }
 
-        const unitRatioEst = parsedData.unitRatio;
+        const unitRatioEst = Number(parsedData.unitRatio);
 
         return {
           name: recipeIngredient.name,

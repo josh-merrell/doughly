@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
+  selectNewRecipeID,
   selectRecipeByID,
   selectSubscriptionByNewRecipeID,
 } from '../../../state/recipe/recipe-selectors';
@@ -50,6 +51,8 @@ import { ProfileService } from 'src/app/profile/data/profile.service';
 import { Profile } from 'src/app/profile/state/profile-state';
 import { UnsubscribeRecipeModalComponent } from '../ui/unsubscribe-recipe-modal/unsubscribe-recipe-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import JSConfetti from 'js-confetti';
+import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -255,7 +258,9 @@ export class UserRecipeComponent {
   ngOnInit(): void {
     this.store.select(selectIngredients).subscribe((ingredients) => {
       this.ingredients.set(ingredients);
-      this.ingredientsNeedReview.set(ingredients.some((ing) => ing.needsReview));
+      this.ingredientsNeedReview.set(
+        ingredients.some((ing) => ing.needsReview)
+      );
     });
     this.store.select(selectTools).subscribe((tools) => {
       this.tools.set(tools);
@@ -269,6 +274,16 @@ export class UserRecipeComponent {
     });
 
     this.displayUsageDate = this.updateDisplayUsageData(this.usageDate);
+    this.store.select(selectNewRecipeID).subscribe((recipeID) => {
+      if (recipeID) {
+        //this means this page was rendered after vision create of new recipe or subscribe, so let's throw confetti then remove newRecipeID from store
+        const jsConfetti = new JSConfetti();
+        jsConfetti.addConfetti({
+          confettiColors: ['#5cd0fa', '#d9127c', '#ffb8d2'],
+        });
+        this.store.dispatch(RecipeActions.clearNewRecipeID());
+      }
+    });
   }
 
   // LIFECYCLE HOOKS  *********************************

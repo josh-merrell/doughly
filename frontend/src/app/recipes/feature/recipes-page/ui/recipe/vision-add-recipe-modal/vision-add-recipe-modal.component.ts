@@ -11,9 +11,11 @@ import { Observable, filter, take } from 'rxjs';
 import {
   selectAdding,
   selectError,
+  selectNewRecipeID,
 } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
@@ -48,7 +50,8 @@ export class VisionAddRecipeModalComponent {
     public dialog: MatDialog,
     public store: Store,
     public recipeProgressService: RecipeProgressService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private router: Router
   ) {}
 
   // for recipe source image
@@ -192,7 +195,15 @@ export class VisionAddRecipeModalComponent {
               } else {
                 this.removeFiles(false);
                 this.recipeProgressService.stopListening();
-                this.dialogRef.close('success');
+                this.store.select(selectNewRecipeID).subscribe((recipeID) => {
+                  if (!recipeID) {
+                    this.dialogRef.close('success');
+                  } else {
+                    //navigate to recipe page
+                    this.router.navigate(['/recipe', recipeID]);
+                    this.dialogRef.close('success');
+                  }
+                })
               }
               this.isAdding = false;
             });

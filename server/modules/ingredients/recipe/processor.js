@@ -3,6 +3,8 @@
 const { createRecipeLog } = require('../../../services/dbLogger');
 const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 const { errorGen } = require('../../../middleware/errorHandling');
+const { getUnitRatio } = require('../../../services/openai');
+
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -221,10 +223,24 @@ module.exports = ({ db }) => {
     return { success: true };
   }
 
+  async function getPurEst(options) {
+    const { userID, authorization, ingredientName, measurementUnit, purchaseUnit } = options;
+    global.logger.info(`GETTING PURCHASE UNIT RATIO ESTIMATE FOR ${ingredientName} ${measurementUnit} and ${purchaseUnit}`)
+
+    const data = await getUnitRatio(userID, authorization, ingredientName, measurementUnit, purchaseUnit);
+    const parsedData = JSON.parse(data.response);
+    global.logger.info(`PURCHASE UNIT RATIO EST RESULT: ${JSON.stringify(parsedData)}`);
+    if (!parsedData.unitRatio) {
+      throw new Error(`Error getting unitRatioEstimate from openAI for ${ingredientName} ${measurementUnit} and ${purchaseUnit}`);
+    }
+    return Number(parsedData.unitRatio);
+  }
+
   return {
     get: {
       all: getAll,
       byID: getRecipeIngredientByID,
+      purEst: getPurEst,
     },
     create,
     update,

@@ -283,7 +283,7 @@ export class PublicRecipeComponent {
         if (result === 'success') {
           this.dialog.open(ConfirmationModalComponent, {
             data: {
-              confirmationMessage: `Subscribed to recipe. Find it in your 'Recipes' page!`,
+              confirmationMessage: `Subscribed. Recipe added.`,
             },
           });
         }

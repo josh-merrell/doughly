@@ -77,4 +77,14 @@ export class RecipeIngredientService {
       recipeIngredient
     );
   }
+
+  getPurEstimate(ingredientName: string, measurementUnit: string, purchaseUnit: string): Observable<number> {
+    console.log(`getPurEstimate called with ${ingredientName}, ${measurementUnit}, ${purchaseUnit}`);
+    return this.http.post<number>(`${this.API_URL}/purEst`, {
+      // include body with three parameters
+      ingredientName: ingredientName,
+      measurementUnit: measurementUnit,
+      purchaseUnit: purchaseUnit
+    })
+  }
 }

@@ -3,6 +3,7 @@ import { Ingredient } from "src/app/kitchen/state/kitchen-interfaces";
 
 export interface RecipeState {
   recipes: Recipe[];
+  newRecipeID?: number;
   recipeSubscriptions: RecipeSubscription[];
   loading: boolean;
   adding: boolean;

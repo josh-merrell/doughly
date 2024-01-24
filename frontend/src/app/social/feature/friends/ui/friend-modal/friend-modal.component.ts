@@ -36,11 +36,17 @@ import { Followship } from 'src/app/social/state/followship-state';
 import { Router } from '@angular/router';
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { TimelineComponent } from 'src/app/social/feature/timeline/timeline.component';
 
 @Component({
   selector: 'dl-friend-modal',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule, RecipeCardComponent],
+  imports: [
+    CommonModule,
+    MatProgressSpinnerModule,
+    RecipeCardComponent,
+    TimelineComponent,
+  ],
   templateUrl: './friend-modal.component.html',
 })
 export class FriendModalComponent {
@@ -89,6 +95,16 @@ export class FriendModalComponent {
             otherRecipes.push(fr);
           }
         }
+        // sort by recipe title
+        otherRecipes.sort((a, b) => {
+          if (a.title < b.title) {
+            return -1;
+          } else if (a.title > b.title) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
         this.recipesFromMe.set(recipesFromMe);
         this.otherRecipes.set(otherRecipes);
       },

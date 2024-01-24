@@ -71,13 +71,16 @@ export const recipeReducer = createReducer(
     error: null,
     deleting: true,
   })),
-  on(RecipeActions.deleteRecipeSubscriptionSuccess, (state, { subscriptionID }) => ({
-    ...state,
-    recipeSubscriptions: state.recipeSubscriptions.filter(
-      (item) => item.subscriptionID !== subscriptionID
-    ),
-    deleting: false,
-  })),
+  on(
+    RecipeActions.deleteRecipeSubscriptionSuccess,
+    (state, { subscriptionID }) => ({
+      ...state,
+      recipeSubscriptions: state.recipeSubscriptions.filter(
+        (item) => item.subscriptionID !== subscriptionID
+      ),
+      deleting: false,
+    })
+  ),
   on(RecipeActions.deleteRecipeSubscriptionFailure, (state, { error }) => ({
     ...state,
     error,
@@ -105,6 +108,7 @@ export const recipeReducer = createReducer(
   })),
   on(RecipeActions.visionAddRecipeSuccess, (state, { recipeID }) => ({
     ...state,
+    newRecipeID: recipeID,
     adding: false,
   })),
   on(RecipeActions.visionAddRecipeFailure, (state, { error }) => ({
@@ -112,13 +116,18 @@ export const recipeReducer = createReducer(
     error,
     adding: false,
   })),
+  on(RecipeActions.clearNewRecipeID, (state) => ({
+    ...state,
+    newRecipeID: undefined,
+  })),
   on(RecipeActions.constructRecipe, (state) => ({
     ...state,
     error: null,
     adding: true,
   })),
-  on(RecipeActions.constructRecipeSuccess, (state) => ({
+  on(RecipeActions.constructRecipeSuccess, (state, { recipeID }) => ({
     ...state,
+    newRecipeID: recipeID,
     adding: false,
   })),
   on(RecipeActions.constructRecipeFailure, (state, { error }) => ({
