@@ -29,7 +29,7 @@ async function getLogs(req, res) {
 async function createLog(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { recipeID, satisfaction, difficulty, note } = req.body;
+  const { recipeID, satisfaction, difficulty, note, message } = req.body;
   const { customID, userID } = req;
   try {
     const returner = await p.create({
@@ -39,6 +39,7 @@ async function createLog(req, res) {
       satisfaction,
       difficulty,
       note,
+      message
     });
     return res.json(returner);
   } catch (e) {

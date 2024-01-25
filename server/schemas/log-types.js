@@ -61,6 +61,7 @@ const newRecipeFeedbackSchema_body = {
     satisfaction: { type: 'string' },
     difficulty: { type: 'string' },
     note: { type: 'string' },
+    message: { type: 'string' },
   },
 };
 

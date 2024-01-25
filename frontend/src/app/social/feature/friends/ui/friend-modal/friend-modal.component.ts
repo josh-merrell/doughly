@@ -37,6 +37,8 @@ import { Router } from '@angular/router';
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { TimelineComponent } from 'src/app/social/feature/timeline/timeline.component';
+import { LogService } from 'src/app/shared/utils/logService';
+import { Log } from 'src/app/shared/state/shared-state';
 
 @Component({
   selector: 'dl-friend-modal',
@@ -63,12 +65,17 @@ export class FriendModalComponent {
   public otherRecipes: WritableSignal<any[]> = signal([]);
   private myRecipes: WritableSignal<any[]> = signal([]);
 
+  // For Timeline Child Component
+  public logs: Log[] = [];
+  private monthAgo!: string;
+
   constructor(
     private store: Store,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<FriendModalComponent>,
     public router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private logService: LogService
   ) {
     this.buttonTexts.set({ friendButton: '', followButton: '' });
 
@@ -158,6 +165,37 @@ export class FriendModalComponent {
           updatedButtonTexts.followButton = 'Follow';
         }
         this.buttonTexts.set(updatedButtonTexts);
+      });
+    this.collectUserLogs();
+  }
+
+  collectUserLogs() {
+    let date = new Date();
+    date.setDate(date.getDate() - 30);
+    date.setUTCHours(0, 0, 0, 0);
+    this.monthAgo = this.formatDateToUTCString(date);
+
+    // Get logs for recent Recipe Creation
+    this.logService
+      .getRecipeLogs(
+        this.friend.userID,
+        'createRecipe',
+        this.monthAgo,
+        undefined
+      )
+      .subscribe((res) => {
+        this.logs.push(...res);
+      });
+    // Get logs for recent Recipe Uses
+    this.logService
+      .getRecipeFeedbackLogs(
+        this.friend.userID,
+        undefined,
+        undefined,
+        undefined
+      )
+      .subscribe((res) => {
+        this.logs.push(...res);
       });
   }
 
@@ -349,5 +387,32 @@ export class FriendModalComponent {
   onRecipeCardClick(recipeID: number): void {
     this.router.navigate(['/recipe/public', recipeID]);
     this.dialogRef.close();
+  }
+
+  // ** UTILITIES ** //
+  private formatDateToUTCString(date: Date): string {
+    return (
+      date.getUTCFullYear() +
+      '-' +
+      this.pad(date.getUTCMonth() + 1) +
+      '-' +
+      this.pad(date.getUTCDate()) +
+      ' ' +
+      this.pad(date.getUTCHours()) +
+      ':' +
+      this.pad(date.getUTCMinutes()) +
+      ':' +
+      this.pad(date.getUTCSeconds()) +
+      '.' +
+      date.getUTCMilliseconds() +
+      '+00'
+    );
+  }
+
+  private pad(number: number): string {
+    if (number < 10) {
+      return '0' + number;
+    }
+    return number.toString();
   }
 }

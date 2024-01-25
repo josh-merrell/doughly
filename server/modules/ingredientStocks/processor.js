@@ -70,7 +70,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    createKitchenLog(userID, authorization, 'createIngredientStock', Number(newIngredientStock.ingredientStockID), ingredientID, null, null, `created ingredientStock: ${newIngredientStock.grams} grams of ${existingIngredient[0].name}`);
+    createKitchenLog(userID, authorization, 'createIngredientStock', Number(newIngredientStock.ingredientStockID), ingredientID, null, null, `Added ${newIngredientStock.grams} grams of ${existingIngredient[0].name}`);
 
     return {
       ingredientStockID: newIngredientStock.ingredientStockID,
@@ -142,7 +142,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    createKitchenLog(userID, authorization, 'deleteIngredientStock', Number(ingredientStockID), Number(existingIngredientStock.ingredientID), null, null, `deleted ingredientStock: ${existingIngredientStock.grams} grams of ${ingredient.name}`);
+    createKitchenLog(userID, authorization, 'deleteIngredientStock', Number(ingredientStockID), Number(existingIngredientStock.ingredientID), null, null, `Deleted: ${existingIngredientStock.grams} grams of ${ingredient.name}`);
     return { success: true };
   }
 

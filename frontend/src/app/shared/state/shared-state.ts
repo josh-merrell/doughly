@@ -71,3 +71,18 @@ export interface Filter {
   operand1: null | string | string[] | number[] | number | Date | CurrencyAmount;
   operand2?: number | CurrencyAmount | Date;
 }
+
+export interface Log {
+  logID: number;
+  logTime: Date | string;
+  eventType: string;
+  subjectID?: number;
+  associatedID?: number;
+  userID: string;
+  message: string;
+  kitchenLogID?: number,
+  recipeLogID?: number,
+  recipeFeedbackLogID?: number,
+  shoppingLogID?: number,
+  userLogID?: number,
+}
