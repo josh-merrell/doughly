@@ -107,7 +107,7 @@ const supplyCheckRecipe = async (userID, authorization, recipeID) => {
     throw errorGen(`'supplyCheckRecipe' Error getting recipeIngredients`, 400);
   }
 
-  const { data: recipeTools, error: recipeToolsError } = await supabase.from('recipeTools').select('toolID, quantity').filter('recipeID', 'eq', recipeID);
+  const { data: recipeTools, error: recipeToolsError } = await supabase.from('recipeTools').select('toolID, quantity').filter('recipeID', 'eq', recipeID).filter('deleted', 'eq', false);
   if (recipeToolsError) {
     global.logger.error(`'supplyCheckRecipe' Error getting recipeTools: ${recipeToolsError.message}`);
     throw errorGen(`'supplyCheckRecipe' Error getting recipeTools`, 400);

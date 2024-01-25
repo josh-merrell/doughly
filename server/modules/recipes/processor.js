@@ -564,7 +564,7 @@ module.exports = ({ db }) => {
       }
 
       //add a 'created' log entry
-      createRecipeLog(userID, authorization, 'createRecipe', recipe.recipeID, null, null, null, `created recipe ${recipe.title}, ID: ${recipe.recipeID}`);
+      createRecipeLog(userID, authorization, 'createRecipe', recipe.recipeID, null, null, null, `Created Recipe: ${recipe.title}`);
 
       global.logger.info(`Created recipe ID:${recipe.recipeID}`);
       // return recipe;
@@ -1278,7 +1278,7 @@ module.exports = ({ db }) => {
       }
 
       //log use of recipe
-      const { log, createLogError } = await createRecipeFeedbackLog(options.userID, authorization, Number(recipeID), String(satisfaction), String(difficulty), note);
+      const { log, createLogError } = await createRecipeFeedbackLog(options.userID, authorization, Number(recipeID), recipe[0].title, String(satisfaction), String(difficulty), note);
       if (createLogError) {
         global.logger.error(`'useRecipe' Error logging recipe use: ${createLogError.message}`);
         throw errorGen(`Error logging recipe use: ${createLogError.message}`, 400);

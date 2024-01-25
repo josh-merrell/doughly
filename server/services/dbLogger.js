@@ -114,7 +114,7 @@ async function createShoppingLog(userID, authorization, eventType, subjectID, as
   }
 }
 
-async function createRecipeFeedbackLog(userID, authorization, recipeID, satisfaction, difficulty, note) {
+async function createRecipeFeedbackLog(userID, authorization, recipeID, recipeTitle, satisfaction, difficulty, note) {
   try {
     let log = await axios.post(
       `${process.env.NODE_HOST}:${process.env.PORT}/logs/recipeFeedback`,
@@ -125,6 +125,7 @@ async function createRecipeFeedbackLog(userID, authorization, recipeID, satisfac
         satisfaction,
         difficulty,
         note,
+        message: `Made ${recipeTitle}; rating ${satisfaction}/10`
       },
       {
         headers: {

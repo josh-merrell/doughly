@@ -65,7 +65,7 @@ module.exports = ({ db }) => {
       global.logger.error(`Error creating toolStock: ${error.message}`);
       throw errorGen('Error creating toolStock', 400);
     }
-    createKitchenLog(userID, authorization, 'createToolStock', Number(toolStock.toolStockID), Number(toolID), null, null, `created toolStock with ID: ${toolStock.toolStockID}`);
+    createKitchenLog(userID, authorization, 'createToolStock', Number(toolStock.toolStockID), Number(toolID), null, null, `Added ${quantity} ${existingTool[0].name}`);
     return {
       toolStockID: toolStock.toolStockID,
       toolID: toolID,
@@ -124,6 +124,17 @@ module.exports = ({ db }) => {
       throw errorGen(`ToolStock ID ${toolStockID} does not exist, cannot delete toolStock`, 400);
     }
 
+    //validate that the associated toolID exists
+    const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', existingToolStock[0].toolID);
+    if (existingToolError) {
+      global.logger.error(`Error validating tool ID: ${existingToolStock[0].toolID}: ${existingToolError.message}`);
+      throw errorGen(`Error validating tool ID: ${existingToolStock[0].toolID}`, 400);
+    }
+    if (existingTool.length === 0) {
+      global.logger.error(`Tool ID ${existingToolStock[0].toolID} does not exist, cannot delete toolStock`);
+      throw errorGen(`Tool ID ${existingToolStock[0].toolID} does not exist, cannot delete toolStock`, 400);
+    }
+
     //delete toolStock
     const { error } = await db.from('toolStocks').update({ deleted: true }).eq('toolStockID', toolStockID);
 
@@ -133,7 +144,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    createKitchenLog(userID, authorization, 'deleteToolStock', Number(toolStockID), Number(existingToolStock[0].toolID), null, null, `deleted toolStock with ID: ${toolStockID}`);
+    createKitchenLog(userID, authorization, 'deleteToolStock', Number(toolStockID), Number(existingToolStock[0].toolID), null, null, `Deleted ${existingToolStock[0].quantity} ${existingTool[0].name}`);
     return { success: true };
   }
 

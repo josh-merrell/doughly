@@ -1,7 +1,13 @@
-import { Component, Inject, Input } from '@angular/core';
+import {
+  Component,
+  Inject,
+  Input,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LogService } from 'src/app/shared/utils/logService';
+import { Log } from 'src/app/shared/state/shared-state';
 
 @Component({
   selector: 'dl-timeline',
@@ -10,61 +16,76 @@ import { LogService } from 'src/app/shared/utils/logService';
   templateUrl: './timeline.component.html',
 })
 export class TimelineComponent {
-  public posts = {};
-  @Input() userID!: string;
-  private weekAgo!: string;
+  @Input() logs!: Log[];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private logService: LogService
-  ) {}
+  public pastDay: WritableSignal<Log[]> = signal([]);
+  public pastWeek: WritableSignal<Log[]> = signal([]);
+  public pastMonth: WritableSignal<Log[]> = signal([]);
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
   ngOnInit() {
-    let date = new Date();
-    date.setDate(date.getDate() - 7);
-    date.setUTCHours(0, 0, 0, 0);
-    this.weekAgo = this.formatDateToUTCString(date);
-
-    this.logService
-      .getRecipeLogs(this.userID, 'recipeCreate', this.weekAgo, undefined)
-      .subscribe((res) => {
-        this.posts['createRecipe'] = [...res];
-      });
-    this.logService
-      .getRecipeFeedbackLogs(this.userID, undefined, undefined, undefined)
-      .subscribe((res) => {
-        this.posts['recipeUse'] = [...res];
-      });
-    this.logService
-      .getKitchenLogs(this.userID, 'createIngredient', this.weekAgo, undefined)
-      .subscribe((res) => {
-        this.posts['createIngredient'] = [...res];
-      });
+    this.prepareLogs();
   }
 
-  private formatDateToUTCString(date: Date): string {
-    return (
-      date.getUTCFullYear() +
-      '-' +
-      this.pad(date.getUTCMonth() + 1) +
-      '-' +
-      this.pad(date.getUTCDate()) +
-      ' ' +
-      this.pad(date.getUTCHours()) +
-      ':' +
-      this.pad(date.getUTCMinutes()) +
-      ':' +
-      this.pad(date.getUTCSeconds()) +
-      '.' +
-      date.getUTCMilliseconds() +
-      '+00'
+  async prepareLogs() {
+    await this.orderLogsByDate();
+    console.log(`LOGS AFTER ORDERING: `, this.logs)
+
+    const now = new Date();
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
     );
+    const weekAgo = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 7
+    );
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    // prepare past day logs
+    let pastDayLogs = this.logs.filter((log) => {
+      const logDate = new Date(log.logTime);
+      return logDate >= todayStart;
+    });
+    pastDayLogs = this.cleanDates(pastDayLogs);
+    this.pastDay.set(pastDayLogs);
+
+    // prepare past week logs
+    let pastWeekLogs = this.logs.filter((log) => {
+      const logDate = new Date(log.logTime);
+      return logDate < todayStart && logDate >= weekAgo;
+    });
+    pastWeekLogs = this.cleanDates(pastWeekLogs);
+    this.pastWeek.set(pastWeekLogs);
+
+    // prepare past month logs
+    let pastMonthLogs = this.logs.filter((log) => {
+      const logDate = new Date(log.logTime);
+      return logDate < weekAgo && logDate >= monthStart;
+    });
+    pastMonthLogs = this.cleanDates(pastMonthLogs);
+    this.pastMonth.set(pastMonthLogs);
   }
 
-  private pad(number: number): string {
-    if (number < 10) {
-      return '0' + number;
-    }
-    return number.toString();
+
+  async orderLogsByDate() {
+    console.log(`LOGS: `, this.logs);
+    this.logs.sort((a, b) => {
+      return new Date(b.logTime).getTime() - new Date(a.logTime).getTime();
+    });
+  }
+  cleanDates(logs: Log[]) {
+    const result: Log[] = [];
+    logs.forEach((log) => {
+      const date = new Date(log.logTime);
+      log.logTime = `${
+        date.getMonth() + 1
+      }/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+      result.push(log);
+    });
+    return result;
   }
 }

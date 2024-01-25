@@ -5,7 +5,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     const { onlyMe, userID, logIDs, satisfaction, recipeID, difficulty, createdAfter, createdBefore } = options;
     let q = db.from('recipeFeedbacks').select().order('recipeFeedbackID', { ascending: true });
-    if (onlyMe === 'true') {
+    if (onlyMe === 'true' && userID && userID !== 'undefined') {
       q = q.filter('userID', 'eq', userID);
     }
     if (logIDs && logIDs !== 'undefined') {
@@ -49,10 +49,10 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, userID, recipeID, satisfaction, difficulty, note } = options;
+    const { customID, userID, recipeID, satisfaction, difficulty, note, message } = options;
     const logTime = new Date().toISOString();
 
-    const { data: log, error } = await db.from('recipeFeedbacks').insert({ recipeFeedbackID: customID, userID, logTime, recipeID, satisfaction, difficulty, note }).select('*').single();
+    const { data: log, error } = await db.from('recipeFeedbacks').insert({ recipeFeedbackID: customID, userID, logTime, recipeID, satisfaction, difficulty, note, message }).select('*').single();
 
     if (error) {
       global.logger.error(`Error creating recipeFeedback log: ${error.message}`);

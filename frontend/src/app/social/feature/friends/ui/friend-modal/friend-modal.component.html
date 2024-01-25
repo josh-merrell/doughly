@@ -1,5 +1,5 @@
 <div
-  class="relative w-full transform overflow-hidden bg-white px-dl-4 pb-dl-4 pt-dl-5 text-left transition-all"
+  class="relative w-full transform overflow-hidden bg-white px-dl-2 pb-dl-4 pt-dl-5 text-left transition-all"
 >
   <!-- Joined, Image, Counts-->
   <div class="mb-dl-3 flex justify-between px-dl-2">
@@ -198,7 +198,7 @@
   <!-- Recipes that don't come from me -->
   <div
     *ngIf="view === 'recipes' && otherRecipes().length"
-    class="mb-dl-6 flex h-dl-11 flex-col items-center overflow-y-auto"
+    class="mb-dl-6 flex h-dl-12 flex-col items-center overflow-y-auto"
   >
     <dl-recipe-card
       *ngFor="let recipe of otherRecipes()"
@@ -220,7 +220,7 @@
   <!-- Subscriptions of my Recipes -->
   <div
     *ngIf="view === 'recipes' && recipesFromMe().length"
-    class="mb-dl-6 flex h-dl-11 flex-col items-center overflow-y-auto"
+    class="mb-dl-6 flex h-dl-12 flex-col items-center overflow-y-auto"
   >
     <span
       class="items-center px-1 pt-1 text-dl-5 font-dl-3 text-dl-grey-2 transition-all duration-200 ease-in-out"
@@ -246,9 +246,5 @@
   </div>
 
   <!-- Timeline -->
-  <div *ngIf="view === 'timeline'" class="mb-dl-6 h-dl-11">
-    <dl-timeline
-      [userID]="friend.userID">
-    </dl-timeline>
-  </div>
+  <dl-timeline *ngIf="view === 'timeline'" [logs]="logs"> </dl-timeline>
 </div>
