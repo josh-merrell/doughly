@@ -208,6 +208,10 @@ module.exports = ({ db, dbPublic }) => {
       throw errorGen(`Error updating friendship ${friendshipID}`, 400);
     }
 
+    if (status === 'confirmed') {
+      createUserLog(userID, authorization, 'confirmedFriendship', friendshipID, null, null, null, 'Now friends with ' + friendship.friend);
+    }
+
     // get inverse friendship
     const { data: inverseFriendship, error: inverseFriendshipError } = await db.from('friendships').select().eq('friend', userID).eq('userID', friendship.friend).single();
     if (inverseFriendshipError) {

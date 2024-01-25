@@ -64,7 +64,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    createKitchenLog(userID, authorization, 'createTool', Number(tool.toolID), null, null, null, `created tool: ${name}`);
+    createKitchenLog(userID, authorization, 'createTool', Number(tool.toolID), null, null, null, `Created Tool: ${name}`);
 
     return {
       toolID: tool.toolID,
@@ -197,7 +197,7 @@ module.exports = ({ db }) => {
       throw errorGen('error deleting tool', 400);
     }
     //add a 'deleted' log entry
-    createKitchenLog(userID, authorization, 'deleteTool', Number(toolID), null, null, null, `deleted tool: ${existingTool[0].name}`);
+    createKitchenLog(userID, authorization, 'deleteTool', Number(toolID), null, null, null, `Deleted Tool: ${existingTool[0].name}`);
     return { success: true };
   }
 

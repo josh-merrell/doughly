@@ -104,7 +104,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error undeleting followship ${existingFollowship[0].followshipID}`, 400);
       }
       global.logger.info(`Undeleted followship ${existingFollowship[0].followshipID}`);
-      createUserLog(userID, authorization, 'createdFollowship', existingFollowship[0].followshipID, null, null, null, 'started following ' + profile.name_first + ' ' + profile.name_last);
+      createUserLog(userID, authorization, 'createdFollowship', existingFollowship[0].followshipID, null, null, null, 'Now following ' + profile.name_first + ' ' + profile.name_last);
       return {
         followshipID: undelete.followshipID,
         userID: undelete.userID,
@@ -119,7 +119,7 @@ module.exports = ({ db, dbPublic }) => {
       throw errorGen('Error creating followship', 400);
     }
     global.logger.info(`Created followship ${customID}`);
-    createUserLog(userID, authorization, 'createdFollowship', followship.followshipID, null, null, null, 'started following ' + profile.name_first + ' ' + profile.name_last);
+    createUserLog(userID, authorization, 'createdFollowship', followship.followshipID, null, null, null, 'Now following ' + profile.name_first + ' ' + profile.name_last);
     return {
       followshipID: followship.followshipID,
       userID: followship.userID,
@@ -146,7 +146,7 @@ module.exports = ({ db, dbPublic }) => {
       throw errorGen(`Error deleting followship ${options.followshipID}`, 400);
     }
     global.logger.info(`Deleted followship ${options.followshipID}`);
-    createUserLog(options.userID, options.authorization, 'deletedFollowship', Number(options.followshipID), null, null, null, 'stopped following ' + followship.following);
+    createUserLog(options.userID, options.authorization, 'deletedFollowship', Number(options.followshipID), null, null, null, 'No longer followng ' + followship.following);
     return data;
   }
 

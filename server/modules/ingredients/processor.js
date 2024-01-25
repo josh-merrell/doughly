@@ -78,7 +78,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'created' log entry
-    createKitchenLog(userID, authorization, 'createIngredient', ingredient.ingredientID, null, null, null, `created ingredient: ${ingredient.name}`);
+    createKitchenLog(userID, authorization, 'createIngredient', ingredient.ingredientID, null, null, null, `Created Ingredient: ${ingredient.name}`);
 
     return {
       ingredientID: ingredient.ingredientID,
@@ -188,8 +188,6 @@ module.exports = ({ db }) => {
           throw errorGen(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID}`, 400);
         }
 
-        //add a 'deleted' log entry
-        createKitchenLog(userID, authorization, 'deleteIngredient', Number(relatedStockEntries[i].ingredientStockID), ingredientID, null, null, `Ingredient stock deleted: ${relatedStockEntries[i].name}`);
       }
     } catch (error) {
       global.logger.error(`Error deleting related stock entries: ${error.message}`);
@@ -217,7 +215,7 @@ module.exports = ({ db }) => {
         }
 
         //add a 'deleted' log entry
-        createRecipeLog(userID, authorization, 'recipeIngredientDeleted', Number(recipeIngredients[i].recipeIngredientID), Number(recipeIngredients[i].recipeID), null, null, `Recipe ingredient deleted: ${recipeIngredients[i].recipeIngredientID}`);
+        createRecipeLog(userID, authorization, 'recipeIngredientDeleted', Number(recipeIngredients[i].recipeIngredientID), Number(recipeIngredients[i].recipeID), null, null, `Removed ${existingIngredient[0].name} from recipe`);
       }
     } catch (error) {
       global.logger.error(`Error deleting related recipeIngredients: ${error.message}`);
@@ -232,7 +230,7 @@ module.exports = ({ db }) => {
     }
 
     //add a 'deleted' log entry
-    createKitchenLog(userID, authorization, 'ingredientDeleted', Number(ingredientID), null, null, null, `Ingredient deleted: ${ingredientID}`);
+    createKitchenLog(userID, authorization, 'ingredientDeleted', Number(ingredientID), null, null, null, `Deleted ${existingIngredient[0].name} from kitchen`);
 
     global.logger.info(`Deleted ingredient ID: ${ingredientID}`);
     return { success: true };

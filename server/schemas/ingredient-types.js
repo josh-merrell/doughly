@@ -41,7 +41,7 @@ const IngredientUpdateSchema_body = {
       type: 'string',
       enum: unitEnum,
     },
-    gramRatio: { type: 'numer' },
+    gramRatio: { type: 'number' },
     brand: { type: 'string' },
   },
 };
