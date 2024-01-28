@@ -666,10 +666,6 @@ module.exports = ({ db }) => {
           indexesToRemove.add(i);
           continue;
         }
-        if (!recipeJSON.ingredients[i].purchaseUnit || recipeJSON.ingredients[i].purchaseUnit <= 0) {
-          global.logger.error(`missing or invalid ingredient purchaseUnit, removing from array. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
-          indexesToRemove.add(i);
-        }
       }
       // remove invalid ingredients from array
       for (let i of Array.from(indexesToRemove).sort((a, b) => b - a)) {
@@ -800,6 +796,10 @@ module.exports = ({ db }) => {
             }
             if (ingredientJSON.gramRatio <= 0) {
               global.logger.error(`Invalid gramRatio for ingredient ${ingredient.name}: ${ingredientJSON.gramRatio}, removing from recipe.`);
+              return null;
+            }
+            if (ingredientJSON.purchaseUnitRatio <= 0) {
+              global.logger.error(`Invalid purchaseUnitRatio for ingredient ${ingredient.name}: ${ingredientJSON.purchaseUnitRatio}, removing from recipe.`);
               return null;
             }
             return {
