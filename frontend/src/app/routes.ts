@@ -104,6 +104,25 @@ export const routes: Route[] = [
       {
         path: 'created',
         component: CreatedRecipesComponent,
+        children: [
+          {
+            path: 'add',
+            component: CreatedRecipesComponent,
+            canActivate: [ProfileGuard],
+            children: [
+              {
+                path: 'vision',
+                component: CreatedRecipesComponent,
+                canActivate: [ProfileGuard],
+              },
+              {
+                path: 'manual',
+                component: CreatedRecipesComponent,
+                canActivate: [ProfileGuard],
+              },
+            ],
+          },
+        ],
       },
       {
         path: 'discover',

@@ -282,6 +282,12 @@ export class UserRecipeComponent {
           confettiColors: ['#5cd0fa', '#d9127c', '#ffb8d2'],
         });
         this.store.dispatch(RecipeActions.clearNewRecipeID());
+        // also open the ConfirmationModal
+        this.dialog.open(ConfirmationModalComponent, {
+          data: {
+            confirmationMessage: 'Recipe added successfully.',
+          },
+        });
       }
     });
   }
