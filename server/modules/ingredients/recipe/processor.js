@@ -231,7 +231,8 @@ module.exports = ({ db }) => {
     const parsedData = JSON.parse(data.response);
     global.logger.info(`PURCHASE UNIT RATIO EST RESULT: ${JSON.stringify(parsedData)}`);
     if (!parsedData.unitRatio) {
-      throw new Error(`Error getting unitRatioEstimate from openAI for ${ingredientName} ${measurementUnit} and ${purchaseUnit}`);
+      global.logger.error(`Error getting unitRatioEstimate from openAI for ${ingredientName} ${measurementUnit} and ${purchaseUnit}. Defaulting to 1`);
+      return 1;
     }
     return Number(parsedData.unitRatio);
   }
