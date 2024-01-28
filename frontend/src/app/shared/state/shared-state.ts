@@ -75,6 +75,7 @@ export interface Filter {
 export interface Log {
   logID: number;
   logTime: Date | string;
+  displayLogTime?: string,
   eventType: string;
   subjectID?: number;
   associatedID?: number;
