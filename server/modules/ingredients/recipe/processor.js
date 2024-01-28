@@ -82,7 +82,7 @@ module.exports = ({ db }) => {
 
     //verify that the provided purchaseUnitRatio is a positive number, return error if not
     if (!purchaseUnitRatio || purchaseUnitRatio <= 0) {
-      global.logger.error(`positive purchaseUnitRatio number is required`);
+      global.logger.error(`positive purchaseUnitRatio number is required, got ${purchaseUnitRatio}`);
       throw errorGen(`positive purchaseUnitRatio number is required`, 400);
     }
 
