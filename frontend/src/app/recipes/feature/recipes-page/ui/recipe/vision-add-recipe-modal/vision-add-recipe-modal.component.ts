@@ -201,7 +201,7 @@ export class VisionAddRecipeModalComponent {
                   } else {
                     //navigate to recipe page
                     this.router.navigate(['/recipe', recipeID]);
-                    this.dialogRef.close('success');
+                    this.dialog.closeAll();
                   }
                 })
               }
