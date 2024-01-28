@@ -30,7 +30,6 @@ export class TimelineComponent {
 
   async prepareLogs() {
     await this.orderLogsByDate();
-    console.log(`LOGS AFTER ORDERING: `, this.logs)
 
     const now = new Date();
     const todayStart = new Date(
@@ -70,9 +69,7 @@ export class TimelineComponent {
     this.pastMonth.set(pastMonthLogs);
   }
 
-
   async orderLogsByDate() {
-    console.log(`LOGS: `, this.logs);
     this.logs.sort((a, b) => {
       return new Date(b.logTime).getTime() - new Date(a.logTime).getTime();
     });
@@ -81,7 +78,7 @@ export class TimelineComponent {
     const result: Log[] = [];
     logs.forEach((log) => {
       const date = new Date(log.logTime);
-      log.logTime = `${
+      log.displayLogTime = `${
         date.getMonth() + 1
       }/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
       result.push(log);
