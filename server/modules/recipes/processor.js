@@ -666,6 +666,10 @@ module.exports = ({ db }) => {
           indexesToRemove.add(i);
           continue;
         }
+        if (!recipeJSON.ingredients[i].purchaseUnit || recipeJSON.ingredients[i].purchaseUnit <= 0) {
+          global.logger.error(`missing or invalid ingredient purchaseUnit, removing from array. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
+          indexesToRemove.add(i);
+        }
       }
       // remove invalid ingredients from array
       for (let i of Array.from(indexesToRemove).sort((a, b) => b - a)) {
