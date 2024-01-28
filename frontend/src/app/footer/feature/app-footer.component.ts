@@ -1,23 +1,35 @@
-import { Renderer2, ElementRef, ViewChild, Component, WritableSignal, signal } from '@angular/core';
+import {
+  Renderer2,
+  ElementRef,
+  ViewChild,
+  Component,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import {
   NavigationEnd,
   Router,
   RouterLinkWithHref,
   RouterOutlet,
 } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Subject, filter, takeUntil, tap } from 'rxjs';
 import { setCurrentUrl } from '../../shared/state/shared-actions';
-import { Observable } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectCurrentUrl } from '../../shared/state/shared-selectors';
 import { AppState } from '../../shared/state/app-state';
 import { AuthService } from '../../shared/utils/authenticationService';
-
+import { selectAdding } from '../../recipes/state/recipe/recipe-selectors';
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLinkWithHref],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLinkWithHref,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './app-footer.component.html',
 })
 export class AppFooterComponent {
@@ -29,6 +41,8 @@ export class AppFooterComponent {
   public profileImageLink: string | undefined;
   public initials: string = '';
   public profile: object | any = {};
+  public addingRecipe: WritableSignal<boolean> = signal(false);
+  public currentLocation: WritableSignal<string> = signal('');
 
   options: any = { exact: false };
 
@@ -36,17 +50,27 @@ export class AppFooterComponent {
     private renderer: Renderer2,
     private router: Router,
     private store: Store<AppState>,
-    public authService: AuthService
+    public authService: AuthService,
+    private location: Location
   ) {}
 
   ngOnInit() {
+    // watch location for changes
+    this.location.onUrlChange((url) => {
+      this.currentLocation.set(url)
+    });
+    this.store.select(selectAdding).subscribe((adding) => {
+      this.addingRecipe.set(adding);
+    });
     this.store.select(selectCurrentUrl).subscribe((url) => {
       this.currentURL.set(url);
     });
     this.authService.$profile.subscribe((profile) => {
       this.profile = profile;
       this.profileImageLink = profile?.photo_url;
-      this.initials = (profile?.name_first?.charAt(0) || '') + (profile?.name_last?.charAt(0) || '');
+      this.initials =
+        (profile?.name_first?.charAt(0) || '') +
+        (profile?.name_last?.charAt(0) || '');
     });
     this.router.events
       .pipe(
@@ -108,7 +132,7 @@ export class AppFooterComponent {
       return 'social';
     } else if (currentURL.includes('kitchen')) {
       return 'kitchen';
-    } 
+    }
     return '';
   }
 

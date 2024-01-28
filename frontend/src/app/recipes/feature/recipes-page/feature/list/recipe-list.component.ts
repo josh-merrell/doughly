@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { RecipeCategoryCardComponent } from '../../ui/recipe-category/recipe-category-card/recipe-category-card.component';
 import { RecipeCardComponent } from '../../ui/recipe/recipe-card/recipe-card.component';
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
+import { Location } from '@angular/common';
+
 import {
   RecipeCategory,
   RecipeCategoryError,
@@ -27,8 +29,9 @@ import { RecipeIngredientError } from 'src/app/recipes/state/recipe-ingredient/r
 import { RecipeIngredientsModalComponent } from '../../ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
 import { RecipeToolsModalComponent } from '../../ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
 import { RecipeStepsModalComponent } from '../../ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { filter, map, takeUntil } from 'rxjs';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -107,7 +110,9 @@ export class RecipeListComponent {
   constructor(
     private router: Router,
     private store: Store,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private location: Location
   ) {
     effect(
       () => {
@@ -137,6 +142,21 @@ export class RecipeListComponent {
   }
 
   ngOnInit(): void {
+    // Check the initial URL
+    this.checkUrlAndAct(this.router.url);
+
+    // Listen for future URL changes
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        ),
+        map((event) => event as NavigationEnd)
+      )
+      .subscribe((navigationEndEvent) => {
+        this.checkUrlAndAct(navigationEndEvent.urlAfterRedirects);
+      });
+
     this.store.select(selectRecipes).subscribe((recipes) => {
       recipes = recipes.filter((recipe) => {
         return this.type === 'subscription'
@@ -163,6 +183,13 @@ export class RecipeListComponent {
     checkScrollHeight();
   }
 
+  private checkUrlAndAct(fullUrl: string) {
+    if (fullUrl.includes('/add')) {
+      this.onAddClick();
+    }
+    // Any other URL checks can be added here
+  }
+
   checkScroll(target: EventTarget | null) {
     if (target) {
       let element = target as HTMLElement;
@@ -181,6 +208,9 @@ export class RecipeListComponent {
     this.searchFilter.set(searchFilter);
   }
   onAddClick(): void {
+    // update url to include '/add' if it's not already there
+    this.location.go('/recipes/created/add')
+
     const dialogRef = this.dialog.open(AddRecipeModalComponent, {
       data: {
         recipeCategories: this.categories(),
@@ -189,12 +219,15 @@ export class RecipeListComponent {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
+        this.dialog.closeAll();
         this.dialog.open(ConfirmationModalComponent, {
           data: {
             confirmationMessage: `Recipe added successfully.`,
           },
         });
       }
+      // remove '/add' from the url
+      this.location.go('/recipes/created')
     });
   }
   categoryCardClick(category: RecipeCategory): void {
@@ -281,5 +314,6 @@ export class RecipeListComponent {
       this.router.navigate(['/recipe', recipe.recipeID]);
     }
   }
+
   // ***************************************************
 }

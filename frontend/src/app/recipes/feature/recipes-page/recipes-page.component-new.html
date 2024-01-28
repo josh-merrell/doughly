@@ -13,7 +13,7 @@
       Discover
     </span> -->
     <span
-      (click)="setView('created')"
+      (click)="navigateToCreated()"
       class="inline-flex items-center border-b-4 font-dl-3 text-dl-7  transition-all duration-100 ease-in-out "
       [ngClass]="{
         ' border-dl-blue-8 text-dl-grey-2 ':
@@ -24,7 +24,7 @@
       Created
     </span>
     <span
-      (click)="setView('subscribed')"
+      (click)="navigateToSubscribed()"
       class="mr-dl-5 inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
         ' border-dl-blue-8  text-dl-grey-2 ':
