@@ -241,12 +241,12 @@ Do not include any other properties in the JSON object response. If an optional 
           'lifespanDays' <number>: (required) estimate of number of days ingredient will stay usable if stored properly, 
           'purchaseUnit' <string>: (required) choose the unit from this list that most closely matches how the ingredient might be purchased: ${units}. The selection should be relavent to the ingredient. For example, 'flour' might be purchased in 'pounds', while 'milk' might be purchased in 'gallons'. Only use generic units like 'single' or 'carton' as a last resort. Value MUST be one of the units in the list., 
 
-          'gramRatio' <positive integer>: (required, > 0) an estimate of how many grams the chosen purchaseUnit of this ingredient would weigh,,
-          'purchaseUnitRatio' <number>: (required, > 0) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient.
+          'gramRatio' <integer>: (required) an estimate of how many grams the chosen purchaseUnit of this ingredient would weigh, Must be greater than 0.,
+          'purchaseUnitRatio' <number>: (required) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient Must be greater than 0..
           
           If a match is found, return the following json:
           'ingredientID' <number>: (required) The ingredientID of the matching user ingredient,
-          'purchaseUnitRatio' <number>: (required, > 0) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient. 
+          'purchaseUnitRatio' <number>: (required) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient. Must be greater than 0.
           
           Do not include any properties in the JSON object responses except those defined for the two cases. Convert any fractions to decimals.`,
         },
