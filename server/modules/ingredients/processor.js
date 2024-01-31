@@ -66,7 +66,7 @@ module.exports = ({ db }) => {
 
     //verify that gramRatio is a positive number
     if (!gramRatio || gramRatio <= 0) {
-      global.logger.error(`positive gramRatio number is required. Ingredient name: ${name}`);
+      global.logger.error(`positive gramRatio number is required. Ingredient name: ${name}, received gramRatio: ${gramRatio}`);
       throw errorGen(`positive gramRatio number is required`, 400);
     }
 
