@@ -145,7 +145,7 @@ module.exports = ({ db }) => {
     let ingredientID;
     global.logger.info(`CONSTRUCT RI: ${ingredient}`)
     try {
-      if (ingredient.ingredientID === 0) {
+      if (Number(ingredient.ingredientID) === 0) {
         // If ingredientID is not provided, create a new ingredient
         const body = {
           authorization,
@@ -170,7 +170,7 @@ module.exports = ({ db }) => {
         global.logger.info(`INGREDIENTID IS: ${ingredientID}`)
       }
     } catch (error) {
-      global.logger.error(`'constructRecipeIngredient' Failed when creating new ingredient. Failure: ${error.message}`);
+      global.logger.error(`'constructRecipeIngredient' Failed when creating new ingredient. RECEIVED INGREDIENT: ${ingredient}. Failure: ${error.message}`);
       throw errorGen(`'constructRecipeIngredient' Failed when creating new ingredient. Failure: ${error.message}`, 400);
     }
     // Then, create the recipeIngredient
