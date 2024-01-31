@@ -2,9 +2,10 @@ const Redis = require('ioredis');
 
 const redisHost = process.env.AWS_ID_CACHE_REDIS_HOST;
 
-const getNextSequence = async (type) => {
+const getNextYearMonthDaySequence = async (type) => {
   try {
     let redis;
+    let yearMonthDay = '';
     // if NODE_ENV is development, access local redis instance at redis://default:redispw@localhost:49153, otherwise access AWS redis instance
     if (process.env.NODE_ENV === 'development') {
       redis = new Redis({
@@ -12,24 +13,38 @@ const getNextSequence = async (type) => {
         port: 49151,
         password: 'redispw',
       });
+      yearMonthDay = generateYearMonthDayLocal();
     } else {
       redis = new Redis({
         host: redisHost,
         port: 6379,
       });
+      yearMonthDay = await redis.get(`IDyearMonthDay`);
     }
-    const sequence = await redis.incr(`IDsequence_type${type}`);
+    let sequence = await redis.incr(`IDsequence_type${type}`);
 
     if (sequence >= 99999999) {
       await redis.set(`IDsequence_type${type}`, 0);
     }
 
-    return sequence;
+    //prepend sequence with 0s to make it 8 digits long
+    sequence = String(sequence).padStart(8, '0');
+
+    return `${yearMonthDay}${sequence}`;
   } catch (err) {
     global.logger.info('Could not get next sequence:', err);
     return null;
   }
 };
+
+function generateYearMonthDayLocal() {
+  const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+  year = now.getUTCFullYear().toString().slice(-2);
+  month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  day = String(now.getUTCDate()).padStart(2, '0');
+
+  return `${year}${month}${day}`;
+}
 
 async function generateID(req, res, next) {
   /**
@@ -55,16 +70,18 @@ async function generateID(req, res, next) {
   }
 
   // get current UTC time date
-  const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
-  let year = now.getUTCFullYear().toString().slice(-2);
-  if (process.env.NODE_ENV === 'development') {year -= 20};
-  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(now.getUTCDate()).padStart(2, '0');
-  let sequence = await getNextSequence(type);
-  //prepend sequence with 0s to make it 8 digits long
-  sequence = String(sequence).padStart(8, '0');
+  // const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+  // year = now.getUTCFullYear().toString().slice(-2);
+  // if (process.env.NODE_ENV === 'development') {
+  //   year -= 20;
+  // }
+  // month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  // day = String(now.getUTCDate()).padStart(2, '0');
 
-  const id = `${type}${year}${month}${day}${sequence}`;
+  const yearMonthDaySequence = await getNextYearMonthDaySequence(type);
+
+  // const id = `${type}${year}${month}${day}${sequence}`;
+  const id = `${type}${yearMonthDaySequence}`;
 
   if (next === 'handlerCall') {
     return id;
@@ -75,5 +92,5 @@ async function generateID(req, res, next) {
 
 module.exports = {
   generateID,
-  getNextSequence,
+  getNextYearMonthDaySequence,
 };
