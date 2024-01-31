@@ -794,11 +794,11 @@ module.exports = ({ db }) => {
               global.logger.error(`Invalid purchaseUnit for ingredient ${ingredient.name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
               return null;
             }
-            if (ingredientJSON.gramRatio <= 0) {
+            if (!ingredientJSON.gramRatio || ingredientJSON.gramRatio <= 0) {
               global.logger.error(`Invalid gramRatio for ingredient ${ingredient.name}: ${ingredientJSON.gramRatio}, removing from recipe.`);
               return null;
             }
-            if (ingredientJSON.purchaseUnitRatio <= 0) {
+            if (!ingredientJSON.purchaseUnitRatio || ingredientJSON.purchaseUnitRatio <= 0) {
               global.logger.error(`Invalid purchaseUnitRatio for ingredient ${ingredient.name}: ${ingredientJSON.purchaseUnitRatio}, removing from recipe.`);
               return null;
             }
