@@ -151,7 +151,6 @@ export class ManualAddRecipeModalComponent {
           url,
           this.croppedImage
         );
-        console.log('Upload Successful:', uploadResponse.url);
 
         this.photoURL = uploadResponse.url.split('?')[0];
       } catch (error) {

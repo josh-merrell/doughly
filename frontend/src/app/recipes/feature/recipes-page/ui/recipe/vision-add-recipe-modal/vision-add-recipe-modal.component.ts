@@ -105,7 +105,6 @@ export class VisionAddRecipeModalComponent {
           url,
           imageToUpload
         );
-        console.log('Upload Successful:', uploadResponse.url);
 
         if (variableName === 'selectedFile')
           this.photoURL = uploadResponse.url.split('?')[0];
