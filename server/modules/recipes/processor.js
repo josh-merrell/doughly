@@ -878,15 +878,20 @@ module.exports = ({ db }) => {
 
         const unitRatioEst = Number(parsedData.unitRatio);
 
-        return {
+        const result = {
           name: recipeIngredient.name,
           measurement: recipeIngredient.measurement,
           measurementUnit: recipeIngredient.measurementUnit,
           ingredientID: Number(userIngredientMatch.ingredientID),
           purchaseUnitRatio: unitRatioEst,
-          preparation: recipeIngredient.preparation,
           needsReview: true,
         };
+
+        if (recipeIngredient.preparation && recipeIngredient.preparation == null) {
+          result.preparation = recipeIngredient.preparation;
+        }
+
+        return result;
       } catch (error) {
         global.logger.error(`Error getting unitRatioEstimate from openAI: ${error.message}`);
         throw errorGen(`Error in secondaryIngredientMatch: ${error.message}`, 400);
