@@ -788,8 +788,12 @@ module.exports = ({ db }) => {
           const ingredientJSON = JSON.parse(data.response);
           global.logger.info(`MAPPED INGREDIENT JSON: ${JSON.stringify(ingredientJSON)}`);
 
-          if (ingredientJSON.lifespanDays) {
+          if (!ingredientJSON.ingredientID || ingredientJSON.ingredientID === 0) {
             const validUnits = process.env.MEASUREMENT_UNITS.split(',');
+            if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
+              global.logger.error(`Invalid lifespanDays for ingredient ${ingredient.name}: ${ingredientJSON.lifespanDays}, removing from recipe.`);
+              return null;
+            }
             if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
               global.logger.error(`Invalid purchaseUnit for ingredient ${ingredient.name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
               return null;
