@@ -88,6 +88,10 @@ export class RecipeService {
     return this.http.get<any[]>(this.API_URL);
   }
 
+  getDiscover(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/discover`);
+  }
+
   getByID(recipeID: number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/${recipeID}`);
   }

@@ -11,6 +11,16 @@ const loadRecipesFailure = createAction(
   props<{ error: any }>()
 );
 
+const loadDiscoverRecipes = createAction('[Recipes] Load Discover');
+const loadDiscoverRecipesSuccess = createAction(
+  '[Recipes] Load Discover Success',
+  props<{ discoverRecipes: Recipe[] }>()
+);
+const loadDiscoverRecipesFailure = createAction(
+  '[Recipes] Load Discover Failure',
+  props<{ error: any }>()
+);
+
 const loadRecipe = createAction(
   '[Recipes] Load Single',
   props<{ recipeID: number }>()
@@ -130,6 +140,9 @@ export const RecipeActions = {
   loadRecipes,
   loadRecipesSuccess,
   loadRecipesFailure,
+  loadDiscoverRecipes,
+  loadDiscoverRecipesSuccess,
+  loadDiscoverRecipesFailure,
   loadRecipe,
   loadRecipeSuccess,
   loadRecipeFailure,

@@ -13,6 +13,19 @@ async function getRecipes(req, res) {
   }
 }
 
+async function getDiscoverRecipes(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { cursor, limit } = req.query;
+  try {
+    const returner = await p.get.discover({ userID: req.userID, cursor, limit });
+    return res.json(returner);
+  } catch (err) {
+    global.logger.error(`'recipes' 'getDiscoverRecipes': ${err.message}`);
+    return res.status(err.code || 500).json({ error: err.message });
+  }
+}
+
 async function getRecipeIngredients(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -279,6 +292,7 @@ async function unsubscribeRecipe(req, res) {
 module.exports = {
   subscriptionsByRecipeID,
   getRecipes,
+  getDiscoverRecipes,
   getRecipeIngredients,
   getRecipeTools,
   getRecipeSteps,
