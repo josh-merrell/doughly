@@ -8,7 +8,7 @@ import {
   Router,
   RouterOutlet,
 } from '@angular/router';
-import { DiscoverRecipesComponent } from './feature/discover/discover-recipes.component';
+import { DiscoverRecipesComponent } from '../discover/discover-recipes.component';
 import { RecipeListComponent } from './feature/list/recipe-list.component';
 import { Subject, filter, takeUntil } from 'rxjs';
 
@@ -90,7 +90,7 @@ export class RecipesPageNewComponent {
 
     this.router.navigate(['/recipes/created']);
   }
-
+  
   navigateToCreatedChildren(childRoutePaths: string[]) {
     this.setView('created');
 

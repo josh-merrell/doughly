@@ -21,6 +21,7 @@ import { FollowersComponent } from './social/feature/followers/followers.compone
 import { ToolsComponent } from './kitchen/feature/tools/tools.component';
 import { CreatedRecipesComponent } from './recipes/feature/created-recipes/created-recipes.component';
 import { SubscribedRecipesComponent } from './recipes/feature/subscribed-recipes/subscribed-recipes.component';
+import { DiscoverRecipesComponent } from './recipes/feature/discover/discover-recipes.component';
 
 export const routes: Route[] = [
   {
@@ -126,7 +127,7 @@ export const routes: Route[] = [
       },
       {
         path: 'discover',
-        component: NotfoundComponent,
+        component: DiscoverRecipesComponent,
       },
       {
         path: 'subscribed',

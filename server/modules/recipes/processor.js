@@ -391,6 +391,22 @@ module.exports = ({ db }) => {
     }
   }
 
+  async function getDiscover(options) {
+    try {
+      // const { userID, authorization } = options;
+      const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false);
+      if (error) {
+        global.logger.error(`Error getting discoverRecipes: ${error.message}`);
+        throw errorGen(`Error getting discoverRecipes: ${error.message}`, 400);
+      }
+      global.logger.info(`Got ${discoverRecipes.length} discoverRecipes`);
+      return discoverRecipes;
+    } catch (error) {
+      global.logger.error(`Unhandled Error: ${error.message}`);
+      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    }
+  }
+
   async function getByID(options) {
     try {
       const { recipeID } = options;
@@ -1430,6 +1446,7 @@ module.exports = ({ db }) => {
       ingredients: getRecipeIngredients,
       tools: getRecipeTools,
       steps: getRecipeSteps,
+      discover: getDiscover
     },
     constructRecipe,
     create,

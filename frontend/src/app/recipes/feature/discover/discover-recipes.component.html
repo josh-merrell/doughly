@@ -1,0 +1,33 @@
+<div class="relative flex w-full flex-col">
+  <!-- List View Header -->
+  <div
+    class="sticky top-0 pb-dl-2 z-10 bg-white mb-dl-1 mt-dl-4 flex w-full px-dl-6"
+  >
+    <span
+      class="ml-dl-2 inline-flex items-center border-b-4 border-transparent px-dl-1 py-dl-1 text-dl-6 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out"
+    >
+      Categories
+    </span>
+  </div>
+
+  <!-- Category List -->
+  <div class="relative mb-dl-3 flex overflow-y-auto flex-col items-center">
+    <div
+      class="flex flex-col items-center"
+      *ngFor="let category of displayCategories()"
+    >
+      <dl-recipe-category-card
+        *ngIf="category.recipeCategoryID !== selectedCategory()?.recipeCategoryID"
+        (click)="categoryCardClick(category)"
+        [category]="category"
+      ></dl-recipe-category-card>
+      <div
+        *ngIf="category.recipeCategoryID === selectedCategory()?.recipeCategoryID"
+        class="flex flex-col w-full p-dl-4 rounded-dl-2"
+        (click)="categoryCardClick(category)"
+      >
+        SELECTED {{ category.name }}
+      </div>
+    </div>
+  </div>
+</div>

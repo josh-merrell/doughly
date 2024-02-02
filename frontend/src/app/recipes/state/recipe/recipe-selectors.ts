@@ -4,6 +4,8 @@ import { Recipe } from './recipe-state';
 
 export const selectRecipes = (state: any) => state.recipe.recipes;
 
+export const selectDiscoverRecipes = (state: any) => state.recipe.discoverRecipes;
+
 export const selectRecipeSubscriptions = (state: any) => state.recipe.recipeSubscriptions;
 
 export const selectRecipeByID = memoize((recipeID: number) => {
