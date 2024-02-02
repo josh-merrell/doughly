@@ -229,7 +229,7 @@ module.exports = ({ db }) => {
         return { recipeToolID: data.recipeToolID, toolID: toolID };
       }
 
-      if (tool.toolID === 0) {
+      if (Number(tool.toolID) === 0) {
         // If toolID is not provided, create a new tool
         const { data } = await axios.post(
           `${process.env.NODE_HOST}:${process.env.PORT}/tools`,
