@@ -23,6 +23,11 @@ const getNextYearMonthDaySequence = async (type) => {
     }
     let sequence = await redis.incr(`IDsequence_type${type}`);
 
+    // if NODE_ENV is development, add 10000 to sequence to avoid collisions with production sequence
+    if (process.env.NODE_ENV === 'development') {
+      sequence += 10000;
+    }
+
     if (sequence >= 99999999) {
       await redis.set(`IDsequence_type${type}`, 0);
     }

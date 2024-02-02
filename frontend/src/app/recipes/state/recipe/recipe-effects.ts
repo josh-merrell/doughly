@@ -150,6 +150,32 @@ export class RecipeEffects {
     )
   );
 
+  loadDiscoverRecipes$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.loadDiscoverRecipes),
+      mergeMap(() =>
+        this.recipeService.getDiscover().pipe(
+          map((discoverRecipes) =>
+            RecipeActions.loadDiscoverRecipesSuccess({
+              discoverRecipes,
+            })
+          ),
+          catchError((error) =>
+            of(
+              RecipeActions.loadDiscoverRecipesFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
   loadRecipe$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeActions.loadRecipe),

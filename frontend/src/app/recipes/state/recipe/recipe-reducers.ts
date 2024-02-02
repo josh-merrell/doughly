@@ -4,6 +4,7 @@ import { RecipeState, RecipeStatus } from './recipe-state';
 
 export const initialState: RecipeState = {
   recipes: [],
+  discoverRecipes: [],
   recipeSubscriptions: [],
   loading: false,
   error: null,
@@ -27,6 +28,16 @@ export const recipeReducer = createReducer(
   on(RecipeActions.loadRecipesFailure, (state, { error }) => ({
     ...state,
     error,
+    loading: false,
+  })),
+  on(RecipeActions.loadDiscoverRecipes, (state) => ({
+    ...state,
+    error: null,
+    loading: true,
+  })),
+  on(RecipeActions.loadDiscoverRecipesSuccess, (state, { discoverRecipes }) => ({
+    ...state,
+    discoverRecipes: discoverRecipes,
     loading: false,
   })),
   on(RecipeActions.loadRecipe, (state) => ({

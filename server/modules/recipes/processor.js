@@ -229,7 +229,7 @@ module.exports = ({ db }) => {
         return { recipeToolID: data.recipeToolID, toolID: toolID };
       }
 
-      if (tool.toolID === 0) {
+      if (Number(tool.toolID) === 0) {
         // If toolID is not provided, create a new tool
         const { data } = await axios.post(
           `${process.env.NODE_HOST}:${process.env.PORT}/tools`,
@@ -385,6 +385,22 @@ module.exports = ({ db }) => {
       }
       global.logger.info(`Got ${recipes.length} recipes`);
       return recipes;
+    } catch (error) {
+      global.logger.error(`Unhandled Error: ${error.message}`);
+      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    }
+  }
+
+  async function getDiscover(options) {
+    try {
+      // const { userID, authorization } = options;
+      const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false);
+      if (error) {
+        global.logger.error(`Error getting discoverRecipes: ${error.message}`);
+        throw errorGen(`Error getting discoverRecipes: ${error.message}`, 400);
+      }
+      global.logger.info(`Got ${discoverRecipes.length} discoverRecipes`);
+      return discoverRecipes;
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);
@@ -1430,6 +1446,7 @@ module.exports = ({ db }) => {
       ingredients: getRecipeIngredients,
       tools: getRecipeTools,
       steps: getRecipeSteps,
+      discover: getDiscover
     },
     constructRecipe,
     create,

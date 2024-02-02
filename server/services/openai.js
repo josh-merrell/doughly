@@ -240,13 +240,25 @@ Do not include any other properties in the JSON object response. If an optional 
           text: `You are provided a recipe ingredient, which includes 'name', 'measurement', and 'measurementUnit'. You are also provided an array of user ingredients. each includes a 'name', 'ingredientID', and 'purchaseUnit'. Using only the 'name' property, attempt to find a matching user ingredient for the provided recipe ingredient. For example, 'flour' would be a match for 'wheat flour', but 'rose water' would not be a match for 'water' If no close match is found, return the following json:
           'lifespanDays' <number>: (required) estimate of number of days ingredient will stay usable if stored properly. Minimum is 1.,
           'purchaseUnit' <string>: (required) choose the unit from this list that most closely matches how the ingredient might be purchased: ${units}. The selection should be relavent to the ingredient. For example, 'flour' might be purchased in 'pounds', while 'milk' might be purchased in 'gallons'. Only use generic units like 'single' or 'carton' as a last resort. Value MUST be one of the units in the list., 
-
-          'gramRatio' <integer>: (required) an estimate of how many grams the chosen purchaseUnit of this ingredient would weigh, Must be greater than or equal to 1.,
+          'gramRatio' <integer>: (required) an estimate of how many grams the chosen purchaseUnit of this ingredient would weigh. Value must be a positive integer.,
           'purchaseUnitRatio' <number>: (required) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient Must be greater than 0..
           
           If a match is found, return the following json:
           'ingredientID' <number>: (required) The ingredientID of the matching user ingredient,
-          'purchaseUnitRatio' <number>: (required) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient. Minimum is 1.
+          'purchaseUnitRatio' <number>: (required) an estimate of how many measurementUnits in a purchaseUnit of the matching user ingredient. Value must be a positive integer.
+
+          Return body must resemble one of the following two examples:
+          'example-1_no-match':{
+            "lifespanDays": 7,
+            "purchaseUnit": "pound",
+            "gramRatio": 453,
+            "purchaseUnitRatio": 16
+          }
+
+          'example-2_match-found':{
+            "ingredientID": 1,
+            "purchaseUnitRatio": 16
+          }
           
           Do not include any properties in the JSON object responses except those defined for the two cases. Convert any fractions to decimals.`,
         },
@@ -285,7 +297,7 @@ Do not include any other properties in the JSON object response. If an optional 
       content: [
         {
           type: 'text',
-          text: `You are provided 'substance', 'measurementUnit_A', and 'measurementUnit_B'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> with a value of the estimated number of 'measurementUnit_A' that fit in a single 'measurementUnit_B'. Use two decimal accuracy. For example, if 'measurementUnit_A' is 'tablespoon' and 'measurementUnit_B' is liter, return {unitRatio: 67.63}. Always return a value, even if it is just an educated guess.`,
+          text: `You are provided 'substance', 'measurementUnit_A', and 'measurementUnit_B'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> with a value of the estimated number of 'measurementUnit_A' that fit in a single 'measurementUnit_B'. Use two decimal accuracy. For example, if 'measurementUnit_A' is 'tablespoon' and 'measurementUnit_B' is liter, return {unitRatio: 67.63}. Always return a positive value, even if it is just an educated guess.`,
         },
       ],
     },
@@ -297,7 +309,7 @@ Do not include any other properties in the JSON object response. If an optional 
       content: [
         {
           type: 'text',
-          text: `You are provided 'substance' and 'measurementUnit'. Provide a json response with a single property 'gramRatio' <integer> with a value of the estimated number of grams in a single 'measurementUnit' of 'substance'. Use two decimal accuracy. For example, if 'substance' is 'flour' and 'measurementUnit' is 'cup', return {gramRatio: 120}. Minimum is '1'. If an estimate cannot be made with the provided units, return {error: 10}, but even a low-confidence estimate is preferable.`,
+          text: `You are provided 'substance' and 'measurementUnit'. Provide a json response with a single property 'gramRatio' <integer> with a value of the estimated number of grams in a single 'measurementUnit' of 'substance'. Use two decimal accuracy. For example, if 'substance' is 'flour' and 'measurementUnit' is 'cup', return {gramRatio: 120}. Returned value must be a postive integer. Always return a value, even if it is just an educated guess.`,
         },
       ],
     },

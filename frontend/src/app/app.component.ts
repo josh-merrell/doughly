@@ -71,6 +71,7 @@ export class AppComponent {
     this.store.dispatch(RecipeToolActions.loadRecipeTools());
     this.store.dispatch(StepActions.loadSteps());
     this.store.dispatch(RecipeStepActions.loadRecipeSteps());
+    this.store.dispatch(RecipeActions.loadDiscoverRecipes());
 
     //--social
     this.store.dispatch(FriendshipActions.loadFriendships());
