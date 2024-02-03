@@ -196,6 +196,7 @@ export class IngredientDetailsModalComponent {
             confirmationMessage: `Ingredient Stock updated`,
           },
         });
+        this.dialogRef.close();
       }
     });
   }

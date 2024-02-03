@@ -427,7 +427,7 @@ export class UserRecipeComponent {
     this.recipeIngredientsNeedReview.set(
       recipeIngredients.some((ri) => ri.needsReview)
     );
-    return recipeIngredients.map((recipeIngredient: any) => {
+    const mappedIngredients = recipeIngredients.map((recipeIngredient: any) => {
       const ingredient = ingredients.find(
         (ing: any) => ing.ingredientID === recipeIngredient.ingredientID
       );
@@ -459,6 +459,7 @@ export class UserRecipeComponent {
             : recipeIngredient.measurementUnit,
       };
     });
+    return mappedIngredients.sort((a: any, b: any) => a.name.localeCompare(b.name));
   }
   private mapRecipeTools(recipeTools: any, tools: any) {
     if (!recipeTools.length || !tools.length) return [];

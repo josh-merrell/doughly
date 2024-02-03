@@ -36,7 +36,7 @@
         Make now!
       </p>
       <p
-        *ngIf="fromMyRecipes === true"
+        *ngIf="recipe.subscription && fromMyRecipes === true"
         class="ml-dl-4 text-dl-5 text-dl-grey-6"
       >
         Since {{ recipe.subscription.startDate }}
