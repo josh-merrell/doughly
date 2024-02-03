@@ -17,7 +17,6 @@ module.exports = ({ db }) => {
       const constructStartTime = new Date();
       const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, components, ingredients, tools, steps } = options;
 
-      console.log();
       let recipeID;
       const createdItems = [];
       try {

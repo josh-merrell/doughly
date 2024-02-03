@@ -94,7 +94,7 @@
         *ngFor="let recipe of filteredRecipes()"
         (click)="recipeCardClick(recipe)"
         [recipe]="recipe"
-        [isUserRecipe]="true"
+        [fromMyRecipes]="true"
         [isSelected]="false"
       ></dl-recipe-card>
     </div>
