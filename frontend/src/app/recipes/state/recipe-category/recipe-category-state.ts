@@ -1,3 +1,5 @@
+import { Recipe } from "../recipe/recipe-state";
+
 export interface RecipeCategoryState {
   recipeCategories: RecipeCategory[];
   loading: boolean;
@@ -12,6 +14,7 @@ export interface RecipeCategory {
   name: string;
   photoURL: string;
   recipeCount?: number;
+  recipes?: Recipe[];
 }
 
 export interface RecipeCategoryError {

@@ -113,7 +113,7 @@
         *ngFor="let recipe of displayRecipes()"
         (click)="recipeCardClick(recipe)"
         [recipe]="recipe"
-        [isUserRecipe]="true"
+        [fromMyRecipes]="true"
         [isSelected]="recipe.recipeID === selectedRecipeID()"
         [inModal]="true"
       ></dl-recipe-card>

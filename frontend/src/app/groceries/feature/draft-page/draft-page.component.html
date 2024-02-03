@@ -56,7 +56,7 @@
           *ngFor="let recipe of displayRecipes()"
           (click)="recipeCardClick(recipe)"
           [recipe]="recipe"
-          [isUserRecipe]="true"
+          [fromMyRecipes]="true"
           [isSelected]="recipe.shoppingListRecipeID === selectedRecipeID()"
           [shoppingPage]="true"
         ></dl-recipe-card>

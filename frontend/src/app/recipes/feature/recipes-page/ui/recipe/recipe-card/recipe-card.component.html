@@ -1,14 +1,13 @@
 <div
-  class="relative transition-all duration-200 ease-in-out my-dl-4 flex h-dl-7 items-center justify-between rounded-dl-3 "
+  class="relative my-dl-4 flex h-dl-7 items-center justify-between rounded-dl-3 transition-all duration-200 ease-in-out"
   [ngClass]="{
-    'bg-dl-teal-10 shadow-lg': isSelected == true,
-    'bg-white shadow-md': isSelected == false,
-    'shadow-none border': fromMyRecipes == true,
-    'w-dl-14': inModal === true,
-    'w-dl-16': inModal === false
+    'bg-dl-teal-10 shadow-lg': isSelected,
+    'bg-white shadow-md': !isSelected,
+    'w-dl-14': inModal,
+    'w-dl-16': !inModal
   }"
 >
-  <div class="flex flex-col h-full justify-between pl-dl-3 py-dl-1">
+  <div class="flex h-full flex-col justify-between py-dl-1 pl-dl-3">
     <p class="text-dl-6 font-dl-3 text-dl-grey-1">
       {{ recipe.title }}
     </p>
@@ -26,7 +25,12 @@
         Draft
       </p>
       <p
-        *ngIf="this.recipe.status === 'published' && this.shoppingList()?.ingredients?.length === 0 && !shoppingPage && fromMyRecipes === true"
+        *ngIf="
+          this.recipe.status === 'published' &&
+          this.shoppingList()?.ingredients?.length === 0 &&
+          !shoppingPage &&
+          fromMyRecipes === true
+        "
         class="ml-dl-4 text-dl-5 italic text-dl-teal-7"
       >
         Make now!
@@ -35,10 +39,12 @@
         *ngIf="fromMyRecipes === true"
         class="ml-dl-4 text-dl-5 text-dl-grey-6"
       >
-        Since {{ recipe.subscription.startDate}}
+        Since {{ recipe.subscription.startDate }}
       </p>
     </div>
-    <p *ngIf="recipe.plannedDate" class="text-dl-5 text-dl-grey-4">Planned: {{ recipe.plannedDate }}</p>
+    <p *ngIf="recipe.plannedDate" class="text-dl-5 text-dl-grey-4">
+      Planned: {{ recipe.plannedDate }}
+    </p>
   </div>
   <img
     *ngIf="recipe.photoURL"
