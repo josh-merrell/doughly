@@ -17,8 +17,8 @@ import { RecipeService } from 'src/app/recipes/data/recipe.service';
 export class RecipeCardComponent implements OnInit {
   @Input() recipe!: any;
   @Input() friendUserID!: string;
-  @Input() isUserRecipe!: boolean;
-  @Input() isSelected!: boolean;
+  // @Input() isUserRecipe!: boolean;
+  @Input() isSelected: boolean = false;
   @Input() shoppingPage: boolean = false;
   @Input() inModal: boolean = false;
   @Input() fromMyRecipes: boolean = false;
