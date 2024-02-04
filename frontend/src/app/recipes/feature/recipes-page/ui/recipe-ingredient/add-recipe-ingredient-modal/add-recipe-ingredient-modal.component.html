@@ -51,7 +51,7 @@
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Ingredient</label>
           <mat-form-field class="text-dl-4">
             <mat-select formControlName="ingredientID">
-              <ng-container *ngFor="let ingredient of ingredients$ | async">
+              <ng-container *ngFor="let ingredient of ingredients()">
                 <mat-option
                   *ngIf="!isIngredientExcluded(ingredient.ingredientID)"
                   [value]="ingredient.ingredientID"

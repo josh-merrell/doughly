@@ -188,9 +188,11 @@ export class PublicRecipeComponent {
         if (!recipe) return;
         this.profileService.getProfile(recipe.userID).subscribe((profile) => {
           this.author.set(profile);
-          this.initials.set(
-            profile.nameFirst.charAt(0) + profile.nameLast.charAt(0)
-          );
+          if (profile.nameFirst || profile.nameLast) {
+            this.initials.set(
+              profile.nameFirst.charAt(0) + profile.nameLast.charAt(0)
+            );
+          }
         });
         this.store
           .select(selectRecipeCategoryByID(recipe.recipeCategoryID))

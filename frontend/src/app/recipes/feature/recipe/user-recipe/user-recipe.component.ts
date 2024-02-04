@@ -660,7 +660,7 @@ export class UserRecipeComponent {
   reviewIngredients() {
     // if any ingredients need review, navigate to the ingredients page
     if (this.ingredientsNeedReview()) {
-      this.router.navigate(['/ingredients']);
+      this.router.navigate(['/kitchen/ingredients']);
     }
 
     // else only recipeIngredients need review so call editRecipeIngredients()
