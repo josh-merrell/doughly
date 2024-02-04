@@ -1,8 +1,8 @@
 <div
   class="relative my-dl-4 flex h-dl-7 items-center justify-between rounded-dl-3 transition-all duration-200 ease-in-out"
   [ngClass]="{
-    'bg-dl-teal-10 shadow-lg': isSelected,
-    'bg-white shadow-md': !isSelected,
+    'bg-dl-teal-10 shadow-xl': isSelected,
+    'bg-white shadow-lg': !isSelected,
     'w-dl-14': inModal,
     'w-dl-16': !inModal
   }"
@@ -36,7 +36,7 @@
         Make now!
       </p>
       <p
-        *ngIf="fromMyRecipes === true"
+        *ngIf="recipe.subscription && fromMyRecipes === true"
         class="ml-dl-4 text-dl-5 text-dl-grey-6"
       >
         Since {{ recipe.subscription.startDate }}
