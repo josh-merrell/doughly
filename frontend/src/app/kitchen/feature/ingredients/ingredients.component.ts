@@ -256,12 +256,17 @@ export class IngredientsComponent {
 
   ingredientCardClick(ingredient: any) {
     const openEdit = ingredient.needsReview ? true : false;
-    this.dialog.open(IngredientDetailsModalComponent, {
+    const dialogRef = this.dialog.open(IngredientDetailsModalComponent, {
       data: {
         ingredient: ingredient,
         openEdit,
       },
       width: '75%',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      // close any other open modals
+      this.modalActiveForIngredientID = null;
+
     });
   }
 

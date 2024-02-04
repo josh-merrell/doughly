@@ -1,15 +1,10 @@
 <div
-  class="relative transform w-dl-14 max-h-full overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="relative max-h-full w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
 >
-  <mat-spinner
-    class="my-app-custom-spinner"
-    *ngIf="isAdding"
-  ></mat-spinner>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    *ngIf="!isAdding"
-  >
+  <div class="flex items-center justify-center" *ngIf="isAdding">
+    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
     <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
         <h3 class="text-dl-6 font-dl-3 text-dl-grey-2">

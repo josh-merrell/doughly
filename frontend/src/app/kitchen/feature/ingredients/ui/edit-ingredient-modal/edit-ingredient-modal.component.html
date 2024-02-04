@@ -1,7 +1,9 @@
 <div
   class="relative max-h-dl-22 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
 >
-  <mat-spinner class="my-app-custom-spinner" *ngIf="isUpdating"></mat-spinner>
+  <div class="flex items-center justify-center" *ngIf="isUpdating">
+    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+  </div>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isUpdating">
     <div class="flex w-full flex-col">
       <div class="mt-dl-1 text-center">
@@ -57,7 +59,9 @@
         </div>
 
         <div id="form-ingredientGramRatio" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4">{{pUnit() ? pUnit() : 'Gram Ratio'}}</label>
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">{{
+            pUnit() ? pUnit() : "Gram Ratio"
+          }}</label>
           <mat-form-field class="w-full">
             <input matInput formControlName="gramRatio" />
             <mat-error

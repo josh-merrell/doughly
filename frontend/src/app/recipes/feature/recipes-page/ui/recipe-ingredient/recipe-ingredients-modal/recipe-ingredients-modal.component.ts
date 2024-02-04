@@ -92,8 +92,10 @@ export class RecipeIngredientsModalComponent {
           )?.purchaseUnit,
         }));
         enrichedRecipeIngredients.forEach((ri) => {
-          // if the ingredient measurementUnit is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
-          ri.measurementUnit = this.enrichMeasurementUnit(ri.measurementUnit);
+          if (ri.measurement > 1) {
+            // if the ingredient measurementUnit is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
+            ri.measurementUnit = this.enrichMeasurementUnit(ri.measurementUnit);
+          }
         });
         const fullList = [...enrichedRecipeIngredients, ...ingredientsToAdd];
         const sortedOne = fullList.sort((a, b) => {
@@ -268,6 +270,7 @@ export class RecipeIngredientsModalComponent {
                   measurementUnit: result.measurementUnit,
                   purchaseUnitRatio: result.purchaseUnitRatio,
                   name: ingredientName,
+                  needsReview: false,
                   toAdd: true,
                 };
 

@@ -92,11 +92,13 @@ export class EditIngredientModalComponent {
     this.ingredient$.subscribe((ingredient) => {
       this.originalIngredient = ingredient;
       this.form.patchValue({
-        brand: ingredient.brand,
         lifespanDays: ingredient.lifespanDays,
         purchaseUnit: ingredient.purchaseUnit,
         gramRatio: ingredient.gramRatio,
       });
+      if (ingredient.brand) {
+        this.form.patchValue({ brand: ingredient.brand });
+      }
     });
 
     this.ingredientsSubscription = this.ingredients$.subscribe(

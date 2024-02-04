@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -49,7 +49,7 @@ import {
   templateUrl: './add-recipe-ingredient-modal.component.html',
 })
 export class AddRecipeIngredientModalComponent {
-  ingredients$!: Observable<any[]>;
+  ingredients: WritableSignal<any[]> = signal([]);
   ingredientsToExclude;
   form!: FormGroup;
   isAdding$: Observable<boolean>;
@@ -70,7 +70,6 @@ export class AddRecipeIngredientModalComponent {
     private fb: FormBuilder,
     public dialog: MatDialog
   ) {
-    this.ingredients$ = this.store.select(selectIngredients);
     this.ingredientsToExclude = this.data.ingredientsToExclude;
     this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
@@ -79,6 +78,17 @@ export class AddRecipeIngredientModalComponent {
 
   isIngredientExcluded(ingredientID: any): boolean {
     return this.ingredientsToExclude.includes(ingredientID);
+  }
+
+  ngOnInit() {
+    this.store.select(selectIngredients).subscribe((ingredients) => {
+      const sorted = [...ingredients].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+      this.ingredients.set(sorted);
+    });
+    // sort the purchaseUnits
+    this.purchaseUnits.sort((a, b) => a.localeCompare(b));
   }
 
   setForm() {

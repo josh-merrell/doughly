@@ -196,6 +196,7 @@ export class IngredientDetailsModalComponent {
             confirmationMessage: `Ingredient Stock updated`,
           },
         });
+        this.dialogRef.close();
       }
     });
   }
@@ -214,6 +215,7 @@ export class IngredientDetailsModalComponent {
             confirmationMessage: `Ingredient updated`,
           },
         });
+        this.dialogRef.close();
       }
     });
   }
@@ -251,6 +253,7 @@ export class IngredientDetailsModalComponent {
             confirmationMessage: `Ingredient deleted`,
           },
         });
+        this.dialogRef.close();
       }
     });
   }
