@@ -55,6 +55,9 @@ const logsRouter = require('./modules/logs/router');
 const profilesRouter = require('./modules/profiles/router');
 const shoppingRouter = require('./modules/shopping/router');
 
+// UTIL ROUTERS
+const unitRatioRouter = require('./modules/utility/unitRatios/router');
+
 app.use(express.json());
 
 //endpoint for EC2 health checks
@@ -114,6 +117,7 @@ app.use('/ingredients', ingredientsRouter);
 app.use('/ingredientStocks', ingredientStocksRouter);
 app.use('/logs', logsRouter);
 app.use('/profiles', profilesRouter);
+app.use('/unitRatios', unitRatioRouter);
 
 // Start the server
 const port = 3000;

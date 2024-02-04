@@ -33,6 +33,7 @@ import {
   positiveFloatValidator,
   positiveIntegerValidator,
 } from 'src/app/shared/utils/formValidator';
+import { UnitService } from 'src/app/shared/utils/units';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -68,7 +69,8 @@ export class AddRecipeIngredientModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private unitService: UnitService
   ) {
     this.ingredientsToExclude = this.data.ingredientsToExclude;
     this.isAdding$ = this.store.select(selectAdding);
@@ -194,6 +196,9 @@ export class AddRecipeIngredientModalComponent {
       measurement: parseFloat(formValue.measurement),
       purchaseUnitRatio: parseFloat(formValue.purchaseUnitRatio),
     };
+    newRecipeIngredient['measurementUnit'] = this.unitService.singular(
+      newRecipeIngredient['measurementUnit']
+    );
     this.dialogRef.close(newRecipeIngredient);
   }
 

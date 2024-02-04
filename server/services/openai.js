@@ -47,7 +47,7 @@ const visionRequest = async (recipeImageURL, userID, authorization, messageType)
 };
 
 const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, userItems) => {
-  console.log(`MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS: ${JSON.stringify(userItems)}`);
+  console.log(`MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`);
   const client = await getClient();
   const body = {
     messages: [requestMessages[type].message],

@@ -26,6 +26,7 @@ import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient
 import { selectError, selectUpdating } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectRecipeByID } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
+import { UnitService } from 'src/app/shared/utils/units';
 
 @Component({
   selector: 'dl-edit-recipe-ingredient-modal',
@@ -54,7 +55,8 @@ export class EditRecipeIngredientModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store<any>,
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private unitService: UnitService
   ) {}
 
   ngOnInit() {
@@ -68,7 +70,9 @@ export class EditRecipeIngredientModalComponent {
       });
     this.form.patchValue({
       measurement: this.data.recipeIngredient.measurement,
-      measurementUnit: this.enrichMeasurementUnit(this.data.recipeIngredient.measurementUnit),
+      measurementUnit: this.enrichMeasurementUnit(
+        this.data.recipeIngredient.measurementUnit
+      ),
       purchaseUnitRatio: this.data.recipeIngredient.purchaseUnitRatio,
     });
   }
@@ -118,6 +122,9 @@ export class EditRecipeIngredientModalComponent {
       ) {
         if (key === 'measurement' || key === 'purchaseUnitRatio') {
           updatedRecipeIngredient[key] = Number(formValues[key]);
+        } else if (key === 'measurementUnit') {
+          const newValue = this.unitService.singular(formValues[key]);
+          updatedRecipeIngredient[key] = newValue;
         } else {
           updatedRecipeIngredient[key] = formValues[key];
         }
@@ -126,7 +133,9 @@ export class EditRecipeIngredientModalComponent {
 
     this.isUpdating = true;
     this.store.dispatch(
-      RecipeIngredientActions.updateRecipeIngredient({ recipeIngredient: updatedRecipeIngredient })
+      RecipeIngredientActions.updateRecipeIngredient({
+        recipeIngredient: updatedRecipeIngredient,
+      })
     );
     this.store
       .select(selectUpdating)

@@ -4,7 +4,6 @@ const { updater } = require('../../db');
 const axios = require('axios');
 const { createKitchenLog, createRecipeLog } = require('../../services/dbLogger');
 const { errorGen } = require('../../middleware/errorHandling');
-const { error } = require('winston');
 
 module.exports = ({ db }) => {
   async function getAll(options) {

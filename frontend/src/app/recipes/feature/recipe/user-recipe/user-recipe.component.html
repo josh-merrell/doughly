@@ -598,13 +598,13 @@
           Edit
         </button>
       </div>
-      <div *ngFor="let tool of displayTools()" class="mt-dl-2 flex">
-        <span class="min-w-dl-7 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
+      <div *ngFor="let tool of displayTools()" class="mt-dl-2 flex w-full justify-between">
+        <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ tool.name }}
         </span>
         <span
           *ngIf="tool.quantity > 0"
-          class="ml-dl-3 text-dl-6 font-dl-2 text-dl-grey-3"
+          class="mr-dl-7 text-dl-6 font-dl-2 text-dl-grey-3"
         >
           {{ tool.quantity }}
         </span>
