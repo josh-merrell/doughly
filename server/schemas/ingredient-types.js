@@ -98,7 +98,7 @@ const RecipeIngredientUpdateSchema_body = {
   type: 'object',
   properties: {
     measurementUnit: { type: 'string' },
-    measurement: { type: 'integer' },
+    measurement: { type: 'number' },
     purchaseUnitRatio: { type: 'number' },
   },
 };

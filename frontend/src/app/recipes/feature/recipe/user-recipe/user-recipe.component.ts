@@ -459,7 +459,9 @@ export class UserRecipeComponent {
             : recipeIngredient.measurementUnit,
       };
     });
-    return mappedIngredients.sort((a: any, b: any) => a.name.localeCompare(b.name));
+    return mappedIngredients.sort((a: any, b: any) =>
+      a.name.localeCompare(b.name)
+    );
   }
   private mapRecipeTools(recipeTools: any, tools: any) {
     if (!recipeTools.length || !tools.length) return [];

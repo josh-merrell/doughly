@@ -655,6 +655,9 @@ module.exports = ({ db }) => {
       }
 
       sendSSEMessage(userID, { message: `General Recipe details look good, checking ingredient details...` });
+      // validate recipe settings
+      recipeJSON.servings = Math.floor(recipeJSON.servings) || 1;
+
       // validate returned ingredients
       if (recipeJSON.ingredients.length < 1) {
         global.logger.error(`no ingredients found in image`);
