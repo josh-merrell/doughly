@@ -33,7 +33,7 @@ import {
   positiveFloatValidator,
   positiveIntegerValidator,
 } from 'src/app/shared/utils/formValidator';
-import { UnitService } from 'src/app/shared/utils/units';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
