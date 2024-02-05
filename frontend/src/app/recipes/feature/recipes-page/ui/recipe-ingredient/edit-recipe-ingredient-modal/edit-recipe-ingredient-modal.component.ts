@@ -1,4 +1,10 @@
-import { Component, Inject, WritableSignal, effect, signal } from '@angular/core';
+import {
+  Component,
+  Inject,
+  WritableSignal,
+  effect,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   MatDialog,
@@ -17,16 +23,17 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import {
-  positiveFloatValidator,
-} from 'src/app/shared/utils/formValidator';
+import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
-import { selectError, selectUpdating } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
+import {
+  selectError,
+  selectUpdating,
+} from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectRecipeByID } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
-import { UnitService } from 'src/app/shared/utils/units';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-edit-recipe-ingredient-modal',

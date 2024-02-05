@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 require('dotenv').config();
 const { errorGen } = require('../middleware/errorHandling.js');
+const { getUnitRatioAI } = require('./openai.js');
 
 const awsConfig = {
   region: process.env.AWS_REGION,
@@ -13,17 +14,19 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const checkForRatio = async (material, unitA, unitB) => {
   const params = {
     TableName: 'dl-prod-unit-conversion-store',
-    Key: `${material}-${unitA}-${unitB}`,
+    Key: {
+      materialAndUnits: `${material}-${unitA}-${unitB}`,
+    },
   };
   try {
     const data = await docClient.get(params).promise();
-    if (data.Item && data.Item.currentStatus === 'approved') {
-      return {
-        currentStatus: 'success',
-        ratio: data.Item.ratio,
-      };
-    }
     if (data.Item) {
+      if (data.Item.currentStatus === 'approved') {
+        return {
+          currentStatus: 'success',
+          ratio: data.Item.ratio,
+        };
+      }
       return {
         currentStatus: 'success',
         ratio: null,
@@ -32,16 +35,24 @@ const checkForRatio = async (material, unitA, unitB) => {
     // if this item does not exist, we need to check for the reverse
     const reverseParams = {
       TableName: 'dl-prod-unit-conversion-store',
-      Key: `${material}-${unitB}-${unitA}`,
+      Key: {
+        materialAndUnits: `${material}-${unitB}-${unitA}`,
+      },
     };
     const reverseData = await docClient.get(reverseParams).promise();
-    if (reverseData.Item && reverseData.Item.currentStatus === 'approved') {
-      // return the inverse of the ratio
-      return {
-        currentStatus: 'success',
-        ratio: 1 / reverseData.Item.ratio,
-      };
+    if (reverseData.Item) {
+      if (reverseData.Item.currentStatus === 'approved') {
+        // return the inverse of the ratio
+        return {
+          currentStatus: 'success',
+          ratio: 1 / reverseData.Item.ratio,
+        };
+      }
     }
+    return {
+      currentStatus: 'success',
+      ratio: null,
+    };
   } catch (error) {
     global.logger.error(`'checkForRatio' Error checking for unit ratio '${material}-${unitA}-${unitB}': ${error}`);
     throw errorGen(`'checkForRatio' Error checking for unit ratio '${material}-${unitA}-${unitB}': ${error}`, 400);
@@ -71,7 +82,7 @@ const addUnitRatio = async (material, unitA, unitB, ratio) => {
 };
 
 const getDraftUnitRatios = async () => {
-  global.logger.info(`'getDraftUnitRatios' Retrieving all draft unit ratios`)
+  global.logger.info(`'getDraftUnitRatios' Retrieving all draft unit ratios`);
   const params = {
     TableName: 'dl-prod-unit-conversion-store',
     FilterExpression: 'currentStatus = :currentStatus',
@@ -142,12 +153,62 @@ const batchDeleteUnitRatios = async (ratios) => {
   }
 };
 
+const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userID) => {
+  if (unitA === unitB) return 1;
+  // first, try checking the store
+  const storeCheck = await checkForRatio(material, unitA, unitB);
+  if (storeCheck.currentStatus === 'success') {
+    if (storeCheck.ratio) {
+      global.logger.info(`'getPurchaseUnitRatio' Store ratio found for ${material}-${unitA}-${unitB}: ${storeCheck.ratio}`);
+      return storeCheck.ratio;
+    }
+  }
+  global.logger.info(`'getPurchaseUnitRatio' No store ratio found for ${material}-${unitA}-${unitB}, asking AI`);
+  // try asking AI for estimate
+  const data = await getUnitRatioAI(userID, authorization, material, unitA, unitB);
+  const aiEstimate = JSON.parse(data.response);
+  global.logger.info(`'getPurchaseUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate.unitRatio}`);
+  if (aiEstimate.unitRatio) {
+    // submit this returned ratio as a draft to the store
+    addUnitRatio(material, unitA, unitB, aiEstimate.unitRatio);
+    return aiEstimate.unitRatio;
+  }
+  // otherwise, just return default of "1"
+  return 1;
+};
+
+const getGramRatio = async (material, unit, authorization, userID) => {
+  if (unit === 'gram') return 1;
+  // first, try checking the store
+  const storeCheck = await checkForRatio(material, 'gram', unit);
+  if (storeCheck.currentStatus === 'success') {
+    if (storeCheck.ratio) {
+      global.logger.info(`'getGramRatio' Store ratio found for ${material}-gram-${unit}: ${storeCheck.ratio}`);
+      return storeCheck.ratio;
+    }
+  }
+  global.logger.info(`'getGramRatio' No store ratio found for ${material}-gram-${unit}, asking AI`);
+  // try asking AI for estimate
+  const data = await getUnitRatioAI(userID, authorization, material, 'gram', unit);
+  const aiEstimate = JSON.parse(data.response);
+  global.logger.info(`'getGramRatio' AI estimate for ${material}-gram-${unit}: ${aiEstimate.unitRatio}`);
+  if (aiEstimate.unitRatio) {
+    // submit this returned ratio as a draft to the store
+    addUnitRatio(material, 'gram', unit, aiEstimate.unitRatio);
+    return aiEstimate.unitRatio;
+  }
+  // otherwise, just return default of "1"
+  return 1;
+};
+
 module.exports = {
   checkForRatio,
   addUnitRatio,
   batchApproveUnitRatios,
   batchDeleteUnitRatios,
   getDraftUnitRatios,
+  getPurchaseUnitRatio,
+  getGramRatio,
 };
 
 /**
@@ -161,5 +222,4 @@ materialAndUnits: {
     currentStatus: 'approved'
   }
 }
-
 **/
