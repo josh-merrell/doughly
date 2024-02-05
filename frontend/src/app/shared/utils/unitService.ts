@@ -26,7 +26,9 @@ export class UnitService {
     return value;
   }
 
-  getUnitRatio(substance: string, unitA: string, unitB: string): Observable<any> {
-    return this.http.get(`${environment.BACKEND}/unitRatios/unitRatio?substance=${substance}&unitA=${unitA}&unitB=${unitB}`)
+  getUnitRatio(material: string, unitA: string, unitB: string): Observable<any> {
+    return this.http.get(
+      `${environment.BACKEND}/unitRatios/unitRatio?material=${material}&unitA=${unitA}&unitB=${unitB}`
+    );
   }
 }

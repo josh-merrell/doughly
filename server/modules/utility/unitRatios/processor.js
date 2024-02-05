@@ -1,6 +1,6 @@
 ('use strict');
 
-const { getDraftUnitRatios, checkForRatio, addUnitRatio, batchApproveUnitRatios, batchDeleteUnitRatios } = require('../../../services/unitRatioStoreService');
+const { getDraftUnitRatios, getGramRatio, getPurchaseUnitRatio, batchApproveUnitRatios, batchDeleteUnitRatios } = require('../../../services/unitRatioStoreService');
 const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = () => {
