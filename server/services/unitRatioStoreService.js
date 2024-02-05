@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 require('dotenv').config();
 const { errorGen } = require('../middleware/errorHandling.js');
+const { getUnitRatioAI } = require('./aiService.js');
 
 const awsConfig = {
   region: process.env.AWS_REGION,
@@ -71,7 +72,7 @@ const addUnitRatio = async (material, unitA, unitB, ratio) => {
 };
 
 const getDraftUnitRatios = async () => {
-  global.logger.info(`'getDraftUnitRatios' Retrieving all draft unit ratios`)
+  global.logger.info(`'getDraftUnitRatios' Retrieving all draft unit ratios`);
   const params = {
     TableName: 'dl-prod-unit-conversion-store',
     FilterExpression: 'currentStatus = :currentStatus',
@@ -142,12 +143,54 @@ const batchDeleteUnitRatios = async (ratios) => {
   }
 };
 
+const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userID) => {
+  if (unitA === unitB) return 1;
+  // first, try checking the store
+  const storeCheck = await checkForRatio(material, unitA, unitB);
+  if (storeCheck.currentStatus === 'success') {
+    if (storeCheck.ratio) {
+      return storeCheck.ratio;
+    }
+  }
+  // try asking AI for estimate
+  const aiEstimate = await getUnitRatioAI(material, unitA, unitB, authorization, userID);
+  if (aiEstimate.ratio) {
+    // submit this returned ratio as a draft to the store
+    addUnitRatio(material, unitA, unitB, aiEstimate.ratio);
+    return aiEstimate.ratio;
+  }
+  // otherwise, just return default of "1"
+  return 1;
+};
+
+const getGramRatio = async (material, unit, authorization, userID) => {
+  if (unit === 'gram') return 1;
+  // first, try checking the store
+  const storeCheck = await checkForRatio(material, 'gram', unit);
+  if (storeCheck.currentStatus === 'success') {
+    if (storeCheck.ratio) {
+      return storeCheck.ratio;
+    }
+  }
+  // try asking AI for estimate
+  const aiEstimate = await getUnitRatioAI(material, 'gram', unit, authorization, userID);
+  if (aiEstimate.ratio) {
+    // submit this returned ratio as a draft to the store
+    addUnitRatio(material, 'gram', unit, aiEstimate.ratio);
+    return aiEstimate.ratio;
+  }
+  // otherwise, just return default of "1"
+  return 1;
+};
+
 module.exports = {
   checkForRatio,
   addUnitRatio,
   batchApproveUnitRatios,
   batchDeleteUnitRatios,
   getDraftUnitRatios,
+  getPurchaseUnitRatio,
+  getGramRatio,
 };
 
 /**
@@ -161,5 +204,4 @@ materialAndUnits: {
     currentStatus: 'approved'
   }
 }
-
 **/
