@@ -1,28 +1,9 @@
 ('use strict');
 
-const { getDraftUnitRatios, getGramRatio, getPurchaseUnitRatio, batchApproveUnitRatios, batchDeleteUnitRatios } = require('../../../services/unitRatioStoreService');
+const { getDraftUnitRatios, checkForRatio, addUnitRatio, batchApproveUnitRatios, batchDeleteUnitRatios } = require('../../../services/unitRatioStoreService');
 const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = () => {
-  async function getUnitRatio(options) {
-    const { material, unitA, unitB, authorization, userID } = options;
-    if (unitA === unitB) return 1;
-    try {
-      // use 'getPurchaseUnitRatio' or 'getGramRatio' method from 'unitRatioStoreService' to get the ratio. It will first check the store, then fallback to asking AI. If AI returns a ratio, it will submit it as a draft to the store.
-      let returner;
-      if (unitA === 'gram') {
-        returner = await getGramRatio(material, unitB, authorization, userID);
-      } else if (unitB === 'gram') {
-        returner = await getGramRatio(material, unitA, authorization, userID);
-      } else {
-        returner = await getPurchaseUnitRatio(material, unitA, unitB, authorization, userID);
-      }
-      return returner;
-    } catch (error) {
-      global.logger.error(`'getUnitRatio' Error getting unit ratio '${material}-${unitA}-${unitB}': ${error}`);
-      throw errorGen(`'getUnitRatio' Error getting unit ratio '${material}-${unitA}-${unitB}': ${error}`, 400);
-    }
-  }
   async function checkForRatio(options) {
     const { material, unitA, unitB } = options;
     if (!material || !unitA || !unitB) {
@@ -97,7 +78,6 @@ module.exports = () => {
 
   return {
     checkForRatio,
-    getUnitRatio,
     getAllDraftRatios,
     addUnitRatio,
     batchUpdateRatios,
