@@ -12,6 +12,19 @@ async function checkForRatio(req, res) {
   }
 }
 
+async function getUnitRatio(req, res) {
+  const p = require('./processor')();
+  const { material, unitA, unitB } = req.query;
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.getUnitRatio({ material, unitA, unitB, authorization, userID: req.userID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'unitRatios' 'getUnitRatio': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 async function getAllDraftRatios(req, res) {
   const p = require('./processor')();
   try {
@@ -50,6 +63,7 @@ async function batchUpdateRatios(req, res) {
 
 module.exports = {
   checkForRatio,
+  getUnitRatio,
   getAllDraftRatios,
   addUnitRatio,
   batchUpdateRatios,

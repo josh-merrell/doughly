@@ -5,7 +5,8 @@ const { createRecipeLog, createRecipeFeedbackLog } = require('../../services/dbL
 const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
-const { visionRequest, matchRecipeItemRequest, getUnitRatio } = require('../../services/openai');
+const { visionRequest, matchRecipeItemRequest, getUnitRatioAI } = require('../../services/openai');
+const { getPurchaseUnitRatio, getGramRatio } = require('../../services/unitRatioStoreService');
 const { sendSSEMessage } = require('../../server.js');
 const path = require('path');
 const fs = require('fs');
@@ -732,10 +733,45 @@ module.exports = ({ db }) => {
           recipeJSON.steps[i].stepID = 0;
         }
       }
+      // get user ingredients from supabase
+      const { data: userIngredients, error: userIngredientsError } = await db.from('ingredients').select('name, purchaseUnit, ingredientID, gramRatio').eq('userID', userID).eq('deleted', false);
+      if (userIngredientsError) {
+        global.logger.error(`Error getting userIngredients: ${userIngredientsError.message}`);
+        throw errorGen(`Error getting userIngredients: ${userIngredientsError.message}`, 400);
+      }
 
       // match ingredients with user Ingredients
       sendSSEMessage(userID, { message: `Matching recipe Ingredients with User Ingredients` });
-      matchedIngredients = await matchIngredients(recipeJSON.ingredients, authorization, userID);
+      matchedIngredients = await matchIngredients(recipeJSON.ingredients, authorization, userID, userIngredients);
+
+      // **************** ADD UNIT RATIOS TO MATCHED INGREDIENTS ***************
+      // add purchaseUnitRatios to ingredients in parrallel
+      const ingredientPurchaseUnitRatioPromises = [];
+      for (let i = 0; i < matchedIngredients.length; i++) {
+        // prepare purchaseUnit depending on whether this is a newly constructed ingredient or not
+        const purchaseUnit = (matchedIngredients[i].ingredientID === 0) ? matchedIngredients[i].purchaseUnit : userIngredients.find((i) => i.ingredientID === matchedIngredients[i].ingredientID).purchaseUnit;
+
+        ingredientPurchaseUnitRatioPromises.push(getPurchaseUnitRatio(matchedIngredients[i].name, matchedIngredients[i].measurementUnit, purchaseUnit, authorization, userID)).then((data) => {
+          matchedIngredients[i].purchaseUnitRatio = data.purchaseUnitRatio;
+        });
+      }
+      await Promise.allSettled(ingredientPurchaseUnitRatioPromises);
+      // remove any ingredients that failed to get purchaseUnitRatio
+      matchedIngredients = matchedIngredients.filter((i) => i.purchaseUnitRatio);
+
+      // if ingredientID is 0, also need to get gramRatio
+      const ingredientGramRatioPromises = [];
+      for (let i = 0; i < matchedIngredients.length; i++) {
+        if (matchedIngredients[i].ingredientID === 0) {
+          ingredientGramRatioPromises.push(getGramRatio(matchedIngredients[i], authorization, userID)).then((data) => {
+            matchedIngredients[i].gramRatio = data.gramRatio;
+          });
+        }
+      }
+      await Promise.allSettled(ingredientGramRatioPromises);
+      // remove any ingredients that failed to get gramRatio
+      matchedIngredients = matchedIngredients.filter((i) => i.gramRatio);
+      // ***************************************************************************
 
       // match tools with user tools
       sendSSEMessage(userID, { message: `Matching recipe Tools with User Tools` });
@@ -786,13 +822,7 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function matchIngredients(ingredients, authorization, userID) {
-    // get user ingredients from supabase
-    const { data: userIngredients, error: userIngredientsError } = await db.from('ingredients').select('name, purchaseUnit, ingredientID, gramRatio').eq('userID', userID).eq('deleted', false);
-    if (userIngredientsError) {
-      global.logger.error(`Error getting userIngredients: ${userIngredientsError.message}`);
-      throw errorGen(`Error getting userIngredients: ${userIngredientsError.message}`, 400);
-    }
+  async function matchIngredients(ingredients, authorization, userID, userIngredients) {
     const userIngredientNames = userIngredients.map((i) => {
       return { name: i.name, ingredientID: i.ingredientID, purchaseUnit: i.purchaseUnit, needsReview: true };
     });
@@ -816,28 +846,18 @@ module.exports = ({ db }) => {
               global.logger.error(`Invalid purchaseUnit for ingredient ${ingredient.name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
               return null;
             }
-            if (!ingredientJSON.gramRatio || ingredientJSON.gramRatio <= 0) {
-              global.logger.error(`Invalid gramRatio for ingredient ${ingredient.name}: ${ingredientJSON.gramRatio}, removing from recipe.`);
-              return null;
-            }
-            if (!ingredientJSON.purchaseUnitRatio || ingredientJSON.purchaseUnitRatio <= 0) {
-              global.logger.error(`Invalid purchaseUnitRatio for ingredient ${ingredient.name}: ${ingredientJSON.purchaseUnitRatio}, removing from recipe.`);
-              return null;
-            }
+
             return {
               ...ingredient,
               ingredientID: 0,
               lifespanDays: ingredientJSON.lifespanDays,
               purchaseUnit: ingredientJSON.purchaseUnit,
-              gramRatio: ingredientJSON.gramRatio,
-              purchaseUnitRatio: ingredientJSON.purchaseUnitRatio,
               needsReview: true,
             };
           } else {
             return {
               ...ingredient,
               ingredientID: Number(ingredientJSON.ingredientID),
-              purchaseUnitRatio: ingredientJSON.purchaseUnitRatio,
               needsReview: true,
             };
           }
@@ -890,26 +910,19 @@ module.exports = ({ db }) => {
 
       try {
         global.logger.info(`GETTING UNIT RATIO FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
-        const data = await getUnitRatio(userID, authorization, recipeIngredient.name, recipeIngredient.measurementUnit, userIngredientMatch.purchaseUnit);
-        const parsedData = JSON.parse(data.response);
-        global.logger.info(`UNIT RATIO EST RESULT: ${JSON.stringify(parsedData)}`);
-
-        if (!parsedData.unitRatio) {
-          throw new Error(`Error getting unitRatioEstimate from openAI for ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
-        }
-
-        const unitRatioEst = Number(parsedData.unitRatio);
+        const purchaseUnitRatio = await getPurchaseUnitRatio(recipeIngredient.name, recipeIngredient.measurementUnit, userIngredientMatch.purchaseUnit, authorization, userID);
+        global.logger.info(`UNIT RATIO RESULT: ${JSON.stringify(parsedData)}`);
 
         const result = {
           name: recipeIngredient.name,
           measurement: recipeIngredient.measurement,
           measurementUnit: recipeIngredient.measurementUnit,
           ingredientID: Number(userIngredientMatch.ingredientID),
-          purchaseUnitRatio: unitRatioEst,
+          purchaseUnitRatio,
           needsReview: true,
         };
 
-        if (recipeIngredient.preparation && recipeIngredient.preparation == null) {
+        if (recipeIngredient.preparation) {
           result.preparation = recipeIngredient.preparation;
         }
 
