@@ -1,4 +1,4 @@
-import { Component, Inject, WritableSignal, signal } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -12,16 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-import {
-  Observable,
-  Subscription,
-  combineLatest,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  switchMap,
-  take,
-} from 'rxjs';
+import { Observable, Subscription, filter, take } from 'rxjs';
 import {
   selectAdding,
   selectIngredients,
@@ -42,7 +33,6 @@ import { IngredientActions } from '../../state/ingredient-actions';
 import { Ingredient } from '../../state/ingredient-state';
 import { selectError } from '../../state/ingredient-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
-import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-add-ingredient-modal',
@@ -68,15 +58,13 @@ export class AddIngredientModalComponent {
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
   private addingSubscription!: Subscription;
   private ingredientsSubscription: Subscription = new Subscription();
-  private gramRatioSuggestion: WritableSignal<number> = signal(0);
 
   constructor(
     public dialogRef: MatDialogRef<AddIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    public dialog: MatDialog,
-    private unitService: UnitService
+    public dialog: MatDialog
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
     this.isLoading$ = this.store.select(selectLoading);
@@ -87,7 +75,6 @@ export class AddIngredientModalComponent {
       (ingredients) => {
         this.ingredients = ingredients;
         this.setForm();
-        this.subscribeToFormChanges();
       }
     );
   }
@@ -108,44 +95,6 @@ export class AddIngredientModalComponent {
       purchaseUnit: ['', Validators.required],
       gramRatio: ['', [Validators.required, positiveIntegerValidator()]],
     });
-  }
-
-  subscribeToFormChanges() {
-    const nameControl = this.form.get('name');
-    const purchaseUnitControl = this.form.get('purchaseUnit');
-
-    if (nameControl && purchaseUnitControl) {
-      combineLatest([
-        nameControl.valueChanges,
-        purchaseUnitControl.valueChanges,
-      ])
-        .pipe(
-          debounceTime(300),
-          distinctUntilChanged(),
-          filter(
-            ([name, purchaseUnit]) => name.length > 0 && purchaseUnit.length > 0
-          ),
-          switchMap(([name, purchaseUnit]) =>
-            this.unitService.getUnitRatio(name, 'gram', purchaseUnit)
-          )
-        )
-        .subscribe({
-          next: (response) => {
-            console.log('Suggested unit ratio:', response)
-            if (typeof response === 'number') {
-              if (!this.form.get('gramRatio')?.value) {
-                this.form.get('gramRatio')?.setErrors(null);
-                this.form.patchValue({ gramRatio: response });
-              } else {
-                this.gramRatioSuggestion.set(response);
-              }
-            }
-          },
-          error: (err) => {
-            console.error('Error fetching suggested unit ratio:', err);
-          },
-        });
-    }
   }
 
   onSubmit() {
