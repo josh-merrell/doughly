@@ -167,7 +167,7 @@ const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userI
   // try asking AI for estimate
   const data = await getUnitRatioAI(userID, authorization, material, unitA, unitB);
   const aiEstimate = JSON.parse(data.response);
-  global.logger.info(`'getPurchaseUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate.unitRatio}`);
+  global.logger.info(`'getPurchaseUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate.unitRatio}. REASONING: ${aiEstimate.reasoning}`);
   if (aiEstimate.unitRatio) {
     // submit this returned ratio as a draft to the store
     addUnitRatio(material, unitA, unitB, aiEstimate.unitRatio);
@@ -191,7 +191,7 @@ const getGramRatio = async (material, unit, authorization, userID) => {
   // try asking AI for estimate
   const data = await getUnitRatioAI(userID, authorization, material, 'gram', unit);
   const aiEstimate = JSON.parse(data.response);
-  global.logger.info(`'getGramRatio' AI estimate for ${material}-gram-${unit}: ${aiEstimate.unitRatio}`);
+  global.logger.info(`'getGramRatio' AI estimate for ${material}-gram-${unit}: ${aiEstimate.unitRatio}. REASONING: ${aiEstimate.reasoning}`);
   if (aiEstimate.unitRatio) {
     // submit this returned ratio as a draft to the store
     addUnitRatio(material, 'gram', unit, aiEstimate.unitRatio);

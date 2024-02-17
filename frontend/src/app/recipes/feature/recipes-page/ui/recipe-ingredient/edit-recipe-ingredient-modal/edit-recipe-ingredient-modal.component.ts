@@ -13,7 +13,7 @@ import {
 } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
-import { filter, take } from 'rxjs';
+import { combineLatest, debounceTime, distinctUntilChanged, filter, switchMap, take, tap } from 'rxjs';
 import {
   FormBuilder,
   FormGroup,
@@ -56,6 +56,7 @@ export class EditRecipeIngredientModalComponent {
   public pUnit!: string;
   public recipeIngredient!: WritableSignal<any>;
   public recipe!: WritableSignal<Recipe>;
+  private purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
 
   constructor(
     public dialogRef: MatDialogRef<EditRecipeIngredientModalComponent>,
@@ -82,6 +83,7 @@ export class EditRecipeIngredientModalComponent {
       ),
       purchaseUnitRatio: this.data.recipeIngredient.purchaseUnitRatio,
     });
+    this.subscribeToFormChanges();
   }
 
   setForm() {
@@ -96,6 +98,55 @@ export class EditRecipeIngredientModalComponent {
       // if value is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
       this.mUnit = this.enrichMeasurementUnit(value);
     });
+  }
+
+  subscribeToFormChanges() {
+    const measurementUnitControl = this.form.get('measurementUnit');
+
+    if (measurementUnitControl) {
+      combineLatest([
+        measurementUnitControl.valueChanges,
+      ])
+        .pipe(
+          tap(([measurementUnit]) =>
+            console.log(
+              `GETTING PUR SUGGESTION. Measurement Unit: ${measurementUnit}`
+            )
+          ),
+          debounceTime(300),
+          distinctUntilChanged(),
+          filter(
+            ([measurementUnit]) =>
+              measurementUnit.length > 0
+          ),
+          switchMap(([measurementUnit]) => {
+            console.log(
+              `GETTING SUGGESTED PUR: ${measurementUnit}`
+            );
+
+            return this.unitService.getUnitRatio(
+              this.recipeIngredient().ingredient,
+              this.recipeIngredient().purchaseUnit,
+              measurementUnit
+            );
+          })
+        )
+        .subscribe({
+          next: (response) => {
+            if (typeof response === 'number') {
+              // if (!this.form.get('purchaseUnitRatio')?.value) {
+                this.form.get('purchaseUnitRatio')?.setErrors(null);
+                this.form.patchValue({ purchaseUnitRatio: response });
+              // } else {
+              //   this.purchaseUnitRatioSuggestion.set(response);
+              // }
+            }
+          },
+          error: (error) => {
+            console.error('Error getting purchase unit ratio:', error);
+          },
+        });
+    }
   }
 
   enrichMeasurementUnit(measurementUnit) {

@@ -14,7 +14,16 @@ import {
   selectAdding,
   selectLoading,
 } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
-import { Observable, Subscription, combineLatest } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+  tap,
+} from 'rxjs';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -29,10 +38,7 @@ import {
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddIngredientModalComponent } from 'src/app/kitchen/feature/ingredients/ui/add-ingredient-modal/add-ingredient-modal.component';
-import {
-  positiveFloatValidator,
-  positiveIntegerValidator,
-} from 'src/app/shared/utils/formValidator';
+import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
 import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
@@ -63,6 +69,7 @@ export class AddRecipeIngredientModalComponent {
 
   //used for getting ingredient details to update pUnit when ingredientID form value changes
   private subscriptions: Subscription[] = [];
+  private purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeIngredientModalComponent>,
@@ -75,7 +82,6 @@ export class AddRecipeIngredientModalComponent {
     this.ingredientsToExclude = this.data.ingredientsToExclude;
     this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
-    this.setForm();
   }
 
   isIngredientExcluded(ingredientID: any): boolean {
@@ -88,9 +94,12 @@ export class AddRecipeIngredientModalComponent {
         a.name.localeCompare(b.name)
       );
       this.ingredients.set(sorted);
+      // console.log(`SETTING INGREDIENTS: `, sorted)
     });
     // sort the purchaseUnits
     this.purchaseUnits.sort((a, b) => a.localeCompare(b));
+    this.setForm();
+    this.subscribeToFormChanges();
   }
 
   setForm() {
@@ -114,17 +123,6 @@ export class AddRecipeIngredientModalComponent {
 
     // Update mUnit whenever measurementUnit value changes
     this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
-      // if value is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
-      if (
-        value === 'box' ||
-        value === 'bunch' ||
-        value === 'pinch' ||
-        value === 'dash'
-      ) {
-        value += 'es';
-      } else {
-        value += 's';
-      }
       this.mUnit = value;
     });
 
@@ -155,12 +153,73 @@ export class AddRecipeIngredientModalComponent {
             .select(selectIngredientByID(value))
             .subscribe((ingredientDetails) => {
               if (ingredientDetails) {
-                this.pUnit = ingredientDetails.purchaseUnit;
+                let value = ingredientDetails.purchaseUnit;
+                if (
+                  value === 'box' ||
+                  value === 'bunch' ||
+                  value === 'pinch' ||
+                  value === 'dash'
+                ) {
+                  value += 'es';
+                } else {
+                  value += 's';
+                }
+                this.pUnit = value;
               }
             });
         }
       })
     );
+  }
+
+  subscribeToFormChanges() {
+    const ingredientIDControl = this.form.get('ingredientID');
+    const measurementUnitControl = this.form.get('measurementUnit');
+
+    if (ingredientIDControl && measurementUnitControl) {
+      combineLatest([
+        ingredientIDControl.valueChanges,
+        measurementUnitControl.valueChanges,
+      ])
+        .pipe(
+          debounceTime(300),
+          distinctUntilChanged(),
+          filter(
+            ([ingredientID, measurementUnit]) =>
+              ingredientID > 0 && measurementUnit.length > 0
+          ),
+          switchMap(([ingredientID, measurementUnit]) => {
+            console.log(
+              `GETTING SUGGESTED PUR: ${ingredientID}, ${measurementUnit}`
+            );
+            const ingredientDetails = this.ingredients().find(
+              (ingredient) => ingredient.ingredientID === ingredientID
+            );
+            console.log('Ingredient Details:', ingredientDetails);
+
+            return this.unitService.getUnitRatio(
+              ingredientDetails.name,
+              ingredientDetails.purchaseUnit,
+              measurementUnit
+            );
+          })
+        )
+        .subscribe({
+          next: (response) => {
+            if (typeof response === 'number') {
+              // if (!this.form.get('purchaseUnitRatio')?.value) {
+                this.form.get('purchaseUnitRatio')?.setErrors(null);
+                this.form.patchValue({ purchaseUnitRatio: response });
+              // } else {
+              //   this.purchaseUnitRatioSuggestion.set(response);
+              // }
+            }
+          },
+          error: (error) => {
+            console.error('Error getting purchase unit ratio:', error);
+          },
+        });
+    }
   }
 
   onAddNewIngredient() {
@@ -188,7 +247,7 @@ export class AddRecipeIngredientModalComponent {
       }
     });
   }
-
+  
   onSubmit() {
     const formValue = this.form.value;
     const newRecipeIngredient = {

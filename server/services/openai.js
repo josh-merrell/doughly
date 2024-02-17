@@ -16,6 +16,7 @@ const visionRequest = async (recipeImageURL, userID, authorization, messageType)
   const client = await getClient();
   const body = {
     messages: [requestMessages[messageType].message],
+    temperature: 0.4,
     user: userID,
     model: 'gpt-4-vision-preview',
     max_tokens: 2000,
@@ -51,6 +52,7 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
   const client = await getClient();
   const body = {
     messages: [requestMessages[type].message],
+    temperature: 0.2,
     user: userID,
     model: 'gpt-3.5-turbo-1106',
     max_tokens: 1500,
@@ -105,6 +107,7 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
   const body = {
     messages: [requestMessages['estimateUnitRatio'].message],
     user: userID,
+    temperature: 0.2,
     model: 'gpt-4-1106-preview',
     max_tokens: 1500,
     response_format: {
@@ -240,7 +243,7 @@ Do not include any other properties in the JSON object response. If an optional 
       content: [
         {
           type: 'text',
-          text: `You are provided 'substance', 'measurementUnit_A', and 'measurementUnit_B'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> with a value of the estimated number of 'measurementUnit_A' that fit in a single 'measurementUnit_B'. Use three decimal accuracy. For example, if 'measurementUnit_A' is 'tablespoon' and 'measurementUnit_B' is liter, return { unitRatio: 67.632 }. If 'measurementUnit_A' is 'ounce' and 'measurementUnit_B' is 'gram', then return { unitRatio:.035 }. If a unit is non-specific, just make an educated guess. For example, if 'substance' is 'yeast' and 'measurementUnit_A' is 'packet' and 'measurementUnit_B' is 'ounce', return { unitRatio: 0.25 }. `,
+          text: `You are provided 'substance', 'measurementUnit_A', and 'measurementUnit_B'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> with a value of unitRatio = measurementUnit_A / measurementUnit_B. Use three decimal accuracy. For example, if 'measurementUnit_A' is 'tablespoon' and 'measurementUnit_B' is liter, return { unitRatio: 67.632 }. If 'measurementUnit_A' is 'ounce' and 'measurementUnit_B' is 'gram', then return { unitRatio:.035 }. If a unit is non-specific, just make an educated guess. For example, if 'substance' is 'yeast' and 'measurementUnit_A' is 'packet' and 'measurementUnit_B' is 'ounce', return { unitRatio: 0.25 }. Also add a 'reasoning' property, explaining the reasoning behind the estimation.`,
         },
       ],
     },
