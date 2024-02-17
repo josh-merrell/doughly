@@ -6,6 +6,7 @@ const { errorGen } = require('../../../middleware/errorHandling');
 module.exports = () => {
   async function getUnitRatio(options) {
     const { material, unitA, unitB, authorization, userID } = options;
+    console.log(`UNITA: ${unitA} UNITB: ${unitB}`)
     if (unitA === unitB) return 1;
     try {
       // use 'getPurchaseUnitRatio' or 'getGramRatio' method from 'unitRatioStoreService' to get the ratio. It will first check the store, then fallback to asking AI. If AI returns a ratio, it will submit it as a draft to the store.
