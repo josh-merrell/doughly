@@ -143,7 +143,7 @@ module.exports = ({ db }) => {
 
   async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
     let ingredientID;
-    global.logger.info(`CONSTRUCT RI: ${ingredient}`)
+    global.logger.info(`CONSTRUCT RI: ${ingredient}`);
     try {
       if (Number(ingredient.ingredientID) === 0) {
         // If ingredientID is not provided, create a new ingredient
@@ -164,10 +164,10 @@ module.exports = ({ db }) => {
         }
         const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
         ingredientID = Number(data.ingredientID);
-        global.logger.info(`CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`)
+        global.logger.info(`CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`);
       } else {
         ingredientID = Number(ingredient.ingredientID);
-        global.logger.info(`INGREDIENTID IS: ${ingredientID}`)
+        global.logger.info(`INGREDIENTID IS: ${ingredientID}`);
       }
     } catch (error) {
       global.logger.error(`'constructRecipeIngredient' Failed when creating new ingredient. RECEIVED INGREDIENT: ${ingredient}. Failure: ${error.message}`);
@@ -175,15 +175,17 @@ module.exports = ({ db }) => {
     }
     // Then, create the recipeIngredient
     try {
-      global.logger.info(`CALLING RI CREATE WITH BODY: ${JSON.stringify({
-        recipeID,
-        ingredientID,
-        measurementUnit: ingredient.measurementUnit,
-        measurement: ingredient.measurement,
-        purchaseUnitRatio: ingredient.purchaseUnitRatio,
-        preparation: ingredient.preparation,
-        needsReview: ingredient.needsReview,
-      })}`)
+      global.logger.info(
+        `CALLING RI CREATE WITH BODY: ${JSON.stringify({
+          recipeID,
+          ingredientID,
+          measurementUnit: ingredient.measurementUnit,
+          measurement: ingredient.measurement,
+          purchaseUnitRatio: ingredient.purchaseUnitRatio,
+          preparation: ingredient.preparation,
+          needsReview: ingredient.needsReview,
+        })}`,
+      );
       const { data } = await axios.post(
         `${process.env.NODE_HOST}:${process.env.PORT}/ingredients/recipe`,
         {
@@ -208,7 +210,7 @@ module.exports = ({ db }) => {
   }
 
   async function constructRecipeTool(tool, authorization, userID, recipeID) {
-    global.logger.info(`CONSTRUCT RT: ${tool}`)
+    global.logger.info(`CONSTRUCT RT: ${tool}`);
     let toolID;
     try {
       if (tool.quantity === -1) {
@@ -225,7 +227,7 @@ module.exports = ({ db }) => {
           },
           { headers: { authorization } },
         );
-        global.logger.info(`CREATED DUMMY RT AND RETURNING`)
+        global.logger.info(`CREATED DUMMY RT AND RETURNING`);
         return { recipeToolID: data.recipeToolID, toolID: toolID };
       }
 
@@ -243,10 +245,10 @@ module.exports = ({ db }) => {
           { headers: { authorization } },
         );
         toolID = Number(data.toolID);
-        global.logger.info(`CREATED TOOL, NOW TOOLID IS: ${toolID}`)
+        global.logger.info(`CREATED TOOL, NOW TOOLID IS: ${toolID}`);
       } else {
         toolID = Number(tool.toolID);
-        global.logger.info(`TOOLID IS: ${toolID}`)
+        global.logger.info(`TOOLID IS: ${toolID}`);
       }
     } catch (error) {
       global.logger.error(`'constructRecipeTool' Failed when creating new tool. Failure: ${error.message}`);
@@ -254,11 +256,13 @@ module.exports = ({ db }) => {
     }
     // Then, create the recipeTool
     try {
-      global.logger.info(`CALLING RT CREATE WITH BODY: ${JSON.stringify({
-        recipeID,
-        toolID,
-        quantity: tool.quantity,
-      })}`)
+      global.logger.info(
+        `CALLING RT CREATE WITH BODY: ${JSON.stringify({
+          recipeID,
+          toolID,
+          quantity: tool.quantity,
+        })}`,
+      );
       const { data } = await axios.post(
         `${process.env.NODE_HOST}:${process.env.PORT}/tools/recipe`,
         {
@@ -747,30 +751,48 @@ module.exports = ({ db }) => {
       // **************** ADD UNIT RATIOS TO MATCHED INGREDIENTS ***************
       // add purchaseUnitRatios to ingredients in parrallel
       const ingredientPurchaseUnitRatioPromises = [];
+      global.logger.info(`ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`);
       for (let i = 0; i < matchedIngredients.length; i++) {
-        // prepare purchaseUnit depending on whether this is a newly constructed ingredient or not
-        const purchaseUnit = (matchedIngredients[i].ingredientID === 0) ? matchedIngredients[i].purchaseUnit : userIngredients.find((i) => i.ingredientID === matchedIngredients[i].ingredientID).purchaseUnit;
-
-        ingredientPurchaseUnitRatioPromises.push(getPurchaseUnitRatio(matchedIngredients[i].name, matchedIngredients[i].measurementUnit, purchaseUnit, authorization, userID)).then((data) => {
-          matchedIngredients[i].purchaseUnitRatio = data.purchaseUnitRatio;
-        });
+        const purchaseUnitRatioPromise = getPurchaseUnitRatio(matchedIngredients[i].name, matchedIngredients[i].measurementUnit, matchedIngredients[i].purchaseUnit, authorization, userID);
+        ingredientPurchaseUnitRatioPromises.push(
+          purchaseUnitRatioPromise.then((ratio) => {
+            matchedIngredients[i].purchaseUnitRatio = ratio;
+          }),
+        );
       }
       await Promise.allSettled(ingredientPurchaseUnitRatioPromises);
       // remove any ingredients that failed to get purchaseUnitRatio
       matchedIngredients = matchedIngredients.filter((i) => i.purchaseUnitRatio);
+      global.logger.info(`DONE ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS, MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`);
 
       // if ingredientID is 0, also need to get gramRatio
       const ingredientGramRatioPromises = [];
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].ingredientID === 0) {
-          ingredientGramRatioPromises.push(getGramRatio(matchedIngredients[i], authorization, userID)).then((data) => {
-            matchedIngredients[i].gramRatio = data.gramRatio;
-          });
+          global.logger.info(`ADDING GRAMRATIO TO NEW INGREDIENT: ${JSON.stringify(matchedIngredients[i])}`);
+
+          const gramRatioPromise = getGramRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, authorization, userID);
+          ingredientGramRatioPromises.push(
+            gramRatioPromise.then((ratio) => {
+              matchedIngredients[i].gramRatio = ratio;
+            }),
+          );
         }
       }
       await Promise.allSettled(ingredientGramRatioPromises);
-      // remove any ingredients that failed to get gramRatio
-      matchedIngredients = matchedIngredients.filter((i) => i.gramRatio);
+      global.logger.info(`PRE FILTER: ${JSON.stringify(matchedIngredients)}`)
+      // remove any ingredients that have ingredientID of 0 and a gramRatio that is missing or less than 1
+      matchedIngredients = matchedIngredients.filter((i) => {
+        if (i.ingredientID !== 0) {
+          return true;
+        }
+        if (!i.gramRatio || i.gramRatio < 1) {
+          global.logger.error(`Invalid gramRatio for ingredient ${i.name}: ${i.gramRatio}, removing from recipe.`);
+          return false;
+        }
+      })
+
+      global.logger.info(`DONE ADDING GRAMRATIO TO MATCHED INGREDIENTS. MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`);
       // ***************************************************************************
 
       // match tools with user tools
@@ -832,7 +854,7 @@ module.exports = ({ db }) => {
     const promises = ingredients.map((ingredient) =>
       matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', { name: ingredient.name, measurementUnit: ingredient.measurementUnit }, userIngredientNames)
         .then((data) => {
-          global.logger.info(`INPUT INGREDIENT: ${JSON.stringify(ingredient)}`)
+          global.logger.info(`INPUT INGREDIENT: ${JSON.stringify(ingredient)}`);
           const ingredientJSON = JSON.parse(data.response);
           global.logger.info(`MAPPED INGREDIENT JSON: ${JSON.stringify(ingredientJSON)}`);
 
@@ -858,6 +880,7 @@ module.exports = ({ db }) => {
             return {
               ...ingredient,
               ingredientID: Number(ingredientJSON.ingredientID),
+              purchaseUnit: ingredientJSON.purchaseUnit,
               needsReview: true,
             };
           }
@@ -897,6 +920,7 @@ module.exports = ({ db }) => {
       }
       return acc;
     }, []);
+    global.logger.info(`COMBINED INGREDIENTS: ${JSON.stringify(combinedIngredients)}`);
     return combinedIngredients;
   }
 
@@ -911,7 +935,7 @@ module.exports = ({ db }) => {
       try {
         global.logger.info(`GETTING UNIT RATIO FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
         const purchaseUnitRatio = await getPurchaseUnitRatio(recipeIngredient.name, recipeIngredient.measurementUnit, userIngredientMatch.purchaseUnit, authorization, userID);
-        global.logger.info(`UNIT RATIO RESULT: ${JSON.stringify(parsedData)}`);
+        global.logger.info(`UNIT RATIO RESULT: ${purchaseUnitRatio}`);
 
         const result = {
           name: recipeIngredient.name,
@@ -1461,7 +1485,7 @@ module.exports = ({ db }) => {
       ingredients: getRecipeIngredients,
       tools: getRecipeTools,
       steps: getRecipeSteps,
-      discover: getDiscover
+      discover: getDiscover,
     },
     constructRecipe,
     create,
