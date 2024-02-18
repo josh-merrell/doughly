@@ -1,6 +1,6 @@
 ('use strict');
 
-const { getDraftUnitRatios, getGramRatio, getPurchaseUnitRatio, batchApproveUnitRatios, batchDeleteUnitRatios } = require('../../../services/unitRatioStoreService');
+const { getDraftUnitRatios, getGramRatio, getPurchaseUnitRatio, batchApproveUnitRatios, batchDeleteUnitRatios, addUnitRatio } = require('../../../services/unitRatioStoreService');
 const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = () => {
@@ -48,8 +48,9 @@ module.exports = () => {
     }
   }
 
-  async function addUnitRatio(options) {
-    const { material, unitA, unitB, ratio } = options;
+  async function addUnitRatioProcesser(options) {
+    const { material, unitA, unitB } = options;
+    let { ratio } = options;
     if (!material || !unitA || !unitB || !ratio) {
       return errorGen('Missing required body parameters', 400);
     }
@@ -100,7 +101,7 @@ module.exports = () => {
     checkForRatio,
     getUnitRatio,
     getAllDraftRatios,
-    addUnitRatio,
+    addUnitRatioProcesser,
     batchUpdateRatios,
   };
 };

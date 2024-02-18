@@ -69,7 +69,10 @@ export class AddRecipeIngredientModalComponent {
 
   //used for getting ingredient details to update pUnit when ingredientID form value changes
   private subscriptions: Subscription[] = [];
-  private purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
+
+  public purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
+  public gettingUnitRatio: WritableSignal<boolean> = signal(false);
+
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeIngredientModalComponent>,
@@ -189,14 +192,13 @@ export class AddRecipeIngredientModalComponent {
               ingredientID > 0 && measurementUnit.length > 0
           ),
           switchMap(([ingredientID, measurementUnit]) => {
-            console.log(
-              `GETTING SUGGESTED PUR: ${ingredientID}, ${measurementUnit}`
-            );
             const ingredientDetails = this.ingredients().find(
               (ingredient) => ingredient.ingredientID === ingredientID
             );
-            console.log('Ingredient Details:', ingredientDetails);
 
+            this.form.get('purchaseUnitRatio')?.setValue(null);
+            this.gettingUnitRatio.set(true);
+            this.purchaseUnitRatioSuggestion.set(0);
             return this.unitService.getUnitRatio(
               ingredientDetails.name,
               ingredientDetails.purchaseUnit,
@@ -206,13 +208,11 @@ export class AddRecipeIngredientModalComponent {
         )
         .subscribe({
           next: (response) => {
+            this.gettingUnitRatio.set(false);
+            this.purchaseUnitRatioSuggestion.set(response);
             if (typeof response === 'number') {
-              // if (!this.form.get('purchaseUnitRatio')?.value) {
                 this.form.get('purchaseUnitRatio')?.setErrors(null);
                 this.form.patchValue({ purchaseUnitRatio: response });
-              // } else {
-              //   this.purchaseUnitRatioSuggestion.set(response);
-              // }
             }
           },
           error: (error) => {

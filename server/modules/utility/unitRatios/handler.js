@@ -40,10 +40,10 @@ async function addUnitRatio(req, res) {
   const p = require('./processor')();
   const { material, unitA, unitB, ratio } = req.body;
   try {
-    const returner = await p.addUnitRatio({ material, unitA, unitB, ratio });
+    const returner = await p.addUnitRatioProcesser({ material, unitA, unitB, ratio });
     return res.json(returner);
   } catch (e) {
-    global.logger.error(`'unitRatios' 'addUnitRatio': ${e.message}`);
+    global.logger.error(`'unitRatios' 'addUnitRatioProcesser': ${e.message}`);
     return res.status(e.code || 500).json({ error: e.message });
   }
 }

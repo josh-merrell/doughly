@@ -69,6 +69,26 @@ const addUnitRatio = async (material, unitA, unitB, ratio) => {
     },
   };
   try {
+    // first, check if this item already exists
+    const checkParams = {
+      TableName: 'dl-prod-unit-conversion-store',
+      Key: {
+        materialAndUnits: `${material}-${unitA}-${unitB}`,
+      },
+    };
+    const checkData = await docClient.get(checkParams).promise();
+    if (checkData.Item) {
+      // if item is approved, return
+      if (checkData.Item.currentStatus === 'approved') {
+        global.logger.info(`'addUnitRatio' Unit ratio '${material}-${unitA}-${unitB}' already exists and is approved`);
+        return {
+          currentStatus: 'success',
+          data: null,
+        };
+      }
+    }
+
+    // no approved item found, so add the draft or overwrite the existing draft
     const data = await docClient.put(params).promise();
     global.logger.info(`'addUnitRatio' Added unit ratio '${material}-${unitA}-${unitB}' in draft currentStatus`);
     return {

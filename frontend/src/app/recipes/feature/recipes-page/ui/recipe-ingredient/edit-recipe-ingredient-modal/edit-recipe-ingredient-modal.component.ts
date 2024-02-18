@@ -56,7 +56,8 @@ export class EditRecipeIngredientModalComponent {
   public pUnit!: string;
   public recipeIngredient!: WritableSignal<any>;
   public recipe!: WritableSignal<Recipe>;
-  private purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
+  public purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
+  public gettingUnitRatio: WritableSignal<boolean> = signal(false);
 
   constructor(
     public dialogRef: MatDialogRef<EditRecipeIngredientModalComponent>,
@@ -108,11 +109,6 @@ export class EditRecipeIngredientModalComponent {
         measurementUnitControl.valueChanges,
       ])
         .pipe(
-          tap(([measurementUnit]) =>
-            console.log(
-              `GETTING PUR SUGGESTION. Measurement Unit: ${measurementUnit}`
-            )
-          ),
           debounceTime(300),
           distinctUntilChanged(),
           filter(
@@ -120,10 +116,10 @@ export class EditRecipeIngredientModalComponent {
               measurementUnit.length > 0
           ),
           switchMap(([measurementUnit]) => {
-            console.log(
-              `GETTING SUGGESTED PUR: ${measurementUnit}`
-            );
 
+            this.form.get('purchaseUnitRatio')?.setValue(null);
+            this.gettingUnitRatio.set(true);
+            this.purchaseUnitRatioSuggestion.set(0);
             return this.unitService.getUnitRatio(
               this.recipeIngredient().ingredient,
               this.recipeIngredient().purchaseUnit,
@@ -133,13 +129,11 @@ export class EditRecipeIngredientModalComponent {
         )
         .subscribe({
           next: (response) => {
+            this.gettingUnitRatio.set(false);
+            this.purchaseUnitRatioSuggestion.set(response);
             if (typeof response === 'number') {
-              // if (!this.form.get('purchaseUnitRatio')?.value) {
                 this.form.get('purchaseUnitRatio')?.setErrors(null);
                 this.form.patchValue({ purchaseUnitRatio: response });
-              // } else {
-              //   this.purchaseUnitRatioSuggestion.set(response);
-              // }
             }
           },
           error: (error) => {
@@ -173,6 +167,26 @@ export class EditRecipeIngredientModalComponent {
       recipeID: this.data.recipeIngredient.recipeID,
     };
     const formValues = this.form.value;
+
+    // if gramRatio is user provided, send it to the server for storage as a draft unit ratio in case it doesn't exist
+    if (this.form.get('purchaseUnitRatio')?.value !== this.purchaseUnitRatioSuggestion()) {
+      this.unitService
+        .addUnitRatio(
+          this.data.name,
+          this.data.purchaseUnit,
+          formValues.measurementUnit,
+          formValues.purchaseUnitRatio
+        )
+        .subscribe({
+          next: (response) => {
+            console.log('Added unit ratio:', response);
+          },
+          error: (error) => {
+            console.error('Error adding unit ratio:', error);
+          },
+        });
+    }
+
     for (let key in formValues) {
       if (
         key in this.data.recipeIngredient &&
