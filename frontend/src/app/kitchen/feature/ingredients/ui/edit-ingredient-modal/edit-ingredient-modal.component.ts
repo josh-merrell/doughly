@@ -10,7 +10,11 @@ import { Store } from '@ngrx/store';
 import {
   Observable,
   Subscription,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
   filter,
+  switchMap,
   take,
 } from 'rxjs';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
@@ -38,6 +42,7 @@ import {
 } from 'src/app/shared/utils/formValidator';
 import { IngredientActions } from '../../state/ingredient-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-edit-ingredient-modal',
@@ -65,13 +70,16 @@ export class EditIngredientModalComponent {
   private updatingSubscription!: Subscription;
   private ingredientsSubscription: Subscription = new Subscription();
   public pUnit: WritableSignal<string> = signal('');
+  public gramRatioSuggestion: WritableSignal<number> = signal(0);
+  public gettingUnitRatio: WritableSignal<boolean> = signal(false);
 
   constructor(
     public dialogRef: MatDialogRef<EditIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store<any>,
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private unitService: UnitService
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
 
@@ -106,6 +114,7 @@ export class EditIngredientModalComponent {
         this.ingredients = ingredients;
       }
     );
+    this.subscribeToFormChanges();
   }
 
   setForm() {
@@ -117,6 +126,41 @@ export class EditIngredientModalComponent {
     });
   }
 
+  subscribeToFormChanges() {
+    const purchaseUnitControl = this.form.get('purchaseUnit') as FormControl;
+
+    if (purchaseUnitControl) {
+      combineLatest([purchaseUnitControl.valueChanges]).pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        filter(([purchaseUnit]) => purchaseUnit.length > 0),
+        switchMap(([purchaseUnit]) => {
+          this.gramRatioSuggestion.set(0);
+          this.form.get('gramRatio')?.setValue(null);
+          this.gettingUnitRatio.set(true);
+          return this.unitService.getUnitRatio(
+            this.data.name,
+            'gram',
+            purchaseUnit
+          );
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          this.gettingUnitRatio.set(false);
+          this.gramRatioSuggestion.set(response);
+          if (typeof response === 'number') {
+            this.form.get('gramRatio')?.setErrors(null);
+            this.form.patchValue({ gramRatio: response });
+          }
+        },
+        error: (error) => {
+          console.error('Error getting gram ratio:', error);
+        },
+      });
+    }
+  }
+
   onSubmit() {
     const updatedIngredient: any = {
       ingredientID: this.data.itemID,
@@ -124,6 +168,18 @@ export class EditIngredientModalComponent {
     };
 
     const formValues = this.form.value;
+
+    // if gramRatio is user provided, send it to the server for storage as a draft unit ratio in case it doesn't exist
+    if (this.form.get('gramRatio')?.value !== this.gramRatioSuggestion()) {
+      this.unitService.addUnitRatio(this.data.name, 'gram', formValues.purchaseUnit, formValues.gramRatio).subscribe({
+        next: (response) => {
+          console.log('Added unit ratio:', response);
+        },
+        error: (error) => {
+          console.error('Error adding unit ratio:', error);
+        },
+      })
+    }
 
     for (let key in formValues) {
       if (

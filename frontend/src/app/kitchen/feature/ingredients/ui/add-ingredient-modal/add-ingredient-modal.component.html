@@ -67,11 +67,16 @@
           <mat-form-field class="w-full">
             <input matInput formControlName="gramRatio" />
           </mat-form-field>
+          <div *ngIf="gettingUnitRatio()" class="absolute flex -bottom-1 left-3">
+            <mat-spinner [diameter]="18" class="my-app-custom-spinner"></mat-spinner>
+            <p class="text-dl-4 ml-dl-3 text-dl-grey-3 font-dl-2 italic">Getting Suggested Ratio...</p>
+          </div>
+          <p *ngIf="gramRatioSuggestion() === form.get('gramRatio')?.value" class="absolute -bottom-1 text-dl-4 ml-dl-3 text-dl-grey-3 italic font-dl-2">Suggested Ratio</p>
         </div>
       </div>
       <!---->
 
-      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <div class="mt-dl-6 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
         <button
           type="button"
           class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
