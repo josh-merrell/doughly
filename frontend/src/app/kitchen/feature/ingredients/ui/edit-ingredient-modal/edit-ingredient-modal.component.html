@@ -71,11 +71,29 @@
               Must be a positive whole number
             </mat-error>
           </mat-form-field>
+          <div
+            *ngIf="gettingUnitRatio()"
+            class="absolute -bottom-1 left-3 flex"
+          >
+            <mat-spinner
+              [diameter]="18"
+              class="my-app-custom-spinner"
+            ></mat-spinner>
+            <p class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3">
+              Getting Suggested Ratio...
+            </p>
+          </div>
+          <p
+            *ngIf="gramRatioSuggestion() === form.get('gramRatio')?.value"
+            class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3"
+          >
+            Suggested Ratio
+          </p>
         </div>
       </div>
       <!---->
 
-      <div class="mt-dl-4">
+      <div class="mt-dl-6">
         <button
           type="button"
           *ngIf="(ingredient$ | async)?.needsReview && form.pristine"

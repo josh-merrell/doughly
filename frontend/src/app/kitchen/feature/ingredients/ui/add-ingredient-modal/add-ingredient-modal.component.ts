@@ -68,7 +68,8 @@ export class AddIngredientModalComponent {
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
   private addingSubscription!: Subscription;
   private ingredientsSubscription: Subscription = new Subscription();
-  private gramRatioSuggestion: WritableSignal<number> = signal(0);
+  public gramRatioSuggestion: WritableSignal<number> = signal(0);
+  public gettingUnitRatio: WritableSignal<boolean> = signal(false);
 
   constructor(
     public dialogRef: MatDialogRef<AddIngredientModalComponent>,
@@ -125,20 +126,21 @@ export class AddIngredientModalComponent {
           filter(
             ([name, purchaseUnit]) => name.length > 0 && purchaseUnit.length > 0
           ),
-          switchMap(([name, purchaseUnit]) =>
-            this.unitService.getUnitRatio(name, 'gram', purchaseUnit)
-          )
+          switchMap(([name, purchaseUnit]) => {
+            this.gramRatioSuggestion.set(0);
+            this.form.get('gramRatio')?.setValue(null);
+            this.gettingUnitRatio.set(true);
+            return this.unitService.getUnitRatio(name, 'gram', purchaseUnit);
+          })
         )
         .subscribe({
           next: (response) => {
-            console.log('Suggested unit ratio:', response)
+            this.gettingUnitRatio.set(false);
+            this.gramRatioSuggestion.set(response);
+            console.log('Suggested unit ratio:', response);
             if (typeof response === 'number') {
-              // if (!this.form.get('gramRatio')?.value) {
-                this.form.get('gramRatio')?.setErrors(null);
-                this.form.patchValue({ gramRatio: response });
-              // } else {
-                // this.gramRatioSuggestion.set(response);
-              // }
+              this.form.get('gramRatio')?.setErrors(null);
+              this.form.patchValue({ gramRatio: response });
             }
           },
           error: (err) => {
@@ -154,6 +156,31 @@ export class AddIngredientModalComponent {
 
     payload.lifespanDays = parseInt(payload.lifespanDays);
     payload.gramRatio = parseInt(payload.gramRatio);
+
+    console.log(
+      `RATIO: ${
+        this.form.get('gramRatio')?.value
+      }. SUGGESTED: ${this.gramRatioSuggestion()}`
+    );
+    if (this.form.get('gramRatio')?.value !== this.gramRatioSuggestion()) {
+      console.log('Sending user provided ratio to server');
+      // send the user provided ratio to the server for storage as a proposed unit ratio in case it doesn't yet exist
+      this.unitService
+        .addUnitRatio(
+          this.form.get('name')?.value,
+          'gram',
+          this.form.get('purchaseUnit')?.value,
+          this.form.get('gramRatio')?.value
+        )
+        .subscribe({
+          next: (response) => {
+            console.log('Unit ratio added successfully', response);
+          },
+          error: (error) => {
+            console.error('Error adding unit ratio', error);
+          },
+        });
+    }
 
     this.store.dispatch(
       IngredientActions.addIngredient({ ingredient: payload })
