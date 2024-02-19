@@ -754,19 +754,33 @@ module.exports = ({ db }) => {
       global.logger.info(`ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`);
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].purchaseUnitRatio) {
+          if (!matchedIngredients[i].needsReview) {
+            matchedIngredients[i].needsReview = true;
+          }
           continue;
         }
-        const purchaseUnitRatioPromise = getPurchaseUnitRatio(matchedIngredients[i].name, matchedIngredients[i].measurementUnit, matchedIngredients[i].purchaseUnit, authorization, userID);
-        ingredientPurchaseUnitRatioPromises.push(
-          purchaseUnitRatioPromise.then((ratio) => {
-            matchedIngredients[i].purchaseUnitRatio = ratio;
-          }),
-        );
+        if (matchedIngredients[i].purchaseUnit === matchedIngredients[i].measurementUnit) {
+          matchedIngredients[i].purchaseUnitRatio = 1;
+          matchedIngredients[i].needsReview = false;
+        } else {
+          const purchaseUnitRatioPromise = getPurchaseUnitRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, matchedIngredients[i].measurementUnit, authorization, userID);
+          ingredientPurchaseUnitRatioPromises.push(
+            purchaseUnitRatioPromise.then((result) => {
+              global.logger.info(`GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`)
+              matchedIngredients[i].purchaseUnitRatio = result.purchaseUnitRatio;
+              matchedIngredients[i].needsReview = result.needsReview;
+            }),
+          );
+        }
       }
       await Promise.allSettled(ingredientPurchaseUnitRatioPromises);
       // remove any ingredients that failed to get purchaseUnitRatio
       matchedIngredients = matchedIngredients.filter((i) => {
         if (i.purchaseUnitRatio && typeof i.purchaseUnitRatio === 'number' && i.purchaseUnitRatio > 0) return true;
+        else {
+          global.logger.error(`Invalid purchaseUnitRatio for ingredient ${i.name}: ${i.purchaseUnitRatio}, removing from recipe.`);
+          return false;
+        }
       });
       global.logger.info(`DONE ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS, MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`);
 
@@ -778,14 +792,15 @@ module.exports = ({ db }) => {
 
           const gramRatioPromise = getGramRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, authorization, userID);
           ingredientGramRatioPromises.push(
-            gramRatioPromise.then((ratio) => {
-              matchedIngredients[i].gramRatio = ratio;
+            gramRatioPromise.then((result) => {
+              matchedIngredients[i].gramRatio = result.ratio;
+              matchedIngredients[i].needsReview = result.needsReview;
             }),
           );
         }
       }
       await Promise.allSettled(ingredientGramRatioPromises);
-      global.logger.info(`PRE FILTER: ${JSON.stringify(matchedIngredients)}`)
+      global.logger.info(`PRE FILTER: ${JSON.stringify(matchedIngredients)}`);
       // remove any ingredients that have ingredientID of 0 and a gramRatio that is missing or less than 1
       matchedIngredients = matchedIngredients.filter((i) => {
         if (i.ingredientID !== 0) {
@@ -796,7 +811,7 @@ module.exports = ({ db }) => {
           return false;
         }
         return true;
-      })
+      });
 
       global.logger.info(`DONE ADDING GRAMRATIO TO MATCHED INGREDIENTS. MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`);
       // ***************************************************************************
@@ -856,84 +871,80 @@ module.exports = ({ db }) => {
     });
     const matchedIngredients = [];
 
-    // First, try using AI to find matches
-    const promises = ingredients.map((ingredient) =>
-      matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', { name: ingredient.name, measurementUnit: ingredient.measurementUnit }, userIngredientNames)
-        .then((data) => {
-          global.logger.info(`INPUT INGREDIENT: ${JSON.stringify(ingredient)}`);
-          const ingredientJSON = JSON.parse(data.response);
-          global.logger.info(`MAPPED INGREDIENT JSON: ${JSON.stringify(ingredientJSON)}`);
+    // First, search for exact name match
+    for (let i = 0; i < ingredients.length; i++) {
+      const primaryMatchResult = await matchIngredientByName(userID, authorization, ingredients[i], userIngredientNames);
+      matchedIngredients.push(primaryMatchResult);
+    }
+    global.logger.info(`MATCHED INGREDIENTS AFTER PRIMARY METHOD: ${JSON.stringify(matchedIngredients)}`);
 
-          if (!ingredientJSON.ingredientID || ingredientJSON.ingredientID === 0) {
-            const validUnits = process.env.MEASUREMENT_UNITS.split(',');
-            if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
-              global.logger.error(`Invalid lifespanDays for ingredient ${ingredient.name}: ${ingredientJSON.lifespanDays}, removing from recipe.`);
-              return null;
-            }
-            if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
-              global.logger.error(`Invalid purchaseUnit for ingredient ${ingredient.name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
-              return null;
-            }
+    const matchedTwiceIngredients = [];
+    // Fallback to try using AI to find matches
+    promises = [];
+    for (let i = 0; i < matchedIngredients.length; i++) {
+      // if the matchedIngredient has an ingredientID of 0, we need to try asking AI to match it with an existing userIngredient. Make a promise of each call to the 'matchRecipeItemRequest' function and add to promises array. If the ingredientID is not 0, we already found a match and can skip this item.
+      if (matchedIngredients[i].ingredientID === 0) {
+        global.logger.info(`MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`);
+        promises.push(
+          matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', matchedIngredients[i].name, userIngredientNames)
+            .then((data) => {
+              const ingredientJSON = JSON.parse(data.response);
+              if (!ingredientJSON.ingredientID || ingredientJSON.ingredientID === 0) {
+                const validUnits = process.env.MEASUREMENT_UNITS.split(',');
+                if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
+                  global.logger.error(`Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`);
+                  return { ...matchedIngredients[i], invalid: true };
+                }
+                if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
+                  global.logger.error(`Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
+                  return { ...matchedIngredients[i], invalid: true };
+                }
 
-            return {
-              ...ingredient,
-              ingredientID: 0,
-              lifespanDays: ingredientJSON.lifespanDays,
-              purchaseUnit: ingredientJSON.purchaseUnit,
-              needsReview: true,
-            };
-          } else {
-            return {
-              ...ingredient,
-              ingredientID: Number(ingredientJSON.ingredientID),
-              purchaseUnit: ingredientJSON.purchaseUnit,
-              needsReview: true,
-            };
-          }
-        })
-        .catch((error) => {
-          global.logger.error(`Error matching ingredient: ${error.message}`);
-          return null;
-        }),
-    );
+                return {
+                  ...matchedIngredients[i],
+                  ingredientID: 0,
+                  lifespanDays: ingredientJSON.lifespanDays,
+                  purchaseUnit: ingredientJSON.purchaseUnit,
+                  needsReview: true,
+                };
+              } else {
+                return {
+                  ...matchedIngredients[i],
+                  ingredientID: Number(ingredientJSON.ingredientID),
+                  purchaseUnit: ingredientJSON.purchaseUnit,
+                };
+              }
+            })
+            .catch((error) => {
+              global.logger.error(`Error matching ingredient: ${error.message}`);
+              return { ...matchedIngredients[i], invalid: true };
+            }),
+        );
+      } else {
+        // stuff that was already matched via exact name match
+        matchedTwiceIngredients.push(matchedIngredients[i]);
+      }
+    }
     const results = await Promise.allSettled(promises);
 
-    // Filter successful responses and add to matchedIngredients
+    // Filter successful and valid responses and add to matchedTwiceIngredients
     for (let i = 0; i < results.length; i++) {
-      // results.forEach((result) => {
+      if (results[i].status === 'fulfilled' && results[i].invalid) {
+        global.logger.error(`Invalid ingredient: ${JSON.stringify(results[i])}`);
+        //don't add invalid ingredients to the matchedTwiceIngredients array
+      }
       if (results[i].status === 'fulfilled' && results[i].value) {
-        if (results[i].value.ingredientID !== 0) {
-          matchedIngredients.push(results[i].value);
-        } else {
-          // fallback match attempt looking for exact string match on name
-          const secondaryMatchResult = await secondaryIngredientMatch(userID, authorization, results[i].value, userIngredientNames);
-          matchedIngredients.push(secondaryMatchResult);
-        }
+        global.logger.info(`PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`)
+        matchedTwiceIngredients.push(results[i].value);
       }
     }
 
-    // combine multiple instances of the same ingredientID using reduce, except where it is 0
-    const combinedIngredients = matchedIngredients.reduce((acc, curr) => {
-      // Find an existing ingredient with the same name
-      const existingIngredient = acc.find((i) => i.name === curr.name);
-
-      if (existingIngredient) {
-        // Sum the measurements if the name is the same
-        existingIngredient.measurement += curr.measurement;
-      } else {
-        // If no existing ingredient with the same name, add the current one to the accumulator
-        acc.push(curr);
-      }
-      return acc;
-    }, []);
-    for (let ci of combinedIngredients) {
-      global.logger.info(`COMBINED INGREDIENT: ${JSON.stringify(ci)}`)
-    }
-    return combinedIngredients;
+    return matchedTwiceIngredients;
   }
 
-  async function secondaryIngredientMatch(userID, authorization, recipeIngredient, userIngredientNames) {
-    global.logger.info(`IN SECONDARY INGREDIENT MATCH. RI: ${JSON.stringify(recipeIngredient)}`);
+  async function matchIngredientByName(userID, authorization, recipeIngredient, userIngredientNames) {
+    // search for exact name match (case-insensitive) among existing user ingredients for provided recipe ingredient. If one is found, return resulting recipeIngredient with ingredientID and retrieved purchasedUnitRatio, also including the 'needsReview' value provided by getPurchaseUnitRatio. If no match is found, return recipeIngredient with ingredientID of 0.
+    global.logger.info(`IN PRIMARY INGREDIENT NAME MATCH. RI: ${JSON.stringify(recipeIngredient)}`);
 
     const userIngredientMatch = userIngredientNames.find((i) => i.name.toLowerCase() === recipeIngredient.name.toLowerCase());
 
@@ -941,17 +952,27 @@ module.exports = ({ db }) => {
       global.logger.info(`FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`);
 
       try {
-        global.logger.info(`GETTING UNIT RATIO FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
-        const purchaseUnitRatio = await getPurchaseUnitRatio(recipeIngredient.name, recipeIngredient.measurementUnit, userIngredientMatch.purchaseUnit, authorization, userID);
-        global.logger.info(`UNIT RATIO RESULT: ${purchaseUnitRatio}`);
+        global.logger.info(`GETTING PUR FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
+        let purchaseUnitRatio;
+        let needsReview;
+        if (!userIngredientMatch.measurementUnit === userIngredientMatch.purchaseUnit) {
+          purchaseUnitRatio = 1;
+          needsReview = false;
+        } else {
+          const data = await getPurchaseUnitRatio(recipeIngredient.name, userIngredientMatch.purchaseUnit, recipeIngredient.measurementUnit, authorization, userID);
+          purchaseUnitRatio = data.purchaseUnitRatio;
+          needsReview = data.needsReview;
+        }
+        global.logger.info(`PUR RESULT: ${purchaseUnitRatio}`);
 
-        const result = {
+        result = {
           name: recipeIngredient.name,
           measurement: recipeIngredient.measurement,
           measurementUnit: recipeIngredient.measurementUnit,
+          purchaseUnit: userIngredientMatch.purchaseUnit,
           ingredientID: Number(userIngredientMatch.ingredientID),
           purchaseUnitRatio,
-          needsReview: true,
+          needsReview,
         };
 
         if (recipeIngredient.preparation) {
@@ -976,7 +997,6 @@ module.exports = ({ db }) => {
       gramRatio: recipeIngredient.gramRatio,
       purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
       preparation: recipeIngredient.preparation,
-      needsReview: true,
     };
   }
 
