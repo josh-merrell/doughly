@@ -180,7 +180,7 @@ const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userI
   if (storeCheck.currentStatus === 'success') {
     if (storeCheck.ratio) {
       global.logger.info(`'getPurchaseUnitRatio' Store ratio found for ${material}-${unitA}-${unitB}: ${storeCheck.ratio}`);
-      return storeCheck.ratio;
+      return { purchaseUnitRatio: storeCheck.ratio, needsReview: false };
     }
   }
   global.logger.info(`'getPurchaseUnitRatio' No store ratio found for ${material}-${unitA}-${unitB}, asking AI`);
@@ -191,10 +191,10 @@ const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userI
   if (aiEstimate.unitRatio) {
     // submit this returned ratio as a draft to the store
     addUnitRatio(material, unitA, unitB, aiEstimate.unitRatio);
-    return aiEstimate.unitRatio;
+    return { purchaseUnitRatio: aiEstimate.unitRatio, needsReview: true };
   }
   // otherwise, just return default of "1"
-  return 1;
+  return { purchaseUnitRatio: 1, needsReview: true };
 };
 
 const getGramRatio = async (material, unit, authorization, userID) => {
@@ -204,7 +204,7 @@ const getGramRatio = async (material, unit, authorization, userID) => {
   if (storeCheck.currentStatus === 'success') {
     if (storeCheck.ratio) {
       global.logger.info(`'getGramRatio' Store ratio found for ${material}-gram-${unit}: ${storeCheck.ratio}`);
-      return storeCheck.ratio;
+      return {ratio: storeCheck.ratio, needsReview: false};
     }
   }
   global.logger.info(`'getGramRatio' No store ratio found for ${material}-gram-${unit}, asking AI`);
@@ -215,10 +215,10 @@ const getGramRatio = async (material, unit, authorization, userID) => {
   if (aiEstimate.unitRatio) {
     // submit this returned ratio as a draft to the store
     addUnitRatio(material, 'gram', unit, aiEstimate.unitRatio);
-    return aiEstimate.unitRatio;
+    return {ratio: aiEstimate.unitRatio, needsReview: true};
   }
   // otherwise, just return default of "1"
-  return 1;
+  return {ratio: 1, needsReview: true};
 };
 
 module.exports = {

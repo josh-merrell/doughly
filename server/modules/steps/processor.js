@@ -76,7 +76,7 @@ module.exports = ({ db }) => {
   }
 
   async function update(options) {
-    const { authorization, stepID, title } = options;
+    const { authorization, stepID, title, description } = options;
     //verify that provided stepID exists
     const { data: step, error } = await db.from('steps').select().eq('stepID', stepID);
     if (error) {
@@ -87,7 +87,11 @@ module.exports = ({ db }) => {
       global.logger.error(`Error validating step ID: ${stepID} while updating step`);
       throw errorGen(`Error validating step ID: ${stepID} while updating step`, 400);
     }
-
+    
+    if (!title, !description) {
+      // nothing to update, just return existing step
+      return step[0];
+    }
     //verify that no steps exist with provided title
     const { data: steps, error: error2 } = await db.from('steps').select('title').eq('title', title);
     if (error2) {

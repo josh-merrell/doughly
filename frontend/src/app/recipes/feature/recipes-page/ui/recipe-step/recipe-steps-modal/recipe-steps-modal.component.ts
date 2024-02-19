@@ -1,4 +1,10 @@
-import { Component, ElementRef, Inject, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   CdkDragDrop,
@@ -447,12 +453,19 @@ export class RecipeStepsModalComponent {
   }
 
   updateStepAndRecipeStep(recipeStep: any, index: number): Observable<any> {
+    // find the corresponding displayRecipeStep. If the title or description has changed, update the step
+    const recipeStepToUpdate = this.displayRecipeStepsSubject.value.find(
+      (step) => step.stepID === recipeStep.stepID
+    );
     const stepToUpdate = {
       stepID: recipeStep.stepID,
-      title: recipeStep.title,
-      description: recipeStep.description,
     };
-
+    if (recipeStep.title !== recipeStepToUpdate.title) {
+      stepToUpdate['title'] = recipeStep.title;
+    }
+    if (recipeStep.description !== recipeStepToUpdate.description) {
+      stepToUpdate['description'] = recipeStep.description;
+    }
     this.store.dispatch(StepActions.updateStep({ step: stepToUpdate }));
 
     return this.actions$.pipe(

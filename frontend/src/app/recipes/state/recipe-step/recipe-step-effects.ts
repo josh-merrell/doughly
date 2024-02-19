@@ -128,49 +128,14 @@ export class RecipeStepEffects {
     )
   );
 
-  // deleteRecipeStep$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(RecipeStepActions.deleteRecipeStep),
-  //     switchMap((action) =>
-  //       this.store.pipe(
-  //         select((state) => selectRecipeStepByID(action.recipeStepID)(state)),
-  //         take(1),
-  //         mergeMap((recipeStep) =>
-  //           this.recipeStepService.delete(action.recipeStepID).pipe(
-  //             switchMap(() =>
-  //               this.recipeService.getByID(recipeStep!.recipeID).pipe(
-  //                 mergeMap((response: Recipe[]) => {
-  //                   const recipe = response[0]; // Access the first element of the response array
-  //                   return [
-  //                     RecipeStepActions.deleteRecipeStepSuccess({
-  //                       recipeStepID: action.recipeStepID,
-  //                     }),
-  //                     RecipeActions.updateRecipeStatus({
-  //                       recipeID: recipe.recipeID,
-  //                       status: recipe.status,
-  //                     }),
-  //                   ];
-  //                 })
-  //               )
-  //             ),
-  //             catchError((error) =>
-  //               of(
-  //                 RecipeStepActions.deleteRecipeStepFailure({
-  //                   error: {
-  //                     errorType: 'DELETE_RECIPE_STEP_FAILURE',
-  //                     message: 'Failed to delete Recipe Step',
-  //                     statusCode: error.status,
-  //                     rawError: error,
-  //                   },
-  //                 })
-  //               )
-  //             )
-  //           )
-  //         )
-  //       )
-  //     )
-  //   )
-  // );
+  // on success of update, call loadRecipeSteps$
+  updateRecipeStepSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeStepActions.updateRecipeStepSuccess),
+      map(() => RecipeStepActions.loadRecipeSteps())
+    )
+  );
+    
 
   deleteRecipeStep$ = createEffect(() =>
     this.actions$.pipe(

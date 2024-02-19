@@ -13,7 +13,7 @@ const addStep = createAction('[Step] Add', props<{ step: Step }>());
 const addStepSuccess = createAction('[Step] Add Success', props<{ step: Step }>());
 const addStepFailure = createAction('[Step] Add Failure', props<{ error: any }>());
 
-const updateStep = createAction('[Step] Edit', props<{ step: Step }>());
+const updateStep = createAction('[Step] Edit', props<{ step: any }>());
 const updateStepSuccess = createAction('[Step] Edit Success', props<{ step: Step }>());
 const updateStepFailure = createAction('[Step] Edit Failure', props<{ error: any }>());
 
