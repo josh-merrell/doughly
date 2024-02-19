@@ -15,6 +15,7 @@ export enum PurchaseUnit {
   gallon = 'gallon',
   milliliter = 'milliliter',
   liter = 'liter',
+  leaf = 'leaf',
   bag = 'bag',
   box = 'box',
   carton = 'carton',
@@ -27,6 +28,7 @@ export enum PurchaseUnit {
   pinch = 'pinch',
   bar = 'bar',
   stick = 'stick',
+  slice = 'slice',
   single = 'single',
   dozen = 'dozen',
 }
