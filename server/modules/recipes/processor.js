@@ -753,6 +753,9 @@ module.exports = ({ db }) => {
       const ingredientPurchaseUnitRatioPromises = [];
       global.logger.info(`ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`);
       for (let i = 0; i < matchedIngredients.length; i++) {
+        if (matchedIngredients[i].purchaseUnitRatio) {
+          continue;
+        }
         const purchaseUnitRatioPromise = getPurchaseUnitRatio(matchedIngredients[i].name, matchedIngredients[i].measurementUnit, matchedIngredients[i].purchaseUnit, authorization, userID);
         ingredientPurchaseUnitRatioPromises.push(
           purchaseUnitRatioPromise.then((ratio) => {
@@ -762,7 +765,9 @@ module.exports = ({ db }) => {
       }
       await Promise.allSettled(ingredientPurchaseUnitRatioPromises);
       // remove any ingredients that failed to get purchaseUnitRatio
-      matchedIngredients = matchedIngredients.filter((i) => i.purchaseUnitRatio);
+      matchedIngredients = matchedIngredients.filter((i) => {
+        if (i.purchaseUnitRatio && typeof i.purchaseUnitRatio === 'number' && i.purchaseUnitRatio > 0) return true;
+      });
       global.logger.info(`DONE ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS, MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`);
 
       // if ingredientID is 0, also need to get gramRatio
@@ -786,10 +791,11 @@ module.exports = ({ db }) => {
         if (i.ingredientID !== 0) {
           return true;
         }
-        if (!i.gramRatio || i.gramRatio < 1) {
+        if (!i.gramRatio || i.gramRatio < 1 || typeof i.gramRatio !== 'number') {
           global.logger.error(`Invalid gramRatio for ingredient ${i.name}: ${i.gramRatio}, removing from recipe.`);
           return false;
         }
+        return true;
       })
 
       global.logger.info(`DONE ADDING GRAMRATIO TO MATCHED INGREDIENTS. MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`);
@@ -920,7 +926,9 @@ module.exports = ({ db }) => {
       }
       return acc;
     }, []);
-    global.logger.info(`COMBINED INGREDIENTS: ${JSON.stringify(combinedIngredients)}`);
+    for (let ci of combinedIngredients) {
+      global.logger.info(`COMBINED INGREDIENT: ${JSON.stringify(ci)}`)
+    }
     return combinedIngredients;
   }
 
