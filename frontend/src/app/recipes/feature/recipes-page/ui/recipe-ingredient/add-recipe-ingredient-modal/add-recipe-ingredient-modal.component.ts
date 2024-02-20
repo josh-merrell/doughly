@@ -64,8 +64,8 @@ export class AddRecipeIngredientModalComponent {
   private addingSubscription!: Subscription;
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
 
-  public mUnit!: string;
-  public pUnit!: string;
+  public mUnit: string = 'measurement unit';
+  public pUnit: string = 'purchase units';
 
   //used for getting ingredient details to update pUnit when ingredientID form value changes
   private subscriptions: Subscription[] = [];
@@ -209,10 +209,12 @@ export class AddRecipeIngredientModalComponent {
         .subscribe({
           next: (response) => {
             this.gettingUnitRatio.set(false);
-            this.purchaseUnitRatioSuggestion.set(response);
-            if (typeof response === 'number') {
+            this.purchaseUnitRatioSuggestion.set(response.purchaseUnitRatio);
+            if (typeof response.purchaseUnitRatio === 'number') {
                 this.form.get('purchaseUnitRatio')?.setErrors(null);
-                this.form.patchValue({ purchaseUnitRatio: response });
+                this.form.patchValue({
+                  purchaseUnitRatio: response.purchaseUnitRatio,
+                });
             }
           },
           error: (error) => {
