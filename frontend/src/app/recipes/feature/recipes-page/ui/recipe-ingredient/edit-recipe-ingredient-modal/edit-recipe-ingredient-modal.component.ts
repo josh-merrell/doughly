@@ -69,7 +69,8 @@ export class EditRecipeIngredientModalComponent {
   ) {}
 
   ngOnInit() {
-    this.pUnit = this.data.recipeIngredient.purchaseUnit;
+    // if value is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
+    this.pUnit = this.enrichMeasurementUnit(this.data.recipeIngredient.purchaseUnit);
     this.recipeIngredient = signal(this.data.recipeIngredient);
     this.setForm();
     this.store
@@ -96,8 +97,7 @@ export class EditRecipeIngredientModalComponent {
 
     // Update mUnit whenever measurementUnit value changes
     this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
-      // if value is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
-      this.mUnit = this.enrichMeasurementUnit(value);
+      this.mUnit = this.singularUnit(value);
     });
   }
 
@@ -130,10 +130,12 @@ export class EditRecipeIngredientModalComponent {
         .subscribe({
           next: (response) => {
             this.gettingUnitRatio.set(false);
-            this.purchaseUnitRatioSuggestion.set(response);
-            if (typeof response === 'number') {
-                this.form.get('purchaseUnitRatio')?.setErrors(null);
-                this.form.patchValue({ purchaseUnitRatio: response });
+            this.purchaseUnitRatioSuggestion.set(response.purchaseUnitRatio);
+            if (typeof response.purchaseUnitRatio === 'number') {
+              this.form.get('purchaseUnitRatio')?.setErrors(null);
+              this.form.patchValue({
+                purchaseUnitRatio: response.purchaseUnitRatio,
+              });
             }
           },
           error: (error) => {
@@ -158,6 +160,13 @@ export class EditRecipeIngredientModalComponent {
       measurementUnit += 's';
     }
     return measurementUnit;
+  }
+
+  singularUnit(unit) {
+    if (unit == 'boxes' || unit == 'bunches' || unit == 'pinches' || unit == 'dashes') {
+      return unit.slice(0, -2);
+    }
+    return unit.slice(0, -1);
   }
 
   onSubmit() {

@@ -2,6 +2,7 @@
 //const unitEnum = ['gram', 'kilogram', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'pint', 'quart', 'gallon', 'milliliter', 'liter', 'bags', 'boxes', 'cartons', 'pallets', 'bottles', 'containers', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen'];
 
 export enum PurchaseUnit {
+  clove = 'clove',
   drop = 'drop',
   gram = 'gram',
   kilogram = 'kilogram',
@@ -31,6 +32,7 @@ export enum PurchaseUnit {
   slice = 'slice',
   single = 'single',
   dozen = 'dozen',
+  rib = 'rib',
 }
 
 export enum States {
