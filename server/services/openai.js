@@ -120,7 +120,7 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     content: [
       {
         type: 'text',
-        text: `'substance': ${substance}, 'measurementUnit_A': ${measurementUnit_A}, 'measurementUnit_B': ${measurementUnit_B}`,
+        text: `'substance': ${substance}, 'numerator': ${measurementUnit_A}, 'denominator': ${measurementUnit_B}`,
       },
     ],
   });
@@ -245,8 +245,8 @@ Do not include any other properties in the JSON object response. If an optional 
       content: [
         {
           type: 'text',
-          text: `You are provided 'substance', 'measurementUnit_A', and 'measurementUnit_B'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> where the value is the number of 'measurementUnit_A' per 'measurementUnit_B'. Use three decimal accuracy. If a unit is non-specific, just make an educated guess. For example, if 'substance' is 'yeast' and 'measurementUnit_A' is 'packet' and 'measurementUnit_B' is 'ounce', return { unitRatio: 0.25 }`,
-        }, // For example, if 'measurementUnit_A' is 'tablespoon' and 'measurementUnit_B' is liter, return { unitRatio: 67.632 }. The value could be partial, less than 1. For example, If 'measurementUnit_A' is 'ounce' and 'measurementUnit_B' is 'gram', then return { unitRatio: .035 }. If a unit is non-specific, just make an educated guess. For example, if 'substance' is 'yeast' and 'measurementUnit_A' is 'packet' and 'measurementUnit_B' is 'ounce', return { unitRatio: 0.25 }.
+          text: `You are provided 'substance', 'numerator', and 'denominator'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> where the value is the ratio of 'numerator' per 'denominator'. Use three decimal accuracy. If a unit is non-specific, just make an educated guess. For example, if 'substance' is 'yeast' and 'numerator' is 'packet' and 'denominator' is 'ounce', return { unitRatio: 0.25 }.`,
+        },
       ],
     },
     response_format: 'json_object',

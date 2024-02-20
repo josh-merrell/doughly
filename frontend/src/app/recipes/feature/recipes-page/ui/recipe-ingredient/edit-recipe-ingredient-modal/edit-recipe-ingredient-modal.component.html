@@ -57,7 +57,7 @@
 
         <div id="form-purchaseUnitRatio" class="relative flex flex-col">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4"
-            >{{mUnit}} per {{pUnit}}</label
+            >{{pUnit}} per {{mUnit}}</label
           >
           <mat-form-field class="w-full">
             <input
@@ -65,7 +65,7 @@
               formControlName="purchaseUnitRatio"
               [placeholder]="
                 mUnit && pUnit
-                  ? 'How many ' + mUnit + ' per ' + pUnit + '? ex: 1.45'
+                  ? 'How many ' + pUnit + ' per ' + mUnit + '? ex: 1.45'
                   : 'Add other fields first'
               "
             />

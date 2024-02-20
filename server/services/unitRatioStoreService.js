@@ -174,7 +174,7 @@ const batchDeleteUnitRatios = async (ratios) => {
 };
 
 const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userID) => {
-  if (unitA === unitB) return 1;
+  if (unitA === unitB) return { puchaseUnitRatio: 1, needsReview: false };
   // first, try checking the store
   const storeCheck = await checkForRatio(material, unitA, unitB);
   if (storeCheck.currentStatus === 'success') {
@@ -198,7 +198,7 @@ const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userI
 };
 
 const getGramRatio = async (material, unit, authorization, userID) => {
-  if (unit === 'gram') return 1;
+  if (unit === 'gram') return { ratio: 1, needsReview: false };
   // first, try checking the store
   const storeCheck = await checkForRatio(material, 'gram', unit);
   if (storeCheck.currentStatus === 'success') {
