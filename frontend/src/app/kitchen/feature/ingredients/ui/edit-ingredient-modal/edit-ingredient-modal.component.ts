@@ -37,7 +37,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
-import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import { positiveFloatValidator, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 import { IngredientActions } from '../../state/ingredient-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { UnitService } from 'src/app/shared/utils/unitService';
@@ -120,7 +120,7 @@ export class EditIngredientModalComponent {
       brand: ['', []],
       lifespanDays: ['', [Validators.required, positiveIntegerValidator()]],
       purchaseUnit: ['', [Validators.required]],
-      gramRatio: ['', [Validators.required, positiveIntegerValidator()]],
+      gramRatio: ['', [Validators.required, positiveFloatValidator()]],
     });
   }
 

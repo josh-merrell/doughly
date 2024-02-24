@@ -36,6 +36,7 @@ import { Store } from '@ngrx/store';
 import {
   nonDuplicateString,
   positiveIntegerValidator,
+  positiveFloatValidator,
 } from 'src/app/shared/utils/formValidator';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
 import { IngredientActions } from '../../state/ingredient-actions';
@@ -107,7 +108,7 @@ export class AddIngredientModalComponent {
       brand: ['', []],
       lifespanDays: ['', [Validators.required, positiveIntegerValidator()]],
       purchaseUnit: ['', Validators.required],
-      gramRatio: ['', [Validators.required, positiveIntegerValidator()]],
+      gramRatio: ['', [Validators.required, positiveFloatValidator()]],
     });
   }
 

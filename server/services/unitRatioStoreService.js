@@ -187,11 +187,11 @@ const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userI
   // try asking AI for estimate
   const data = await getUnitRatioAI(userID, authorization, material, unitA, unitB);
   const aiEstimate = JSON.parse(data.response);
-  global.logger.info(`'getPurchaseUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate.unitRatio}. REASONING: ${aiEstimate.reasoning}`);
-  if (aiEstimate.unitRatio) {
+  global.logger.info(`'getPurchaseUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate}.`);
+  if (aiEstimate) {
     // submit this returned ratio as a draft to the store
-    addUnitRatio(material, unitA, unitB, aiEstimate.unitRatio);
-    return { purchaseUnitRatio: aiEstimate.unitRatio, needsReview: true };
+    addUnitRatio(material, unitA, unitB, aiEstimate);
+    return { purchaseUnitRatio: aiEstimate, needsReview: true };
   }
   // otherwise, just return default of "1"
   return { purchaseUnitRatio: 1, needsReview: true };
@@ -204,21 +204,21 @@ const getGramRatio = async (material, unit, authorization, userID) => {
   if (storeCheck.currentStatus === 'success') {
     if (storeCheck.ratio) {
       global.logger.info(`'getGramRatio' Store ratio found for ${material}-gram-${unit}: ${storeCheck.ratio}`);
-      return {ratio: storeCheck.ratio, needsReview: false};
+      return { ratio: storeCheck.ratio, needsReview: false };
     }
   }
   global.logger.info(`'getGramRatio' No store ratio found for ${material}-gram-${unit}, asking AI`);
   // try asking AI for estimate
   const data = await getUnitRatioAI(userID, authorization, material, 'gram', unit);
-  const aiEstimate = JSON.parse(data.response);
-  global.logger.info(`'getGramRatio' AI estimate for ${material}-gram-${unit}: ${aiEstimate.unitRatio}. REASONING: ${aiEstimate.reasoning}`);
-  if (aiEstimate.unitRatio) {
+  const aiEstimate = Math.round(data.response * 1000) / 1000;
+  global.logger.info(`'getGramRatio' AI estimate for ${material}-gram-${unit}: ${aiEstimate}. `);
+  if (aiEstimate) {
     // submit this returned ratio as a draft to the store
-    addUnitRatio(material, 'gram', unit, aiEstimate.unitRatio);
-    return {ratio: aiEstimate.unitRatio, needsReview: true};
+    addUnitRatio(material, 'gram', unit, aiEstimate);
+    return { ratio: aiEstimate, needsReview: true };
   }
   // otherwise, just return default of "1"
-  return {ratio: 1, needsReview: true};
+  return { ratio: 1, needsReview: true };
 };
 
 module.exports = {

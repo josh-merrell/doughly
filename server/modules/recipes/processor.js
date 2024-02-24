@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 ('use strict');
 
 const { default: axios } = require('axios');
@@ -5,7 +6,7 @@ const { createRecipeLog, createRecipeFeedbackLog } = require('../../services/dbL
 const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
-const { visionRequest, matchRecipeItemRequest, getUnitRatioAI } = require('../../services/openai');
+const { visionRequest, matchRecipeItemRequest } = require('../../services/openai');
 const { getPurchaseUnitRatio, getGramRatio } = require('../../services/unitRatioStoreService');
 const { sendSSEMessage } = require('../../server.js');
 const path = require('path');
@@ -16,7 +17,7 @@ module.exports = ({ db }) => {
     try {
       //start timer
       const constructStartTime = new Date();
-      const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, components, ingredients, tools, steps } = options;
+      const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps } = options;
 
       let recipeID;
       const createdItems = [];
@@ -395,7 +396,7 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function getDiscover(options) {
+  async function getDiscover() {
     try {
       // const { userID, authorization } = options;
       const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false);
@@ -685,8 +686,12 @@ module.exports = ({ db }) => {
           indexesToRemove.add(i);
         }
         if (!units.includes(recipeJSON.ingredients[i].measurementUnit)) {
-          global.logger.error(`invalid ingredient measurementUnit, removing from array. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
-          indexesToRemove.add(i);
+          if (recipeJSON.ingredients[i].measurementUnit === 'ounce') {
+            recipeJSON.ingredients[i].measurementUnit = 'weightOunce';
+          } else {
+            global.logger.error(`invalid ingredient measurementUnit, removing from array. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
+            indexesToRemove.add(i);
+          }
           continue;
         }
       }
@@ -746,7 +751,7 @@ module.exports = ({ db }) => {
 
       // match ingredients with user Ingredients
       sendSSEMessage(userID, { message: `Matching recipe Ingredients with User Ingredients` });
-      matchedIngredients = await matchIngredients(recipeJSON.ingredients, authorization, userID, userIngredients);
+      let matchedIngredients = await matchIngredients(recipeJSON.ingredients, authorization, userID, userIngredients);
 
       // **************** ADD UNIT RATIOS TO MATCHED INGREDIENTS ***************
       // add purchaseUnitRatios to ingredients in parrallel
@@ -766,7 +771,7 @@ module.exports = ({ db }) => {
           const purchaseUnitRatioPromise = getPurchaseUnitRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, matchedIngredients[i].measurementUnit, authorization, userID);
           ingredientPurchaseUnitRatioPromises.push(
             purchaseUnitRatioPromise.then((result) => {
-              global.logger.info(`GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`)
+              global.logger.info(`GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`);
               matchedIngredients[i].purchaseUnitRatio = result.purchaseUnitRatio;
               matchedIngredients[i].needsReview = result.needsReview;
             }),
@@ -806,7 +811,7 @@ module.exports = ({ db }) => {
         if (i.ingredientID !== 0) {
           return true;
         }
-        if (!i.gramRatio || i.gramRatio < 1 || typeof i.gramRatio !== 'number') {
+        if (!i.gramRatio || i.gramRatio <= 0 || typeof i.gramRatio !== 'number') {
           global.logger.error(`Invalid gramRatio for ingredient ${i.name}: ${i.gramRatio}, removing from recipe.`);
           return false;
         }
@@ -818,11 +823,11 @@ module.exports = ({ db }) => {
 
       // match tools with user tools
       sendSSEMessage(userID, { message: `Matching recipe Tools with User Tools` });
-      matchedTools = await matchTools(recipeJSON.tools, authorization, userID);
+      const matchedTools = await matchTools(recipeJSON.tools, authorization, userID);
 
       // match category
       sendSSEMessage(userID, { message: `Finding Appropriate Category for new Recipe` });
-      matchedCategoryID = await matchCategory(recipeJSON.category, authorization, userID);
+      const matchedCategoryID = await matchCategory(recipeJSON.category, authorization, userID);
 
       // prepare constructRecipe body
       const constructBody = {
@@ -851,7 +856,7 @@ module.exports = ({ db }) => {
         global.logger.error(`Error constructing recipe from image details: ${constructError.message}`);
         throw errorGen(`Error constructing recipe from image details: ${constructError.message}`, 400);
       }
-      recipeID = recipe.recipeID;
+      const recipeID = recipe.recipeID;
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;
@@ -880,7 +885,7 @@ module.exports = ({ db }) => {
 
     const matchedTwiceIngredients = [];
     // Fallback to try using AI to find matches
-    promises = [];
+    const promises = [];
     for (let i = 0; i < matchedIngredients.length; i++) {
       // if the matchedIngredient has an ingredientID of 0, we need to try asking AI to match it with an existing userIngredient. Make a promise of each call to the 'matchRecipeItemRequest' function and add to promises array. If the ingredientID is not 0, we already found a match and can skip this item.
       if (matchedIngredients[i].ingredientID === 0) {
@@ -933,8 +938,8 @@ module.exports = ({ db }) => {
         global.logger.error(`Invalid ingredient: ${JSON.stringify(results[i])}`);
         //don't add invalid ingredients to the matchedTwiceIngredients array
       }
-      if (results[i].status === 'fulfilled' && results[i].value) {
-        global.logger.info(`PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`)
+      if (results[i].status === 'fulfilled' && results[i].value && !results[i].value.invalid) {
+        global.logger.info(`PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`);
         matchedTwiceIngredients.push(results[i].value);
       }
     }
@@ -965,7 +970,7 @@ module.exports = ({ db }) => {
         }
         global.logger.info(`PUR RESULT: ${purchaseUnitRatio}`);
 
-        result = {
+        const result = {
           name: recipeIngredient.name,
           measurement: recipeIngredient.measurement,
           measurementUnit: recipeIngredient.measurementUnit,
@@ -1389,7 +1394,7 @@ module.exports = ({ db }) => {
 
   async function subscribeRecipe(options) {
     try {
-      const { customID, sourceRecipeID, newRecipeID, authorization, userID } = options;
+      const { customID, sourceRecipeID, newRecipeID, userID } = options;
 
       //ensure provided sourceRecipeID exists and is not deleted
       const { data: sourceRecipe, error } = await db.from('recipes').select().eq('recipeID', sourceRecipeID).eq('deleted', false);

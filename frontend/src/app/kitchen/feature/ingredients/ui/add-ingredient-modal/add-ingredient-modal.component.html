@@ -66,6 +66,12 @@
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Gram Ratio</label>
           <mat-form-field class="w-full">
             <input matInput formControlName="gramRatio" />
+            <mat-error
+              class="text-dl-5"
+              *ngIf="form.get('gramRatio')?.hasError('notPositiveFloat')"
+            >
+              Must be a positive number
+            </mat-error>
           </mat-form-field>
           <div *ngIf="gettingUnitRatio()" class="absolute flex -bottom-1 left-3">
             <mat-spinner [diameter]="18" class="my-app-custom-spinner"></mat-spinner>

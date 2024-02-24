@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const { OpenAI } = require('openai');
 const { createUserLog } = require('./dbLogger');
 const { errorGen } = require('../middleware/errorHandling');
@@ -54,7 +55,7 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
     messages: [requestMessages[type].message],
     temperature: 0.2,
     user: userID,
-    model: 'gpt-3.5-turbo-1106',
+    model: 'gpt-4-turbo-preview',
     max_tokens: 1500,
     response_format: {
       type: requestMessages[type].response_format,
@@ -108,7 +109,7 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     messages: [requestMessages['estimateUnitRatio'].message],
     user: userID,
     temperature: 0.2,
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4-turbo-preview',
     max_tokens: 1500,
     response_format: {
       type: requestMessages['estimateUnitRatio'].response_format,
@@ -163,7 +164,7 @@ const requestMessages = {
 -'name' <string> (Disregard any adjective words and capitalize, for example 'stemmed broccoli' should be 'Broccoli', and 'dry yeast' should be 'Yeast'). If the ingredient is a component of something, such as 'Egg White' or 'Egg Yolk', just use the main item, eg: 'Egg'. If the ingredient is a specific version of something, include the full name, ex: 'Apple Cider Vinegar'.
 -'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe: ${JSON.stringify(
             units,
-          )}. Example if recipe calls for 2 medium onions, the best measurementUnit would be "single" with a measurement of 2. Disregard adjectives like "medium"), 
+          )}. Example if recipe calls for 2 medium onions, the best measurementUnit would be "single" with a measurement of 2. Disregard adjectives like "medium"). If the recipe Ingredient measurement unit is "ounce", select "weightOunce"., 
 -'measurement' <number> (required) estimate based on chosen measurementUnit if no measurement provided, 
 -'preparation' <string>. 'preparation' is optional and describes how the ingredient should be prepared, for example, 'chopped' or 'thinly sliced minced'.
 'tools' <array>: An array of objects, each one a 'tool'
@@ -245,11 +246,13 @@ Do not include any other properties in the JSON object response. If an optional 
       content: [
         {
           type: 'text',
-          text: `You are provided 'substance', 'numerator', and 'denominator'. Considering the provided 'substance', provide a json response with a single property 'unitRatio' <number> where the value is the ratio of 'numerator' per 'denominator'. Use three decimal accuracy. If a unit is non-specific, just make an educated guess. For example, if 'substance' is 'yeast' and 'numerator' is 'packet' and 'denominator' is 'ounce', return { unitRatio: 0.25 }.`,
+          text: `You are provided 'substance', 'unitA', and 'unitB'. Estimate the ratio of unitA per single unitB, for the given substance. Return the number estimate and nothing else.
+Example: substance='salt', unitA='ounce', unitB='teaspoon', could return 0.167
+Example: substance='milk', unitA='gram', unitB='gallon', could return 3840`,
         },
       ],
     },
-    response_format: 'json_object',
+    response_format: 'text',
   },
 };
 
