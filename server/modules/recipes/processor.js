@@ -155,7 +155,7 @@ module.exports = ({ db }) => {
           name: ingredient.name,
           lifespanDays: Math.round(Number(ingredient.lifespanDays)),
           purchaseUnit: ingredient.purchaseUnit,
-          gramRatio: Math.round(Number(ingredient.gramRatio)),
+          gramRatio: Number(ingredient.gramRatio),
         };
         if (ingredient.brand) {
           body.brand = ingredient.brand;
@@ -843,7 +843,7 @@ module.exports = ({ db }) => {
         steps: recipeJSON.steps,
         ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }), //include 'timeBake' if not null
       };
-      // global.logger.info(`CALLING CONSTRUCT WITH INGREDIENTS: ${JSON.stringify(constructBody.ingredients)}`)
+      global.logger.info(`CALLING CONSTRUCT WITH INGREDIENTS: ${JSON.stringify(constructBody.ingredients)}`);
       if (recipePhotoURL) {
         constructBody['photoURL'] = recipePhotoURL;
       }
