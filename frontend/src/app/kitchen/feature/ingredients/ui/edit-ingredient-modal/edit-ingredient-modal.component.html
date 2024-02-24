@@ -66,9 +66,9 @@
             <input matInput formControlName="gramRatio" />
             <mat-error
               class="text-dl-5"
-              *ngIf="form.get('gramRatio')?.hasError('notPositiveInteger')"
+              *ngIf="form.get('gramRatio')?.hasError('notPositiveFloat')"
             >
-              Must be a positive whole number
+              Must be a positive number
             </mat-error>
           </mat-form-field>
           <div

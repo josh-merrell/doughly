@@ -48,7 +48,6 @@ export class IngredientDetailsModalComponent {
   recipeIDs$!: Observable<number[]>;
   ingredientRecipes$!: Observable<any>;
   displayRecipes$!: Observable<any>;
-  menuOpen: boolean = false;
   ingredient: any;
   menuOpenForIndex: number = -1;
 
@@ -71,12 +70,6 @@ export class IngredientDetailsModalComponent {
           this.stockDropdownMenu?.nativeElement.contains(event.target);
         if (!clickedInsideStock && this.menuOpenForIndex !== -1) {
           this.menuOpenForIndex = -1;
-        }
-
-        const clickedInsideIngredient =
-          this.dropdownMenu?.nativeElement.contains(event.target);
-        if (!clickedInsideIngredient && this.menuOpen) {
-          this.menuOpen = false;
         }
       }
     );
@@ -145,11 +138,6 @@ export class IngredientDetailsModalComponent {
   onRecipeClick(recipeID: number): void {
     this.router.navigate(['/recipe', recipeID]);
     this.dialogRef.close();
-  }
-
-  toggleMenu(event: any) {
-    event.stopPropagation();
-    this.menuOpen = !this.menuOpen;
   }
 
   toggleStockMenu(event: any, index: number) {

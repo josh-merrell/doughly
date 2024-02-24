@@ -1,12 +1,10 @@
-//export a 'PurchaseUnit' enum with following:
-//const unitEnum = ['gram', 'kilogram', 'ounce', 'pound', 'teaspoon', 'tablespoon', 'cup', 'pint', 'quart', 'gallon', 'milliliter', 'liter', 'bags', 'boxes', 'cartons', 'pallets', 'bottles', 'containers', 'bunch', 'dash', 'pinch', 'bar', 'stick', 'single', 'dozen'];
-
 export enum PurchaseUnit {
   clove = 'clove',
   drop = 'drop',
   gram = 'gram',
   kilogram = 'kilogram',
-  ounce = 'ounce',
+  fluidOunce = 'fluidOunce',
+  weightOunce = 'weightOunce',
   pound = 'pound',
   teaspoon = 'teaspoon',
   tablespoon = 'tablespoon',

@@ -44,9 +44,9 @@ const getNextYearMonthDaySequence = async (type) => {
 
 function generateYearMonthDayLocal() {
   const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
-  year = now.getUTCFullYear().toString().slice(-2);
-  month = String(now.getUTCMonth() + 1).padStart(2, '0');
-  day = String(now.getUTCDate()).padStart(2, '0');
+  const year = now.getUTCFullYear().toString().slice(-2);
+  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(now.getUTCDate()).padStart(2, '0');
 
   return `${year}${month}${day}`;
 }
