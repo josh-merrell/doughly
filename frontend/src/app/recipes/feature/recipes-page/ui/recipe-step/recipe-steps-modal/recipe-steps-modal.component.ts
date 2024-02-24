@@ -252,7 +252,7 @@ export class RecipeStepsModalComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       this.deactivateModalForRow();
-      if (result?.title) {
+      if (result?.title || result?.description) {
         // Get the current value of displayRecipeSteps from the BehaviorSubject
         this.displayRecipeStepsSubject
           .pipe(take(1))
@@ -454,18 +454,11 @@ export class RecipeStepsModalComponent {
 
   updateStepAndRecipeStep(recipeStep: any, index: number): Observable<any> {
     // find the corresponding displayRecipeStep. If the title or description has changed, update the step
-    const recipeStepToUpdate = this.displayRecipeStepsSubject.value.find(
-      (step) => step.stepID === recipeStep.stepID
-    );
     const stepToUpdate = {
       stepID: recipeStep.stepID,
     };
-    if (recipeStep.title !== recipeStepToUpdate.title) {
-      stepToUpdate['title'] = recipeStep.title;
-    }
-    if (recipeStep.description !== recipeStepToUpdate.description) {
-      stepToUpdate['description'] = recipeStep.description;
-    }
+    stepToUpdate['title'] = recipeStep.title;
+    stepToUpdate['description'] = recipeStep.description;
     this.store.dispatch(StepActions.updateStep({ step: stepToUpdate }));
 
     return this.actions$.pipe(
