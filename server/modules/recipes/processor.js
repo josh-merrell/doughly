@@ -7,7 +7,7 @@ const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
 const { visionRequest, matchRecipeItemRequest } = require('../../services/openai');
-const { getPurchaseUnitRatio, getGramRatio } = require('../../services/unitRatioStoreService');
+const { getPurchaseUnitRatio, getUnitRatio } = require('../../services/unitRatioStoreService');
 const { sendSSEMessage } = require('../../server.js');
 const path = require('path');
 const fs = require('fs');
@@ -794,8 +794,7 @@ module.exports = ({ db }) => {
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].ingredientID === 0) {
           global.logger.info(`ADDING GRAMRATIO TO NEW INGREDIENT: ${JSON.stringify(matchedIngredients[i])}`);
-
-          const gramRatioPromise = getGramRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, authorization, userID);
+          const gramRatioPromise = getUnitRatio(matchedIngredients[i].name, 'gram', matchedIngredients[i].purchaseUnit, authorization, userID);
           ingredientGramRatioPromises.push(
             gramRatioPromise.then((result) => {
               matchedIngredients[i].gramRatio = result.ratio;
