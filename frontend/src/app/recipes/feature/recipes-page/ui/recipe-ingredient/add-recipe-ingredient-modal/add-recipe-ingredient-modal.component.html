@@ -51,6 +51,12 @@
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Ingredient</label>
           <mat-form-field class="text-dl-4">
             <mat-select formControlName="ingredientID">
+              <mat-option
+                class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
+                (click)="onAddNewIngredient()"
+              >
+                New Ingredient
+              </mat-option>
               <ng-container *ngFor="let ingredient of ingredients()">
                 <mat-option
                   *ngIf="!isIngredientExcluded(ingredient.ingredientID)"
@@ -60,12 +66,6 @@
                   {{ ingredient.name }}
                 </mat-option>
               </ng-container>
-              <mat-option
-                class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
-                (click)="onAddNewIngredient()"
-              >
-                New Ingredient
-              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
