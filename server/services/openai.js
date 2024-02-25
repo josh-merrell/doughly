@@ -166,7 +166,7 @@ const requestMessages = {
             units,
           )}. Example if recipe calls for 2 medium onions, the best measurementUnit would be "single" with a measurement of 2. Disregard adjectives like "medium"). If the recipe Ingredient measurement unit is "ounce", select "weightOunce"., 
 -'measurement' <number> (required) estimate based on chosen measurementUnit if no measurement provided, 
--'preparation' <string>. 'preparation' is optional and describes how the ingredient should be prepared, for example, 'chopped' or 'thinly sliced minced'.
+-'preparation' <string>. 'preparation' is optional and describes how the ingredient should be prepared, for example, 'chopped' or 'thinly sliced minced'. If the recipe calls for the recipe multiple times, use 'preparation' to distinguish between them. For example, 'for the filling'.
 'tools' <array>: An array of objects, each one a 'tool'
 'tool' <object>: An object with properties 'name' <string> and 'quantity' <number> (default 1).
 'steps' <array> (required): An array of objects, each one a 'step'

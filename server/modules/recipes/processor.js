@@ -7,10 +7,10 @@ const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
 const { visionRequest, matchRecipeItemRequest } = require('../../services/openai');
-const { getPurchaseUnitRatio, getGramRatio } = require('../../services/unitRatioStoreService');
+const { getUnitRatio } = require('../../services/unitRatioStoreService');
 const { sendSSEMessage } = require('../../server.js');
-const path = require('path');
-const fs = require('fs');
+// const path = require('path');
+// const fs = require('fs');
 
 module.exports = ({ db }) => {
   async function constructRecipe(options) {
@@ -647,13 +647,13 @@ module.exports = ({ db }) => {
         throw errorGen(`no recipe title found in image`, 400);
       }
       // save recipeJSON to file
-      const sanitizedTitle = recipeJSON.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-      const recipeJSONPath = path.join(__dirname, `../../data/recipes/${sanitizedTitle}.json`);
-      if (!fs.existsSync(path.dirname(recipeJSONPath))) {
-        fs.mkdirSync(path.dirname(recipeJSONPath), { recursive: true });
-      }
+      // const sanitizedTitle = recipeJSON.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      // const recipeJSONPath = path.join(__dirname, `../../data/recipes/${sanitizedTitle}.json`);
+      // if (!fs.existsSync(path.dirname(recipeJSONPath))) {
+      //   fs.mkdirSync(path.dirname(recipeJSONPath), { recursive: true });
+      // }
       global.logger.info(`RECIPE JSON: ${JSON.stringify(recipeJSON)}`);
-      fs.writeFileSync(recipeJSONPath, JSON.stringify(recipeJSON));
+      // fs.writeFileSync(recipeJSONPath, JSON.stringify(recipeJSON));
 
       if (!recipeJSON.category) {
         global.logger.error(`no recipe category found in image`);
@@ -768,11 +768,11 @@ module.exports = ({ db }) => {
           matchedIngredients[i].purchaseUnitRatio = 1;
           matchedIngredients[i].needsReview = false;
         } else {
-          const purchaseUnitRatioPromise = getPurchaseUnitRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, matchedIngredients[i].measurementUnit, authorization, userID);
+          const purchaseUnitRatioPromise = getUnitRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, matchedIngredients[i].measurementUnit, authorization, userID);
           ingredientPurchaseUnitRatioPromises.push(
             purchaseUnitRatioPromise.then((result) => {
               global.logger.info(`GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`);
-              matchedIngredients[i].purchaseUnitRatio = result.purchaseUnitRatio;
+              matchedIngredients[i].purchaseUnitRatio = result.unitRatio;
               matchedIngredients[i].needsReview = result.needsReview;
             }),
           );
@@ -794,11 +794,10 @@ module.exports = ({ db }) => {
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].ingredientID === 0) {
           global.logger.info(`ADDING GRAMRATIO TO NEW INGREDIENT: ${JSON.stringify(matchedIngredients[i])}`);
-
-          const gramRatioPromise = getGramRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, authorization, userID);
+          const gramRatioPromise = getUnitRatio(matchedIngredients[i].name, 'gram', matchedIngredients[i].purchaseUnit, authorization, userID);
           ingredientGramRatioPromises.push(
             gramRatioPromise.then((result) => {
-              matchedIngredients[i].gramRatio = result.ratio;
+              matchedIngredients[i].gramRatio = result.unitRatio;
               matchedIngredients[i].needsReview = result.needsReview;
             }),
           );
@@ -964,8 +963,8 @@ module.exports = ({ db }) => {
           purchaseUnitRatio = 1;
           needsReview = false;
         } else {
-          const data = await getPurchaseUnitRatio(recipeIngredient.name, userIngredientMatch.purchaseUnit, recipeIngredient.measurementUnit, authorization, userID);
-          purchaseUnitRatio = data.purchaseUnitRatio;
+          const data = await getUnitRatio(recipeIngredient.name, userIngredientMatch.purchaseUnit, recipeIngredient.measurementUnit, authorization, userID);
+          purchaseUnitRatio = data.unitRatio;
           needsReview = data.needsReview;
         }
         global.logger.info(`PUR RESULT: ${purchaseUnitRatio}`);

@@ -4,7 +4,7 @@ async function checkForRatio(req, res) {
   const p = require('./processor')();
   const { material, unitA, unitB } = req.query;
   try {
-    const returner = await p.checkForRatio({ material, unitA, unitB });
+    const returner = await p.checkForRatioProcessor({ material, unitA, unitB });
     return res.json(returner);
   } catch (e) {
     global.logger.error(`'unitRatios' 'checkForRatio': ${e.message}`);
@@ -17,7 +17,7 @@ async function getUnitRatio(req, res) {
   const { material, unitA, unitB } = req.query;
   const { authorization } = req.headers;
   try {
-    const returner = await p.getUnitRatio({ material, unitA, unitB, authorization, userID: req.userID });
+    const returner = await p.getUnitRatioProcessor({ material, unitA, unitB, authorization, userID: req.userID });
     return res.json(returner);
   } catch (e) {
     global.logger.error(`'unitRatios' 'getUnitRatio': ${e.message}`);
@@ -28,7 +28,7 @@ async function getUnitRatio(req, res) {
 async function getAllDraftRatios(req, res) {
   const p = require('./processor')();
   try {
-    const returner = await p.getAllDraftRatios();
+    const returner = await p.getAllDraftRatiosProcessor();
     return res.json(returner);
   } catch (e) {
     global.logger.error(`'unitRatios' 'getAllDraftRatios': ${e.message}`);
@@ -50,10 +50,10 @@ async function addUnitRatio(req, res) {
 
 async function batchUpdateRatios(req, res) {
   const p = require('./processor')();
-  console.log(`BODY KEYS: ${Object.keys(req.body)}`)
+  console.log(`BODY KEYS: ${Object.keys(req.body)}`);
   const { ratios } = req.body;
   try {
-    const returner = await p.batchUpdateRatios({ ratios });
+    const returner = await p.batchUpdateRatiosProcessor({ ratios });
     return res.json(returner);
   } catch (e) {
     global.logger.error(`'unitRatios' 'batchUpdateRatios': ${e.message}`);
