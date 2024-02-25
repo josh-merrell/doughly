@@ -87,20 +87,10 @@ module.exports = ({ db }) => {
       global.logger.error(`Error validating step ID: ${stepID} while updating step`);
       throw errorGen(`Error validating step ID: ${stepID} while updating step`, 400);
     }
-    
-    if (!title, !description) {
+
+    if (!title || !description) {
       // nothing to update, just return existing step
       return step[0];
-    }
-    //verify that no steps exist with provided title
-    const { data: steps, error: error2 } = await db.from('steps').select('title').eq('title', title);
-    if (error2) {
-      global.logger.error(`Error validating title: ${title} while updating step ${error2.message}`);
-      throw errorGen(`Error validating title: ${title} while updating step`, 400);
-    }
-    if (steps.length > 1) {
-      global.logger.error(`Step with title ${title} already exists, can't use this title`);
-      throw errorGen(`Step with title ${title} already exists, can't use this title`, 400);
     }
 
     const updateFields = {};

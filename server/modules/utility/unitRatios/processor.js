@@ -1,36 +1,29 @@
 ('use strict');
 
-const { getDraftUnitRatios, getGramRatio, getPurchaseUnitRatio, batchApproveUnitRatios, batchDeleteUnitRatios, addUnitRatio } = require('../../../services/unitRatioStoreService');
+const { getDraftUnitRatios, getUnitRatio, batchApproveUnitRatios, batchDeleteUnitRatios, addUnitRatio } = require('../../../services/unitRatioStoreService');
 const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = () => {
-  async function getUnitRatio(options) {
+  async function getUnitRatioProcessor(options) {
     const { material, unitA, unitB, authorization, userID } = options;
-    console.log(`UNITA: ${unitA} UNITB: ${unitB}`);
+    console.log(`'getUnitRatioProcessor'. UNITA: ${unitA} UNITB: ${unitB}`);
     if (unitA === unitB) return { ratio: 1, needsReview: false };
     try {
-      // use 'getPurchaseUnitRatio' or 'getGramRatio' method from 'unitRatioStoreService' to get the ratio. It will first check the store, then fallback to asking AI. If AI returns a ratio, it will submit it as a draft to the store.
-      let returner;
-      if (unitA === 'gram') {
-        returner = await getGramRatio(material, unitB, authorization, userID);
-      } else if (unitB === 'gram') {
-        returner = await getGramRatio(material, unitA, authorization, userID);
-      } else {
-        returner = await getPurchaseUnitRatio(material, unitA, unitB, authorization, userID);
-      }
+      // use 'getUnitRatio' method from 'unitRatioStoreService' to get the ratio. It will first check common ratios for a match, then check the store for an approved ratio match, then fallback to asking AI. If AI returns a ratio, it will submit it as a draft to the store for admin approval.
+      const returner = await getUnitRatio(material, unitA, unitB, authorization, userID);
       return returner;
     } catch (error) {
       global.logger.error(`'getUnitRatio' Error getting unit ratio '${material}-${unitA}-${unitB}': ${error}`);
       throw errorGen(`'getUnitRatio' Error getting unit ratio '${material}-${unitA}-${unitB}': ${error}`, 400);
     }
   }
-  async function checkForRatio(options) {
+  async function checkForRatioProcessor(options) {
     const { material, unitA, unitB } = options;
     if (!material || !unitA || !unitB) {
       return errorGen('Missing required query parameters', 400);
     }
     try {
-      const returner = await checkForRatio(material, unitA, unitB);
+      const returner = await checkForRatioProcessor(material, unitA, unitB);
       return returner;
     } catch (error) {
       global.logger.error(`'checkForRatio' Error checking for unit ratio '${material}-${unitA}-${unitB}': ${error}`);
@@ -38,7 +31,7 @@ module.exports = () => {
     }
   }
 
-  async function getAllDraftRatios() {
+  async function getAllDraftRatiosProcessor() {
     try {
       const returner = await getDraftUnitRatios();
       return returner;
@@ -67,7 +60,7 @@ module.exports = () => {
     }
   }
 
-  async function batchUpdateRatios(options) {
+  async function batchUpdateRatiosProcessor(options) {
     const { ratios } = options;
     if (!ratios || !Array.isArray(ratios) || ratios.length === 0) {
       return errorGen('Missing required body parameters', 400);
@@ -98,10 +91,10 @@ module.exports = () => {
   }
 
   return {
-    checkForRatio,
-    getUnitRatio,
-    getAllDraftRatios,
+    checkForRatioProcessor,
+    getUnitRatioProcessor,
+    getAllDraftRatiosProcessor,
     addUnitRatioProcesser,
-    batchUpdateRatios,
+    batchUpdateRatiosProcessor,
   };
 };

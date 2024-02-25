@@ -173,52 +173,91 @@ const batchDeleteUnitRatios = async (ratios) => {
   }
 };
 
-const getPurchaseUnitRatio = async (material, unitA, unitB, authorization, userID) => {
+const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   if (unitA === unitB) return { puchaseUnitRatio: 1, needsReview: false };
-  // first, try checking the store
+  // first, check for common ratio
+  const checkCommonResult = await checkCommonRatios(unitA, unitB);
+  if (checkCommonResult.success) {
+    global.logger.info(`'getUnitRatio' Common ratio found for ${unitA}-${unitB}: ${checkCommonResult.ratio}`);
+    return { unitRatio: checkCommonResult.ratio, needsReview: false };
+  }
+
+  // next, try checking the store for approved matching ratio
   const storeCheck = await checkForRatio(material, unitA, unitB);
   if (storeCheck.currentStatus === 'success') {
     if (storeCheck.ratio) {
-      global.logger.info(`'getPurchaseUnitRatio' Store ratio found for ${material}-${unitA}-${unitB}: ${storeCheck.ratio}`);
-      return { purchaseUnitRatio: storeCheck.ratio, needsReview: false };
+      global.logger.info(`'getUnitRatio' Store ratio found for ${material}-${unitA}-${unitB}: ${storeCheck.ratio}`);
+      return { unitRatio: storeCheck.ratio, needsReview: false };
     }
   }
-  global.logger.info(`'getPurchaseUnitRatio' No store ratio found for ${material}-${unitA}-${unitB}, asking AI`);
+  global.logger.info(`'getUnitRatio' No store ratio found for ${material}-${unitA}-${unitB}, asking AI`);
   // try asking AI for estimate
   const data = await getUnitRatioAI(userID, authorization, material, unitA, unitB);
   const aiEstimate = JSON.parse(data.response);
-  global.logger.info(`'getPurchaseUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate}.`);
+  global.logger.info(`'getUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate}.`);
   if (aiEstimate) {
     // submit this returned ratio as a draft to the store
     addUnitRatio(material, unitA, unitB, aiEstimate);
-    return { purchaseUnitRatio: aiEstimate, needsReview: true };
+    return { unitRatio: aiEstimate, needsReview: true };
   }
   // otherwise, just return default of "1"
-  return { purchaseUnitRatio: 1, needsReview: true };
+  return { unitRatio: 1, needsReview: true };
 };
 
-const getGramRatio = async (material, unit, authorization, userID) => {
-  if (unit === 'gram') return { ratio: 1, needsReview: false };
-  // first, try checking the store
-  const storeCheck = await checkForRatio(material, 'gram', unit);
-  if (storeCheck.currentStatus === 'success') {
-    if (storeCheck.ratio) {
-      global.logger.info(`'getGramRatio' Store ratio found for ${material}-gram-${unit}: ${storeCheck.ratio}`);
-      return { ratio: storeCheck.ratio, needsReview: false };
-    }
+const checkCommonRatios = async (unitA, unitB) => {
+  const commonRatios = {
+    'gram-weightOunce': 28.35,
+    'weightOunce-gram': 0.035,
+    'gram-pound': 453.59,
+    'pound-gram': 0.0022,
+    'weightOunce-pound': 16,
+    'pound-weightOunce': 0.0625,
+    'fluidOunce-tablespoon': 0.5,
+    'tablespoon-fluidOunce': 2,
+    'fluidOunce-teaspoon': 0.167,
+    'teaspoon-fluidOunce': 6,
+    'cup-tablespoon': 0.063,
+    'tablespoon-cup': 16,
+    'cup-teaspoon': 0.021,
+    'teaspoon-cup': 48,
+    'cup-fluidOunce': 0.125,
+    'fluidOunce-cup': 8,
+    'cup-gallon': 16,
+    'gallon-cup': 0.063,
+    'cup-liter': 4.226,
+    'liter-cup': 0.236,
+    'cup-milliliter': 0.004,
+    'milliliter-cup': 236.588,
+    'tablespoon-teaspoon': 0.333,
+    'teaspoon-tablespoon': 3,
+    'fluicOunce-gallon': 128,
+    'gallon-fluidOunce': 0.008,
+    'fluidOunce-liter': 33.814,
+    'liter-fluidOunce': 0.029,
+    'milliliter-gallon': 3785.41,
+    'gallon-milliliter': 0.00026,
+    'pint-cup': 2,
+    'cup-pint': 0.5,
+    'quart-cup': 0.25,
+    'cup-quart': 4,
+    'quart-pint': 0.5,
+    'pint-quart': 2,
+    'pint-gallon': 8,
+    'gallon-pint': 0.125,
+    'quart-gallon': 4,
+    'gallon-quart': 0.25,
+    'tablespoon-gallon': 256,
+    'gallon-tablespoon': 0.0039,
+    'teaspoon-gallon': 768,
+    'gallon-teaspoon': 0.0013,
+    'gallon-liter': 0.264,
+    'liter-gallon': 3.785,
+  };
+  const key = `${unitA}-${unitB}`;
+  if (commonRatios[key]) {
+    return { success: true, ratio: commonRatios[key] };
   }
-  global.logger.info(`'getGramRatio' No store ratio found for ${material}-gram-${unit}, asking AI`);
-  // try asking AI for estimate
-  const data = await getUnitRatioAI(userID, authorization, material, 'gram', unit);
-  const aiEstimate = Math.round(data.response * 1000) / 1000;
-  global.logger.info(`'getGramRatio' AI estimate for ${material}-gram-${unit}: ${aiEstimate}. `);
-  if (aiEstimate) {
-    // submit this returned ratio as a draft to the store
-    addUnitRatio(material, 'gram', unit, aiEstimate);
-    return { ratio: aiEstimate, needsReview: true };
-  }
-  // otherwise, just return default of "1"
-  return { ratio: 1, needsReview: true };
+  return { success: false, ratio: null };
 };
 
 module.exports = {
@@ -227,8 +266,7 @@ module.exports = {
   batchApproveUnitRatios,
   batchDeleteUnitRatios,
   getDraftUnitRatios,
-  getPurchaseUnitRatio,
-  getGramRatio,
+  getUnitRatio,
 };
 
 /**
