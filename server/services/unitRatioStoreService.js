@@ -179,7 +179,7 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   const checkCommonResult = await checkCommonRatios(unitA, unitB);
   if (checkCommonResult.success) {
     global.logger.info(`'getUnitRatio' Common ratio found for ${unitA}-${unitB}: ${checkCommonResult.ratio}`);
-    return { unitRatio: checkCommonResult.ratio, needsReview: false };
+    return { ratio: checkCommonResult.ratio, needsReview: false };
   }
 
   // next, try checking the store for approved matching ratio
@@ -187,7 +187,7 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   if (storeCheck.currentStatus === 'success') {
     if (storeCheck.ratio) {
       global.logger.info(`'getUnitRatio' Store ratio found for ${material}-${unitA}-${unitB}: ${storeCheck.ratio}`);
-      return { unitRatio: storeCheck.ratio, needsReview: false };
+      return { ratio: storeCheck.ratio, needsReview: false };
     }
   }
   global.logger.info(`'getUnitRatio' No store ratio found for ${material}-${unitA}-${unitB}, asking AI`);
@@ -198,10 +198,10 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   if (aiEstimate) {
     // submit this returned ratio as a draft to the store
     addUnitRatio(material, unitA, unitB, aiEstimate);
-    return { unitRatio: aiEstimate, needsReview: true };
+    return { ratio: aiEstimate, needsReview: true };
   }
   // otherwise, just return default of "1"
-  return { unitRatio: 1, needsReview: true };
+  return { ratio: 1, needsReview: true };
 };
 
 const checkCommonRatios = async (unitA, unitB) => {
@@ -252,6 +252,12 @@ const checkCommonRatios = async (unitA, unitB) => {
     'gallon-teaspoon': 0.0013,
     'gallon-liter': 0.264,
     'liter-gallon': 3.785,
+    'pound-kilogram': 2.205,
+    'kilogram-pound': 0.453,
+    'tablespoon-liter': 67.628,
+    'liter-tablespoon': 0.015,
+    'teaspoon-liter': 202.884,
+    'liter-teaspoon': 0.005,
   };
   const key = `${unitA}-${unitB}`;
   if (commonRatios[key]) {

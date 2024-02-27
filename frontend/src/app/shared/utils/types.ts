@@ -1,6 +1,8 @@
 export enum PurchaseUnit {
+  block = 'block',
   clove = 'clove',
   drop = 'drop',
+  drizzle = 'drizzle',
   gram = 'gram',
   kilogram = 'kilogram',
   fluidOunce = 'fluidOunce',
@@ -28,6 +30,8 @@ export enum PurchaseUnit {
   bar = 'bar',
   stick = 'stick',
   slice = 'slice',
+  sprig = 'sprig',
+  strip = 'strip',
   single = 'single',
   dozen = 'dozen',
   rib = 'rib',

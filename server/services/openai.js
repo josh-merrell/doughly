@@ -161,7 +161,7 @@ const requestMessages = {
 'category' <string> (required): An appropriate one-word category for the recipe based on the title
 'ingredients' <array> (required): An array of objects, each one an 'ingredient'
 'ingredient' <object>: An object with properties: 
--'name' <string> (Disregard any adjective words and capitalize, for example 'stemmed broccoli' should be 'Broccoli', and 'dry yeast' should be 'Yeast'). If the ingredient is a component of something, such as 'Egg White' or 'Egg Yolk', just use the main item, eg: 'Egg'. If the ingredient is a specific version of something, include the full name, ex: 'Apple Cider Vinegar'.
+-'name' <string> (Disregard any adjective words and capitalize, for example 'stemmed broccoli' should be 'Broccoli', and 'dry yeast' should be 'Yeast'). If the ingredient is a component of something, such as 'Egg White' or 'Egg Yolk', just use the main item, eg: 'Egg'. If the ingredient is a specific version of something, include the full name, ex: 'Apple Cider Vinegar'. If an adjective describes a different ingredient, include it, ex: 'Green Olive' or 'White Wine'.
 -'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe: ${JSON.stringify(
             units,
           )}. Example if recipe calls for 2 medium onions, the best measurementUnit would be "single" with a measurement of 2. Disregard adjectives like "medium"). If the recipe Ingredient measurement unit is "ounce", select "weightOunce"., 
