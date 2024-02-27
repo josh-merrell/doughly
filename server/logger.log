@@ -1,0 +1,325 @@
+2024-02-26T19:08:19 [info]: *SSE Session* connected userID: a525810e-5531-4f97-95a4-39a082f7416b
+2024-02-26T19:08:19 [info]: Calling visionRequest
+2024-02-26T19:08:53 [info]: *TIME* recipe visionRequest: 33.834 seconds
+2024-02-26T19:08:53 [info]: RECIPE JSON: {"title":"Sticky Chinese Bbq Pork Belly Ribs (Char Siu)","servings":6,"lifespanDays":3,"timePrep":15,"timeBake":45,"category":"Dinner","ingredients":[{"name":"Hoisin Sauce","measurementUnit":"cup","measurement":0.5},{"name":"Soy Sauce","measurementUnit":"cup","measurement":0.5},{"name":"Chinese Shaoxing Wine","measurementUnit":"tablespoon","measurement":4},{"name":"Honey","measurementUnit":"tablespoon","measurement":4},{"name":"Brown Sugar","measurementUnit":"tablespoon","measurement":4},{"name":"Garlic","measurementUnit":"tablespoon","measurement":2,"preparation":"minced"},{"name":"Red Food Colouring","measurementUnit":"teaspoon","measurement":1},{"name":"Chinese Five Spice Powder","measurementUnit":"teaspoon","measurement":1.5},{"name":"Pork Belly/Spare Ribs","measurementUnit":"single","measurement":6},{"name":"Shallot","measurementUnit":"single","measurement":1,"preparation":"to garnish"}],"tools":[{"name":"Bowl","quantity":1},{"name":"Jug","quantity":1},{"name":"Baking Paper/Parchment Paper","quantity":1},{"name":"Grill/Broil","quantity":1},{"name":"Tongs","quantity":1},{"name":"Saucepan","quantity":1}],"steps":[{"title":"Marinate The Pork","description":"Combine hoisin sauce, soy sauce, wine, honey, sugar, garlic, colouring (if using) and spice powder in a shallow bowl. Whisk well to combine. Pour half of the sauce into a jug and reserve for later. Add the pork into the bowl with the remaining sauce. Rotate to cover completely and marinate in the refrigerator for 1-3 hours, or cover and refrigerate overnight for best results.","sequence":1},{"title":"Prepare For Grilling/Broiling","description":"Preheat oven to grill/broil settings on medium heat (176°C | 350°F). Drain pork and discard the marinade. Line a baking pan with baking/parchment paper or aluminum foil. Place pork onto pan and grill/broil for 30 minutes on one side, basting two or three times with the reserved marinade. Rotate with tongs and baste again with the marinade twice again while grilling/broiling.","sequence":2},{"title":"Cool The Pork","description":"Remove from oven and allow to cool.","sequence":3},{"title":"Prepare Additional Glaze","description":"If you like additional glaze, combine all of the extra glaze ingredients into a small saucepan. Bring to a boil; reduce heat and allow to simmer for about 5-8 minutes until the sauce has thickened (keep your eye on it as it can burn easily if the heat is too high). Remove from heat and allow to cool slightly.","sequence":4},{"title":"Serve","description":"Cut pork into thick slices to serve. Serve over steamed rice and/or vegetables with the extra glaze.","sequence":5}]}
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Hoisin Sauce","measurementUnit":"cup","measurement":0.5}
+2024-02-26T19:08:53 [info]: NO MATCH FOUND FOR Hoisin Sauce
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Soy Sauce","measurementUnit":"cup","measurement":0.5}
+2024-02-26T19:08:53 [info]: FOUND MATCH FOR Soy Sauce in {"name":"Soy Sauce","ingredientID":1224022400010015,"purchaseUnit":"fluidOunce","needsReview":true}
+2024-02-26T19:08:53 [info]: GETTING PUR FOR Soy Sauce cup and fluidOunce
+2024-02-26T19:08:53 [info]: 'getUnitRatio' Common ratio found for fluidOunce-cup: 8
+2024-02-26T19:08:53 [info]: PUR RESULT: undefined
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Chinese Shaoxing Wine","measurementUnit":"tablespoon","measurement":4}
+2024-02-26T19:08:53 [info]: NO MATCH FOUND FOR Chinese Shaoxing Wine
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Honey","measurementUnit":"tablespoon","measurement":4}
+2024-02-26T19:08:53 [info]: FOUND MATCH FOR Honey in {"name":"Honey","ingredientID":1224022400010068,"purchaseUnit":"fluidOunce","needsReview":true}
+2024-02-26T19:08:53 [info]: GETTING PUR FOR Honey tablespoon and fluidOunce
+2024-02-26T19:08:53 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
+2024-02-26T19:08:53 [info]: PUR RESULT: undefined
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Brown Sugar","measurementUnit":"tablespoon","measurement":4}
+2024-02-26T19:08:53 [info]: FOUND MATCH FOR Brown Sugar in {"name":"Brown Sugar","ingredientID":1224021800010092,"purchaseUnit":"pound","needsReview":true}
+2024-02-26T19:08:53 [info]: GETTING PUR FOR Brown Sugar tablespoon and pound
+2024-02-26T19:08:53 [info]: 'getUnitRatio' Store ratio found for Brown Sugar-pound-tablespoon: 0.03125
+2024-02-26T19:08:53 [info]: PUR RESULT: undefined
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Garlic","measurementUnit":"tablespoon","measurement":2,"preparation":"minced"}
+2024-02-26T19:08:53 [info]: NO MATCH FOUND FOR Garlic
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Red Food Colouring","measurementUnit":"teaspoon","measurement":1}
+2024-02-26T19:08:53 [info]: NO MATCH FOUND FOR Red Food Colouring
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Chinese Five Spice Powder","measurementUnit":"teaspoon","measurement":1.5}
+2024-02-26T19:08:53 [info]: NO MATCH FOUND FOR Chinese Five Spice Powder
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Pork Belly/Spare Ribs","measurementUnit":"single","measurement":6}
+2024-02-26T19:08:53 [info]: NO MATCH FOUND FOR Pork Belly/Spare Ribs
+2024-02-26T19:08:53 [info]: IN PRIMARY INGREDIENT NAME MATCH. RI: {"name":"Shallot","measurementUnit":"single","measurement":1,"preparation":"to garnish"}
+2024-02-26T19:08:53 [info]: FOUND MATCH FOR Shallot in {"name":"Shallot","ingredientID":1224022300010002,"purchaseUnit":"single","needsReview":true}
+2024-02-26T19:08:53 [info]: GETTING PUR FOR Shallot single and single
+2024-02-26T19:08:53 [info]: PUR RESULT: undefined
+2024-02-26T19:08:53 [info]: MATCHED INGREDIENTS AFTER PRIMARY METHOD: [{"name":"Hoisin Sauce","measurement":0.5,"measurementUnit":"cup","ingredientID":0},{"name":"Soy Sauce","measurement":0.5,"measurementUnit":"cup","purchaseUnit":"fluidOunce","ingredientID":1224022400010015,"needsReview":false},{"name":"Chinese Shaoxing Wine","measurement":4,"measurementUnit":"tablespoon","ingredientID":0},{"name":"Honey","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"fluidOunce","ingredientID":1224022400010068,"needsReview":false},{"name":"Brown Sugar","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"pound","ingredientID":1224021800010092,"needsReview":false},{"name":"Garlic","measurement":2,"measurementUnit":"tablespoon","ingredientID":0,"preparation":"minced"},{"name":"Red Food Colouring","measurement":1,"measurementUnit":"teaspoon","ingredientID":0},{"name":"Chinese Five Spice Powder","measurement":1.5,"measurementUnit":"teaspoon","ingredientID":0},{"name":"Pork Belly/Spare Ribs","measurement":6,"measurementUnit":"single","ingredientID":0},{"name":"Shallot","measurement":1,"measurementUnit":"single","purchaseUnit":"single","ingredientID":1224022300010002,"needsReview":false,"preparation":"to garnish"}]
+2024-02-26T19:08:53 [info]: MATCHED INGREDIENT Hoisin Sauce HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI
+2024-02-26T19:08:53 [info]: MATCHED INGREDIENT Chinese Shaoxing Wine HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI
+2024-02-26T19:08:53 [info]: MATCHED INGREDIENT Garlic HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI
+2024-02-26T19:08:53 [info]: MATCHED INGREDIENT Red Food Colouring HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI
+2024-02-26T19:08:53 [info]: MATCHED INGREDIENT Chinese Five Spice Powder HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI
+2024-02-26T19:08:53 [info]: MATCHED INGREDIENT Pork Belly/Spare Ribs HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI
+2024-02-26T19:08:53 [info]: **USER LOG ENTRY ID: 7224022600010274** openaiTokensUsed|subjectID:0|oldValue:null|newValue:2817
+2024-02-26T19:08:56 [info]: **USER LOG ENTRY ID: 7224022600010275** openaiTokensUsed|subjectID:0|oldValue:null|newValue:7538
+2024-02-26T19:08:56 [info]: **USER LOG ENTRY ID: 7224022600010276** openaiTokensUsed|subjectID:0|oldValue:null|newValue:7539
+2024-02-26T19:08:57 [info]: **USER LOG ENTRY ID: 7224022600010277** openaiTokensUsed|subjectID:0|oldValue:null|newValue:7541
+2024-02-26T19:08:57 [info]: **USER LOG ENTRY ID: 7224022600010278** openaiTokensUsed|subjectID:0|oldValue:null|newValue:7542
+2024-02-26T19:08:57 [info]: **USER LOG ENTRY ID: 7224022600010279** openaiTokensUsed|subjectID:0|oldValue:null|newValue:7543
+2024-02-26T19:08:57 [info]: PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: {"name":"Hoisin Sauce","measurement":0.5,"measurementUnit":"cup","ingredientID":0,"lifespanDays":30,"purchaseUnit":"bottle","needsReview":true}
+2024-02-26T19:08:57 [info]: PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: {"name":"Chinese Shaoxing Wine","measurement":4,"measurementUnit":"tablespoon","ingredientID":1224022600010066,"purchaseUnit":"fluidOunce"}
+2024-02-26T19:08:57 [info]: PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: {"name":"Garlic","measurement":2,"measurementUnit":"tablespoon","ingredientID":1224020300010028,"purchaseUnit":"weightOunce","preparation":"minced"}
+2024-02-26T19:08:57 [info]: PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: {"name":"Red Food Colouring","measurement":1,"measurementUnit":"teaspoon","ingredientID":0,"lifespanDays":365,"purchaseUnit":"bottle","needsReview":true}
+2024-02-26T19:08:57 [info]: PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: {"name":"Chinese Five Spice Powder","measurement":1.5,"measurementUnit":"teaspoon","ingredientID":1224022600010058,"purchaseUnit":"weightOunce"}
+2024-02-26T19:08:57 [info]: PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: {"name":"Pork Belly/Spare Ribs","measurement":6,"measurementUnit":"single","ingredientID":1224021800010113,"purchaseUnit":"pound"}
+2024-02-26T19:08:57 [info]: ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS
+2024-02-26T19:08:57 [info]: 'getUnitRatio' Common ratio found for fluidOunce-cup: 8
+2024-02-26T19:08:57 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
+2024-02-26T19:08:57 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
+2024-02-26T19:08:57 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":8,"needsReview":false}
+2024-02-26T19:08:57 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":0.5,"needsReview":false}
+2024-02-26T19:08:57 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":0.5,"needsReview":false}
+2024-02-26T19:08:57 [info]: 'getUnitRatio' Store ratio found for Brown Sugar-pound-tablespoon: 0.03125
+2024-02-26T19:08:57 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":0.03125,"needsReview":false}
+2024-02-26T19:08:57 [info]: 'getUnitRatio' Store ratio found for Garlic-weightOunce-tablespoon: 0.5
+2024-02-26T19:08:57 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":0.5,"needsReview":false}
+2024-02-26T19:08:57 [info]: 'getUnitRatio' No store ratio found for Hoisin Sauce-bottle-cup, asking AI
+2024-02-26T19:08:57 [info]: 'getUnitRatio' No store ratio found for Chinese Five Spice Powder-weightOunce-teaspoon, asking AI
+2024-02-26T19:08:57 [info]: 'getUnitRatio' No store ratio found for Red Food Colouring-bottle-teaspoon, asking AI
+2024-02-26T19:08:57 [info]: 'getUnitRatio' No store ratio found for Pork Belly/Spare Ribs-pound-single, asking AI
+2024-02-26T19:08:57 [info]: **USER LOG ENTRY ID: 7224022600010280** openaiTokensUsed|subjectID:0|oldValue:null|newValue:7537
+2024-02-26T19:08:58 [info]: 'getUnitRatio' AI estimate for Chinese Five Spice Powder-weightOunce-teaspoon: 0.18.
+2024-02-26T19:08:58 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":0.18,"needsReview":true}
+2024-02-26T19:08:58 [info]: 'getUnitRatio' AI estimate for Hoisin Sauce-bottle-cup: 0.5.
+2024-02-26T19:08:58 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":0.5,"needsReview":true}
+2024-02-26T19:08:58 [info]: 'getUnitRatio' AI estimate for Red Food Colouring-bottle-teaspoon: 0.5.
+2024-02-26T19:08:58 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":0.5,"needsReview":true}
+2024-02-26T19:08:58 [info]: 'getUnitRatio' AI estimate for Pork Belly/Spare Ribs-pound-single: 3.5.
+2024-02-26T19:08:58 [info]: GOT RESULT FROM AI PUR ESTIMATE: {"ratio":3.5,"needsReview":true}
+2024-02-26T19:08:58 [info]: DONE ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS, MATCHED INGREDIENTS: [{"name":"Soy Sauce","measurement":0.5,"measurementUnit":"cup","purchaseUnit":"fluidOunce","ingredientID":1224022400010015,"purchaseUnitRatio":8,"needsReview":false},{"name":"Honey","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"fluidOunce","ingredientID":1224022400010068,"purchaseUnitRatio":0.5,"needsReview":false},{"name":"Brown Sugar","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"pound","ingredientID":1224021800010092,"purchaseUnitRatio":0.03125,"needsReview":false},{"name":"Shallot","measurement":1,"measurementUnit":"single","purchaseUnit":"single","ingredientID":1224022300010002,"purchaseUnitRatio":1,"needsReview":false,"preparation":"to garnish"},{"name":"Hoisin Sauce","measurement":0.5,"measurementUnit":"cup","ingredientID":0,"lifespanDays":30,"purchaseUnit":"bottle","purchaseUnitRatio":0.5,"needsReview":true},{"name":"Chinese Shaoxing Wine","measurement":4,"measurementUnit":"tablespoon","ingredientID":1224022600010066,"purchaseUnit":"fluidOunce","purchaseUnitRatio":0.5,"needsReview":false},{"name":"Garlic","measurement":2,"measurementUnit":"tablespoon","ingredientID":1224020300010028,"purchaseUnit":"weightOunce","purchaseUnitRatio":0.5,"preparation":"minced","needsReview":false},{"name":"Red Food Colouring","measurement":1,"measurementUnit":"teaspoon","ingredientID":0,"lifespanDays":365,"purchaseUnit":"bottle","purchaseUnitRatio":0.5,"needsReview":true},{"name":"Chinese Five Spice Powder","measurement":1.5,"measurementUnit":"teaspoon","ingredientID":1224022600010058,"purchaseUnit":"weightOunce","purchaseUnitRatio":0.18,"needsReview":true},{"name":"Pork Belly/Spare Ribs","measurement":6,"measurementUnit":"single","ingredientID":1224021800010113,"purchaseUnit":"pound","purchaseUnitRatio":3.5,"needsReview":true}]
+2024-02-26T19:08:58 [info]: ADDING GRAMRATIO TO NEW INGREDIENT: {"name":"Hoisin Sauce","measurement":0.5,"measurementUnit":"cup","ingredientID":0,"lifespanDays":30,"purchaseUnit":"bottle","purchaseUnitRatio":0.5,"needsReview":true}
+2024-02-26T19:08:58 [info]: ADDING GRAMRATIO TO NEW INGREDIENT: {"name":"Red Food Colouring","measurement":1,"measurementUnit":"teaspoon","ingredientID":0,"lifespanDays":365,"purchaseUnit":"bottle","purchaseUnitRatio":0.5,"needsReview":true}
+2024-02-26T19:08:58 [info]: 'addUnitRatio' Added unit ratio 'Chinese Five Spice Powder-weightOunce-teaspoon' in draft currentStatus
+2024-02-26T19:08:58 [info]: **USER LOG ENTRY ID: 7224022600010282** openaiTokensUsed|subjectID:0|oldValue:null|newValue:121
+2024-02-26T19:08:58 [info]: 'addUnitRatio' Added unit ratio 'Pork Belly/Spare Ribs-pound-single' in draft currentStatus
+2024-02-26T19:08:58 [info]: 'getUnitRatio' No store ratio found for Hoisin Sauce-gram-bottle, asking AI
+2024-02-26T19:08:58 [info]: 'getUnitRatio' No store ratio found for Red Food Colouring-gram-bottle, asking AI
+2024-02-26T19:08:58 [info]: **USER LOG ENTRY ID: 7224022600010283** openaiTokensUsed|subjectID:0|oldValue:null|newValue:124
+2024-02-26T19:08:58 [info]: 'addUnitRatio' Added unit ratio 'Hoisin Sauce-bottle-cup' in draft currentStatus
+2024-02-26T19:08:58 [info]: **USER LOG ENTRY ID: 7224022600010281** openaiTokensUsed|subjectID:0|oldValue:null|newValue:124
+2024-02-26T19:08:58 [info]: 'addUnitRatio' Added unit ratio 'Red Food Colouring-bottle-teaspoon' in draft currentStatus
+2024-02-26T19:08:58 [info]: **USER LOG ENTRY ID: 7224022600010284** openaiTokensUsed|subjectID:0|oldValue:null|newValue:122
+2024-02-26T19:08:58 [info]: 'getUnitRatio' AI estimate for Hoisin Sauce-gram-bottle: 50.
+2024-02-26T19:08:59 [info]: 'getUnitRatio' AI estimate for Red Food Colouring-gram-bottle: 15.432.
+2024-02-26T19:08:59 [info]: PRE FILTER: [{"name":"Soy Sauce","measurement":0.5,"measurementUnit":"cup","purchaseUnit":"fluidOunce","ingredientID":1224022400010015,"purchaseUnitRatio":8,"needsReview":false},{"name":"Honey","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"fluidOunce","ingredientID":1224022400010068,"purchaseUnitRatio":0.5,"needsReview":false},{"name":"Brown Sugar","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"pound","ingredientID":1224021800010092,"purchaseUnitRatio":0.03125,"needsReview":false},{"name":"Shallot","measurement":1,"measurementUnit":"single","purchaseUnit":"single","ingredientID":1224022300010002,"purchaseUnitRatio":1,"needsReview":false,"preparation":"to garnish"},{"name":"Hoisin Sauce","measurement":0.5,"measurementUnit":"cup","ingredientID":0,"lifespanDays":30,"purchaseUnit":"bottle","gramRatio":50,"purchaseUnitRatio":0.5,"needsReview":true},{"name":"Chinese Shaoxing Wine","measurement":4,"measurementUnit":"tablespoon","ingredientID":1224022600010066,"purchaseUnit":"fluidOunce","purchaseUnitRatio":0.5,"needsReview":false},{"name":"Garlic","measurement":2,"measurementUnit":"tablespoon","ingredientID":1224020300010028,"purchaseUnit":"weightOunce","purchaseUnitRatio":0.5,"preparation":"minced","needsReview":false},{"name":"Red Food Colouring","measurement":1,"measurementUnit":"teaspoon","ingredientID":0,"lifespanDays":365,"purchaseUnit":"bottle","gramRatio":15.432,"purchaseUnitRatio":0.5,"needsReview":true},{"name":"Chinese Five Spice Powder","measurement":1.5,"measurementUnit":"teaspoon","ingredientID":1224022600010058,"purchaseUnit":"weightOunce","purchaseUnitRatio":0.18,"needsReview":true},{"name":"Pork Belly/Spare Ribs","measurement":6,"measurementUnit":"single","ingredientID":1224021800010113,"purchaseUnit":"pound","purchaseUnitRatio":3.5,"needsReview":true}]
+2024-02-26T19:08:59 [info]: DONE ADDING GRAMRATIO TO MATCHED INGREDIENTS. MATCHED INGREDIENTS: [{"name":"Soy Sauce","measurement":0.5,"measurementUnit":"cup","purchaseUnit":"fluidOunce","ingredientID":1224022400010015,"purchaseUnitRatio":8,"needsReview":false},{"name":"Honey","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"fluidOunce","ingredientID":1224022400010068,"purchaseUnitRatio":0.5,"needsReview":false},{"name":"Brown Sugar","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"pound","ingredientID":1224021800010092,"purchaseUnitRatio":0.03125,"needsReview":false},{"name":"Shallot","measurement":1,"measurementUnit":"single","purchaseUnit":"single","ingredientID":1224022300010002,"purchaseUnitRatio":1,"needsReview":false,"preparation":"to garnish"},{"name":"Hoisin Sauce","measurement":0.5,"measurementUnit":"cup","ingredientID":0,"lifespanDays":30,"purchaseUnit":"bottle","gramRatio":50,"purchaseUnitRatio":0.5,"needsReview":true},{"name":"Chinese Shaoxing Wine","measurement":4,"measurementUnit":"tablespoon","ingredientID":1224022600010066,"purchaseUnit":"fluidOunce","purchaseUnitRatio":0.5,"needsReview":false},{"name":"Garlic","measurement":2,"measurementUnit":"tablespoon","ingredientID":1224020300010028,"purchaseUnit":"weightOunce","purchaseUnitRatio":0.5,"preparation":"minced","needsReview":false},{"name":"Red Food Colouring","measurement":1,"measurementUnit":"teaspoon","ingredientID":0,"lifespanDays":365,"purchaseUnit":"bottle","gramRatio":15.432,"purchaseUnitRatio":0.5,"needsReview":true},{"name":"Chinese Five Spice Powder","measurement":1.5,"measurementUnit":"teaspoon","ingredientID":1224022600010058,"purchaseUnit":"weightOunce","purchaseUnitRatio":0.18,"needsReview":true},{"name":"Pork Belly/Spare Ribs","measurement":6,"measurementUnit":"single","ingredientID":1224021800010113,"purchaseUnit":"pound","purchaseUnitRatio":3.5,"needsReview":true}]
+2024-02-26T19:08:59 [info]: **USER LOG ENTRY ID: 7224022600010285** openaiTokensUsed|subjectID:0|oldValue:null|newValue:119
+2024-02-26T19:08:59 [info]: 'addUnitRatio' Added unit ratio 'Red Food Colouring-gram-bottle' in draft currentStatus
+2024-02-26T19:08:59 [info]: 'addUnitRatio' Added unit ratio 'Hoisin Sauce-gram-bottle' in draft currentStatus
+2024-02-26T19:08:59 [info]: **USER LOG ENTRY ID: 7224022600010286** openaiTokensUsed|subjectID:0|oldValue:null|newValue:122
+2024-02-26T19:09:00 [info]: **USER LOG ENTRY ID: 7224022600010287** openaiTokensUsed|subjectID:0|oldValue:null|newValue:990
+2024-02-26T19:09:00 [info]: **USER LOG ENTRY ID: 7224022600010288** openaiTokensUsed|subjectID:0|oldValue:null|newValue:993
+2024-02-26T19:09:00 [info]: **USER LOG ENTRY ID: 7224022600010290** openaiTokensUsed|subjectID:0|oldValue:null|newValue:990
+2024-02-26T19:09:00 [info]: **USER LOG ENTRY ID: 7224022600010289** openaiTokensUsed|subjectID:0|oldValue:null|newValue:992
+2024-02-26T19:09:01 [info]: **USER LOG ENTRY ID: 7224022600010291** openaiTokensUsed|subjectID:0|oldValue:null|newValue:1004
+2024-02-26T19:09:01 [info]: IN SECONDARY TOOLS MATCH. RT: {"toolID":0,"quantity":1,"name":"Jug"}
+2024-02-26T19:09:01 [info]: NO MATCH FOUND FOR Jug
+2024-02-26T19:09:01 [info]: **USER LOG ENTRY ID: 7224022600010292** openaiTokensUsed|subjectID:0|oldValue:null|newValue:999
+2024-02-26T19:09:02 [info]: CALLING CONSTRUCT WITH INGREDIENTS: [{"name":"Soy Sauce","measurement":0.5,"measurementUnit":"cup","purchaseUnit":"fluidOunce","ingredientID":1224022400010015,"purchaseUnitRatio":8,"needsReview":false},{"name":"Honey","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"fluidOunce","ingredientID":1224022400010068,"purchaseUnitRatio":0.5,"needsReview":false},{"name":"Brown Sugar","measurement":4,"measurementUnit":"tablespoon","purchaseUnit":"pound","ingredientID":1224021800010092,"purchaseUnitRatio":0.03125,"needsReview":false},{"name":"Shallot","measurement":1,"measurementUnit":"single","purchaseUnit":"single","ingredientID":1224022300010002,"purchaseUnitRatio":1,"needsReview":false,"preparation":"to garnish"},{"name":"Hoisin Sauce","measurement":0.5,"measurementUnit":"cup","ingredientID":0,"lifespanDays":30,"purchaseUnit":"bottle","gramRatio":50,"purchaseUnitRatio":0.5,"needsReview":true},{"name":"Chinese Shaoxing Wine","measurement":4,"measurementUnit":"tablespoon","ingredientID":1224022600010066,"purchaseUnit":"fluidOunce","purchaseUnitRatio":0.5,"needsReview":false},{"name":"Garlic","measurement":2,"measurementUnit":"tablespoon","ingredientID":1224020300010028,"purchaseUnit":"weightOunce","purchaseUnitRatio":0.5,"preparation":"minced","needsReview":false},{"name":"Red Food Colouring","measurement":1,"measurementUnit":"teaspoon","ingredientID":0,"lifespanDays":365,"purchaseUnit":"bottle","gramRatio":15.432,"purchaseUnitRatio":0.5,"needsReview":true},{"name":"Chinese Five Spice Powder","measurement":1.5,"measurementUnit":"teaspoon","ingredientID":1224022600010058,"purchaseUnit":"weightOunce","purchaseUnitRatio":0.18,"needsReview":true},{"name":"Pork Belly/Spare Ribs","measurement":6,"measurementUnit":"single","ingredientID":1224021800010113,"purchaseUnit":"pound","purchaseUnitRatio":3.5,"needsReview":true}]
+2024-02-26T19:09:02 [info]: **USER LOG ENTRY ID: 7224022600010293** openaiTokensUsed|subjectID:0|oldValue:null|newValue:533
+2024-02-26T19:09:02 [info]: Created recipe ID:1124022600010012
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: INGREDIENTID IS: 1224022400010015
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224022400010015,"measurementUnit":"cup","measurement":0.5,"purchaseUnitRatio":8,"needsReview":false}
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: INGREDIENTID IS: 1224022400010068
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224022400010068,"measurementUnit":"tablespoon","measurement":4,"purchaseUnitRatio":0.5,"needsReview":false}
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: INGREDIENTID IS: 1224021800010092
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224021800010092,"measurementUnit":"tablespoon","measurement":4,"purchaseUnitRatio":0.03125,"needsReview":false}
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: INGREDIENTID IS: 1224022300010002
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224022300010002,"measurementUnit":"single","measurement":1,"purchaseUnitRatio":1,"preparation":"to garnish","needsReview":false}
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: INGREDIENTID IS: 1224022600010066
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224022600010066,"measurementUnit":"tablespoon","measurement":4,"purchaseUnitRatio":0.5,"needsReview":false}
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: INGREDIENTID IS: 1224020300010028
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224020300010028,"measurementUnit":"tablespoon","measurement":2,"purchaseUnitRatio":0.5,"preparation":"minced","needsReview":false}
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: INGREDIENTID IS: 1224022600010058
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224022600010058,"measurementUnit":"teaspoon","measurement":1.5,"purchaseUnitRatio":0.18,"needsReview":true}
+2024-02-26T19:09:02 [info]: CONSTRUCT RI: [object Object]
+2024-02-26T19:09:02 [info]: INGREDIENTID IS: 1224021800010113
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224021800010113,"measurementUnit":"single","measurement":6,"purchaseUnitRatio":3.5,"needsReview":true}
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: undefined
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: undefined
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: undefined
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: to garnish
+2024-02-26T19:09:02 [info]: **RECIPE LOG ENTRY ID: 7124022600010995** createRecipe|subjectID:1124022600010012|oldValue:null|newValue:null
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: minced
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: undefined
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: undefined
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: undefined
+2024-02-26T19:09:02 [info]: CREATED ING, NOW INGREDIENTID IS: 1224022600010090
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224022600010090,"measurementUnit":"cup","measurement":0.5,"purchaseUnitRatio":0.5,"needsReview":true}
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: undefined
+2024-02-26T19:09:02 [info]: CREATED ING, NOW INGREDIENTID IS: 1224022600010092
+2024-02-26T19:09:02 [info]: CALLING RI CREATE WITH BODY: {"recipeID":1124022600010012,"ingredientID":1224022600010092,"measurementUnit":"teaspoon","measurement":1,"purchaseUnitRatio":0.5,"needsReview":true}
+2024-02-26T19:09:02 [info]: **KITCHEN LOG ENTRY ID: 7024022600010099** createIngredient|subjectID:1224022600010090|oldValue:null|newValue:null
+2024-02-26T19:09:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: undefined
+2024-02-26T19:09:02 [info]: **RECIPE LOG ENTRY ID: 7124022600010996** createRecipeIngredient|subjectID:1624022600010170|oldValue:null|newValue:null
+2024-02-26T19:09:02 [info]: **KITCHEN LOG ENTRY ID: 7024022600010100** createIngredient|subjectID:1224022600010092|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600010999** createRecipeIngredient|subjectID:1624022600010173|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600010997** createRecipeIngredient|subjectID:1624022600010168|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600010998** createRecipeIngredient|subjectID:1624022600010171|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011001** createRecipeIngredient|subjectID:1624022600010167|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011003** createRecipeIngredient|subjectID:1624022600010174|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011000** createRecipeIngredient|subjectID:1624022600010169|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011004** createRecipeIngredient|subjectID:1624022600010175|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011002** createRecipeIngredient|subjectID:1624022600010166|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011005** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011006** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011007** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011008** createRecipeIngredient|subjectID:1624022600010172|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011010** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011009** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: CONSTRUCT RT: [object Object]
+2024-02-26T19:09:03 [info]: TOOLID IS: 1424021800010006
+2024-02-26T19:09:03 [info]: CALLING RT CREATE WITH BODY: {"recipeID":1124022600010012,"toolID":1424021800010006,"quantity":1}
+2024-02-26T19:09:03 [info]: CONSTRUCT RT: [object Object]
+2024-02-26T19:09:03 [info]: CONSTRUCT RT: [object Object]
+2024-02-26T19:09:03 [info]: TOOLID IS: 1424022400010019
+2024-02-26T19:09:03 [info]: CALLING RT CREATE WITH BODY: {"recipeID":1124022600010012,"toolID":1424022400010019,"quantity":1}
+2024-02-26T19:09:03 [info]: CONSTRUCT RT: [object Object]
+2024-02-26T19:09:03 [info]: TOOLID IS: 1424021800010004
+2024-02-26T19:09:03 [info]: CALLING RT CREATE WITH BODY: {"recipeID":1124022600010012,"toolID":1424021800010004,"quantity":1}
+2024-02-26T19:09:03 [info]: CONSTRUCT RT: [object Object]
+2024-02-26T19:09:03 [info]: TOOLID IS: 1424021800010012
+2024-02-26T19:09:03 [info]: CALLING RT CREATE WITH BODY: {"recipeID":1124022600010012,"toolID":1424021800010012,"quantity":1}
+2024-02-26T19:09:03 [info]: CONSTRUCT RT: [object Object]
+2024-02-26T19:09:03 [info]: TOOLID IS: 1424020300000003
+2024-02-26T19:09:03 [info]: CALLING RT CREATE WITH BODY: {"recipeID":1124022600010012,"toolID":1424020300000003,"quantity":1}
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011011** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011014** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011012** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [error]: Timed out waiting for AI ingredient matches, continuing without AI Ingredient backup matching.
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011013** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: CREATED TOOL, NOW TOOLID IS: 1424022600010005
+2024-02-26T19:09:03 [info]: CALLING RT CREATE WITH BODY: {"recipeID":1124022600010012,"toolID":1424022600010005,"quantity":1}
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011015** updateRecipeVersion|subjectID:1124022600010012|oldValue:1|newValue:2
+2024-02-26T19:09:03 [info]: **KITCHEN LOG ENTRY ID: 7024022600010101** createTool|subjectID:1424022600010005|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011016** createRecipeTool|subjectID:1724022600010031|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011017** createRecipeTool|subjectID:1724022600010033|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011018** createRecipeTool|subjectID:1724022600010035|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011019** createRecipeTool|subjectID:1724022600010034|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011020** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011021** createRecipeTool|subjectID:1724022600010032|oldValue:null|newValue:null
+2024-02-26T19:09:03 [info]: **RECIPE LOG ENTRY ID: 7124022600011022** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011023** createRecipeTool|subjectID:1724022600010036|oldValue:null|newValue:null
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011025** updateRecipeStatus|subjectID:1124022600010012|oldValue:noTools|newValue:noSteps
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011026** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011027** updateRecipeStatus|subjectID:1124022600010012|oldValue:noTools|newValue:noSteps
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011028** updateRecipeStatus|subjectID:1124022600010012|oldValue:noTools|newValue:noSteps
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011024** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011030** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011029** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011032** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011033** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011031** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011034** updateRecipeStatus|subjectID:1124022600010012|oldValue:noTools|newValue:noSteps
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011036** updateRecipeStatus|subjectID:1124022600010012|oldValue:noTools|newValue:noSteps
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011035** updateRecipeStatus|subjectID:1124022600010012|oldValue:noTools|newValue:noSteps
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011037** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011038** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011039** updateRecipeVersion|subjectID:1124022600010012|oldValue:2|newValue:3
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011040** createdStep|subjectID:1824022600010058|oldValue:null|newValue:null
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011042** createdStep|subjectID:1824022600010061|oldValue:null|newValue:null
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011041** createdStep|subjectID:1824022600010059|oldValue:null|newValue:null
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011044** createdStep|subjectID:1824022600010062|oldValue:null|newValue:null
+2024-02-26T19:09:04 [info]: **RECIPE LOG ENTRY ID: 7124022600011043** createdStep|subjectID:1824022600010060|oldValue:null|newValue:null
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011045** createdRecipeStep|subjectID:1924022600010058|oldValue:null|newValue:null
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011046** createdRecipeStep|subjectID:1924022600010059|oldValue:null|newValue:null
+2024-02-26T19:09:05 [info]: Recipe moved to "published" status
+2024-02-26T19:09:05 [info]: Created recipeStep 1924022600010058
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011048** createdRecipeStep|subjectID:1924022600010060|oldValue:null|newValue:null
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011047** createdRecipeStep|subjectID:1924022600010062|oldValue:null|newValue:null
+2024-02-26T19:09:05 [info]: Recipe moved to "published" status
+2024-02-26T19:09:05 [info]: Created recipeStep 1924022600010059
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011049** updateRecipeVersion|subjectID:1124022600010012|oldValue:3|newValue:4
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011050** updatedRecipeStatus|subjectID:1124022600010012|oldValue:null|newValue:published
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011052** createdRecipeStep|subjectID:1924022600010061|oldValue:null|newValue:null
+2024-02-26T19:09:05 [info]: Recipe moved to "published" status
+2024-02-26T19:09:05 [info]: Created recipeStep 1924022600010060
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011051** updateRecipeVersion|subjectID:1124022600010012|oldValue:3|newValue:4
+2024-02-26T19:09:05 [info]: Recipe moved to "published" status
+2024-02-26T19:09:05 [info]: Created recipeStep 1924022600010062
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011053** updateRecipeVersion|subjectID:1124022600010012|oldValue:3|newValue:4
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011054** updatedRecipeStatus|subjectID:1124022600010012|oldValue:null|newValue:published
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011055** updateRecipeVersion|subjectID:1124022600010012|oldValue:3|newValue:4
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011056** updatedRecipeStatus|subjectID:1124022600010012|oldValue:null|newValue:published
+2024-02-26T19:09:05 [info]: Recipe moved to "published" status
+2024-02-26T19:09:05 [info]: Created recipeStep 1924022600010061
+2024-02-26T19:09:05 [info]: Successfully constructed recipe 1124022600010012
+2024-02-26T19:09:05 [info]: *TIME* constructRecipe: 3.511 seconds
+2024-02-26T19:09:05 [info]: *TIME* vison recipe and construct total: 46.295 seconds
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011057** updatedRecipeStatus|subjectID:1124022600010012|oldValue:null|newValue:published
+2024-02-26T19:09:05 [info]: *SSE Session* disconnected userID: a525810e-5531-4f97-95a4-39a082f7416b
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011058** updateRecipeVersion|subjectID:1124022600010012|oldValue:3|newValue:4
+2024-02-26T19:09:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011059** updatedRecipeStatus|subjectID:1124022600010012|oldValue:null|newValue:published
+2024-02-26T19:09:05 [info]: Got 62 recipes
+2024-02-26T19:09:05 [info]: Got 191 recipeTools
+2024-02-26T19:09:05 [info]: Got 382 steps
+2024-02-26T19:09:05 [info]: Got 689 recipeIngredients
+2024-02-26T19:09:05 [info]: Got 321 recipeSteps
+2024-02-26T19:09:06 [info]: Got 259 ingredients
+2024-02-26T19:09:06 [info]: Got 54 tools
+2024-02-26T19:09:06 [info]: Found 0 recipeSubscriptions for recipeID: 1124022600010012
+2024-02-26T19:09:06 [info]: Got 0 recipeFeedback logs
+2024-02-26T19:09:06 [info]: Got 0 recipeFeedback logs
+2024-02-26T19:09:06 [info]: 'getUnitRatio' Common ratio found for gram-weightOunce: 28.35
+2024-02-26T19:09:06 [info]: 'getUnitRatio' Store ratio found for Bok Choy-gram-single: 70
+2024-02-26T19:09:39 [info]: **RECIPE LOG ENTRY ID: 7124022600011060** updateRecipes-recipeCategoryID|subjectID:1124022600010012|oldValue:10|newValue:8
+2024-02-26T19:09:40 [info]: **RECIPE LOG ENTRY ID: 7124022600011061** updateRecipeVersion|subjectID:1124022600010012|oldValue:4|newValue:5
+2024-02-26T19:09:40 [info]: **RECIPE LOG ENTRY ID: 7124022600011062** updateRecipes-title|subjectID:1124022600010012|oldValue:Sticky Chinese Bbq Pork Belly Ribs (Char Siu)|newValue:Char Siu (Sticky Pork Belly Ribs)
+2024-02-26T19:09:40 [info]: **RECIPE LOG ENTRY ID: 7124022600011063** updateRecipes-type|subjectID:1124022600010012|oldValue:private|newValue:public
+2024-02-26T19:09:40 [info]: **RECIPE LOG ENTRY ID: 7124022600011064** updateRecipeVersion|subjectID:1124022600010012|oldValue:4|newValue:5
+2024-02-26T19:09:40 [info]: **RECIPE LOG ENTRY ID: 7124022600011065** updateRecipeVersion|subjectID:1124022600010012|oldValue:4|newValue:5
+2024-02-26T19:10:12 [info]: 'getUnitRatio' Common ratio found for gram-weightOunce: 28.35
+2024-02-26T19:10:13 [info]: **KITCHEN LOG ENTRY ID: 7024022600010102** updateIngredients-brand|subjectID:1224022600010090|oldValue:null|newValue:
+2024-02-26T19:10:14 [info]: **KITCHEN LOG ENTRY ID: 7024022600010103** updateIngredients-purchaseUnit|subjectID:1224022600010090|oldValue:bottle|newValue:weightOunce
+2024-02-26T19:10:14 [info]: **KITCHEN LOG ENTRY ID: 7024022600010104** updateIngredients-gramRatio|subjectID:1224022600010090|oldValue:50|newValue:28
+2024-02-26T19:10:14 [info]: **KITCHEN LOG ENTRY ID: 7024022600010105** updateIngredients-needsReview|subjectID:1224022600010090|oldValue:true|newValue:false
+2024-02-26T19:10:14 [info]: 'getUnitRatio' Common ratio found for gram-weightOunce: 28.35
+2024-02-26T19:10:20 [info]: 'getUnitRatio' No store ratio found for Red Food Colouring-gram-fluidOunce, asking AI
+2024-02-26T19:10:21 [info]: 'getUnitRatio' AI estimate for Red Food Colouring-gram-fluidOunce: 1.04318.
+2024-02-26T19:10:21 [info]: 'addUnitRatio' Added unit ratio 'Red Food Colouring-gram-fluidOunce' in draft currentStatus
+2024-02-26T19:10:21 [info]: **USER LOG ENTRY ID: 7224022600010294** openaiTokensUsed|subjectID:0|oldValue:null|newValue:125
+2024-02-26T19:10:27 [info]: **KITCHEN LOG ENTRY ID: 7024022600010106** updateIngredients-brand|subjectID:1224022600010092|oldValue:null|newValue:
+2024-02-26T19:10:27 [info]: **KITCHEN LOG ENTRY ID: 7024022600010107** updateIngredients-purchaseUnit|subjectID:1224022600010092|oldValue:bottle|newValue:fluidOunce
+2024-02-26T19:10:28 [info]: **KITCHEN LOG ENTRY ID: 7024022600010108** updateIngredients-gramRatio|subjectID:1224022600010092|oldValue:15.432|newValue:28
+2024-02-26T19:10:28 [info]: **KITCHEN LOG ENTRY ID: 7024022600010109** updateIngredients-needsReview|subjectID:1224022600010092|oldValue:true|newValue:false
+2024-02-26T19:10:28 [info]: 'getUnitRatio' No store ratio found for Red Food Colouring-gram-fluidOunce, asking AI
+2024-02-26T19:10:29 [info]: 'getUnitRatio' AI estimate for Red Food Colouring-gram-fluidOunce: 1.04318.
+2024-02-26T19:10:29 [info]: 'addUnitRatio' Added unit ratio 'Red Food Colouring-gram-fluidOunce' in draft currentStatus
+2024-02-26T19:10:29 [info]: **USER LOG ENTRY ID: 7224022600010295** openaiTokensUsed|subjectID:0|oldValue:null|newValue:125
+2024-02-26T19:10:32 [info]: Found 0 recipeSubscriptions for recipeID: 1124022600010012
+2024-02-26T19:10:33 [info]: Got 0 recipeFeedback logs
+2024-02-26T19:10:33 [info]: Got 0 recipeFeedback logs
+2024-02-26T19:10:47 [info]: 'getUnitRatio' No store ratio found for Hoisin Sauce-weightOunce-cup, asking AI
+2024-02-26T19:10:47 [info]: 'getUnitRatio' AI estimate for Hoisin Sauce-weightOunce-cup: 2.4.
+2024-02-26T19:10:47 [info]: 'addUnitRatio' Added unit ratio 'Hoisin Sauce-weightOunce-cup' in draft currentStatus
+2024-02-26T19:10:48 [info]: **USER LOG ENTRY ID: 7224022600010296** openaiTokensUsed|subjectID:0|oldValue:null|newValue:123
+2024-02-26T19:10:49 [info]: **RECIPE LOG ENTRY ID: 7124022600011066** updateRecipeIngredients-measurement|subjectID:1624022600010174|oldValue:0.5|newValue:0.33
+2024-02-26T19:10:49 [info]: **RECIPE LOG ENTRY ID: 7124022600011067** updateRecipeVersion|subjectID:1124022600010012|oldValue:5|newValue:6
+2024-02-26T19:10:49 [info]: **RECIPE LOG ENTRY ID: 7124022600011068** updateRecipeIngredientVersion|subjectID:1624022600010174|oldValue:1|newValue:2
+2024-02-26T19:10:50 [info]: **RECIPE LOG ENTRY ID: 7124022600011069** updateRecipeIngredients-purchaseUnitRatio|subjectID:1624022600010174|oldValue:0.5|newValue:2.4
+2024-02-26T19:10:50 [info]: **RECIPE LOG ENTRY ID: 7124022600011070** updateRecipeVersion|subjectID:1124022600010012|oldValue:5|newValue:6
+2024-02-26T19:10:50 [info]: **RECIPE LOG ENTRY ID: 7124022600011071** updateRecipeIngredientVersion|subjectID:1624022600010174|oldValue:1|newValue:2
+2024-02-26T19:10:50 [info]: **RECIPE LOG ENTRY ID: 7124022600011072** updateRecipeIngredients-needsReview|subjectID:1624022600010174|oldValue:true|newValue:false
+2024-02-26T19:10:50 [info]: **RECIPE LOG ENTRY ID: 7124022600011073** updateRecipeVersion|subjectID:1124022600010012|oldValue:5|newValue:6
+2024-02-26T19:10:50 [info]: **RECIPE LOG ENTRY ID: 7124022600011074** updateRecipeIngredientVersion|subjectID:1624022600010174|oldValue:1|newValue:2
+2024-02-26T19:11:05 [info]: **RECIPE LOG ENTRY ID: 7124022600011075** updateRecipeIngredients-measurement|subjectID:1624022600010174|oldValue:0.33|newValue:0.5
+2024-02-26T19:11:06 [info]: **RECIPE LOG ENTRY ID: 7124022600011076** updateRecipeVersion|subjectID:1124022600010012|oldValue:6|newValue:7
+2024-02-26T19:11:06 [info]: **RECIPE LOG ENTRY ID: 7124022600011077** updateRecipeIngredientVersion|subjectID:1624022600010174|oldValue:2|newValue:3
+2024-02-26T19:12:54 [info]: **RECIPE LOG ENTRY ID: 7124022600011078** updateRecipeIngredients-needsReview|subjectID:1624022600010172|oldValue:true|newValue:false
+2024-02-26T19:12:54 [info]: **RECIPE LOG ENTRY ID: 7124022600011079** updateRecipeVersion|subjectID:1124022600010012|oldValue:7|newValue:8
+2024-02-26T19:12:54 [info]: **RECIPE LOG ENTRY ID: 7124022600011080** updateRecipeIngredientVersion|subjectID:1624022600010172|oldValue:1|newValue:2
+2024-02-26T19:13:13 [info]: **RECIPE LOG ENTRY ID: 7124022600011081** updateRecipeIngredients-purchaseUnitRatio|subjectID:1624022600010173|oldValue:3.5|newValue:0.19
+2024-02-26T19:13:13 [info]: **RECIPE LOG ENTRY ID: 7124022600011082** updateRecipeVersion|subjectID:1124022600010012|oldValue:8|newValue:9
+2024-02-26T19:13:13 [info]: **RECIPE LOG ENTRY ID: 7124022600011084** updateRecipeIngredientVersion|subjectID:1624022600010173|oldValue:1|newValue:2
+2024-02-26T19:13:13 [info]: **RECIPE LOG ENTRY ID: 7124022600011083** updateRecipeIngredients-needsReview|subjectID:1624022600010173|oldValue:true|newValue:false
+2024-02-26T19:13:13 [info]: **RECIPE LOG ENTRY ID: 7124022600011085** updateRecipeVersion|subjectID:1124022600010012|oldValue:8|newValue:9
+2024-02-26T19:13:13 [info]: **RECIPE LOG ENTRY ID: 7124022600011086** updateRecipeIngredientVersion|subjectID:1624022600010173|oldValue:1|newValue:2
+2024-02-26T19:13:20 [info]: **RECIPE LOG ENTRY ID: 7124022600011087** updateRecipeIngredients-purchaseUnitRatio|subjectID:1624022600010175|oldValue:0.5|newValue:0.16
+2024-02-26T19:13:21 [info]: **RECIPE LOG ENTRY ID: 7124022600011088** updateRecipeVersion|subjectID:1124022600010012|oldValue:9|newValue:10
+2024-02-26T19:13:21 [info]: **RECIPE LOG ENTRY ID: 7124022600011089** updateRecipeIngredientVersion|subjectID:1624022600010175|oldValue:1|newValue:2
+2024-02-26T19:13:21 [info]: **RECIPE LOG ENTRY ID: 7124022600011090** updateRecipeIngredients-needsReview|subjectID:1624022600010175|oldValue:true|newValue:false
+2024-02-26T19:13:21 [info]: **RECIPE LOG ENTRY ID: 7124022600011092** updateRecipeVersion|subjectID:1124022600010012|oldValue:9|newValue:10
+2024-02-26T19:13:21 [info]: **RECIPE LOG ENTRY ID: 7124022600011091** updateRecipeIngredientVersion|subjectID:1624022600010175|oldValue:1|newValue:2
+2024-02-26T19:13:30 [info]: 'getDraftUnitRatios' Retrieving all draft unit ratios
+2024-02-26T19:13:30 [info]: 'getDraftUnitRatios' Retrieved 8 draft unit ratios
+2024-02-26T19:13:57 [info]: 'batchApproveUnitRatios' Approved 4 unit ratios
+2024-02-26T19:13:57 [info]: 'batchDeleteUnitRatios' Deleted 4 unit ratios

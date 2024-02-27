@@ -130,11 +130,11 @@ export class EditRecipeIngredientModalComponent {
         .subscribe({
           next: (response) => {
             this.gettingUnitRatio.set(false);
-            this.purchaseUnitRatioSuggestion.set(response.unitRatio);
-            if (typeof response.unitRatio === 'number') {
+            this.purchaseUnitRatioSuggestion.set(response.ratio);
+            if (typeof response.ratio === 'number') {
               this.form.get('purchaseUnitRatio')?.setErrors(null);
               this.form.patchValue({
-                purchaseUnitRatio: response.unitRatio,
+                purchaseUnitRatio: response.ratio,
               });
             }
           },

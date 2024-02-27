@@ -173,9 +173,9 @@
           <span class="mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
             {{ ingredient.measurement }}
           </span>
-          <span class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2">{{
-            ingredient.measurementUnit
-          }}</span>
+          <span class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2">
+            {{ingredient.measurementUnit === 'weightOunces' ? 'oz' : ingredient.measurementUnit}}
+          </span>
         </div>
       </div>
     </div>
