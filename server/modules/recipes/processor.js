@@ -772,7 +772,7 @@ module.exports = ({ db }) => {
           ingredientPurchaseUnitRatioPromises.push(
             purchaseUnitRatioPromise.then((result) => {
               global.logger.info(`GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`);
-              matchedIngredients[i].purchaseUnitRatio = result.unitRatio;
+              matchedIngredients[i].purchaseUnitRatio = result.ratio;
               matchedIngredients[i].needsReview = result.needsReview;
             }),
           );
@@ -797,7 +797,7 @@ module.exports = ({ db }) => {
           const gramRatioPromise = getUnitRatio(matchedIngredients[i].name, 'gram', matchedIngredients[i].purchaseUnit, authorization, userID);
           ingredientGramRatioPromises.push(
             gramRatioPromise.then((result) => {
-              matchedIngredients[i].gramRatio = result.unitRatio;
+              matchedIngredients[i].gramRatio = result.ratio;
               matchedIngredients[i].needsReview = result.needsReview;
             }),
           );
@@ -929,8 +929,13 @@ module.exports = ({ db }) => {
         matchedTwiceIngredients.push(matchedIngredients[i]);
       }
     }
-    const results = await Promise.allSettled(promises);
+    // return matchedTwiceIngredients as is after 10 seconds if the promises haven't yet resolved.
+    setTimeout(() => {
+      global.logger.error(`Timed out waiting for AI ingredient matches, continuing without AI Ingredient backup matching.`);
+      return matchedTwiceIngredients;
+    }, 10000);
 
+    const results = await Promise.allSettled(promises);
     // Filter successful and valid responses and add to matchedTwiceIngredients
     for (let i = 0; i < results.length; i++) {
       if (results[i].status === 'fulfilled' && results[i].invalid) {

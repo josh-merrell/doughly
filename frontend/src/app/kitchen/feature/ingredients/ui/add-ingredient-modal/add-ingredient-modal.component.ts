@@ -137,11 +137,11 @@ export class AddIngredientModalComponent {
         .subscribe({
           next: (response) => {
             this.gettingUnitRatio.set(false);
-            this.gramRatioSuggestion.set(response.unitRatio);
-            console.log('Suggested unit ratio:', response.unitRatio);
+            this.gramRatioSuggestion.set(response.ratio);
+            console.log('Suggested unit ratio:', response.ratio);
             // if (typeof response.ratio === 'number') {
               this.form.get('gramRatio')?.setErrors(null);
-              this.form.patchValue({ gramRatio: response.unitRatio });
+              this.form.patchValue({ gramRatio: response.ratio });
             // }
           },
           error: (err) => {
