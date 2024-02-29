@@ -78,7 +78,7 @@ async function createUserLog(userID, authorization, eventType, subjectID, associ
         },
       },
     );
-    global.logger.info(`**USER LOG ENTRY ID: ${log.data.userLogID}** ${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
+    global.logger.info(`**USER LOG MESSAGE: ${message}. ENTRY ID: ${log.data.userLogID}** ${eventType}|subjectID:${subjectID}|oldValue:${oldValue}|newValue:${newValue}`);
     return log.data.userLogID;
   } catch (error) {
     global.logger.error(`Error creating user log: ${error.message}`);
@@ -125,7 +125,7 @@ async function createRecipeFeedbackLog(userID, authorization, recipeID, recipeTi
         satisfaction,
         difficulty,
         note,
-        message: `Made ${recipeTitle}; rating ${satisfaction}/10`
+        message: `Made ${recipeTitle}; rating ${satisfaction}/10`,
       },
       {
         headers: {

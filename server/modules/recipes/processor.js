@@ -6,7 +6,7 @@ const { createRecipeLog, createRecipeFeedbackLog } = require('../../services/dbL
 const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
-const { visionRequest, matchRecipeItemRequest } = require('../../services/openai');
+const { visionRequest, matchRecipeItemRequest, matchRecipeIngredientRequest } = require('../../services/openai');
 const { getUnitRatio } = require('../../services/unitRatioStoreService');
 const { sendSSEMessage } = require('../../server.js');
 // const path = require('path');
@@ -890,17 +890,34 @@ module.exports = ({ db }) => {
       if (matchedIngredients[i].ingredientID === 0) {
         global.logger.info(`MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`);
         promises.push(
-          matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', matchedIngredients[i].name, userIngredientNames)
+          // matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', matchedIngredients[i].name, userIngredientNames)
+          matchRecipeIngredientRequest(userID, authorization, matchedIngredients[i].name, userIngredientNames)
             .then((data) => {
-              const ingredientJSON = JSON.parse(data.response);
-              if (!ingredientJSON.ingredientID || ingredientJSON.ingredientID === 0) {
+              const ingredientJSON = data.response;
+              if (ingredientJSON.error) {
+                global.logger.error(`Error matching ingredient with AI: ${ingredientJSON.error}`);
+                return { ...matchedIngredients[i], invalid: true };
+              }
+              global.logger.info(`AI MATCHED INGREDIENT: ${JSON.stringify(ingredientJSON)}`);
+              if (ingredientJSON.foundMatch) {
+                const ingredientID = userIngredients.find((i) => i.name === ingredientJSON.ingredientName);
+                if (!ingredientID) {
+                  global.logger.error(`Error matching ingredient with AI: ${ingredientJSON.error}`);
+                  return { ...matchedIngredients[i], invalid: true };
+                }
+                return {
+                  ...matchedIngredients[i],
+                  ingredientID: Number(ingredientID.ingredientID),
+                  purchaseUnit: ingredientJSON.purchaseUnit,
+                };
+              } else {
                 const validUnits = process.env.MEASUREMENT_UNITS.split(',');
                 if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
-                  global.logger.error(`Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`);
+                  global.logger.error(`AI provided Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`);
                   return { ...matchedIngredients[i], invalid: true };
                 }
                 if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
-                  global.logger.error(`Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
+                  global.logger.error(`AI provided Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
                   return { ...matchedIngredients[i], invalid: true };
                 }
 
@@ -911,16 +928,10 @@ module.exports = ({ db }) => {
                   purchaseUnit: ingredientJSON.purchaseUnit,
                   needsReview: true,
                 };
-              } else {
-                return {
-                  ...matchedIngredients[i],
-                  ingredientID: Number(ingredientJSON.ingredientID),
-                  purchaseUnit: ingredientJSON.purchaseUnit,
-                };
               }
             })
             .catch((error) => {
-              global.logger.error(`Error matching ingredient: ${error.message}`);
+              global.logger.error(`Error matching ingredient with AI: ${error.message}`);
               return { ...matchedIngredients[i], invalid: true };
             }),
         );
@@ -929,11 +940,6 @@ module.exports = ({ db }) => {
         matchedTwiceIngredients.push(matchedIngredients[i]);
       }
     }
-    // return matchedTwiceIngredients as is after 10 seconds if the promises haven't yet resolved.
-    setTimeout(() => {
-      global.logger.error(`Timed out waiting for AI ingredient matches, continuing without AI Ingredient backup matching.`);
-      return matchedTwiceIngredients;
-    }, 10000);
 
     const results = await Promise.allSettled(promises);
     // Filter successful and valid responses and add to matchedTwiceIngredients
