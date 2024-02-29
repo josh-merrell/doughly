@@ -69,6 +69,23 @@
             </mat-select>
           </mat-form-field>
         </div>
+        <!-- Preparation -->
+        <div id="form-preparation" class="relative flex flex-col">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Notes</label>
+          <mat-form-field class="w-full">
+            <input
+              matInput
+              formControlName="preparation"
+              placeholder="ex: peeled and diced"
+            />
+            <mat-error
+              class="text-dl-5"
+              *ngIf="form.get('preparation')?.hasError('moreThan40Chars')"
+            >
+              Must be less than 40 characters
+            </mat-error>
+          </mat-form-field>
+        </div>
         <div id="form-measurement">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Measurement</label>
           <mat-form-field class="w-full text-dl-4">

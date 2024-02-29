@@ -270,6 +270,7 @@ export class RecipeIngredientsModalComponent {
                   measurementUnit: result.measurementUnit,
                   purchaseUnitRatio: result.purchaseUnitRatio,
                   name: ingredientName,
+                  preparation: result.preparation,
                   needsReview: false,
                   toAdd: true,
                 };
@@ -295,6 +296,7 @@ export class RecipeIngredientsModalComponent {
           measurementUnit: recipeIngredient.measurementUnit,
           purchaseUnit: recipeIngredient.purchaseUnit,
           purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+          preparation: recipeIngredient.preparation,
           needsReview: recipeIngredient.needsReview,
         },
       },

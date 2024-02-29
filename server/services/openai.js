@@ -103,13 +103,12 @@ const textRequest = async (userID, authorization, messageType, messageStrings) =
 
 const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredient, userIngredients) => {
   try {
+    const billRatePer1000Chars = 0.00025;
     const token = await getAccessToken();
     const vertexaiProject = '911585064385';
     const vertexaiLocation = 'us-central1';
     const vertexaiEndpointID = '2044698002500616192';
     const promptText = `You are provided the name of a recipe ingredient. You are also provided an array of user ingredient names. Attempt to find the most closely related match from the user ingredients for the provided recipe ingredient. If no close match is found, return 'null'. RECIPE INGREDIENT:${recipeIngredient}, USER INGREDIENTS:[${userIngredients}]`;
-
-    global.logger.info(`VERTEXAI REQUEST: ${promptText}`)
 
     const requestJson = {
       instances: [
@@ -135,9 +134,13 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
       body: JSON.stringify(requestJson),
     });
     const data = await response.json();
-    global.logger.info(`VERTEXAI RESPONSE: ${data.predictions[0].content}`);
+    // global.logger.info(`RI NAME: ${recipeIngredient} VERTEXAI RESPONSE: ${data.predictions[0].content}. FULL RESPONSE: ${JSON.stringify(data)}`);
+    global.logger.info(`RI NAME: ${recipeIngredient} VERTEXAI RESPONSE: ${data.predictions[0].content}`)
     const matchResult = data.predictions[0].content;
     let resultJSON;
+    const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
+    const cost = (characterCount / 1000) * billRatePer1000Chars;
+    global.logger.info(`CHARACTER COUNT: ${characterCount}, COST: $${cost}`);
     const prepReturn = async () => {
       if (matchResult === 'null') {
         //need to get openai estimate of lifespanDays and purchaseUnit
@@ -163,11 +166,13 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
     await prepReturn();
     return {
       response: resultJSON,
+      cost: cost,
     };
   } catch (error) {
     global.logger.error(`Error matching ingredient: ${error.message}`);
     return {
       reponse: { error: error.message },
+      cost: cost || 0
     };
   }
 };

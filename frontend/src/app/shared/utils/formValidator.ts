@@ -66,3 +66,10 @@ export function isState(): ValidatorFn {
       : { notState: true };
   };
 }
+
+export function lessThan40CharsValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    if (!control.value) return null;
+    return control.value.length < 40 ? null : { moreThan40Chars: true };
+  };
+}

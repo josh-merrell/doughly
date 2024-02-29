@@ -751,7 +751,8 @@ module.exports = ({ db }) => {
 
       // match ingredients with user Ingredients
       sendSSEMessage(userID, { message: `Matching recipe Ingredients with User Ingredients` });
-      let matchedIngredients = await matchIngredients(recipeJSON.ingredients, authorization, userID, userIngredients);
+      let matchedIngredientsResponse = await matchIngredients(recipeJSON.ingredients, authorization, userID, userIngredients);
+      let matchedIngredients = matchedIngredientsResponse.matchedTwiceIngredients;
 
       // **************** ADD UNIT RATIOS TO MATCHED INGREDIENTS ***************
       // add purchaseUnitRatios to ingredients in parrallel
@@ -828,6 +829,12 @@ module.exports = ({ db }) => {
       sendSSEMessage(userID, { message: `Finding Appropriate Category for new Recipe` });
       const matchedCategoryID = await matchCategory(recipeJSON.category, authorization, userID);
 
+      // Uncomment when testing to avoid creating recipe
+      // if (true) {
+      //   global.logger.info(`TESTING ONLY, NOT CREATING RECIPE`);
+      //   return;
+      // }
+
       // prepare constructRecipe body
       const constructBody = {
         title: recipeJSON.title,
@@ -861,6 +868,9 @@ module.exports = ({ db }) => {
       const totalDuration = endTime - visionStartTime;
       // global.logger.info(`Time taken to decipher and construct recipe: ${totalDuration / 1000} seconds`);
       global.logger.info(`*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`);
+      // fix the vertexaiCost to 4 decimals
+      const vertexaiCost = parseFloat(matchedIngredientsResponse.vertexaiCost).toFixed(4);
+      global.logger.info(`vertexAI Cost to match ingredients: ${vertexaiCost}`);
       sendSSEMessage(userID, { message: `done` });
       return recipeID;
     } catch (error) {
@@ -870,14 +880,14 @@ module.exports = ({ db }) => {
   }
 
   async function matchIngredients(ingredients, authorization, userID, userIngredients) {
-    const userIngredientNames = userIngredients.map((i) => {
+    const userIngredientsInfo = userIngredients.map((i) => {
       return { name: i.name, ingredientID: i.ingredientID, purchaseUnit: i.purchaseUnit, needsReview: true };
     });
     const matchedIngredients = [];
 
     // First, search for exact name match
     for (let i = 0; i < ingredients.length; i++) {
-      const primaryMatchResult = await matchIngredientByName(userID, authorization, ingredients[i], userIngredientNames);
+      const primaryMatchResult = await matchIngredientByName(userID, authorization, ingredients[i], userIngredientsInfo);
       matchedIngredients.push(primaryMatchResult);
     }
     global.logger.info(`MATCHED INGREDIENTS AFTER PRIMARY METHOD: ${JSON.stringify(matchedIngredients)}`);
@@ -885,50 +895,52 @@ module.exports = ({ db }) => {
     const matchedTwiceIngredients = [];
     // Fallback to try using AI to find matches
     const promises = [];
+    const userIngredientNames = userIngredients.map((i) => i.name);
     for (let i = 0; i < matchedIngredients.length; i++) {
       // if the matchedIngredient has an ingredientID of 0, we need to try asking AI to match it with an existing userIngredient. Make a promise of each call to the 'matchRecipeItemRequest' function and add to promises array. If the ingredientID is not 0, we already found a match and can skip this item.
       if (matchedIngredients[i].ingredientID === 0) {
         global.logger.info(`MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`);
         promises.push(
-          // matchRecipeItemRequest(userID, authorization, 'findMatchingIngredient', matchedIngredients[i].name, userIngredientNames)
           matchRecipeIngredientRequest(userID, authorization, matchedIngredients[i].name, userIngredientNames)
             .then((data) => {
               const ingredientJSON = data.response;
               if (ingredientJSON.error) {
                 global.logger.error(`Error matching ingredient with AI: ${ingredientJSON.error}`);
-                return { ...matchedIngredients[i], invalid: true };
+                return { ...matchedIngredients[i], invalid: true, cost: data.cost };
               }
               global.logger.info(`AI MATCHED INGREDIENT: ${JSON.stringify(ingredientJSON)}`);
               if (ingredientJSON.foundMatch) {
                 const ingredientID = userIngredients.find((i) => i.name === ingredientJSON.ingredientName);
                 if (!ingredientID) {
                   global.logger.error(`Error matching ingredient with AI: ${ingredientJSON.error}`);
-                  return { ...matchedIngredients[i], invalid: true };
+                  return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                 }
                 return {
                   ...matchedIngredients[i],
                   ingredientID: Number(ingredientID.ingredientID),
                   purchaseUnit: ingredientJSON.purchaseUnit,
+                  cost: data.cost,
                 };
               } else {
                 const validUnits = process.env.MEASUREMENT_UNITS.split(',');
                 if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
                   global.logger.error(`AI provided Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`);
-                  return { ...matchedIngredients[i], invalid: true };
+                  return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                 }
                 if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
                   global.logger.error(`AI provided Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
-                  return { ...matchedIngredients[i], invalid: true };
+                  return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                 }
-
                 return {
                   ...matchedIngredients[i],
                   ingredientID: 0,
                   lifespanDays: ingredientJSON.lifespanDays,
                   purchaseUnit: ingredientJSON.purchaseUnit,
                   needsReview: true,
+                  cost: data.cost,
                 };
               }
+              // add character count to vertexaiCharacters
             })
             .catch((error) => {
               global.logger.error(`Error matching ingredient with AI: ${error.message}`);
@@ -942,8 +954,11 @@ module.exports = ({ db }) => {
     }
 
     const results = await Promise.allSettled(promises);
+    // calculate vertexaiCost
+    let vertexaiCost = 0;
     // Filter successful and valid responses and add to matchedTwiceIngredients
     for (let i = 0; i < results.length; i++) {
+      vertexaiCost += results[i].value?.cost || 0;
       if (results[i].status === 'fulfilled' && results[i].invalid) {
         global.logger.error(`Invalid ingredient: ${JSON.stringify(results[i])}`);
         //don't add invalid ingredients to the matchedTwiceIngredients array
@@ -954,7 +969,7 @@ module.exports = ({ db }) => {
       }
     }
 
-    return matchedTwiceIngredients;
+    return { matchedTwiceIngredients, vertexaiCost };
   }
 
   async function matchIngredientByName(userID, authorization, recipeIngredient, userIngredientNames) {
