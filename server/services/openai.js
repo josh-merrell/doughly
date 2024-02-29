@@ -1,9 +1,17 @@
-/* eslint-disable max-len */
+/* eslint-disable */
 const { OpenAI } = require('openai');
 const { createUserLog } = require('./dbLogger');
 const { errorGen } = require('../middleware/errorHandling');
 const units = process.env.MEASUREMENT_UNITS.split(',');
+let fetch;
 
+(async () => {
+  fetch = (await import('node-fetch')).default;
+})();
+
+const { getAccessToken } = require('./google/google-api');
+
+// create openai Client
 const getClient = async () => {
   const openai = new OpenAI({
     apiKey: `${process.env.OPENAI_API_KEY}`,
@@ -39,7 +47,52 @@ const visionRequest = async (recipeImageURL, userID, authorization, messageType)
     throw errorGen('Content Omitted due to filter being flagged', 400);
   }
 
-  // console.log(`RAW RECIPEJSON: ${chatCompletionObject.choices[0].message.content}`);
+  // global.logger.info(`RAW RECIPEJSON: ${chatCompletionObject.choices[0].message.content}`);
+  //Clean up the response JSON
+  let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');
+  responseJSON = responseJSON.trim().replace(/^`{3}|`{3}$/g, '');
+  return {
+    response: responseJSON,
+  };
+};
+const textRequest = async (userID, authorization, messageType, messageStrings) => {
+  const client = await getClient();
+  const body = {
+    messages: [requestMessages[messageType].message],
+    temperature: 0.2,
+    user: userID,
+    model: 'gpt-3.5-turbo',
+    max_tokens: 1500,
+    response_format: {
+      type: requestMessages[messageType].response_format,
+    },
+  };
+  // for each message string object, add it to the request joining the 'string.preamble' and 'string.value' properties
+  messageStrings.forEach((messageString) => {
+    body.messages.push({
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: `${messageString.preamble}: ${messageString.value}`,
+        },
+      ],
+    });
+  });
+  const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
+    throw errorGen(`OpenAI request failed: ${err.message}`, 500);
+  });
+
+  //log token usage
+  createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to ${messageType}`);
+
+  //Check for unsuccessful completions
+  if (chatCompletionObject.choices[0].finish_reason === 'length') {
+    throw errorGen('OpenAI request or response too long. Consider increasing "max_tokens" request property', 400);
+  }
+  if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
+    throw errorGen('Content Omitted due to filter being flagged', 400);
+  }
   //Clean up the response JSON
   let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');
   responseJSON = responseJSON.trim().replace(/^`{3}|`{3}$/g, '');
@@ -48,14 +101,85 @@ const visionRequest = async (recipeImageURL, userID, authorization, messageType)
   };
 };
 
+const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredient, userIngredients) => {
+  try {
+    const token = await getAccessToken();
+    const vertexaiProject = '911585064385';
+    const vertexaiLocation = 'us-central1';
+    const vertexaiEndpointID = '2044698002500616192';
+    const promptText = `You are provided the name of a recipe ingredient. You are also provided an array of user ingredient names. Attempt to find the most closely related match from the user ingredients for the provided recipe ingredient. If no close match is found, return 'null'. RECIPE INGREDIENT:${recipeIngredient}, USER INGREDIENTS:[${userIngredients}]`;
+
+    global.logger.info(`VERTEXAI REQUEST: ${promptText}`)
+
+    const requestJson = {
+      instances: [
+        {
+          content: promptText,
+        },
+      ],
+      parameters: {
+        candidateCount: 1,
+        maxOutputTokens: 1024,
+        temperature: 0.2,
+        topP: 0.8,
+        topK: 40,
+      },
+    };
+    const API_ENDPOINT = `${vertexaiLocation}-aiplatform.googleapis.com`;
+    const response = await fetch(`https://${API_ENDPOINT}/v1/projects/${vertexaiProject}/locations/${vertexaiLocation}/endpoints/${vertexaiEndpointID}:predict`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestJson),
+    });
+    const data = await response.json();
+    global.logger.info(`VERTEXAI RESPONSE: ${data.predictions[0].content}`);
+    const matchResult = data.predictions[0].content;
+    let resultJSON;
+    const prepReturn = async () => {
+      if (matchResult === 'null') {
+        //need to get openai estimate of lifespanDays and purchaseUnit
+        const lifespanDaysAndPurchaseUnitresponse = await textRequest(userID, authorization, 'estimateDaysAndPurchaseUnit', [{ preamble: 'INGREDIENT: ', value: recipeIngredient }]);
+        global.logger.info(`Lifespan and purchase unit estimate: ${lifespanDaysAndPurchaseUnitresponse.response}`);
+        resultJSON = JSON.parse(lifespanDaysAndPurchaseUnitresponse.response);
+        if (!units.includes(resultJSON.purchaseUnit)) {
+          resultJSON.purchaseUnit = 'weightOunce';
+        }
+        resultJSON['foundMatch'] = false;
+      } else {
+        //need to get openai estimate of purchaseUnit
+        const purchaseUnitresponse = await textRequest(userID, authorization, 'estimatePurchaseUnit', [{ preamble: 'INGREDIENT: ', value: recipeIngredient }]);
+        global.logger.info(`Purchase unit estimate: ${purchaseUnitresponse.response}`);
+        resultJSON = JSON.parse(purchaseUnitresponse.response);
+        if (!units.includes(resultJSON.purchaseUnit)) {
+          resultJSON.purchaseUnit = 'weightOunce';
+        }
+        resultJSON['ingredientName'] = matchResult;
+        resultJSON['foundMatch'] = true;
+      }
+    };
+    await prepReturn();
+    return {
+      response: resultJSON,
+    };
+  } catch (error) {
+    global.logger.error(`Error matching ingredient: ${error.message}`);
+    return {
+      reponse: { error: error.message },
+    };
+  }
+};
+
 const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, userItems) => {
-  console.log(`MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`);
+  global.logger.info(`MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`);
   const client = await getClient();
   const body = {
     messages: [requestMessages[type].message],
     temperature: 0.2,
     user: userID,
-    model: 'gpt-4-turbo-preview',
+    model: 'gpt-4-0125-preview',
     max_tokens: 1500,
     response_format: {
       type: requestMessages[type].response_format,
@@ -215,6 +339,47 @@ Do not include any other properties in the JSON object response. If an optional 
     },
     response_format: 'json_object',
   },
+  estimatePurchaseUnit: {
+    message: {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: `You are provided an ingredient name. Return the following json:
+          'purchaseUnit' <string>: (required) choose the unit from the provded list that most closely matches how the ingredient might be purchased. The selection should be relavent to the ingredient. For example, 'flour' might be purchased in 'pounds', while 'milk' might be purchased in 'gallons'. Value MUST be one of these UNITS: ${units},
+
+          Return body must resemble following example:
+          **{
+            "purchaseUnit": "pound",
+          }**`,
+        },
+      ],
+    },
+    response_format: 'json_object',
+  },
+  estimateDaysAndPurchaseUnit: {
+    message: {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: `You are provided an ingredient name. Return the following json:
+          'lifespanDays' <number>: (required) estimate of number of days ingredient will stay usable if stored properly. Minimum is 1.,
+          'purchaseUnit' <string>: (required) choose the unit from the provided list that most closely matches how the ingredient might be purchased. The selection should be relavent to the ingredient. For example, 'flour' might be purchased in 'pounds', while 'milk' might be purchased in 'gallons'. Value MUST be one of these UNITS: ${units},
+
+          Return body must resemble following example:
+          **
+          {
+            "lifespanDays": 7,
+            "purchaseUnit": "pound",
+          }
+          **
+          `,
+        },
+      ],
+    },
+    response_format: 'json_object',
+  },
   findMatchingTool: {
     message: {
       role: 'user',
@@ -260,4 +425,5 @@ module.exports = {
   visionRequest,
   matchRecipeItemRequest,
   getUnitRatioAI,
+  matchRecipeIngredientRequest,
 };
