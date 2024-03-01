@@ -34,6 +34,11 @@ import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { FractionService } from 'src/app/shared/utils/fractionService';
 
+interface displayIngredientsByComponent {
+  noComponent: any[];
+  components: { [componentName: string]: any[] };
+}
+
 @Component({
   selector: 'dl-public-recipe',
   standalone: true,
@@ -70,17 +75,19 @@ export class PublicRecipeComponent {
       newIngredients.push({
         ...ingredient,
         purchaseUnitRatio: ri.purchaseUnitRatio,
+        component: ri.component,
+        preparation: ri.preparation,
         measurement: ri.measurement,
         measurementUnit: ri.measurementUnit,
       });
     }
     return newIngredients;
   });
-  displayIngredients = computed(() => {
+  displayIngredientsByComponent: Signal<displayIngredientsByComponent> = computed(() => {
     const enhancedIngredients = this.enhancedIngredients();
     if (!enhancedIngredients) return [];
 
-    return enhancedIngredients.map((i) => {
+    const mappedIngredients = enhancedIngredients.map((i) => {
       if (!i) return null;
 
       // Convert the measurement to a fraction
@@ -109,11 +116,39 @@ export class PublicRecipeComponent {
             : i.measurementUnit,
       };
     });
+
+    mappedIngredients.sort((a, b) => a.name.localeCompare(b.name));
+    /**
+    displayIngredientsByComponent: {
+      noComponent: [mappedIngredients],
+      components: {
+        sauce: [mappedSauceIngredients],
+        filling: [mappedFillingIngredients],
+      }
+    }
+    **/
+    const displayIngredientsByComponent: any = {
+      noComponent: [],
+      components: {},
+    };
+    for (let i = 0; i < mappedIngredients.length; i++) {
+      const ing = mappedIngredients[i];
+      if (ing.component) {
+        if (!displayIngredientsByComponent.components[ing.component]) {
+          displayIngredientsByComponent.components[ing.component] = [];
+        }
+        displayIngredientsByComponent.components[ing.component].push(ing);
+      } else {
+        displayIngredientsByComponent.noComponent.push(ing);
+      }
+    };
+    console.log(`DISPLAY RI BY COMPONENT: `, displayIngredientsByComponent)
+    return displayIngredientsByComponent;
   });
   ready = computed(() => {
     if (
       this.recipe() &&
-      this.displayIngredients() &&
+      this.displayIngredientsByComponent() &&
       this.steps() &&
       this.tools()
     )
