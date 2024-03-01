@@ -38,7 +38,11 @@ import {
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddIngredientModalComponent } from 'src/app/kitchen/feature/ingredients/ui/add-ingredient-modal/add-ingredient-modal.component';
-import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
+import {
+  positiveFloatValidator,
+  lessThan40CharsValidator,
+  lessThan15CharsValidator,
+} from 'src/app/shared/utils/formValidator';
 import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
@@ -109,7 +113,9 @@ export class AddRecipeIngredientModalComponent {
     const initialIngredientID = '';
     const initialMeasurementUnit = '';
     this.form = this.fb.group({
+      component: ['', [lessThan15CharsValidator()]],
       ingredientID: [initialIngredientID, Validators.required],
+      preparation: ['', [lessThan40CharsValidator()]],
       measurement: [
         { value: '', disabled: !initialIngredientID },
         [Validators.required, positiveFloatValidator()],

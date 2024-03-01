@@ -244,8 +244,12 @@ export class RecipeIngredientsModalComponent {
         });
 
         const dialogRef = this.dialog.open(AddRecipeIngredientModalComponent, {
+          // data: {
+          //   ingredientsToExclude,
+          // },
+          // not restricting users from adding ingredient to recipe more than once
           data: {
-            ingredientsToExclude,
+            ingredientsToExclude: [],
           },
           width: '75%',
         });
@@ -270,6 +274,8 @@ export class RecipeIngredientsModalComponent {
                   measurementUnit: result.measurementUnit,
                   purchaseUnitRatio: result.purchaseUnitRatio,
                   name: ingredientName,
+                  preparation: result.preparation,
+                  component: result.component,
                   needsReview: false,
                   toAdd: true,
                 };
@@ -295,6 +301,8 @@ export class RecipeIngredientsModalComponent {
           measurementUnit: recipeIngredient.measurementUnit,
           purchaseUnit: recipeIngredient.purchaseUnit,
           purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+          preparation: recipeIngredient.preparation,
+          component: recipeIngredient.component,
           needsReview: recipeIngredient.needsReview,
         },
       },

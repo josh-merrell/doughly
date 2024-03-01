@@ -13,7 +13,15 @@ import {
 } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
-import { combineLatest, debounceTime, distinctUntilChanged, filter, switchMap, take, tap } from 'rxjs';
+import {
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import {
   FormBuilder,
   FormGroup,
@@ -23,7 +31,11 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
+import {
+  positiveFloatValidator,
+  lessThan40CharsValidator,
+  lessThan15CharsValidator,
+} from 'src/app/shared/utils/formValidator';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
@@ -66,11 +78,18 @@ export class EditRecipeIngredientModalComponent {
     private fb: FormBuilder,
     public dialog: MatDialog,
     private unitService: UnitService
-  ) {}
+  ) {
+    effect(() => {
+      const recipeIngredient = this.recipeIngredient();
+      console.log(`RI: `, recipeIngredient);
+    });
+  }
 
   ngOnInit() {
     // if value is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
-    this.pUnit = this.enrichMeasurementUnit(this.data.recipeIngredient.purchaseUnit);
+    this.pUnit = this.enrichMeasurementUnit(
+      this.data.recipeIngredient.purchaseUnit
+    );
     this.recipeIngredient = signal(this.data.recipeIngredient);
     this.setForm();
     this.store
@@ -79,6 +98,8 @@ export class EditRecipeIngredientModalComponent {
         this.recipe = signal(recipe);
       });
     this.form.patchValue({
+      component: this.data.recipeIngredient.component,
+      preparation: this.data.recipeIngredient.preparation,
       measurement: this.data.recipeIngredient.measurement,
       measurementUnit: this.enrichMeasurementUnit(
         this.data.recipeIngredient.measurementUnit
@@ -90,6 +111,8 @@ export class EditRecipeIngredientModalComponent {
 
   setForm() {
     this.form = this.fb.group({
+      component: ['', [lessThan15CharsValidator()]],
+      preparation: ['', [lessThan40CharsValidator()]],
       measurement: ['', [Validators.required, positiveFloatValidator()]],
       measurementUnit: ['', [Validators.required]],
       purchaseUnitRatio: ['', [Validators.required, positiveFloatValidator()]],
@@ -105,18 +128,12 @@ export class EditRecipeIngredientModalComponent {
     const measurementUnitControl = this.form.get('measurementUnit');
 
     if (measurementUnitControl) {
-      combineLatest([
-        measurementUnitControl.valueChanges,
-      ])
+      combineLatest([measurementUnitControl.valueChanges])
         .pipe(
           debounceTime(300),
           distinctUntilChanged(),
-          filter(
-            ([measurementUnit]) =>
-              measurementUnit.length > 0
-          ),
+          filter(([measurementUnit]) => measurementUnit.length > 0),
           switchMap(([measurementUnit]) => {
-
             this.form.get('purchaseUnitRatio')?.setValue(null);
             this.gettingUnitRatio.set(true);
             this.purchaseUnitRatioSuggestion.set(0);
@@ -163,7 +180,12 @@ export class EditRecipeIngredientModalComponent {
   }
 
   singularUnit(unit) {
-    if (unit == 'boxes' || unit == 'bunches' || unit == 'pinches' || unit == 'dashes') {
+    if (
+      unit == 'boxes' ||
+      unit == 'bunches' ||
+      unit == 'pinches' ||
+      unit == 'dashes'
+    ) {
       return unit.slice(0, -2);
     }
     return unit.slice(0, -1);
@@ -178,7 +200,10 @@ export class EditRecipeIngredientModalComponent {
     const formValues = this.form.value;
 
     // if gramRatio is user provided, send it to the server for storage as a draft unit ratio in case it doesn't exist
-    if (this.form.get('purchaseUnitRatio')?.value !== this.purchaseUnitRatioSuggestion()) {
+    if (
+      this.form.get('purchaseUnitRatio')?.value !==
+      this.purchaseUnitRatioSuggestion()
+    ) {
       this.unitService
         .addUnitRatio(
           this.data.name,
