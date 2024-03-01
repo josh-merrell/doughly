@@ -41,6 +41,7 @@ import { AddIngredientModalComponent } from 'src/app/kitchen/feature/ingredients
 import {
   positiveFloatValidator,
   lessThan40CharsValidator,
+  lessThan15CharsValidator,
 } from 'src/app/shared/utils/formValidator';
 import { UnitService } from 'src/app/shared/utils/unitService';
 
@@ -112,6 +113,7 @@ export class AddRecipeIngredientModalComponent {
     const initialIngredientID = '';
     const initialMeasurementUnit = '';
     this.form = this.fb.group({
+      component: ['', [lessThan15CharsValidator()]],
       ingredientID: [initialIngredientID, Validators.required],
       preparation: ['', [lessThan40CharsValidator()]],
       measurement: [

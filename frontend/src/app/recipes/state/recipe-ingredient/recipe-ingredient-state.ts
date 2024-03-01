@@ -15,6 +15,7 @@ export interface RecipeIngredient {
   measurementUnit: string;
   purchaseUnitRatio: number;
   preparation?: string;
+  component?: string;
   needsReview: boolean;
 }
 

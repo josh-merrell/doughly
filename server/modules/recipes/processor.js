@@ -184,6 +184,7 @@ module.exports = ({ db }) => {
           measurement: ingredient.measurement,
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
           preparation: ingredient.preparation,
+          component: ingredient.component,
           needsReview: ingredient.needsReview,
         })}`,
       );
@@ -199,6 +200,7 @@ module.exports = ({ db }) => {
           measurement: ingredient.measurement,
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
           preparation: ingredient.preparation,
+          component: ingredient.component,
           needsReview: ingredient.needsReview,
         },
         { headers: { authorization } },
@@ -1008,6 +1010,9 @@ module.exports = ({ db }) => {
         if (recipeIngredient.preparation) {
           result.preparation = recipeIngredient.preparation;
         }
+        if (recipeIngredient.component) {
+          result.component = recipeIngredient.component;
+        }
 
         return result;
       } catch (error) {
@@ -1027,6 +1032,7 @@ module.exports = ({ db }) => {
       gramRatio: recipeIngredient.gramRatio,
       purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
       preparation: recipeIngredient.preparation,
+      component: recipeIngredient.component,
     };
   }
 

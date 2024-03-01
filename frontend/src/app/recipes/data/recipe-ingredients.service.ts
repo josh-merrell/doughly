@@ -34,6 +34,7 @@ export class RecipeIngredientService {
             measurementUnit: recipeIngredient.measurementUnit,
             purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
             preparation: recipeIngredient.preparation,
+            component: recipeIngredient.component,
             needsReview: recipeIngredient.needsReview,
           };
         });
@@ -62,6 +63,7 @@ export class RecipeIngredientService {
       measurement: recipeIngredient.measurement,
       measurementUnit: recipeIngredient.measurementUnit,
       preparation: recipeIngredient.preparation,
+      component: recipeIngredient.component,
       purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
     };
     return this.http.post<RecipeIngredient>(this.API_URL, body);

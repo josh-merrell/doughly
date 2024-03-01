@@ -27,7 +27,7 @@ async function getRecipeIngredientByID(req, res) {
 async function createRecipeIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const { recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation, needsReview } = req.body;
+  const { recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation, needsReview, component } = req.body;
   const { authorization } = req.headers;
   let userID;
   if (req.body.userID) {
@@ -47,6 +47,7 @@ async function createRecipeIngredient(req, res) {
       measurement,
       purchaseUnitRatio,
       preparation,
+      component,
       needsReview,
     });
     return res.json(returner);
@@ -60,7 +61,7 @@ async function updateRecipeIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeIngredientID } = req.params;
-  const { measurementUnit, measurement, purchaseUnitRatio, preparation } = req.body;
+  const { measurementUnit, measurement, purchaseUnitRatio, preparation, component } = req.body;
   const { authorization } = req.headers;
   try {
     const returner = await p.update({
@@ -71,6 +72,7 @@ async function updateRecipeIngredient(req, res) {
       measurement,
       purchaseUnitRatio,
       preparation,
+      component,
     });
     return res.json(returner);
   } catch (e) {
@@ -99,7 +101,7 @@ async function getPurEst(req, res) {
   const { ingredientName, measurementUnit, purchaseUnit } = req.body;
   const { authorization } = req.headers;
   try {
-    const returner = await p.get.purEst({ userID: req.userID, authorization, ingredientName, measurementUnit, purchaseUnit});
+    const returner = await p.get.purEst({ userID: req.userID, authorization, ingredientName, measurementUnit, purchaseUnit });
     return res.json(returner);
   } catch (e) {
     global.logger.error(`'ingredients' 'getPurEst': ${e.message}`);

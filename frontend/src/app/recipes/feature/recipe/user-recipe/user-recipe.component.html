@@ -532,7 +532,10 @@
     </div>
 
     <!-- Ingredients -->
-    <div class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md">
+    <div
+      *ngIf="displayIngredientsByComponent()"
+      class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md"
+    >
       <div class="flex items-center justify-between">
         <p class="mb-dl-3 pl-dl-3 pt-dl-1 text-dl-7 font-dl-3 text-dl-grey-2">
           Ingredients
@@ -540,7 +543,7 @@
         <div class="flex items-center">
           <button
             *ngIf="ingredientsNeedReview() || recipeIngredientsNeedReview()"
-            class="block h-dl-4 w-dl-7 text-centerpl-dl-5 mr-dl-3 min-w-dl-9 rounded-dl-1 border border-dl-yellow-4 px-dl-1 py-dl-1 text-dl-5 font-dl-3 text-dl-yellow-2"
+            class="text-centerpl-dl-5 mr-dl-3 block h-dl-4 w-dl-7 min-w-dl-9 rounded-dl-1 border border-dl-yellow-4 px-dl-1 py-dl-1 text-dl-5 font-dl-3 text-dl-yellow-2"
             (click)="reviewIngredients()"
           >
             Needs Review
@@ -556,8 +559,10 @@
           </button>
         </div>
       </div>
+
+      <!-- Base Ingredients (no assigned component) -->
       <div
-        *ngFor="let ingredient of displayIngredients()"
+        *ngFor="let ingredient of displayIngredientsByComponent().noComponent"
         class="mt-dl-2 flex w-full justify-between"
       >
         <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
@@ -565,16 +570,65 @@
           <span
             *ngIf="ingredient.preparation"
             class="pl-dl-3 text-dl-5 font-dl-2 italic text-dl-grey-2"
-            >{{ ingredient.preparation }}</span
           >
+            {{ ingredient.preparation }}
+          </span>
         </span>
         <div class="flex justify-end">
           <span class="mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
             {{ ingredient.measurement }}
           </span>
           <span class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2">
-            {{ingredient.measurementUnit === 'weightOunces' ? 'oz' : ingredient.measurementUnit}}
+            {{
+              ingredient.measurementUnit === "weightOunces"
+                ? "oz"
+                : ingredient.measurementUnit
+            }}
           </span>
+        </div>
+      </div>
+
+      <!-- Ingredients for recipe components (ex: filling, sauce) -->
+      <div
+        *ngFor="
+          let component of displayIngredientsByComponent().components | keyvalue
+        "
+        class="relative mt-dl-7"
+      >
+        <div>
+          <!-- Italic Label with component name -->
+          <span
+            class="absolute left-1/2 -translate-x-1/2 -top-4 text-dl-6 font-dl-3 italic text-dl-grey-5"
+            >for {{ component.key }}</span
+          >
+
+          <!-- Ingredients for component (display them same as in no-component) -->
+          <div
+            *ngFor="let ingredient of component.value"
+            class="mt-dl-2 flex w-full justify-between"
+          >
+            <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
+              {{ ingredient.name }}
+              <span
+                *ngIf="ingredient.preparation"
+                class="pl-dl-3 text-dl-5 font-dl-2 italic text-dl-grey-2"
+              >
+                {{ ingredient.preparation }}
+              </span>
+            </span>
+            <div class="flex justify-end">
+              <span class="mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
+                {{ ingredient.measurement }}
+              </span>
+              <span class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2">
+                {{
+                  ingredient.measurementUnit === "weightOunces"
+                    ? "oz"
+                    : ingredient.measurementUnit
+                }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -598,7 +652,10 @@
           Edit
         </button>
       </div>
-      <div *ngFor="let tool of displayTools()" class="mt-dl-2 flex w-full justify-between">
+      <div
+        *ngFor="let tool of displayTools()"
+        class="mt-dl-2 flex w-full justify-between"
+      >
         <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
           {{ tool.name }}
         </span>
@@ -645,9 +702,7 @@
       >
         <div class="mb-dl-2 flex w-full items-start">
           <!-- Step number with consistent width and padding -->
-          <div
-            class="pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-3"
-          >
+          <div class="pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-3">
             {{ i + 1 }})
           </div>
           <!-- Title taking the remaining width -->

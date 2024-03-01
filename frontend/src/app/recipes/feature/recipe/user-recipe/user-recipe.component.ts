@@ -58,6 +58,11 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
 }
 
+interface displayIngredientsByComponent {
+  noComponent: any[];
+  components: { [componentName: string]: any[]};
+}
+
 @Component({
   selector: 'dl-user-recipe',
   standalone: true,
@@ -82,7 +87,8 @@ export class UserRecipeComponent {
   recipeTools: WritableSignal<any[]> = signal([]);
   recipeSteps: WritableSignal<any[]> = signal([]);
   shoppingList = signal<ShoppingList | null>(null);
-  displayIngredients: WritableSignal<any[]> = signal([]);
+  displayIngredientsByComponent: WritableSignal<displayIngredientsByComponent> =
+    signal({ noComponent: [], components: {} });
   displayTools: WritableSignal<any[]> = signal([]);
   displaySteps: WritableSignal<any[]> = signal([]);
   public subscriptions: WritableSignal<any[]> = signal([]);
@@ -218,7 +224,7 @@ export class UserRecipeComponent {
       () => {
         const recipeIngredients = this.recipeIngredients();
         const ingredients = this.ingredients();
-        this.displayIngredients.set(
+        this.displayIngredientsByComponent.set(
           this.mapRecipeIngredients(recipeIngredients, ingredients)
         );
       },
@@ -459,9 +465,39 @@ export class UserRecipeComponent {
             : recipeIngredient.measurementUnit,
       };
     });
-    return mappedIngredients.sort((a: any, b: any) =>
-      a.name.localeCompare(b.name)
-    );
+    mappedIngredients.sort((a: any, b: any) => a.name.localeCompare(b.name));
+    /**
+    displayIngredientsByComponent: {
+      noComponent: [mappedIngredients],
+      components: {
+        sauce: [mappedSauceIngredients],
+        filling: [mappedFillingIngredients],
+      }
+    }
+    **/
+    const displayIngredientsByComponent: any = {
+      noComponent: [],
+      components: {},
+    };
+    for (let i = 0; i < mappedIngredients.length; i++) {
+      if (mappedIngredients[i].component) {
+        if (
+          !displayIngredientsByComponent.components[
+            mappedIngredients[i].component
+          ]
+        ) {
+          displayIngredientsByComponent.components[
+            mappedIngredients[i].component
+          ] = [];
+        }
+        displayIngredientsByComponent.components[
+          mappedIngredients[i].component
+        ].push(mappedIngredients[i]);
+      } else {
+        displayIngredientsByComponent.noComponent.push(mappedIngredients[i]);
+      }
+    }
+    return displayIngredientsByComponent;
   }
   private mapRecipeTools(recipeTools: any, tools: any) {
     if (!recipeTools.length || !tools.length) return [];

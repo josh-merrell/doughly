@@ -5,7 +5,6 @@ const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 const { errorGen } = require('../../../middleware/errorHandling');
 const { getUnitRatio } = require('../../../services/openai');
 
-
 module.exports = ({ db }) => {
   async function getAll(options) {
     const { userID, recipeIngredientIDs, recipeID, ingredientID } = options;
@@ -43,8 +42,8 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation, needsReview=false } = options;
-    global.logger.info(`CREATING RECIPE INGREDIENT, PREPARATION: ${preparation}`)
+    const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation, component, needsReview = false } = options;
+    global.logger.info(`CREATING RECIPE INGREDIENT, PREPARATION: ${preparation}`);
 
     //verify that 'customID' exists on the request
     if (!customID) {
@@ -87,7 +86,7 @@ module.exports = ({ db }) => {
     }
 
     //create the recipeIngredient
-    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, version: 1, preparation, needsReview }).select().single();
+    const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, version: 1, preparation, component, needsReview }).select().single();
 
     if (error3) {
       global.logger.error(`Error creating recipeIngredient: ${error3.message}`);
@@ -122,7 +121,8 @@ module.exports = ({ db }) => {
       measurement: recipeIngredient.measurement,
       purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
       preparation,
-      needsReview
+      component,
+      needsReview,
     };
   }
 
@@ -225,7 +225,7 @@ module.exports = ({ db }) => {
 
   async function getPurEst(options) {
     const { userID, authorization, ingredientName, measurementUnit, purchaseUnit } = options;
-    global.logger.info(`GETTING PURCHASE UNIT RATIO ESTIMATE FOR ${ingredientName} ${measurementUnit} and ${purchaseUnit}`)
+    global.logger.info(`GETTING PURCHASE UNIT RATIO ESTIMATE FOR ${ingredientName} ${measurementUnit} and ${purchaseUnit}`);
 
     const data = await getUnitRatio(userID, authorization, ingredientName, measurementUnit, purchaseUnit);
     const parsedData = JSON.parse(data.response);

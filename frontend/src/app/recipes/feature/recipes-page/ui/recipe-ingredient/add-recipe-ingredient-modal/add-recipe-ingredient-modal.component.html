@@ -47,6 +47,26 @@
 
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
+        <!-- Component -->
+        <div id="form-component" class="relative flex flex-col">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+            >Recipe Component (opt)</label
+          >
+          <mat-form-field class="w-full">
+            <input
+              matInput
+              formControlName="component"
+              placeholder="ex: filling"
+            />
+            <mat-error
+              class="text-dl-5"
+              *ngIf="form.get('component')?.hasError('moreThan15Chars')"
+            >
+              Must be less than 15 characters
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <!-- Name -->
         <div id="form-ingredientName" class="relative flex flex-col">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Ingredient</label>
           <mat-form-field class="text-dl-4">
@@ -120,7 +140,7 @@
         </div>
         <div id="form-purchaseUnitRatio" class="relative flex flex-col">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4"
-            >{{pUnit}} per {{mUnit}}</label
+            >{{ pUnit }} per {{ mUnit }}</label
           >
           <mat-form-field class="w-full text-dl-4">
             <input

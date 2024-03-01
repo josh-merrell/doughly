@@ -34,6 +34,7 @@ import { MatInputModule } from '@angular/material/input';
 import {
   positiveFloatValidator,
   lessThan40CharsValidator,
+  lessThan15CharsValidator,
 } from 'src/app/shared/utils/formValidator';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
@@ -97,6 +98,7 @@ export class EditRecipeIngredientModalComponent {
         this.recipe = signal(recipe);
       });
     this.form.patchValue({
+      component: this.data.recipeIngredient.component,
       preparation: this.data.recipeIngredient.preparation,
       measurement: this.data.recipeIngredient.measurement,
       measurementUnit: this.enrichMeasurementUnit(
@@ -109,6 +111,7 @@ export class EditRecipeIngredientModalComponent {
 
   setForm() {
     this.form = this.fb.group({
+      component: ['', [lessThan15CharsValidator()]],
       preparation: ['', [lessThan40CharsValidator()]],
       measurement: ['', [Validators.required, positiveFloatValidator()]],
       measurementUnit: ['', [Validators.required]],
