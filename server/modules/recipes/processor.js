@@ -757,6 +757,7 @@ module.exports = ({ db }) => {
       let matchedIngredients = matchedIngredientsResponse.matchedTwiceIngredients;
 
       // **************** ADD UNIT RATIOS TO MATCHED INGREDIENTS ***************
+      let unitRatioCost = 0;
       // add purchaseUnitRatios to ingredients in parrallel
       const ingredientPurchaseUnitRatioPromises = [];
       global.logger.info(`ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`);
@@ -774,6 +775,9 @@ module.exports = ({ db }) => {
           const purchaseUnitRatioPromise = getUnitRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, matchedIngredients[i].measurementUnit, authorization, userID);
           ingredientPurchaseUnitRatioPromises.push(
             purchaseUnitRatioPromise.then((result) => {
+              if (result.cost) {
+                unitRatioCost += result.cost;
+              }
               global.logger.info(`GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`);
               matchedIngredients[i].purchaseUnitRatio = result.ratio;
               matchedIngredients[i].needsReview = result.needsReview;
@@ -800,6 +804,9 @@ module.exports = ({ db }) => {
           const gramRatioPromise = getUnitRatio(matchedIngredients[i].name, 'gram', matchedIngredients[i].purchaseUnit, authorization, userID);
           ingredientGramRatioPromises.push(
             gramRatioPromise.then((result) => {
+              if (result.cost) {
+                unitRatioCost += result.cost;
+              }
               matchedIngredients[i].gramRatio = result.ratio;
               matchedIngredients[i].needsReview = result.needsReview;
             }),
@@ -872,7 +879,9 @@ module.exports = ({ db }) => {
       global.logger.info(`*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`);
       // fix the vertexaiCost to 4 decimals
       const vertexaiCost = parseFloat(matchedIngredientsResponse.vertexaiCost).toFixed(4);
-      global.logger.info(`vertexAI Cost to match ingredients: ${vertexaiCost}`);
+      global.logger.info(`vertexAI Cost (all ingr) to find match and get PU/LD: ${vertexaiCost}`);
+      const vertexaiUnitConversionCost = parseFloat(unitRatioCost).toFixed(4);
+      global.logger.info(`vertexAI Cost (all unit conversion): ${vertexaiUnitConversionCost}`);
       sendSSEMessage(userID, { message: `done` });
       return recipeID;
     } catch (error) {

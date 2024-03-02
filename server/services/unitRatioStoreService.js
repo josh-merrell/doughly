@@ -193,12 +193,12 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   global.logger.info(`'getUnitRatio' No store ratio found for ${material}-${unitA}-${unitB}, asking AI`);
   // try asking AI for estimate
   const data = await getUnitRatioAI(userID, authorization, material, unitA, unitB);
-  const aiEstimate = JSON.parse(data.response);
+  const aiEstimate = Number(JSON.parse(data.response));
   global.logger.info(`'getUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate}.`);
   if (aiEstimate) {
     // submit this returned ratio as a draft to the store
     addUnitRatio(material, unitA, unitB, aiEstimate);
-    return { ratio: aiEstimate, needsReview: true };
+    return { ratio: aiEstimate, needsReview: true, cost: data.cost };
   }
   // otherwise, just return default of "1"
   return { ratio: 1, needsReview: true };

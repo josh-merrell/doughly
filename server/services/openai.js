@@ -55,50 +55,109 @@ const visionRequest = async (recipeImageURL, userID, authorization, messageType)
     response: responseJSON,
   };
 };
-const textRequest = async (userID, authorization, messageType, messageStrings) => {
-  const client = await getClient();
-  const body = {
-    messages: [requestMessages[messageType].message],
-    temperature: 0.2,
-    user: userID,
-    model: 'gpt-3.5-turbo',
-    max_tokens: 1500,
-    response_format: {
-      type: requestMessages[messageType].response_format,
-    },
-  };
-  // for each message string object, add it to the request joining the 'string.preamble' and 'string.value' properties
-  messageStrings.forEach((messageString) => {
-    body.messages.push({
-      role: 'user',
-      content: [
+// const textRequest = async (userID, authorization, messageType, messageStrings) => {
+//   const client = await getClient();
+//   const body = {
+//     messages: [requestMessages[messageType].message],
+//     temperature: 0.2,
+//     user: userID,
+//     model: 'gpt-3.5-turbo',
+//     max_tokens: 1500,
+//     response_format: {
+//       type: requestMessages[messageType].response_format,
+//     },
+//   };
+//   // for each message string object, add it to the request joining the 'string.preamble' and 'string.value' properties
+//   messageStrings.forEach((messageString) => {
+//     body.messages.push({
+//       role: 'user',
+//       content: [
+//         {
+//           type: 'text',
+//           text: `${messageString.preamble}: ${messageString.value}`,
+//         },
+//       ],
+//     });
+//   });
+//   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
+//     throw errorGen(`OpenAI request failed: ${err.message}`, 500);
+//   });
+
+//   //log token usage
+//   createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to ${messageType}`);
+
+//   //Check for unsuccessful completions
+//   if (chatCompletionObject.choices[0].finish_reason === 'length') {
+//     throw errorGen('OpenAI request or response too long. Consider increasing "max_tokens" request property', 400);
+//   }
+//   if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
+//     throw errorGen('Content Omitted due to filter being flagged', 400);
+//   }
+//   //Clean up the response JSON
+//   let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');
+//   responseJSON = responseJSON.trim().replace(/^`{3}|`{3}$/g, '');
+//   return {
+//     response: responseJSON,
+//   };
+// };
+
+getPurchaseUnitLifespanDaysEstimate = async (ingredient) => {
+  // uses the vertexai tuned model 'purchaseUnit-lifespanDays_selection' to estimate the purchase unit and lifespan days of an ingredient
+  try {
+    const billRatePer1000Chars = 0.00025;
+    const token = await getAccessToken();
+    const vertexaiProject = '911585064385';
+    const vertexaiLocation = 'us-central1';
+    const vertexaiEndpointID = '8420950649927106560';
+    const promptText = `You are provided the name of a ingredient. You are also provided an array measurement units. Return two strings separated by a comma. The first should be a purchaseUnit appropriate for the ingredient and must be selected from the provided array of units. It should reflect the way in which this ingredient is purchased. When possible, this should be a specific unit, like 'weightOunce' or 'fluidOunce'. The second string should be a number estimate of how many days the ingredient will remain usable or fresh, assuming it is stored properly (this might involve refrigeration or freezing). For example, for the ingredient 'tomato', the return value might be 'weightOunce,12'. INGREDIENT:${ingredient}, UNITS: [${units}]`;
+    global.logger.info(`GETTING PU/LD VERTEXAI REQUEST: ${promptText}`);
+
+    const requestJson = {
+      instances: [
         {
-          type: 'text',
-          text: `${messageString.preamble}: ${messageString.value}`,
+          content: promptText,
         },
       ],
+      parameters: {
+        candidateCount: 1,
+        maxOutputTokens: 1024,
+        temperature: 0.2,
+        topP: 0.8,
+        topK: 40,
+      },
+    };
+    const API_ENDPOINT = `${vertexaiLocation}-aiplatform.googleapis.com`;
+    const response = await fetch(`https://${API_ENDPOINT}/v1/projects/${vertexaiProject}/locations/${vertexaiLocation}/endpoints/${vertexaiEndpointID}:predict`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestJson),
     });
-  });
-  const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
-    throw errorGen(`OpenAI request failed: ${err.message}`, 500);
-  });
+    const data = await response.json();
+    const result = data.predictions[0].content.split(',');
+    if (result[0] === 'weighOunce') result[0] = 'weightOunce';
+    // global.logger.info(`RI NAME: ${ingredient} PU/LD VERTEXAI RESPONSE: ${data.predictions[0].content}. FULL RESPONSE: ${JSON.stringify(data)}`);
+    global.logger.info(`RI NAME: ${ingredient} PU/LD VERTEXAI RESPONSE: ${result[0]}, ${result[1]}`);
 
-  //log token usage
-  createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to ${messageType}`);
-
-  //Check for unsuccessful completions
-  if (chatCompletionObject.choices[0].finish_reason === 'length') {
-    throw errorGen('OpenAI request or response too long. Consider increasing "max_tokens" request property', 400);
+    // calculate cost
+    const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
+    const cost = (characterCount / 1000) * billRatePer1000Chars;
+    global.logger.info(`CHARACTER COUNT: ${characterCount}, COST: $${cost}`);
+    return {
+      purchaseUnit: result[0],
+      lifespanDays: result[1],
+      cost: cost,
+    };
+  } catch (error) {
+    global.logger.error(`Error estimating purchaseUnit and lifespanDays: ${error.message}`);
+    return {
+      purchaseUnit: 'weightOunce',
+      lifespanDays: 7,
+      cost: cost || 0,
+    };
   }
-  if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
-    throw errorGen('Content Omitted due to filter being flagged', 400);
-  }
-  //Clean up the response JSON
-  let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');
-  responseJSON = responseJSON.trim().replace(/^`{3}|`{3}$/g, '');
-  return {
-    response: responseJSON,
-  };
 };
 
 const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredient, userIngredients) => {
@@ -135,30 +194,24 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
     });
     const data = await response.json();
     // global.logger.info(`RI NAME: ${recipeIngredient} VERTEXAI RESPONSE: ${data.predictions[0].content}. FULL RESPONSE: ${JSON.stringify(data)}`);
-    global.logger.info(`RI NAME: ${recipeIngredient} VERTEXAI RESPONSE: ${data.predictions[0].content}`);
+    global.logger.info(`RI NAME: ${recipeIngredient} MATCHING VERTEXAI RESPONSE: ${data.predictions[0].content}`);
     const matchResult = data.predictions[0].content;
     let resultJSON;
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
-    const cost = (characterCount / 1000) * billRatePer1000Chars;
+    let cost = (characterCount / 1000) * billRatePer1000Chars;
     global.logger.info(`CHARACTER COUNT: ${characterCount}, COST: $${cost}`);
+
+    // get est for purchaseUnit and lifespanDays from vertexai
+    resultJSON = await getPurchaseUnitLifespanDaysEstimate(recipeIngredient);
+    // add cost from finding purchaseUnit and lifespanDays
+    cost += resultJSON.cost;
+
     const prepReturn = async () => {
       if (matchResult === 'null') {
-        //need to get openai estimate of lifespanDays and purchaseUnit
-        const lifespanDaysAndPurchaseUnitresponse = await textRequest(userID, authorization, 'estimateDaysAndPurchaseUnit', [{ preamble: 'INGREDIENT: ', value: recipeIngredient }]);
-        global.logger.info(`Lifespan and purchase unit estimate: ${lifespanDaysAndPurchaseUnitresponse.response}`);
-        resultJSON = JSON.parse(lifespanDaysAndPurchaseUnitresponse.response);
-        if (!units.includes(resultJSON.purchaseUnit)) {
-          resultJSON.purchaseUnit = 'weightOunce';
-        }
         resultJSON['foundMatch'] = false;
       } else {
-        //need to get openai estimate of purchaseUnit
-        const purchaseUnitresponse = await textRequest(userID, authorization, 'estimatePurchaseUnit', [{ preamble: 'INGREDIENT: ', value: recipeIngredient }]);
-        global.logger.info(`Purchase unit estimate: ${purchaseUnitresponse.response}`);
-        resultJSON = JSON.parse(purchaseUnitresponse.response);
-        if (!units.includes(resultJSON.purchaseUnit)) {
-          resultJSON.purchaseUnit = 'weightOunce';
-        }
+        // remove 'lifespanDays' from resultJSON
+        delete resultJSON.lifespanDays;
         resultJSON['ingredientName'] = matchResult;
         resultJSON['foundMatch'] = true;
       }
@@ -232,46 +285,100 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
   };
 };
 
+// const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_A, measurementUnit_B) => {
+//   const client = await getClient();
+//   const body = {
+//     messages: [requestMessages['estimateUnitRatio'].message],
+//     user: userID,
+//     temperature: 0.2,
+//     model: 'gpt-4-turbo-preview',
+//     max_tokens: 1500,
+//     response_format: {
+//       type: requestMessages['estimateUnitRatio'].response_format,
+//     },
+//   };
+//   // add the params to the request
+//   body.messages.push({
+//     role: 'user',
+//     content: [
+//       {
+//         type: 'text',
+//         text: `'substance': ${substance}, 'numerator': ${measurementUnit_A}, 'denominator': ${measurementUnit_B}`,
+//       },
+//     ],
+//   });
+//   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
+//     throw errorGen(`OpenAI request failed: ${err.message}`, 500);
+//   });
+
+//   //log token usage
+//   createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to estimate unit ratio between ${measurementUnit_A} and ${measurementUnit_B}`);
+
+//   //Check for unsuccessful completions
+//   if (chatCompletionObject.choices[0].finish_reason === 'length') {
+//     throw errorGen('OpenAI request or response too long. Consider increasing "max_tokens" request property', 400);
+//   }
+//   if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
+//     throw errorGen('Content Omitted due to filter being flagged', 400);
+//   }
+//   let responseJSON = chatCompletionObject.choices[0].message.content;
+//   return {
+//     response: responseJSON,
+//   };
+// };
+
 const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_A, measurementUnit_B) => {
-  const client = await getClient();
-  const body = {
-    messages: [requestMessages['estimateUnitRatio'].message],
-    user: userID,
-    temperature: 0.2,
-    model: 'gpt-4-turbo-preview',
-    max_tokens: 1500,
-    response_format: {
-      type: requestMessages['estimateUnitRatio'].response_format,
-    },
-  };
-  // add the params to the request
-  body.messages.push({
-    role: 'user',
-    content: [
-      {
-        type: 'text',
-        text: `'substance': ${substance}, 'numerator': ${measurementUnit_A}, 'denominator': ${measurementUnit_B}`,
+  try {
+    const billRatePer1000Chars = 0.00025;
+    const token = await getAccessToken();
+    const vertexaiProject = '911585064385';
+    const vertexaiLocation = 'us-central1';
+    const vertexaiEndpointID = '3241811078451036160';
+    const promptText = `You are provided 'substance', 'unitA', and 'unitB'. Estimate the ratio of unitA per single unitB, for the given substance. Return the number estimate and nothing else. Example: substance='salt', unitA='ounce', unitB='teaspoon', could return 0.167. Example: substance='milk', unitA='gram', unitB='gallon', could return 3840. SUBSTANCE:${substance},UNITA:${measurementUnit_A},UNITB:${measurementUnit_B}`;
+
+    const requestJson = {
+      instances: [
+        {
+          content: promptText,
+        },
+      ],
+      parameters: {
+        candidateCount: 1,
+        maxOutputTokens: 1024,
+        temperature: 0.2,
+        topP: 0.8,
+        topK: 40,
       },
-    ],
-  });
-  const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
-    throw errorGen(`OpenAI request failed: ${err.message}`, 500);
-  });
+    };
+    const API_ENDPOINT = `${vertexaiLocation}-aiplatform.googleapis.com`;
+    const response = await fetch(`https://${API_ENDPOINT}/v1/projects/${vertexaiProject}/locations/${vertexaiLocation}/endpoints/${vertexaiEndpointID}:predict`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestJson),
+    });
+    const data = await response.json();
+    const result = data.predictions[0].content;
+    // global.logger.info(`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}, FULL PROMPT: ${promptText}`);
+    global.logger.info(`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}`);
 
-  //log token usage
-  createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to estimate unit ratio between ${measurementUnit_A} and ${measurementUnit_B}`);
-
-  //Check for unsuccessful completions
-  if (chatCompletionObject.choices[0].finish_reason === 'length') {
-    throw errorGen('OpenAI request or response too long. Consider increasing "max_tokens" request property', 400);
+    // calculate cost
+    const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
+    const cost = (characterCount / 1000) * billRatePer1000Chars;
+    global.logger.info(`CHARACTER COUNT: ${characterCount}, COST: $${cost}`);
+    return {
+      response: result,
+      cost: cost,
+    };
+  } catch (error) {
+    global.logger.error(`Error estimating unit ratio: ${error.message}`);
+    return {
+      response: 1,
+      cost: cost || 0,
+    }
   }
-  if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
-    throw errorGen('Content Omitted due to filter being flagged', 400);
-  }
-  let responseJSON = chatCompletionObject.choices[0].message.content;
-  return {
-    response: responseJSON,
-  };
 };
 
 const requestMessages = {
@@ -313,37 +420,6 @@ Do not include any other properties in the JSON object response. If an optional 
       ],
     },
     response_format: 'text',
-  },
-  findMatchingIngredient: {
-    message: {
-      role: 'user',
-      content: [
-        {
-          type: 'text',
-          text: `You are provided a recipe ingredient, which includes 'name', 'measurement', and 'measurementUnit'. You are also provided an array of user ingredients. each includes a 'name', 'ingredientID', and 'purchaseUnit'. Using only the 'name' property, review all available user ingredients and attempt to find the closest match for the provided recipe ingredient. If no close match is found, return the following json:
-          'lifespanDays' <number>: (required) estimate of number of days ingredient will stay usable if stored properly. Minimum is 1.,
-          'purchaseUnit' <string>: (required) choose the unit from this list that most closely matches how the ingredient might be purchased: ${units}. The selection should be relavent to the ingredient. For example, 'flour' might be purchased in 'pounds', while 'milk' might be purchased in 'gallons'. Only use generic units like 'single' or 'carton' as a last resort. Value MUST be one of the units in the list., 
-          
-          If a match is found, return the following json:
-          'ingredientID' <number>: (required) The ingredientID of the matching user ingredient,
-          'purchaseUnit' <string>: (required) The purchaseUnit of the matching user ingredient.
-
-          Return body must resemble one of the following two examples:
-          'example-1_no-match':{
-            "lifespanDays": 7,
-            "purchaseUnit": "pound",
-          }
-
-          'example-2_match-found':{
-            "ingredientID": 1,
-            "purchaseUnit": "ounce",
-          }
-          
-          Do not include any properties in the JSON object responses except those defined for the two cases. Convert any fractions to decimals.`,
-        },
-      ],
-    },
-    response_format: 'json_object',
   },
   estimatePurchaseUnit: {
     message: {
