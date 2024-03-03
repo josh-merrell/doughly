@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 require('dotenv').config();
 const { errorGen } = require('../middleware/errorHandling.js');
-const { getUnitRatioAI } = require('./openai.js');
+const { getUnitRatioAI } = require('./aiHandlers.js');
 
 const awsConfig = {
   region: process.env.AWS_REGION,

@@ -3,7 +3,7 @@
 const { createRecipeLog } = require('../../../services/dbLogger');
 const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 const { errorGen } = require('../../../middleware/errorHandling');
-const { getUnitRatio } = require('../../../services/openai');
+const { getUnitRatio } = require('../../../services/aiHandlers');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
