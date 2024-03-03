@@ -6,6 +6,8 @@ export enum PurchaseUnit {
   gram = 'gram',
   kilogram = 'kilogram',
   fluidOunce = 'fluidOunce',
+  filet = 'filet',
+  kernel = 'kernel',
   weightOunce = 'weightOunce',
   pound = 'pound',
   teaspoon = 'teaspoon',

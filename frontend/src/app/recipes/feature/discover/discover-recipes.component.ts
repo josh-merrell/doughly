@@ -55,6 +55,14 @@ export class DiscoverRecipesComponent {
           return categoryWithRecipes;
         });
 
+        // remove the 'Other' category
+        const otherCategoryIndex = categoriesWithRecipes.findIndex(
+          (category) => category.recipeCategoryID === 1
+        );
+        if (otherCategoryIndex !== -1) {
+          categoriesWithRecipes.splice(otherCategoryIndex, 1);
+        }
+
         this.displayCategories.set(categoriesWithRecipes);
         // console.log(`RECIPES WITH CATEGORIES: `, categoriesWithRecipes)
       },
