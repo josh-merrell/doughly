@@ -334,7 +334,7 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     const vertexaiProject = '911585064385';
     const vertexaiLocation = 'us-central1';
     const vertexaiEndpointID = '3241811078451036160';
-    const promptText = `You are provided 'substance', 'unitA', and 'unitB'. Estimate the ratio of unitA per single unitB, for the given substance. Return the number estimate and nothing else. Example: substance='salt', unitA='ounce', unitB='teaspoon', could return 0.167. Example: substance='milk', unitA='gram', unitB='gallon', could return 3840. SUBSTANCE:${substance},UNITA:${measurementUnit_A},UNITB:${measurementUnit_B}`;
+    const promptText = `You are provided 'substance', 'unitA', and 'unitB'. Estimate the ratio of unitA per single unitB, for the given substance. Return ONLY the number estimate and nothing else. Example: substance='salt', unitA='ounce', unitB='teaspoon', could return 0.167. Example: substance='milk', unitA='gram', unitB='gallon', could return 3840. SUBSTANCE:${substance},UNITA:${measurementUnit_A},UNITB:${measurementUnit_B}`;
 
     const requestJson = {
       instances: [
@@ -363,6 +363,15 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     const result = data.predictions[0].content;
     // global.logger.info(`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}, FULL PROMPT: ${promptText}`);
     global.logger.info(`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}`);
+    // if result can not be converted to a number, return 1
+    if (isNaN(result)) {
+      global.logger.error(`AI Unit Ratio estimate was not a number: ${result}, returning default "1"`);
+      return {
+        response: 1,
+        cost: cost || 0,
+      };
+    }
+
 
     // calculate cost
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
