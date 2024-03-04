@@ -92,3 +92,24 @@ export enum States {
   WI = 'WI',
   WY = 'WY',
 }
+
+export const worldCategories: string[] = [
+  'African',
+  'American',
+  'Korean',
+  'Mediterranean',
+  'Mexican',
+  'Middle Eastern',
+  'South American',
+  'Spanish',
+  'Thai',
+  'Vietnamese',
+  'Caribbean',
+  'Chinese',
+  'East European',
+  'French',
+  'Greek',
+  'Indian',
+  'Italian',
+  'Japanese',
+];
