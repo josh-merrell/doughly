@@ -258,6 +258,8 @@ const checkCommonRatios = async (unitA, unitB) => {
     'liter-tablespoon': 0.015,
     'teaspoon-liter': 202.884,
     'liter-teaspoon': 0.005,
+    'fluidOunce-milliliter': 29.574,
+    'milliliter-fluidOunce': 0.034,
   };
   const key = `${unitA}-${unitB}`;
   if (commonRatios[key]) {

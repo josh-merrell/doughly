@@ -7,6 +7,7 @@ export enum PurchaseUnit {
   kilogram = 'kilogram',
   fluidOunce = 'fluidOunce',
   filet = 'filet',
+  head = 'head',
   kernel = 'kernel',
   weightOunce = 'weightOunce',
   pound = 'pound',
