@@ -360,6 +360,15 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
       body: JSON.stringify(requestJson),
     });
     const data = await response.json();
+
+    if (!data.predictions || !Array.isArray(data.predictions) || data.predictions.length === 0) {
+      global.logger.error(`API response did not include expected 'predictions' array or it was empty.`);
+      return {
+        response: 1,
+        cost: 0,
+      };
+    }
+
     const result = data.predictions[0].content;
     // global.logger.info(`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}, FULL PROMPT: ${promptText}`);
     global.logger.info(`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}`);

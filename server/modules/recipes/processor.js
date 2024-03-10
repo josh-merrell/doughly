@@ -687,6 +687,9 @@ module.exports = ({ db }) => {
           global.logger.error(`missing ingredient measurementUnit: JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`);
           indexesToRemove.add(i);
         }
+        // convert units to singular
+        recipeJSON.ingredients[i] = singularUnit(recipeJSON.ingredients[i]);
+
         if (!units.includes(recipeJSON.ingredients[i].measurementUnit)) {
           if (recipeJSON.ingredients[i].measurementUnit === 'ounce') {
             recipeJSON.ingredients[i].measurementUnit = 'weightOunce';
@@ -1547,6 +1550,150 @@ module.exports = ({ db }) => {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);
     }
+  }
+
+  function singularUnit(ingredient) {
+    // use switch case to convert plural units to singular, return the ingredient
+    switch (ingredient.measurementUnit) {
+      case 'bags':
+        ingredient.measurementUnit = 'bag';
+        break;
+      case 'bars':
+        ingredient.measurementUnit = 'bar';
+        break;
+      case 'blocks':
+        ingredient.measurementUnit = 'block';
+        break;
+      case 'bottles':
+        ingredient.measurementUnit = 'bottle';
+        break;
+      case 'boxes':
+        ingredient.measurementUnit = 'box';
+        break;
+      case 'bunches':
+        ingredient.measurementUnit = 'bunch';
+        break;
+      case 'cans':
+        ingredient.measurementUnit = 'can';
+        break;
+      case 'cartons':
+        ingredient.measurementUnit = 'carton';
+        break;
+      case 'containers':
+        ingredient.measurementUnit = 'container';
+        break;
+      case 'cloves':
+        ingredient.measurementUnit = 'clove';
+        break;
+      case 'cups':
+        ingredient.measurementUnit = 'cup';
+        break;
+      case 'dashes':
+        ingredient.measurementUnit = 'dash';
+        break;
+      case 'dozens':
+        ingredient.measurementUnit = 'dozen';
+        break;
+      case 'drizzles':
+        ingredient.measurementUnit = 'drizzle';
+        break;
+      case 'drops':
+        ingredient.measurementUnit = 'drop';
+        break;
+      case 'fillets':
+        ingredient.measurementUnit = 'fillet';
+        break;
+      case 'fluidOunces':
+        ingredient.measurementUnit = 'fluidOunce';
+        break;
+      case 'heads':
+        ingredient.measurementUnit = 'head';
+        break;
+      case 'kernels':
+        ingredient.measurementUnit = 'kernel';
+        break;
+      case 'teaspoons':
+        ingredient.measurementUnit = 'teaspoon';
+        break;
+      case 'tablespoons':
+        ingredient.measurementUnit = 'tablespoon';
+        break;
+      case 'ounces':
+        ingredient.measurementUnit = 'ounce';
+        break;
+      case 'gallons':
+        ingredient.measurementUnit = 'gallon';
+        break;
+      case 'grams':
+        ingredient.measurementUnit = 'gram';
+        break;
+      case 'kilograms':
+        ingredient.measurementUnit = 'kilogram';
+        break;
+      case 'leafs':
+        ingredient.measurementUnit = 'leaf';
+        break;
+      case 'liters':
+        ingredient.measurementUnit = 'liter';
+        break;
+      case 'loaves':
+        ingredient.measurementUnit = 'loaf';
+        break;
+      case 'milliliters':
+        ingredient.measurementUnit = 'milliliter';
+        break;
+      case 'packets':
+        ingredient.measurementUnit = 'packet';
+        break;
+      case 'pallets':
+        ingredient.measurementUnit = 'pallet';
+        break;
+      case 'pinches':
+        ingredient.measurementUnit = 'pinch';
+        break;
+      case 'pints':
+        ingredient.measurementUnit = 'pint';
+        break;
+      case 'pounds':
+        ingredient.measurementUnit = 'pound';
+        break;
+      case 'quarts':
+        ingredient.measurementUnit = 'quart';
+        break;
+      case 'ribs':
+        ingredient.measurementUnit = 'rib';
+        break;
+      case 'sheets':
+        ingredient.measurementUnit = 'sheet';
+        break;
+      case 'singles':
+        ingredient.measurementUnit = 'single';
+        break;
+      case 'slices':
+        ingredient.measurementUnit = 'slice';
+        break;
+      case 'sprigs':
+        ingredient.measurementUnit = 'sprig';
+        break;
+      case 'sprinkles':
+        ingredient.measurementUnit = 'sprinkle';
+        break;
+      case 'stalks':
+        ingredient.measurementUnit = 'stalk';
+        break;
+      case 'sticks':
+        ingredient.measurementUnit = 'stick';
+        break;
+      case 'strips':
+        ingredient.measurementUnit = 'strip';
+        break;
+      case 'weightOunces':
+        ingredient.measurementUnit = 'weightOunce';
+        break;
+      default:
+        break;
+    }
+    return ingredient;
   }
 
   return {

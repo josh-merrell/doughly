@@ -179,7 +179,7 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   const checkCommonResult = await checkCommonRatios(unitA, unitB);
   if (checkCommonResult.success) {
     global.logger.info(`'getUnitRatio' Common ratio found for ${unitA}-${unitB}: ${checkCommonResult.ratio}`);
-    return { ratio: checkCommonResult.ratio, needsReview: false };
+    return { ratio: checkCommonResult.ratio, needsReview: false, cost: 0 };
   }
 
   // next, try checking the store for approved matching ratio
@@ -187,7 +187,7 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   if (storeCheck.currentStatus === 'success') {
     if (storeCheck.ratio) {
       global.logger.info(`'getUnitRatio' Store ratio found for ${material}-${unitA}-${unitB}: ${storeCheck.ratio}`);
-      return { ratio: storeCheck.ratio, needsReview: false };
+      return { ratio: storeCheck.ratio, needsReview: false, cost: 0 };
     }
   }
   global.logger.info(`'getUnitRatio' No store ratio found for ${material}-${unitA}-${unitB}, asking AI`);
@@ -201,7 +201,7 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
     return { ratio: aiEstimate, needsReview: true, cost: data.cost };
   }
   // otherwise, just return default of "1"
-  return { ratio: 1, needsReview: true };
+  return { ratio: 1, needsReview: true, cost: 0 };
 };
 
 const checkCommonRatios = async (unitA, unitB) => {
