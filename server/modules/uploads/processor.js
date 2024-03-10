@@ -6,7 +6,7 @@ const { errorGen } = require('../../middleware/errorHandling');
 
 module.exports = ({ db, dbDefault }) => {
   async function create(options) {
-    const { userID, type ,fileName, fileType } = options;
+    const { userID, type, fileName, fileType } = options;
 
     const s3Client = new S3Client({ region: 'us-west-2' });
     const key = `${type}/${userID}/${fileName}`;

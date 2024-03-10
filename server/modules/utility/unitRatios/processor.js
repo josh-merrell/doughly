@@ -6,7 +6,7 @@ const { errorGen } = require('../../../middleware/errorHandling');
 module.exports = () => {
   async function getUnitRatioProcessor(options) {
     const { material, unitA, unitB, authorization, userID } = options;
-    console.log(`'getUnitRatioProcessor'. UNITA: ${unitA} UNITB: ${unitB}`);
+    global.logger.info(`'getUnitRatioProcessor'. UNITA: ${unitA} UNITB: ${unitB}`);
     if (unitA === unitB) return { ratio: 1, needsReview: false };
     try {
       // use 'getUnitRatio' method from 'unitRatioStoreService' to get the ratio. It will first check common ratios for a match, then check the store for an approved ratio match, then fallback to asking AI. If AI returns a ratio, it will submit it as a draft to the store for admin approval.
