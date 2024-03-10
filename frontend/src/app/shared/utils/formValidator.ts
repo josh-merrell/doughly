@@ -74,9 +74,9 @@ export function lessThan40CharsValidator(): ValidatorFn {
   };
 }
 
-export function lessThan15CharsValidator(): ValidatorFn {
+export function lessThan20CharsValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
     if (!control.value) return null;
-    return control.value.length < 15 ? null : { moreThan15Chars: true };
+    return control.value.length < 20 ? null : { moreThan20Chars: true };
   };
 }

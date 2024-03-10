@@ -360,6 +360,15 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
       body: JSON.stringify(requestJson),
     });
     const data = await response.json();
+
+    if (!data.predictions || !Array.isArray(data.predictions) || data.predictions.length === 0) {
+      global.logger.error(`API response did not include expected 'predictions' array or it was empty.`);
+      return {
+        response: 1,
+        cost: 0,
+      };
+    }
+
     const result = data.predictions[0].content;
     // global.logger.info(`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}, FULL PROMPT: ${promptText}`);
     global.logger.info(`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}`);
@@ -371,7 +380,6 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
         cost: cost || 0,
       };
     }
-
 
     // calculate cost
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
@@ -386,7 +394,7 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     return {
       response: 1,
       cost: cost || 0,
-    }
+    };
   }
 };
 
@@ -407,7 +415,7 @@ const requestMessages = {
 'ingredients' <array> (required): An array of objects, each one an 'ingredient'
 'ingredient' <object>: An object with properties: 
 -'name' <string> (Disregard any adjective words and capitalize, for example 'stemmed broccoli' should be 'Broccoli', and 'dry yeast' should be 'Yeast'). If the ingredient is a component of something, such as 'Egg White' or 'Egg Yolk', just use the main item, eg: 'Egg'. If the ingredient is a specific version of something, include the full name, ex: 'Apple Cider Vinegar'. If an adjective describes a different ingredient, include it, ex: 'Green Olive' or 'White Wine'.
--'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe: ${JSON.stringify(
+-'measurementUnit' <string> (required, choose the unit from this list that most closely matches the measurement unit defined in the recipe. UNITS:${JSON.stringify(
             units,
           )}. Example if recipe calls for 2 medium onions, the best measurementUnit would be "single" with a measurement of 2. Disregard adjectives like "medium"). If the recipe Ingredient measurement unit is "ounce", select "weightOunce"., 
 -'measurement' <number> (required) estimate based on chosen measurementUnit if no measurement provided, 
