@@ -185,7 +185,7 @@ module.exports = ({ db }) => {
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
           preparation: ingredient.preparation,
           component: ingredient.component,
-          needsReview: ingredient.needsReview,
+          RIneedsReview: ingredient.RIneedsReview || false,
         })}`,
       );
       const { data } = await axios.post(
@@ -201,7 +201,7 @@ module.exports = ({ db }) => {
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
           preparation: ingredient.preparation,
           component: ingredient.component,
-          needsReview: ingredient.needsReview,
+          RIneedsReview: ingredient.RIneedsReview || false,
         },
         { headers: { authorization } },
       );
@@ -766,14 +766,12 @@ module.exports = ({ db }) => {
       global.logger.info(`ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`);
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].purchaseUnitRatio) {
-          if (!matchedIngredients[i].needsReview) {
-            matchedIngredients[i].needsReview = true;
-          }
+          matchedIngredients[i].RIneedsReview = false;
           continue;
         }
         if (matchedIngredients[i].purchaseUnit === matchedIngredients[i].measurementUnit) {
           matchedIngredients[i].purchaseUnitRatio = 1;
-          matchedIngredients[i].needsReview = false;
+          matchedIngredients[i].RIneedsReview = false;
         } else {
           const purchaseUnitRatioPromise = getUnitRatio(matchedIngredients[i].name, matchedIngredients[i].purchaseUnit, matchedIngredients[i].measurementUnit, authorization, userID);
           ingredientPurchaseUnitRatioPromises.push(
@@ -783,7 +781,7 @@ module.exports = ({ db }) => {
               }
               global.logger.info(`GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`);
               matchedIngredients[i].purchaseUnitRatio = result.ratio;
-              matchedIngredients[i].needsReview = result.needsReview;
+              matchedIngredients[i].RIneedsReview = result.needsReview;
             }),
           );
         }
@@ -811,7 +809,6 @@ module.exports = ({ db }) => {
                 unitRatioCost += result.cost;
               }
               matchedIngredients[i].gramRatio = result.ratio;
-              matchedIngredients[i].needsReview = result.needsReview;
             }),
           );
         }
@@ -934,6 +931,7 @@ module.exports = ({ db }) => {
                   ingredientID: Number(ingredientID.ingredientID),
                   purchaseUnit: ingredientJSON.purchaseUnit,
                   cost: data.cost,
+                  needsReview: false,
                 };
               } else {
                 const validUnits = process.env.MEASUREMENT_UNITS.split(',');

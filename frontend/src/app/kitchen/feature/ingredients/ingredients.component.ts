@@ -19,7 +19,9 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import { Store } from '@ngrx/store';
 import { selectIngredients } from './state/ingredient-selectors';
 import { selectIngredientStocks } from '../Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
-
+import { Router } from '@angular/router';
+import { removeReviewRecipe } from '../../state/kitchen-actions';
+import { selectReviewRecipeID } from '../../state/kitchen-selectors';
 @Component({
   selector: 'dl-ingredients',
   standalone: true,
@@ -53,7 +55,8 @@ export class IngredientsComponent {
     private dialog: MatDialog,
     private sortingService: SortingService,
     private filterService: FilterService,
-    private store: Store
+    private store: Store,
+    private router: Router
   ) {
     effect(
       () => {
@@ -120,7 +123,8 @@ export class IngredientsComponent {
 
     effect(
       () => {
-        const filteredIngredientsNeedsReview = this.filteredIngredientsNeedsReview();
+        const filteredIngredientsNeedsReview =
+          this.filteredIngredientsNeedsReview();
         if (
           filteredIngredientsNeedsReview &&
           filteredIngredientsNeedsReview.length > 0
@@ -140,6 +144,25 @@ export class IngredientsComponent {
       },
       { allowSignalWrites: true }
     );
+
+    effect(() => {
+      const displayedRowsNeedsReview = this.displayedRowsNeedsReview();
+      const displayedRowsNoReview = this.displayedRowsNoReview();
+
+      if (
+        displayedRowsNeedsReview.length === 0 &&
+        displayedRowsNoReview.length > 0
+      ) {
+        // get current value of 'reviewRecipeID' from store
+        this.store.select(selectReviewRecipeID).subscribe((reviewRecipeID) => {
+          // if defined, set 'reviewRecipeID' to null in store and navigate to recipe
+          if (reviewRecipeID) {
+            this.store.dispatch(removeReviewRecipe());
+            this.router.navigate(['recipe', reviewRecipeID]);
+          }
+        });
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -266,7 +289,6 @@ export class IngredientsComponent {
     dialogRef.afterClosed().subscribe((result) => {
       // close any other open modals
       this.modalActiveForIngredientID = null;
-
     });
   }
 

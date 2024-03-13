@@ -16,7 +16,7 @@ export interface RecipeIngredient {
   purchaseUnitRatio: number;
   preparation?: string;
   component?: string;
-  needsReview: boolean;
+  RIneedsReview: boolean;
 }
 
 export interface RecipeIngredientError {
