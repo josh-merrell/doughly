@@ -53,6 +53,7 @@ import { UnsubscribeRecipeModalComponent } from '../ui/unsubscribe-recipe-modal/
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import JSConfetti from 'js-confetti';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
+import { setReviewRecipe } from 'src/app/kitchen/state/kitchen-actions';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -431,7 +432,7 @@ export class UserRecipeComponent {
     if (!recipeIngredients.length || !ingredients.length) return [];
     //update recipeIngredientsNeedReview
     this.recipeIngredientsNeedReview.set(
-      recipeIngredients.some((ri) => ri.needsReview)
+      recipeIngredients.some((ri) => ri.RIneedsReview)
     );
     const mappedIngredients = recipeIngredients.map((recipeIngredient: any) => {
       const ingredient = ingredients.find(
@@ -696,6 +697,8 @@ export class UserRecipeComponent {
   }
 
   reviewIngredients() {
+    // add recipeID to 'reviewRecipeID' property in kitchen store
+    this.store.dispatch(setReviewRecipe({ recipeID: this.recipeID() }));
     // if any ingredients need review, navigate to the ingredients page
     if (this.ingredientsNeedReview()) {
       this.router.navigate(['/kitchen/ingredients']);
