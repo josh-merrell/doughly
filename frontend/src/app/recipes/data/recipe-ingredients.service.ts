@@ -35,7 +35,7 @@ export class RecipeIngredientService {
             purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
             preparation: recipeIngredient.preparation,
             component: recipeIngredient.component,
-            needsReview: recipeIngredient.needsReview,
+            RIneedsReview: recipeIngredient.RIneedsReview,
           };
         });
       })

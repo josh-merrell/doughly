@@ -105,10 +105,10 @@ export class RecipeIngredientsModalComponent {
           } else return 1;
         });
         this.displayNeedsReview.set(
-          sortedOne.filter((ri) => ri.needsReview === true)
+          sortedOne.filter((ri) => ri.RIneedsReview === true)
         );
         this.displayNoReview.set(
-          sortedOne.filter((ri) => ri.needsReview === false)
+          sortedOne.filter((ri) => ri.RIneedsReview === false)
         );
         return sortedOne;
       })
@@ -133,12 +133,12 @@ export class RecipeIngredientsModalComponent {
     this.ingredients$ = this.store.select(selectIngredients);
     this.displayNeedsReview$ = this.displayedIngredients$.pipe(
       map((ingredients) =>
-        ingredients.filter((ingredient) => ingredient.needsReview === true)
+        ingredients.filter((ingredient) => ingredient.RIneedsReview === true)
       )
     );
     this.displayNoReview$ = this.displayedIngredients$.pipe(
       map((ingredients) =>
-        ingredients.filter((ingredient) => ingredient.needsReview === false)
+        ingredients.filter((ingredient) => ingredient.RIneedsReview === false)
       )
     );
   }
@@ -303,7 +303,7 @@ export class RecipeIngredientsModalComponent {
           purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
           preparation: recipeIngredient.preparation,
           component: recipeIngredient.component,
-          needsReview: recipeIngredient.needsReview,
+          RIneedsReview: recipeIngredient.RIneedsReview,
         },
       },
     });

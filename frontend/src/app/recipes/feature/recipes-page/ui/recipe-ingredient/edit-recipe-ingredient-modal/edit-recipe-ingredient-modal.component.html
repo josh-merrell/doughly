@@ -24,7 +24,7 @@
 
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
-        <p *ngIf="recipeIngredient().needsReview" class="text-dl-5 font-dl-3 text-dl-pink-4">Confirm existing or Edit details</p>
+        <p *ngIf="recipeIngredient().RIneedsReview" class="text-dl-5 font-dl-3 text-dl-pink-4">Confirm existing or Edit details</p>
         <!-- Component -->
         <div id="form-component" class="relative flex flex-col">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Recipe Component (opt)</label>
@@ -140,7 +140,7 @@
       <div class="mt-dl-6">
         <button
           type="button"
-          *ngIf="recipeIngredient().needsReview && form.pristine"
+          *ngIf="recipeIngredient().RIneedsReview && form.pristine"
           class="mb-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-dl-pink-4 border-2 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white shadow-sm"
           (click)="onConfirm()"
         >
