@@ -39,7 +39,7 @@ module.exports = ({ db }) => {
   }
 
   async function create(options) {
-    const { customID, authorization, userID, name, lifespanDays, brand, purchaseUnit, gramRatio, needsReview=false } = options;
+    const { customID, authorization, userID, name, lifespanDays, brand, purchaseUnit, gramRatio, needsReview = false } = options;
 
     //verify that 'customID' exists on the request
     if (!customID) {
@@ -187,7 +187,6 @@ module.exports = ({ db }) => {
           global.logger.error(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
           throw errorGen(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID}`, 400);
         }
-
       }
     } catch (error) {
       global.logger.error(`Error deleting related stock entries: ${error.message}`);

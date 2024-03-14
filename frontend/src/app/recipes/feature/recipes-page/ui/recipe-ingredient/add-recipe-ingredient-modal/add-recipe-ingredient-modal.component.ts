@@ -238,13 +238,16 @@ export class AddRecipeIngredientModalComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
+      // if result is a number, it is the ingredientID of the newly added ingredient
+      if (typeof result === 'number') {
         this.dialog.open(AddRequestConfirmationModalComponent, {
           data: {
             result: result,
             addSuccessMessage: 'Ingredient added successfully!',
           },
         });
+        // update the value of the ingredientID form control
+        this.form.get('ingredientID')?.setValue(result);
       } else if (result) {
         this.dialog.open(AddRequestErrorModalComponent, {
           data: {
