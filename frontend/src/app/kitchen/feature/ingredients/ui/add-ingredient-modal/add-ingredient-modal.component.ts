@@ -41,7 +41,10 @@ import {
 import { PurchaseUnit } from 'src/app/shared/utils/types';
 import { IngredientActions } from '../../state/ingredient-actions';
 import { Ingredient } from '../../state/ingredient-state';
-import { selectError } from '../../state/ingredient-selectors';
+import {
+  selectError,
+  selectIngredientByName,
+} from '../../state/ingredient-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { UnitService } from 'src/app/shared/utils/unitService';
 
@@ -205,7 +208,15 @@ export class AddIngredientModalComponent {
               },
             });
           } else {
-            this.dialogRef.close('success');
+            // this.dialogRef.close('success');
+            // return the new ingredientID after selecting the new ingredient from the store by name
+            this.store
+              .select(selectIngredientByName(payload.name))
+              .pipe(take(1))
+              .subscribe((ingredient) => {
+                this.dialogRef.close(ingredient?.ingredientID);
+              });
+
           }
           this.isAdding = false;
         });

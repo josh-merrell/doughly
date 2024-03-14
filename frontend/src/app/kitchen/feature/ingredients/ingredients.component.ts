@@ -149,10 +149,12 @@ export class IngredientsComponent {
       const displayedRowsNeedsReview = this.displayedRowsNeedsReview();
       const displayedRowsNoReview = this.displayedRowsNoReview();
 
+      // console.log('CURRENT: ', displayedRowsNeedsReview, displayedRowsNoReview);
       if (
         displayedRowsNeedsReview.length === 0 &&
         displayedRowsNoReview.length > 0
       ) {
+        // console.log('NEEDS REVIEW EMPTY');
         // get current value of 'reviewRecipeID' from store
         this.store.select(selectReviewRecipeID).subscribe((reviewRecipeID) => {
           // if defined, set 'reviewRecipeID' to null in store and navigate to recipe
@@ -162,7 +164,7 @@ export class IngredientsComponent {
           }
         });
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   ngOnInit(): void {
@@ -214,7 +216,8 @@ export class IngredientsComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
+      // if result is a number, it is the ingredientID of the newly added ingredient
+      if (typeof result === 'number') {
         this.dialog.open(ConfirmationModalComponent, {
           data: {
             confirmationMessage: `Added Ingredient`,
