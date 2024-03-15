@@ -154,7 +154,7 @@ export class IngredientsComponent {
         displayedRowsNeedsReview.length === 0 &&
         displayedRowsNoReview.length > 0
       ) {
-        // console.log('NEEDS REVIEW EMPTY');
+        console.log('NEEDS REVIEW EMPTY');
         // get current value of 'reviewRecipeID' from store
         this.store.select(selectReviewRecipeID).subscribe((reviewRecipeID) => {
           // if defined, set 'reviewRecipeID' to null in store and navigate to recipe
