@@ -54,6 +54,7 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import JSConfetti from 'js-confetti';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { setReviewRecipe } from 'src/app/kitchen/state/kitchen-actions';
+import { selectReviewRecipeID } from 'src/app/kitchen/state/kitchen-selectors';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -697,11 +698,17 @@ export class UserRecipeComponent {
   }
 
   reviewIngredients() {
-    // add recipeID to 'reviewRecipeID' property in kitchen store
-    this.store.dispatch(setReviewRecipe({ recipeID: this.recipeID() }));
     // if any ingredients need review, navigate to the ingredients page
     if (this.ingredientsNeedReview()) {
-      this.router.navigate(['/kitchen/ingredients']);
+      // add recipeID to 'reviewRecipeID' property in kitchen store
+      this.store.dispatch(setReviewRecipe({ recipeID: this.recipeID() }));
+  
+      // wait for the store to update, then navigate to the ingredients page
+      this.store.select(selectReviewRecipeID).subscribe((reviewRecipeID) => {
+        if (reviewRecipeID === this.recipeID()) {
+          this.router.navigate(['/kitchen/ingredients']);
+        }
+      });
     }
 
     // else only recipeIngredients need review so call editRecipeIngredients()
