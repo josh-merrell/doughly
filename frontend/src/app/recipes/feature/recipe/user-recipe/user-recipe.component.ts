@@ -62,7 +62,7 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
 
 interface displayIngredientsByComponent {
   noComponent: any[];
-  components: { [componentName: string]: any[]};
+  components: { [componentName: string]: any[] };
 }
 
 @Component({
@@ -698,23 +698,20 @@ export class UserRecipeComponent {
   }
 
   reviewIngredients() {
-    // if any ingredients need review, navigate to the ingredients page
-    if (this.ingredientsNeedReview()) {
-      // add recipeID to 'reviewRecipeID' property in kitchen store
-      this.store.dispatch(setReviewRecipe({ recipeID: this.recipeID() }));
-  
-      // wait for the store to update, then navigate to the ingredients page
-      this.store.select(selectReviewRecipeID).subscribe((reviewRecipeID) => {
-        if (reviewRecipeID === this.recipeID()) {
-          this.router.navigate(['/kitchen/ingredients']);
-        }
-      });
-    }
-
-    // else only recipeIngredients need review so call editRecipeIngredients()
-    else {
-      this.editRecipeIngredients();
-    }
+    const recipeID = this.recipeID();
+    // add recipeID to 'reviewRecipeID' property in kitchen store
+    this.store.dispatch(setReviewRecipe({ recipeID }));
+    // wait half a second
+    setTimeout(() => {
+      // if any ingredients need review, navigate to the ingredients page
+      if (this.ingredientsNeedReview()) {
+        this.router.navigate(['/kitchen/ingredients']);
+      }
+      // else only recipeIngredients need review so call editRecipeIngredients()
+      else {
+        this.editRecipeIngredients();
+      }
+    }, 500);
   }
 
   //***************************************************

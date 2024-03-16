@@ -57,7 +57,7 @@ export class SubscribeRecipeModalComponent {
   public initials: string = '';
   public progressValue: number = 10;
   public loading: WritableSignal<boolean> = signal(false);
-  
+
   // User Kitchen Items
   public userIngredients: WritableSignal<any[]> = signal([]);
   public userTools: WritableSignal<any[]> = signal([]);
@@ -184,7 +184,7 @@ export class SubscribeRecipeModalComponent {
     }
     return 'Select Ingredient';
   }
-    getToolPlaceholder(sourceTool: any): string {
+  getToolPlaceholder(sourceTool: any): string {
     if (sourceTool.userToolID) {
       const matchedTool = this.userTools().find(
         (ut) => ut.toolID === sourceTool.userToolID
@@ -287,14 +287,9 @@ export class SubscribeRecipeModalComponent {
           newIngredient['lifespanDays'] = Number(ingredients[i].lifespanDays);
           newIngredient['purchaseUnit'] = ingredients[i].purchaseUnit;
           newIngredient['gramRatio'] = Number(ingredients[i].gramRatio);
-          newIngredient['purchaseUnitRatio'] = Number(
-            ingredients[i].purchaseUnitRatio
-          );
+          newIngredient['purchaseUnitRatio'] = ingredients[i].purchaseUnitRatio;
           newIngredient['measurementUnit'] = ingredients[i].measurementUnit;
           newIngredient['measurement'] = Number(ingredients[i].measurement);
-        }
-        if (ingredients[i].brand) {
-          newIngredient['brand'] = ingredients[i].brand;
         }
 
         // if userIngredientID is not 0, this ingredient needs 'userIngredientID', 'userPurchaseUnitRatio', 'measurementUnit', 'measurement'
@@ -307,6 +302,15 @@ export class SubscribeRecipeModalComponent {
           newIngredient['measurement'] = Number(ingredients[i].measurement);
         }
 
+        if (ingredients[i].brand) {
+          newIngredient['brand'] = ingredients[i].brand;
+        }
+        if (ingredients[i].preparation) {
+          newIngredient['preparation'] = ingredients[i].preparation;
+        }
+        if (ingredients[i].component) {
+          newIngredient['component'] = ingredients[i].component;
+        }
         constructBody['ingredients'].push(newIngredient);
       }
 
@@ -318,7 +322,6 @@ export class SubscribeRecipeModalComponent {
         if (tools[i].userToolID === 0) {
           newTool['toolID'] = 0;
           newTool['name'] = tools[i].name;
-          newTool['brand'] = tools[i].brand;
           newTool['quantity'] = Number(tools[i].quantity);
         }
 
@@ -326,6 +329,10 @@ export class SubscribeRecipeModalComponent {
         else {
           newTool['toolID'] = tools[i].userToolID;
           newTool['quantity'] = Number(tools[i].quantity);
+        }
+
+        if (tools[i].brand) {
+          newTool['brand'] = tools[i].brand;
         }
 
         constructBody['tools'].push(newTool);
@@ -343,6 +350,8 @@ export class SubscribeRecipeModalComponent {
         constructBody['steps'].push(newStep);
       }
 
+      // Dispatch Construct Recipe Action
+      // console.log(`CONSTRUCT BODY: `, constructBody);
       this.loading.set(true);
       this.store.dispatch(
         RecipeActions.constructRecipe({

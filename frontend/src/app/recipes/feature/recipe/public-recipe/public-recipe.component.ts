@@ -142,7 +142,6 @@ export class PublicRecipeComponent {
         displayIngredientsByComponent.noComponent.push(ing);
       }
     };
-    console.log(`DISPLAY RI BY COMPONENT: `, displayIngredientsByComponent)
     return displayIngredientsByComponent;
   });
   ready = computed(() => {
