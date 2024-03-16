@@ -16,7 +16,8 @@ import { RecipeCategoryCardComponent } from '../recipes-page/ui/recipe-category/
 import { selectRecipeCategories } from '../../state/recipe-category/recipe-category-selectors';
 import { Recipe } from '../../state/recipe/recipe-state';
 import { selectDiscoverRecipes } from '../../state/recipe/recipe-selectors';
-
+import { selectRecipeByID } from '../../state/recipe/recipe-selectors';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 @Component({
   selector: 'dl-discover-recipes',
   standalone: true,
@@ -28,6 +29,7 @@ export class DiscoverRecipesComponent {
   public selectedCategory: WritableSignal<RecipeCategory | null> = signal(null);
   private categories: WritableSignal<RecipeCategory[]> = signal([]);
   public displayCategories: WritableSignal<RecipeCategory[]> = signal([]);
+  private profile: WritableSignal<any> = signal(null);
 
   // Auto-scrolling upon Category Selection
   @ViewChildren('categoryCard') categoryCards!: QueryList<ElementRef>;
@@ -77,10 +79,24 @@ export class DiscoverRecipesComponent {
     this.store.select(selectDiscoverRecipes).subscribe((recipes) => {
       this.discoverRecipes.set(recipes);
     });
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
   }
 
   onRecipeCardClick(recipeID: number): void {
-    this.router.navigate(['/recipe/public', recipeID]);
+    this.store
+      .select(selectRecipeByID(recipeID))
+      .subscribe((recipe: unknown) => {
+        // Treat incoming data as unknown
+        const typedRecipe = recipe as Recipe | undefined; // Assert the type
+        if (typedRecipe && typedRecipe.userID === this.profile().userID) {
+          this.router.navigate(['/recipe/', recipeID]);
+        } else {
+          // Else, navigate to the public recipe page
+          this.router.navigate(['/recipe/public', recipeID]);
+        }
+      });
   }
 
   // Category Click and Auto-Scrolling
