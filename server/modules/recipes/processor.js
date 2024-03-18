@@ -146,8 +146,9 @@ module.exports = ({ db }) => {
     let ingredientID;
     global.logger.info(`CONSTRUCT RI: ${ingredient}`);
     try {
-      if (Number(ingredient.ingredientID) === 0) {
-        // If ingredientID is not provided, create a new ingredient
+      const nameMatchIngrID = await checkForIngredient(ingredient.name, authorization, userID);
+      if (Number(ingredient.ingredientID) === 0 && nameMatchIngrID === 0) {
+        // If ingredientID is not provided, and no same-named ingr exists, create a new ingredient
         const body = {
           authorization,
           userID,
@@ -166,6 +167,9 @@ module.exports = ({ db }) => {
         const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
         ingredientID = Number(data.ingredientID);
         global.logger.info(`CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`);
+      } else if (nameMatchIngrID !== 0) {
+        ingredientID = Number(nameMatchIngrID);
+        global.logger.info(`INGREDIENT WITH NAME ALREADY EXISTS. INGREDIENTID IS: ${ingredientID}`);
       } else {
         ingredientID = Number(ingredient.ingredientID);
         global.logger.info(`INGREDIENTID IS: ${ingredientID}`);
@@ -210,6 +214,19 @@ module.exports = ({ db }) => {
       global.logger.error(`'constructRecipeIngredient' Failed when creating recipeIngredient. Failure: ${error.message}`);
       throw errorGen(`'constructRecipeIngredient' Failed when creating recipeIngredient. Failure: ${error.message}`, 400);
     }
+  }
+
+  async function checkForIngredient(ingredientName, authorization, userID) {
+    // check if ingredient exists in user's ingredients
+    const { data: ingredient, error } = await db.from('ingredients').select().eq('userID', userID).eq('name', ingredientName).eq('deleted', false);
+    if (error) {
+      global.logger.error(`Error checking for ingredient: ${error.message}`);
+      throw errorGen(`Error checking for ingredient: ${error.message}`, 400);
+    }
+    if (ingredient.length) {
+      return ingredient[0].ingredientID;
+    }
+    return 0;
   }
 
   async function constructRecipeTool(tool, authorization, userID, recipeID) {

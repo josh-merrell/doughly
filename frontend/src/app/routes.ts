@@ -22,6 +22,7 @@ import { ToolsComponent } from './kitchen/feature/tools/tools.component';
 import { CreatedRecipesComponent } from './recipes/feature/created-recipes/created-recipes.component';
 import { SubscribedRecipesComponent } from './recipes/feature/subscribed-recipes/subscribed-recipes.component';
 import { DiscoverRecipesComponent } from './recipes/feature/discover/discover-recipes.component';
+import { SettingsComponent } from './settings/settings.component';
 
 export const routes: Route[] = [
   {
@@ -87,6 +88,11 @@ export const routes: Route[] = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [ProfileGuard],
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
     canActivate: [ProfileGuard],
   },
   {

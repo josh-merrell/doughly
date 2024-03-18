@@ -100,22 +100,29 @@
             </ng-container>
           </mat-select>
         </mat-form-field>
-        <mat-form-field
-          [style.width.rem]="11.25"
-          *ngIf="i.userIngredientID && i.userIngredientID !== 0"
-        >
-          <input
-            [value]="i.userPurchaseUnitRatio || ''"
-            (input)="onPurchaseUnitRatioChange($event.target, i)"
-            matInput
-            name="userPurchaseUnitRatio-{{ i.userIngredientID }}"
-            type="text"
-            placeholder="{{ ingredientMeasurementUnitString(i) }} per {{
-              i.measurementUnit
-            }}"
-            class="text-dl-4"
-          />
-        </mat-form-field>
+
+        <!-- Purchase Unit Ratio -->
+        <div *ngIf="i.userIngredientID && i.userIngredientID !== 0" class="relative flex flex-col">
+          <label class="ml-dl-4 text-dl-5 font-dl-3 text-dl-grey-4">{{ ingredientMeasurementUnitString(i) }} per {{
+                i.measurementUnit
+              }}</label>
+          <mat-form-field
+            [style.width.rem]="11.25"
+            
+          >
+            <input
+              [value]="i.userPurchaseUnitRatio || ''"
+              (input)="onPurchaseUnitRatioChange($event.target, i)"
+              matInput
+              name="userPurchaseUnitRatio-{{ i.userIngredientID }}"
+              type="text"
+              placeholder="{{ ingredientMeasurementUnitString(i) }} per {{
+                i.measurementUnit
+              }}"
+              class="text-dl-4"
+            />
+          </mat-form-field>
+        </div>
       </div>
     </div>
 
