@@ -30,6 +30,8 @@ import {
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { Router } from '@angular/router';
+import { UnitService } from 'src/app/shared/utils/unitService';
+import { SortingService } from 'src/app/shared/utils/sortingService';
 
 @Component({
   selector: 'dl-subscribe-recipe-modal',
@@ -68,7 +70,9 @@ export class SubscribeRecipeModalComponent {
     public store: Store,
     public recipeService: RecipeService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router, 
+    private unitService: UnitService,
+    private sortingService: SortingService
   ) {
     effect(
       () => {
@@ -123,7 +127,7 @@ export class SubscribeRecipeModalComponent {
 
     this.recipe = this.data.recipe;
     this.data.ingredients.map((i: any) => {
-      i.userIngredientID = null;
+      i.userIngredientID = 0;
       i.userPurchaseUnitRatio = null;
       this.ingredients.set([...this.ingredients(), i]);
     });
@@ -137,7 +141,12 @@ export class SubscribeRecipeModalComponent {
 
     // Load User Kitchen Items
     this.store.select(selectIngredients).subscribe((ingredients) => {
-      this.userIngredients.set(ingredients);
+      // sort by name then set
+      const sortedIngredients = this.sortingService.applySorts(
+            ingredients,
+            [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
+          );
+      this.userIngredients.set(sortedIngredients);
       // Iterate over each source ingredient and premap any where the name matches that of a user ingredient
       const updatedIngredients = this.ingredients().map((sourceIngredient) => {
         const matchingUserIngredient = this.findMatchingUserIngredient(
@@ -147,6 +156,7 @@ export class SubscribeRecipeModalComponent {
         if (matchingUserIngredient) {
           sourceIngredient.userIngredientID =
             matchingUserIngredient.ingredientID;
+
         }
         return sourceIngredient;
       });
@@ -173,6 +183,10 @@ export class SubscribeRecipeModalComponent {
       const initialStatuses = userTools.map(() => false);
       this.toolStatuses.set(initialStatuses);
     });
+
+    // Get unit ratio suggestions for any ingredient that has a userIngredientID and no userPurchaseUnitRatio
+    this.getUnitRatios();
+    
   }
 
   getIngredientPlaceholder(sourceIngredient: any): string {
@@ -182,7 +196,7 @@ export class SubscribeRecipeModalComponent {
       );
       return matchedIngredient ? matchedIngredient.name : 'Select Ingredient';
     }
-    return 'Select Ingredient';
+    return 'Copy to Kitchen';
   }
   getToolPlaceholder(sourceTool: any): string {
     if (sourceTool.userToolID) {
@@ -212,7 +226,7 @@ export class SubscribeRecipeModalComponent {
     const userIngredient = this.userIngredients().find(
       (i) => i.ingredientID === ingredient.userIngredientID
     );
-    return `${userIngredient.purchaseUnit}`;
+    return this.unitService.plural(userIngredient.purchaseUnit);
   }
   onIngredientSelectChange(newUserIngredientID, ingredient) {
     const newIngredients = this.ingredients().map((i) => {
@@ -258,6 +272,36 @@ export class SubscribeRecipeModalComponent {
         ? 40
         : 10;
     this.progressValue = progress;
+  }
+
+  getUnitRatios() {
+    this.ingredients().forEach((ingredient) => {
+      if (ingredient.userIngredientID && !ingredient.userPurchaseUnitRatio) {
+        const userIngredient = this.userIngredients().find(
+          (i) => i.ingredientID === ingredient.userIngredientID
+        );
+        this.unitService
+          .getUnitRatio(
+            ingredient.name,
+            userIngredient.purchaseUnit,
+            ingredient.measurementUnit
+          )
+          .subscribe({
+            next: (response) => {
+              const newIngredients = this.ingredients().map((i) => {
+                if (i.ingredientID === ingredient.ingredientID) {
+                  i.userPurchaseUnitRatio = response.ratio;
+                }
+                return i;
+              });
+              this.ingredients.set(newIngredients);
+            },
+            error: (error) => {
+              console.error('Error getting purchase unit ratio:', error);
+            },
+          });
+      }
+    });
   }
 
   onSubscribeClick() {

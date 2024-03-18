@@ -12,6 +12,12 @@ export class UnitService {
   singular(value: string) {
     if (value[value.length - 1] === 's') {
       if (
+        value === 'leaves' ||
+        value === 'loaves'
+      ) {
+        return value.slice(0, -3) + 'f';
+      }
+      else if (
         value === 'boxes' ||
         value === 'bunches' ||
         value === 'pinches' ||
@@ -20,6 +26,27 @@ export class UnitService {
         return value.slice(0, -2);
       } else {
         return value.slice(0, -1);
+      }
+    }
+    return value;
+  }
+
+  plural(value: string) {
+    if (value[value.length - 1] !== 's') {
+      if (
+        value === 'leaf' || value === 'loaf'
+      ) {
+        return value.slice(0, -1) + 'ves';
+      }
+      else if (
+        value === 'box' ||
+        value === 'bunch' ||
+        value === 'pinch' ||
+        value === 'dash'
+      ) {
+        return value + 'es';
+      } else {
+        return value + 's';
       }
     }
     return value;
