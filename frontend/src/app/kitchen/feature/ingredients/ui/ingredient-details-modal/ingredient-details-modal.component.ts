@@ -203,7 +203,7 @@ export class IngredientDetailsModalComponent {
             confirmationMessage: `Ingredient updated`,
           },
         });
-        this.dialogRef.close();
+        this.dialogRef.close('success');
       }
     });
   }
