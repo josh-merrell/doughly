@@ -86,8 +86,8 @@ export class EditRecipeIngredientModalComponent {
   }
 
   ngOnInit() {
-    // if value is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
-    this.pUnit = this.enrichMeasurementUnit(
+    // get plural
+    this.pUnit = this.unitService.plural(
       this.data.recipeIngredient.purchaseUnit
     );
     this.recipeIngredient = signal(this.data.recipeIngredient);
@@ -101,7 +101,7 @@ export class EditRecipeIngredientModalComponent {
       component: this.data.recipeIngredient.component,
       preparation: this.data.recipeIngredient.preparation,
       measurement: this.data.recipeIngredient.measurement,
-      measurementUnit: this.enrichMeasurementUnit(
+      measurementUnit: this.unitService.plural(
         this.data.recipeIngredient.measurementUnit
       ),
       purchaseUnitRatio: this.data.recipeIngredient.purchaseUnitRatio,
@@ -120,7 +120,7 @@ export class EditRecipeIngredientModalComponent {
 
     // Update mUnit whenever measurementUnit value changes
     this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
-      this.mUnit = this.singularUnit(value);
+      this.mUnit = this.unitService.singular(value);
     });
   }
 
@@ -160,35 +160,6 @@ export class EditRecipeIngredientModalComponent {
           },
         });
     }
-  }
-
-  enrichMeasurementUnit(measurementUnit) {
-    if (measurementUnit[measurementUnit.length - 1] === 's') {
-      return measurementUnit;
-    }
-    if (
-      measurementUnit === 'box' ||
-      measurementUnit === 'bunch' ||
-      measurementUnit === 'pinch' ||
-      measurementUnit === 'dash'
-    ) {
-      measurementUnit += 'es';
-    } else {
-      measurementUnit += 's';
-    }
-    return measurementUnit;
-  }
-
-  singularUnit(unit) {
-    if (
-      unit == 'boxes' ||
-      unit == 'bunches' ||
-      unit == 'pinches' ||
-      unit == 'dashes'
-    ) {
-      return unit.slice(0, -2);
-    }
-    return unit.slice(0, -1);
   }
 
   onSubmit() {
