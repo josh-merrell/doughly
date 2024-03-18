@@ -42,6 +42,8 @@ export class IngredientsComponent {
   public filteredIngredientsNeedsReview: WritableSignal<any[]> = signal([]);
   public displayedRowsNoReview: WritableSignal<any[]> = signal([]);
   public displayedRowsNeedsReview: WritableSignal<any[]> = signal([]);
+  private reviewedCount: number = 0;
+  private reviewRecipeID: WritableSignal<number | null> = signal(null);
 
   sorts: Sort[] = [];
 
@@ -144,32 +146,14 @@ export class IngredientsComponent {
       },
       { allowSignalWrites: true }
     );
-
-    effect(() => {
-      const displayedRowsNeedsReview = this.displayedRowsNeedsReview();
-      const displayedRowsNoReview = this.displayedRowsNoReview();
-
-      // console.log('CURRENT: ', displayedRowsNeedsReview, displayedRowsNoReview);
-      if (
-        displayedRowsNeedsReview.length === 0 &&
-        displayedRowsNoReview.length > 0
-      ) {
-        console.log('NEEDS REVIEW EMPTY');
-        // get current value of 'reviewRecipeID' from store
-        this.store.select(selectReviewRecipeID).subscribe((reviewRecipeID) => {
-          // if defined, set 'reviewRecipeID' to null in store and navigate to recipe
-          if (reviewRecipeID) {
-            this.store.dispatch(removeReviewRecipe());
-            this.router.navigate(['recipe', reviewRecipeID]);
-          }
-        });
-      }
-    }, { allowSignalWrites: true });
   }
 
   ngOnInit(): void {
     this.store.select(selectIngredients).subscribe((ingredients) => {
       this.ingredients.set(ingredients);
+    });
+    this.store.select(selectReviewRecipeID).subscribe((reviewRecipeID) => {
+      this.reviewRecipeID.set(reviewRecipeID);
     });
   }
 
@@ -290,8 +274,26 @@ export class IngredientsComponent {
       width: '75%',
     });
     dialogRef.afterClosed().subscribe((result) => {
+      if (openEdit && result === 'success') {
+        this.reviewedCount++;
+      }
       // close any other open modals
       this.modalActiveForIngredientID = null;
+
+      if (
+        this.displayedRowsNeedsReview().length < 2 &&
+        this.displayedRowsNoReview().length
+      ) {
+        // get current value of 'reviewRecipeID' from store
+        const reviewRecipeID = this.reviewRecipeID();
+        if (reviewRecipeID) {
+          // if defined, set 'reviewRecipeID' to null in store and navigate to recipe
+          if (this.reviewedCount > 0) {
+            this.store.dispatch(removeReviewRecipe());
+            this.router.navigate(['recipe', reviewRecipeID]);
+          }
+        }
+      }
     });
   }
 
