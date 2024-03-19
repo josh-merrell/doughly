@@ -11,7 +11,7 @@ import { NgZone } from '@angular/core';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { RecipeProgressService } from 'src/app/recipes/data/recipeVisionProgress.service';
 import { Observable, filter, take } from 'rxjs';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   selectAdding,
   selectError,
@@ -22,6 +22,7 @@ import { Router } from '@angular/router';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'dl-from-url-add-recipe-modal',
@@ -31,6 +32,8 @@ import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
     ImageCropperModule,
     MatProgressSpinnerModule,
     MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './from-url-add-recipe-modal.component.html',
 })
@@ -121,7 +124,7 @@ export class FromUrlAddRecipeModalComponent {
 
   setForm() {
     this.form = this.fb.group({
-      sourceURL: [''],
+      sourceURL: ['', [Validators.required]],
     });
   }
 

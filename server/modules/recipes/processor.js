@@ -628,31 +628,8 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function createVision(options) {
+  async function processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID) {
     try {
-      const { userID, recipeSourceImageURL, recipePhotoURL, authorization } = options;
-
-      // call openaiHandler to build recipe json
-      let elapsedTime = 0;
-      const timer = setInterval(() => {
-        elapsedTime += 1;
-        sendSSEMessage(userID, { message: `Searching image for recipe details. This should take around twenty seconds. Elapsed Time: ${elapsedTime}` });
-      }, 1000); // Send progress update every second
-      global.logger.info(`Calling visionRequest`);
-      const visionStartTime = new Date();
-      const { response, error } = await visionRequest(recipeSourceImageURL, userID, authorization, 'generateRecipeFromImage');
-      if (error) {
-        global.logger.error(`Error creating recipe from vision: ${error.message}`);
-        throw errorGen(`Error creating recipe from vision: ${error.message}`, 400);
-      }
-      clearInterval(timer);
-      const recipeJSON = JSON.parse(response);
-      // Stop timer and calculate duration
-      const visionEndTime = new Date();
-      const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
-      sendSSEMessage(userID, { message: `Got recipe details from image in ${visionDuration / 1000} seconds` });
-      global.logger.info(`*TIME* recipe visionRequest: ${visionDuration / 1000} seconds`);
-
       // validate resulting json, return if it lacks minimum requirements
       if (recipeJSON.error) {
         if (recipeJSON.error === 10) {
@@ -891,10 +868,6 @@ module.exports = ({ db }) => {
       }
       const recipeID = recipe.recipeID;
 
-      const endTime = new Date();
-      const totalDuration = endTime - visionStartTime;
-      // global.logger.info(`Time taken to decipher and construct recipe: ${totalDuration / 1000} seconds`);
-      global.logger.info(`*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`);
       // fix the vertexaiCost to 4 decimals
       const vertexaiCost = parseFloat(matchedIngredientsResponse.vertexaiCost).toFixed(4);
       global.logger.info(`vertexAI Cost (all ingr) to find match and get PU/LD: ${vertexaiCost}`);
@@ -908,27 +881,79 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function createFromURL(options) {
-    const { userID, authorization, recipeSourceURL, recipePhotoURL } = options;
+  async function createVision(options) {
     try {
+      const { userID, recipeSourceImageURL, recipePhotoURL, authorization } = options;
+
+      // call openaiHandler to build recipe json
+      let elapsedTime = 0;
+      const timer = setInterval(() => {
+        elapsedTime += 1;
+        sendSSEMessage(userID, { message: `Searching image for recipe details. This should take around twenty seconds. Elapsed Time: ${elapsedTime}` });
+      }, 1000); // Send progress update every second
+      global.logger.info(`Calling visionRequest`);
+      const visionStartTime = new Date();
+      const { response, error } = await visionRequest(recipeSourceImageURL, userID, authorization, 'generateRecipeFromImage');
+      if (error) {
+        global.logger.error(`Error creating recipe from vision: ${error.message}`);
+        throw errorGen(`Error creating recipe from vision: ${error.message}`, 400);
+      }
+      clearInterval(timer);
+      const recipeJSON = JSON.parse(response);
+      // Stop timer and calculate duration
+      const visionEndTime = new Date();
+      const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
+      sendSSEMessage(userID, { message: `Got recipe details from image in ${visionDuration / 1000} seconds` });
+      global.logger.info(`*TIME* recipe visionRequest: ${visionDuration / 1000} seconds`);
+
+      const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
+
+      const endTime = new Date();
+      const totalDuration = endTime - visionStartTime;
+      global.logger.info(`*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`);
+
+      return recipeID;
+    } catch (error) {
+      global.logger.error(`Unhandled Error: ${error.message}`);
+      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    }
+  }
+
+  async function createFromURL(options) {
+    const { userID, authorization, recipeURL, recipePhotoURL } = options;
+    global.logger.info(`Creating recipe from URL: ${recipeURL}`);
+    try {
+      // start timer
+      const visionStartTime = new Date();
+
       // call 'getHtml' to get recipe details from URL
-      const { response, error } = await getHtml(recipeSourceURL, userID, authorization, 'generateRecipeFromURL');
+      const { html, error } = await getHtml(recipeURL, userID, authorization, 'generateRecipeFromURL');
       if (error) {
         global.logger.error(`Error getting Source Recipe details. Can't create recipe: ${error.message}`);
         throw errorGen(`Error getting Source Recipe details. Can't create recipe: ${error.message}`, 400);
       }
 
-      const htmlText = await extractFromHtml(response);
+      const htmlText = await extractFromHtml(html);
       if (!htmlText) {
-        global.logger.error(`Error extracting recipe details from URL: ${recipeSourceURL}`);
-        throw errorGen(`Error extracting recipe details from URL: ${recipeSourceURL}`, 400);
+        global.logger.error(`Error extracting recipe details from URL: ${recipeURL}`);
+        throw errorGen(`Error extracting recipe details from URL: ${recipeURL}`, 400);
       }
 
       global.logger.info(`HTML TEXT: ${htmlText}`);
       // call openaiHandler to build recipe json
+      // const recipeJSON = await openaiHandler(htmlText);
 
       // temp early return
       return;
+
+      // const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
+
+      const endTime = new Date();
+      const totalDuration = endTime - visionStartTime;
+      // global.logger.info(`Time taken to decipher and construct recipe: ${totalDuration / 1000} seconds`);
+      global.logger.info(`*TIME* URL recipe and construct total: ${totalDuration / 1000} seconds`);
+
+      // return recipeID;
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);

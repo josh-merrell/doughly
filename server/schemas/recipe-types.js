@@ -41,6 +41,14 @@ const newRecipeVisionSchema_body = {
   },
 };
 
+const newRecipeFromUrlSchema_body = {
+  type: 'object',
+  required: ['recipeURL'],
+  properties: {
+    recipeURL: { type: 'string' },
+  },
+};
+
 const RecipeUpdateSchema_body = {
   type: 'object',
   properties: {
@@ -193,6 +201,7 @@ module.exports = {
   getRecipeSchema_params,
   newRecipeSchema_body,
   newRecipeVisionSchema_body,
+  newRecipeFromUrlSchema_body,
   RecipeUpdateSchema_body,
   RecipeUpdateSchema_params,
   RecipeDeleteSchema_params,

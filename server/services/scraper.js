@@ -11,7 +11,7 @@ const getHtml = async (url) => {
     await page.goto(url);
     const html = await page.content();
     global.logger.info(`HTML from URL: ${url} retrieved`);
-    return html;
+    return { html };
   } catch (error) {
     global.logger.error(`Error getting HTML from URL: ${url}`);
     throw error;
@@ -19,11 +19,28 @@ const getHtml = async (url) => {
 };
 
 const extractFromHtml = async (html) => {
-  // load html into cheerio and get all text from the page. Save the text to a single string.
   const $ = cheerio.load(html);
-  const text = $('*').text();
+
+  // Remove image tags from the HTML to prevent processing their textual content
+  $('img').remove();
+
+  // Now extract text from the HTML, but more selectively to ensure we don't inadvertently include undesired content
+  let text = '';
+  $('body')
+    .find('*')
+    .not('script, style')
+    .each(function () {
+      const current = $(this);
+      // Check if the current element is directly text-containing element
+      if (current.children().length === 0) {
+        // Element does not contain other elements
+        text += ' ' + current.text();
+      }
+    });
+
+  text = text.replace(/<img[^>]*>/g, ''); // Remove any remaining image tags
   global.logger.info(`Text extracted from HTML: ${text}`);
-  return text;
+  return text.trim(); // Trim the text to remove any leading/trailing whitespace
 };
 
 module.exports = {
