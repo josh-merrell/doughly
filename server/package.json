@@ -1,5 +1,7 @@
 {
   "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.29",
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -17,6 +19,7 @@
     "@supabase/supabase-js": "^2.22.0",
     "aws-sdk": "^2.1442.0",
     "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -30,6 +33,7 @@
     "node-fetch": "^3.3.2",
     "openai": "^4.28.0",
     "path": "^0.12.7",
+    "playwright": "^1.42.1",
     "winston": "^3.9.0"
   }
 }

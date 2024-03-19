@@ -8,6 +8,7 @@ import {
 
 import { ManualAddRecipeModalComponent } from '../manual-add-recipe-modal/manual-add-recipe-modal.component';
 import { VisionAddRecipeModalComponent } from '../vision-add-recipe-modal/vision-add-recipe-modal.component';
+import { FromUrlAddRecipeModalComponent } from '../from-url-add-recipe-modal/from-url-add-recipe-modal.component';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -52,7 +53,11 @@ export class AddRecipeModalComponent {
     if (fullUrl.includes('/vision')) {
       this.onVisionAddClick();
     }
+    if (fullUrl.includes('/from-url')) {
+      this.onFromUrlAddClick();
+    }
     // Any other URL checks can be added here
+
   }
 
   onManualAddClick(): void {
@@ -78,6 +83,22 @@ export class AddRecipeModalComponent {
     });
     dialogRef.afterClosed().subscribe((result) => {
       // remove '/vision' from the url
+      this.location.go('/recipes/created/add');
+      if (result === 'success') {
+        this.dialogRef.close('success');
+      }
+    });
+  }
+
+  onFromUrlAddClick(): void {
+    // update url to include '/from-url' if it's not already there
+    this.location.go('/recipes/created/add/from-url');
+
+    const dialogRef = this.dialog.open(FromUrlAddRecipeModalComponent, {
+      width: '90%',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      // remove '/from-url' from the url
       this.location.go('/recipes/created/add');
       if (result === 'success') {
         this.dialogRef.close('success');

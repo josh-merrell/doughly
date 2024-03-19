@@ -141,11 +141,30 @@ async function createRecipeVision(req, res) {
       authorization,
       userID: req.userID,
       recipeSourceImageURL,
-      recipePhotoURL
+      recipePhotoURL,
     });
     return res.json(returner);
   } catch (err) {
     global.logger.error(`'recipes' 'createRecipeVision': ${err.message}`);
+    return res.status(err.code || 500).json({ error: err.message });
+  }
+}
+
+async function createRecipeFromURL(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { recipeSourceURL, recipePhotoURL } = req.body;
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.createFromURL({
+      authorization,
+      userID: req.userID,
+      recipeSourceURL,
+      recipePhotoURL,
+    });
+    return res.json(returner);
+  } catch (err) {
+    global.logger.error(`'recipes' 'createRecipeFromURL': ${err.message}`);
     return res.status(err.code || 500).json({ error: err.message });
   }
 }
@@ -195,7 +214,7 @@ async function deleteRecipe(req, res) {
   }
 }
 
-async function useRecipe(req, res, next) {
+async function useRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeID } = req.params;
@@ -300,6 +319,7 @@ module.exports = {
   getRecipeSubscriptions,
   createRecipe,
   createRecipeVision,
+  createRecipeFromURL,
   updateRecipe,
   deleteRecipe,
   useRecipe,

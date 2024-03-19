@@ -1,0 +1,102 @@
+<div
+  class="relative max-h-dl-21 w-full transform overflow-hidden overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+>
+  <div class="mb-dl-7 flex w-full flex-col items-center">
+    <!-- Title -->
+    <h3 class="mb-dl-4 leading-dl-4 text-dl-7 font-dl-3 text-dl-grey-2">
+      Web Recipe
+    </h3>
+    <p *ngIf="!isAdding" class="px-dl-4 text-dl-5 font-dl-2 text-dl-grey-2">
+      Paste the URL of the recipe you wish to add to your collection. Optionally, choose a photo of the completed dish
+    </p>
+    <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
+    <p
+      *ngIf="isAdding"
+      class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2"
+    >
+      You may navigate away while waiting
+    </p>
+    <p
+      *ngIf="statusMessage() && isAdding"
+      class="px-dl-4 text-dl-5 font-dl-2 text-dl-grey-3"
+    >
+      {{ statusMessage() }}
+    </p>
+  </div>
+  <div *ngIf="!isAdding" class="relative flex w-full flex-col">
+    <div class="text-center">
+      <!-- Source URL input Selection -->
+      <!--FORM FIELDS-->
+      <div class="mt-dl-6">
+        <div id="form-first-field" class="relative flex flex-col">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Web Recipe Address</label>
+          <mat-form-field class="w-full">
+            <input matInput formControlName="sourceURL" />
+            <mat-error
+              *ngIf="form.get('sourceURL')?.errors?.['notState']"
+            >
+              Must provide a valid URL
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Photo Selection -->
+      <div class="mt-dl-1 w-full">
+        <div class="relative flex w-full flex-col items-center">
+          <input
+            type="file"
+            class="hidden"
+            id="fileInputRecipe"
+            (change)="recipeOnFileSelected($event)"
+            accept="image/png, image/jpeg"
+          />
+          <label
+            for="fileInputRecipe"
+            class="inline-block w-full cursor-pointer rounded px-4 py-2 text-dl-5"
+            [ngClass]="{
+              'border-2 border-dl-blue-4 bg-white text-dl-blue-4': imagePresent,
+              'bg-dl-blue-4 text-white': !imagePresent
+            }"
+          >
+            {{ imagePresent ? "Change Recipe Photo" : "Choose Recipe Photo" }}
+          </label>
+        </div>
+
+        <image-cropper
+          [imageChangedEvent]="recipeImageChangedEvent"
+          [maintainAspectRatio]="true"
+          [aspectRatio]="5 / 3"
+          (imageCropped)="recipeImageCropped($event)"
+          (imageLoaded)="recipeImageLoaded()"
+          (cropperReady)="recipeCropperReady()"
+          (loadImageFailed)="recipeLoadImageFailed()"
+        ></image-cropper>
+      </div>
+
+      <!-- Submit, Cancel Buttons -->
+      <div class="mt-dl-6">
+        <button
+          type="button"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          [class.cursor-pointer]="form.valid ||!form.pristine"
+          [ngClass]="{
+            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5': form.valid || !form.pristine,
+            'bg-dl-grey-7': !form.valid || form.pristine
+          }"          
+          [disabled]="!form.valid || form.pristine"
+          (click)="onSubmit()"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

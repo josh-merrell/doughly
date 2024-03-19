@@ -8,6 +8,7 @@ const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supp
 const { errorGen } = require('../../middleware/errorHandling');
 const { visionRequest, matchRecipeItemRequest, matchRecipeIngredientRequest } = require('../../services/aiHandlers.js');
 const { getUnitRatio } = require('../../services/unitRatioStoreService');
+const { getHtml, extractFromHtml } = require('../../services/scraper');
 const { sendSSEMessage } = require('../../server.js');
 // const path = require('path');
 // const fs = require('fs');
@@ -907,6 +908,33 @@ module.exports = ({ db }) => {
     }
   }
 
+  async function createFromURL(options) {
+    const { userID, authorization, recipeSourceURL, recipePhotoURL } = options;
+    try {
+      // call 'getHtml' to get recipe details from URL
+      const { response, error } = await getHtml(recipeSourceURL, userID, authorization, 'generateRecipeFromURL');
+      if (error) {
+        global.logger.error(`Error getting Source Recipe details. Can't create recipe: ${error.message}`);
+        throw errorGen(`Error getting Source Recipe details. Can't create recipe: ${error.message}`, 400);
+      }
+
+      const htmlText = await extractFromHtml(response);
+      if (!htmlText) {
+        global.logger.error(`Error extracting recipe details from URL: ${recipeSourceURL}`);
+        throw errorGen(`Error extracting recipe details from URL: ${recipeSourceURL}`, 400);
+      }
+
+      global.logger.info(`HTML TEXT: ${htmlText}`);
+      // call openaiHandler to build recipe json
+
+      // temp early return
+      return;
+    } catch (error) {
+      global.logger.error(`Unhandled Error: ${error.message}`);
+      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    }
+  }
+
   async function matchIngredients(ingredients, authorization, userID, userIngredients) {
     const userIngredientsInfo = userIngredients.map((i) => {
       return { name: i.name, ingredientID: i.ingredientID, purchaseUnit: i.purchaseUnit, needsReview: true };
@@ -1725,6 +1753,7 @@ module.exports = ({ db }) => {
     constructRecipe,
     create,
     createVision,
+    createFromURL,
     update,
     delete: deleteRecipe,
     use: useRecipe,
