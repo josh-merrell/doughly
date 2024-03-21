@@ -187,7 +187,7 @@ export class VisionAddRecipeModalComponent {
                 this.dialog.open(ErrorModalComponent, {
                   maxWidth: '380px',
                   data: {
-                    errorMessage: error.message,
+                    errorMessage: `We couldn't add a recipe using that image. Make sure the image clearly shows all details of a recipe and try again.`,
                     statusCode: error.statusCode,
                   },
                 });

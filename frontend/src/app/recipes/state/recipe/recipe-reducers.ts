@@ -127,6 +127,21 @@ export const recipeReducer = createReducer(
     error,
     adding: false,
   })),
+  on(RecipeActions.UrlAddRecipe, (state) => ({
+    ...state,
+    error: null,
+    adding: true,
+  })),
+  on(RecipeActions.UrlAddRecipeSuccess, (state, { recipeID }) => ({
+    ...state,
+    newRecipeID: recipeID,
+    adding: false,
+  })),
+  on(RecipeActions.UrlAddRecipeFailure, (state, { error }) => ({
+    ...state,
+    error,
+    adding: false,
+  })),
   on(RecipeActions.clearNewRecipeID, (state) => ({
     ...state,
     newRecipeID: undefined,

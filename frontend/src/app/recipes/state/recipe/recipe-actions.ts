@@ -69,7 +69,7 @@ const addRecipeFailure = createAction(
 
 const visionAddRecipe = createAction(
   '[Recipes] Vision Add',
-  props<{ recipeSourceImageURL: string, recipePhotoURL?: string }>()
+  props<{ recipeSourceImageURL: string; recipePhotoURL?: string }>()
 );
 const visionAddRecipeSuccess = createAction(
   '[Recipes] Vision Add Success',
@@ -80,13 +80,29 @@ const visionAddRecipeFailure = createAction(
   props<{ error: any }>()
 );
 
+const UrlAddRecipe = createAction(
+  '[Recipes] From URL Add',
+  props<{ recipeURL: string; recipePhotoURL?: string }>()
+);
+const UrlAddRecipeSuccess = createAction(
+  '[Recipes] From URL Add Success',
+  props<{ recipeID: number }>()
+);
+const UrlAddRecipeFailure = createAction(
+  '[Recipes] From URL Add Failure',
+  props<{ error: any }>()
+);
+
 const clearNewRecipeID = createAction('[Recipes] Clear New Recipe ID');
 
 const constructRecipe = createAction(
   '[Recipes] Construct',
   props<{ constructBody: any }>()
 );
-const constructRecipeSuccess = createAction('[Recipes] Construct Success', props<{ recipeID: number }>());
+const constructRecipeSuccess = createAction(
+  '[Recipes] Construct Success',
+  props<{ recipeID: number }>()
+);
 const constructRecipeFailure = createAction(
   '[Recipes] Construct Failure',
   props<{ error: any }>()
@@ -158,6 +174,9 @@ export const RecipeActions = {
   visionAddRecipe,
   visionAddRecipeSuccess,
   visionAddRecipeFailure,
+  UrlAddRecipe,
+  UrlAddRecipeSuccess,
+  UrlAddRecipeFailure,
   clearNewRecipeID,
   constructRecipe,
   constructRecipeSuccess,
