@@ -111,7 +111,7 @@ export class LoginPageComponent {
         .then(() => {
           // Handle successful sign in
           this.loadState();
-          this.router.navigate(['/recipes']);
+          this.router.navigate(['/recipes/discover']);
         })
         .catch((error) => {
           // Handle sign in error

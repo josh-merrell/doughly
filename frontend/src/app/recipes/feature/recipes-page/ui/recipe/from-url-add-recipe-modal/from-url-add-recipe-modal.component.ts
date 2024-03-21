@@ -130,7 +130,7 @@ export class FromUrlAddRecipeModalComponent {
 
   async onSubmit() {
     this.isAdding = true;
-    this.statusMessage.set('Loading Image');
+    this.statusMessage.set('Getting Recipe Details');
     //if recipe photo is present, upload it
     if (this.selectedFile) {
       await this.uploadCroppedImage();

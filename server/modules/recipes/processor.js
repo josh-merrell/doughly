@@ -915,7 +915,7 @@ module.exports = ({ db }) => {
       let elapsedTime = 0;
       const timer = setInterval(() => {
         elapsedTime += 1;
-        sendSSEMessage(userID, { message: `Searching image for recipe details. This should take around twenty seconds. Elapsed Time: ${elapsedTime}` });
+        sendSSEMessage(userID, { message: `Getting recipe details from image. This should take less than a minute. Elapsed Time: ${elapsedTime}` });
       }, 1000); // Send progress update every second
       global.logger.info(`Calling visionRequest`);
       const visionStartTime = new Date();
@@ -974,6 +974,14 @@ module.exports = ({ db }) => {
   async function createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL) {
     global.logger.info(`Creating recipe from URL: ${recipeURL}`);
     try {
+      // call openaiHandler to build recipe json
+      let elapsedTime = 0;
+      const timer = setInterval(() => {
+        elapsedTime += 1;
+        sendSSEMessage(userID, { message: `Getting recipe details from web page. This should be quick. Elapsed Time: ${elapsedTime}` });
+      }, 1000); // Send progress update every second
+      global.logger.info(`Calling urlRequest`);
+
       // start timer
       const visionStartTime = new Date();
 
@@ -983,6 +991,7 @@ module.exports = ({ db }) => {
         global.logger.error(`Error getting Source Recipe details. Can't create recipe: ${error.message}`);
         throw errorGen(`Error getting Source Recipe details. Can't create recipe: ${error.message}`, 400);
       }
+      clearInterval(timer);
 
       const htmlText = await extractFromHtml(html);
       if (!htmlText) {
