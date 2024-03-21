@@ -37,7 +37,7 @@ export const selectSubscriptionBySourceRecipeID = memoize((recipeID: number) => 
   );
 });
 
-export const selectNewRecipeID = (state: any) => state.recipe.newRecipeID;
+export const selectNewRecipeID = (state: any) => state.recipe.newRecipeID.recipeID;
 
 export const selectDeleting = (state: any) => state.recipe.deleting;
 

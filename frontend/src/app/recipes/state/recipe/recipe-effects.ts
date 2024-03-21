@@ -48,24 +48,26 @@ export class RecipeEffects {
     this.actions$.pipe(
       ofType(RecipeActions.visionAddRecipe),
       mergeMap((action) =>
-        this.recipeService.visionAdd(action.recipeSourceImageURL, action.recipePhotoURL ).pipe(
-          map((recipeID) =>
-            RecipeActions.visionAddRecipeSuccess({
-              recipeID,
-            })
-          ),
-          catchError((error) =>
-            of(
-              RecipeActions.visionAddRecipeFailure({
-                error: {
-                  message: error.error.error,
-                  statusCode: error.status,
-                  rawError: error,
-                },
+        this.recipeService
+          .visionAdd(action.recipeSourceImageURL, action.recipePhotoURL)
+          .pipe(
+            map((recipeID) =>
+              RecipeActions.visionAddRecipeSuccess({
+                recipeID,
               })
+            ),
+            catchError((error) =>
+              of(
+                RecipeActions.visionAddRecipeFailure({
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
+                })
+              )
             )
           )
-        )
       )
     )
   );
@@ -86,12 +88,58 @@ export class RecipeEffects {
     )
   );
 
+  UrlAddRecipe$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.UrlAddRecipe),
+      mergeMap((action) =>
+        this.recipeService
+          .fromURLAdd(action.recipeURL, action.recipePhotoURL)
+          .pipe(
+            map((recipeID) =>
+              RecipeActions.UrlAddRecipeSuccess({
+                recipeID,
+              })
+            ),
+            catchError((error) =>
+              of(
+                RecipeActions.UrlAddRecipeFailure({
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
+                })
+              )
+            )
+          )
+      )
+    )
+  );
+
+  //load recipe items after URL add
+  loadRecipesAfterURLAdd$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.UrlAddRecipeSuccess),
+      mergeMap(() => [
+        RecipeActions.loadRecipes(),
+        RecipeIngredientActions.loadRecipeIngredients(),
+        RecipeToolActions.loadRecipeTools(),
+        StepActions.loadSteps(),
+        RecipeStepActions.loadRecipeSteps(),
+        IngredientActions.loadIngredients(),
+        ToolActions.loadTools(),
+      ])
+    )
+  );
+
   constructRecipe$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeActions.constructRecipe),
       mergeMap((action) =>
         this.recipeService.constructRecipe(action.constructBody).pipe(
-          map((result) => RecipeActions.constructRecipeSuccess({ recipeID: result.recipeID })),
+          map((result) =>
+            RecipeActions.constructRecipeSuccess({ recipeID: result.recipeID })
+          ),
           catchError((error) =>
             of(
               RecipeActions.constructRecipeFailure({

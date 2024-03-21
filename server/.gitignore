@@ -2,3 +2,7 @@ node_modules/
 logger.log
 request.log
 ecosystem.config.js
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

@@ -131,6 +131,10 @@ export class RecipeService {
     return this.http.post<any>(`${this.API_URL}/vision`, { recipeSourceImageURL, recipePhotoURL });
   }
 
+  fromURLAdd(recipeURL, recipePhotoURL): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/fromURL`, { recipeURL, recipePhotoURL });
+  }
+
   delete(recipeID: number): Observable<Recipe> {
     return this.http.delete<Recipe>(`${this.API_URL}/${recipeID}`);
   }
