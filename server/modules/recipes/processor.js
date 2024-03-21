@@ -6,7 +6,7 @@ const { createRecipeLog, createRecipeFeedbackLog } = require('../../services/dbL
 const { updater } = require('../../db');
 const { supplyCheckRecipe, useRecipeIngredients } = require('../../services/supply');
 const { errorGen } = require('../../middleware/errorHandling');
-const { visionRequest, matchRecipeItemRequest, matchRecipeIngredientRequest } = require('../../services/aiHandlers.js');
+const { visionRequest, recipeFromTextRequest, matchRecipeItemRequest, matchRecipeIngredientRequest } = require('../../services/aiHandlers.js');
 const { getUnitRatio } = require('../../services/unitRatioStoreService');
 const { getHtml, extractFromHtml } = require('../../services/scraper');
 const { sendSSEMessage } = require('../../server.js');
@@ -685,6 +685,16 @@ module.exports = ({ db }) => {
         // convert units to singular
         recipeJSON.ingredients[i] = singularUnit(recipeJSON.ingredients[i]);
 
+        // remove 'preparation' from object if it is null
+        if (!recipeJSON.ingredients[i].preparation) {
+          delete recipeJSON.ingredients[i].preparation;
+        }
+
+        // remove 'component' from object if it is null
+        if (!recipeJSON.ingredients[i].component) {
+          delete recipeJSON.ingredients[i].component;
+        }
+
         if (!units.includes(recipeJSON.ingredients[i].measurementUnit)) {
           if (recipeJSON.ingredients[i].measurementUnit === 'ounce') {
             recipeJSON.ingredients[i].measurementUnit = 'weightOunce';
@@ -725,23 +735,30 @@ module.exports = ({ db }) => {
       if (recipeJSON.steps.length < 1) {
         global.logger.error(`no recipe steps found in image`);
         throw errorGen(`no recipe steps found in image`, 400);
-      } else {
-        for (let i = 0; i < recipeJSON.steps.length; i++) {
-          if (!recipeJSON.steps[i].title) {
-            global.logger.error(`step missing title`);
-            throw errorGen(`step missing title`, 400);
-          }
-          if (!recipeJSON.steps[i].description) {
-            global.logger.error(`step missing description`);
-            throw errorGen(`step missing description`, 400);
-          }
-          if (!recipeJSON.steps[i].sequence || recipeJSON.steps[i].sequence < 1) {
-            global.logger.error(`missing or invalid step sequence`);
-            throw errorGen(`missing or invalid step sequence`, 400);
-          }
-          recipeJSON.steps[i].stepID = 0;
-        }
       }
+
+      const toolIndexesToRemove = new Set();
+      recipeJSON.steps = addStepSequences(recipeJSON.steps);
+      for (let i = 0; i < recipeJSON.steps.length; i++) {
+        if (!recipeJSON.steps[i].title) {
+          global.logger.error(`step missing title`);
+          toolIndexesToRemove.add(i);
+        }
+        if (!recipeJSON.steps[i].description) {
+          global.logger.error(`step missing description`);
+          toolIndexesToRemove.add(i);
+        }
+        // if (!recipeJSON.steps[i].sequence || recipeJSON.steps[i].sequence < 1) {
+        //   global.logger.error(`missing or invalid step sequence`);
+        //   toolIndexesToRemove.add(i);
+        // }
+        recipeJSON.steps[i].stepID = 0;
+      }
+      // remove invalid steps from array
+      for (let i of Array.from(toolIndexesToRemove).sort((a, b) => b - a)) {
+        recipeJSON.steps.splice(i, 1);
+      }
+
       // get user ingredients from supabase
       const { data: userIngredients, error: userIngredientsError } = await db.from('ingredients').select('name, purchaseUnit, ingredientID, gramRatio').eq('userID', userID).eq('deleted', false);
       if (userIngredientsError) {
@@ -861,12 +878,12 @@ module.exports = ({ db }) => {
 
       // call constructRecipe with body
       sendSSEMessage(userID, { message: `Details ready, building new Recipe` });
-      const { data: recipe, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
+      const { data: recipeID, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
       if (constructError) {
         global.logger.error(`Error constructing recipe from image details: ${constructError.message}`);
         throw errorGen(`Error constructing recipe from image details: ${constructError.message}`, 400);
       }
-      const recipeID = recipe.recipeID;
+      // const recipeID = recipe.recipeID;
 
       // fix the vertexaiCost to 4 decimals
       const vertexaiCost = parseFloat(matchedIngredientsResponse.vertexaiCost).toFixed(4);
@@ -879,6 +896,15 @@ module.exports = ({ db }) => {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);
     }
+  }
+
+  function addStepSequences(steps) {
+    let sequence = 1;
+    for (let i = 0; i < steps.length; i++) {
+      steps[i].sequence = sequence;
+      sequence++;
+    }
+    return steps;
   }
 
   async function createVision(options) {
@@ -920,7 +946,32 @@ module.exports = ({ db }) => {
   }
 
   async function createFromURL(options) {
-    const { userID, authorization, recipeURL, recipePhotoURL } = options;
+    const { userID, recipeURL, recipePhotoURL, authorization } = options;
+
+    // max attempts to create recipe from URL
+    const maxAttempts = 3;
+
+    // attempt to create recipe from URL
+    let recipeID;
+    let attempt = 1;
+    while (attempt <= maxAttempts) {
+      try {
+        global.logger.info(`Attempt ${attempt} to create recipe from URL: ${recipeURL}`);
+        recipeID = await createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL);
+        break;
+      } catch (error) {
+        global.logger.error(`Error creating recipe from URL: ${error.message}`);
+        if (attempt === maxAttempts) {
+          throw errorGen(`Error creating recipe from URL: ${error.message}`, 400);
+        }
+        attempt++;
+      }
+    }
+    global.logger.info(`Created recipe from URL: ${recipeURL}`);
+    return recipeID;
+  }
+
+  async function createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL) {
     global.logger.info(`Creating recipe from URL: ${recipeURL}`);
     try {
       // start timer
@@ -941,19 +992,18 @@ module.exports = ({ db }) => {
 
       global.logger.info(`HTML TEXT: ${htmlText}`);
       // call openaiHandler to build recipe json
-      // const recipeJSON = await openaiHandler(htmlText);
+      const result = await recipeFromTextRequest(htmlText, userID, authorization);
+      // const recipeJSON = result.response;
+      const recipeJSON = JSON.parse(result.response);
 
-      // temp early return
-      return;
-
-      // const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
+      const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;
       // global.logger.info(`Time taken to decipher and construct recipe: ${totalDuration / 1000} seconds`);
       global.logger.info(`*TIME* URL recipe and construct total: ${totalDuration / 1000} seconds`);
 
-      // return recipeID;
+      return recipeID;
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);

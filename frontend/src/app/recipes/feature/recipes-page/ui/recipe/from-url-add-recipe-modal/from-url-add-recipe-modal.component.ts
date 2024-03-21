@@ -180,7 +180,7 @@ export class FromUrlAddRecipeModalComponent {
                 this.dialog.open(ErrorModalComponent, {
                   maxWidth: '380px',
                   data: {
-                    errorMessage: error,
+                    errorMessage: `We couldn't add a recipe using that link. Make sure that web page has all details of a recipe and try again.`,
                     statusCode: error.statusCode,
                   },
                 });
@@ -193,7 +193,7 @@ export class FromUrlAddRecipeModalComponent {
                     if (!newRecipeID) {
                       this.dialogRef.close('success');
                     } else {
-                      this.router.navigate(['/recipes', newRecipeID]);
+                      this.router.navigate(['/recipe', newRecipeID]);
                       this.dialog.closeAll();
                     }
                   });

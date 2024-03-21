@@ -39,7 +39,7 @@ const extractFromHtml = async (html) => {
     });
 
   text = text.replace(/<img[^>]*>/g, ''); // Remove any remaining image tags
-  global.logger.info(`Text extracted from HTML: ${text}`);
+  // global.logger.info(`Text extracted from HTML: ${text}`);
   return text.trim(); // Trim the text to remove any leading/trailing whitespace
 };
 
