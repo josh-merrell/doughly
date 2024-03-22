@@ -293,7 +293,7 @@ export class UserRecipeComponent {
         // also open the ConfirmationModal
         this.dialog.open(ConfirmationModalComponent, {
           data: {
-            confirmationMessage: 'Recipe added successfully.',
+            confirmationMessage: `Recipe added successfully! Please adjust details as needed, we're not perfect yet ;)`,
           },
         });
       }

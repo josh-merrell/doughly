@@ -28,11 +28,9 @@ export class DiscoverRecipesComponent {
   public discoverRecipes: WritableSignal<Recipe[]> = signal([]);
   public selectedCategory: WritableSignal<RecipeCategory | null> = signal(null);
   private categories: WritableSignal<RecipeCategory[]> = signal([]);
-  public displayCategories: WritableSignal<RecipeCategory[]> = signal([]);
+  public dayCategories: WritableSignal<RecipeCategory[]> = signal([]);
+  public worldCategories: WritableSignal<RecipeCategory[]> = signal([]);
   private profile: WritableSignal<any> = signal(null);
-
-  // Auto-scrolling upon Category Selection
-  @ViewChildren('categoryCard') categoryCards!: QueryList<ElementRef>;
 
   constructor(
     private store: Store,
@@ -65,8 +63,7 @@ export class DiscoverRecipesComponent {
           categoriesWithRecipes.splice(otherCategoryIndex, 1);
         }
 
-        this.displayCategories.set(categoriesWithRecipes);
-        // console.log(`RECIPES WITH CATEGORIES: `, categoriesWithRecipes)
+        this.categoryPlacement(categoriesWithRecipes);
       },
       { allowSignalWrites: true }
     );
@@ -99,27 +96,24 @@ export class DiscoverRecipesComponent {
       });
   }
 
-  // Category Click and Auto-Scrolling
-  ngAfterViewInit() {
-    this.categoryCards.changes.subscribe(() => {
-      if (this.selectedCategory()) {
-        this.scrollToCategory();
-      }
-    });
+  public scroll(element: any) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   scrollToCategory() {
-    const selectedCategoryIndex = this.displayCategories().findIndex(
-      (category) =>
-        category.recipeCategoryID === this.selectedCategory()?.recipeCategoryID
-    );
-    if (selectedCategoryIndex !== -1) {
-      const categoryElement =
-        this.categoryCards.toArray()[selectedCategoryIndex];
-      categoryElement.nativeElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
+    // Assuming you keep the selected category ID in a state variable.
+    const categoryId = this.selectedCategory()?.recipeCategoryID;
+    console.log(`CATEGORY ID: `, categoryId);
+    if (categoryId !== null && categoryId !== undefined) {
+      console.log('here');
+      const categoryElement = document.querySelector(`.category-card`);
+      if (categoryElement) {
+        console.log(`CATEGORY ELEMENT: `, categoryElement);
+        categoryElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
     }
   }
 
@@ -128,9 +122,20 @@ export class DiscoverRecipesComponent {
     const previouslySelected =
       this.selectedCategory()?.recipeCategoryID === category.recipeCategoryID;
     this.selectedCategory.set(previouslySelected ? null : category);
-    if (!previouslySelected) {
-      setTimeout(() => this.scrollToCategory(), 0); // Ensure DOM updates have occurred
-    }
+  }
+
+  categoryPlacement(categories: RecipeCategory[]) {
+    const dayCategoryIDs = [
+      9, 4, 5, 6, 10, 13, 19, 20, 24, 25, 26, 27, 30, 32, 33,
+    ];
+    const dayCategories = categories.filter((category) =>
+      dayCategoryIDs.includes(category.recipeCategoryID)
+    );
+    const worldCategories = categories.filter(
+      (category) => !dayCategoryIDs.includes(category.recipeCategoryID)
+    );
+    this.dayCategories.set(dayCategories);
+    this.worldCategories.set(worldCategories);
   }
   // ********************************
 }

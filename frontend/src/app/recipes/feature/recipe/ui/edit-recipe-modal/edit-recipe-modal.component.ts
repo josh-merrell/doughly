@@ -245,9 +245,12 @@ export class EditRecipeModalComponent {
           ? 'public'
           : 'heirloom'
         : 'private',
-      photoURL: this.photoURL,
       recipeID: this.data.recipeID,
     };
+
+    if (this.photoURL) {
+      newRecipe.photoURL = this.photoURL;
+    }
     //first replace the image if necessary
     if (this.croppedImage && this.selectedFile) {
       await this.replaceImage();
