@@ -291,21 +291,29 @@ export class AuthService {
     });
   }
 
-  updateProfile(profile: any): void {
+  updateProfile(profile: any): Observable<any> {
     const update = {
       ...profile,
       updated_at: new Date(),
     };
+    console.log('updateProfile', update);
     // upsert the update into the 'profiles' table, then update the profile BehaviorSubject with the new profile
-    this.supabase.supabase
-      .from('profiles')
-      .upsert(update)
-      .then(({ data, error }) => {
-        if (error) console.error('Error updating profile:', error);
-        if (data !== null && data !== undefined) {
-          this._$profile.next(data);
-        }
-      });
+    return from(
+      this.supabase.supabase
+        .from('profiles')
+        .update(update)
+        .eq('user_id', this.user_id)
+        .select('*')
+        .single()
+        .then(({ data, error }) => {
+          if (error) console.error('Error updating profile:', error);
+          if (data !== null && data !== undefined) {
+            console.log('updateProfile', data);
+            this._$profile.next(data);
+            return data;
+          }
+        })
+    );
   }
 
   logout() {

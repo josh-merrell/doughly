@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ProfileService } from '../data/profile.service';
 import { ProfileActions } from './profile-actions';
@@ -211,7 +211,7 @@ export class ProfileEffects {
     this.actions$.pipe(
       ofType(ProfileActions.updateProfile),
       mergeMap((action) =>
-        this.authService.updateField(action.property, action.value).pipe(
+        this.authService.updateProfile(action.profile).pipe(
           map((profile) => ProfileActions.updateProfileSuccess({ profile })),
           catchError((error) =>
             of(
@@ -229,39 +229,34 @@ export class ProfileEffects {
     )
   );
 
-  // deleteFriend$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(ProfileActions.deleteFriend),
-  //     mergeMap((action) =>
-  //       this.profileService.deleteFriend(action.friendUserID).pipe(
-  //         map(() =>
-  //           ProfileActions.deleteFriendSuccess({
-  //             friendUserID: action.friendUserID,
-  //           })
-  //         ),
-  //         catchError((error) =>
-  //           of(ProfileActions.deleteFriendFailure({ error }))
-  //         )
-  //       )
-  //     )
-  //   )
-  // );
+  loadProfileAfterUpdate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.updateProfileSuccess),
+      map(() => ProfileActions.loadProfile({}))
+    )
+  );
 
-  // deleteFollower$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(ProfileActions.deleteFollower),
-  //     mergeMap((action) =>
-  //       this.profileService.deleteFollower(action.followerUserID).pipe(
-  //         map(() =>
-  //           ProfileActions.deleteFollowerSuccess({
-  //             followerUserID: action.followerUserID,
-  //           })
-  //         ),
-  //         catchError((error) =>
-  //           of(ProfileActions.deleteFollowerFailure({ error }))
-  //         )
-  //       )
-  //     )
-  //   )
-  // );
+  updateProfileProperty$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.updateProfileProperty),
+      mergeMap((action) =>
+        this.authService.updateField(action.property, action.value).pipe(
+          map((profile) =>
+            ProfileActions.updateProfilePropertySuccess({ profile })
+          ),
+          catchError((error) =>
+            of(
+              ProfileActions.updateProfilePropertyFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
 }

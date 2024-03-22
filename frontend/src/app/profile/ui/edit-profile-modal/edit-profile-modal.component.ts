@@ -76,7 +76,7 @@ export class EditProfileModalComponent {
     this.isEditing = true;
     const formValues = this.form.value;
     this.store.dispatch(
-      ProfileActions.updateProfile({
+      ProfileActions.updateProfileProperty({
         property: this.data.property,
         value: formValues[this.data.property],
       })
