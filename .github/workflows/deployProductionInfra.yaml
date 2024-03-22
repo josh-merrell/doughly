@@ -2,11 +2,11 @@ name: AWS Infra Deploy v14
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy-api-ec2-prod:
-    name: deploy-api-ec2-prod 
+    name: deploy-api-ec2-prod
     if: contains(github.event.pull_request.labels.*.name, 'deploy-back-api-production')
     runs-on: ubuntu-latest
     steps:
@@ -54,7 +54,6 @@ jobs:
 
             # Install dependencies
             npm install
-            sudo npx playwright install-deps
 
             # Start the server using PM2
             pm2 start ../ecosystem.config.js
@@ -75,9 +74,9 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
-        with: 
+        with:
           node-version: 20.x
-          
+
       - name: Install Angular CLI
         run: npm install -g @angular/cli
 
@@ -95,7 +94,7 @@ jobs:
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
-        with: 
+        with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
@@ -103,7 +102,7 @@ jobs:
       - name: Deploy to S3
         run: |
           aws s3 rm s3://doughly.co --recursive
-          aws s3 sync ./frontend/dist/ s3://doughly.co 
+          aws s3 sync ./frontend/dist/ s3://doughly.co
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -116,6 +115,3 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-2
-
-
-
