@@ -81,15 +81,25 @@ const searchProfilesFailure = createAction(
   props<{ error: any }>()
 );
 
-const updateProfile = createAction(
+const updateProfile = createAction('[Profile] Update', props<{ profile: any }>());
+const updateProfileSuccess = createAction(
+  '[Profile] Update Success',
+  props<{ profile: Profile }>()
+);
+const updateProfileFailure = createAction(
+  '[Profile] Update Failure',
+  props<{ error: any }>()
+);
+
+const updateProfileProperty = createAction(
   '[Profile] Update',
   props<{ property: string; value: any }>()
 );
-const updateProfileSuccess = createAction(
+const updateProfilePropertySuccess = createAction(
   '[Profile] Update Success',
   props<{ profile: any }>()
 );
-const updateProfileFailure = createAction(
+const updateProfilePropertyFailure = createAction(
   '[Profile] Update Failure',
   props<{ error: any }>()
 );
@@ -142,6 +152,9 @@ export const ProfileActions = {
   updateProfile,
   updateProfileSuccess,
   updateProfileFailure,
+  updateProfileProperty,
+  updateProfilePropertySuccess,
+  updateProfilePropertyFailure,
   deleteFriend,
   deleteFriendSuccess,
   deleteFriendFailure,

@@ -156,10 +156,24 @@ export const ProfileReducer = createReducer(
   })),
   on(ProfileActions.updateProfileSuccess, (state, { profile }) => ({
     ...state,
-    profile,
     updating: false,
   })),
   on(ProfileActions.updateProfileFailure, (state, { error }) => ({
+    ...state,
+    error,
+    updating: false,
+  })),
+  on(ProfileActions.updateProfileProperty, (state) => ({
+    ...state,
+    updating: true,
+    error: null,
+  })),
+  on(ProfileActions.updateProfilePropertySuccess, (state, { profile }) => ({
+    ...state,
+    profile,
+    updating: false,
+  })),
+  on(ProfileActions.updateProfilePropertyFailure, (state, { error }) => ({
     ...state,
     error,
     updating: false,

@@ -237,6 +237,7 @@ export class SubscribeRecipeModalComponent {
       return i;
     });
     this.ingredients.set(newIngredients);
+    this.getUnitRatios();
   }
   onPurchaseUnitRatioChange(inputElement: EventTarget | null, ingredient) {
     if (!inputElement) return;
