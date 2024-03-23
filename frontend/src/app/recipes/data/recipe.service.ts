@@ -158,7 +158,48 @@ export class RecipeService {
     date = new Date()
   ): Observable<RecipeShoppingList> {
     if (!checkIngredientStock) {
-      return of({ ingredients: [] });
+      return this.store.pipe(
+        select(selectRecipeIngredientsByRecipeID(recipeID)),
+        switchMap((recipeIngredients) => {
+          if (recipeIngredients.length === 0) {
+            return of({ ingredients: [] });
+          }
+          const ingredientObservables = recipeIngredients.map(
+            (recipeIngredient) =>
+              this.store.pipe(
+                select(selectIngredientByID(recipeIngredient.ingredientID)),
+                take(1),
+                map((ingredient) => {
+                  if (!ingredient) {
+                    return null; // We will filter out these nulls later
+                  }
+                  const quantity =
+                    Math.ceil(
+                      (recipeIngredient.measurement *
+                        recipeIngredient.purchaseUnitRatio) 
+                    );
+                  return {
+                    type: 'ingredient',
+                    ingredientName: ingredient.name,
+                    ingredientID: ingredient.ingredientID,
+                    quantity,
+                    unit: ingredient.purchaseUnit,
+                    purchaseAfter: null,
+                  } as ShoppingListIngredient; // Ensure this matches ShoppingListIngredient type
+                })
+              )
+          );
+
+          return forkJoin(ingredientObservables).pipe(
+            map((ingredients) => ({
+              ingredients: ingredients.filter(
+                (ingredient): ingredient is ShoppingListIngredient =>
+                  ingredient !== null
+              ),
+            }))
+          );
+        })
+      );
     }
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
@@ -203,7 +244,7 @@ export class RecipeService {
             return { ingredients: [] }; // Return default ShoppingList when no ingredients are found
           }
           let neededGrams =
-            (recipeIngredient.measurement /
+            (recipeIngredient.measurement *
               recipeIngredient.purchaseUnitRatio) *
             ingredient.gramRatio;
           for (const stock of ingredientStocks) {

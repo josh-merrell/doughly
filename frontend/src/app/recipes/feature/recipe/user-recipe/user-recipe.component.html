@@ -398,7 +398,7 @@
               Make Now!
             </button>
             <button
-              *ngIf="shoppingList()?.ingredients?.length !== 0"
+              *ngIf="(shoppingList()?.ingredients?.length !== 0 && profile()?.checkIngredientStock) || profile()?.checkIngredientStock === false"
               type="button"
               class="block whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-2 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
               (click)="viewShoppingList()"
