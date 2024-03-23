@@ -40,7 +40,7 @@ export class RecipeShoppingListModalComponent {
   plannedDate: string;
   shoppingLists: WritableSignal<ShoppingList[]> = signal([]);
   listRecipes: WritableSignal<any[]> = signal([]);
-  recipeOnDraftList: WritableSignal<boolean> = signal(false);
+  recipeOnList: WritableSignal<boolean> = signal(false);
   draftList: WritableSignal<boolean> = signal(false);
   public isLoading = false;
 
@@ -62,7 +62,7 @@ export class RecipeShoppingListModalComponent {
         const shoppingLists = this.shoppingLists();
         const listRecipes = this.listRecipes();
         if (shoppingLists && shoppingLists[0]) {
-          this.recipeOnDraftList.set(
+          this.recipeOnList.set(
             listRecipes.some(
               (listRecipe) =>
                 listRecipe.recipeID === this.recipeID &&
@@ -146,6 +146,19 @@ export class RecipeShoppingListModalComponent {
       '/groceries/draft',
       this.shoppingLists()[0].shoppingListID,
     ]);
+  }
+
+  onViewShoppingList() {
+    this.dialogRef.close();
+    this.router.navigate([
+      '/groceries/shopping',
+      this.shoppingLists()[0].shoppingListID,
+    ]);
+  }
+
+  onViewSettings() {
+    this.dialogRef.close();
+    this.router.navigate(['/settings']);
   }
 
   onCancel() {
