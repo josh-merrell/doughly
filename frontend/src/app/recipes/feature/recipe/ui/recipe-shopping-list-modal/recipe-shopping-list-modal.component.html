@@ -15,8 +15,19 @@
     class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left"
   >
     <div class="mb-dl-4 text-center">
-      <p class="leading-dl-4 text-dl-7 font-dl-3 text-dl-grey-4">
-        Shopping List
+      <p class="leading-dl-4 text-dl-7 font-dl-3 text-dl-grey-2">
+        Recipe Groceries
+      </p>
+    </div>
+    <div *ngIf="checkIngredientStock === false" class="mb-dl-4">
+      <p class="text-dl-5 font-dl-2 text-dl-grey-3">
+        Your kitchen inventory is not being checked. You can change this in
+        <span
+          (click)="onViewSettings()"
+          class="text-dl-5 font-dl-3 text-dl-blue-4"
+        >
+          Settings</span
+        >
       </p>
     </div>
 
@@ -49,12 +60,35 @@
     <!-- Cancel, Submit Buttons-->
     <div class="mt-dl-6 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
       <!-- If List is in 'shopping' status and has this recipe-->
+      <div *ngIf="draftList() === false && recipeOnList() === true">
+        <p class="text-dl-5 font-dl-2 text-dl-grey-2">
+          Recipe already on Shopping List
+        </p>
+        <span
+          (click)="onViewShoppingList()"
+          class="text-dl-5 font-dl-3 text-dl-blue-4"
+        >
+          finish shopping</span
+        >
+      </div>
+
       <!-- If List is in 'shopping' status and does not have this recipe-->
+      <div *ngIf="draftList() === false && recipeOnList() === false">
+        <p class="text-dl-5 font-dl-2 text-dl-grey-2">
+          Can't add to existing in-progress list
+        </p>
+        <span
+          (click)="onViewShoppingList()"
+          class="text-dl-5 font-dl-3 text-dl-blue-4"
+        >
+          finish shopping to create new list</span
+        >
+      </div>
 
       <!-- If recipe not already on Draft List -->
       <button
         type="button"
-        *ngIf="draftList() && recipeOnDraftList() === false"
+        *ngIf="draftList() && recipeOnList() === false"
         class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
         (click)="onAddToDraft()"
       >
@@ -64,7 +98,7 @@
       <!-- If recipe already on Draft List -->
       <button
         type="button"
-        *ngIf="draftList() && recipeOnDraftList() === true"
+        *ngIf="draftList() && recipeOnList() === true"
         class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 border border-dl-pink-4 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pink-4 sm:ml-dl-4"
         (click)="onViewDraftList()"
       >

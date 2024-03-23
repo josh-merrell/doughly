@@ -26,6 +26,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProfileActions } from '../profile/state/profile-actions';
 import {
   selectError as selectErrorProfile,
+  selectProfile,
   selectUpdating as selectUpdatingProfile,
 } from 'src/app/profile/state/profile-selectors';
 import { filter, take } from 'rxjs';
@@ -64,7 +65,7 @@ export class SettingsComponent {
   }
 
   ngOnInit() {
-    this.authService.$profile.subscribe((profile) => {
+    this.store.select(selectProfile).subscribe((profile) => {
       this.profile.set(profile);
     });
     this.setForm();

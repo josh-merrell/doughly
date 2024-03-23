@@ -100,7 +100,6 @@ const supplyCheckMoreDemand = async (userID, neededQuantity, orderID, stockProdu
 
 // Checks current ingredient/tool inventory for a given recipe and returns 'sufficient' or 'insufficient'. If 'insufficient', returns list of ingredients/tools that are insufficient.
 const supplyCheckRecipe = async (userID, authorization, recipeID) => {
-  console.log();
   const { data: recipeIngredients, error: recipeIngredientsError } = await supabase.from('recipeIngredients').select('ingredientID, measurement, purchaseUnitRatio').filter('recipeID', 'eq', recipeID).filter('deleted', 'eq', false);
   if (recipeIngredientsError) {
     global.logger.error(`'supplyCheckRecipe' Error getting recipeIngredients: ${recipeIngredientsError.message}`);
@@ -127,7 +126,7 @@ const supplyCheckRecipe = async (userID, authorization, recipeID) => {
       global.logger.error(`'supplyCheckRecipe' Error getting ingredient: ${ingredientError.message}`);
       throw errorGen(`'supplyCheckRecipe' Error getting ingredient`, 400);
     }
-    let gramsNeeded = recipeIngredients[i].measurement * (ingredient.gramRatio / recipeIngredients[i].purchaseUnitRatio);
+    let gramsNeeded = recipeIngredients[i].measurement * recipeIngredients[i].purchaseUnitRatio * ingredient.gramRatio;
     const { data: ingredientStock, error: ingredientStockError } = await supabase.from('ingredientStocks').select('ingredientID, grams').filter('userID', 'eq', userID).filter('ingredientID', 'eq', recipeIngredients[i].ingredientID);
     if (ingredientStockError) {
       global.logger.error(`'supplyCheckRecipe' Error getting ingredientStock: ${ingredientStockError.message}`);
@@ -185,7 +184,7 @@ const useRecipeIngredients = async (userID, authorization, recipeID) => {
       throw errorGen(`'useRecipeIngredients' Error getting ingredient`, 400);
     }
     //calculate the neededGrams by multiplying recipeIngredient.measurement * recipeIngredient.purchaseUnitRatio * ingredient.gramRatio
-    let neededGrams = recipeIngredients[i].measurement * (ingredient.gramRatio / recipeIngredients[i].purchaseUnitRatio);
+    let neededGrams = recipeIngredients[i].measurement * recipeIngredients[i].purchaseUnitRatio * ingredient.gramRatio;
     //get all non-deleted ingredientStocks for the ingredient, ordered by purchasedDate ascending
     const { data: ingredientStocks, error: ingredientStocksError } = await supabase
       .from('ingredientStocks')

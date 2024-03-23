@@ -10,6 +10,7 @@ import { StepActions } from '../step/step-actions';
 import { RecipeStepActions } from '../recipe-step/recipe-step-actions';
 import { IngredientActions } from 'src/app/kitchen/feature/ingredients/state/ingredient-actions';
 import { ToolActions } from 'src/app/kitchen/feature/tools/state/tool-actions';
+import { IngredientStockActions } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-actions';
 
 @Injectable()
 export class RecipeEffects {
@@ -385,7 +386,8 @@ export class RecipeEffects {
           .pipe(
             map(
               () => RecipeActions.useRecipeSuccess(),
-              RecipeActions.loadRecipe({ recipeID: action.recipeID })
+              RecipeActions.loadRecipe({ recipeID: action.recipeID }),
+              // load ingredient stocks after using recipe
             ),
             catchError((error) =>
               of(
@@ -400,6 +402,13 @@ export class RecipeEffects {
             )
           )
       )
+    )
+  );
+
+  loadIngredientStockAfterUse$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.useRecipeSuccess),
+      map(() => IngredientStockActions.loadIngredientStocks())
     )
   );
 }
