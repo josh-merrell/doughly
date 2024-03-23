@@ -16,6 +16,10 @@ export class ShoppingListRecipeService {
     private idService: IDService
   ) {}
 
+  getAllShoppingListRecipes(): Observable<any[]> {
+    return this.http.get<any[]>(this.API_URL);
+  }
+
   getShoppingListRecipeByID(shoppingListRecipeID: number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/${shoppingListRecipeID}`);
   }
@@ -26,6 +30,7 @@ export class ShoppingListRecipeService {
   }
 
   createShoppingListRecipe(shoppingListID: number, recipeID: number, plannedDate: string): Observable<any> {
+    console.log('createShoppingListRecipe: ', shoppingListID, recipeID, plannedDate);
     const body = {
       IDtype: this.idService.getIDtype('shoppingListRecipe'),
       recipeID,

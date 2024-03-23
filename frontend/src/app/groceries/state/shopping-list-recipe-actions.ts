@@ -1,6 +1,16 @@
 import { createAction, props } from '@ngrx/store';
 import { ShoppingListRecipe } from './shopping-list-recipe-state';
 
+const loadAllShoppingListRecipes = createAction('[ShoppingListRecipes] Load All');
+const loadAllShoppingListRecipesSuccess = createAction(
+  '[ShoppingListRecipes] Load All Success',
+  props<{ shoppingListRecipes: ShoppingListRecipe[] }>()
+);
+const loadAllShoppingListRecipesFailure = createAction(
+  '[ShoppingListRecipes] Load All Failure',
+  props<{ error: any }>()
+);
+
 const loadShoppingListRecipes = createAction('[ShoppingListRecipes] Load', props<{ shoppingListID: number }>());
 const loadShoppingListRecipesSuccess = createAction(
   '[ShoppingListRecipes] Load Success',
@@ -35,6 +45,9 @@ const deleteShoppingListRecipeFailure = createAction(
 );
 
 export const ShoppingListRecipeActions = {
+  loadAllShoppingListRecipes,
+  loadAllShoppingListRecipesSuccess,
+  loadAllShoppingListRecipesFailure,
   loadShoppingListRecipes,
   loadShoppingListRecipesSuccess,
   loadShoppingListRecipesFailure,

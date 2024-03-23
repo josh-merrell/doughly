@@ -144,6 +144,7 @@ const useRecipe = createAction(
     satisfaction: number;
     difficulty: number;
     note: string;
+    checkIngredientStock: boolean;
   }>()
 );
 const useRecipeSuccess = createAction('[Recipes] Use Success');

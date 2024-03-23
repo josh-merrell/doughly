@@ -1478,7 +1478,7 @@ module.exports = ({ db }) => {
   }
 
   async function useRecipe(options) {
-    const { recipeID, authorization, satisfaction, difficulty, note } = options;
+    const { recipeID, authorization, satisfaction, difficulty, note, checkIngredientStock } = options;
     //ensure provided satisfaction is valid number one through ten
     if (!satisfaction || satisfaction < 1 || satisfaction > 10) {
       global.logger.error(`Satisfaction should be integer between 1 and 10`);
@@ -1502,50 +1502,54 @@ module.exports = ({ db }) => {
       throw errorGen(`Recipe with provided ID ${recipeID} does not exist`, 400);
     }
 
-    //make call to supply service to check whether there is sufficient stock to make this recipe
-    const { data: supplyCheckResult, error: supplyCheckError } = await supplyCheckRecipe(options.userID, authorization, recipeID);
-    if (supplyCheckError) {
-      global.logger.error(`Error checking supply for recipeID: ${recipeID} : ${supplyCheckError}`);
-      throw errorGen(`Error checking supply for recipeID: ${recipeID}: ${supplyCheckError}`, 400);
-    }
-    if (supplyCheckResult.status === 'insufficient') {
-      global.logger.error(`Insufficient stock to use recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`);
-      throw errorGen(`Insufficient stock to make recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`, 400);
+    if (checkIngredientStock) {
+      //make call to supply service to check whether there is sufficient stock to make this recipe
+      const { data: supplyCheckResult, error: supplyCheckError } = await supplyCheckRecipe(options.userID, authorization, recipeID);
+      if (supplyCheckError) {
+        global.logger.error(`Error checking supply for recipeID: ${recipeID} : ${supplyCheckError}`);
+        throw errorGen(`Error checking supply for recipeID: ${recipeID}: ${supplyCheckError}`, 400);
+      }
+      if (supplyCheckResult.status === 'insufficient') {
+        global.logger.error(`Insufficient stock to use recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`);
+        throw errorGen(`Insufficient stock to make recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`, 400);
+      }
     }
 
     try {
       //get list of related recipeComponents and use each
-      try {
-        const { data: relatedRecipeComponents, error: componentError } = await db.from('recipeComponents').select().eq('recipeID', recipeID).eq('deleted', false);
-        if (componentError) {
-          global.logger.error(`Error getting related recipeComponents for recipe to use: ${recipeID} : ${componentError.message}`);
-          throw errorGen(`Error getting related recipeComponents to use recipe: ${recipeID} : ${componentError.message}`, 400);
+      // try {
+      //   const { data: relatedRecipeComponents, error: componentError } = await db.from('recipeComponents').select().eq('recipeID', recipeID).eq('deleted', false);
+      //   if (componentError) {
+      //     global.logger.error(`Error getting related recipeComponents for recipe to use: ${recipeID} : ${componentError.message}`);
+      //     throw errorGen(`Error getting related recipeComponents to use recipe: ${recipeID} : ${componentError.message}`, 400);
+      //   }
+
+      //   //use any associated recipeComponent entries;
+      //   for (let i = 0; i < relatedRecipeComponents.length; i++) {
+      //     const { data: recipeComponentUseResult } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/use/${relatedRecipeComponents[i].recipeComponentID}`, {
+      //       authorization,
+      //       userID: options.userID,
+      //     });
+      //     if (recipeComponentUseResult.error) {
+      //       global.logger.error(`Error using recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} while using recipe ID: ${recipeID} : ${recipeComponentUseResult.error}`);
+      //       throw errorGen(`Error using recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} while using recipe ID: ${recipeID} : ${recipeComponentUseResult.error}`, 400);
+      //     }
+
+      //     //add a 'used' log entry
+      //     createRecipeLog(options.userID, authorization, 'useRecipeComponent', Number(relatedRecipeComponents[i].recipeComponentID), Number(relatedRecipeComponents[i].recipeID), null, null, `used recipeComponent: ${relatedRecipeComponents[i].title}`);
+      //   }
+      // } catch (error) {
+      //   global.logger.error(`Error using related recipeComponents: ${error.message}`);
+      //   throw errorGen(`Error using related recipeComponents: ${error.message}`, 400);
+      // }
+
+      if (checkIngredientStock) {
+        //use stock of each recipeIngredient
+        const useIngredientsResult = await useRecipeIngredients(options.userID, authorization, recipeID);
+        if (useIngredientsResult.error) {
+          global.logger.error(`'useRecipe' Error using recipeIngredients for recipeID: ${recipeID}. Rollback of inventory state was successful: ${useIngredientsResult.error.rollbackSuccess}`);
+          throw errorGen(`Error using recipeIngredients for recipeID: ${recipeID}. Rollback of inventory state was successful: ${useIngredientsResult.error.rollbackSuccess}`, 400);
         }
-
-        //use any associated recipeComponent entries;
-        for (let i = 0; i < relatedRecipeComponents.length; i++) {
-          const { data: recipeComponentUseResult } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/use/${relatedRecipeComponents[i].recipeComponentID}`, {
-            authorization,
-            userID: options.userID,
-          });
-          if (recipeComponentUseResult.error) {
-            global.logger.error(`Error using recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} while using recipe ID: ${recipeID} : ${recipeComponentUseResult.error}`);
-            throw errorGen(`Error using recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} while using recipe ID: ${recipeID} : ${recipeComponentUseResult.error}`, 400);
-          }
-
-          //add a 'used' log entry
-          createRecipeLog(options.userID, authorization, 'useRecipeComponent', Number(relatedRecipeComponents[i].recipeComponentID), Number(relatedRecipeComponents[i].recipeID), null, null, `used recipeComponent: ${relatedRecipeComponents[i].title}`);
-        }
-      } catch (error) {
-        global.logger.error(`Error using related recipeComponents: ${error.message}`);
-        throw errorGen(`Error using related recipeComponents: ${error.message}`, 400);
-      }
-
-      //use stock of each recipeIngredient
-      const useIngredientsResult = await useRecipeIngredients(options.userID, authorization, recipeID);
-      if (useIngredientsResult.error) {
-        global.logger.error(`'useRecipe' Error using recipeIngredients for recipeID: ${recipeID}. Rollback of inventory state was successful: ${useIngredientsResult.error.rollbackSuccess}`);
-        throw errorGen(`Error using recipeIngredients for recipeID: ${recipeID}. Rollback of inventory state was successful: ${useIngredientsResult.error.rollbackSuccess}`, 400);
       }
 
       //log use of recipe

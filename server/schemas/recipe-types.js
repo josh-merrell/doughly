@@ -168,11 +168,12 @@ const useRecipeSchema_params = {
 
 const useRecipeSchema_body = {
   type: 'object',
-  required: ['satisfaction', 'difficulty'],
+  required: ['satisfaction', 'difficulty', 'checkIngredientStock'],
   properties: {
     satisfaction: { type: 'integer' },
     difficulty: { type: 'integer' },
     note: { type: 'string' },
+    checkIngredientStock: { type: 'boolean' },
   },
 };
 

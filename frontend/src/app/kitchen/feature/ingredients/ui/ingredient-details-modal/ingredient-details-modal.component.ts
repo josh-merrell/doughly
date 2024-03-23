@@ -4,6 +4,9 @@ import {
   Renderer2,
   ViewChild,
   ElementRef,
+  WritableSignal,
+  signal,
+  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -33,6 +36,7 @@ import { DeleteIngredientModalComponent } from '../delete-ingredient-modal/delet
 import { EditIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/edit-ingredient-stock-modal/edit-ingredient-stock-modal.component';
 import { DeleteIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/delete-ingredient-stock-modal/delete-ingredient-stock-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 
 @Component({
   selector: 'dl-ingredient-details-modal',
@@ -50,6 +54,7 @@ export class IngredientDetailsModalComponent {
   displayRecipes$!: Observable<any>;
   ingredient: any;
   menuOpenForIndex: number = -1;
+  profile: WritableSignal<any> = signal(null);
 
   constructor(
     private renderer: Renderer2,
@@ -59,7 +64,32 @@ export class IngredientDetailsModalComponent {
     private recipeService: RecipeService,
     private router: Router,
     public dialog: MatDialog
-  ) {}
+  ) {
+    effect(
+      () => {
+        const profile = this.profile();
+        if (profile) {
+          this.displayRecipes$ = this.ingredientRecipes$.pipe(
+            switchMap((recipes: any[]) => {
+              // Map each recipe to an observable fetching its shopping list
+              const shoppingListObservables = recipes.map((recipe) =>
+                this.recipeService.getShoppingList(recipe.recipeID, profile.checkIngredientStock).pipe(
+                  take(1),
+                  map((shoppingList) => ({
+                    ...recipe,
+                    shoppingList: shoppingList,
+                  }))
+                )
+              );
+              // Use forkJoin to execute all observables concurrently and wait for all to complete
+              return forkJoin(shoppingListObservables);
+            })
+          );
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   ngAfterViewInit() {
     this.globalClickListener = this.renderer.listen(
@@ -82,6 +112,9 @@ export class IngredientDetailsModalComponent {
   }
 
   ngOnInit(): void {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.ingredient = this.data.ingredient;
     this.ingredientStocks$ = this.store.pipe(
       select(selectIngredientStocksByIngredientID(this.ingredient.ingredientID))
@@ -100,22 +133,6 @@ export class IngredientDetailsModalComponent {
       })
     );
 
-    this.displayRecipes$ = this.ingredientRecipes$.pipe(
-      switchMap((recipes: any[]) => {
-        // Map each recipe to an observable fetching its shopping list
-        const shoppingListObservables = recipes.map((recipe) =>
-          this.recipeService.getShoppingList(recipe.recipeID).pipe(
-            take(1),
-            map((shoppingList) => ({
-              ...recipe,
-              shoppingList: shoppingList,
-            }))
-          )
-        );
-        // Use forkJoin to execute all observables concurrently and wait for all to complete
-        return forkJoin(shoppingListObservables);
-      })
-    );
     if (this.data.openEdit) {
       this.openEditIngredientDialog();
     }

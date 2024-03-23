@@ -75,7 +75,7 @@ export interface ShoppingListTool {
   quantity: number,
 }
 
-export interface ShoppingList {
+export interface RecipeShoppingList {
   ingredients: ShoppingListIngredient[] | null;
   // tools: ShoppingListTool[] | null;
 }

@@ -54,6 +54,7 @@ jobs:
 
             # Install dependencies
             npm install
+            sudo npx playwright install-deps
 
             # Start the server using PM2
             pm2 start ../ecosystem.config.js
