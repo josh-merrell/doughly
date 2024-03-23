@@ -10,7 +10,7 @@
         <div class="mt-dl-2 space-x-1 whitespace-nowrap">
           <span class="text-dl-6 font-dl-2 text-dl-grey-5">Edit</span
           ><span class="text-dl-6 font-dl-3 text-dl-grey-2">{{
-            (ingredient$ | async)!.name
+            (ingredient$ | async)?.name
           }}</span>
         </div>
       </div>
@@ -23,6 +23,27 @@
         >
           Confirm existing or Edit details
         </p>
+
+        <!-- Name -->
+        <div id="form-ingredientName" class="relative flex flex-col">
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Name</label>
+          <mat-form-field class="text-dl-4">
+            <input matInput formControlName="name" />
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('name')?.hasError('nameTaken')"
+            >
+              This name is already in use
+            </mat-error>
+            <mat-error
+              class="text-dl-3"
+              *ngIf="form.get('name')?.hasError('required')"
+            >
+              Name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
         <div id="form-ingredientBrand" class="relative flex flex-col">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Brand</label>
           <mat-form-field class="w-full">
