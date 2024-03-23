@@ -4,6 +4,9 @@ import {
   Inject,
   Renderer2,
   ViewChild,
+  WritableSignal,
+  effect,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -34,6 +37,7 @@ import { DeleteToolStockModalComponent } from '../../../Inventory/feature/tool-i
 import { DeleteToolModalComponent } from '../delete-tool-modal/delete-tool-modal.component';
 import { selectRecipeIDsByToolID } from 'src/app/recipes/state/recipe-tool/recipe-tool-selectors';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 
 @Component({
   selector: 'dl-tool-details-modal',
@@ -52,6 +56,7 @@ export class ToolDetailsModalComponent {
   menuOpen: boolean = false;
   tool: any;
   menuOpenForIndex: number = -1;
+  profile: WritableSignal<any> = signal(null);
 
   constructor(
     private renderer: Renderer2,
@@ -61,7 +66,29 @@ export class ToolDetailsModalComponent {
     private recipeService: RecipeService,
     private router: Router,
     public dialog: MatDialog
-  ) {}
+  ) {
+    effect(() => {
+      const profile = this.profile();
+      if (profile) {
+        this.displayRecipes$ = this.toolRecipes$.pipe(
+          switchMap((recipes: any[]) => {
+            // Map each recipe to an observable fetching its shopping list
+            const shoppingListObservables = recipes.map((recipe) =>
+              this.recipeService.getShoppingList(recipe.recipeID, profile.checkIngredientStock).pipe(
+                take(1),
+                map((shoppingList) => ({
+                  ...recipe,
+                  shoppingList: shoppingList,
+                }))
+              )
+            );
+            // Use forkJoin to execute all observables concurrently and wait for all to complete
+            return forkJoin(shoppingListObservables);
+          })
+        );
+      }
+    })
+  }
 
   ngAfterViewInit() {
     this.globalClickListener = this.renderer.listen(
@@ -92,6 +119,9 @@ export class ToolDetailsModalComponent {
 
   ngOnInit(): void {
     this.tool = this.data.tool;
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.toolStocks$ = this.store.pipe(
       select(selectToolStocksByToolID(this.tool.toolID))
     );
@@ -106,23 +136,6 @@ export class ToolDetailsModalComponent {
           this.store.pipe(select(selectRecipeByID(recipeID)))
         );
         return combineLatest(recipeObservables);
-      })
-    );
-
-    this.displayRecipes$ = this.toolRecipes$.pipe(
-      switchMap((recipes: any[]) => {
-        // Map each recipe to an observable fetching its shopping list
-        const shoppingListObservables = recipes.map((recipe) =>
-          this.recipeService.getShoppingList(recipe.recipeID).pipe(
-            take(1),
-            map((shoppingList) => ({
-              ...recipe,
-              shoppingList: shoppingList,
-            }))
-          )
-        );
-        // Use forkJoin to execute all observables concurrently and wait for all to complete
-        return forkJoin(shoppingListObservables);
       })
     );
   }

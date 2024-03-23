@@ -1,4 +1,4 @@
-import { Inject, Component } from '@angular/core';
+import { Inject, Component, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -26,6 +26,8 @@ import {
   selectError,
 } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+
 
 @Component({
   selector: 'dl-use-recipe-modal',
@@ -46,11 +48,11 @@ export class UseRecipeModalComponent {
   form!: FormGroup;
   public confirmed: boolean = false;
   public isSubmitting: boolean = false;
+  public userProfile: WritableSignal<any> = signal(null);
 
   constructor(
     private fb: FormBuilder,
     private store: Store,
-    private recipeService: RecipeService,
     private dialogRef: MatDialogRef<UseRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialog: MatDialog
@@ -58,7 +60,11 @@ export class UseRecipeModalComponent {
     this.setForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.userProfile.set(profile);
+    });
+  }
 
   setForm() {
     this.form = this.fb.group({
@@ -80,6 +86,7 @@ export class UseRecipeModalComponent {
         satisfaction,
         difficulty,
         note,
+        checkIngredientStock: this.userProfile().checkIngredientStock
       })
     );
     this.store

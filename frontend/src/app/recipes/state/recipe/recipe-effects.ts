@@ -379,7 +379,8 @@ export class RecipeEffects {
             action.recipeID,
             action.satisfaction,
             action.difficulty,
-            action.note
+            action.note,
+            action.checkIngredientStock
           )
           .pipe(
             map(

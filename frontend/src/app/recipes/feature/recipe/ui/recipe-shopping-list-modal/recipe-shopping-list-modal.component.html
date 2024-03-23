@@ -1,31 +1,44 @@
 <div
   class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
 >
-  <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
+  <!-- Spinner-->
+  <div
+    *ngIf="isLoading === true"
+    class="flex h-full w-full items-center justify-center"
+  >
+    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+  </div>
+
+  <!-- If not Loading -->
+  <div
+    *ngIf="isLoading === false"
+    class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left"
+  >
     <div class="mb-dl-4 text-center">
-      <p class="leading-dl-4 text-dl-7 font-dl-3 text-dl-grey-4">Shopping List</p>
+      <p class="leading-dl-4 text-dl-7 font-dl-3 text-dl-grey-4">
+        Shopping List
+      </p>
     </div>
 
     <!--List of Ingredients and needed quantities-->
-    <div class="mb-dl-5 mx-dl-2 flex flex-col">
+    <div class="mx-dl-2 mb-dl-5 flex flex-col">
       <div class="mb-dl-2 flex w-10/12 flex-wrap items-start">
         <ng-container *ngFor="let item of shoppingList.ingredients">
-          <div
-            class="inline-block"
-          >
+          <div class="inline-block">
             <div
               class="mr-dl-3 mt-dl-2 inline-flex whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2"
             >
-              <span class="text-dl-5 text-dl-grey-2 font-dl-3"
+              <span class="text-dl-5 font-dl-3 text-dl-grey-2"
                 >{{ item.ingredientName }}&nbsp;&nbsp;&nbsp;</span
               >
-              <span class="text-dl-5 text-dl-grey-4 font-dl-2">
-                {{ item.quantity }}&nbsp;{{
-                  item.unit
-                }}</span
+              <span class="text-dl-5 font-dl-2 text-dl-grey-4">
+                {{ item.quantity }}&nbsp;{{ item.unit }}</span
               >
-              <span *ngIf="item.purchaseAfter" class="text-dl-5 font-dl-2 italic text-dl-grey-2"
-                >&nbsp;&nbsp;&nbsp;Buy After {{item.purchaseAfter}}&nbsp;&nbsp;</span
+              <span
+                *ngIf="item.purchaseAfter"
+                class="text-dl-5 font-dl-2 italic text-dl-grey-2"
+                >&nbsp;&nbsp;&nbsp;Buy After
+                {{ item.purchaseAfter }}&nbsp;&nbsp;</span
               >
             </div>
           </div>
@@ -34,13 +47,36 @@
     </div>
 
     <!-- Cancel, Submit Buttons-->
-    <div class="mt-dl-3 flex flex-row-reverse">
+    <div class="mt-dl-6 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <!-- If List is in 'shopping' status and has this recipe-->
+      <!-- If List is in 'shopping' status and does not have this recipe-->
+
+      <!-- If recipe not already on Draft List -->
       <button
         type="button"
-        class="mt-dl-3 inline-flex w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-2 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+        *ngIf="draftList() && recipeOnDraftList() === false"
+        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+        (click)="onAddToDraft()"
+      >
+        Add All to Draft List
+      </button>
+
+      <!-- If recipe already on Draft List -->
+      <button
+        type="button"
+        *ngIf="draftList() && recipeOnDraftList() === true"
+        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 border border-dl-pink-4 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pink-4 sm:ml-dl-4"
+        (click)="onViewDraftList()"
+      >
+        View Draft Shopping List
+      </button>
+
+      <button
+        type="button"
+        class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
-        Close
+        Cancel
       </button>
     </div>
   </div>

@@ -14,7 +14,7 @@ import { Store, select } from '@ngrx/store';
 import { selectRecipes } from '../state/recipe/recipe-selectors';
 import {
   Recipe,
-  ShoppingList,
+  RecipeShoppingList,
   ShoppingListIngredient,
 } from '../state/recipe/recipe-state';
 import { selectRecipeCategories } from '../state/recipe-category/recipe-category-selectors';
@@ -128,11 +128,17 @@ export class RecipeService {
   }
 
   visionAdd(recipeSourceImageURL, recipePhotoURL): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/vision`, { recipeSourceImageURL, recipePhotoURL });
+    return this.http.post<any>(`${this.API_URL}/vision`, {
+      recipeSourceImageURL,
+      recipePhotoURL,
+    });
   }
 
   fromURLAdd(recipeURL, recipePhotoURL): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/fromURL`, { recipeURL, recipePhotoURL });
+    return this.http.post<any>(`${this.API_URL}/fromURL`, {
+      recipeURL,
+      recipePhotoURL,
+    });
   }
 
   delete(recipeID: number): Observable<Recipe> {
@@ -148,8 +154,53 @@ export class RecipeService {
 
   getShoppingList(
     recipeID: number,
+    checkIngredientStock,
     date = new Date()
-  ): Observable<ShoppingList> {
+  ): Observable<RecipeShoppingList> {
+    if (!checkIngredientStock) {
+      return this.store.pipe(
+        select(selectRecipeIngredientsByRecipeID(recipeID)),
+        switchMap((recipeIngredients) => {
+          if (recipeIngredients.length === 0) {
+            return of({ ingredients: [] });
+          }
+          const ingredientObservables = recipeIngredients.map(
+            (recipeIngredient) =>
+              this.store.pipe(
+                select(selectIngredientByID(recipeIngredient.ingredientID)),
+                take(1),
+                map((ingredient) => {
+                  if (!ingredient) {
+                    return null; // We will filter out these nulls later
+                  }
+                  const quantity =
+                    Math.ceil(
+                      (recipeIngredient.measurement *
+                        recipeIngredient.purchaseUnitRatio) 
+                    );
+                  return {
+                    type: 'ingredient',
+                    ingredientName: ingredient.name,
+                    ingredientID: ingredient.ingredientID,
+                    quantity,
+                    unit: ingredient.purchaseUnit,
+                    purchaseAfter: null,
+                  } as ShoppingListIngredient; // Ensure this matches ShoppingListIngredient type
+                })
+              )
+          );
+
+          return forkJoin(ingredientObservables).pipe(
+            map((ingredients) => ({
+              ingredients: ingredients.filter(
+                (ingredient): ingredient is ShoppingListIngredient =>
+                  ingredient !== null
+              ),
+            }))
+          );
+        })
+      );
+    }
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
       switchMap((recipeIngredients) => {
@@ -193,7 +244,7 @@ export class RecipeService {
             return { ingredients: [] }; // Return default ShoppingList when no ingredients are found
           }
           let neededGrams =
-            (recipeIngredient.measurement /
+            (recipeIngredient.measurement *
               recipeIngredient.purchaseUnitRatio) *
             ingredient.gramRatio;
           for (const stock of ingredientStocks) {
@@ -275,11 +326,13 @@ export class RecipeService {
     recipeID: number,
     satisfaction: number,
     difficulty: number,
-    note: string
+    note: string,
+    checkIngredientStock: boolean
   ): Observable<RecipeUse> {
     const body: any = {
       satisfaction: satisfaction,
       difficulty: difficulty,
+      checkIngredientStock: checkIngredientStock,
     };
     if (note) body['note'] = note;
 

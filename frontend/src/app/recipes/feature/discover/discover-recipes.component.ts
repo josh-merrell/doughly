@@ -50,6 +50,10 @@ export class DiscoverRecipesComponent {
               (recipe) => recipe.recipeCategoryID === category.recipeCategoryID
             ),
           };
+          // sort the recipes by title
+          categoryWithRecipes.recipes.sort((a, b) =>
+            a.title.localeCompare(b.title)
+          );
           categoryWithRecipes['recipeCount'] =
             categoryWithRecipes.recipes.length;
           return categoryWithRecipes;
