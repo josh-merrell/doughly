@@ -141,7 +141,7 @@ export const routes: Route[] = [
       },
       {
         path: '',
-        redirectTo: 'created', // Default path or add a component for the default view
+        redirectTo: 'discover', // Default path or add a component for the default view
         pathMatch: 'full',
       },
     ],

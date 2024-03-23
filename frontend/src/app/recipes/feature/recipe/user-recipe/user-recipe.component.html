@@ -278,7 +278,7 @@
             alt="author profile image"
           />
           <span
-            class="ml-dl-3 text-dl-5 font-dl-2 italic leading-dl-2 text-dl-grey-3"
+            class="ml-dl-2 text-dl-5 font-dl-2 italic leading-dl-2 text-dl-grey-3"
           >
             By {{ recipeSubscription().authorName }}
           </span>
@@ -292,7 +292,7 @@
         </div>
         <div *ngIf="!recipe().timeBake" class="flex items-center">
           <svg
-            class="ml-dl-4 text-dl-grey-4"
+            class="ml-dl-2 text-dl-grey-4"
             width="22"
             height="22"
             viewBox="0 0 15 15"
@@ -318,7 +318,7 @@
       <!--Times IF timeBake is Provided -->
       <div
         *ngIf="recipe().timeBake"
-        class="mx-dl-5 mt-dl-2 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
+        class="mx-dl-3 mt-dl-2 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
         <div class="flex items-center">
           <svg
@@ -355,9 +355,9 @@
         class="mx-dl-4 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
         <div
-          class="mb-dl-1 ml-dl-4 flex w-full items-center justify-between px-dl-1 pt-dl-1"
+          class="mb-dl-1 ml-dl-2 flex w-full items-center justify-between px-dl-1 pt-dl-1"
         >
-          <p *ngIf=""></p>
+          <!-- Usage Date -->
           <div class="flex">
             <p class="text-dl-6 font-dl-2 text-dl-grey-4">Make it</p>
             <div
@@ -383,34 +383,29 @@
               <mat-datepicker #picker></mat-datepicker>
             </div>
           </div>
-          <button
-            *ngIf="
-              shoppingList()?.ingredients?.length === 0 &&
-              displayUsageDate === 'Today'
-            "
-            type="button"
-            class="block w-dl-8 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
-            (click)="useRecipe()"
-          >
-            Use it Now
-          </button>
-          <button
-            *ngIf="shoppingList()?.ingredients?.length !== 0"
-            type="button"
-            class="block w-dl-10 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
-            (click)="viewShoppingList()"
-          >
-            View Shopping List
-          </button>
-          <p
-            *ngIf="
-              shoppingList()?.ingredients?.length === 0 &&
-              displayUsageDate !== 'Today'
-            "
-            class="ml-dl-4 text-dl-5 italic text-dl-teal-7"
-          >
-            Ready to Make!
-          </p>
+
+          <!-- Usage Buttons -->
+          <div class="flex items-center">
+            <button
+              *ngIf="
+                shoppingList()?.ingredients?.length === 0 &&
+                displayUsageDate === 'Today' || !profile()?.checkIngredientStock
+              "
+              type="button"
+              class="block whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 mr-dl-2 px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+              (click)="useRecipe()"
+            >
+              Make Now!
+            </button>
+            <button
+              *ngIf="(shoppingList()?.ingredients?.length !== 0 && profile()?.checkIngredientStock) || profile()?.checkIngredientStock === false"
+              type="button"
+              class="block whitespace-nowrap rounded-dl-1 border border-dl-pink-4 bg-white px-dl-2 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+              (click)="viewShoppingList()"
+            >
+              Shopping List
+            </button>
+          </div>
         </div>
       </div>
 
@@ -598,7 +593,7 @@
         <div>
           <!-- Italic Label with component name -->
           <span
-            class="absolute left-1/2 -translate-x-1/2 -top-4 text-dl-6 font-dl-3 italic text-dl-grey-5"
+            class="absolute -top-4 left-1/2 -translate-x-1/2 text-dl-6 font-dl-3 italic text-dl-grey-5"
             >for {{ component.key }}</span
           >
 
