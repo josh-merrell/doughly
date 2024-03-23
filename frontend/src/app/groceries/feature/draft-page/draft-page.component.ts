@@ -189,14 +189,22 @@ export class DraftPageComponent {
       const lr = this.listRecipes();
       for (let i = 0; i < lr.length; i++) {
         //if the 'plannedDate' property of the listRecipe is prior to today, call the 'deleteListRecipe' method
+        const now = new Date(new Date().toLocaleDateString('en-US')).getTime();
+        const plannedDate = new Date(new Date(lr[i].plannedDate).toLocaleDateString('en-US')).getTime();
         if (
-          new Date(lr[i].plannedDate).getTime() <
-          new Date(new Date().toDateString()).getTime()
+          plannedDate <
+          now
         ) {
+          console.log(
+            'deleting list recipe due to date. PLANNED: ',
+            plannedDate,
+            ' NOW: ',
+            now
+          );
           this.deleteListRecipe(lr[i].shoppingListRecipeID);
         }
       }
-    });
+    }, { allowSignalWrites: true });
 
     function combineShoppingLists(allShoppingLists) {
       const result: any[] = [];

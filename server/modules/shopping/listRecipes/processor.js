@@ -26,6 +26,17 @@ module.exports = ({ db }) => {
     return shoppingListRecipes;
   }
 
+  async function getAllShoppingListRecipes(options) {
+    const { userID } = options;
+    const { data: shoppingListRecipes, error } = await db.from('shoppingListRecipes').select('shoppingListRecipeID, shoppingListID, recipeID, plannedDate').filter('deleted', 'eq', false);
+    if (error) {
+      global.logger.error(`Error getting all shopping list recipes: ${error.message}`);
+      throw errorGen(`Error getting all shopping list recipes`, 400);
+    }
+    global.logger.info(`Got ${shoppingListRecipes.length} shoppingListRecipes`);
+    return shoppingListRecipes;
+  }
+
   async function createShoppingListRecipe(options) {
     const { userID, customID, authorization, shoppingListID, recipeID, plannedDate } = options;
     //verify that 'customID' exists on the request
@@ -57,7 +68,7 @@ module.exports = ({ db }) => {
     }
 
     //verify no other shoppingListRecipe exists for this shoppingList and recipe
-    const { data: existingShoppingListRecipe, error: existingShoppingListRecipeError } = await db.from('shoppingListRecipes').select('shoppingListRecipeID, deleted').filter('shoppingListID', 'eq', shoppingListID).filter('recipeID', 'eq', recipeID);
+    const { data: existingShoppingListRecipe, error: existingShoppingListRecipeError } = await db.from('shoppingListRecipes').select().filter('shoppingListID', 'eq', shoppingListID).filter('recipeID', 'eq', recipeID);
     if (existingShoppingListRecipeError) {
       global.logger.error(`Error getting existingShoppingListRecipes: ${existingShoppingListRecipeError.message}`);
       throw errorGen(`Error getting existingShoppingListRecipes: ${existingShoppingListRecipeError.message}`, 400);
@@ -68,7 +79,13 @@ module.exports = ({ db }) => {
       //log it
       await createShoppingLog(userID, authorization, 'undeleteRecipeFromShoppingList', Number(existingShoppingListRecipe[0].shoppingListRecipeID), Number(shoppingListID), null, null, `undeleted Recipe from ShoppingList: ${existingShoppingListRecipe[0].shoppingListRecipeID}`);
       global.logger.info(`Undeleted shoppingListRecipe ${existingShoppingListRecipe[0].shoppingListRecipeID}`);
-      return { shoppingListRecipeID: existingShoppingListRecipe[0].shoppingListRecipeID };
+      const result = {
+        shoppingListRecipeID: existingShoppingListRecipe[0].shoppingListRecipeID,
+        shoppingListID: existingShoppingListRecipe[0].shoppingListID,
+        recipeID: existingShoppingListRecipe[0].recipeID,
+        plannedDate: plannedDate,
+      };
+      return result;
     }
     if (existingShoppingListRecipe.length > 0) {
       global.logger.error('Error creating shoppingListRecipe: recipe already exists on this shoppingList');
@@ -84,7 +101,13 @@ module.exports = ({ db }) => {
     //add a 'created' log entry
     await createShoppingLog(userID, authorization, 'addRecipeToShoppingList', Number(shoppingListRecipe.shoppingListRecipeID), Number(shoppingListID), null, null, `addedRecipeToShoppingList: ${shoppingListRecipe.shoppingListRecipeID}`);
 
-    return { shoppingListRecipeID: shoppingListRecipe.shoppingListRecipeID };
+    const result = {
+      shoppingListRecipeID: shoppingListRecipe.shoppingListRecipeID,
+      shoppingListID: shoppingListRecipe.shoppingListID,
+      recipeID: shoppingListRecipe.recipeID,
+      plannedDate: shoppingListRecipe.plannedDate,
+    };
+    return result;
   }
 
   async function deleteShoppingListRecipe(options) {
@@ -117,6 +140,7 @@ module.exports = ({ db }) => {
         ID: getShoppingListRecipeByID,
         shoppingList: getRecipesByShoppingList,
       },
+      all: getAllShoppingListRecipes,
     },
     create: createShoppingListRecipe,
     delete: deleteShoppingListRecipe,

@@ -13,6 +13,7 @@ const h = handler;
 router.use(authenticateJWT);
 router.get('/:shoppingListRecipeID', routeValidator(getShoppingListRecipeSchema_params, 'params'), errorCatcher(h.getShoppingListRecipeByID));
 router.get('/byList/:shoppingListID', routeValidator(getRecipesByShoppingListSchema_params, 'params'), errorCatcher(h.getRecipesByShoppingList));
+router.get('/', errorCatcher(h.getAllShoppingListRecipes));
 router.post('/:shoppingListID', generateID, routeValidator(getRecipesByShoppingListSchema_params, 'params'), routeValidator(createShoppingListRecipeSchema_body, 'body'), errorCatcher(h.createShoppingListRecipe));
 router.delete('/:shoppingListRecipeID', routeValidator(ShoppingListRecipeDeleteSchema_params, 'params'), errorCatcher(h.deleteShoppingListRecipe));
 

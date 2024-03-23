@@ -14,7 +14,7 @@ import { Store, select } from '@ngrx/store';
 import { selectRecipes } from '../state/recipe/recipe-selectors';
 import {
   Recipe,
-  ShoppingList,
+  RecipeShoppingList,
   ShoppingListIngredient,
 } from '../state/recipe/recipe-state';
 import { selectRecipeCategories } from '../state/recipe-category/recipe-category-selectors';
@@ -128,11 +128,17 @@ export class RecipeService {
   }
 
   visionAdd(recipeSourceImageURL, recipePhotoURL): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/vision`, { recipeSourceImageURL, recipePhotoURL });
+    return this.http.post<any>(`${this.API_URL}/vision`, {
+      recipeSourceImageURL,
+      recipePhotoURL,
+    });
   }
 
   fromURLAdd(recipeURL, recipePhotoURL): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/fromURL`, { recipeURL, recipePhotoURL });
+    return this.http.post<any>(`${this.API_URL}/fromURL`, {
+      recipeURL,
+      recipePhotoURL,
+    });
   }
 
   delete(recipeID: number): Observable<Recipe> {
@@ -149,7 +155,7 @@ export class RecipeService {
   getShoppingList(
     recipeID: number,
     date = new Date()
-  ): Observable<ShoppingList> {
+  ): Observable<RecipeShoppingList> {
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
       switchMap((recipeIngredients) => {
@@ -275,11 +281,13 @@ export class RecipeService {
     recipeID: number,
     satisfaction: number,
     difficulty: number,
-    note: string
+    note: string,
+    checkIngredientStock: boolean
   ): Observable<RecipeUse> {
     const body: any = {
       satisfaction: satisfaction,
       difficulty: difficulty,
+      checkIngredientStock: checkIngredientStock,
     };
     if (note) body['note'] = note;
 

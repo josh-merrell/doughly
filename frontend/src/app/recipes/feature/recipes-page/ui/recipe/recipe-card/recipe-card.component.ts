@@ -1,6 +1,9 @@
 import { Component, Input, OnInit, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Recipe, ShoppingList } from 'src/app/recipes/state/recipe/recipe-state';
+import {
+  Recipe,
+  RecipeShoppingList,
+} from 'src/app/recipes/state/recipe/recipe-state';
 import { Store } from '@ngrx/store';
 import { RecipeCategoryActions } from 'src/app/recipes/state/recipe-category/recipe-category-actions';
 import { RecipeCategoryService } from 'src/app/recipes/data/recipe-category.service';
@@ -22,16 +25,14 @@ export class RecipeCardComponent implements OnInit {
   @Input() shoppingPage: boolean = false;
   @Input() inModal: boolean = false;
   @Input() fromMyRecipes: boolean = false;
-  shoppingList: WritableSignal<ShoppingList | null> = signal(null);
+  shoppingList: WritableSignal<RecipeShoppingList | null> = signal(null);
 
   constructor(
     private store: Store,
     private recipeCategoryService: RecipeCategoryService,
     private router: Router,
     private recipeService: RecipeService
-  ) {
-
-  }
+  ) {}
 
   ngOnInit(): void {
     if (this.recipe.plannedDate) {
@@ -40,8 +41,10 @@ export class RecipeCardComponent implements OnInit {
       const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
       this.recipe.plannedDate = dayOfWeek;
     }
-    this.recipeService.getShoppingList(this.recipe.recipeID).subscribe((shoppingList) => {
-      this.shoppingList.set(shoppingList);
-    });
+    this.recipeService
+      .getShoppingList(this.recipe.recipeID)
+      .subscribe((shoppingList) => {
+        this.shoppingList.set(shoppingList);
+      });
   }
 }

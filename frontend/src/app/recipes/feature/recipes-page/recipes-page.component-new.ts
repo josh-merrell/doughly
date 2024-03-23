@@ -32,7 +32,7 @@ export class RecipesPageNewComponent {
     public dialog: MatDialog,
     private route: ActivatedRoute
   ) {
-    this.view = signal('created'); // Default view
+    this.view = signal('discover'); // Default view
   }
 
   ngOnInit(): void {
@@ -90,7 +90,7 @@ export class RecipesPageNewComponent {
 
     this.router.navigate(['/recipes/created']);
   }
-  
+
   navigateToCreatedChildren(childRoutePaths: string[]) {
     this.setView('created');
 

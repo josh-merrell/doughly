@@ -18,6 +18,7 @@ import { ToolStockActions } from './kitchen/feature/Inventory/feature/tool-inven
 import { RecipeToolActions } from './recipes/state/recipe-tool/recipe-tool-actions';
 import { RecipeStepActions } from './recipes/state/recipe-step/recipe-step-actions';
 import { ShoppingListActions } from './groceries/state/shopping-list-actions';
+import { ShoppingListRecipeActions } from './groceries/state/shopping-list-recipe-actions';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 @Component({
   standalone: true,
@@ -86,5 +87,6 @@ export class AppComponent {
 
     //--shopping
     this.store.dispatch(ShoppingListActions.loadShoppingLists());
+    this.store.dispatch(ShoppingListRecipeActions.loadAllShoppingListRecipes());
   }
 }

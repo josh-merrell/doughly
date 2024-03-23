@@ -24,6 +24,18 @@ async function getRecipesByShoppingList(req, res) {
   }
 }
 
+async function getAllShoppingListRecipes(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  try {
+    const returner = await p.get.all({ userID: req.userID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'shoppingListRecipes' 'getAllShoppingListRecipes': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 async function createShoppingListRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -68,6 +80,7 @@ async function deleteShoppingListRecipe(req, res) {
 module.exports = {
   getShoppingListRecipeByID,
   getRecipesByShoppingList,
+  getAllShoppingListRecipes,
   createShoppingListRecipe,
   deleteShoppingListRecipe,
 };

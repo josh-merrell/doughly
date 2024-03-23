@@ -13,6 +13,32 @@ export class ShoppingListRecipeEffects {
     private shoppingListRecipeService: ShoppingListRecipeService
   ) {}
 
+  loadAllShoppingListRecipes$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListRecipeActions.loadAllShoppingListRecipes),
+      mergeMap(() =>
+        this.shoppingListRecipeService.getAllShoppingListRecipes().pipe(
+          map((shoppingListRecipes: ShoppingListRecipe[]) =>
+            ShoppingListRecipeActions.loadAllShoppingListRecipesSuccess({
+              shoppingListRecipes,
+            })
+          ),
+          catchError((error) =>
+            of(
+              ShoppingListRecipeActions.loadAllShoppingListRecipesFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
   loadShoppingListRecipes$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListRecipeActions.loadShoppingListRecipes),

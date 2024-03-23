@@ -14,6 +14,21 @@ export const initialState: ShoppingListRecipeState = {
 
 export const ShoppingListRecipeReducer = createReducer(
   initialState,
+  on(ShoppingListRecipeActions.loadAllShoppingListRecipes, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(ShoppingListRecipeActions.loadAllShoppingListRecipesSuccess, (state, { shoppingListRecipes }) => ({
+    ...state,
+    shoppingListRecipes,
+    loading: false,
+  })),
+  on(ShoppingListRecipeActions.loadAllShoppingListRecipesFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
   on(ShoppingListRecipeActions.loadShoppingListRecipes, (state) => ({
     ...state,
     loading: true,

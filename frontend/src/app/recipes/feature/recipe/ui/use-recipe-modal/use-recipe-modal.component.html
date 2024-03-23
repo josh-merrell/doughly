@@ -8,13 +8,22 @@
   </div>
 
   <!-- Ask for Confirmation-->
-  <div *ngIf="!isSubmitting" id="confirmation" class="relative mt-dl-2 flex flex-row items-center">
+  <div *ngIf="!isSubmitting && userProfile().checkIngredientStock" id="confirmation" class="relative mt-dl-2 flex flex-row items-center">
     <mat-slide-toggle
       [(ngModel)]="confirmed"
       class="select-slider"
     ></mat-slide-toggle>
     <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
       >Use this recipe and deduct ingredient inventory from kitchen</span
+    >
+  </div>
+  <div *ngIf="!isSubmitting && !userProfile().checkIngredientStock" id="confirmation" class="relative mt-dl-2 flex flex-row items-center">
+    <mat-slide-toggle
+      [(ngModel)]="confirmed"
+      class="select-slider"
+    ></mat-slide-toggle>
+    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
+      >Use this recipe. Your Ingredient Inventory will not be checked or altered (You can change this behavior in the Settings page).</span
     >
   </div>
 

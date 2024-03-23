@@ -43,7 +43,7 @@ import { FractionService } from 'src/app/shared/utils/fractionService';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ShoppingList } from '../../../state/recipe/recipe-state';
+import { RecipeShoppingList } from '../../../state/recipe/recipe-state';
 import { RecipeShoppingListModalComponent } from './../ui/recipe-shopping-list-modal/recipe-shopping-list-modal.component';
 import { UseRecipeModalComponent } from './../ui/use-recipe-modal/use-recipe-modal.component';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
@@ -55,6 +55,9 @@ import JSConfetti from 'js-confetti';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { setReviewRecipe } from 'src/app/kitchen/state/kitchen-actions';
 import { selectReviewRecipeID } from 'src/app/kitchen/state/kitchen-selectors';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { selectShoppingLists } from 'src/app/groceries/state/shopping-list-selectors';
+import { selectShoppingListRecipes } from 'src/app/groceries/state/shopping-list-recipe-selectors';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -88,7 +91,9 @@ export class UserRecipeComponent {
   recipeIngredients: WritableSignal<RecipeIngredient[]> = signal([]);
   recipeTools: WritableSignal<any[]> = signal([]);
   recipeSteps: WritableSignal<any[]> = signal([]);
-  shoppingList = signal<ShoppingList | null>(null);
+  shoppingList = signal<RecipeShoppingList | null>(null); // informative, what would this recipe need to be made
+  public shoppingLists: WritableSignal<any> = signal([]); // current shopping lists ('draft' or 'shopping')
+  private listRecipes: WritableSignal<any> = signal([]); // recipes currently in the shopping list(s)
   displayIngredientsByComponent: WritableSignal<displayIngredientsByComponent> =
     signal({ noComponent: [], components: {} });
   displayTools: WritableSignal<any[]> = signal([]);
@@ -97,6 +102,7 @@ export class UserRecipeComponent {
   public sourceRecipeVersion: WritableSignal<number> = signal(0);
   public ingredientsNeedReview: WritableSignal<boolean> = signal(false);
   public recipeIngredientsNeedReview: WritableSignal<boolean> = signal(false);
+  public profile: WritableSignal<Profile | null> = signal(null);
 
   //****** Usage Logs ******
   //default datestring 30 days prior
@@ -281,9 +287,21 @@ export class UserRecipeComponent {
       this.recipeID.set(Number(params.get('recipeID')!));
     });
 
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
+    this.store.select(selectShoppingLists).subscribe((shoppingLists: any) => {
+      this.shoppingLists.set(shoppingLists);
+    });
+    this.store
+      .select(selectShoppingListRecipes)
+      .subscribe((listRecipes: any) => {
+        this.listRecipes.set(listRecipes);
+      });
+
     this.displayUsageDate = this.updateDisplayUsageData(this.usageDate);
-    this.store.select(selectNewRecipeID).subscribe((recipeID) => {
-      if (recipeID) {
+    this.store.select(selectNewRecipeID).subscribe((newRecipeID) => {
+      if (newRecipeID) {
         //this means this page was rendered after vision create of new recipe or subscribe, so let's throw confetti then remove newRecipeID from store
         const jsConfetti = new JSConfetti();
         jsConfetti.addConfetti({
@@ -647,6 +665,11 @@ export class UserRecipeComponent {
         shoppingList: this.shoppingList(),
         usageDate: this.usageDate,
         recipeName: this.recipe().title,
+        recipeID: this.recipeID(),
+        checkIngredientStock: this.profile()!.checkIngredientStock,
+        shoppingLists: this.shoppingLists(),
+        listRecipes: this.listRecipes(),
+        plannedDate: this.usageDate,
       },
       width: '90%',
     });

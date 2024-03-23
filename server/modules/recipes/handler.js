@@ -218,7 +218,7 @@ async function useRecipe(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeID } = req.params;
-  const { satisfaction, difficulty, note } = req.body;
+  const { satisfaction, difficulty, note, checkIngredientStock } = req.body;
   const { authorization } = req.headers;
 
   try {
@@ -229,6 +229,7 @@ async function useRecipe(req, res) {
       satisfaction: parseInt(satisfaction),
       difficulty: parseInt(difficulty),
       note,
+      checkIngredientStock,
     });
     return res.json(returner);
   } catch (err) {
