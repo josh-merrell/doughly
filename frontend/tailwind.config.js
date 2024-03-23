@@ -293,6 +293,9 @@ module.exports = {
           "grey-10": "hsl(216, 33%, 97%)",
         },
       },
+      inset: {
+        "-rignt-22": "-5.5rem",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms")],
