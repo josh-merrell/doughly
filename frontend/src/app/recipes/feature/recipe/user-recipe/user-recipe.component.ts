@@ -147,6 +147,7 @@ export class UserRecipeComponent {
     effect(
       () => {
         const recipeID = this.recipeID();
+        const profile = this.profile();
         this.store
           .select(selectSubscriptionByNewRecipeID(recipeID))
           .subscribe((subscription) => {
@@ -171,11 +172,13 @@ export class UserRecipeComponent {
           .subscribe((recipeSteps) => {
             this.recipeSteps.set(recipeSteps);
           });
+        if (profile) {
         this.recipeService
-          .getShoppingList(recipeID)
+          .getShoppingList(recipeID, profile.checkIngredientStock)
           .subscribe((shoppingList) => {
             this.shoppingList.set(shoppingList);
           });
+        }
         this.recipeService
           .getSubscriptionsByRecipeID(recipeID)
           .subscribe((data) => {
@@ -186,19 +189,19 @@ export class UserRecipeComponent {
       { allowSignalWrites: true }
     );
 
-    effect(
-      () => {
-        const recipeID = this.recipeID();
-        const ingredients = this.ingredients();
-        const recipeIngredients = this.recipeIngredients();
-        this.recipeService
-          .getShoppingList(recipeID)
-          .subscribe((shoppingList) => {
-            this.shoppingList.set(shoppingList);
-          });
-      },
-      { allowSignalWrites: true }
-    );
+    // effect(
+    //   () => {
+    //     const recipeID = this.recipeID();
+    //     const ingredients = this.ingredients();
+    //     const recipeIngredients = this.recipeIngredients();
+    //     this.recipeService
+    //       .getShoppingList(recipeID)
+    //       .subscribe((shoppingList) => {
+    //         this.shoppingList.set(shoppingList);
+    //       });
+    //   },
+    //   { allowSignalWrites: true }
+    // );
 
     effect(() => {
       const recipeSubscription = this.recipeSubscription();

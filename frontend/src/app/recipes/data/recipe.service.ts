@@ -154,8 +154,12 @@ export class RecipeService {
 
   getShoppingList(
     recipeID: number,
+    checkIngredientStock,
     date = new Date()
   ): Observable<RecipeShoppingList> {
+    if (!checkIngredientStock) {
+      return of({ ingredients: [] });
+    }
     return this.store.pipe(
       select(selectRecipeIngredientsByRecipeID(recipeID)),
       switchMap((recipeIngredients) => {
