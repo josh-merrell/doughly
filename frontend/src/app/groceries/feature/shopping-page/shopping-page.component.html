@@ -48,10 +48,10 @@
     <!-- List -->
     <div
       *ngIf="!isLoading()"
-      class="relative mb-dl-2 flex max-h-dl-18 w-11/12 flex-col items-center overflow-y-auto"
+      class="relative mb-dl-2 flex max-h-dl-18 w-dl-16 flex-col items-center overflow-y-auto"
     >
       <div
-        class="relative mb-dl-3 flex w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-1"
+        class="relative mb-dl-3 flex w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2"
         *ngFor="let item of displaySLIngr().items"
       >
         <div
@@ -127,23 +127,25 @@
           <!-- Box to cover Checkmark (only if item 'purchasedMeasurement' is present but not yet saved)-->
           <div
             *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
-            class="absolute left-5 top-4 z-20 h-3 w-4 bg-dl-pink-7"
+            class="absolute left-5 top-5 z-20 h-3 w-4 bg-dl-pink-7"
           ></div>
 
-          <span class="ml-dl-4 text-dl-5 font-dl-3 text-dl-grey-1">
-            {{ item.name }}
+          <div class="ml-dl-4 flex flex-col">
+            <span class="text-dl-5 font-dl-3 text-dl-grey-1">
+              {{ item.name }}
+            </span>
             <span class="text-dl-5 font-dl-2 text-dl-grey-3">
               {{ Math.ceil(item.needMeasurement) }} {{ item.needUnit }}
             </span>
-          </span>
+          </div>
         </div>
         <div class="relative flex items-center justify-between">
-          <p class="mr-dl-2 text-dl-4 font-dl-2 italic text-dl-grey-4">
+          <!-- <p class="mr-dl-2 text-dl-4 font-dl-2 italic text-dl-grey-4">
             {{ item.needUnit }}s
-          </p>
+          </p> -->
           <p
             *ngIf="!item.valueValid"
-            class="absolute -left-24 mr-dl-2 w-dl-10 text-dl-4 font-dl-3 text-dl-red-4"
+            class="absolute -right-22 -bottom-1 mr-dl-2 w-dl-10 text-dl-4 font-dl-3 text-dl-red-4"
           >
             buy more
           </p>

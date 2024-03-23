@@ -27,6 +27,7 @@ import {
 } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -55,7 +56,8 @@ export class UseRecipeModalComponent {
     private store: Store,
     private dialogRef: MatDialogRef<UseRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private router: Router
   ) {
     this.setForm();
   }
@@ -86,7 +88,7 @@ export class UseRecipeModalComponent {
         satisfaction,
         difficulty,
         note,
-        checkIngredientStock: this.userProfile().checkIngredientStock
+        checkIngredientStock: this.userProfile().checkIngredientStock,
       })
     );
     this.store
@@ -117,6 +119,11 @@ export class UseRecipeModalComponent {
             this.isSubmitting = false;
           });
       });
+  }
+
+  onViewSettings() {
+    this.dialogRef.close();
+    this.router.navigate(['/settings']);
   }
 
   onCancel() {

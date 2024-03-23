@@ -23,7 +23,12 @@
       class="select-slider"
     ></mat-slide-toggle>
     <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
-      >Use this recipe. Your Ingredient Inventory will not be checked or altered (You can change this behavior in the Settings page).</span
+      >Your Kitchen Inventory will not be checked or used. You can change this behavior in <span
+          (click)="onViewSettings()"
+          class="text-dl-5 font-dl-3 text-dl-blue-4"
+        >
+          Settings</span
+        ></span
     >
   </div>
 
