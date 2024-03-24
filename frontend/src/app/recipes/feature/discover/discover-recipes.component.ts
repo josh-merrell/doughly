@@ -104,23 +104,6 @@ export class DiscoverRecipesComponent {
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  scrollToCategory() {
-    // Assuming you keep the selected category ID in a state variable.
-    const categoryId = this.selectedCategory()?.recipeCategoryID;
-    console.log(`CATEGORY ID: `, categoryId);
-    if (categoryId !== null && categoryId !== undefined) {
-      console.log('here');
-      const categoryElement = document.querySelector(`.category-card`);
-      if (categoryElement) {
-        console.log(`CATEGORY ELEMENT: `, categoryElement);
-        categoryElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
-      }
-    }
-  }
-
   categoryCardClick(category: any) {
     if (category.recipeCount === 0) return;
     const previouslySelected =
