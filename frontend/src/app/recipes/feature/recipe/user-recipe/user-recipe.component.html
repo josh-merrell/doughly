@@ -388,8 +388,8 @@
           <div class="flex items-center">
             <button
               *ngIf="
-                shoppingList()?.ingredients?.length === 0 &&
-                displayUsageDate === 'Today' || !profile()?.checkIngredientStock
+                (shoppingList()?.ingredients?.length === 0 &&
+                displayUsageDate === 'Today' || !profile()?.checkIngredientStock) && !ingredientsNeedReview() && !recipeIngredientsNeedReview()
               "
               type="button"
               class="block whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 mr-dl-2 px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-grey-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"

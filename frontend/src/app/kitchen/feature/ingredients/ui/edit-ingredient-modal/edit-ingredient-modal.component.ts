@@ -30,6 +30,8 @@ import {
   Validators,
   ReactiveFormsModule,
   FormControl,
+  ValidatorFn,
+  AbstractControl,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -80,13 +82,6 @@ export class EditIngredientModalComponent {
     private unitService: UnitService
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
-
-    // // Subscribe to the valueChanges observable of purchaseUnit form control
-    // const purchaseUnitControl = this.form.get('purchaseUnit') as FormControl;
-    // purchaseUnitControl.valueChanges.subscribe((newValue) => {
-    //   // Update pUnit with the new value
-    //   this.pUnit.set(newValue);
-    // });
   }
 
   ngOnInit(): void {
@@ -98,6 +93,7 @@ export class EditIngredientModalComponent {
     this.ingredient$.subscribe((ingredient) => {
       this.originalIngredient = ingredient;
       this.form.patchValue({
+        name: ingredient.name,
         lifespanDays: ingredient.lifespanDays,
         purchaseUnit: ingredient.purchaseUnit,
         gramRatio: ingredient.gramRatio,
@@ -117,11 +113,31 @@ export class EditIngredientModalComponent {
 
   setForm() {
     this.form = this.fb.group({
+      name: ['', [Validators.required, this.nameValidator()]],
       brand: ['', []],
       lifespanDays: ['', [Validators.required, positiveIntegerValidator()]],
       purchaseUnit: ['', [Validators.required]],
       gramRatio: ['', [Validators.required, positiveFloatValidator()]],
     });
+  }
+
+  nameValidator(): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} | null => {
+      const name = control.value;
+      if (!name) {
+        return null;
+      }
+      // Check it the name is the same as the original ingredient name
+      if (name === this.originalIngredient.name) {
+        return null;
+      }
+
+      // Check if the name is already taken by another ingredient
+      if (this.ingredients.find(ingredient => ingredient.name === name)) {
+        return { nameTaken: true };
+      }
+      return null;
+    };
   }
 
   subscribeToFormChanges() {
@@ -163,7 +179,6 @@ export class EditIngredientModalComponent {
   onSubmit() {
     const updatedIngredient: any = {
       ingredientID: this.data.itemID,
-      name: this.data.name,
     };
 
     const formValues = this.form.value;

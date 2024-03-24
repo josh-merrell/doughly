@@ -173,11 +173,11 @@ export class UserRecipeComponent {
             this.recipeSteps.set(recipeSteps);
           });
         if (profile) {
-        this.recipeService
-          .getShoppingList(recipeID, profile.checkIngredientStock)
-          .subscribe((shoppingList) => {
-            this.shoppingList.set(shoppingList);
-          });
+          this.recipeService
+            .getShoppingList(recipeID, profile.checkIngredientStock)
+            .subscribe((shoppingList) => {
+              this.shoppingList.set(shoppingList);
+            });
         }
         this.recipeService
           .getSubscriptionsByRecipeID(recipeID)
@@ -188,20 +188,6 @@ export class UserRecipeComponent {
       },
       { allowSignalWrites: true }
     );
-
-    // effect(
-    //   () => {
-    //     const recipeID = this.recipeID();
-    //     const ingredients = this.ingredients();
-    //     const recipeIngredients = this.recipeIngredients();
-    //     this.recipeService
-    //       .getShoppingList(recipeID)
-    //       .subscribe((shoppingList) => {
-    //         this.shoppingList.set(shoppingList);
-    //       });
-    //   },
-    //   { allowSignalWrites: true }
-    // );
 
     effect(() => {
       const recipeSubscription = this.recipeSubscription();
@@ -678,24 +664,25 @@ export class UserRecipeComponent {
     });
   }
   useRecipe() {
-    const dialogRef = this.dialog.open(UseRecipeModalComponent, {
-      data: {
-        recipeName: this.recipe().title,
-        recipeID: this.recipeID(),
-        logsAfterDate: this.logsAfterDate(),
-      },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'cancel') return;
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          maxWidth: '380px',
-          data: {
-            confirmationMessage: 'Recipe used successfully',
-          },
-        });
-      }
-    });
+    // const dialogRef = this.dialog.open(UseRecipeModalComponent, {
+    //   data: {
+    //     recipeName: this.recipe().title,
+    //     recipeID: this.recipeID(),
+    //     logsAfterDate: this.logsAfterDate(),
+    //   },
+    // });
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   if (result === 'cancel') return;
+    //   if (result === 'success') {
+    //     this.dialog.open(ConfirmationModalComponent, {
+    //       maxWidth: '380px',
+    //       data: {
+    //         confirmationMessage: 'Recipe used successfully',
+    //       },
+    //     });
+    //   }
+    // });
+    this.router.navigate(['/recipe/using/' + this.recipeID()]);
   }
   editRecipeSteps() {
     const dialogRef = this.dialog.open(RecipeStepsModalComponent, {
