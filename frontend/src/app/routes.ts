@@ -23,6 +23,7 @@ import { CreatedRecipesComponent } from './recipes/feature/created-recipes/creat
 import { SubscribedRecipesComponent } from './recipes/feature/subscribed-recipes/subscribed-recipes.component';
 import { DiscoverRecipesComponent } from './recipes/feature/discover/discover-recipes.component';
 import { SettingsComponent } from './settings/settings.component';
+import { UsingRecipeComponent } from './recipes/feature/recipe/ui/using-recipe/using-recipe.component';
 
 export const routes: Route[] = [
   {
@@ -98,6 +99,10 @@ export const routes: Route[] = [
   {
     path: 'recipe/public/:recipeID',
     component: PublicRecipeComponent,
+  },
+  {
+    path: 'recipe/using/:recipeID',
+    component: UsingRecipeComponent,
   },
   {
     path: 'recipe/:recipeID',
