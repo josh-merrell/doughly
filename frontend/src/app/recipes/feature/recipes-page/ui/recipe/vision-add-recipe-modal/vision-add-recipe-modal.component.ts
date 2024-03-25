@@ -195,6 +195,7 @@ export class VisionAddRecipeModalComponent {
                 this.removeFiles(false);
                 this.recipeProgressService.stopListening();
                 this.store.select(selectNewRecipeID).subscribe((recipeID) => {
+                  console.log('newRecipeID: ', recipeID);
                   if (!recipeID) {
                     this.dialogRef.close('success');
                   } else {

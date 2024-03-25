@@ -190,6 +190,7 @@ export class FromUrlAddRecipeModalComponent {
                 this.store
                   .select(selectNewRecipeID)
                   .subscribe((newRecipeID) => {
+                    console.log('newRecipeID: ', newRecipeID);
                     if (!newRecipeID) {
                       this.dialogRef.close('success');
                     } else {
