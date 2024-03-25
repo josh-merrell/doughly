@@ -46,7 +46,35 @@ module.exports = ({ db }) => {
         }
         recipeID = recipe.recipeID;
 
-        const ingredientPromises = ingredients.map((i) => constructRecipeIngredient(i, authorization, userID, recipe.recipeID));
+        const uniqueNameIngredients = {};
+        ingredients.map((i) => {
+          if (!uniqueNameIngredients[i.name]) {
+            uniqueNameIngredients[i.name] = { ingredients: [i], ingredientID: 0 };
+          } else {
+            uniqueNameIngredients[i.name]['ingredients'].push(i);
+          }
+        });
+        global.logger.info(`UNIQUE NAME INGREDIENTS: ${JSON.stringify(uniqueNameIngredients)}`);
+        const ingredientIDPromises = [];
+        for (const [name, value] of Object.entries(uniqueNameIngredients)) {
+          // first get 'ingredientID' for each group of ingredients with the same name using 'getIngredientID' endpoint
+          ingredientIDPromises.push(
+            getIngredientID(name, value.ingredients, userID, authorization).then((ingredientID) => {
+              value.ingredientID = ingredientID;
+            }),
+          );
+        }
+        await Promise.allSettled(ingredientIDPromises);
+        global.logger.info(`UNIQUE NAME INGREDIENTS AFTER GETTING INGREDIENTID: ${JSON.stringify(uniqueNameIngredients)}`);
+        // then create recipeIngredients for each ingredient group
+        const ingredientPromises = [];
+        for (const [, value] of Object.entries(uniqueNameIngredients)) {
+          for (let i = 0; i < value.ingredients.length; i++) {
+            value.ingredients[i].ingredientID = value.ingredientID;
+            ingredientPromises.push(constructRecipeIngredient(value.ingredients[i], authorization, userID, recipe.recipeID));
+          }
+        }
+
         const ingredientResults = await Promise.allSettled(ingredientPromises);
         for (const result of ingredientResults) {
           if (result.status === 'fulfilled') {
@@ -143,48 +171,49 @@ module.exports = ({ db }) => {
     }
   }
 
-  async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
-    let ingredientID;
-    global.logger.info(`CONSTRUCT RI: ${ingredient}`);
-    try {
-      const nameMatchIngrID = await checkForIngredient(ingredient.name, authorization, userID);
-      if (Number(ingredient.ingredientID) === 0 && nameMatchIngrID === 0) {
-        // If ingredientID is not provided, and no same-named ingr exists, create a new ingredient
-        const body = {
-          authorization,
-          userID,
-          IDtype: 12,
-          name: ingredient.name,
-          lifespanDays: Math.round(Number(ingredient.lifespanDays)),
-          purchaseUnit: ingredient.purchaseUnit,
-          gramRatio: Number(ingredient.gramRatio),
-        };
-        if (ingredient.brand) {
-          body.brand = ingredient.brand;
-        }
-        if (ingredient.needsReview) {
-          body.needsReview = ingredient.needsReview;
-        }
-        const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
-        ingredientID = Number(data.ingredientID);
-        global.logger.info(`CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`);
-      } else if (nameMatchIngrID !== 0) {
-        ingredientID = Number(nameMatchIngrID);
-        global.logger.info(`INGREDIENT WITH NAME ALREADY EXISTS. INGREDIENTID IS: ${ingredientID}`);
-      } else {
-        ingredientID = Number(ingredient.ingredientID);
-        global.logger.info(`INGREDIENTID IS: ${ingredientID}`);
+  async function getIngredientID(ingredientName, ingredientGroup, userID, authorization) {
+    let ingredientID = 0;
+    // look through ingredientGroup for any with a non-zero ingredientID. If found, return that ingredientID
+    for (let i = 0; i < ingredientGroup.length; i++) {
+      if (ingredientGroup[i].ingredientID !== 0) {
+        return ingredientGroup[i].ingredientID;
       }
-    } catch (error) {
-      global.logger.error(`'constructRecipeIngredient' Failed when creating new ingredient. RECEIVED INGREDIENT: ${ingredient}. Failure: ${error.message}`);
-      throw errorGen(`'constructRecipeIngredient' Failed when creating new ingredient. Failure: ${error.message}`, 400);
+    }
+    // if none found, need to create a new ingredient
+    const body = {
+      authorization,
+      userID,
+      IDtype: 12,
+      name: ingredientName,
+      lifespanDays: Math.round(Number(ingredientGroup[0].lifespanDays)),
+      purchaseUnit: ingredientGroup[0].purchaseUnit,
+      gramRatio: Number(ingredientGroup[0].gramRatio),
+    };
+    if (ingredientGroup[0].brand) {
+      body.brand = ingredientGroup[0].brand;
+    }
+    if (ingredientGroup[0].needsReview) {
+      body.needsReview = ingredientGroup[0].needsReview;
+    }
+    const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
+    ingredientID = Number(data.ingredientID);
+    global.logger.info(`CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`);
+    // return ingredientID
+    return ingredientID;
+  }
+
+  async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
+    global.logger.info(`CONSTRUCT RI: ${JSON.stringify(ingredient)}`);
+    if (!ingredient.ingredientID || ingredient.ingredientID === 0) {
+      global.logger.error(`'constructRecipeIngredient' ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`);
+      throw errorGen(`'constructRecipeIngredient' ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`, 400);
     }
     // Then, create the recipeIngredient
     try {
       global.logger.info(
         `CALLING RI CREATE WITH BODY: ${JSON.stringify({
           recipeID,
-          ingredientID,
+          ingredientID: ingredient.ingredientID,
           measurementUnit: ingredient.measurementUnit,
           measurement: ingredient.measurement,
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
@@ -200,7 +229,7 @@ module.exports = ({ db }) => {
           userID,
           IDtype: 16,
           recipeID,
-          ingredientID,
+          ingredientID: ingredient.ingredientID,
           measurementUnit: ingredient.measurementUnit,
           measurement: ingredient.measurement,
           purchaseUnitRatio: ingredient.purchaseUnitRatio,
@@ -210,24 +239,11 @@ module.exports = ({ db }) => {
         },
         { headers: { authorization } },
       );
-      return { recipeIngredientID: data.recipeIngredientID, ingredientID: ingredientID };
+      return { recipeIngredientID: data.recipeIngredientID, ingredientID: ingredient.ingredientID };
     } catch (error) {
       global.logger.error(`'constructRecipeIngredient' Failed when creating recipeIngredient. Failure: ${error.message}`);
       throw errorGen(`'constructRecipeIngredient' Failed when creating recipeIngredient. Failure: ${error.message}`, 400);
     }
-  }
-
-  async function checkForIngredient(ingredientName, authorization, userID) {
-    // check if ingredient exists in user's ingredients
-    const { data: ingredient, error } = await db.from('ingredients').select().eq('userID', userID).eq('name', ingredientName).eq('deleted', false);
-    if (error) {
-      global.logger.error(`Error checking for ingredient: ${error.message}`);
-      throw errorGen(`Error checking for ingredient: ${error.message}`, 400);
-    }
-    if (ingredient.length) {
-      return ingredient[0].ingredientID;
-    }
-    return 0;
   }
 
   async function constructRecipeTool(tool, authorization, userID, recipeID) {
@@ -850,12 +866,6 @@ module.exports = ({ db }) => {
       sendSSEMessage(userID, { message: `Finding Appropriate Category for new Recipe` });
       const matchedCategoryID = await matchCategory(recipeJSON.category, authorization, userID);
 
-      // Uncomment when testing to avoid creating recipe
-      // if (true) {
-      //   global.logger.info(`TESTING ONLY, NOT CREATING RECIPE`);
-      //   return;
-      // }
-
       // prepare constructRecipe body
       const constructBody = {
         title: recipeJSON.title,
@@ -870,7 +880,7 @@ module.exports = ({ db }) => {
         steps: recipeJSON.steps,
         ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }), //include 'timeBake' if not null
       };
-      global.logger.info(`CALLING CONSTRUCT WITH INGREDIENTS: ${JSON.stringify(constructBody.ingredients)}`);
+      global.logger.info(`CALLING CONSTRUCT WITH BODY: ${JSON.stringify(constructBody)}`);
       if (recipePhotoURL) {
         constructBody['photoURL'] = recipePhotoURL;
       }
