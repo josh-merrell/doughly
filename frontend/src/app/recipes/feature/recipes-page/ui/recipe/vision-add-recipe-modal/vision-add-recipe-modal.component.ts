@@ -194,16 +194,17 @@ export class VisionAddRecipeModalComponent {
               } else {
                 this.removeFiles(false);
                 this.recipeProgressService.stopListening();
-                this.store.select(selectNewRecipeID).subscribe((recipeID) => {
-                  console.log('newRecipeID: ', recipeID);
-                  if (!recipeID) {
-                    this.dialogRef.close('success');
-                  } else {
-                    //navigate to recipe page
-                    this.router.navigate(['/recipe', recipeID]);
-                    this.dialog.closeAll();
-                  }
-                })
+                this.store
+                  .select(selectNewRecipeID)
+                  .subscribe((newRecipeID) => {
+                    if (!newRecipeID) {
+                      this.dialogRef.close('success');
+                    } else {
+                      //navigate to recipe page
+                      this.router.navigate(['/recipe', newRecipeID.recipeID]);
+                      this.dialog.closeAll();
+                    }
+                  });
               }
               this.isAdding = false;
             });
