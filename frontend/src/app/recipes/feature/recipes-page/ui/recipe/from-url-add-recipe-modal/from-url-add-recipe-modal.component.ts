@@ -193,7 +193,7 @@ export class FromUrlAddRecipeModalComponent {
                     if (!newRecipeID) {
                       this.dialogRef.close('success');
                     } else {
-                      this.router.navigate(['/recipe', newRecipeID]);
+                      this.router.navigate(['/recipe', newRecipeID.recipeID]);
                       this.dialog.closeAll();
                     }
                   });
