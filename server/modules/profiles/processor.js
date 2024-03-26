@@ -84,6 +84,13 @@ module.exports = ({ db, dbPublic }) => {
       recipes: recipesWithSubscriptions,
       timelineEvents: [],
       checkIngredientStock: profile.checkIngredientStock,
+      autoDeleteExpiredStock: profile.autoDeleteExpiredStock,
+      notifyOnLowStock: profile.notifyOnLowStock,
+      notifyOnNoStock: profile.notifyOnNoStock,
+      notifyUpcomingStockExpiry: profile.notifyUpcomingStockExpiry,
+      notifyExpiredStock: profile.notifyExpiredStock,
+      notifyFriendCreateRecipe: profile.notifyFriendCreateRecipe,
+      notifyFolloweeCreateRecipe: profile.notifyFolloweeCreateRecipe,
     };
     return result;
   }
