@@ -64,7 +64,7 @@ export class AppComponent {
       const pushToken = this.pushToken();
       console.log('pushToken: ' + pushToken);
       console.log('prevPushToken: ' + this.prevPushToken());
-      if (pushToken !== this.prevPushToken()) {
+      // if (pushToken !== this.prevPushToken()) {
         // Only run if pushToken has changed and profile is available
         this.prevPushToken.set(pushToken); // Update previous pushToken
         console.log('updated prevPushToken: ' + this.prevPushToken());
@@ -76,7 +76,7 @@ export class AppComponent {
           }).subscribe();
           console.log('sent push token to server' + pushToken);
         }
-      }
+      // }
     });
   }
 
