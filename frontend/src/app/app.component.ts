@@ -58,26 +58,26 @@ export class AppComponent {
     private zone: NgZone,
     public authService: AuthService
   ) {
-    // listense for deep-links
+    // listen for deep-links
     this.initializeApp();
-    effect(() => {
-      const pushToken = this.pushToken();
-      console.log('pushToken: ' + pushToken);
-      console.log('prevPushToken: ' + this.prevPushToken());
-      // if (pushToken !== this.prevPushToken()) {
-        // Only run if pushToken has changed and profile is available
-        this.prevPushToken.set(pushToken); // Update previous pushToken
-        console.log('updated prevPushToken: ' + this.prevPushToken());
-        if (pushToken) {
-          this.authService.updateProfile({
-            profile: {
-              pushToken: pushToken,
-            },
-          }).subscribe();
-          console.log('sent push token to server' + pushToken);
-        }
-      // }
-    });
+    // effect(() => {
+    //   const pushToken = this.pushToken();
+    //   console.log('pushToken: ' + pushToken);
+    //   console.log('prevPushToken: ' + this.prevPushToken());
+    //   // if (pushToken !== this.prevPushToken()) {
+    //     // Only run if pushToken has changed and profile is available
+    //     this.prevPushToken.set(pushToken); // Update previous pushToken
+    //     console.log('updated prevPushToken: ' + this.prevPushToken());
+    //     if (pushToken) {
+    //       this.authService.updateProfile({
+    //         profile: {
+    //           pushToken: pushToken,
+    //         },
+    //       }).subscribe();
+    //       console.log('sent push token to server' + pushToken);
+    //     }
+    //   // }
+    // });
   }
 
   initializeApp() {
