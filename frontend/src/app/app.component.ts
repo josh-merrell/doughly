@@ -34,6 +34,7 @@ import {
   PushNotifications,
   Token,
 } from '@capacitor/push-notifications';
+import { AuthService } from './shared/utils/authenticationService';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -54,7 +55,8 @@ export class AppComponent {
   constructor(
     public store: Store,
     private router: Router,
-    private zone: NgZone
+    private zone: NgZone,
+    public authService: AuthService
   ) {
     // listense for deep-links
     this.initializeApp();
@@ -98,6 +100,9 @@ export class AppComponent {
   }
 
   ngOnInit() {
+    this.authService.$profile.subscribe((profile) => {
+      this.profile.set(profile);
+    });
     //** LOAD STATE **
     //--kitchen
     this.store.dispatch(IngredientActions.loadIngredients());
@@ -146,10 +151,6 @@ export class AppComponent {
     PushNotifications.addListener('registration', (token: Token) => {
       alert('Push registration success, token: ' + token.value);
       // Send the token to the server
-      this.store.select(selectProfile).subscribe((profile) => {
-        alert('profile: ' + JSON.stringify(profile));
-        this.profile.set(profile);
-      });
       this.pushToken.set(token.value);
     });
     // Some issue with our setup and push will not work
