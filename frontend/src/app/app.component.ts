@@ -70,7 +70,7 @@ export class AppComponent {
           })
         );
       }
-      console.log('sent push token to server', pushToken);
+      alert('sent push token to server' + pushToken);
     });
   }
 
