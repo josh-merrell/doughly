@@ -151,9 +151,7 @@ export class AppComponent {
       alert('Push registration success, token: ' + token.value);
       // Send the token to the server
       this.authService.updateProfile({
-        profile: {
-          pushToken: token.value,
-        },
+        pushToken: token.value,
       }).subscribe();
     });
     // Some issue with our setup and push will not work
