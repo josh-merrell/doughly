@@ -60,11 +60,11 @@ export class AppComponent {
     this.initializeApp();
     effect(() => {
       const pushToken = this.pushToken();
-      if (pushToken !== this.prevPushToken()) {
-        // Only run if pushToken has changed
+      const profile = this.profile();
+      if (pushToken !== this.prevPushToken() && profile) {
+        // Only run if pushToken has changed and profile is available
         this.prevPushToken.set(pushToken); // Update previous pushToken
 
-        const profile = this.profile();
         if (profile && pushToken) {
           this.store.dispatch(
             ProfileActions.updateProfile({
