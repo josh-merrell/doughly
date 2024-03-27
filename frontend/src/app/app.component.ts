@@ -61,7 +61,7 @@ export class AppComponent {
     effect(() => {
       const pushToken = this.pushToken();
       const profile = this.profile();
-      if (pushToken !== this.prevPushToken() && profile) {
+      // if (pushToken !== this.prevPushToken() && profile) {
         // Only run if pushToken has changed and profile is available
         this.prevPushToken.set(pushToken); // Update previous pushToken
 
@@ -76,7 +76,7 @@ export class AppComponent {
           );
           alert('sent push token to server' + pushToken);
         }
-      }
+      // }
     });
   }
 
