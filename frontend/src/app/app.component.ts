@@ -61,9 +61,10 @@ export class AppComponent {
     this.initializeApp();
     effect(() => {
       const pushToken = this.pushToken();
+      const previousPushToken = this.prevPushToken();
       console.log('pushToken: ' + pushToken);
       console.log('prevPushToken: ' + this.prevPushToken());
-      if (pushToken !== this.prevPushToken()) {
+      if (pushToken !== previousPushToken) {
         // Only run if pushToken has changed and profile is available
         this.prevPushToken.set(pushToken); // Update previous pushToken
         console.log('updated prevPushToken: ' + this.prevPushToken());
