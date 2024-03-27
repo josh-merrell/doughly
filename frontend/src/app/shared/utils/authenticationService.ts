@@ -296,6 +296,7 @@ export class AuthService {
       ...profile,
       updated_at: new Date(),
     };
+    alert('updateProfile: ' + JSON.stringify(update));
     // upsert the update into the 'profiles' table, then update the profile BehaviorSubject with the new profile
     return from(
       this.supabase.supabase
