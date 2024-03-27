@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "911585064385",
+    "project_id": "doughly",
+    "storage_bucket": "doughly.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911585064385:android:7acb28a73bfbb4d691eb40",
+        "android_client_info": {
+          "package_name": "co.doughly.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBxHFg8jO-N65QeyVeKxM_rMMySEndPXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

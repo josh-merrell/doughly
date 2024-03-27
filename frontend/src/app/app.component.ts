@@ -1,4 +1,10 @@
-import { Component, NgZone } from '@angular/core';
+import {
+  Component,
+  NgZone,
+  WritableSignal,
+  effect,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AppFooterComponent } from './footer/feature/app-footer.component';
@@ -20,6 +26,14 @@ import { RecipeStepActions } from './recipes/state/recipe-step/recipe-step-actio
 import { ShoppingListActions } from './groceries/state/shopping-list-actions';
 import { ShoppingListRecipeActions } from './groceries/state/shopping-list-recipe-actions';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
+import { selectProfile } from './profile/state/profile-selectors';
+
+import {
+  ActionPerformed,
+  PushNotificationSchema,
+  PushNotifications,
+  Token,
+} from '@capacitor/push-notifications';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -33,30 +47,92 @@ import { App, URLOpenListenerEvent } from '@capacitor/app';
 })
 export class AppComponent {
   title = 'frontend';
+  pushToken: WritableSignal<string | null> = signal(null);
+  profile: WritableSignal<any> = signal(null);
 
-  constructor(public store: Store, private router: Router, private zone: NgZone) {
+  constructor(
+    public store: Store,
+    private router: Router,
+    private zone: NgZone
+  ) {
     // listense for deep-links
     this.initializeApp();
+    effect(() => {
+      const profile = this.profile();
+      const pushToken = this.pushToken();
+      if (profile && pushToken) {
+        this.store.dispatch(
+          ProfileActions.updateProfile({
+            profile: {
+              ...profile,
+              pushToken: pushToken,
+            },
+          })
+        );
+      }
+      console.log('sent push token to server', pushToken);
+    });
   }
 
   initializeApp() {
-    App.addListener('appUrlOpen', (event: URLOpenListenerEvent ) => {
+    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
       this.zone.run(() => {
         // Example url: https://beerswift.app/tabs/tab2
         // slug = /tabs/tab2
 
         // Our app url: https://doughly.co
-        const slug = event.url.split(".co").pop();
+        const slug = event.url.split('.co').pop();
         if (slug) {
           this.router.navigateByUrl(slug);
         }
         // If no match, do nothing - let regular routing
         // logic take over
-      })
-    })
+      });
+    });
   }
 
   ngOnInit() {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
+
+    //** INIT NOTIFICATION METHODS
+    // Request permission to use push notifications
+    // iOS will prompt user and return if they granted permission or not
+    // Android will just grant without prompting
+    PushNotifications.requestPermissions().then((result) => {
+      if (result.receive === 'granted') {
+        // Register with Apple / Google to receive push via APNS/FCM
+        PushNotifications.register();
+      } else {
+        // Show some error
+      }
+    });
+    // On success, we should be able to receive notifications
+    PushNotifications.addListener('registration', (token: Token) => {
+      alert('Push registration success, token: ' + token.value);
+      // Send the token to the server
+      this.pushToken.set(token.value);
+    });
+    // Some issue with our setup and push will not work
+    PushNotifications.addListener('registrationError', (error: any) => {
+      alert('Error on registration: ' + JSON.stringify(error));
+    });
+    // Show us the notification payload if the app is open on our device
+    PushNotifications.addListener(
+      'pushNotificationReceived',
+      (notification: PushNotificationSchema) => {
+        alert('Push received: ' + JSON.stringify(notification));
+      }
+    );
+    // Method called when tapping on a notification
+    PushNotifications.addListener(
+      'pushNotificationActionPerformed',
+      (notification: ActionPerformed) => {
+        alert('Push action performed: ' + JSON.stringify(notification));
+      }
+    );
+
     //** LOAD STATE **
     //--kitchen
     this.store.dispatch(IngredientActions.loadIngredients());
