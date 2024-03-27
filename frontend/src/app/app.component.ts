@@ -150,7 +150,11 @@ export class AppComponent {
     PushNotifications.addListener('registration', (token: Token) => {
       alert('Push registration success, token: ' + token.value);
       // Send the token to the server
-      this.pushToken.set(token.value);
+      this.authService.updateProfile({
+        profile: {
+          pushToken: token.value,
+        },
+      }).subscribe();
     });
     // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError', (error: any) => {
