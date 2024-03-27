@@ -49,6 +49,7 @@ export class AppComponent {
   title = 'frontend';
   pushToken: WritableSignal<string | null> = signal(null);
   profile: WritableSignal<any> = signal(null);
+  private prevPushToken: WritableSignal<string | null> = signal(null);
 
   constructor(
     public store: Store,
@@ -58,19 +59,24 @@ export class AppComponent {
     // listense for deep-links
     this.initializeApp();
     effect(() => {
-      const profile = this.profile();
       const pushToken = this.pushToken();
-      if (profile && pushToken) {
-        this.store.dispatch(
-          ProfileActions.updateProfile({
-            profile: {
-              ...profile,
-              pushToken: pushToken,
-            },
-          })
-        );
+      if (pushToken !== this.prevPushToken()) {
+        // Only run if pushToken has changed
+        this.prevPushToken.set(pushToken); // Update previous pushToken
+
+        const profile = this.profile();
+        if (profile && pushToken) {
+          this.store.dispatch(
+            ProfileActions.updateProfile({
+              profile: {
+                ...profile,
+                pushToken: pushToken,
+              },
+            })
+          );
+          alert('sent push token to server' + pushToken);
+        }
       }
-      alert('sent push token to server' + pushToken);
     });
   }
 
