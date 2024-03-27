@@ -63,6 +63,9 @@ export class AppComponent {
     effect(() => {
       const pushToken = this.pushToken();
       const profile = this.profile();
+      alert('pushToken: ' + pushToken);
+      alert('prevPushToken: ' + this.prevPushToken());
+      alert('profile: ' + profile);
       if (pushToken !== this.prevPushToken() && profile) {
         // Only run if pushToken has changed and profile is available
         this.prevPushToken.set(pushToken); // Update previous pushToken
@@ -101,6 +104,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.authService.$profile.subscribe((profile) => {
+      alert('setting profile: ' + JSON.stringify(profile));
       this.profile.set(profile);
     });
     //** LOAD STATE **
