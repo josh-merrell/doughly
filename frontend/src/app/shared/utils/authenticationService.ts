@@ -306,7 +306,7 @@ export class AuthService {
         .select('*')
         .single()
         .then(({ data, error }) => {
-          if (error) console.error('Error updating profile:', error);
+          if (error) console.error('Error updating profile:', JSON.stringify(error));
           if (data !== null && data !== undefined) {
             console.log('updatedProfile', data);
             this._$profile.next(data);
