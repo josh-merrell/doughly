@@ -67,15 +67,13 @@ export class AppComponent {
       if (pushToken !== this.prevPushToken()) {
         // Only run if pushToken has changed and profile is available
         this.prevPushToken.set(pushToken); // Update previous pushToken
-
+        console.log('updated prevPushToken: ' + this.prevPushToken());
         if (pushToken) {
-          this.store.dispatch(
-            ProfileActions.updateProfile({
-              profile: {
-                pushToken: pushToken,
-              },
-            })
-          );
+          this.authService.updateProfile({
+            profile: {
+              pushToken: pushToken,
+            },
+          }).subscribe();
           console.log('sent push token to server' + pushToken);
         }
       }
