@@ -49,7 +49,6 @@ import { AuthService } from './shared/utils/authenticationService';
 export class AppComponent {
   title = 'frontend';
   pushToken: WritableSignal<string | null> = signal(null);
-  profile: WritableSignal<any> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
 
   constructor(
@@ -60,24 +59,24 @@ export class AppComponent {
   ) {
     // listen for deep-links
     this.initializeApp();
-    // effect(() => {
-    //   const pushToken = this.pushToken();
-    //   console.log('pushToken: ' + pushToken);
-    //   console.log('prevPushToken: ' + this.prevPushToken());
-    //   // if (pushToken !== this.prevPushToken()) {
-    //     // Only run if pushToken has changed and profile is available
-    //     this.prevPushToken.set(pushToken); // Update previous pushToken
-    //     console.log('updated prevPushToken: ' + this.prevPushToken());
-    //     if (pushToken) {
-    //       this.authService.updateProfile({
-    //         profile: {
-    //           pushToken: pushToken,
-    //         },
-    //       }).subscribe();
-    //       console.log('sent push token to server' + pushToken);
-    //     }
-    //   // }
-    // });
+    effect(() => {
+      const pushToken = this.pushToken();
+      console.log('pushToken: ' + pushToken);
+      console.log('prevPushToken: ' + this.prevPushToken());
+      if (pushToken !== this.prevPushToken()) {
+        // Only run if pushToken has changed and profile is available
+        this.prevPushToken.set(pushToken); // Update previous pushToken
+        console.log('updated prevPushToken: ' + this.prevPushToken());
+        if (pushToken) {
+          this.authService.updateProfile({
+            profile: {
+              pushToken: pushToken,
+            },
+          }).subscribe();
+          console.log('sent push token to server' + pushToken);
+        }
+      }
+    });
   }
 
   initializeApp() {
@@ -98,10 +97,10 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    this.authService.$profile.subscribe((profile) => {
-      alert('setting profile: ' + JSON.stringify(profile));
-      this.profile.set(profile);
-    });
+    // this.authService.$profile.subscribe((profile) => {
+    //   alert('setting profile: ' + JSON.stringify(profile));
+    //   this.profile.set(profile);
+    // });
     //** LOAD STATE **
     //--kitchen
     this.store.dispatch(IngredientActions.loadIngredients());
