@@ -296,7 +296,7 @@ export class AuthService {
       ...profile,
       updated_at: new Date(),
     };
-    alert('updateProfile: ' + JSON.stringify(update));
+    console.log('updateProfile: ' + JSON.stringify(update));
     // upsert the update into the 'profiles' table, then update the profile BehaviorSubject with the new profile
     return from(
       this.supabase.supabase
@@ -308,7 +308,7 @@ export class AuthService {
         .then(({ data, error }) => {
           if (error) console.error('Error updating profile:', error);
           if (data !== null && data !== undefined) {
-            console.log('updateProfile', data);
+            console.log('updatedProfile', data);
             this._$profile.next(data);
             return data;
           }
