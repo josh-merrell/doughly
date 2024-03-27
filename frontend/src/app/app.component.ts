@@ -99,6 +99,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.store.select(selectProfile).subscribe((profile) => {
+      alert('profile: ' + JSON.stringify(profile));
       this.profile.set(profile);
     });
 
