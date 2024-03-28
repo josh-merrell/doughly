@@ -145,6 +145,7 @@ export class AppComponent {
     // On success, we should be able to receive notifications
     PushNotifications.addListener('registration', (token: Token) => {
       alert('Push registration success, token: ' + token.value);
+      console.log('got unsaved pushToken: ' + token.value);
       // Send the token to the server
       this.authService.unsavedPushToken = token.value;
     });
