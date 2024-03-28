@@ -80,6 +80,14 @@ export class AuthService {
               // Update our profile BehaviorSubject with the current value
               this._$profile.next(this.isProfile(res.data) ? res.data : null);
 
+              // If there is an unsaved pushToken, update the profile with it
+              if (this.unsavedPushToken) {
+                this.updateField('pushToken', this.unsavedPushToken).subscribe(
+                  () => {
+                    this.unsavedPushToken = null;
+                  }
+                );
+              }
               // Listen to any changes to our user's profile using Supabase Realtime
               this.profile_subscription = this.supabase.supabase
                 .channel('public:profiles')
@@ -94,16 +102,6 @@ export class AuthService {
                   (payload: any) => {
                     // Update our profile BehaviorSubject with the newest value
                     this._$profile.next(payload.new);
-
-                    // If there is an unsaved pushToken, update the profile with it
-                    if (this.unsavedPushToken) {
-                      this.updateField(
-                        'pushToken',
-                        this.unsavedPushToken
-                      ).subscribe(() => {
-                        this.unsavedPushToken = null;
-                      });
-                    }
                   }
                 )
                 .subscribe();
