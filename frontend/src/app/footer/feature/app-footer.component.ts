@@ -21,6 +21,12 @@ import { selectCurrentUrl } from '../../shared/state/shared-selectors';
 import { AppState } from '../../shared/state/app-state';
 import { AuthService } from '../../shared/utils/authenticationService';
 import { selectAdding } from '../../recipes/state/recipe/recipe-selectors';
+import {
+  ActionPerformed,
+  PushNotificationSchema,
+  PushNotifications,
+  Token,
+} from '@capacitor/push-notifications';
 
 
 
@@ -144,5 +150,6 @@ export class AppFooterComponent {
     this.authService.logout().then(() => {
       this.router.navigate(['/login']);
     });
+    PushNotifications.unregister
   }
 }
