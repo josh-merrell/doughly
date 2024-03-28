@@ -306,9 +306,9 @@ export class AuthService {
         .select('*')
         .single()
         .then(({ data, error }) => {
-          if (error) console.error('Error updating profile:', JSON.stringify(error));
+          if (error)
+            console.error('Error updating profile:', JSON.stringify(error));
           if (data !== null && data !== undefined) {
-            console.log('updatedProfile', data);
             this._$profile.next(data);
             return data;
           }
@@ -343,6 +343,8 @@ export class AuthService {
       [field]: value,
       updated_at: new Date(),
     };
+    console.log('updateProfileField: ' + JSON.stringify(update));
+    console.log('user_id: ' + this.user_id);
     return from(
       this.supabase.supabase
         .from('profiles')
@@ -351,7 +353,6 @@ export class AuthService {
         .select('*')
         .then(({ data, error }) => {
           if (error) throw error;
-
           const newProfile = {
             user_id: data[0].user_id,
             email: data[0].email,
@@ -363,6 +364,7 @@ export class AuthService {
             city: data[0].city,
             state: data[0].state,
           };
+          console.log('updatedProfile', newProfile);
           this._$profile.next(newProfile);
           return data;
         })

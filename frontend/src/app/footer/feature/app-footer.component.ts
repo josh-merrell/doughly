@@ -110,9 +110,7 @@ export class AppFooterComponent {
       alert('Push registration success, token: ' + token.value);
       // Send the token to the server
       this.authService
-        .updateProfile({
-          pushToken: token.value,
-        })
+        .updateField('pushToken', token.value)
         .subscribe();
     });
     // Some issue with our setup and push will not work
