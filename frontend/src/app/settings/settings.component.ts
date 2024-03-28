@@ -32,6 +32,7 @@ import {
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from '../shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/confirmation-modal.component';
+import { notificationMethods } from '../shared/utils/types';
 
 @Component({
   selector: 'dl-settings',
@@ -42,6 +43,7 @@ import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/conf
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSlideToggleModule,
+    MatSelectModule,
   ],
   templateUrl: './settings.component.html',
 })
@@ -49,6 +51,7 @@ export class SettingsComponent {
   isEditing: boolean = false;
   form!: FormGroup;
   private profile: WritableSignal<any> = signal({});
+  notificationMethods: string[] = Object.values(notificationMethods);
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -60,6 +63,13 @@ export class SettingsComponent {
       // update form value of 'checkIngredientStock' when profile changes
       this.form.patchValue({
         checkIngredientStock: newProfile.checkIngredientStock,
+        autoDeleteExpiredStock: newProfile.autoDeleteExpiredStock,
+        notifyOnLowStock: newProfile.notifyOnLowStock,
+        notifyOnNoStock: newProfile.notifyOnNoStock,
+        notifyUpcomingStockExpiry: newProfile.notifyUpcomingStockExpiry,
+        notifyExpiredStock: newProfile.notifyExpiredStock,
+        notifyFriendCreateRecipe: newProfile.notifyFriendCreateRecipe,
+        notifyFolloweeCreateRecipe: newProfile.notifyFolloweeCreateRecipe,
       });
     });
   }
@@ -74,6 +84,13 @@ export class SettingsComponent {
   setForm() {
     this.form = this.fb.group({
       checkIngredientStock: [false],
+      autoDeleteExpiredStock: [false],
+      notifyOnLowStock: ['', [Validators.required]],
+      notifyOnNoStock: ['', [Validators.required]],
+      notifyUpcomingStockExpiry: ['', [Validators.required]],
+      notifyExpiredStock: ['', [Validators.required]],
+      notifyFriendCreateRecipe: ['', [Validators.required]],
+      notifyFolloweeCreateRecipe: ['', [Validators.required]],
     });
   }
 
@@ -81,6 +98,13 @@ export class SettingsComponent {
     this.isEditing = true;
     const updateBody = {
       checkIngredientStock: this.form.value.checkIngredientStock,
+      autoDeleteExpiredStock: this.form.value.autoDeleteExpiredStock,
+      notifyOnLowStock: this.form.value.notifyOnLowStock,
+      notifyOnNoStock: this.form.value.notifyOnNoStock,
+      notifyUpcomingStockExpiry: this.form.value.notifyUpcomingStockExpiry,
+      notifyExpiredStock: this.form.value.notifyExpiredStock,
+      notifyFriendCreateRecipe: this.form.value.notifyFriendCreateRecipe,
+      notifyFolloweeCreateRecipe: this.form.value.notifyFolloweeCreateRecipe,
     };
     this.store.dispatch(ProfileActions.updateProfile({ profile: updateBody }));
     this.store

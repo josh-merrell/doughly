@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
 const cors = require('cors');
-const https = require('https');
 require('dotenv').config();
 
 const logger = winston.createLogger({
@@ -23,7 +22,7 @@ const logger = winston.createLogger({
   transports: [new winston.transports.Console({ format: winston.format.simple() }), new winston.transports.File({ filename: 'logger.log', level: 'info' })],
 });
 
-const { supabase, supabaseDefault, verifyUser } = require('./db');
+const { supabase, supabaseDefault } = require('./db');
 
 // Instantiate an express application
 const app = express();
@@ -54,6 +53,7 @@ const uploadsRouter = require('./modules/uploads/router');
 const logsRouter = require('./modules/logs/router');
 const profilesRouter = require('./modules/profiles/router');
 const shoppingRouter = require('./modules/shopping/router');
+const pushTokensRouter = require('./modules/pushNotifications/router');
 
 // UTIL ROUTERS
 const unitRatioRouter = require('./modules/utility/unitRatios/router');
@@ -118,6 +118,7 @@ app.use('/ingredientStocks', ingredientStocksRouter);
 app.use('/logs', logsRouter);
 app.use('/profiles', profilesRouter);
 app.use('/unitRatios', unitRatioRouter);
+app.use('/pushTokens', pushTokensRouter);
 
 // Start the server
 const port = 3000;
