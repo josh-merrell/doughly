@@ -73,7 +73,7 @@ export class IngredientStockEffects {
     this.actions$.pipe(
       ofType(IngredientStockActions.loadIngredientStocks),
       mergeMap(() =>
-        this.ingredientStockService.getAll().pipe(
+        this.ingredientStockService.deleteExpiredAndGetAll().pipe(
           map((ingredientStocks) =>
             IngredientStockActions.loadIngredientStocksSuccess({
               ingredientStocks,

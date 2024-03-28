@@ -55,6 +55,15 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ShoppingListIngredientReducer } from './app/groceries/state/shopping-list-ingredient-reducers';
 import { ShoppingListIngredientEffects } from './app/groceries/state/shopping-list-ingredient-effects';
 
+
+import {
+  ActionPerformed,
+  PushNotificationSchema,
+  PushNotifications,
+  Token,
+} from '@capacitor/push-notifications';
+
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
@@ -111,7 +120,7 @@ bootstrapApplication(AppComponent, {
       MatDatepickerModule,
       MatMomentDateModule,
       MatNativeDateModule,
-      BrowserAnimationsModule
+      BrowserAnimationsModule,
     ),
     // provideRouterStore(),
     // provideEffects([RouterEffects, AuthEffects])

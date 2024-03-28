@@ -29,6 +29,7 @@ import { RecipeToolActions } from '../../.././recipes/state/recipe-tool/recipe-t
 import { RecipeStepActions } from '../../.././recipes/state/recipe-step/recipe-step-actions';
 import { ShoppingListActions } from '../../.././groceries/state/shopping-list-actions';
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
+import { ShoppingListRecipeActions } from 'src/app/groceries/state/shopping-list-recipe-actions';
 
 declare const google: any;
 @Component({
@@ -157,6 +158,7 @@ export class LoginPageComponent {
     this.store.dispatch(RecipeToolActions.loadRecipeTools());
     this.store.dispatch(StepActions.loadSteps());
     this.store.dispatch(RecipeStepActions.loadRecipeSteps());
+    this.store.dispatch(RecipeActions.loadDiscoverRecipes());
 
     //--social
     this.store.dispatch(FriendshipActions.loadFriendships());
@@ -171,5 +173,6 @@ export class LoginPageComponent {
 
     //--shopping
     this.store.dispatch(ShoppingListActions.loadShoppingLists());
+    this.store.dispatch(ShoppingListRecipeActions.loadAllShoppingListRecipes());
   }
 }

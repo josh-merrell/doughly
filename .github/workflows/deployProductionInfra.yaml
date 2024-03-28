@@ -56,6 +56,9 @@ jobs:
             npm install
             sudo npx playwright install-deps
 
+            # Export path to Google Service Account Credentials
+            export GOOGLE_APPLICATION_CREDENTIALS="~/dl/services/google/doughly-ee4c38c0be84.json"
+
             # Start the server using PM2
             pm2 start ../ecosystem.config.js
 

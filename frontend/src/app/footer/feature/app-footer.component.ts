@@ -21,6 +21,15 @@ import { selectCurrentUrl } from '../../shared/state/shared-selectors';
 import { AppState } from '../../shared/state/app-state';
 import { AuthService } from '../../shared/utils/authenticationService';
 import { selectAdding } from '../../recipes/state/recipe/recipe-selectors';
+import {
+  ActionPerformed,
+  PushNotificationSchema,
+  PushNotifications,
+  Token,
+} from '@capacitor/push-notifications';
+
+
+
 @Component({
   selector: 'app-footer',
   standalone: true,
@@ -57,7 +66,7 @@ export class AppFooterComponent {
   ngOnInit() {
     // watch location for changes
     this.location.onUrlChange((url) => {
-      this.currentLocation.set(url)
+      this.currentLocation.set(url);
     });
     this.store.select(selectAdding).subscribe((adding) => {
       this.addingRecipe.set(adding);
@@ -141,5 +150,6 @@ export class AppFooterComponent {
     this.authService.logout().then(() => {
       this.router.navigate(['/login']);
     });
+    PushNotifications.unregister
   }
 }

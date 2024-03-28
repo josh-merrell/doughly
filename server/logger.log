@@ -1,1203 +1,178 @@
-2024-03-14T12:50:11 [info]: Server is running at http://localhost:3000
-2024-03-14T12:50:31 [info]: Got 0 ingredientStocks
-2024-03-14T12:50:31 [info]: Got 0 toolStocks
-2024-03-14T12:50:31 [info]: Got 617 ingredients
-2024-03-14T12:50:31 [info]: Got 34 recipeCategories
-2024-03-14T12:50:31 [info]: Got 83 tools
-2024-03-14T12:50:31 [info]: Got 225 recipes
-2024-03-14T12:50:31 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T12:50:31 [info]: Got 705 recipeTools
-2024-03-14T12:50:31 [info]: Got 1243 recipeSteps
-2024-03-14T12:50:31 [info]: Got 224 discoverRecipes
-2024-03-14T12:50:31 [info]: Got 2896 recipeIngredients
-2024-03-14T12:50:31 [info]: Got 1361 steps
-2024-03-14T12:50:32 [info]: Successfully retrieved 0 followers for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T12:50:32 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T12:50:32 [info]: Successfully retrieved profile for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T12:50:32 [info]: Got 2 friendships
-2024-03-14T12:50:32 [info]: Got 0 follower followships
-2024-03-14T12:50:32 [info]: Got 0 followships
-2024-03-14T12:50:32 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T12:50:32 [info]: Got 1 shopping lists
-2024-03-14T12:50:32 [info]: Successfully retrieved 1 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T12:50:32 [info]: Successfully retrieved 1 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T12:52:22 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:52:22 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:52:22 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010014
-2024-03-14T12:52:29 [info]: **RECIPE LOG ENTRY ID: 7124031400011500** deleteRecipeIngredient|subjectID:1624021800010045|oldValue:null|newValue:null
-2024-03-14T12:52:29 [info]: **RECIPE LOG ENTRY ID: 7124031400011501** updateRecipeVersion|subjectID:1124021800010014|oldValue:24|newValue:25
-2024-03-14T12:52:29 [info]: Got recipe
-2024-03-14T12:52:29 [info]: Got 225 recipes
-2024-03-14T12:52:46 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: pound
-2024-03-14T12:52:46 [info]: 'getUnitRatio' Common ratio found for weightOunce-pound: 16
-2024-03-14T12:52:50 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T12:52:50 [info]: **RECIPE LOG ENTRY ID: 7124031400011502** createRecipeIngredient|subjectID:1624031400010141|oldValue:null|newValue:null
-2024-03-14T12:52:51 [info]: Got recipe
-2024-03-14T12:52:51 [info]: **RECIPE LOG ENTRY ID: 7124031400011503** updateRecipeVersion|subjectID:1124021800010014|oldValue:25|newValue:26
-2024-03-14T12:53:01 [info]: Deleted ingredient ID: 1224021800010065
-2024-03-14T12:53:01 [info]: **KITCHEN LOG ENTRY ID: 7024031400010051** ingredientDeleted|subjectID:1224021800010065|oldValue:null|newValue:null
-2024-03-14T12:53:01 [info]: Got 0 ingredientStocks
-2024-03-14T12:53:02 [info]: Got 225 recipes
-2024-03-14T12:53:02 [info]: Got 2896 recipeIngredients
-2024-03-14T12:53:10 [info]: Found 0 recipeSubscriptions for recipeID: 1124022300010103
-2024-03-14T12:53:10 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:53:10 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:53:21 [info]: **RECIPE LOG ENTRY ID: 7124031400011504** deleteRecipeIngredient|subjectID:1624022300010129|oldValue:null|newValue:null
-2024-03-14T12:53:21 [info]: **RECIPE LOG ENTRY ID: 7124031400011505** updateRecipeVersion|subjectID:1124022300010103|oldValue:20|newValue:21
-2024-03-14T12:53:21 [info]: Got recipe
-2024-03-14T12:53:22 [info]: Got 225 recipes
-2024-03-14T12:53:33 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: pound
-2024-03-14T12:53:33 [info]: 'getUnitRatio' Common ratio found for weightOunce-pound: 16
-2024-03-14T12:53:36 [info]: CREATING RECIPE INGREDIENT, PREPARATION: lean ground
-2024-03-14T12:53:37 [info]: **RECIPE LOG ENTRY ID: 7124031400011506** createRecipeIngredient|subjectID:1624031400010142|oldValue:null|newValue:null
-2024-03-14T12:53:37 [info]: **RECIPE LOG ENTRY ID: 7124031400011507** updateRecipeVersion|subjectID:1124022300010103|oldValue:21|newValue:22
-2024-03-14T12:53:37 [info]: Got recipe
-2024-03-14T12:53:45 [info]: Deleted ingredient ID: 1224022300010135
-2024-03-14T12:53:45 [info]: **KITCHEN LOG ENTRY ID: 7024031400010052** ingredientDeleted|subjectID:1224022300010135|oldValue:null|newValue:null
-2024-03-14T12:53:46 [info]: Got 225 recipes
-2024-03-14T12:53:46 [info]: Got 0 ingredientStocks
-2024-03-14T12:53:46 [info]: Got 2896 recipeIngredients
-2024-03-14T12:54:13 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:54:13 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:54:13 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300000001
-2024-03-14T12:54:26 [info]: **RECIPE LOG ENTRY ID: 7124031400011508** deleteRecipeIngredient|subjectID:1624020300000009|oldValue:null|newValue:null
-2024-03-14T12:54:27 [info]: **RECIPE LOG ENTRY ID: 7124031400011509** updateRecipeVersion|subjectID:1124020300000001|oldValue:46|newValue:47
-2024-03-14T12:54:27 [info]: Got recipe
-2024-03-14T12:54:27 [info]: Got 225 recipes
-2024-03-14T12:54:40 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T12:54:42 [info]: CREATING RECIPE INGREDIENT, PREPARATION: deseeded and sliced
-2024-03-14T12:54:43 [info]: **RECIPE LOG ENTRY ID: 7124031400011510** createRecipeIngredient|subjectID:1624031400010143|oldValue:null|newValue:null
-2024-03-14T12:54:43 [info]: **RECIPE LOG ENTRY ID: 7124031400011511** updateRecipeVersion|subjectID:1124020300000001|oldValue:47|newValue:48
-2024-03-14T12:54:43 [info]: Got recipe
-2024-03-14T12:54:51 [info]: Deleted ingredient ID: 1224020300000028
-2024-03-14T12:54:51 [info]: **KITCHEN LOG ENTRY ID: 7024031400010053** ingredientDeleted|subjectID:1224020300000028|oldValue:null|newValue:null
-2024-03-14T12:54:51 [info]: Got 0 ingredientStocks
-2024-03-14T12:54:52 [info]: Got 2896 recipeIngredients
-2024-03-14T12:54:52 [info]: Got 225 recipes
-2024-03-14T12:55:22 [info]: Deleted ingredient ID: 1224021800010073
-2024-03-14T12:55:22 [info]: **KITCHEN LOG ENTRY ID: 7024031400010054** ingredientDeleted|subjectID:1224021800010073|oldValue:null|newValue:null
-2024-03-14T12:55:23 [info]: Got 0 ingredientStocks
-2024-03-14T12:55:23 [info]: Got 225 recipes
-2024-03-14T12:55:23 [info]: Got 2896 recipeIngredients
-2024-03-14T12:55:29 [info]: Deleted ingredient ID: 1224021800010088
-2024-03-14T12:55:30 [info]: **KITCHEN LOG ENTRY ID: 7024031400010055** ingredientDeleted|subjectID:1224021800010088|oldValue:null|newValue:null
-2024-03-14T12:55:30 [info]: Got 0 ingredientStocks
-2024-03-14T12:55:30 [info]: Got 225 recipes
-2024-03-14T12:55:30 [info]: Got 2896 recipeIngredients
-2024-03-14T12:56:08 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:56:08 [info]: Found 0 recipeSubscriptions for recipeID: 1124030600010020
-2024-03-14T12:56:08 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:56:30 [info]: **RECIPE LOG ENTRY ID: 7124031400011512** deleteRecipeIngredient|subjectID:1624030600010290|oldValue:null|newValue:null
-2024-03-14T12:56:30 [info]: **RECIPE LOG ENTRY ID: 7124031400011513** updateRecipeVersion|subjectID:1124030600010020|oldValue:13|newValue:14
-2024-03-14T12:56:30 [info]: Got recipe
-2024-03-14T12:56:31 [info]: Got 225 recipes
-2024-03-14T12:56:47 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: teaspoon
-2024-03-14T12:56:47 [info]: 'getUnitRatio' Store ratio found for Chaat Masala Powder-weightOunce-teaspoon: 0.19
-2024-03-14T12:56:51 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T12:56:51 [info]: **RECIPE LOG ENTRY ID: 7124031400011514** createRecipeIngredient|subjectID:1624031400010144|oldValue:null|newValue:null
-2024-03-14T12:56:51 [info]: **RECIPE LOG ENTRY ID: 7124031400011515** updateRecipeVersion|subjectID:1124030600010020|oldValue:14|newValue:15
-2024-03-14T12:56:51 [info]: Got recipe
-2024-03-14T12:57:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011516** deleteRecipeIngredient|subjectID:1624030600010291|oldValue:null|newValue:null
-2024-03-14T12:57:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011517** updateRecipeVersion|subjectID:1124030600010020|oldValue:15|newValue:16
-2024-03-14T12:57:03 [info]: Got recipe
-2024-03-14T12:57:03 [info]: Got 225 recipes
-2024-03-14T12:57:15 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: tablespoon
-2024-03-14T12:57:16 [info]: 'getUnitRatio' No store ratio found for Chaat Masala Powder-weightOunce-tablespoon, asking AI
-2024-03-14T12:57:17 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: teaspoon
-2024-03-14T12:57:17 [info]: 'getUnitRatio' Store ratio found for Chaat Masala Powder-weightOunce-teaspoon: 0.19
-2024-03-14T12:57:17 [info]: UNIT CONVERSION VERTEXAI Chaat Masala Powder-weightOunce-tablespoon RESPONSE: 0.6
-2024-03-14T12:57:17 [info]: CHARACTER COUNT: 353, COST: $0.00008824999999999999
-2024-03-14T12:57:17 [info]: 'getUnitRatio' AI estimate for Chaat Masala Powder-weightOunce-tablespoon: 0.6.
-2024-03-14T12:57:17 [info]: 'addUnitRatio' Added unit ratio 'Chaat Masala Powder-weightOunce-tablespoon' in draft currentStatus
-2024-03-14T12:57:19 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T12:57:20 [info]: **RECIPE LOG ENTRY ID: 7124031400011518** createRecipeIngredient|subjectID:1624031400010145|oldValue:null|newValue:null
-2024-03-14T12:57:20 [info]: **RECIPE LOG ENTRY ID: 7124031400011519** updateRecipeVersion|subjectID:1124030600010020|oldValue:16|newValue:17
-2024-03-14T12:57:20 [info]: Got recipe
-2024-03-14T12:57:28 [info]: Deleted ingredient ID: 1224030600010072
-2024-03-14T12:57:28 [info]: **KITCHEN LOG ENTRY ID: 7024031400010056** ingredientDeleted|subjectID:1224030600010072|oldValue:null|newValue:null
-2024-03-14T12:57:28 [info]: Got 0 ingredientStocks
-2024-03-14T12:57:28 [info]: Got 225 recipes
-2024-03-14T12:57:28 [info]: Got 2896 recipeIngredients
-2024-03-14T12:57:46 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:57:46 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:57:46 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010001
-2024-03-14T12:58:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011520** deleteRecipeIngredient|subjectID:1624020300010014|oldValue:null|newValue:null
-2024-03-14T12:58:07 [info]: **RECIPE LOG ENTRY ID: 7124031400011521** updateRecipeVersion|subjectID:1124020300010001|oldValue:39|newValue:40
-2024-03-14T12:58:07 [info]: Got recipe
-2024-03-14T12:58:07 [info]: Got 225 recipes
-2024-03-14T12:58:11 [info]: **RECIPE LOG ENTRY ID: 7124031400011522** updateRecipeIngredients-preparation|subjectID:1624020300010016|oldValue:null|newValue:cut in bite-sized pieces
-2024-03-14T12:58:11 [info]: **RECIPE LOG ENTRY ID: 7124031400011523** updateRecipeVersion|subjectID:1124020300010001|oldValue:40|newValue:41
-2024-03-14T12:58:11 [info]: **RECIPE LOG ENTRY ID: 7124031400011524** updateRecipeIngredientVersion|subjectID:1624020300010016|oldValue:2|newValue:3
-2024-03-14T12:58:21 [info]: Deleted ingredient ID: 1224020300010015
-2024-03-14T12:58:21 [info]: **KITCHEN LOG ENTRY ID: 7024031400010057** ingredientDeleted|subjectID:1224020300010015|oldValue:null|newValue:null
-2024-03-14T12:58:22 [info]: Got 0 ingredientStocks
-2024-03-14T12:58:22 [info]: Got 225 recipes
-2024-03-14T12:58:22 [info]: Got 2895 recipeIngredients
-2024-03-14T12:58:45 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:58:45 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010004
-2024-03-14T12:58:45 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:58:54 [info]: **RECIPE LOG ENTRY ID: 7124031400011525** deleteRecipeIngredient|subjectID:1624020300010055|oldValue:null|newValue:null
-2024-03-14T12:58:54 [info]: Got recipe
-2024-03-14T12:58:54 [info]: **RECIPE LOG ENTRY ID: 7124031400011526** updateRecipeVersion|subjectID:1124020300010004|oldValue:31|newValue:32
-2024-03-14T12:58:55 [info]: Got 225 recipes
-2024-03-14T12:59:07 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: cup
-2024-03-14T12:59:07 [info]: 'getUnitRatio' Store ratio found for Chicken Stock-pound-cup: 0.58
-2024-03-14T12:59:10 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T12:59:10 [info]: **RECIPE LOG ENTRY ID: 7124031400011527** createRecipeIngredient|subjectID:1624031400010146|oldValue:null|newValue:null
-2024-03-14T12:59:11 [info]: Got recipe
-2024-03-14T12:59:11 [info]: **RECIPE LOG ENTRY ID: 7124031400011528** updateRecipeVersion|subjectID:1124020300010004|oldValue:32|newValue:33
-2024-03-14T12:59:20 [info]: Deleted ingredient ID: 1224020300010073
-2024-03-14T12:59:20 [info]: **KITCHEN LOG ENTRY ID: 7024031400010058** ingredientDeleted|subjectID:1224020300010073|oldValue:null|newValue:null
-2024-03-14T12:59:20 [info]: Got 0 ingredientStocks
-2024-03-14T12:59:20 [info]: Got 225 recipes
-2024-03-14T12:59:20 [info]: Got 2895 recipeIngredients
-2024-03-14T12:59:32 [info]: Deleted ingredient ID: 1224022300010108
-2024-03-14T12:59:32 [info]: **KITCHEN LOG ENTRY ID: 7024031400010059** ingredientDeleted|subjectID:1224022300010108|oldValue:null|newValue:null
-2024-03-14T12:59:33 [info]: Got 0 ingredientStocks
-2024-03-14T12:59:33 [info]: Got 225 recipes
-2024-03-14T12:59:33 [info]: Got 2895 recipeIngredients
-2024-03-14T12:59:44 [info]: Deleted ingredient ID: 1224021800010077
-2024-03-14T12:59:45 [info]: **KITCHEN LOG ENTRY ID: 7024031400010060** ingredientDeleted|subjectID:1224021800010077|oldValue:null|newValue:null
-2024-03-14T12:59:45 [info]: Got 2895 recipeIngredients
-2024-03-14T12:59:45 [info]: Got 0 ingredientStocks
-2024-03-14T12:59:45 [info]: Got 225 recipes
-2024-03-14T12:59:57 [info]: Got 0 recipeFeedback logs
-2024-03-14T12:59:57 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010005
-2024-03-14T12:59:57 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:00:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011529** deleteRecipeIngredient|subjectID:1624020300010070|oldValue:null|newValue:null
-2024-03-14T13:00:10 [info]: **RECIPE LOG ENTRY ID: 7124031400011530** updateRecipeVersion|subjectID:1124020300010005|oldValue:45|newValue:46
-2024-03-14T13:00:10 [info]: Got recipe
-2024-03-14T13:00:10 [info]: Got 225 recipes
-2024-03-14T13:00:21 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: teaspoon
-2024-03-14T13:00:21 [info]: 'getUnitRatio' Store ratio found for Coriander-weightOunce-teaspoon: 0.017
-2024-03-14T13:00:24 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:00:24 [info]: **RECIPE LOG ENTRY ID: 7124031400011531** createRecipeIngredient|subjectID:1624031400010147|oldValue:null|newValue:null
-2024-03-14T13:00:24 [info]: **RECIPE LOG ENTRY ID: 7124031400011532** updateRecipeVersion|subjectID:1124020300010005|oldValue:46|newValue:47
-2024-03-14T13:00:25 [info]: Got recipe
-2024-03-14T13:00:30 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:00:30 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010010
-2024-03-14T13:00:30 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:00:39 [info]: **RECIPE LOG ENTRY ID: 7124031400011533** deleteRecipeIngredient|subjectID:1624021800010014|oldValue:null|newValue:null
-2024-03-14T13:00:39 [info]: **RECIPE LOG ENTRY ID: 7124031400011534** updateRecipeVersion|subjectID:1124021800010010|oldValue:32|newValue:33
-2024-03-14T13:00:39 [info]: Got recipe
-2024-03-14T13:00:40 [info]: Got 225 recipes
-2024-03-14T13:00:47 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: teaspoon
-2024-03-14T13:00:47 [info]: 'getUnitRatio' Store ratio found for Coriander-weightOunce-teaspoon: 0.017
-2024-03-14T13:00:52 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:00:52 [info]: **RECIPE LOG ENTRY ID: 7124031400011535** createRecipeIngredient|subjectID:1624031400010148|oldValue:null|newValue:null
-2024-03-14T13:00:52 [info]: Got recipe
-2024-03-14T13:00:52 [info]: **RECIPE LOG ENTRY ID: 7124031400011536** updateRecipeVersion|subjectID:1124021800010010|oldValue:33|newValue:34
-2024-03-14T13:00:59 [info]: Deleted ingredient ID: 1224020300010103
-2024-03-14T13:01:00 [info]: **KITCHEN LOG ENTRY ID: 7024031400010061** ingredientDeleted|subjectID:1224020300010103|oldValue:null|newValue:null
-2024-03-14T13:01:00 [info]: Got 0 ingredientStocks
-2024-03-14T13:01:00 [info]: Got 2895 recipeIngredients
-2024-03-14T13:01:00 [info]: Got 225 recipes
-2024-03-14T13:01:27 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010010
-2024-03-14T13:01:27 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:01:27 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:01:33 [info]: **RECIPE LOG ENTRY ID: 7124031400011537** deleteRecipeIngredient|subjectID:1624021800010012|oldValue:null|newValue:null
-2024-03-14T13:01:33 [info]: **RECIPE LOG ENTRY ID: 7124031400011538** updateRecipeVersion|subjectID:1124021800010010|oldValue:34|newValue:35
-2024-03-14T13:01:33 [info]: Got recipe
-2024-03-14T13:01:33 [info]: Got 225 recipes
-2024-03-14T13:01:41 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: tablespoon
-2024-03-14T13:01:42 [info]: 'getUnitRatio' Store ratio found for Cumin-weightOunce-tablespoon: 0.5
-2024-03-14T13:01:43 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: teaspoon
-2024-03-14T13:01:43 [info]: 'getUnitRatio' Store ratio found for Cumin-weightOunce-teaspoon: 0.16
-2024-03-14T13:01:45 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:01:45 [info]: **RECIPE LOG ENTRY ID: 7124031400011539** createRecipeIngredient|subjectID:1624031400010149|oldValue:null|newValue:null
-2024-03-14T13:01:46 [info]: **RECIPE LOG ENTRY ID: 7124031400011540** updateRecipeVersion|subjectID:1124021800010010|oldValue:35|newValue:36
-2024-03-14T13:01:46 [info]: Got recipe
-2024-03-14T13:01:52 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:01:52 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:01:52 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010027
-2024-03-14T13:01:58 [info]: **RECIPE LOG ENTRY ID: 7124031400011541** deleteRecipeIngredient|subjectID:1624021800010140|oldValue:null|newValue:null
-2024-03-14T13:01:58 [info]: **RECIPE LOG ENTRY ID: 7124031400011542** updateRecipeVersion|subjectID:1124021800010027|oldValue:29|newValue:30
-2024-03-14T13:01:58 [info]: Got recipe
-2024-03-14T13:01:58 [info]: Got 225 recipes
-2024-03-14T13:02:05 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: tablespoon
-2024-03-14T13:02:05 [info]: 'getUnitRatio' Store ratio found for Cumin-weightOunce-tablespoon: 0.5
-2024-03-14T13:02:07 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:02:08 [info]: **RECIPE LOG ENTRY ID: 7124031400011543** createRecipeIngredient|subjectID:1624031400010150|oldValue:null|newValue:null
-2024-03-14T13:02:08 [info]: **RECIPE LOG ENTRY ID: 7124031400011544** updateRecipeVersion|subjectID:1124021800010027|oldValue:30|newValue:31
-2024-03-14T13:02:08 [info]: Got recipe
-2024-03-14T13:02:15 [info]: Deleted ingredient ID: 1224021800010022
-2024-03-14T13:02:15 [info]: **KITCHEN LOG ENTRY ID: 7024031400010062** ingredientDeleted|subjectID:1224021800010022|oldValue:null|newValue:null
-2024-03-14T13:02:15 [info]: Got 0 ingredientStocks
-2024-03-14T13:02:15 [info]: Got 2895 recipeIngredients
-2024-03-14T13:02:15 [info]: Got 225 recipes
-2024-03-14T13:02:30 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:02:30 [info]: Found 0 recipeSubscriptions for recipeID: 1124031300010010
-2024-03-14T13:02:30 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:02:42 [info]: **RECIPE LOG ENTRY ID: 7124031400011545** deleteRecipeIngredient|subjectID:1624031300010138|oldValue:null|newValue:null
-2024-03-14T13:02:42 [info]: **RECIPE LOG ENTRY ID: 7124031400011546** updateRecipeVersion|subjectID:1124031300010010|oldValue:9|newValue:10
-2024-03-14T13:02:42 [info]: Got recipe
-2024-03-14T13:02:43 [info]: Got 225 recipes
-2024-03-14T13:02:55 [info]: 'getUnitRatioProcessor'. UNITA: bunch UNITB: tablespoon
-2024-03-14T13:02:55 [info]: 'getUnitRatio' Store ratio found for Dill-bunch-tablespoon: 0.5
-2024-03-14T13:03:00 [info]: CREATING RECIPE INGREDIENT, PREPARATION: chopped if using fresh
-2024-03-14T13:03:01 [info]: **RECIPE LOG ENTRY ID: 7124031400011547** createRecipeIngredient|subjectID:1624031400010151|oldValue:null|newValue:null
-2024-03-14T13:03:01 [info]: **RECIPE LOG ENTRY ID: 7124031400011548** updateRecipeVersion|subjectID:1124031300010010|oldValue:10|newValue:11
-2024-03-14T13:03:01 [info]: Got recipe
-2024-03-14T13:03:10 [info]: Deleted ingredient ID: 1224031300010050
-2024-03-14T13:03:11 [info]: **KITCHEN LOG ENTRY ID: 7024031400010063** ingredientDeleted|subjectID:1224031300010050|oldValue:null|newValue:null
-2024-03-14T13:03:11 [info]: Got 225 recipes
-2024-03-14T13:03:11 [info]: Got 2895 recipeIngredients
-2024-03-14T13:03:11 [info]: Got 0 ingredientStocks
-2024-03-14T13:03:23 [info]: Deleted ingredient ID: 1224021800010076
-2024-03-14T13:03:23 [info]: **KITCHEN LOG ENTRY ID: 7024031400010064** ingredientDeleted|subjectID:1224021800010076|oldValue:null|newValue:null
-2024-03-14T13:03:23 [info]: Got 0 ingredientStocks
-2024-03-14T13:03:23 [info]: Got 225 recipes
-2024-03-14T13:03:23 [info]: Got 2895 recipeIngredients
-2024-03-14T13:03:26 [info]: Deleted ingredient ID: 1224021800010089
-2024-03-14T13:03:26 [info]: **KITCHEN LOG ENTRY ID: 7024031400010065** ingredientDeleted|subjectID:1224021800010089|oldValue:null|newValue:null
-2024-03-14T13:03:27 [info]: Got 0 ingredientStocks
-2024-03-14T13:03:27 [info]: Got 225 recipes
-2024-03-14T13:03:27 [info]: Got 2895 recipeIngredients
-2024-03-14T13:03:38 [info]: Deleted ingredient ID: 1224021800010040
-2024-03-14T13:03:38 [info]: **KITCHEN LOG ENTRY ID: 7024031400010066** ingredientDeleted|subjectID:1224021800010040|oldValue:null|newValue:null
-2024-03-14T13:03:38 [info]: Got 0 ingredientStocks
-2024-03-14T13:03:38 [info]: Got 225 recipes
-2024-03-14T13:03:39 [info]: Got 2895 recipeIngredients
-2024-03-14T13:03:54 [info]: Deleted ingredient ID: 1224021800010072
-2024-03-14T13:03:54 [info]: **KITCHEN LOG ENTRY ID: 7024031400010067** ingredientDeleted|subjectID:1224021800010072|oldValue:null|newValue:null
-2024-03-14T13:03:55 [info]: Got 0 ingredientStocks
-2024-03-14T13:03:55 [info]: Got 225 recipes
-2024-03-14T13:03:55 [info]: Got 2895 recipeIngredients
-2024-03-14T13:03:58 [info]: Deleted ingredient ID: 1224021800010086
-2024-03-14T13:03:58 [info]: **KITCHEN LOG ENTRY ID: 7024031400010068** ingredientDeleted|subjectID:1224021800010086|oldValue:null|newValue:null
-2024-03-14T13:03:58 [info]: Got 225 recipes
-2024-03-14T13:03:58 [info]: Got 0 ingredientStocks
-2024-03-14T13:03:58 [info]: Got 2895 recipeIngredients
-2024-03-14T13:04:11 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010001
-2024-03-14T13:04:11 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:04:11 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:04:23 [info]: **RECIPE LOG ENTRY ID: 7124031400011549** deleteRecipeIngredient|subjectID:1624020300010017|oldValue:null|newValue:null
-2024-03-14T13:04:23 [info]: **RECIPE LOG ENTRY ID: 7124031400011550** updateRecipeVersion|subjectID:1124020300010001|oldValue:41|newValue:42
-2024-03-14T13:04:23 [info]: Got recipe
-2024-03-14T13:04:23 [info]: Got 225 recipes
-2024-03-14T13:04:31 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:04:31 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010002
-2024-03-14T13:04:31 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:04:44 [info]: **RECIPE LOG ENTRY ID: 7124031400011551** deleteRecipeIngredient|subjectID:1624020300010038|oldValue:null|newValue:null
-2024-03-14T13:04:44 [info]: **RECIPE LOG ENTRY ID: 7124031400011552** updateRecipeVersion|subjectID:1124020300010002|oldValue:40|newValue:41
-2024-03-14T13:04:44 [info]: Got recipe
-2024-03-14T13:04:44 [info]: Got 225 recipes
-2024-03-14T13:04:51 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:04:51 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:04:51 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010005
-2024-03-14T13:05:02 [info]: **RECIPE LOG ENTRY ID: 7124031400011553** deleteRecipeIngredient|subjectID:1624020300010084|oldValue:null|newValue:null
-2024-03-14T13:05:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011554** updateRecipeVersion|subjectID:1124020300010005|oldValue:47|newValue:48
-2024-03-14T13:05:03 [info]: Got recipe
-2024-03-14T13:05:03 [info]: Got 225 recipes
-2024-03-14T13:05:29 [info]: Deleted ingredient ID: 1224020300010026
-2024-03-14T13:05:29 [info]: **KITCHEN LOG ENTRY ID: 7024031400010069** ingredientDeleted|subjectID:1224020300010026|oldValue:null|newValue:null
-2024-03-14T13:05:30 [info]: Got 0 ingredientStocks
-2024-03-14T13:05:30 [info]: Got 225 recipes
-2024-03-14T13:05:30 [info]: Got 2892 recipeIngredients
-2024-03-14T13:05:45 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010006
-2024-03-14T13:05:45 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:05:45 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:06:01 [info]: **RECIPE LOG ENTRY ID: 7124031400011555** deleteRecipeIngredient|subjectID:1624020300010094|oldValue:null|newValue:null
-2024-03-14T13:06:01 [info]: **RECIPE LOG ENTRY ID: 7124031400011556** updateRecipeVersion|subjectID:1124020300010006|oldValue:37|newValue:38
-2024-03-14T13:06:01 [info]: Got recipe
-2024-03-14T13:06:02 [info]: Got 225 recipes
-2024-03-14T13:06:17 [info]: 'getUnitRatioProcessor'. UNITA: clove UNITB: clove
-2024-03-14T13:06:19 [info]: CREATING RECIPE INGREDIENT, PREPARATION: minced
-2024-03-14T13:06:19 [info]: **RECIPE LOG ENTRY ID: 7124031400011557** createRecipeIngredient|subjectID:1624031400010152|oldValue:null|newValue:null
-2024-03-14T13:06:20 [info]: Got recipe
-2024-03-14T13:06:20 [info]: **RECIPE LOG ENTRY ID: 7124031400011558** updateRecipeVersion|subjectID:1124020300010006|oldValue:38|newValue:39
-2024-03-14T13:06:37 [info]: Deleted ingredient ID: 1224020300010119
-2024-03-14T13:06:37 [info]: **KITCHEN LOG ENTRY ID: 7024031400010070** ingredientDeleted|subjectID:1224020300010119|oldValue:null|newValue:null
-2024-03-14T13:06:38 [info]: Got 2892 recipeIngredients
-2024-03-14T13:06:38 [info]: Got 225 recipes
-2024-03-14T13:06:38 [info]: Got 0 ingredientStocks
-2024-03-14T13:06:49 [info]: Deleted ingredient ID: 1224021800010079
-2024-03-14T13:06:49 [info]: **KITCHEN LOG ENTRY ID: 7024031400010071** ingredientDeleted|subjectID:1224021800010079|oldValue:null|newValue:null
-2024-03-14T13:06:50 [info]: Got 0 ingredientStocks
-2024-03-14T13:06:50 [info]: Got 225 recipes
-2024-03-14T13:06:50 [info]: Got 2892 recipeIngredients
-2024-03-14T13:06:56 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:06:56 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:06:56 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010001
-2024-03-14T13:07:14 [info]: **RECIPE LOG ENTRY ID: 7124031400011559** deleteRecipeIngredient|subjectID:1624020300010011|oldValue:null|newValue:null
-2024-03-14T13:07:14 [info]: **RECIPE LOG ENTRY ID: 7124031400011560** updateRecipeVersion|subjectID:1124020300010001|oldValue:42|newValue:43
-2024-03-14T13:07:14 [info]: Got recipe
-2024-03-14T13:07:15 [info]: Got 225 recipes
-2024-03-14T13:07:25 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: teaspoon
-2024-03-14T13:07:25 [info]: 'getUnitRatio' Store ratio found for Ginger-weightOunce-teaspoon: 0.18
-2024-03-14T13:07:27 [info]: CREATING RECIPE INGREDIENT, PREPARATION: minced
-2024-03-14T13:07:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011561** createRecipeIngredient|subjectID:1624031400010153|oldValue:null|newValue:null
-2024-03-14T13:07:28 [info]: Got recipe
-2024-03-14T13:07:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011562** updateRecipeVersion|subjectID:1124020300010001|oldValue:43|newValue:44
-2024-03-14T13:07:36 [info]: Deleted ingredient ID: 1224020300010005
-2024-03-14T13:07:36 [info]: **KITCHEN LOG ENTRY ID: 7024031400010072** ingredientDeleted|subjectID:1224020300010005|oldValue:null|newValue:null
-2024-03-14T13:07:36 [info]: Got 0 ingredientStocks
-2024-03-14T13:07:37 [info]: Got 225 recipes
-2024-03-14T13:07:37 [info]: Got 2892 recipeIngredients
-2024-03-14T13:07:41 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010002
-2024-03-14T13:07:41 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:07:41 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:07:55 [info]: **RECIPE LOG ENTRY ID: 7124031400011563** deleteRecipeIngredient|subjectID:1624020300010031|oldValue:null|newValue:null
-2024-03-14T13:07:55 [info]: **RECIPE LOG ENTRY ID: 7124031400011564** updateRecipeVersion|subjectID:1124020300010002|oldValue:41|newValue:42
-2024-03-14T13:07:55 [info]: Got recipe
-2024-03-14T13:07:56 [info]: Got 225 recipes
-2024-03-14T13:08:09 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: tablespoon
-2024-03-14T13:08:09 [info]: 'getUnitRatio' Store ratio found for Ginger-weightOunce-tablespoon: 0.6
-2024-03-14T13:08:11 [info]: CREATING RECIPE INGREDIENT, PREPARATION: minced, fresh
-2024-03-14T13:08:12 [info]: **RECIPE LOG ENTRY ID: 7124031400011565** createRecipeIngredient|subjectID:1624031400010154|oldValue:null|newValue:null
-2024-03-14T13:08:12 [info]: Got recipe
-2024-03-14T13:08:12 [info]: **RECIPE LOG ENTRY ID: 7124031400011566** updateRecipeVersion|subjectID:1124020300010002|oldValue:42|newValue:43
-2024-03-14T13:08:18 [info]: Deleted ingredient ID: 1224020300010047
-2024-03-14T13:08:19 [info]: **KITCHEN LOG ENTRY ID: 7024031400010073** ingredientDeleted|subjectID:1224020300010047|oldValue:null|newValue:null
-2024-03-14T13:08:19 [info]: Got 0 ingredientStocks
-2024-03-14T13:08:19 [info]: Got 225 recipes
-2024-03-14T13:08:20 [info]: Got 2892 recipeIngredients
-2024-03-14T13:08:23 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010005
-2024-03-14T13:08:23 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:08:23 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:08:34 [info]: **RECIPE LOG ENTRY ID: 7124031400011567** deleteRecipeIngredient|subjectID:1624020300010076|oldValue:null|newValue:null
-2024-03-14T13:08:34 [info]: **RECIPE LOG ENTRY ID: 7124031400011568** updateRecipeVersion|subjectID:1124020300010005|oldValue:48|newValue:49
-2024-03-14T13:08:34 [info]: Got recipe
-2024-03-14T13:08:34 [info]: Got 225 recipes
-2024-03-14T13:08:50 [info]: 'getUnitRatioProcessor'. UNITA: ounce UNITB: teaspoon
-2024-03-14T13:08:51 [info]: 'getUnitRatio' No store ratio found for Ginger-ounce-teaspoon, asking AI
-2024-03-14T13:08:52 [info]: UNIT CONVERSION VERTEXAI Ginger-ounce-teaspoon RESPONSE: 0.167
-2024-03-14T13:08:52 [info]: CHARACTER COUNT: 336, COST: $0.00008400000000000001
-2024-03-14T13:08:52 [info]: 'getUnitRatio' AI estimate for Ginger-ounce-teaspoon: 0.167.
-2024-03-14T13:08:52 [info]: 'addUnitRatio' Added unit ratio 'Ginger-ounce-teaspoon' in draft currentStatus
-2024-03-14T13:08:54 [info]: CREATING RECIPE INGREDIENT, PREPARATION: freshly minced
-2024-03-14T13:08:55 [info]: **RECIPE LOG ENTRY ID: 7124031400011569** createRecipeIngredient|subjectID:1624031400010155|oldValue:null|newValue:null
-2024-03-14T13:08:55 [info]: **RECIPE LOG ENTRY ID: 7124031400011570** updateRecipeVersion|subjectID:1124020300010005|oldValue:49|newValue:50
-2024-03-14T13:08:55 [info]: Got recipe
-2024-03-14T13:09:05 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010005
-2024-03-14T13:09:05 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:09:05 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:09:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011571** deleteRecipeIngredient|subjectID:1624031400010155|oldValue:null|newValue:null
-2024-03-14T13:09:10 [info]: **RECIPE LOG ENTRY ID: 7124031400011572** updateRecipeVersion|subjectID:1124020300010005|oldValue:50|newValue:51
-2024-03-14T13:09:10 [info]: Got recipe
-2024-03-14T13:09:10 [info]: Got 225 recipes
-2024-03-14T13:09:27 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: teaspoon
-2024-03-14T13:09:27 [info]: 'getUnitRatio' Store ratio found for Ginger-weightOunce-teaspoon: 0.18
-2024-03-14T13:09:29 [info]: CREATING RECIPE INGREDIENT, PREPARATION: freshly minced
-2024-03-14T13:09:29 [info]: **RECIPE LOG ENTRY ID: 7124031400011573** createRecipeIngredient|subjectID:1624031400010156|oldValue:null|newValue:null
-2024-03-14T13:09:30 [info]: Got recipe
-2024-03-14T13:09:30 [info]: **RECIPE LOG ENTRY ID: 7124031400011574** updateRecipeVersion|subjectID:1124020300010005|oldValue:51|newValue:52
-2024-03-14T13:09:39 [info]: Deleted ingredient ID: 1224020300010092
-2024-03-14T13:09:39 [info]: **KITCHEN LOG ENTRY ID: 7024031400010074** ingredientDeleted|subjectID:1224020300010092|oldValue:null|newValue:null
-2024-03-14T13:09:40 [info]: Got 0 ingredientStocks
-2024-03-14T13:09:40 [info]: Got 2892 recipeIngredients
-2024-03-14T13:09:40 [info]: Got 225 recipes
-2024-03-14T13:09:55 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:09:55 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:09:55 [info]: Found 0 recipeSubscriptions for recipeID: 1124030900010012
-2024-03-14T13:10:15 [info]: **RECIPE LOG ENTRY ID: 7124031400011575** deleteRecipeIngredient|subjectID:1624030900010147|oldValue:null|newValue:null
-2024-03-14T13:10:15 [info]: **RECIPE LOG ENTRY ID: 7124031400011576** updateRecipeVersion|subjectID:1124030900010012|oldValue:19|newValue:20
-2024-03-14T13:10:15 [info]: Got recipe
-2024-03-14T13:10:16 [info]: Got 225 recipes
-2024-03-14T13:10:38 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: tablespoon
-2024-03-14T13:10:38 [info]: 'getUnitRatio' Store ratio found for Gochugaru-weightOunce-tablespoon: 0.5
-2024-03-14T13:10:40 [info]: CREATING RECIPE INGREDIENT, PREPARATION: course
-2024-03-14T13:10:41 [info]: **RECIPE LOG ENTRY ID: 7124031400011577** createRecipeIngredient|subjectID:1624031400010157|oldValue:null|newValue:null
-2024-03-14T13:10:41 [info]: **RECIPE LOG ENTRY ID: 7124031400011578** updateRecipeVersion|subjectID:1124030900010012|oldValue:20|newValue:21
-2024-03-14T13:10:41 [info]: Got recipe
-2024-03-14T13:10:59 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300000001
-2024-03-14T13:10:59 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:10:59 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:11:12 [info]: **RECIPE LOG ENTRY ID: 7124031400011579** deleteRecipeIngredient|subjectID:1624020300000016|oldValue:null|newValue:null
-2024-03-14T13:11:13 [info]: Got recipe
-2024-03-14T13:11:13 [info]: **RECIPE LOG ENTRY ID: 7124031400011580** updateRecipeVersion|subjectID:1124020300000001|oldValue:48|newValue:49
-2024-03-14T13:11:13 [info]: Got 225 recipes
-2024-03-14T13:11:17 [info]: **RECIPE LOG ENTRY ID: 7124031400011581** deleteRecipeIngredient|subjectID:1624020300000017|oldValue:null|newValue:null
-2024-03-14T13:11:17 [info]: **RECIPE LOG ENTRY ID: 7124031400011582** updateRecipeVersion|subjectID:1124020300000001|oldValue:49|newValue:50
-2024-03-14T13:11:17 [info]: Got recipe
-2024-03-14T13:11:18 [info]: Got 225 recipes
-2024-03-14T13:11:25 [info]: Deleted ingredient ID: 1224020300000032
-2024-03-14T13:11:26 [info]: **KITCHEN LOG ENTRY ID: 7024031400010075** ingredientDeleted|subjectID:1224020300000032|oldValue:null|newValue:null
-2024-03-14T13:11:26 [info]: Got 0 ingredientStocks
-2024-03-14T13:11:26 [info]: Got 225 recipes
-2024-03-14T13:11:26 [info]: Got 2890 recipeIngredients
-2024-03-14T13:11:41 [info]: Deleted ingredient ID: 1224022300010113
-2024-03-14T13:11:41 [info]: **KITCHEN LOG ENTRY ID: 7024031400010076** ingredientDeleted|subjectID:1224022300010113|oldValue:null|newValue:null
-2024-03-14T13:11:42 [info]: Got 0 ingredientStocks
-2024-03-14T13:11:42 [info]: Got 225 recipes
-2024-03-14T13:11:42 [info]: Got 2890 recipeIngredients
-2024-03-14T13:12:16 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:12:16 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:12:16 [info]: Found 0 recipeSubscriptions for recipeID: 1124031100010002
-2024-03-14T13:12:36 [info]: **RECIPE LOG ENTRY ID: 7124031400011583** deleteRecipeIngredient|subjectID:1624031100010037|oldValue:null|newValue:null
-2024-03-14T13:12:36 [info]: **RECIPE LOG ENTRY ID: 7124031400011584** updateRecipeVersion|subjectID:1124031100010002|oldValue:13|newValue:14
-2024-03-14T13:12:36 [info]: Got recipe
-2024-03-14T13:12:37 [info]: Got 225 recipes
-2024-03-14T13:12:48 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: tablespoon
-2024-03-14T13:12:48 [info]: 'getUnitRatio' Store ratio found for Lebanese 7 Spice-weightOunce-tablespoon: 0.5
-2024-03-14T13:12:51 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:12:52 [info]: **RECIPE LOG ENTRY ID: 7124031400011585** createRecipeIngredient|subjectID:1624031400010158|oldValue:null|newValue:null
-2024-03-14T13:12:52 [info]: **RECIPE LOG ENTRY ID: 7124031400011586** updateRecipeVersion|subjectID:1124031100010002|oldValue:14|newValue:15
-2024-03-14T13:12:52 [info]: Got recipe
-2024-03-14T13:13:02 [info]: **RECIPE LOG ENTRY ID: 7124031400011587** deleteRecipeIngredient|subjectID:1624031100010038|oldValue:null|newValue:null
-2024-03-14T13:13:02 [info]: **RECIPE LOG ENTRY ID: 7124031400011588** updateRecipeVersion|subjectID:1124031100010002|oldValue:15|newValue:16
-2024-03-14T13:13:02 [info]: Got recipe
-2024-03-14T13:13:03 [info]: Got 225 recipes
-2024-03-14T13:13:14 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: tablespoon
-2024-03-14T13:13:14 [info]: 'getUnitRatio' Store ratio found for Lebanese 7 Spice-weightOunce-tablespoon: 0.5
-2024-03-14T13:13:17 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:13:17 [info]: **RECIPE LOG ENTRY ID: 7124031400011589** createRecipeIngredient|subjectID:1624031400010159|oldValue:null|newValue:null
-2024-03-14T13:13:18 [info]: **RECIPE LOG ENTRY ID: 7124031400011590** updateRecipeVersion|subjectID:1124031100010002|oldValue:16|newValue:17
-2024-03-14T13:13:18 [info]: Got recipe
-2024-03-14T13:13:47 [info]: **RECIPE LOG ENTRY ID: 7124031400011591** updateRecipeIngredients-component|subjectID:1624031400010158|oldValue:Sauce|newValue:Kibbeh Filling
-2024-03-14T13:13:47 [info]: **RECIPE LOG ENTRY ID: 7124031400011593** updateRecipeIngredientVersion|subjectID:1624031400010158|oldValue:1|newValue:2
-2024-03-14T13:13:47 [info]: **RECIPE LOG ENTRY ID: 7124031400011592** updateRecipeVersion|subjectID:1124031100010002|oldValue:17|newValue:18
-2024-03-14T13:13:56 [info]: Deleted ingredient ID: 1224031100010006
-2024-03-14T13:13:56 [info]: **KITCHEN LOG ENTRY ID: 7024031400010077** ingredientDeleted|subjectID:1224031100010006|oldValue:null|newValue:null
-2024-03-14T13:13:57 [info]: Got 0 ingredientStocks
-2024-03-14T13:13:57 [info]: Got 225 recipes
-2024-03-14T13:13:57 [info]: Got 2890 recipeIngredients
-2024-03-14T13:14:09 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:14:09 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:14:09 [info]: Found 0 recipeSubscriptions for recipeID: 1124031300010010
-2024-03-14T13:14:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011594** deleteRecipeIngredient|subjectID:1624031300010140|oldValue:null|newValue:null
-2024-03-14T13:14:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011595** updateRecipeVersion|subjectID:1124031300010010|oldValue:11|newValue:12
-2024-03-14T13:14:28 [info]: Got recipe
-2024-03-14T13:14:29 [info]: Got 225 recipes
-2024-03-14T13:14:43 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: teaspoon
-2024-03-14T13:14:43 [info]: 'getUnitRatio' Store ratio found for Lemon Zest-weightOunce-teaspoon: 0.18
-2024-03-14T13:14:45 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:14:46 [info]: **RECIPE LOG ENTRY ID: 7124031400011596** createRecipeIngredient|subjectID:1624031400010160|oldValue:null|newValue:null
-2024-03-14T13:14:46 [info]: Got recipe
-2024-03-14T13:14:46 [info]: **RECIPE LOG ENTRY ID: 7124031400011597** updateRecipeVersion|subjectID:1124031300010010|oldValue:12|newValue:13
-2024-03-14T13:14:56 [info]: Deleted ingredient ID: 1224031300010056
-2024-03-14T13:14:56 [info]: **KITCHEN LOG ENTRY ID: 7024031400010078** ingredientDeleted|subjectID:1224031300010056|oldValue:null|newValue:null
-2024-03-14T13:14:57 [info]: Got 0 ingredientStocks
-2024-03-14T13:14:57 [info]: Got 225 recipes
-2024-03-14T13:14:57 [info]: Got 2890 recipeIngredients
-2024-03-14T13:15:16 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:15:16 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:15:17 [info]: Found 0 recipeSubscriptions for recipeID: 1124031300010010
-2024-03-14T13:15:27 [info]: **RECIPE LOG ENTRY ID: 7124031400011598** deleteRecipeIngredient|subjectID:1624031300010137|oldValue:null|newValue:null
-2024-03-14T13:15:27 [info]: **RECIPE LOG ENTRY ID: 7124031400011599** updateRecipeVersion|subjectID:1124031300010010|oldValue:13|newValue:14
-2024-03-14T13:15:27 [info]: Got recipe
-2024-03-14T13:15:28 [info]: Got 225 recipes
-2024-03-14T13:15:37 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: tablespoon
-2024-03-14T13:15:37 [info]: 'getUnitRatio' Store ratio found for Mayonnaise-weightOunce-tablespoon: 0.5
-2024-03-14T13:15:39 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:15:40 [info]: **RECIPE LOG ENTRY ID: 7124031400011600** createRecipeIngredient|subjectID:1624031400010161|oldValue:null|newValue:null
-2024-03-14T13:15:40 [info]: **RECIPE LOG ENTRY ID: 7124031400011601** updateRecipeVersion|subjectID:1124031300010010|oldValue:14|newValue:15
-2024-03-14T13:15:40 [info]: Got recipe
-2024-03-14T13:15:49 [info]: Deleted ingredient ID: 1224031300010054
-2024-03-14T13:15:49 [info]: **KITCHEN LOG ENTRY ID: 7024031400010079** ingredientDeleted|subjectID:1224031300010054|oldValue:null|newValue:null
-2024-03-14T13:15:49 [info]: Got 0 ingredientStocks
-2024-03-14T13:15:50 [info]: Got 225 recipes
-2024-03-14T13:15:50 [info]: Got 2890 recipeIngredients
-2024-03-14T13:16:11 [info]: Found 0 recipeSubscriptions for recipeID: 1124022700010001
-2024-03-14T13:16:11 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:16:11 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:16:40 [info]: **RECIPE LOG ENTRY ID: 7124031400011602** deleteRecipeIngredient|subjectID:1624022700010012|oldValue:null|newValue:null
-2024-03-14T13:16:40 [info]: **RECIPE LOG ENTRY ID: 7124031400011603** updateRecipeVersion|subjectID:1124022700010001|oldValue:13|newValue:14
-2024-03-14T13:16:41 [info]: Got recipe
-2024-03-14T13:16:41 [info]: Got 225 recipes
-2024-03-14T13:16:49 [info]: **RECIPE LOG ENTRY ID: 7124031400011604** deleteRecipeIngredient|subjectID:1624022700010011|oldValue:null|newValue:null
-2024-03-14T13:16:49 [info]: **RECIPE LOG ENTRY ID: 7124031400011605** updateRecipeVersion|subjectID:1124022700010001|oldValue:14|newValue:15
-2024-03-14T13:16:49 [info]: Got recipe
-2024-03-14T13:16:50 [info]: Got 225 recipes
-2024-03-14T13:17:00 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: tablespoon
-2024-03-14T13:17:00 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
-2024-03-14T13:17:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:17:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011606** createRecipeIngredient|subjectID:1624031400010162|oldValue:null|newValue:null
-2024-03-14T13:17:03 [info]: Got recipe
-2024-03-14T13:17:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011607** updateRecipeVersion|subjectID:1124022700010001|oldValue:15|newValue:16
-2024-03-14T13:17:14 [info]: Deleted ingredient ID: 1224022700010008
-2024-03-14T13:17:14 [info]: **KITCHEN LOG ENTRY ID: 7024031400010080** ingredientDeleted|subjectID:1224022700010008|oldValue:null|newValue:null
-2024-03-14T13:17:15 [info]: Got 0 ingredientStocks
-2024-03-14T13:17:15 [info]: Got 225 recipes
-2024-03-14T13:17:15 [info]: Got 2889 recipeIngredients
-2024-03-14T13:17:26 [info]: Deleted ingredient ID: 1224022300010115
-2024-03-14T13:17:26 [info]: **KITCHEN LOG ENTRY ID: 7024031400010081** ingredientDeleted|subjectID:1224022300010115|oldValue:null|newValue:null
-2024-03-14T13:17:26 [info]: Got 0 ingredientStocks
-2024-03-14T13:17:26 [info]: Got 225 recipes
-2024-03-14T13:17:26 [info]: Got 2889 recipeIngredients
-2024-03-14T13:17:35 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300000001
-2024-03-14T13:17:35 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:17:35 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:17:45 [info]: **RECIPE LOG ENTRY ID: 7124031400011608** deleteRecipeIngredient|subjectID:1624020300000019|oldValue:null|newValue:null
-2024-03-14T13:17:45 [info]: **RECIPE LOG ENTRY ID: 7124031400011609** updateRecipeVersion|subjectID:1124020300000001|oldValue:50|newValue:51
-2024-03-14T13:17:46 [info]: Got recipe
-2024-03-14T13:17:46 [info]: Got 225 recipes
-2024-03-14T13:17:48 [info]: **RECIPE LOG ENTRY ID: 7124031400011610** deleteRecipeIngredient|subjectID:1624020300000012|oldValue:null|newValue:null
-2024-03-14T13:17:48 [info]: **RECIPE LOG ENTRY ID: 7124031400011611** updateRecipeVersion|subjectID:1124020300000001|oldValue:51|newValue:52
-2024-03-14T13:17:48 [info]: Got recipe
-2024-03-14T13:17:48 [info]: Got 225 recipes
-2024-03-14T13:17:59 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: tablespoon
-2024-03-14T13:17:59 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
-2024-03-14T13:18:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:18:02 [info]: **RECIPE LOG ENTRY ID: 7124031400011612** createRecipeIngredient|subjectID:1624031400010163|oldValue:null|newValue:null
-2024-03-14T13:18:02 [info]: **RECIPE LOG ENTRY ID: 7124031400011613** updateRecipeVersion|subjectID:1124020300000001|oldValue:52|newValue:53
-2024-03-14T13:18:02 [info]: Got recipe
-2024-03-14T13:18:10 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:18:10 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010001
-2024-03-14T13:18:10 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:18:23 [info]: **RECIPE LOG ENTRY ID: 7124031400011614** deleteRecipeIngredient|subjectID:1624020300010004|oldValue:null|newValue:null
-2024-03-14T13:18:23 [info]: **RECIPE LOG ENTRY ID: 7124031400011615** updateRecipeVersion|subjectID:1124020300010001|oldValue:44|newValue:45
-2024-03-14T13:18:23 [info]: Got recipe
-2024-03-14T13:18:23 [info]: Got 225 recipes
-2024-03-14T13:18:32 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: cup
-2024-03-14T13:18:32 [info]: 'getUnitRatio' Common ratio found for fluidOunce-cup: 8
-2024-03-14T13:18:33 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:18:34 [info]: **RECIPE LOG ENTRY ID: 7124031400011616** createRecipeIngredient|subjectID:1624031400010164|oldValue:null|newValue:null
-2024-03-14T13:18:34 [info]: Got recipe
-2024-03-14T13:18:34 [info]: **RECIPE LOG ENTRY ID: 7124031400011617** updateRecipeVersion|subjectID:1124020300010001|oldValue:45|newValue:46
-2024-03-14T13:18:42 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010005
-2024-03-14T13:18:42 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:18:42 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:18:54 [info]: **RECIPE LOG ENTRY ID: 7124031400011618** deleteRecipeIngredient|subjectID:1624020300010063|oldValue:null|newValue:null
-2024-03-14T13:18:54 [info]: **RECIPE LOG ENTRY ID: 7124031400011619** updateRecipeVersion|subjectID:1124020300010005|oldValue:52|newValue:53
-2024-03-14T13:18:54 [info]: Got recipe
-2024-03-14T13:18:54 [info]: Got 225 recipes
-2024-03-14T13:19:07 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: tablespoon
-2024-03-14T13:19:07 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
-2024-03-14T13:19:09 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:19:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011620** createRecipeIngredient|subjectID:1624031400010165|oldValue:null|newValue:null
-2024-03-14T13:19:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011621** updateRecipeVersion|subjectID:1124020300010005|oldValue:53|newValue:54
-2024-03-14T13:19:09 [info]: Got recipe
-2024-03-14T13:19:17 [info]: Found 0 recipeSubscriptions for recipeID: 1124021900010028
-2024-03-14T13:19:17 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:19:17 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:19:22 [info]: **RECIPE LOG ENTRY ID: 7124031400011622** deleteRecipeIngredient|subjectID:1624021900010152|oldValue:null|newValue:null
-2024-03-14T13:19:23 [info]: **RECIPE LOG ENTRY ID: 7124031400011623** updateRecipeVersion|subjectID:1124021900010028|oldValue:29|newValue:30
-2024-03-14T13:19:23 [info]: Got recipe
-2024-03-14T13:19:23 [info]: Got 225 recipes
-2024-03-14T13:19:35 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: tablespoon
-2024-03-14T13:19:35 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
-2024-03-14T13:19:37 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:19:38 [info]: **RECIPE LOG ENTRY ID: 7124031400011624** createRecipeIngredient|subjectID:1624031400010166|oldValue:null|newValue:null
-2024-03-14T13:19:38 [info]: **RECIPE LOG ENTRY ID: 7124031400011625** updateRecipeVersion|subjectID:1124021900010028|oldValue:30|newValue:31
-2024-03-14T13:19:38 [info]: Got recipe
-2024-03-14T13:19:44 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:19:44 [info]: Found 0 recipeSubscriptions for recipeID: 1124021900010029
-2024-03-14T13:19:44 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:19:52 [info]: **RECIPE LOG ENTRY ID: 7124031400011626** deleteRecipeIngredient|subjectID:1624021900010168|oldValue:null|newValue:null
-2024-03-14T13:19:52 [info]: **RECIPE LOG ENTRY ID: 7124031400011627** updateRecipeVersion|subjectID:1124021900010029|oldValue:28|newValue:29
-2024-03-14T13:19:52 [info]: Got recipe
-2024-03-14T13:19:53 [info]: Got 225 recipes
-2024-03-14T13:20:01 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: tablespoon
-2024-03-14T13:20:01 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
-2024-03-14T13:20:02 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:20:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011628** createRecipeIngredient|subjectID:1624031400010167|oldValue:null|newValue:null
-2024-03-14T13:20:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011629** updateRecipeVersion|subjectID:1124021900010029|oldValue:29|newValue:30
-2024-03-14T13:20:03 [info]: Got recipe
-2024-03-14T13:20:09 [info]: Found 0 recipeSubscriptions for recipeID: 1124021900010030
-2024-03-14T13:20:09 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:20:09 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:20:15 [info]: **RECIPE LOG ENTRY ID: 7124031400011630** deleteRecipeIngredient|subjectID:1624021900010183|oldValue:null|newValue:null
-2024-03-14T13:20:15 [info]: **RECIPE LOG ENTRY ID: 7124031400011631** updateRecipeVersion|subjectID:1124021900010030|oldValue:25|newValue:26
-2024-03-14T13:20:15 [info]: Got recipe
-2024-03-14T13:20:16 [info]: Got 225 recipes
-2024-03-14T13:20:22 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: tablespoon
-2024-03-14T13:20:22 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5
-2024-03-14T13:20:24 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:20:24 [info]: **RECIPE LOG ENTRY ID: 7124031400011632** createRecipeIngredient|subjectID:1624031400010168|oldValue:null|newValue:null
-2024-03-14T13:20:24 [info]: Got recipe
-2024-03-14T13:20:24 [info]: **RECIPE LOG ENTRY ID: 7124031400011633** updateRecipeVersion|subjectID:1124021900010030|oldValue:26|newValue:27
-2024-03-14T13:20:30 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:20:30 [info]: Found 0 recipeSubscriptions for recipeID: 1124022300010001
-2024-03-14T13:20:30 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:20:35 [info]: **RECIPE LOG ENTRY ID: 7124031400011634** deleteRecipeIngredient|subjectID:1624022300010006|oldValue:null|newValue:null
-2024-03-14T13:20:36 [info]: Got recipe
-2024-03-14T13:20:36 [info]: **RECIPE LOG ENTRY ID: 7124031400011635** updateRecipeVersion|subjectID:1124022300010001|oldValue:20|newValue:21
-2024-03-14T13:20:36 [info]: Got 225 recipes
-2024-03-14T13:20:49 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: cup
-2024-03-14T13:20:49 [info]: 'getUnitRatio' Common ratio found for fluidOunce-cup: 8
-2024-03-14T13:20:52 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:20:52 [info]: **RECIPE LOG ENTRY ID: 7124031400011636** createRecipeIngredient|subjectID:1624031400010169|oldValue:null|newValue:null
-2024-03-14T13:20:52 [info]: **RECIPE LOG ENTRY ID: 7124031400011637** updateRecipeVersion|subjectID:1124022300010001|oldValue:21|newValue:22
-2024-03-14T13:20:52 [info]: Got recipe
-2024-03-14T13:20:58 [info]: Deleted ingredient ID: 1224020300000026
-2024-03-14T13:20:59 [info]: **KITCHEN LOG ENTRY ID: 7024031400010082** ingredientDeleted|subjectID:1224020300000026|oldValue:null|newValue:null
-2024-03-14T13:20:59 [info]: Got 0 ingredientStocks
-2024-03-14T13:20:59 [info]: Got 225 recipes
-2024-03-14T13:20:59 [info]: Got 2888 recipeIngredients
-2024-03-14T13:21:16 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:21:16 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:21:16 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300000001
-2024-03-14T13:21:25 [info]: **RECIPE LOG ENTRY ID: 7124031400011638** deleteRecipeIngredient|subjectID:1624020300000001|oldValue:null|newValue:null
-2024-03-14T13:21:25 [info]: **RECIPE LOG ENTRY ID: 7124031400011639** updateRecipeVersion|subjectID:1124020300000001|oldValue:53|newValue:54
-2024-03-14T13:21:25 [info]: Got recipe
-2024-03-14T13:21:26 [info]: Got 225 recipes
-2024-03-14T13:21:38 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:21:40 [info]: CREATING RECIPE INGREDIENT, PREPARATION: chopped
-2024-03-14T13:21:41 [info]: **RECIPE LOG ENTRY ID: 7124031400011640** createRecipeIngredient|subjectID:1624031400010170|oldValue:null|newValue:null
-2024-03-14T13:21:41 [info]: Got recipe
-2024-03-14T13:21:41 [info]: **RECIPE LOG ENTRY ID: 7124031400011641** updateRecipeVersion|subjectID:1124020300000001|oldValue:54|newValue:55
-2024-03-14T13:21:49 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:21:49 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010001
-2024-03-14T13:21:49 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:21:55 [info]: **RECIPE LOG ENTRY ID: 7124031400011642** deleteRecipeIngredient|subjectID:1624020300010001|oldValue:null|newValue:null
-2024-03-14T13:21:55 [info]: **RECIPE LOG ENTRY ID: 7124031400011643** updateRecipeVersion|subjectID:1124020300010001|oldValue:46|newValue:47
-2024-03-14T13:21:55 [info]: Got recipe
-2024-03-14T13:21:56 [info]: Got 225 recipes
-2024-03-14T13:22:06 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:22:08 [info]: CREATING RECIPE INGREDIENT, PREPARATION: diced
-2024-03-14T13:22:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011644** createRecipeIngredient|subjectID:1624031400010171|oldValue:null|newValue:null
-2024-03-14T13:22:09 [info]: Got recipe
-2024-03-14T13:22:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011645** updateRecipeVersion|subjectID:1124020300010001|oldValue:47|newValue:48
-2024-03-14T13:22:14 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:22:14 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010004
-2024-03-14T13:22:14 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:22:27 [info]: **RECIPE LOG ENTRY ID: 7124031400011646** deleteRecipeIngredient|subjectID:1624020300010045|oldValue:null|newValue:null
-2024-03-14T13:22:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011647** updateRecipeVersion|subjectID:1124020300010004|oldValue:33|newValue:34
-2024-03-14T13:22:28 [info]: Got recipe
-2024-03-14T13:22:28 [info]: Got 225 recipes
-2024-03-14T13:22:37 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: sheet
-2024-03-14T13:22:37 [info]: 'getUnitRatio' No store ratio found for Onion-single-sheet, asking AI
-2024-03-14T13:22:38 [info]: UNIT CONVERSION VERTEXAI Onion-single-sheet RESPONSE: 0.5
-2024-03-14T13:22:38 [info]: CHARACTER COUNT: 331, COST: $0.00008275
-2024-03-14T13:22:38 [info]: 'getUnitRatio' AI estimate for Onion-single-sheet: 0.5.
-2024-03-14T13:22:38 [info]: 'addUnitRatio' Added unit ratio 'Onion-single-sheet' in draft currentStatus
-2024-03-14T13:22:38 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:22:40 [info]: CREATING RECIPE INGREDIENT, PREPARATION: roughly chopped
-2024-03-14T13:22:41 [info]: **RECIPE LOG ENTRY ID: 7124031400011648** createRecipeIngredient|subjectID:1624031400010172|oldValue:null|newValue:null
-2024-03-14T13:22:41 [info]: Got recipe
-2024-03-14T13:22:41 [info]: **RECIPE LOG ENTRY ID: 7124031400011649** updateRecipeVersion|subjectID:1124020300010004|oldValue:34|newValue:35
-2024-03-14T13:22:47 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010005
-2024-03-14T13:22:47 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:22:47 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:23:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011650** deleteRecipeIngredient|subjectID:1624020300010064|oldValue:null|newValue:null
-2024-03-14T13:23:03 [info]: **RECIPE LOG ENTRY ID: 7124031400011651** updateRecipeVersion|subjectID:1124020300010005|oldValue:54|newValue:55
-2024-03-14T13:23:03 [info]: Got recipe
-2024-03-14T13:23:04 [info]: Got 225 recipes
-2024-03-14T13:23:22 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:23:24 [info]: CREATING RECIPE INGREDIENT, PREPARATION: medium, chopped
-2024-03-14T13:23:24 [info]: **RECIPE LOG ENTRY ID: 7124031400011652** createRecipeIngredient|subjectID:1624031400010173|oldValue:null|newValue:null
-2024-03-14T13:23:25 [info]: **RECIPE LOG ENTRY ID: 7124031400011653** updateRecipeVersion|subjectID:1124020300010005|oldValue:55|newValue:56
-2024-03-14T13:23:25 [info]: Got recipe
-2024-03-14T13:23:30 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010006
-2024-03-14T13:23:30 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:23:30 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:23:38 [info]: **RECIPE LOG ENTRY ID: 7124031400011654** deleteRecipeIngredient|subjectID:1624020300010087|oldValue:null|newValue:null
-2024-03-14T13:23:38 [info]: **RECIPE LOG ENTRY ID: 7124031400011655** updateRecipeVersion|subjectID:1124020300010006|oldValue:39|newValue:40
-2024-03-14T13:23:38 [info]: Got recipe
-2024-03-14T13:23:39 [info]: Got 225 recipes
-2024-03-14T13:23:51 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: gallon
-2024-03-14T13:23:51 [info]: 'getUnitRatio' No store ratio found for Onion-single-gallon, asking AI
-2024-03-14T13:23:52 [info]: UNIT CONVERSION VERTEXAI Onion-single-gallon RESPONSE: 8
-2024-03-14T13:23:52 [info]: CHARACTER COUNT: 330, COST: $0.0000825
-2024-03-14T13:23:52 [info]: 'getUnitRatio' AI estimate for Onion-single-gallon: 8.
-2024-03-14T13:23:52 [info]: 'addUnitRatio' Added unit ratio 'Onion-single-gallon' in draft currentStatus
-2024-03-14T13:23:52 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:23:54 [info]: CREATING RECIPE INGREDIENT, PREPARATION: sliced
-2024-03-14T13:23:55 [info]: **RECIPE LOG ENTRY ID: 7124031400011656** createRecipeIngredient|subjectID:1624031400010174|oldValue:null|newValue:null
-2024-03-14T13:23:55 [info]: **RECIPE LOG ENTRY ID: 7124031400011657** updateRecipeVersion|subjectID:1124020300010006|oldValue:40|newValue:41
-2024-03-14T13:23:55 [info]: Got recipe
-2024-03-14T13:24:01 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:24:01 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010010
-2024-03-14T13:24:01 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:24:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011658** deleteRecipeIngredient|subjectID:1624021800010006|oldValue:null|newValue:null
-2024-03-14T13:24:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011659** updateRecipeVersion|subjectID:1124021800010010|oldValue:36|newValue:37
-2024-03-14T13:24:06 [info]: Got recipe
-2024-03-14T13:24:06 [info]: Got 225 recipes
-2024-03-14T13:24:27 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:24:29 [info]: CREATING RECIPE INGREDIENT, PREPARATION: small, diced
-2024-03-14T13:24:29 [info]: **RECIPE LOG ENTRY ID: 7124031400011660** createRecipeIngredient|subjectID:1624031400010175|oldValue:null|newValue:null
-2024-03-14T13:24:30 [info]: **RECIPE LOG ENTRY ID: 7124031400011661** updateRecipeVersion|subjectID:1124021800010010|oldValue:37|newValue:38
-2024-03-14T13:24:30 [info]: Got recipe
-2024-03-14T13:24:38 [info]: Deleted ingredient ID: 1224020300000006
-2024-03-14T13:24:38 [info]: **KITCHEN LOG ENTRY ID: 7024031400010083** ingredientDeleted|subjectID:1224020300000006|oldValue:null|newValue:null
-2024-03-14T13:24:39 [info]: Got 0 ingredientStocks
-2024-03-14T13:24:39 [info]: Got 225 recipes
-2024-03-14T13:24:39 [info]: Got 2888 recipeIngredients
-2024-03-14T13:24:48 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:24:48 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:24:48 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010013
-2024-03-14T13:24:54 [info]: **RECIPE LOG ENTRY ID: 7124031400011662** deleteRecipeIngredient|subjectID:1624021800010036|oldValue:null|newValue:null
-2024-03-14T13:24:54 [info]: **RECIPE LOG ENTRY ID: 7124031400011663** updateRecipeVersion|subjectID:1124021800010013|oldValue:25|newValue:26
-2024-03-14T13:24:54 [info]: Got recipe
-2024-03-14T13:24:55 [info]: Got 225 recipes
-2024-03-14T13:25:02 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:25:03 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:25:04 [info]: **RECIPE LOG ENTRY ID: 7124031400011664** createRecipeIngredient|subjectID:1624031400010176|oldValue:null|newValue:null
-2024-03-14T13:25:04 [info]: **RECIPE LOG ENTRY ID: 7124031400011665** updateRecipeVersion|subjectID:1124021800010013|oldValue:26|newValue:27
-2024-03-14T13:25:04 [info]: Got recipe
-2024-03-14T13:25:10 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:25:10 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:25:10 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010014
-2024-03-14T13:25:22 [info]: **RECIPE LOG ENTRY ID: 7124031400011666** deleteRecipeIngredient|subjectID:1624021800010042|oldValue:null|newValue:null
-2024-03-14T13:25:22 [info]: **RECIPE LOG ENTRY ID: 7124031400011667** updateRecipeVersion|subjectID:1124021800010014|oldValue:26|newValue:27
-2024-03-14T13:25:22 [info]: Got recipe
-2024-03-14T13:25:23 [info]: Got 225 recipes
-2024-03-14T13:25:31 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: gallon
-2024-03-14T13:25:31 [info]: 'getUnitRatio' No store ratio found for Onion-single-gallon, asking AI
-2024-03-14T13:25:31 [info]: UNIT CONVERSION VERTEXAI Onion-single-gallon RESPONSE: 8
-2024-03-14T13:25:31 [info]: CHARACTER COUNT: 330, COST: $0.0000825
-2024-03-14T13:25:31 [info]: 'getUnitRatio' AI estimate for Onion-single-gallon: 8.
-2024-03-14T13:25:32 [info]: 'addUnitRatio' Added unit ratio 'Onion-single-gallon' in draft currentStatus
-2024-03-14T13:25:32 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:25:35 [info]: CREATING RECIPE INGREDIENT, PREPARATION: medium red, thinly sliced into rings
-2024-03-14T13:25:35 [info]: **RECIPE LOG ENTRY ID: 7124031400011668** createRecipeIngredient|subjectID:1624031400010177|oldValue:null|newValue:null
-2024-03-14T13:25:35 [info]: **RECIPE LOG ENTRY ID: 7124031400011669** updateRecipeVersion|subjectID:1124021800010014|oldValue:27|newValue:28
-2024-03-14T13:25:35 [info]: Got recipe
-2024-03-14T13:25:43 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:25:43 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:25:43 [info]: Found 0 recipeSubscriptions for recipeID: 1124021900010029
-2024-03-14T13:25:51 [info]: **RECIPE LOG ENTRY ID: 7124031400011670** deleteRecipeIngredient|subjectID:1624021900010161|oldValue:null|newValue:null
-2024-03-14T13:25:51 [info]: Got recipe
-2024-03-14T13:25:51 [info]: **RECIPE LOG ENTRY ID: 7124031400011671** updateRecipeVersion|subjectID:1124021900010029|oldValue:30|newValue:31
-2024-03-14T13:25:51 [info]: Got 225 recipes
-2024-03-14T13:26:08 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:26:11 [info]: CREATING RECIPE INGREDIENT, PREPARATION: diced
-2024-03-14T13:26:11 [info]: **RECIPE LOG ENTRY ID: 7124031400011672** createRecipeIngredient|subjectID:1624031400010178|oldValue:null|newValue:null
-2024-03-14T13:26:11 [info]: **RECIPE LOG ENTRY ID: 7124031400011673** updateRecipeVersion|subjectID:1124021900010029|oldValue:31|newValue:32
-2024-03-14T13:26:11 [info]: Got recipe
-2024-03-14T13:26:19 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:26:19 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:26:19 [info]: Found 0 recipeSubscriptions for recipeID: 1124021900010030
-2024-03-14T13:26:25 [info]: **RECIPE LOG ENTRY ID: 7124031400011674** deleteRecipeIngredient|subjectID:1624021900010180|oldValue:null|newValue:null
-2024-03-14T13:26:25 [info]: **RECIPE LOG ENTRY ID: 7124031400011675** updateRecipeVersion|subjectID:1124021900010030|oldValue:27|newValue:28
-2024-03-14T13:26:25 [info]: Got recipe
-2024-03-14T13:26:26 [info]: Got 225 recipes
-2024-03-14T13:26:37 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:26:39 [info]: CREATING RECIPE INGREDIENT, PREPARATION: diced
-2024-03-14T13:26:39 [info]: **RECIPE LOG ENTRY ID: 7124031400011676** createRecipeIngredient|subjectID:1624031400010179|oldValue:null|newValue:null
-2024-03-14T13:26:39 [info]: **RECIPE LOG ENTRY ID: 7124031400011677** updateRecipeVersion|subjectID:1124021900010030|oldValue:28|newValue:29
-2024-03-14T13:26:40 [info]: Got recipe
-2024-03-14T13:26:46 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:26:47 [info]: Found 0 recipeSubscriptions for recipeID: 1124021900010029
-2024-03-14T13:26:47 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:26:53 [info]: **RECIPE LOG ENTRY ID: 7124031400011678** deleteRecipeIngredient|subjectID:1624031400010178|oldValue:null|newValue:null
-2024-03-14T13:26:53 [info]: **RECIPE LOG ENTRY ID: 7124031400011679** updateRecipeVersion|subjectID:1124021900010029|oldValue:32|newValue:33
-2024-03-14T13:26:53 [info]: Got recipe
-2024-03-14T13:26:54 [info]: Got 225 recipes
-2024-03-14T13:27:03 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:27:05 [info]: CREATING RECIPE INGREDIENT, PREPARATION: diced
-2024-03-14T13:27:05 [info]: **RECIPE LOG ENTRY ID: 7124031400011680** createRecipeIngredient|subjectID:1624031400010180|oldValue:null|newValue:null
-2024-03-14T13:27:05 [info]: Got recipe
-2024-03-14T13:27:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011681** updateRecipeVersion|subjectID:1124021900010029|oldValue:33|newValue:34
-2024-03-14T13:27:13 [info]: Deleted ingredient ID: 1224021800010049
-2024-03-14T13:27:13 [info]: **KITCHEN LOG ENTRY ID: 7024031400010084** ingredientDeleted|subjectID:1224021800010049|oldValue:null|newValue:null
-2024-03-14T13:27:14 [info]: Got 0 ingredientStocks
-2024-03-14T13:27:14 [info]: Got 225 recipes
-2024-03-14T13:27:14 [info]: Got 2888 recipeIngredients
-2024-03-14T13:27:23 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:27:23 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010002
-2024-03-14T13:27:23 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:27:38 [info]: **RECIPE LOG ENTRY ID: 7124031400011682** deleteRecipeIngredient|subjectID:1624020300010027|oldValue:null|newValue:null
-2024-03-14T13:27:38 [info]: **RECIPE LOG ENTRY ID: 7124031400011683** updateRecipeVersion|subjectID:1124020300010002|oldValue:43|newValue:44
-2024-03-14T13:27:38 [info]: Got recipe
-2024-03-14T13:27:38 [info]: Got 225 recipes
-2024-03-14T13:27:46 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T13:27:47 [info]: CREATING RECIPE INGREDIENT, PREPARATION: sliced root to tip
-2024-03-14T13:27:48 [info]: **RECIPE LOG ENTRY ID: 7124031400011684** createRecipeIngredient|subjectID:1624031400010181|oldValue:null|newValue:null
-2024-03-14T13:27:48 [info]: **RECIPE LOG ENTRY ID: 7124031400011685** updateRecipeVersion|subjectID:1124020300010002|oldValue:44|newValue:45
-2024-03-14T13:27:48 [info]: Got recipe
-2024-03-14T13:27:54 [info]: Deleted ingredient ID: 1224020300010040
-2024-03-14T13:27:54 [info]: **KITCHEN LOG ENTRY ID: 7024031400010085** ingredientDeleted|subjectID:1224020300010040|oldValue:null|newValue:null
-2024-03-14T13:27:55 [info]: Got 0 ingredientStocks
-2024-03-14T13:27:55 [info]: Got 225 recipes
-2024-03-14T13:27:55 [info]: Got 2888 recipeIngredients
-2024-03-14T13:28:12 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:28:12 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:28:12 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010006
-2024-03-14T13:28:21 [info]: **RECIPE LOG ENTRY ID: 7124031400011686** deleteRecipeIngredient|subjectID:1624020300010098|oldValue:null|newValue:null
-2024-03-14T13:28:22 [info]: **RECIPE LOG ENTRY ID: 7124031400011687** updateRecipeVersion|subjectID:1124020300010006|oldValue:41|newValue:42
-2024-03-14T13:28:22 [info]: Got recipe
-2024-03-14T13:28:22 [info]: Got 225 recipes
-2024-03-14T13:28:29 [info]: Deleted ingredient ID: 1224020300010130
-2024-03-14T13:28:29 [info]: **KITCHEN LOG ENTRY ID: 7024031400010086** ingredientDeleted|subjectID:1224020300010130|oldValue:null|newValue:null
-2024-03-14T13:28:30 [info]: Got 225 recipes
-2024-03-14T13:28:30 [info]: Got 0 ingredientStocks
-2024-03-14T13:28:30 [info]: Got 2887 recipeIngredients
-2024-03-14T13:28:57 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:28:57 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300000001
-2024-03-14T13:28:57 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:29:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011688** deleteRecipeIngredient|subjectID:1624020300000011|oldValue:null|newValue:null
-2024-03-14T13:29:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011689** updateRecipeVersion|subjectID:1124020300000001|oldValue:55|newValue:56
-2024-03-14T13:29:09 [info]: Got recipe
-2024-03-14T13:29:09 [info]: Got 225 recipes
-2024-03-14T13:29:26 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: dash
-2024-03-14T13:29:26 [info]: 'getUnitRatio' Store ratio found for Pepper-weightOunce-dash: 0.07
-2024-03-14T13:29:28 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T13:29:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011690** createRecipeIngredient|subjectID:1624031400010182|oldValue:null|newValue:null
-2024-03-14T13:29:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011691** updateRecipeVersion|subjectID:1124020300000001|oldValue:56|newValue:57
-2024-03-14T13:29:29 [info]: Got recipe
-2024-03-14T13:29:37 [info]: Deleted ingredient ID: 1224020300000020
-2024-03-14T13:29:37 [info]: **KITCHEN LOG ENTRY ID: 7024031400010087** ingredientDeleted|subjectID:1224020300000020|oldValue:null|newValue:null
-2024-03-14T13:29:37 [info]: Got 0 ingredientStocks
-2024-03-14T13:29:37 [info]: Got 225 recipes
-2024-03-14T13:29:38 [info]: Got 2887 recipeIngredients
-2024-03-14T13:29:47 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:29:47 [info]: Got 0 recipeFeedback logs
-2024-03-14T13:29:47 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010001
-2024-03-14T13:29:54 [info]: **RECIPE LOG ENTRY ID: 7124031400011692** deleteRecipeIngredient|subjectID:1624020300010012|oldValue:null|newValue:null
-2024-03-14T13:29:54 [info]: Got recipe
-2024-03-14T13:29:54 [info]: **RECIPE LOG ENTRY ID: 7124031400011693** updateRecipeVersion|subjectID:1124020300010001|oldValue:48|newValue:49
-2024-03-14T13:29:55 [info]: Got 225 recipes
-2024-03-14T13:30:05 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: pinch
-2024-03-14T13:30:05 [info]: 'getUnitRatio' Store ratio found for Pepper-weightOunce-pinch: 0.05
-2024-03-14T13:30:06 [info]: CREATING RECIPE INGREDIENT, PREPARATION: to taste
-2024-03-14T13:30:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011694** createRecipeIngredient|subjectID:1624031400010183|oldValue:null|newValue:null
-2024-03-14T13:30:07 [info]: Got recipe
-2024-03-14T13:30:07 [info]: **RECIPE LOG ENTRY ID: 7124031400011695** updateRecipeVersion|subjectID:1124020300010001|oldValue:49|newValue:50
-2024-03-14T13:30:15 [info]: Deleted ingredient ID: 1224020300010010
-2024-03-14T13:30:16 [info]: **KITCHEN LOG ENTRY ID: 7024031400010088** ingredientDeleted|subjectID:1224020300010010|oldValue:null|newValue:null
-2024-03-14T13:30:16 [info]: Got 0 ingredientStocks
-2024-03-14T13:30:16 [info]: Got 225 recipes
-2024-03-14T13:30:16 [info]: Got 2887 recipeIngredients
-2024-03-14T14:05:58 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:05:58 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010002
-2024-03-14T14:05:58 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:06:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011696** deleteRecipeIngredient|subjectID:1624020300010035|oldValue:null|newValue:null
-2024-03-14T14:06:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011697** updateRecipeVersion|subjectID:1124020300010002|oldValue:45|newValue:46
-2024-03-14T14:06:06 [info]: Got recipe
-2024-03-14T14:06:07 [info]: Got 225 recipes
-2024-03-14T14:06:30 [info]: Deleted ingredient ID: 1224020300010053
-2024-03-14T14:06:30 [info]: **KITCHEN LOG ENTRY ID: 7024031400010089** ingredientDeleted|subjectID:1224020300010053|oldValue:null|newValue:null
-2024-03-14T14:06:31 [info]: Got 0 ingredientStocks
-2024-03-14T14:06:31 [info]: Got 225 recipes
-2024-03-14T14:06:31 [info]: Got 2886 recipeIngredients
-2024-03-14T14:07:02 [info]: Found 0 recipeSubscriptions for recipeID: 1124021900010029
-2024-03-14T14:07:02 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:07:02 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:07:19 [info]: **RECIPE LOG ENTRY ID: 7124031400011698** deleteRecipeIngredient|subjectID:1624021900010175|oldValue:null|newValue:null
-2024-03-14T14:07:19 [info]: **RECIPE LOG ENTRY ID: 7124031400011699** updateRecipeVersion|subjectID:1124021900010029|oldValue:34|newValue:35
-2024-03-14T14:07:19 [info]: Got recipe
-2024-03-14T14:07:20 [info]: Got 225 recipes
-2024-03-14T14:07:48 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: packet
-2024-03-14T14:07:48 [info]: 'getUnitRatio' No store ratio found for Potato-pound-packet, asking AI
-2024-03-14T14:07:49 [info]: UNIT CONVERSION VERTEXAI Potato-pound-packet RESPONSE: 0.25
-2024-03-14T14:07:49 [info]: CHARACTER COUNT: 333, COST: $0.00008325
-2024-03-14T14:07:49 [info]: 'getUnitRatio' AI estimate for Potato-pound-packet: 0.25.
-2024-03-14T14:07:49 [info]: 'addUnitRatio' Added unit ratio 'Potato-pound-packet' in draft currentStatus
-2024-03-14T14:07:49 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: pound
-2024-03-14T14:07:57 [info]: CREATING RECIPE INGREDIENT, PREPARATION: peeled and diced
-2024-03-14T14:07:58 [info]: **RECIPE LOG ENTRY ID: 7124031400011700** createRecipeIngredient|subjectID:1624031400010184|oldValue:null|newValue:null
-2024-03-14T14:07:58 [info]: **RECIPE LOG ENTRY ID: 7124031400011701** updateRecipeVersion|subjectID:1124021900010029|oldValue:35|newValue:36
-2024-03-14T14:07:58 [info]: Got recipe
-2024-03-14T14:08:08 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:08:08 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:08:08 [info]: Found 0 recipeSubscriptions for recipeID: 1124022400010004
-2024-03-14T14:08:16 [info]: **RECIPE LOG ENTRY ID: 7124031400011702** deleteRecipeIngredient|subjectID:1624022400010045|oldValue:null|newValue:null
-2024-03-14T14:08:17 [info]: **RECIPE LOG ENTRY ID: 7124031400011703** updateRecipeVersion|subjectID:1124022400010004|oldValue:45|newValue:46
-2024-03-14T14:08:17 [info]: Got recipe
-2024-03-14T14:08:17 [info]: Got 225 recipes
-2024-03-14T14:08:28 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: rib
-2024-03-14T14:08:28 [info]: 'getUnitRatio' No store ratio found for Potato-pound-rib, asking AI
-2024-03-14T14:08:29 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: gallon
-2024-03-14T14:08:29 [info]: 'getUnitRatio' No store ratio found for Potato-pound-gallon, asking AI
-2024-03-14T14:08:30 [info]: UNIT CONVERSION VERTEXAI Potato-pound-rib RESPONSE: 0.5
-2024-03-14T14:08:30 [info]: CHARACTER COUNT: 329, COST: $0.00008225000000000001
-2024-03-14T14:08:30 [info]: 'getUnitRatio' AI estimate for Potato-pound-rib: 0.5.
-2024-03-14T14:08:30 [info]: 'addUnitRatio' Added unit ratio 'Potato-pound-rib' in draft currentStatus
-2024-03-14T14:08:30 [info]: UNIT CONVERSION VERTEXAI Potato-pound-gallon RESPONSE: 0.0026
-2024-03-14T14:08:30 [info]: CHARACTER COUNT: 335, COST: $0.00008375
-2024-03-14T14:08:30 [info]: 'getUnitRatio' AI estimate for Potato-pound-gallon: 0.0026.
-2024-03-14T14:08:30 [info]: 'addUnitRatio' Added unit ratio 'Potato-pound-gallon' in draft currentStatus
-2024-03-14T14:08:31 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: single
-2024-03-14T14:08:31 [info]: 'getUnitRatio' Store ratio found for Potato-pound-single: 0.33
-2024-03-14T14:08:34 [info]: CREATING RECIPE INGREDIENT, PREPARATION: boiled
-2024-03-14T14:08:34 [info]: **RECIPE LOG ENTRY ID: 7124031400011704** createRecipeIngredient|subjectID:1624031400010185|oldValue:null|newValue:null
-2024-03-14T14:08:35 [info]: **RECIPE LOG ENTRY ID: 7124031400011705** updateRecipeVersion|subjectID:1124022400010004|oldValue:46|newValue:47
-2024-03-14T14:08:35 [info]: Got recipe
-2024-03-14T14:08:42 [info]: Deleted ingredient ID: 1224021900010138
-2024-03-14T14:08:42 [info]: **KITCHEN LOG ENTRY ID: 7024031400010090** ingredientDeleted|subjectID:1224021900010138|oldValue:null|newValue:null
-2024-03-14T14:08:43 [info]: Got 0 ingredientStocks
-2024-03-14T14:08:43 [info]: Got 225 recipes
-2024-03-14T14:08:43 [info]: Got 2886 recipeIngredients
-2024-03-14T14:09:11 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010004
-2024-03-14T14:09:11 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:09:11 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:09:19 [info]: **RECIPE LOG ENTRY ID: 7124031400011706** deleteRecipeIngredient|subjectID:1624020300010053|oldValue:null|newValue:null
-2024-03-14T14:09:19 [info]: **RECIPE LOG ENTRY ID: 7124031400011707** updateRecipeVersion|subjectID:1124020300010004|oldValue:35|newValue:36
-2024-03-14T14:09:19 [info]: Got recipe
-2024-03-14T14:09:19 [info]: Got 225 recipes
-2024-03-14T14:09:27 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: cup
-2024-03-14T14:09:27 [info]: 'getUnitRatio' No store ratio found for Parboiled Rice-weightOunce-cup, asking AI
-2024-03-14T14:09:28 [info]: UNIT CONVERSION VERTEXAI Parboiled Rice-weightOunce-cup RESPONSE: 4.2
-2024-03-14T14:09:28 [info]: CHARACTER COUNT: 342, COST: $0.0000855
-2024-03-14T14:09:28 [info]: 'getUnitRatio' AI estimate for Parboiled Rice-weightOunce-cup: 4.2.
-2024-03-14T14:09:28 [info]: 'addUnitRatio' Added unit ratio 'Parboiled Rice-weightOunce-cup' in draft currentStatus
-2024-03-14T14:09:30 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:09:30 [info]: **RECIPE LOG ENTRY ID: 7124031400011708** createRecipeIngredient|subjectID:1624031400010186|oldValue:null|newValue:null
-2024-03-14T14:09:31 [info]: **RECIPE LOG ENTRY ID: 7124031400011709** updateRecipeVersion|subjectID:1124020300010004|oldValue:36|newValue:37
-2024-03-14T14:09:31 [info]: Got recipe
-2024-03-14T14:09:37 [info]: **RECIPE LOG ENTRY ID: 7124031400011710** deleteRecipeIngredient|subjectID:1624031400010186|oldValue:null|newValue:null
-2024-03-14T14:09:37 [info]: **RECIPE LOG ENTRY ID: 7124031400011711** updateRecipeVersion|subjectID:1124020300010004|oldValue:37|newValue:38
-2024-03-14T14:09:37 [info]: Got recipe
-2024-03-14T14:09:37 [info]: Got 225 recipes
-2024-03-14T14:09:46 [info]: Deleted ingredient ID: 1224020300010082
-2024-03-14T14:09:46 [info]: **KITCHEN LOG ENTRY ID: 7024031400010091** ingredientDeleted|subjectID:1224020300010082|oldValue:null|newValue:null
-2024-03-14T14:09:47 [info]: Got 0 ingredientStocks
-2024-03-14T14:09:47 [info]: Got 225 recipes
-2024-03-14T14:09:47 [info]: Got 2885 recipeIngredients
-2024-03-14T14:10:10 [info]: Found 0 recipeSubscriptions for recipeID: 1124031300010010
-2024-03-14T14:10:10 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:10:10 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:10:18 [info]: **RECIPE LOG ENTRY ID: 7124031400011712** deleteRecipeIngredient|subjectID:1624031300010139|oldValue:null|newValue:null
-2024-03-14T14:10:19 [info]: Got recipe
-2024-03-14T14:10:19 [info]: **RECIPE LOG ENTRY ID: 7124031400011713** updateRecipeVersion|subjectID:1124031300010010|oldValue:15|newValue:16
-2024-03-14T14:10:19 [info]: Got 225 recipes
-2024-03-14T14:10:33 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: fillet
-2024-03-14T14:10:33 [info]: 'getUnitRatio' No store ratio found for Salmon-weightOunce-fillet, asking AI
-2024-03-14T14:10:33 [info]: UNIT CONVERSION VERTEXAI Salmon-weightOunce-fillet RESPONSE: 4.5
-2024-03-14T14:10:33 [info]: CHARACTER COUNT: 338, COST: $0.00008450000000000001
-2024-03-14T14:10:33 [info]: 'getUnitRatio' AI estimate for Salmon-weightOunce-fillet: 4.5.
-2024-03-14T14:10:34 [info]: 'addUnitRatio' Added unit ratio 'Salmon-weightOunce-fillet' in draft currentStatus
-2024-03-14T14:10:35 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:10:36 [info]: **RECIPE LOG ENTRY ID: 7124031400011714** createRecipeIngredient|subjectID:1624031400010187|oldValue:null|newValue:null
-2024-03-14T14:10:36 [info]: **RECIPE LOG ENTRY ID: 7124031400011715** updateRecipeVersion|subjectID:1124031300010010|oldValue:16|newValue:17
-2024-03-14T14:10:36 [info]: Got recipe
-2024-03-14T14:10:45 [info]: Deleted ingredient ID: 1224031300010052
-2024-03-14T14:10:45 [info]: **KITCHEN LOG ENTRY ID: 7024031400010092** ingredientDeleted|subjectID:1224031300010052|oldValue:null|newValue:null
-2024-03-14T14:10:46 [info]: Got 0 ingredientStocks
-2024-03-14T14:10:46 [info]: Got 225 recipes
-2024-03-14T14:10:46 [info]: Got 2885 recipeIngredients
-2024-03-14T14:11:09 [info]: Deleted ingredient ID: 1224021800010037
-2024-03-14T14:11:09 [info]: **KITCHEN LOG ENTRY ID: 7024031400010093** ingredientDeleted|subjectID:1224021800010037|oldValue:null|newValue:null
-2024-03-14T14:11:10 [info]: Got 0 ingredientStocks
-2024-03-14T14:11:10 [info]: Got 225 recipes
-2024-03-14T14:11:10 [info]: Got 2885 recipeIngredients
-2024-03-14T14:11:15 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300000001
-2024-03-14T14:11:15 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:11:15 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:11:25 [info]: **RECIPE LOG ENTRY ID: 7124031400011716** deleteRecipeIngredient|subjectID:1624020300000003|oldValue:null|newValue:null
-2024-03-14T14:11:25 [info]: **RECIPE LOG ENTRY ID: 7124031400011717** updateRecipeVersion|subjectID:1124020300000001|oldValue:57|newValue:58
-2024-03-14T14:11:25 [info]: Got recipe
-2024-03-14T14:11:26 [info]: Got 225 recipes
-2024-03-14T14:11:36 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T14:11:38 [info]: CREATING RECIPE INGREDIENT, PREPARATION: deseeded and chopped
-2024-03-14T14:11:38 [info]: **RECIPE LOG ENTRY ID: 7124031400011718** createRecipeIngredient|subjectID:1624031400010188|oldValue:null|newValue:null
-2024-03-14T14:11:38 [info]: Got recipe
-2024-03-14T14:11:39 [info]: **RECIPE LOG ENTRY ID: 7124031400011719** updateRecipeVersion|subjectID:1124020300000001|oldValue:58|newValue:59
-2024-03-14T14:11:45 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010004
-2024-03-14T14:11:45 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:11:45 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:11:50 [info]: **RECIPE LOG ENTRY ID: 7124031400011720** deleteRecipeIngredient|subjectID:1624020300010047|oldValue:null|newValue:null
-2024-03-14T14:11:50 [info]: Got recipe
-2024-03-14T14:11:50 [info]: **RECIPE LOG ENTRY ID: 7124031400011721** updateRecipeVersion|subjectID:1124020300010004|oldValue:38|newValue:39
-2024-03-14T14:11:51 [info]: Got 225 recipes
-2024-03-14T14:12:04 [info]: 'getUnitRatioProcessor'. UNITA: single UNITB: single
-2024-03-14T14:12:06 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:12:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011722** createRecipeIngredient|subjectID:1624031400010189|oldValue:null|newValue:null
-2024-03-14T14:12:06 [info]: **RECIPE LOG ENTRY ID: 7124031400011723** updateRecipeVersion|subjectID:1124020300010004|oldValue:39|newValue:40
-2024-03-14T14:12:06 [info]: Got recipe
-2024-03-14T14:12:15 [info]: Deleted ingredient ID: 1224020300000002
-2024-03-14T14:12:15 [info]: **KITCHEN LOG ENTRY ID: 7024031400010094** ingredientDeleted|subjectID:1224020300000002|oldValue:null|newValue:null
-2024-03-14T14:12:15 [info]: Got 0 ingredientStocks
-2024-03-14T14:12:15 [info]: Got 225 recipes
-2024-03-14T14:12:16 [info]: Got 2885 recipeIngredients
-2024-03-14T14:12:57 [info]: Deleted ingredient ID: 1224021800010083
-2024-03-14T14:12:57 [info]: **KITCHEN LOG ENTRY ID: 7024031400010095** ingredientDeleted|subjectID:1224021800010083|oldValue:null|newValue:null
-2024-03-14T14:12:58 [info]: Got 0 ingredientStocks
-2024-03-14T14:12:58 [info]: Got 225 recipes
-2024-03-14T14:12:58 [info]: Got 2885 recipeIngredients
-2024-03-14T14:13:01 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:13:01 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:13:01 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300000001
-2024-03-14T14:13:07 [info]: **RECIPE LOG ENTRY ID: 7124031400011724** deleteRecipeIngredient|subjectID:1624020300000004|oldValue:null|newValue:null
-2024-03-14T14:13:07 [info]: **RECIPE LOG ENTRY ID: 7124031400011725** updateRecipeVersion|subjectID:1124020300000001|oldValue:59|newValue:60
-2024-03-14T14:13:08 [info]: Got recipe
-2024-03-14T14:13:08 [info]: Got 225 recipes
-2024-03-14T14:13:15 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: tablespoon
-2024-03-14T14:13:15 [info]: 'getUnitRatio' Store ratio found for Sugar-pound-tablespoon: 0.028
-2024-03-14T14:13:17 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:13:17 [info]: **RECIPE LOG ENTRY ID: 7124031400011726** createRecipeIngredient|subjectID:1624031400010190|oldValue:null|newValue:null
-2024-03-14T14:13:18 [info]: **RECIPE LOG ENTRY ID: 7124031400011727** updateRecipeVersion|subjectID:1124020300000001|oldValue:60|newValue:61
-2024-03-14T14:13:18 [info]: Got recipe
-2024-03-14T14:13:25 [info]: Deleted ingredient ID: 1224020300000009
-2024-03-14T14:13:26 [info]: **KITCHEN LOG ENTRY ID: 7024031400010096** ingredientDeleted|subjectID:1224020300000009|oldValue:null|newValue:null
-2024-03-14T14:13:26 [info]: Got 225 recipes
-2024-03-14T14:13:26 [info]: Got 0 ingredientStocks
-2024-03-14T14:13:26 [info]: Got 2885 recipeIngredients
-2024-03-14T14:13:54 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010001
-2024-03-14T14:13:54 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:13:54 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:13:59 [info]: **RECIPE LOG ENTRY ID: 7124031400011728** deleteRecipeIngredient|subjectID:1624020300010018|oldValue:null|newValue:null
-2024-03-14T14:13:59 [info]: **RECIPE LOG ENTRY ID: 7124031400011729** updateRecipeVersion|subjectID:1124020300010001|oldValue:50|newValue:51
-2024-03-14T14:13:59 [info]: Got recipe
-2024-03-14T14:14:00 [info]: Got 225 recipes
-2024-03-14T14:14:06 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: single
-2024-03-14T14:14:07 [info]: 'getUnitRatio' Store ratio found for Tomato-weightOunce-single: 5.405405405405405
-2024-03-14T14:14:08 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:14:08 [info]: **RECIPE LOG ENTRY ID: 7124031400011730** createRecipeIngredient|subjectID:1624031400010191|oldValue:null|newValue:null
-2024-03-14T14:14:09 [info]: **RECIPE LOG ENTRY ID: 7124031400011731** updateRecipeVersion|subjectID:1124020300010001|oldValue:51|newValue:52
-2024-03-14T14:14:09 [info]: Got recipe
-2024-03-14T14:14:21 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:14:21 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010006
-2024-03-14T14:14:21 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:14:26 [info]: **RECIPE LOG ENTRY ID: 7124031400011732** deleteRecipeIngredient|subjectID:1624020300010085|oldValue:null|newValue:null
-2024-03-14T14:14:27 [info]: **RECIPE LOG ENTRY ID: 7124031400011733** updateRecipeVersion|subjectID:1124020300010006|oldValue:42|newValue:43
-2024-03-14T14:14:27 [info]: Got recipe
-2024-03-14T14:14:27 [info]: Got 225 recipes
-2024-03-14T14:14:38 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: single
-2024-03-14T14:14:38 [info]: 'getUnitRatio' Store ratio found for Tomato-weightOunce-single: 5.405405405405405
-2024-03-14T14:14:39 [info]: CREATING RECIPE INGREDIENT, PREPARATION: diced
-2024-03-14T14:14:40 [info]: **RECIPE LOG ENTRY ID: 7124031400011734** createRecipeIngredient|subjectID:1624031400010192|oldValue:null|newValue:null
-2024-03-14T14:14:40 [info]: Got recipe
-2024-03-14T14:14:40 [info]: **RECIPE LOG ENTRY ID: 7124031400011735** updateRecipeVersion|subjectID:1124020300010006|oldValue:43|newValue:44
-2024-03-14T14:14:50 [info]: Deleted ingredient ID: 1224020300010030
-2024-03-14T14:14:50 [info]: **KITCHEN LOG ENTRY ID: 7024031400010097** ingredientDeleted|subjectID:1224020300010030|oldValue:null|newValue:null
-2024-03-14T14:14:51 [info]: Got 0 ingredientStocks
-2024-03-14T14:14:51 [info]: Got 225 recipes
-2024-03-14T14:14:51 [info]: Got 2885 recipeIngredients
-2024-03-14T14:15:08 [info]: Deleted ingredient ID: 1224021800010038
-2024-03-14T14:15:08 [info]: **KITCHEN LOG ENTRY ID: 7024031400010098** ingredientDeleted|subjectID:1224021800010038|oldValue:null|newValue:null
-2024-03-14T14:15:09 [info]: Got 0 ingredientStocks
-2024-03-14T14:15:09 [info]: Got 225 recipes
-2024-03-14T14:15:09 [info]: Got 2885 recipeIngredients
-2024-03-14T14:15:22 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300000001
-2024-03-14T14:15:22 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:15:22 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:15:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011736** deleteRecipeIngredient|subjectID:1624020300000006|oldValue:null|newValue:null
-2024-03-14T14:15:28 [info]: **RECIPE LOG ENTRY ID: 7124031400011737** updateRecipeVersion|subjectID:1124020300000001|oldValue:61|newValue:62
-2024-03-14T14:15:28 [info]: Got recipe
-2024-03-14T14:15:29 [info]: Got 225 recipes
-2024-03-14T14:15:42 [info]: 'getUnitRatioProcessor'. UNITA: gallon UNITB: cup
-2024-03-14T14:15:42 [info]: 'getUnitRatio' Common ratio found for gallon-cup: 0.063
-2024-03-14T14:15:43 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:15:43 [info]: **RECIPE LOG ENTRY ID: 7124031400011738** createRecipeIngredient|subjectID:1624031400010193|oldValue:null|newValue:null
-2024-03-14T14:15:43 [info]: **RECIPE LOG ENTRY ID: 7124031400011739** updateRecipeVersion|subjectID:1124020300000001|oldValue:62|newValue:63
-2024-03-14T14:15:43 [info]: Got recipe
-2024-03-14T14:15:51 [info]: Deleted ingredient ID: 1224020300000018
-2024-03-14T14:15:51 [info]: **KITCHEN LOG ENTRY ID: 7024031400010099** ingredientDeleted|subjectID:1224020300000018|oldValue:null|newValue:null
-2024-03-14T14:15:52 [info]: Got 225 recipes
-2024-03-14T14:15:52 [info]: Got 0 ingredientStocks
-2024-03-14T14:15:52 [info]: Got 2885 recipeIngredients
-2024-03-14T14:15:55 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010003
-2024-03-14T14:15:55 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:15:55 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:16:01 [info]: **RECIPE LOG ENTRY ID: 7124031400011740** deleteRecipeIngredient|subjectID:1624020300010043|oldValue:null|newValue:null
-2024-03-14T14:16:01 [info]: **RECIPE LOG ENTRY ID: 7124031400011741** updateRecipeVersion|subjectID:1124020300010003|oldValue:19|newValue:20
-2024-03-14T14:16:01 [info]: Got recipe
-2024-03-14T14:16:01 [info]: Got 225 recipes
-2024-03-14T14:16:11 [info]: 'getUnitRatioProcessor'. UNITA: gallon UNITB: cup
-2024-03-14T14:16:11 [info]: 'getUnitRatio' Common ratio found for gallon-cup: 0.063
-2024-03-14T14:16:15 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:16:15 [info]: **RECIPE LOG ENTRY ID: 7124031400011742** createRecipeIngredient|subjectID:1624031400010194|oldValue:null|newValue:null
-2024-03-14T14:16:15 [info]: **RECIPE LOG ENTRY ID: 7124031400011743** updateRecipeVersion|subjectID:1124020300010003|oldValue:20|newValue:21
-2024-03-14T14:16:15 [info]: Got recipe
-2024-03-14T14:18:01 [info]: **RECIPE LOG ENTRY ID: 7124031400011744** deleteRecipeIngredient|subjectID:1624031400010194|oldValue:null|newValue:null
-2024-03-14T14:18:02 [info]: **RECIPE LOG ENTRY ID: 7124031400011745** updateRecipeVersion|subjectID:1124020300010003|oldValue:21|newValue:22
-2024-03-14T14:18:02 [info]: Got recipe
-2024-03-14T14:18:02 [info]: Got 225 recipes
-2024-03-14T14:18:11 [info]: Deleted ingredient ID: 1224020300010064
-2024-03-14T14:18:11 [info]: **KITCHEN LOG ENTRY ID: 7024031400010100** ingredientDeleted|subjectID:1224020300010064|oldValue:null|newValue:null
-2024-03-14T14:18:11 [info]: Got 0 ingredientStocks
-2024-03-14T14:18:11 [info]: Got 225 recipes
-2024-03-14T14:18:11 [info]: Got 2884 recipeIngredients
-2024-03-14T14:18:16 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:18:17 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010010
-2024-03-14T14:18:17 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:18:56 [info]: **RECIPE LOG ENTRY ID: 7124031400011746** deleteRecipeIngredient|subjectID:1624021800010008|oldValue:null|newValue:null
-2024-03-14T14:18:57 [info]: **RECIPE LOG ENTRY ID: 7124031400011747** updateRecipeVersion|subjectID:1124021800010010|oldValue:38|newValue:39
-2024-03-14T14:18:57 [info]: Got recipe
-2024-03-14T14:18:57 [info]: Got 225 recipes
-2024-03-14T14:19:03 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:19:03 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:19:03 [info]: Found 0 recipeSubscriptions for recipeID: 1124021800010010
-2024-03-14T14:19:07 [info]: **RECIPE LOG ENTRY ID: 7124031400011748** deleteRecipeIngredient|subjectID:1624021800010016|oldValue:null|newValue:null
-2024-03-14T14:19:07 [info]: **RECIPE LOG ENTRY ID: 7124031400011749** updateRecipeVersion|subjectID:1124021800010010|oldValue:39|newValue:40
-2024-03-14T14:19:07 [info]: Got recipe
-2024-03-14T14:19:08 [info]: Got 225 recipes
-2024-03-14T14:19:15 [info]: 'getUnitRatioProcessor'. UNITA: gallon UNITB: cup
-2024-03-14T14:19:15 [info]: 'getUnitRatio' Common ratio found for gallon-cup: 0.063
-2024-03-14T14:19:16 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:19:17 [info]: **RECIPE LOG ENTRY ID: 7124031400011750** createRecipeIngredient|subjectID:1624031400010195|oldValue:null|newValue:null
-2024-03-14T14:19:17 [info]: **RECIPE LOG ENTRY ID: 7124031400011751** updateRecipeVersion|subjectID:1124021800010010|oldValue:40|newValue:41
-2024-03-14T14:19:17 [info]: Got recipe
-2024-03-14T14:19:26 [info]: Deleted ingredient ID: 1224021800010032
-2024-03-14T14:19:26 [info]: **KITCHEN LOG ENTRY ID: 7024031400010101** ingredientDeleted|subjectID:1224021800010032|oldValue:null|newValue:null
-2024-03-14T14:19:26 [info]: Got 225 recipes
-2024-03-14T14:19:26 [info]: Got 0 ingredientStocks
-2024-03-14T14:19:26 [info]: Got 2883 recipeIngredients
-2024-03-14T14:19:42 [info]: Deleted ingredient ID: 1224021700010002
-2024-03-14T14:19:42 [info]: **KITCHEN LOG ENTRY ID: 7024031400010102** ingredientDeleted|subjectID:1224021700010002|oldValue:null|newValue:null
-2024-03-14T14:19:43 [info]: Got 225 recipes
-2024-03-14T14:19:43 [info]: Got 0 ingredientStocks
-2024-03-14T14:19:43 [info]: Got 2883 recipeIngredients
-2024-03-14T14:19:46 [info]: Deleted ingredient ID: 1224021700010006
-2024-03-14T14:19:46 [info]: **KITCHEN LOG ENTRY ID: 7024031400010103** ingredientDeleted|subjectID:1224021700010006|oldValue:null|newValue:null
-2024-03-14T14:19:47 [info]: Got 0 ingredientStocks
-2024-03-14T14:19:47 [info]: Got 225 recipes
-2024-03-14T14:19:47 [info]: Got 2883 recipeIngredients
-2024-03-14T14:19:50 [info]: Deleted ingredient ID: 1224021700010008
-2024-03-14T14:19:50 [info]: **KITCHEN LOG ENTRY ID: 7024031400010104** ingredientDeleted|subjectID:1224021700010008|oldValue:null|newValue:null
-2024-03-14T14:19:50 [info]: Got 0 ingredientStocks
-2024-03-14T14:19:50 [info]: Got 225 recipes
-2024-03-14T14:19:51 [info]: Got 2883 recipeIngredients
-2024-03-14T14:19:54 [info]: Deleted ingredient ID: 1224021700010010
-2024-03-14T14:19:55 [info]: **KITCHEN LOG ENTRY ID: 7024031400010105** ingredientDeleted|subjectID:1224021700010010|oldValue:null|newValue:null
-2024-03-14T14:19:55 [info]: Got 0 ingredientStocks
-2024-03-14T14:19:55 [info]: Got 225 recipes
-2024-03-14T14:19:55 [info]: Got 2883 recipeIngredients
-2024-03-14T14:19:58 [info]: Deleted ingredient ID: 1224021700010012
-2024-03-14T14:19:58 [info]: **KITCHEN LOG ENTRY ID: 7024031400010106** ingredientDeleted|subjectID:1224021700010012|oldValue:null|newValue:null
-2024-03-14T14:19:58 [info]: Got 0 ingredientStocks
-2024-03-14T14:19:58 [info]: Got 225 recipes
-2024-03-14T14:19:58 [info]: Got 2883 recipeIngredients
-2024-03-14T14:20:07 [info]: Deleted ingredient ID: 1224021800010034
-2024-03-14T14:20:08 [info]: **KITCHEN LOG ENTRY ID: 7024031400010107** ingredientDeleted|subjectID:1224021800010034|oldValue:null|newValue:null
-2024-03-14T14:20:08 [info]: Got 225 recipes
-2024-03-14T14:20:08 [info]: Got 0 ingredientStocks
-2024-03-14T14:20:08 [info]: Got 2883 recipeIngredients
-2024-03-14T14:20:18 [info]: Found 0 recipeSubscriptions for recipeID: 1124020300010003
-2024-03-14T14:20:18 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:20:19 [info]: Got 0 recipeFeedback logs
-2024-03-14T14:20:23 [info]: **RECIPE LOG ENTRY ID: 7124031400011752** deleteRecipeIngredient|subjectID:1624020300010041|oldValue:null|newValue:null
-2024-03-14T14:20:24 [info]: **RECIPE LOG ENTRY ID: 7124031400011753** updateRecipeVersion|subjectID:1124020300010003|oldValue:22|newValue:23
-2024-03-14T14:20:24 [info]: Got recipe
-2024-03-14T14:20:24 [info]: Got 225 recipes
-2024-03-14T14:20:33 [info]: 'getUnitRatioProcessor'. UNITA: packet UNITB: tablespoon
-2024-03-14T14:20:33 [info]: 'getUnitRatio' Store ratio found for Yeast-packet-tablespoon: 1.33
-2024-03-14T14:20:36 [info]: 'getUnitRatioProcessor'. UNITA: packet UNITB: teaspoon
-2024-03-14T14:20:36 [info]: 'getUnitRatio' Store ratio found for Yeast-packet-teaspoon: 2.25
-2024-03-14T14:20:37 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T14:20:37 [info]: **RECIPE LOG ENTRY ID: 7124031400011754** createRecipeIngredient|subjectID:1624031400010196|oldValue:null|newValue:null
-2024-03-14T14:20:38 [info]: **RECIPE LOG ENTRY ID: 7124031400011755** updateRecipeVersion|subjectID:1124020300010003|oldValue:23|newValue:24
-2024-03-14T14:20:38 [info]: Got recipe
-2024-03-14T14:20:48 [info]: Deleted ingredient ID: 1224020300010062
-2024-03-14T14:20:48 [info]: **KITCHEN LOG ENTRY ID: 7024031400010108** ingredientDeleted|subjectID:1224020300010062|oldValue:null|newValue:null
-2024-03-14T14:20:48 [info]: Got 0 ingredientStocks
-2024-03-14T14:20:48 [info]: Got 225 recipes
-2024-03-14T14:20:49 [info]: Got 2883 recipeIngredients
-2024-03-14T15:32:43 [info]: Found 0 recipeSubscriptions for recipeID: 1124030300015004
-2024-03-14T15:32:43 [info]: Got 0 recipeFeedback logs
-2024-03-14T15:32:43 [info]: Got 0 recipeFeedback logs
-2024-03-14T15:33:14 [info]: 'getUnitRatioProcessor'. UNITA: gram UNITB: weightOunce
-2024-03-14T15:33:14 [info]: 'getUnitRatio' Common ratio found for gram-weightOunce: 28.35
-2024-03-14T15:33:15 [info]: **KITCHEN LOG ENTRY ID: 7024031400010109** createIngredient|subjectID:1224031400010058|oldValue:null|newValue:null
-2024-03-14T15:33:28 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: weightOunce
-2024-03-14T15:33:33 [info]: CREATING RECIPE INGREDIENT, PREPARATION: 
-2024-03-14T15:33:33 [info]: **RECIPE LOG ENTRY ID: 7124031400011756** createRecipeIngredient|subjectID:1624031400010197|oldValue:null|newValue:null
-2024-03-14T15:33:34 [info]: **RECIPE LOG ENTRY ID: 7124031400011757** updateRecipeVersion|subjectID:1124030300015004|oldValue:17|newValue:18
-2024-03-14T15:33:34 [info]: Got recipe
-2024-03-14T15:33:38 [info]: Got 225 recipes
-2024-03-14T15:33:38 [info]: Got 560 ingredients
-2024-03-14T15:33:38 [info]: Got 83 tools
-2024-03-14T15:33:38 [info]: Got 34 recipeCategories
-2024-03-14T15:33:38 [info]: Got 0 ingredientStocks
-2024-03-14T15:33:38 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T15:33:38 [info]: Got 0 toolStocks
-2024-03-14T15:33:38 [info]: Got 2884 recipeIngredients
-2024-03-14T15:33:38 [info]: Got 1361 steps
-2024-03-14T15:33:38 [info]: Got 1243 recipeSteps
-2024-03-14T15:33:38 [info]: Got 224 discoverRecipes
-2024-03-14T15:33:38 [info]: Got 705 recipeTools
-2024-03-14T15:33:38 [info]: Successfully retrieved profile for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T15:33:38 [info]: Got 0 followships
-2024-03-14T15:33:38 [info]: Successfully retrieved 0 followers for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T15:33:38 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T15:33:38 [info]: Got 0 follower followships
-2024-03-14T15:33:38 [info]: Got 2 friendships
-2024-03-14T15:33:38 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T15:33:38 [info]: Got 1 shopping lists
-2024-03-14T15:33:39 [info]: Found 0 recipeSubscriptions for recipeID: 1124030300015004
-2024-03-14T15:33:39 [info]: Got 0 recipeFeedback logs
-2024-03-14T15:33:39 [info]: Got 0 recipeFeedback logs
-2024-03-14T15:33:39 [info]: Successfully retrieved 1 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T15:33:39 [info]: Successfully retrieved 1 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b
-2024-03-14T15:33:45 [info]: **RECIPE LOG ENTRY ID: 7124031400011758** deleteRecipeIngredient|subjectID:1624031400010197|oldValue:null|newValue:null
-2024-03-14T15:33:45 [info]: **RECIPE LOG ENTRY ID: 7124031400011759** updateRecipeVersion|subjectID:1124030300015004|oldValue:18|newValue:19
-2024-03-14T15:33:45 [info]: Got recipe
-2024-03-14T15:33:45 [info]: Got 225 recipes
-2024-03-14T15:33:58 [info]: Deleted ingredient ID: 1224031400010058
-2024-03-14T15:33:58 [info]: **KITCHEN LOG ENTRY ID: 7024031400010110** ingredientDeleted|subjectID:1224031400010058|oldValue:null|newValue:null
-2024-03-14T15:33:59 [info]: Got 0 ingredientStocks
-2024-03-14T15:33:59 [info]: Got 225 recipes
-2024-03-14T15:33:59 [info]: Got 2883 recipeIngredients
+2024-03-25T19:17:06 [info]: Got 11 ingredients
+2024-03-25T19:17:06 [info]: Got 34 recipeCategories
+2024-03-25T19:17:06 [info]: Got 3 tools
+2024-03-25T19:17:06 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-25T19:17:06 [info]: Got 0 toolStocks
+2024-03-25T19:17:06 [info]: Got 1 recipes
+2024-03-25T19:17:06 [info]: Got 14 recipeIngredients
+2024-03-25T19:17:06 [info]: Got 2 recipeTools
+2024-03-25T19:17:06 [info]: Got 297 discoverRecipes
+2024-03-25T19:17:06 [info]: Got 4 recipeSteps
+2024-03-25T19:17:06 [info]: Got 99 steps
+2024-03-25T19:17:06 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-25T19:17:06 [info]: Got 7 friendships
+2024-03-25T19:17:06 [info]: Got 2 follower followships
+2024-03-25T19:17:06 [info]: Got 6 followships
+2024-03-25T19:17:06 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-25T19:17:06 [info]: Got 1 shopping lists
+2024-03-25T19:17:06 [info]: Successfully retrieved 6 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-25T19:17:06 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-25T19:17:06 [info]: Got 0 shoppingListRecipes
+2024-03-25T19:17:07 [info]: Successfully retrieved 3 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-25T19:17:08 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:02 [info]: Server is running at http://localhost:3000
+2024-03-26T17:15:17 [info]: Got 0 toolStocks
+2024-03-26T17:15:17 [info]: Got 11 ingredients
+2024-03-26T17:15:17 [info]: Got 34 recipeCategories
+2024-03-26T17:15:17 [info]: Got 3 tools
+2024-03-26T17:15:17 [info]: Got 14 recipeIngredients
+2024-03-26T17:15:17 [info]: Got 1 recipes
+2024-03-26T17:15:17 [info]: Got 2 recipeTools
+2024-03-26T17:15:17 [info]: Got 4 recipeSteps
+2024-03-26T17:15:17 [info]: Got 99 steps
+2024-03-26T17:15:17 [info]: Got 297 discoverRecipes
+2024-03-26T17:15:17 [info]: Got 7 friendships
+2024-03-26T17:15:17 [info]: Got 6 followships
+2024-03-26T17:15:17 [info]: Got 2 follower followships
+2024-03-26T17:15:17 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:17 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:17 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:18 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:18 [info]: Got 1 shopping lists
+2024-03-26T17:15:18 [info]: Successfully retrieved 6 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:18 [info]: Got 0 shoppingListRecipes
+2024-03-26T17:15:18 [info]: Successfully retrieved 3 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:19 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:49 [info]: Got 3 tools
+2024-03-26T17:15:49 [info]: Got 34 recipeCategories
+2024-03-26T17:15:49 [info]: Got 11 ingredients
+2024-03-26T17:15:49 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:49 [info]: Got 1 recipes
+2024-03-26T17:15:49 [info]: Got 14 recipeIngredients
+2024-03-26T17:15:49 [info]: Got 2 recipeTools
+2024-03-26T17:15:49 [info]: Got 99 steps
+2024-03-26T17:15:49 [info]: Got 4 recipeSteps
+2024-03-26T17:15:49 [info]: Got 0 toolStocks
+2024-03-26T17:15:49 [info]: Got 297 discoverRecipes
+2024-03-26T17:15:49 [info]: Got 7 friendships
+2024-03-26T17:15:49 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:49 [info]: Got 2 follower followships
+2024-03-26T17:15:49 [info]: Got 6 followships
+2024-03-26T17:15:49 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:49 [info]: Got 1 shopping lists
+2024-03-26T17:15:49 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:49 [info]: Got 0 shoppingListRecipes
+2024-03-26T17:15:49 [info]: Successfully retrieved 6 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:49 [info]: Successfully retrieved 3 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:15:51 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:16:58 [info]: Got 11 ingredients
+2024-03-26T17:16:58 [info]: Got 0 toolStocks
+2024-03-26T17:16:58 [info]: Got 1 recipes
+2024-03-26T17:16:58 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:16:58 [info]: Got 3 tools
+2024-03-26T17:16:58 [info]: Got 34 recipeCategories
+2024-03-26T17:16:58 [info]: Got 14 recipeIngredients
+2024-03-26T17:16:58 [info]: Got 297 discoverRecipes
+2024-03-26T17:16:58 [info]: Got 2 recipeTools
+2024-03-26T17:16:58 [info]: Got 99 steps
+2024-03-26T17:16:58 [info]: Got 4 recipeSteps
+2024-03-26T17:16:58 [info]: Got 7 friendships
+2024-03-26T17:16:58 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:16:58 [info]: Got 6 followships
+2024-03-26T17:16:58 [info]: Got 2 follower followships
+2024-03-26T17:16:58 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:16:59 [info]: Successfully retrieved 6 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:16:59 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:16:59 [info]: Got 0 shoppingListRecipes
+2024-03-26T17:16:59 [info]: Successfully retrieved 3 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:16:59 [info]: Got 1 shopping lists
+2024-03-26T17:16:59 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:17:16 [info]: Got 3 tools
+2024-03-26T17:17:16 [info]: Got 11 ingredients
+2024-03-26T17:17:16 [info]: Got 34 recipeCategories
+2024-03-26T17:17:16 [info]: Got 0 toolStocks
+2024-03-26T17:17:16 [info]: Got 1 recipes
+2024-03-26T17:17:16 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:17:16 [info]: Got 4 recipeSteps
+2024-03-26T17:17:16 [info]: Got 2 recipeTools
+2024-03-26T17:17:16 [info]: Got 297 discoverRecipes
+2024-03-26T17:17:16 [info]: Got 99 steps
+2024-03-26T17:17:17 [info]: Got 7 friendships
+2024-03-26T17:17:17 [info]: Got 14 recipeIngredients
+2024-03-26T17:17:17 [info]: Got 2 follower followships
+2024-03-26T17:17:17 [info]: Got 6 followships
+2024-03-26T17:17:17 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:17:17 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:17:17 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:17:17 [info]: Successfully retrieved 6 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:17:17 [info]: Got 1 shopping lists
+2024-03-26T17:17:17 [info]: Got 0 shoppingListRecipes
+2024-03-26T17:17:17 [info]: Successfully retrieved 3 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:17:18 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:18:55 [info]: Got 0 toolStocks
+2024-03-26T17:18:55 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:18:55 [info]: Got 34 recipeCategories
+2024-03-26T17:18:55 [info]: Got 1 recipes
+2024-03-26T17:18:55 [info]: Got 3 tools
+2024-03-26T17:18:55 [info]: Got 11 ingredients
+2024-03-26T17:18:55 [info]: Got 2 recipeTools
+2024-03-26T17:18:55 [info]: Got 99 steps
+2024-03-26T17:18:55 [info]: Got 14 recipeIngredients
+2024-03-26T17:18:55 [info]: Got 297 discoverRecipes
+2024-03-26T17:18:55 [info]: Got 7 friendships
+2024-03-26T17:18:55 [info]: Got 4 recipeSteps
+2024-03-26T17:18:55 [info]: Got 6 followships
+2024-03-26T17:18:55 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:18:55 [info]: Got 2 follower followships
+2024-03-26T17:18:55 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:18:55 [info]: Got 1 shopping lists
+2024-03-26T17:18:56 [info]: Got 0 shoppingListRecipes
+2024-03-26T17:18:56 [info]: Successfully retrieved 6 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:18:56 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:18:56 [info]: Successfully retrieved 3 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:18:57 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:19:55 [info]: Got 1 recipes
+2024-03-26T17:19:55 [info]: Got 0 toolStocks
+2024-03-26T17:19:55 [info]: Got 34 recipeCategories
+2024-03-26T17:19:55 [info]: Got 3 tools
+2024-03-26T17:19:55 [info]: Got 11 ingredients
+2024-03-26T17:19:55 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:19:55 [info]: Got 14 recipeIngredients
+2024-03-26T17:19:55 [info]: Got 99 steps
+2024-03-26T17:19:55 [info]: Got 2 recipeTools
+2024-03-26T17:19:55 [info]: Got 4 recipeSteps
+2024-03-26T17:19:55 [info]: Got 297 discoverRecipes
+2024-03-26T17:19:55 [info]: Got 7 friendships
+2024-03-26T17:19:55 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:19:55 [info]: Got 2 follower followships
+2024-03-26T17:19:55 [info]: Got 6 followships
+2024-03-26T17:19:55 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:19:55 [info]: Got 1 shopping lists
+2024-03-26T17:19:55 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:19:55 [info]: Successfully retrieved 6 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:19:55 [info]: Got 0 shoppingListRecipes
+2024-03-26T17:19:57 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:19:57 [info]: Successfully retrieved 3 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:22:24 [info]: Got 34 recipeCategories
+2024-03-26T17:22:24 [info]: Got 1 recipes
+2024-03-26T17:22:24 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:22:24 [info]: Got 0 toolStocks
+2024-03-26T17:22:24 [info]: Got 3 tools
+2024-03-26T17:22:24 [info]: Got 11 ingredients
+2024-03-26T17:22:24 [info]: Got 14 recipeIngredients
+2024-03-26T17:22:25 [info]: Got 99 steps
+2024-03-26T17:22:25 [info]: Got 2 recipeTools
+2024-03-26T17:22:25 [info]: Got 4 recipeSteps
+2024-03-26T17:22:25 [info]: Got 7 friendships
+2024-03-26T17:22:25 [info]: Got 6 followships
+2024-03-26T17:22:25 [info]: Got 2 follower followships
+2024-03-26T17:22:25 [info]: Got 297 discoverRecipes
+2024-03-26T17:22:25 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:22:25 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:22:25 [info]: Got 1 shopping lists
+2024-03-26T17:22:25 [info]: Successfully retrieved 6 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:22:25 [info]: Got 0 shoppingListRecipes
+2024-03-26T17:22:25 [info]: Successfully retrieved 3 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:22:25 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T17:22:26 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-03-26T19:26:03 [info]: Server is running at http://localhost:3000

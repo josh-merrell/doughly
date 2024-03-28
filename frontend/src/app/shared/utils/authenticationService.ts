@@ -41,6 +41,8 @@ export class AuthService {
   ) as Observable<Profile | null>;
   private profile_subscription?: RealtimeChannel;
 
+  public unsavedPushToken: string | null = null;
+
   isProfile(obj: any): obj is Profile {
     return (
       obj && typeof obj.user_id === 'string' && typeof obj.email === 'string'
@@ -63,6 +65,7 @@ export class AuthService {
     // The state of the user's profile is dependent on their being a user. If no user is set, there shouldn't be a profile.
     this.$user.subscribe((user) => {
       if (user) {
+        console.log('initial got user: ' + user.id)
         // We only make changes if the user is different
         if (user.id !== this.user_id) {
           const user_id = user.id;
@@ -75,9 +78,19 @@ export class AuthService {
             .match({ user_id: user_id })
             .single()
             .then((res) => {
+              console.log('initial got profile: ' + JSON.stringify(res.data))
               // Update our profile BehaviorSubject with the current value
               this._$profile.next(this.isProfile(res.data) ? res.data : null);
 
+              // If there is an unsaved pushToken, update the profile with it
+              if (this.unsavedPushToken) {
+                console.log('save pushToken: ' + this.unsavedPushToken)
+                this.updateField('pushToken', this.unsavedPushToken).subscribe(
+                  () => {
+                    this.unsavedPushToken = null;
+                  }
+                );
+              }
               // Listen to any changes to our user's profile using Supabase Realtime
               this.profile_subscription = this.supabase.supabase
                 .channel('public:profiles')
@@ -296,6 +309,7 @@ export class AuthService {
       ...profile,
       updated_at: new Date(),
     };
+    console.log('updateProfile: ' + JSON.stringify(update));
     // upsert the update into the 'profiles' table, then update the profile BehaviorSubject with the new profile
     return from(
       this.supabase.supabase
@@ -305,9 +319,9 @@ export class AuthService {
         .select('*')
         .single()
         .then(({ data, error }) => {
-          if (error) console.error('Error updating profile:', error);
+          if (error)
+            console.error('Error updating profile:', JSON.stringify(error));
           if (data !== null && data !== undefined) {
-            console.log('updateProfile', data);
             this._$profile.next(data);
             return data;
           }
@@ -342,6 +356,8 @@ export class AuthService {
       [field]: value,
       updated_at: new Date(),
     };
+    console.log('updateProfileField: ' + JSON.stringify(update));
+    console.log('user_id: ' + this.user_id);
     return from(
       this.supabase.supabase
         .from('profiles')
@@ -350,7 +366,6 @@ export class AuthService {
         .select('*')
         .then(({ data, error }) => {
           if (error) throw error;
-
           const newProfile = {
             user_id: data[0].user_id,
             email: data[0].email,
@@ -362,6 +377,7 @@ export class AuthService {
             city: data[0].city,
             state: data[0].state,
           };
+          console.log('updatedProfile', newProfile);
           this._$profile.next(newProfile);
           return data;
         })

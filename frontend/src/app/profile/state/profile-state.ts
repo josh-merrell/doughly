@@ -19,6 +19,8 @@ export interface Profile {
 
   // settings
   checkIngredientStock: boolean;
+  notifyOnLowStock: string;
+  notifyOnNoStock: string;
 }
 
 export interface ProfileState {
