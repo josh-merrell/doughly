@@ -41,6 +41,8 @@ export class AuthService {
   ) as Observable<Profile | null>;
   private profile_subscription?: RealtimeChannel;
 
+  public unsavedPushToken: string | null = null;
+
   isProfile(obj: any): obj is Profile {
     return (
       obj && typeof obj.user_id === 'string' && typeof obj.email === 'string'
@@ -92,6 +94,16 @@ export class AuthService {
                   (payload: any) => {
                     // Update our profile BehaviorSubject with the newest value
                     this._$profile.next(payload.new);
+
+                    // If there is an unsaved pushToken, update the profile with it
+                    if (this.unsavedPushToken) {
+                      this.updateField(
+                        'pushToken',
+                        this.unsavedPushToken
+                      ).subscribe(() => {
+                        this.unsavedPushToken = null;
+                      });
+                    }
                   }
                 )
                 .subscribe();
