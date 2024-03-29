@@ -10,22 +10,20 @@ export class PushTokenService {
   public unsavedPushToken: WritableSignal<string | null> = signal(null);
 
   constructor(private http: HttpClient) {
-    effect(() => {
-      if (this.unsavedPushToken()) {
-        this.savePushToken(this.unsavedPushToken()!);
-      }
-    });
   }
 
   public savePushToken(token: string) {
     this.http.post(this.API_URL, { token }).subscribe(
-      (response) => {
-        console.log('Push token saved to server');
-        this.unsavedPushToken.set(null);
+      () => {
+        console.log('Push token saved to server for user.');
       },
       (error) => {
-        console.error('Error saving push token to server');
+        console.error('Error saving push token to server: ', error);
       }
     );
+  }
+
+  public getOtherUserPushTokens(userID: string) {
+    return this.http.get<string[]>(`${this.API_URL}/${userID}`);
   }
 }

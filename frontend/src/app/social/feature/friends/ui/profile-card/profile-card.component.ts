@@ -12,6 +12,7 @@ import { Friendship } from 'src/app/social/state/friendship-state';
 import { Store } from '@ngrx/store';
 import { selectFriendshipByFriendID } from 'src/app/social/state/friendship-selectors';
 import { selectFollowshipByFollowingID } from 'src/app/social/state/followship-selectors';
+import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 
 @Component({
   selector: 'dl-profile-card',
@@ -29,7 +30,7 @@ export class ProfileCardComponent {
   public followship: WritableSignal<Friendship | null> = signal(null);
   public initials: string = '';
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private pushTokenService: PushTokenService) {}
 
   ngOnInit(): void {
     this.initials = this.profile.nameFirst[0] + this.profile.nameLast[0];
@@ -58,5 +59,23 @@ export class ProfileCardComponent {
             : { exists: false, followshipID: 0 }
         );
       });
+  }
+
+  pingUser() {
+    console.log('Pinging user: ', this.profile.userID);
+    // get the push token(s) for the user
+    this.pushTokenService.getOtherUserPushTokens(this.profile.userID).subscribe(
+      (pushTokens) => {
+        console.log('Got push tokens for user: ', pushTokens);
+        // send a push notification to the user
+        pushTokens.forEach((pushToken) => {
+          console.log('Sending push notification to user: ', pushToken);
+          // send push notification
+        });
+      },
+      (error) => {
+        console.error('Error getting push tokens for user: ', error);
+      }
+    );
   }
 }
