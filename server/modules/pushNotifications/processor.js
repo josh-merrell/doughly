@@ -85,6 +85,22 @@ module.exports = ({ db }) => {
     return tokens;
   }
 
+  async function getOtherUserPushTokens(options) {
+    const { userID } = options;
+    if (!userID) {
+      throw errorGen('userID is required', 400);
+    }
+
+    const { data: tokens, error } = await db.from('pushTokens').select().eq('userID', userID);
+    if (error) {
+      global.logger.error(`Error getting user tokens: ${error.message}`);
+      throw errorGen('Error getting user tokens', 500);
+    }
+
+    global.logger.info(`Got ${tokens.length} push tokens for other user: ${userID}`);
+    return tokens;
+  }
+
   async function update(options) {
     const { token, userID } = options;
     if (!token) {
@@ -102,6 +118,7 @@ module.exports = ({ db }) => {
   return {
     get: {
       userTokens,
+      otherUser: getOtherUserPushTokens,
     },
     add: {
       token: addToken,

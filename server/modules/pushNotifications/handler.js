@@ -17,6 +17,24 @@ async function getUserPushTokens(req, res) {
   }
 }
 
+async function getOtherUserPushTokens(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { userID } = req.params;
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.get.otherUser({
+      userID,
+      authorization,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'pushNotifications' 'getUserPushToken': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 async function addPushToken(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
@@ -74,6 +92,7 @@ async function removeUserPushTokens(req, res) {
 
 module.exports = {
   getUserPushTokens,
+  getOtherUserPushTokens,
   addPushToken,
   removePushToken,
   removeUserPushTokens,

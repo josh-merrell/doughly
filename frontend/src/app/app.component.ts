@@ -35,6 +35,7 @@ import {
 } from '@capacitor/push-notifications';
 
 import { AuthService } from './shared/utils/authenticationService';
+import { PushTokenService } from './shared/utils/pushTokenService';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -55,7 +56,8 @@ export class AppComponent {
     public store: Store,
     private router: Router,
     private zone: NgZone,
-    public authService: AuthService
+    public authService: AuthService,
+    public pushTokenService: PushTokenService
   ) {
     // listen for deep-links
     this.initializeApp();
@@ -147,7 +149,7 @@ export class AppComponent {
       alert('Push registration success, token: ' + token.value);
       console.log('got unsaved pushToken: ' + token.value);
       // Send the token to the server
-      this.authService.unsavedPushToken = token.value;
+      this.pushTokenService.unsavedPushToken.set(token.value);
     });
     // Some issue with our setup and push will not work
     PushNotifications.addListener('registrationError', (error: any) => {

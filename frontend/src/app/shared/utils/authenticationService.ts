@@ -10,6 +10,7 @@ import {
   tap,
 } from 'rxjs';
 import { SupabaseService } from './supabase.service';
+import { PushTokenService } from './pushTokenService';
 
 export interface Profile {
   user_id: string;
@@ -41,15 +42,16 @@ export class AuthService {
   ) as Observable<Profile | null>;
   private profile_subscription?: RealtimeChannel;
 
-  public unsavedPushToken: string | null = null;
-
   isProfile(obj: any): obj is Profile {
     return (
       obj && typeof obj.user_id === 'string' && typeof obj.email === 'string'
     );
   }
 
-  constructor(private supabase: SupabaseService) {
+  constructor(
+    private supabase: SupabaseService,
+    private pushTokenService: PushTokenService
+  ) {
     // Check the current session on initialization
     this.supabase.supabase.auth.getSession().then(({ data, error }) => {
       if (data && data.session && !error) {
@@ -65,7 +67,7 @@ export class AuthService {
     // The state of the user's profile is dependent on their being a user. If no user is set, there shouldn't be a profile.
     this.$user.subscribe((user) => {
       if (user) {
-        console.log('initial got user: ' + user.id)
+        console.log('initial got user: ' + user.id);
         // We only make changes if the user is different
         if (user.id !== this.user_id) {
           const user_id = user.id;
@@ -78,18 +80,21 @@ export class AuthService {
             .match({ user_id: user_id })
             .single()
             .then((res) => {
-              console.log('initial got profile: ' + JSON.stringify(res.data))
+              console.log('initial got profile: ' + JSON.stringify(res.data));
               // Update our profile BehaviorSubject with the current value
               this._$profile.next(this.isProfile(res.data) ? res.data : null);
 
               // If there is an unsaved pushToken, update the profile with it
-              if (this.unsavedPushToken) {
-                console.log('save pushToken: ' + this.unsavedPushToken)
-                this.updateField('pushToken', this.unsavedPushToken).subscribe(
-                  () => {
-                    this.unsavedPushToken = null;
-                  }
+              if (this.pushTokenService.unsavedPushToken()) {
+                console.log(
+                  'save pushToken: ' + this.pushTokenService.unsavedPushToken()
                 );
+                // this.updateField(
+                //   'pushToken',
+                //   this.pushTokenService.unsavedPushToken()
+                // ).subscribe(() => {
+                //   this.pushTokenService.unsavedPushToken.set(null);
+                // });
               }
               // Listen to any changes to our user's profile using Supabase Realtime
               this.profile_subscription = this.supabase.supabase

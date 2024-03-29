@@ -14,7 +14,16 @@ const removePushTokenSchema_params = {
   },
 };
 
+const getUserPushTokensSchema_params = {
+  type: 'object',
+  required: ['userID'],
+  properties: {
+    userID: { type: 'string' },
+  },
+};
+
 module.exports = {
   newPushTokenSchema_body,
   removePushTokenSchema_params,
+  getUserPushTokensSchema_params,
 };
