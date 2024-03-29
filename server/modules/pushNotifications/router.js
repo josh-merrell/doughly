@@ -11,7 +11,7 @@ const h = handler;
 
 router.use(authenticateJWT);
 
-router.get('/:userID', routeValidator(getUserPushTokensSchema_params), errorCatcher(h.getOtherUserPushTokens));
+router.get('/:userID', routeValidator(getUserPushTokensSchema_params, 'params'), errorCatcher(h.getOtherUserPushTokens));
 router.get('/', errorCatcher(h.getUserPushTokens));
 router.post('/', routeValidator(newPushTokenSchema_body, 'body'), errorCatcher(h.addPushToken));
 router.delete('/:token', routeValidator(removePushTokenSchema_params, 'params'), errorCatcher(h.removePushToken));
