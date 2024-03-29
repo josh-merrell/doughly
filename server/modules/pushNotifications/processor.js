@@ -10,7 +10,7 @@ module.exports = ({ db }) => {
     }
 
     // check for existing entry for this token
-    const existingToken = await db.from('pushTokens').select().eq('pushToken', token);
+    const existingToken = await db.from('pushTokens').select().eq('pushToken', token).eq('userID', userID);
     const createTime = new Date().toISOString();
     if (existingToken.data.length > 0) {
       // we should just update the 'createTime' field

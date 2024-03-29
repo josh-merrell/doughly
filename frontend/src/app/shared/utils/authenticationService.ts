@@ -89,12 +89,9 @@ export class AuthService {
                 console.log(
                   'save pushToken: ' + this.pushTokenService.unsavedPushToken()
                 );
-                // this.updateField(
-                //   'pushToken',
-                //   this.pushTokenService.unsavedPushToken()
-                // ).subscribe(() => {
-                //   this.pushTokenService.unsavedPushToken.set(null);
-                // });
+                this.pushTokenService.savePushToken(
+                  this.pushTokenService.unsavedPushToken()!
+                );
               }
               // Listen to any changes to our user's profile using Supabase Realtime
               this.profile_subscription = this.supabase.supabase
@@ -110,6 +107,17 @@ export class AuthService {
                   (payload: any) => {
                     // Update our profile BehaviorSubject with the newest value
                     this._$profile.next(payload.new);
+
+                    // If there is an unsaved pushToken, update the profile with it
+                    if (this.pushTokenService.unsavedPushToken()) {
+                      console.log(
+                        'save pushToken: ' +
+                          this.pushTokenService.unsavedPushToken()
+                      );
+                      this.pushTokenService.savePushToken(
+                        this.pushTokenService.unsavedPushToken()!
+                      );
+                    }
                   }
                 )
                 .subscribe();
