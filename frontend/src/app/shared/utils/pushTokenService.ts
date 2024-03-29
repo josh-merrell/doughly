@@ -15,8 +15,7 @@ export class PushTokenService {
   public savePushToken(token: string) {
     this.http.post(this.API_URL, { token }).subscribe(
       () => {
-        console.log('Push token saved to server');
-        this.unsavedPushToken.set(null);
+        console.log('Push token saved to server for user.');
       },
       (error) => {
         console.error('Error saving push token to server: ', error);

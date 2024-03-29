@@ -107,6 +107,17 @@ export class AuthService {
                   (payload: any) => {
                     // Update our profile BehaviorSubject with the newest value
                     this._$profile.next(payload.new);
+
+                    // If there is an unsaved pushToken, update the profile with it
+                    if (this.pushTokenService.unsavedPushToken()) {
+                      console.log(
+                        'save pushToken: ' +
+                          this.pushTokenService.unsavedPushToken()
+                      );
+                      this.pushTokenService.savePushToken(
+                        this.pushTokenService.unsavedPushToken()!
+                      );
+                    }
                   }
                 )
                 .subscribe();
