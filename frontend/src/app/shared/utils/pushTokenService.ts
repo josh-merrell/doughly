@@ -22,4 +22,8 @@ export class PushTokenService {
       }
     );
   }
+
+  public getOtherUserPushTokens(userID: string) {
+    return this.http.get<string[]>(`${this.API_URL}/${userID}`);
+  }
 }
