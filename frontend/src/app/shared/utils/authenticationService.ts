@@ -89,12 +89,9 @@ export class AuthService {
                 console.log(
                   'save pushToken: ' + this.pushTokenService.unsavedPushToken()
                 );
-                // this.updateField(
-                //   'pushToken',
-                //   this.pushTokenService.unsavedPushToken()
-                // ).subscribe(() => {
-                //   this.pushTokenService.unsavedPushToken.set(null);
-                // });
+                this.pushTokenService.savePushToken(
+                  this.pushTokenService.unsavedPushToken()!
+                );
               }
               // Listen to any changes to our user's profile using Supabase Realtime
               this.profile_subscription = this.supabase.supabase
