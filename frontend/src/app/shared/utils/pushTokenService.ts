@@ -3,8 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import {
+  selectFollowerByUserID,
+  selectFollowers,
   selectFriendByUserID,
   selectFriends,
+  selectSearchResults,
 } from 'src/app/profile/state/profile-selectors';
 import { Observable, catchError, filter, from, mergeMap, of, take } from 'rxjs';
 
@@ -44,7 +47,7 @@ export class PushTokenService {
     });
   }
 
-  public getPushTokensAndSendNotification(
+  public getFriendPushTokensAndSendNotification(
     settingName,
     type,
     data
@@ -82,6 +85,83 @@ export class PushTokenService {
               })
             )
           )
+        )
+      )
+    );
+  }
+
+  public getFollowerPushTokensAndSendNotification(
+    settingName,
+    type,
+    data
+  ): Observable<any> {
+    return this.store.select(selectFollowers).pipe(
+      take(1),
+      catchError((error) => {
+        console.error('Error selecting followers: ', error);
+        return of([]);
+      }),
+      mergeMap((followers) => from(followers)),
+      mergeMap((follower: any) =>
+        this.store.select(selectFollowerByUserID(follower.userID)).pipe(
+          take(1),
+          filter(
+            (followerProfile) =>
+              !(
+                followerProfile[settingName] === 'None' ||
+                followerProfile[settingName] === 'Email Only'
+              )
+          ),
+          mergeMap((followerProfile) =>
+            this.getOtherUserPushTokens(followerProfile.userID).pipe(
+              catchError((error) => {
+                console.error('Error getting push tokens for user: ', error);
+                return of([]);
+              })
+            )
+          ),
+          mergeMap((tokens) =>
+            this.sendPushNotification(tokens, type, data).pipe(
+              catchError((error) => {
+                console.error('Error sending push notification: ', error);
+                return of(null);
+              })
+            )
+          )
+        )
+      )
+    );
+  }
+
+  public getSearchResultUserPushTokensAndSendNotification(
+    targetUserID: string,
+    settingName,
+    type,
+    data
+  ): Observable<any> {
+    return this.store.select(selectSearchResults).pipe(
+      take(1),
+      catchError((error) => {
+        console.error('Error selecting search results: ', error);
+        return of([]);
+      }),
+      mergeMap((searchResults) => from(searchResults)),
+      filter((result: any) => result.userID === targetUserID),
+      filter((targetUser) => targetUser[settingName] !== 'None' || targetUser[settingName] !== 'Email Only'),
+      mergeMap((targetUser) =>
+        this.getOtherUserPushTokens(targetUser.userID).pipe(
+          catchError((error) => {
+            console.error('Error getting push tokens for user: ', error);
+            return of([]);
+          })
+        )
+      ),
+      mergeMap((tokens) =>
+        this.sendPushNotification(tokens, type, data).pipe(
+          catchError((error) => {
+            console.error('Error sending push notification: ', error);
+            return of(null);
+          })
         )
       )
     );

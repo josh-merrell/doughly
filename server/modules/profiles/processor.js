@@ -91,7 +91,8 @@ module.exports = ({ db, dbPublic }) => {
       notifyExpiredStock: profile.notifyExpiredStock,
       notifyFriendCreateRecipe: profile.notifyFriendCreateRecipe,
       notifyFolloweeCreateRecipe: profile.notifyFolloweeCreateRecipe,
-      pushToken: profile.pushToken,
+      notifyFriendRequest: profile.notifyFriendRequest,
+      notifyNewFollower: profile.notifyNewFollower,
     };
     return result;
   }

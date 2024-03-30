@@ -42,8 +42,7 @@
         <h3 class="mt-dl-6 text-dl-6 font-dl-3 text-dl-blue-3">
           Notifications
         </h3>
-        <div class="flex flex-col max-h-dl-18 overflow-y-auto">
-
+        <div class="flex max-h-dl-18 flex-col overflow-y-auto">
           <!-- Notify on Low Ingredient Stock -->
           <div
             id="form-notifyOnLowStock"
@@ -147,7 +146,7 @@
               </mat-select>
             </mat-form-field>
           </div>
-  
+
           <!-- Notify Followee Created Recipe -->
           <div
             id="form-notifyFolloweeCreatedRecipe"
@@ -168,8 +167,49 @@
               </mat-select>
             </mat-form-field>
           </div>
-        </div>
 
+          <!-- Notify on New Friend Reqest -->
+          <div
+            id="form-notifyFriendRequest"
+            class="relative mt-dl-2 flex flex-row items-center"
+          >
+            <span
+              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
+              >When you receive a friend request</span
+            >
+            <mat-form-field>
+              <mat-select formControlName="notifyFriendRequest">
+                <mat-option
+                  *ngFor="let method of notificationMethods"
+                  [value]="method"
+                >
+                  {{ method }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Notify on New Follower -->
+          <div
+            id="form-notifyNewFollower"
+            class="relative mt-dl-2 flex flex-row items-center"
+          >
+            <span
+              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
+              >When someone follows you</span
+            >
+            <mat-form-field>
+              <mat-select formControlName="notifyNewFollower">
+                <mat-option
+                  *ngFor="let method of notificationMethods"
+                  [value]="method"
+                >
+                  {{ method }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
       </div>
 
       <button

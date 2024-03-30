@@ -64,6 +64,36 @@ function getPayload(type, data) {
           body: `You've got the inside scoop. ${data.recipeAuthor} just shared a new recipe; ${data.recipeName}, for friends only!`,
         },
       };
+    case 'notifyNewFollower':
+      return {
+        message: {
+          newFollower: `${data['followerName']} started following you!`,
+        },
+        notification: {
+          title: 'New Follower',
+          body: `${data.followerName} is now following you`,
+        },
+      };
+    case 'notifyRequestFriendship':
+      return {
+        message: {
+          friendRequest: `${data['requesterName']} sent you a friend request!`,
+        },
+        notification: {
+          title: 'Friend Request',
+          body: `${data.requesterName} wants to be your friend`,
+        },
+      };
+    case 'notifyConfirmFriendship':
+      return {
+        message: {
+          friendRequest: `${data['friendName']} accepted your friend request!`,
+        },
+        notification: {
+          title: 'Friend Request Accepted',
+          body: `${data.friendName} accepted your friend request`,
+        },
+      };
 
     default:
       return {
