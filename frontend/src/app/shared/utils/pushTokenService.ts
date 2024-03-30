@@ -9,8 +9,7 @@ export class PushTokenService {
   private API_URL = `${environment.BACKEND}/pushTokens`;
   public unsavedPushToken: WritableSignal<string | null> = signal(null);
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   public savePushToken(token: string) {
     this.http.post(this.API_URL, { token }).subscribe(
@@ -25,5 +24,18 @@ export class PushTokenService {
 
   public getOtherUserPushTokens(userID: string) {
     return this.http.get<string[]>(`${this.API_URL}/${userID}`);
+  }
+
+  public sendPushNotification(
+    destTokens: Array<string>,
+    type: string,
+    data: any
+  ) {
+    console.log(`Sending "${type}" notification to: ${destTokens.length} users with data: `, JSON.stringify(data));
+    return this.http.post(`${this.API_URL}/notification`, {
+      destTokens,
+      type,
+      data,
+    });
   }
 }

@@ -10,39 +10,21 @@ const app = initializeApp({
 async function sendTokenNotifications(destTokens, type, data) {
   for (const token of destTokens) {
     const payload = getPayload(type, data);
-    // const message = {
-    //   data: payload.message,
-    //   notification: payload.notification,
-    //   android: payload.android,
-    //   token,
-    // };
-    const message = {
-      notification: {
-        title: 'PING',
-        body: 'You have a new ping!',
-      },
-      android: {
-        notification: {
-          imageUrl: 'https://s3.us-west-2.amazonaws.com/dl.images/recipe/a525810e-5531-4f97-95a4-39a082f7416b/beef-broccoli.jpg',
-        },
-      },
-      apns: {
-        payload: {
-          aps: {
-            'mutable-content': 1,
-          },
-        },
-        fcm_options: {
-          image: 'https://s3.us-west-2.amazonaws.com/dl.images/recipe/a525810e-5531-4f97-95a4-39a082f7416b/beef-broccoli.jpg',
-        },
-      },
-      webpush: {
-        headers: {
-          image: 'https://s3.us-west-2.amazonaws.com/dl.images/recipe/a525810e-5531-4f97-95a4-39a082f7416b/beef-broccoli.jpg',
-        },
-      },
+    let message = {
+      data: payload.message,
+      notification: payload.notification,
       token,
     };
+    if (data['imageUrl']) {
+      message = addImage(message, data['imageUrl']);
+    }
+    // const message = {
+    //   notification: {
+    //     title: 'PING',
+    //     body: 'You have a new ping!',
+    //   },
+    //   token,
+    // };
     global.logger.info(`Sending token message: ${JSON.stringify(message)}`);
     await sendTokenNotification(message);
   }
@@ -64,22 +46,62 @@ function getPayload(type, data) {
   switch (type) {
     case 'ping':
       return {
-        // message: { score: data['score'] },
+        message: { score: data['score'] },
         notification: {
           title: 'Ping!',
           body: 'You have a new ping!',
         },
-        android: {
-          notification: {
-            imageUrl: data['imageUrl'],
-          },
+      };
+    case 'notifyFollowersPublicRecipeCreated':
+      return {
+        message: {
+          newRecipe: `${data['recipeAuthor']} published a new recipe: ${data['recipeName']}`,
+        },
+        notification: {
+          title: 'New Recipe on Doughly',
+          body: `Check out ${data.recipeName}, a new public recipe published by ${data.recipeAuthor}, who you follow!`,
         },
       };
+    case 'notifyFriendsHeirloomRecipeCreated':
+      return {
+        message: {
+          newRecipe: `${data['recipeAuthor']} published a new recipe: ${data['recipeName']}`,
+        },
+        notification: {
+          title: 'New Recipe on Doughly',
+          body: `You've got the inside scoop. ${data.recipeAuthor} just shared a new recipe; ${data.recipeName}, for friends only!`,
+        },
+      };
+
     default:
       return {
         message: `default message`,
       };
   }
+}
+
+function addImage(message, imageUrl) {
+  message['android'] = {
+    notification: {
+      imageUrl: imageUrl,
+    },
+  };
+  message['apns'] = {
+    payload: {
+      aps: {
+        'mutable-content': 1,
+      },
+    },
+    fcm_options: {
+      image: imageUrl,
+    },
+  };
+  message['webpush'] = {
+    notification: {
+      imageUrl: imageUrl,
+    },
+  };
+  return message;
 }
 
 module.exports = {
