@@ -342,7 +342,7 @@ export class EditRecipeModalComponent {
                         this.profile().nameLast
                       }`,
                       recipeName: this.form.value.title,
-                      imageUrl: this.newPhotoURL,
+                      imageUrl: this.photoURL || this.newPhotoURL,
                     }
                   )
                   .pipe(
@@ -384,7 +384,7 @@ export class EditRecipeModalComponent {
                         this.profile().nameLast
                       }`,
                       recipeName: this.form.value.title,
-                      imageUrl: this.newPhotoURL,
+                      imageUrl: this.photoURL || this.newPhotoURL,
                     }
                   )
                   .pipe(
