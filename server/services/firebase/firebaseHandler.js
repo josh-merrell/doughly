@@ -3,7 +3,6 @@ const { getMessaging } = require('firebase-admin/messaging');
 const serviceAccount = require('./doughly-d93badfe1987.json');
 
 const app = initializeApp({
-  // credential: applicationDefault(),
   credential: cert(serviceAccount),
 });
 
@@ -13,18 +12,11 @@ async function sendTokenNotifications(destTokens, type, data) {
     let message = {
       data: payload.message,
       notification: payload.notification,
-      token,
+      token: token.pushToken,
     };
     if (data['imageUrl']) {
       message = addImage(message, data['imageUrl']);
     }
-    // const message = {
-    //   notification: {
-    //     title: 'PING',
-    //     body: 'You have a new ping!',
-    //   },
-    //   token,
-    // };
     global.logger.info(`Sending token message: ${JSON.stringify(message)}`);
     await sendTokenNotification(message);
   }
