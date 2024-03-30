@@ -19,6 +19,8 @@ import {
   Subscription,
   catchError,
   filter,
+  from,
+  mergeMap,
   of,
   take,
   takeUntil,
@@ -47,6 +49,7 @@ import {
   selectFollowers,
   selectFriends,
   selectProfile,
+  selectFriendByUserID,
 } from 'src/app/profile/state/profile-selectors';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 
@@ -300,7 +303,7 @@ export class EditRecipeModalComponent {
                 },
               });
             } else {
-              this.sendNotification();
+              this.sendPushNotification();
               this.dialogRef.close('success');
             }
             this.isSubmitting = false;
@@ -308,95 +311,51 @@ export class EditRecipeModalComponent {
       });
   }
 
-  sendNotification() {
+  sendPushNotification() {
     if (!this.form.value.isPublicRecipe && !this.form.value.isHeirloomRecipe) {
       return;
     }
-    if (this.form.value.isPublicRecipe) {
-      this.store
-        .select(selectFriends)
-        .pipe(
-          take(1),
-          catchError((error) => {
-            console.error('Error selecting friends:', error);
-            return of([]); // Return an empty array as fallback
-          })
+    if (
+      this.form.value.isHeirloomRecipe &&
+      this.form.value.isPublicRecipe === false
+    ) {
+      this.pushTokenService
+        .getPushTokensAndSendNotification(
+          'notifyFriendCreateRecipe',
+          'notifyFriendsHeirloomRecipeCreated',
+          {
+            recipeAuthor: `${this.profile().nameFirst} ${
+              this.profile().nameLast
+            }`,
+            recipeName: this.form.value.title,
+            imageUrl: this.photoURL || this.newPhotoURL,
+          }
         )
-        .subscribe((friends) => {
-          friends.forEach((friend) => {
-            this.pushTokenService
-              .getOtherUserPushTokens(friend.userID)
-              .pipe(
-                catchError((error) => {
-                  console.error('Error getting user push tokens:', error);
-                  return of([]); // Return an empty array as fallback
-                })
-              )
-              .subscribe((tokens) => {
-                this.pushTokenService
-                  .sendPushNotification(
-                    tokens,
-                    'notifyFriendsHeirloomRecipeCreated',
-                    {
-                      recipeAuthor: `${this.profile().nameFirst} ${
-                        this.profile().nameLast
-                      }`,
-                      recipeName: this.form.value.title,
-                      imageUrl: this.photoURL || this.newPhotoURL,
-                    }
-                  )
-                  .pipe(
-                    catchError((error) => {
-                      console.error('Error sending push notification:', error);
-                      return of(null); // You might want to handle this differently
-                    })
-                  )
-                  .subscribe();
-              });
-          });
-        });
-    } else if (this.form.value.isHeirloomRecipe) {
-      this.store
-        .select(selectFollowers)
-        .pipe(
-          catchError((error) => {
-            console.error('Error selecting followers:', error);
-            return of([]); // Return an empty array as fallback
-          })
+        .subscribe(
+          () => {},
+          (error) => {
+            console.error('Error sending push notification:', error);
+          }
+        );
+    } else if (this.form.value.isPublicRecipe) {
+      this.pushTokenService
+        .getPushTokensAndSendNotification(
+          'notifyFolloweeCreateRecipe',
+          'notifyFollowersPublicRecipeCreated',
+          {
+            recipeAuthor: `${this.profile().nameFirst} ${
+              this.profile().nameLast
+            }`,
+            recipeName: this.form.value.title,
+            imageUrl: this.photoURL || this.newPhotoURL,
+          }
         )
-        .subscribe((followers) => {
-          followers.forEach((follower) => {
-            this.pushTokenService
-              .getOtherUserPushTokens(follower.userID)
-              .pipe(
-                catchError((error) => {
-                  console.error('Error getting user push tokens:', error);
-                  return of([]); // Return an empty array as fallback
-                })
-              )
-              .subscribe((tokens) => {
-                this.pushTokenService
-                  .sendPushNotification(
-                    tokens,
-                    'notifyFollowersPublicRecipeCreated',
-                    {
-                      recipeAuthor: `${this.profile().nameFirst} ${
-                        this.profile().nameLast
-                      }`,
-                      recipeName: this.form.value.title,
-                      imageUrl: this.photoURL || this.newPhotoURL,
-                    }
-                  )
-                  .pipe(
-                    catchError((error) => {
-                      console.error('Error sending push notification:', error);
-                      return of(null);
-                    })
-                  )
-                  .subscribe();
-              });
-          });
-        });
+        .subscribe(
+          () => {},
+          (error) => {
+            console.error('Error sending push notification:', error);
+          }
+        );
     }
   }
 
