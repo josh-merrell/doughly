@@ -90,10 +90,32 @@ async function removeUserPushTokens(req, res) {
   }
 }
 
+async function sendNotification(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { destTokens, type, data } = req.body;
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.send.notification({
+      userID: req.userID,
+      authorization,
+      destTokens,
+      type,
+      data,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'pushNotifications' 'sendNotification': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 module.exports = {
   getUserPushTokens,
   getOtherUserPushTokens,
   addPushToken,
   removePushToken,
   removeUserPushTokens,
+  sendNotification,
 };

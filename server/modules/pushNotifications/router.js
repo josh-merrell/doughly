@@ -13,6 +13,7 @@ router.use(authenticateJWT);
 
 router.get('/:userID', routeValidator(getUserPushTokensSchema_params, 'params'), errorCatcher(h.getOtherUserPushTokens));
 router.get('/', errorCatcher(h.getUserPushTokens));
+router.post('/notification', errorCatcher(h.sendNotification));
 router.post('/', routeValidator(newPushTokenSchema_body, 'body'), errorCatcher(h.addPushToken));
 router.delete('/:token', routeValidator(removePushTokenSchema_params, 'params'), errorCatcher(h.removePushToken));
 router.delete('/', errorCatcher(h.removeUserPushTokens));
