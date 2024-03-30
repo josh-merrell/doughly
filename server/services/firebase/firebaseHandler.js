@@ -10,10 +10,37 @@ const app = initializeApp({
 async function sendTokenNotifications(destTokens, type, data) {
   for (const token of destTokens) {
     const payload = getPayload(type, data);
+    // const message = {
+    //   data: payload.message,
+    //   notification: payload.notification,
+    //   android: payload.android,
+    //   token,
+    // };
     const message = {
-      data: payload.message,
-      notification: payload.notification,
-      android: payload.android,
+      notification: {
+        title: 'PING',
+        body: 'You have a new ping!',
+      },
+      android: {
+        notification: {
+          imageUrl: 'https://s3.us-west-2.amazonaws.com/dl.images/recipe/a525810e-5531-4f97-95a4-39a082f7416b/beef-broccoli.jpg',
+        },
+      },
+      apns: {
+        payload: {
+          aps: {
+            'mutable-content': 1,
+          },
+        },
+        fcm_options: {
+          image: 'https://s3.us-west-2.amazonaws.com/dl.images/recipe/a525810e-5531-4f97-95a4-39a082f7416b/beef-broccoli.jpg',
+        },
+      },
+      webpush: {
+        headers: {
+          image: 'https://s3.us-west-2.amazonaws.com/dl.images/recipe/a525810e-5531-4f97-95a4-39a082f7416b/beef-broccoli.jpg',
+        },
+      },
       token,
     };
     global.logger.info(`Sending token message: ${JSON.stringify(message)}`);
