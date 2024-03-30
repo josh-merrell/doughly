@@ -121,7 +121,7 @@ module.exports = ({ db }) => {
     if (!destTokens || !type || !data) {
       throw errorGen('destTokens, type, and data are required', 400);
     }
-    global.logger.info(`in sendNotification: destTokens: ${destTokens}, type: ${type}, data: ${data}`);
+    global.logger.info(`in sendNotification: destTokens: ${JSON.stringify(destTokens)}, type: ${type}, data: ${JSON.stringify(data)}`);
 
     // send the notification
     sendTokenNotifications(destTokens, type, data);

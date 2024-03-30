@@ -31,7 +31,6 @@ export class PushTokenService {
     type: string,
     data: any
   ) {
-    console.log(`Sending "${type}" notification to: ${destTokens.length} users with data: `, JSON.stringify(data));
     return this.http.post(`${this.API_URL}/notification`, {
       destTokens,
       type,
