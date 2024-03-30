@@ -17,7 +17,9 @@ import {
   Observable,
   Subject,
   Subscription,
+  catchError,
   filter,
+  of,
   take,
   takeUntil,
 } from 'rxjs';
@@ -41,6 +43,12 @@ import {
 } from 'src/app/shared/utils/formValidator';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import {
+  selectFollowers,
+  selectFriends,
+  selectProfile,
+} from 'src/app/profile/state/profile-selectors';
+import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 
 @Component({
   selector: 'dl-edit-recipe-modal',
@@ -80,6 +88,7 @@ export class EditRecipeModalComponent {
   public photo: any;
   public isPublic!: boolean;
   public isHeirloom!: boolean;
+  private profile: WritableSignal<any> = signal(null);
   newPhotoURL!: string;
 
   constructor(
@@ -88,12 +97,16 @@ export class EditRecipeModalComponent {
     private photoService: PhotoService,
     private dialogRef: MatDialogRef<EditRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private pushTokenService: PushTokenService
   ) {
     this.setForm();
   }
 
   ngOnInit(): void {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.isPublic = this.data.type === 'public' ? true : false;
     this.isHeirloom =
       this.data.type === 'heirloom' || this.data.type === 'public'
@@ -215,7 +228,11 @@ export class EditRecipeModalComponent {
     if (this.croppedImage && this.selectedFile) {
       try {
         const url: string = await this.photoService
-          .getPreSignedPostUrl('recipe', this.selectedFile.name, this.selectedFile.type)
+          .getPreSignedPostUrl(
+            'recipe',
+            this.selectedFile.name,
+            this.selectedFile.type
+          )
           .toPromise();
 
         const uploadResponse = await this.photoService.uploadFileToS3(
@@ -283,11 +300,104 @@ export class EditRecipeModalComponent {
                 },
               });
             } else {
+              this.sendNotification();
               this.dialogRef.close('success');
             }
             this.isSubmitting = false;
           });
       });
+  }
+
+  sendNotification() {
+    if (!this.form.value.isPublicRecipe && !this.form.value.isHeirloomRecipe) {
+      return;
+    }
+    if (this.form.value.isPublicRecipe) {
+      this.store
+        .select(selectFriends)
+        .pipe(
+          take(1),
+          catchError((error) => {
+            console.error('Error selecting friends:', error);
+            return of([]); // Return an empty array as fallback
+          })
+        )
+        .subscribe((friends) => {
+          friends.forEach((friend) => {
+            this.pushTokenService
+              .getOtherUserPushTokens(friend.userID)
+              .pipe(
+                catchError((error) => {
+                  console.error('Error getting user push tokens:', error);
+                  return of([]); // Return an empty array as fallback
+                })
+              )
+              .subscribe((tokens) => {
+                this.pushTokenService
+                  .sendPushNotification(
+                    tokens,
+                    'notifyFriendsHeirloomRecipeCreated',
+                    {
+                      recipeAuthor: `${this.profile().nameFirst} ${
+                        this.profile().nameLast
+                      }`,
+                      recipeName: this.form.value.title,
+                      imageUrl: this.newPhotoURL,
+                    }
+                  )
+                  .pipe(
+                    catchError((error) => {
+                      console.error('Error sending push notification:', error);
+                      return of(null); // You might want to handle this differently
+                    })
+                  )
+                  .subscribe();
+              });
+          });
+        });
+    } else if (this.form.value.isHeirloomRecipe) {
+      this.store
+        .select(selectFollowers)
+        .pipe(
+          catchError((error) => {
+            console.error('Error selecting followers:', error);
+            return of([]); // Return an empty array as fallback
+          })
+        )
+        .subscribe((followers) => {
+          followers.forEach((follower) => {
+            this.pushTokenService
+              .getOtherUserPushTokens(follower.userID)
+              .pipe(
+                catchError((error) => {
+                  console.error('Error getting user push tokens:', error);
+                  return of([]); // Return an empty array as fallback
+                })
+              )
+              .subscribe((tokens) => {
+                this.pushTokenService
+                  .sendPushNotification(
+                    tokens,
+                    'notifyFollowersPublicRecipeCreated',
+                    {
+                      recipeAuthor: `${this.profile().nameFirst} ${
+                        this.profile().nameLast
+                      }`,
+                      recipeName: this.form.value.title,
+                      imageUrl: this.newPhotoURL,
+                    }
+                  )
+                  .pipe(
+                    catchError((error) => {
+                      console.error('Error sending push notification:', error);
+                      return of(null);
+                    })
+                  )
+                  .subscribe();
+              });
+          });
+        });
+    }
   }
 
   ngOnDestroy(): void {
