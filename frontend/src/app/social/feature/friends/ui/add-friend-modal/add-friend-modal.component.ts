@@ -7,6 +7,7 @@ import { Observable, filter, take } from 'rxjs';
 import {
   selectError as selectErrorProfile,
   selectLoading as selectLoadingProfile,
+  selectProfile,
   selectSearchResults as selectSearchResultsProfile,
 } from 'src/app/profile/state/profile-selectors';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
@@ -27,6 +28,7 @@ import {
 } from 'src/app/social/state/followship-selectors';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 
 @Component({
   selector: 'dl-add-friend-modal',
@@ -43,8 +45,13 @@ export class AddFriendModalComponent {
   public followshipStatuses: WritableSignal<any[]> = signal([]);
   public buttonTexts: WritableSignal<any[]> = signal([]);
   public isLoading: WritableSignal<boolean> = signal(false);
+  private profile: WritableSignal<any> = signal({});
 
-  constructor(private store: Store, public dialog: MatDialog) {
+  constructor(
+    private store: Store,
+    public dialog: MatDialog,
+    private pushTokenService: PushTokenService
+  ) {
     this.store.select(selectSearchResultsProfile).subscribe((searchResults) => {
       this.searchResults.set(searchResults);
       const friendshipStatuses = searchResults.map(() => ({
@@ -67,7 +74,11 @@ export class AddFriendModalComponent {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
+  }
 
   onFriendshipLoaded(index: number, friendshipStatus: any): void {
     const friendshipStatuses = [...this.friendshipStatuses()];
@@ -207,6 +218,8 @@ export class AddFriendModalComponent {
                     },
                   });
                 }
+                // notify user of confirmed friendship
+                this.sendPushNotification('notifyConfirmFriendship');
                 this.isLoading.set(false);
               });
           });
@@ -276,6 +289,8 @@ export class AddFriendModalComponent {
                     },
                   });
                 }
+                // notify user of friend request
+                this.sendPushNotification('notifyRequestFriendship');
                 this.isLoading.set(false);
               });
           });
@@ -353,9 +368,76 @@ export class AddFriendModalComponent {
                     },
                   });
                 }
+                //notify user of followship request
+                this.sendPushNotification('notifyNewFollower');
                 this.isLoading.set(false);
               });
           });
+    }
+  }
+
+  sendPushNotification(type: string) {
+    switch (type) {
+      case 'notifyConfirmFriendship':
+        this.pushTokenService
+          .getSearchResultUserPushTokensAndSendNotification(
+            this.searchResults()[this.selectedCard()].userID,
+            'notifyFriendRequest',
+            'notifyConfirmFriendship',
+            {
+              friendName: `${this.profile().nameFirst} ${
+                this.profile().nameLast
+              }`,
+            }
+          )
+          .subscribe(
+            () => {},
+            (error) => {
+              console.error('Error sending push notification:', error);
+            }
+          );
+        return null;
+
+      case 'notifyRequestFriendship':
+        this.pushTokenService
+          .getSearchResultUserPushTokensAndSendNotification(
+            this.searchResults()[this.selectedCard()].userID,
+            'notifyFriendRequest',
+            'notifyRequestFriendship',
+            {
+              requesterName: `${this.profile().nameFirst} ${
+                this.profile().nameLast
+              }`,
+            }
+          )
+          .subscribe(
+            () => {},
+            (error) => {
+              console.error('Error sending push notification:', error);
+            }
+          );
+        return null;
+      case 'notifyNewFollower':
+        this.pushTokenService
+          .getSearchResultUserPushTokensAndSendNotification(
+            this.searchResults()[this.selectedCard()].userID,
+            'notifyNewFollower',
+            'notifyNewFollower',
+            {
+              followerName: `${this.profile().nameFirst} ${
+                this.profile().nameLast
+              }`,
+            }
+          )
+          .subscribe(
+            () => {},
+            (error) => {
+              console.error('Error sending push notification:', error);
+            }
+          );
+        return null;
+      default:
+        return null;
     }
   }
 }

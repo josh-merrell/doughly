@@ -320,7 +320,7 @@ export class EditRecipeModalComponent {
       this.form.value.isPublicRecipe === false
     ) {
       this.pushTokenService
-        .getPushTokensAndSendNotification(
+        .getFriendPushTokensAndSendNotification(
           'notifyFriendCreateRecipe',
           'notifyFriendsHeirloomRecipeCreated',
           {
@@ -339,7 +339,7 @@ export class EditRecipeModalComponent {
         );
     } else if (this.form.value.isPublicRecipe) {
       this.pushTokenService
-        .getPushTokensAndSendNotification(
+        .getFollowerPushTokensAndSendNotification(
           'notifyFolloweeCreateRecipe',
           'notifyFollowersPublicRecipeCreated',
           {

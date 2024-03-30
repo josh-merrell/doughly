@@ -70,6 +70,8 @@ export class SettingsComponent {
         notifyExpiredStock: newProfile.notifyExpiredStock,
         notifyFriendCreateRecipe: newProfile.notifyFriendCreateRecipe,
         notifyFolloweeCreateRecipe: newProfile.notifyFolloweeCreateRecipe,
+        notifyFriendRequest: newProfile.notifyFriendRequest,
+        notifyNewFollower: newProfile.notifyNewFollower,
       });
     });
   }
@@ -91,6 +93,8 @@ export class SettingsComponent {
       notifyExpiredStock: ['', [Validators.required]],
       notifyFriendCreateRecipe: ['', [Validators.required]],
       notifyFolloweeCreateRecipe: ['', [Validators.required]],
+      notifyFriendRequest: ['', [Validators.required]],
+      notifyNewFollower: ['', [Validators.required]],
     });
   }
 
@@ -105,6 +109,8 @@ export class SettingsComponent {
       notifyExpiredStock: this.form.value.notifyExpiredStock,
       notifyFriendCreateRecipe: this.form.value.notifyFriendCreateRecipe,
       notifyFolloweeCreateRecipe: this.form.value.notifyFolloweeCreateRecipe,
+      notifyFriendRequest: this.form.value.notifyFriendRequest,
+      notifyNewFollower: this.form.value.notifyNewFollower,
     };
     this.store.dispatch(ProfileActions.updateProfile({ profile: updateBody }));
     this.store
