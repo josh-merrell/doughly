@@ -1,4 +1,5 @@
 const { errorGen } = require('../../middleware/errorHandling');
+const { sendTokenNotifications } = require('../../services/firebase/firebaseHandler');
 ('use strict');
 
 // const { default: axios } = require('axios');
@@ -115,6 +116,17 @@ module.exports = ({ db }) => {
     global.logger.info(`Updated 'lastUsedTime' for push token: ${token} for user ${userID}`);
   }
 
+  async function sendNotification(options) {
+    const { destTokens, type, data } = options;
+    if (!destTokens || !type || !data) {
+      throw errorGen('destTokens, type, and data are required', 400);
+    }
+    global.logger.info(`in sendNotification: destTokens: ${destTokens}, type: ${type}, data: ${data}`);
+
+    // send the notification
+    sendTokenNotifications(destTokens, type, data);
+  }
+
   return {
     get: {
       userTokens,
@@ -128,5 +140,8 @@ module.exports = ({ db }) => {
       userTokens: removeUserTokens,
     },
     update,
+    send: {
+      notification: sendNotification,
+    },
   };
 };

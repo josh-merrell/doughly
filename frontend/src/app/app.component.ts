@@ -159,7 +159,7 @@ export class AppComponent {
     PushNotifications.addListener(
       'pushNotificationReceived',
       (notification: PushNotificationSchema) => {
-        alert('Push received: ' + JSON.stringify(notification));
+        alert(JSON.stringify(notification));
       }
     );
     // Method called when tapping on a notification
