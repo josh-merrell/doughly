@@ -21,6 +21,12 @@ export interface Profile {
   checkIngredientStock: boolean;
   notifyOnLowStock: string;
   notifyOnNoStock: string;
+  notifyUpcomingStockExpiry: string;
+  notifyExpiredStock: string;
+  notifyFriendCreateRecipe: string;
+  notifyFolloweeCreateRecipe: string;
+  notifyFriendRequest: string;
+  notifyNewFollower: string;
 }
 
 export interface ProfileState {

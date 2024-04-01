@@ -147,7 +147,7 @@ export class PushTokenService {
       }),
       mergeMap((searchResults) => from(searchResults)),
       filter((result: any) => result.userID === targetUserID),
-      filter((targetUser) => targetUser[settingName] !== 'None' || targetUser[settingName] !== 'Email Only'),
+      filter((targetUser) => !(targetUser[settingName] === 'None' || targetUser[settingName] === 'Email Only')),
       mergeMap((targetUser) =>
         this.getOtherUserPushTokens(targetUser.userID).pipe(
           catchError((error) => {
@@ -156,6 +156,20 @@ export class PushTokenService {
           })
         )
       ),
+      mergeMap((tokens) =>
+        this.sendPushNotification(tokens, type, data).pipe(
+          catchError((error) => {
+            console.error('Error sending push notification: ', error);
+            return of(null);
+          })
+        )
+      )
+    );
+  }
+
+  public sendPushNotificationToUserNoCheck(targetUserID, type, data): Observable<any>{
+    console.log('HERE');
+    return this.getOtherUserPushTokens(targetUserID).pipe(
       mergeMap((tokens) =>
         this.sendPushNotification(tokens, type, data).pipe(
           catchError((error) => {
