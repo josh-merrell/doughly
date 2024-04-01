@@ -39,6 +39,8 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { TimelineComponent } from 'src/app/social/feature/timeline/timeline.component';
 import { LogService } from 'src/app/shared/utils/logService';
 import { Log } from 'src/app/shared/state/shared-state';
+import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 
 @Component({
   selector: 'dl-friend-modal',
@@ -54,6 +56,7 @@ import { Log } from 'src/app/shared/state/shared-state';
 export class FriendModalComponent {
   public isLoading: WritableSignal<boolean> = signal(false);
   public friend!: Profile;
+  private myProfile: WritableSignal<any> = signal(null);
   public displayDate: WritableSignal<string> = signal('');
   public initials: string = '';
   public view: string = 'recipes';
@@ -75,7 +78,8 @@ export class FriendModalComponent {
     public dialogRef: MatDialogRef<FriendModalComponent>,
     public router: Router,
     public dialog: MatDialog,
-    private logService: LogService
+    private logService: LogService,
+    private pushTokenService: PushTokenService
   ) {
     this.buttonTexts.set({ friendButton: '', followButton: '' });
 
@@ -125,6 +129,9 @@ export class FriendModalComponent {
     });
     this.store.select(selectDeletingFriendship).subscribe((deleting) => {
       this.isDeleting.set(deleting);
+    });
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.myProfile.set(profile);
     });
 
     this.friend = this.data;
@@ -269,6 +276,8 @@ export class FriendModalComponent {
                     },
                   });
                 }
+                // notify user of confirmed friendship
+                this.sendPushNotification('notifyConfirmFriendship');
                 this.isLoading.set(false);
               });
           });
@@ -378,6 +387,8 @@ export class FriendModalComponent {
                   },
                 });
               }
+              // notify user of new follower
+              this.sendPushNotification('notifyNewFollower');
               this.isLoading.set(false);
             });
         });
@@ -414,5 +425,52 @@ export class FriendModalComponent {
       return '0' + number;
     }
     return number.toString();
+  }
+
+  sendPushNotification(type: string) {
+    switch (type) {
+      case 'notifyConfirmFriendship':
+        console.log('Sending push notification to new friend');
+        if (
+          !(
+            this.friend.notifyFriendRequest === 'None' ||
+            this.friend.notifyFriendRequest === 'Email Only'
+          )
+        ) {
+          this.pushTokenService.sendPushNotificationToUserNoCheck(
+            this.friend.userID,
+            'notifyConfirmFriendship',
+            {
+              friendName: `${this.myProfile().nameFirst} ${
+                this.myProfile().nameLast
+              }`,
+            }
+          )
+          .subscribe();
+        }
+        return null;
+      case 'notifyNewFollower':
+        console.log('Sending push notification to new followee', this.friend.notifyNewFollower);
+        if (
+          !(
+            this.friend.notifyNewFollower === 'None' ||
+            this.friend.notifyNewFollower === 'Email Only'
+          )
+        ) {
+          this.pushTokenService.sendPushNotificationToUserNoCheck(
+            this.friend.userID,
+            'notifyNewFollower',
+            {
+              followerName: `${this.myProfile().nameFirst} ${
+                this.myProfile().nameLast
+              }`,
+            }
+          )
+          .subscribe();
+        }
+        return null;
+      default:
+        return null;
+    }
   }
 }

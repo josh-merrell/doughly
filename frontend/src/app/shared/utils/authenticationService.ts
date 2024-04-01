@@ -67,7 +67,6 @@ export class AuthService {
     // The state of the user's profile is dependent on their being a user. If no user is set, there shouldn't be a profile.
     this.$user.subscribe((user) => {
       if (user) {
-        console.log('initial got user: ' + user.id);
         // We only make changes if the user is different
         if (user.id !== this.user_id) {
           const user_id = user.id;
@@ -80,7 +79,6 @@ export class AuthService {
             .match({ user_id: user_id })
             .single()
             .then((res) => {
-              console.log('initial got profile: ' + JSON.stringify(res.data));
               // Update our profile BehaviorSubject with the current value
               this._$profile.next(this.isProfile(res.data) ? res.data : null);
 

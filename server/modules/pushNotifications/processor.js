@@ -118,6 +118,7 @@ module.exports = ({ db }) => {
 
   async function sendNotification(options) {
     const { destTokens, type, data } = options;
+    global.logger.info(`in sendNotification: destTokens: ${destTokens}, type: ${type}, data: ${data}`);
     if (!destTokens || !type || !data) {
       throw errorGen('destTokens, type, and data are required', 400);
     }

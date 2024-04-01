@@ -1,231 +1,237 @@
-<div
-  class="flex h-full w-full flex-col items-center overflow-y-auto overflow-x-hidden"
->
+<div class="flex w-full flex-col items-center overflow-x-hidden">
   <mat-spinner class="my-app-custom-spinner" *ngIf="isEditing"></mat-spinner>
 
   <div
-    *ngIf="isEditing === false"
-    class="items-left mt-dl-3 flex w-4/5 flex-col bg-white pb-dl-3"
+    *ngIf="!isEditing"
+    class="relative items-left mt-dl-3 flex h-full w-4/5 flex-col bg-white pb-dl-3"
   >
-    <span class="mt-dl-5 text-dl-7 font-dl-3 text-dl-blue-3">Settings</span>
+    <div class="mr-dl-5 flex w-full text-dl-7 font-dl-3 text-dl-grey-2">Settings</div>
     <!--FORM FIELDS-->
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="mt-dl-3">
-        <!-- Check Ingredient Stock -->
-        <div
-          id="form-checkIngredientStock"
-          class="relative mt-dl-2 flex flex-row items-center"
-        >
-          <mat-slide-toggle
-            formControlName="checkIngredientStock"
-            class="select-slider"
-          ></mat-slide-toggle>
-          <span class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-2"
-            >Check Kitchen inventory when adding a recipe to a shopping list and
-            deduct inventory when using a recipe</span
-          >
-        </div>
-
-        <!-- Auto Delete Expired Stock-->
-        <div
-          id="form-autoDeleteExpiredStock"
-          class="relative mt-dl-2 flex flex-row items-center"
-        >
-          <mat-slide-toggle formControlName="autoDeleteExpiredStock">
-          </mat-slide-toggle>
-          <span class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-2"
-            >Delete Ingredient Inventory from your kitchen when it expires,
-            based on your Ingredient Lifespan setting</span
-          >
-        </div>
-        <!-- Notifications -->
-        <h3 class="mt-dl-6 text-dl-6 font-dl-3 text-dl-blue-3">
-          Notifications
-        </h3>
-        <div class="flex max-h-dl-18 flex-col overflow-y-auto">
-          <!-- Notify on Low Ingredient Stock -->
+    <form
+      class="flex flex-grow flex-col overflow-y-auto"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+    >
+      <div class="">
+        <div class="mt-dl-3">
+          <!-- Check Ingredient Stock -->
           <div
-            id="form-notifyOnLowStock"
+            id="form-checkIngredientStock"
             class="relative mt-dl-2 flex flex-row items-center"
           >
-            <span
-              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
-              >When an ingredient is low in stock</span
+            <mat-slide-toggle
+              formControlName="checkIngredientStock"
+              class="select-slider"
+            ></mat-slide-toggle>
+            <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2"
+              >Check Kitchen inventory when adding a recipe to a shopping list
+              and deduct inventory when using a recipe</span
             >
-            <mat-form-field>
-              <mat-select formControlName="notifyOnLowStock">
-                <mat-option
-                  *ngFor="let method of notificationMethods"
-                  [value]="method"
-                >
-                  {{ method }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
           </div>
 
-          <!-- Notify on No Stock -->
+          <!-- Auto Delete Expired Stock-->
           <div
-            id="form-notifyOnNoStock"
+            id="form-autoDeleteExpiredStock"
             class="relative mt-dl-2 flex flex-row items-center"
           >
-            <span
-              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
-              >When an ingredient has no more stock</span
+            <mat-slide-toggle formControlName="autoDeleteExpiredStock">
+            </mat-slide-toggle>
+            <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2"
+              >Delete Ingredient Inventory from your kitchen when it expires,
+              based on your Ingredient Lifespan setting</span
             >
-            <mat-form-field>
-              <mat-select formControlName="notifyOnNoStock">
-                <mat-option
-                  *ngFor="let method of notificationMethods"
-                  [value]="method"
-                >
-                  {{ method }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
           </div>
+          <!-- Notifications -->
+          <h3 class="mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-3">
+            Notifications
+          </h3>
+          <div class="flex flex-col">
+            <!-- Notify on Low Ingredient Stock -->
+            <div
+              id="form-notifyOnLowStock"
+              class="relative mt-dl-2 flex flex-row items-center"
+            >
+              <span
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                >When an ingredient is low in stock</span
+              >
+              <mat-form-field>
+                <mat-select formControlName="notifyOnLowStock">
+                  <mat-option
+                    *ngFor="let method of notificationMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-          <!-- Notify on Upcoming Expiration -->
-          <div
-            id="form-notifyUpcomingStockExpiry"
-            class="relative mt-dl-2 flex flex-row items-center"
-          >
-            <span
-              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
-              >When an ingredient stock is three days from expiration</span
+            <!-- Notify on No Stock -->
+            <div
+              id="form-notifyOnNoStock"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
-            <mat-form-field>
-              <mat-select formControlName="notifyUpcomingStockExpiry">
-                <mat-option
-                  *ngFor="let method of notificationMethods"
-                  [value]="method"
-                >
-                  {{ method }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+              <span
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                >When an ingredient has no more stock</span
+              >
+              <mat-form-field>
+                <mat-select formControlName="notifyOnNoStock">
+                  <mat-option
+                    *ngFor="let method of notificationMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-          <!-- Notify on Expired Stock -->
-          <div
-            id="form-notifyExpiredStock"
-            class="relative mt-dl-2 flex flex-row items-center"
-          >
-            <span
-              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
-              >When an ingredient stock has expired</span
+            <!-- Notify on Upcoming Expiration -->
+            <div
+              id="form-notifyUpcomingStockExpiry"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
-            <mat-form-field>
-              <mat-select formControlName="notifyExpiredStock">
-                <mat-option
-                  *ngFor="let method of notificationMethods"
-                  [value]="method"
-                >
-                  {{ method }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-          <!-- Notify Friend Created Recipe -->
-          <div
-            id="form-notifyFriendCreatedRecipe"
-            class="relative mt-dl-2 flex flex-row items-center"
-          >
-            <span
-              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
-              >When a friend creates a recipe</span
-            >
-            <mat-form-field>
-              <mat-select formControlName="notifyFriendCreateRecipe">
-                <mat-option
-                  *ngFor="let method of notificationMethods"
-                  [value]="method"
-                >
-                  {{ method }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+              <span
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                >When an ingredient stock is three days from expiration</span
+              >
+              <mat-form-field>
+                <mat-select formControlName="notifyUpcomingStockExpiry">
+                  <mat-option
+                    *ngFor="let method of notificationMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-          <!-- Notify Followee Created Recipe -->
-          <div
-            id="form-notifyFolloweeCreatedRecipe"
-            class="relative mt-dl-2 flex flex-row items-center"
-          >
-            <span
-              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
-              >When someone you follow creates a recipe</span
+            <!-- Notify on Expired Stock -->
+            <div
+              id="form-notifyExpiredStock"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
-            <mat-form-field>
-              <mat-select formControlName="notifyFolloweeCreateRecipe">
-                <mat-option
-                  *ngFor="let method of notificationMethods"
-                  [value]="method"
-                >
-                  {{ method }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+              <span
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                >When an ingredient stock has expired</span
+              >
+              <mat-form-field>
+                <mat-select formControlName="notifyExpiredStock">
+                  <mat-option
+                    *ngFor="let method of notificationMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <!-- Notify Friend Created Recipe -->
+            <div
+              id="form-notifyFriendCreatedRecipe"
+              class="relative mt-dl-2 flex flex-row items-center"
+            >
+              <span
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                >When a friend creates a recipe</span
+              >
+              <mat-form-field>
+                <mat-select formControlName="notifyFriendCreateRecipe">
+                  <mat-option
+                    *ngFor="let method of notificationMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-          <!-- Notify on New Friend Reqest -->
-          <div
-            id="form-notifyFriendRequest"
-            class="relative mt-dl-2 flex flex-row items-center"
-          >
-            <span
-              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
-              >When you receive a friend request</span
+            <!-- Notify Followee Created Recipe -->
+            <div
+              id="form-notifyFolloweeCreatedRecipe"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
-            <mat-form-field>
-              <mat-select formControlName="notifyFriendRequest">
-                <mat-option
-                  *ngFor="let method of notificationMethods"
-                  [value]="method"
-                >
-                  {{ method }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+              <span
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                >When someone you follow creates a recipe</span
+              >
+              <mat-form-field>
+                <mat-select formControlName="notifyFolloweeCreateRecipe">
+                  <mat-option
+                    *ngFor="let method of notificationMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-          <!-- Notify on New Follower -->
-          <div
-            id="form-notifyNewFollower"
-            class="relative mt-dl-2 flex flex-row items-center"
-          >
-            <span
-              class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-5 text-dl-grey-2"
-              >When someone follows you</span
+            <!-- Notify on New Friend Reqest -->
+            <div
+              id="form-notifyFriendRequest"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
-            <mat-form-field>
-              <mat-select formControlName="notifyNewFollower">
-                <mat-option
-                  *ngFor="let method of notificationMethods"
-                  [value]="method"
-                >
-                  {{ method }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+              <span
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                >When you receive a friend request</span
+              >
+              <mat-form-field>
+                <mat-select formControlName="notifyFriendRequest">
+                  <mat-option
+                    *ngFor="let method of notificationMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Notify on New Follower -->
+            <div
+              id="form-notifyNewFollower"
+              class="relative mt-dl-2 flex flex-row items-center"
+            >
+              <span
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                >When someone follows you</span
+              >
+              <mat-form-field>
+                <mat-select formControlName="notifyNewFollower">
+                  <mat-option
+                    *ngFor="let method of notificationMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
           </div>
         </div>
       </div>
 
-      <button
-        type="button"
-        class="shadow-s mt-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
-        [class.cursor-pointer]="form.valid && !form.pristine"
-        [ngClass]="{
-          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
-            form.valid && !form.pristine,
-          'bg-dl-grey-7': !form.valid || form.pristine
-        }"
-        [disabled]="!form.valid || form.pristine"
-        (click)="onSubmit()"
-      >
-        Save Changes
-      </button>
+      <div class="mt-auto w-full flex-none">
+        <button
+          type="button"
+          class="shadow-s mt-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          [class.cursor-pointer]="form.valid && !form.pristine"
+          [ngClass]="{
+            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+              form.valid && !form.pristine,
+            'bg-dl-grey-7': !form.valid || form.pristine
+          }"
+          [disabled]="!form.valid || form.pristine"
+          (click)="onSubmit()"
+        >
+          Save Changes
+        </button>
+      </div>
     </form>
   </div>
 </div>

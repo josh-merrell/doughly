@@ -28,14 +28,18 @@ export class KitchenPageComponent implements OnInit {
 
   constructor(private router: Router, private route: ActivatedRoute) {
     this.view = signal('ingredients'); // Default value
-    effect(() => {
-      const view = this.view();
-      if (view === 'tools') {
-        this.router.navigate(['kitchen/tools']);
-      } else if (view === 'ingredients') {
-        this.router.navigate(['kitchen/ingredients']);
-      }
-    });
+    effect(
+      () => {
+        const view = this.view();
+        if (view === 'tools') {
+          this.router.navigate(['kitchen/tools']);
+        } else {
+          this.view.set('ingredients');
+          this.router.navigate(['kitchen/ingredients']);
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   updateView(view: string) {
