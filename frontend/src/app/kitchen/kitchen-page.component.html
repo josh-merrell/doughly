@@ -1,6 +1,4 @@
-<div
-  class="relative flex h-full w-full flex-col overflow-y-auto bg-white pt-dl-5"
->
+<div class="relative flex h-full w-full flex-col bg-white pt-dl-5">
   <!-- View Header -->
   <div class="mb-dl-3 flex w-full flex-row-reverse pr-dl-5">
     <span
@@ -25,9 +23,7 @@
     </span>
   </div>
   <!-- Main content -->
-  <main class="w-full">
-    <div class="flex-grow overflow-y-auto">
-      <router-outlet></router-outlet>
-    </div>
-  </main>
+  <div class="flex flex-grow flex-col overflow-y-auto">
+    <router-outlet></router-outlet>
+  </div>
 </div>

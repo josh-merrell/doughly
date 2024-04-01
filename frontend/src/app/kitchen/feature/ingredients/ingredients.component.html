@@ -1,8 +1,8 @@
-<div class="relative w-full">
+<div class="relative flex w-full flex-col">
   <!-- header -->
-  <div class="mx-dl-5 mt-dl-7 flex items-center justify-between">
+  <div class="mx-dl-5 mt-dl-4 flex items-center justify-between">
     <div class="ml-dl-2 flex flex-col">
-      <p class="mt-dl-3 text-dl-6 font-dl-2 text-dl-grey-4">
+      <p class="text-dl-6 font-dl-2 text-dl-grey-4">
         {{ totalInStock() }} of {{ ingredients().length }} In Stock
       </p>
     </div>
@@ -11,7 +11,7 @@
     <button
       id="test-button"
       type="button"
-      class="mt-dl-5 block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
       (click)="onAddIngredient()"
     >
       Add Ingredient
@@ -21,7 +21,7 @@
   <!-- Search -->
   <div class="flex flex-col items-center">
     <!-- Search Bar -->
-    <div class="mb-dl-4 mt-dl-7 flex">
+    <div class="mb-dl-4 mt-dl-5 flex">
       <svg
         width="35"
         height="35"
@@ -53,7 +53,7 @@
 
   <div
     #recipeContainer
-    class="ingredient-container mb-dl-2 flex h-full max-h-dl-20 w-full flex-col items-center overflow-auto scroll-smooth"
+    class="ingredient-container mb-dl-2 flex w-full flex-grow flex-col items-center overflow-y-auto overflow-x-hidden "
     (scroll)="checkIngredientScroll($event.target)"
   >
     <!-- Ingredient Rows Needs Review -->
@@ -70,7 +70,7 @@
       <!-- Ingredient Card -->
       <div
         *ngFor="let ingredient of row"
-        class="ingredient-card relative mx-dl-2 my-dl-2 flex h-dl-8 min-w-dl-11 max-w-1/2 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
+        class="ingredient-card max-w-1/2 relative mx-dl-2 my-dl-2 flex h-dl-8 min-w-dl-11 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
         [ngClass]="{
           'border-2 border-dl-yellow-9 bg-dl-yellow-10': ingredient.needsReview,
           'bg-dl-grey-8 ': ingredient.totalStock === 0,
@@ -106,7 +106,7 @@
       <!-- Ingredient Card -->
       <div
         *ngFor="let ingredient of row"
-        class="ingredient-card relative mx-dl-2 my-dl-2 flex h-dl-8 min-w-dl-11 max-w-1/2 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
+        class="ingredient-card max-w-1/2 relative mx-dl-2 my-dl-2 flex h-dl-8 min-w-dl-11 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
         [ngClass]="{
           'bg-dl-grey-8 ': ingredient.totalStock === 0,
           'bg-dl-grey-10': ingredient.totalStock > 0
