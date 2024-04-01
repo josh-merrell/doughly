@@ -2,16 +2,13 @@
   class="relative flex w-full flex-col transition-all duration-200 ease-in-out"
 >
   <!-- List View Header -->
-  <div
-    class="sticky -top-1 z-10 mb-dl-1 mt-dl-4 flex w-full bg-white px-dl-6 pb-dl-2"
-  >
+  <div class="-top-1 sticky z-10 mb-dl-5 flex w-full flex-row-reverse bg-white">
     <span
-      class="ml-dl-2 inline-flex items-center border-b-4 border-transparent px-dl-1 py-dl-1 text-dl-6 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out"
+      class="mb-dl-5 mr-dl-5 inline-flex items-center border-b-4 border-dl-blue-8 py-dl-1 text-dl-6 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out"
     >
       Throughout the Day
     </span>
   </div>
-
   <!-- Day Category List -->
   <div
     class="relative mb-dl-3 flex w-full flex-col items-center overflow-y-auto"
@@ -34,7 +31,7 @@
         *ngIf="
           category.recipeCategoryID === selectedCategory()?.recipeCategoryID
         "
-        class="relative mb-dl-7 mt-dl-3 flex max-h-dl-20 w-full flex-col items-center overflow-y-auto overflow-x-hidden transition-all duration-200 ease-in-out"
+        class="relative mb-dl-7 mt-dl-3 flex max-h-dl-19 w-full flex-col items-center overflow-y-auto overflow-x-hidden transition-all duration-200 ease-in-out"
         (click)="categoryCardClick(category)"
       >
         <!-- Header -->
@@ -78,11 +75,9 @@
   </div>
 
   <!-- List View Header -->
-  <div
-    class="sticky -top-1 z-10 mb-dl-1 mt-dl-4 flex w-full bg-white px-dl-6 pb-dl-2"
-  >
+  <div class="sticky -top-0 z-10 mb-dl-5 flex w-full flex-row-reverse bg-white">
     <span
-      class="ml-dl-2 inline-flex items-center border-b-4 border-transparent px-dl-1 py-dl-1 text-dl-6 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out"
+      class="mb-dl-5 mr-dl-5 inline-flex items-center border-b-4 border-dl-blue-8 py-dl-1 text-dl-6 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out"
     >
       Around the World
     </span>
@@ -110,7 +105,7 @@
         *ngIf="
           category.recipeCategoryID === selectedCategory()?.recipeCategoryID
         "
-        class="relative mb-dl-7 mt-dl-3 flex max-h-dl-20 w-full flex-col items-center overflow-y-auto overflow-x-hidden transition-all duration-200 ease-in-out"
+        class="relative mb-dl-7 mt-dl-3 flex max-h-dl-19 w-full flex-col items-center overflow-y-auto overflow-x-hidden transition-all duration-200 ease-in-out"
         (click)="categoryCardClick(category)"
       >
         <!-- Header -->

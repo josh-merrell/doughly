@@ -1,8 +1,8 @@
-<div class="relative w-full">
+<div class="relative flex h-full w-full flex-col">
   <!-- header -->
-  <div class="mx-dl-5 mt-dl-7 flex justify-between items-center">
-    <div class="flex flex-col ml-dl-2 ">
-      <p class="mt-dl-3 text-dl-6 font-dl-2 text-dl-grey-4">
+  <div class="mx-dl-5 mt-dl-4 flex items-center justify-between">
+    <div class="ml-dl-2 flex flex-col">
+      <p class="text-dl-6 font-dl-2 text-dl-grey-4">
         {{ totalInStock$ | async }} of {{ (tools$ | async)?.length }} In Stock
       </p>
     </div>
@@ -11,7 +11,7 @@
     <button
       id="test-button"
       type="button"
-      class="block whitespace-nowrap rounded-dl-1 mt-dl-5 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
       (click)="onAddTool()"
     >
       Add Tool
@@ -21,7 +21,7 @@
   <!-- Search -->
   <div class="flex flex-col items-center">
     <!-- Search Bar -->
-    <div class="mb-dl-4 mt-dl-7 flex">
+    <div class="mb-dl-4 mt-dl-5 flex">
       <svg
         width="35"
         height="35"
@@ -42,9 +42,7 @@
         type="text"
         class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
         [placeholder]="
-          !searchFilters.length
-            ? 'Filter by Tool'
-            : searchFilters[0].operand1
+          !searchFilters.length ? 'Filter by Tool' : searchFilters[0].operand1
         "
         (input)="updateSearchFilter(searchInput.value)"
       />
@@ -54,7 +52,7 @@
   <!-- Tool Rows -->
   <div
     #recipeContainer
-    class="tool-container mb-dl-3 flex h-full max-h-dl-20 w-full flex-col items-center overflow-auto scroll-smooth"
+    class="tool-container mb-dl-2 flex w-full flex-grow flex-col items-center overflow-y-auto overflow-x-hidden scroll-smooth"
     (scroll)="checkToolScroll($event.target)"
   >
     <div
@@ -64,7 +62,7 @@
       <!-- Tool Card -->
       <div
         *ngFor="let tool of row"
-        class="tool-card relative my-dl-2 mx-dl-2 flex h-dl-8 w-dl-12 max-w-dl-12 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
+        class="tool-card relative mx-dl-2 my-dl-2 flex h-dl-8 w-dl-12 max-w-dl-12 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
         [ngClass]="{
           'bg-dl-grey-8 ': tool.totalStock === 0,
           'bg-dl-grey-10': tool.totalStock > 0
