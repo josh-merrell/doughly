@@ -185,26 +185,30 @@ export class DraftPageComponent {
       { allowSignalWrites: true }
     );
 
-    effect(() => {
-      const lr = this.listRecipes();
-      for (let i = 0; i < lr.length; i++) {
-        //if the 'plannedDate' property of the listRecipe is prior to today, call the 'deleteListRecipe' method
-        const now = new Date(new Date().toLocaleDateString('en-US')).getTime();
-        const plannedDate = new Date(new Date(lr[i].plannedDate).toLocaleDateString('en-US')).getTime();
-        if (
-          plannedDate <
-          now
-        ) {
-          console.log(
-            'deleting list recipe due to date. PLANNED: ',
-            plannedDate,
-            ' NOW: ',
-            now
-          );
-          this.deleteListRecipe(lr[i].shoppingListRecipeID);
+    effect(
+      () => {
+        const lr = this.listRecipes();
+        for (let i = 0; i < lr.length; i++) {
+          //if the 'plannedDate' property of the listRecipe is prior to today, call the 'deleteListRecipe' method
+          const now = new Date(
+            new Date().toLocaleDateString('en-US')
+          ).getTime();
+          const plannedDate = new Date(
+            new Date(lr[i].plannedDate).toLocaleDateString('en-US')
+          ).getTime();
+          if (plannedDate < now) {
+            console.log(
+              'deleting list recipe due to date. PLANNED: ',
+              plannedDate,
+              ' NOW: ',
+              now
+            );
+            this.deleteListRecipe(lr[i].shoppingListRecipeID, 'date');
+          }
         }
-      }
-    }, { allowSignalWrites: true });
+      },
+      { allowSignalWrites: true }
+    );
 
     function combineShoppingLists(allShoppingLists) {
       const result: any[] = [];
@@ -409,7 +413,7 @@ export class DraftPageComponent {
     this.menuOpen = !this.menuOpen;
   }
 
-  deleteListRecipe(shoppingListRecipeID: number) {
+  deleteListRecipe(shoppingListRecipeID: number, reason?: string) {
     this.isDeleting.set(true);
     this.store.dispatch(
       ShoppingListRecipeActions.deleteShoppingListRecipe({
@@ -440,6 +444,16 @@ export class DraftPageComponent {
                 },
               });
             } else {
+              if (reason === 'date') {
+                console.log('deleting list recipe due to date');
+                this.dialog.open(ConfirmationModalComponent, {
+                  maxWidth: '380px',
+                  data: {
+                    confirmationMessage:
+                      'Removed recipe planned for a past date',
+                  },
+                });
+              }
               this.dialog.open(ConfirmationModalComponent, {
                 maxWidth: '380px',
                 data: {
