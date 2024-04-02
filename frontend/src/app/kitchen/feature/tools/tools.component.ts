@@ -42,15 +42,13 @@ export class ToolsComponent {
   ) {}
 
   public tools$: Observable<Tool[]> = this.toolService.rows$;
-  public enhancedTools$: Observable<Tool[]> =
-    this.toolService.enhancedRows$;
+  public enhancedTools$: Observable<Tool[]> = this.toolService.enhancedRows$;
   public enhancedTools: any[] = [];
-  public rows$!: Observable<any[]>;
   public filters$ = new BehaviorSubject<Filter[]>([]);
   public filters: Filter[] = [];
   public filteredTools$ = new BehaviorSubject<any[]>([]);
   sorts: Sort[] = [];
-  public displayedRows$ = new BehaviorSubject<any[]>([]);
+  public displayTools$ = new BehaviorSubject<any[]>([]);
 
   toolsPerRow: number = 2;
   public totalInStock$!: Observable<Number>;
@@ -60,11 +58,6 @@ export class ToolsComponent {
   modalActiveForToolID: number | null = null;
 
   ngOnInit(): void {
-    // this.store.dispatch(ToolActions.loadTools());
-    // this.store.dispatch(ToolStockActions.loadToolStocks());
-    // this.store.dispatch(RecipeActions.loadRecipes());
-    // this.store.dispatch(RecipeToolActions.loadRecipeTools());
-
     this.tools$.subscribe((tools) => {
       this.toolService.addStockTotals(tools);
     });
@@ -97,32 +90,15 @@ export class ToolsComponent {
     this.filteredTools$.subscribe((filteredTools) => {
       // Check if filteredRows is defined and not empty
       if (filteredTools && filteredTools.length > 0) {
-        const sortedTools = this.sortingService.applySorts(
-          filteredTools,
-          [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
-        );
-        const sortedRows = this.arrangeInRows(sortedTools);
+        const sortedTools = this.sortingService.applySorts(filteredTools, [
+          { prop: 'name', sortOrderIndex: 0, direction: 'asc' },
+        ]);
 
-        this.displayedRows$.next(sortedRows);
+        this.displayTools$.next(sortedTools);
       } else {
-        this.displayedRows$.next([]);
+        this.displayTools$.next([]);
       }
     });
-  }
-
-  arrangeInRows(sortedTools: Tool[]) {
-    const rows: Tool[][] = [];
-    if (sortedTools.length > 0) {
-      sortedTools.forEach((tool, index) => {
-        const rowIndex = Math.floor(index / this.toolsPerRow);
-        if (!rows[rowIndex]) {
-          rows[rowIndex] = [];
-        }
-        rows[rowIndex].push(tool);
-      });
-    }
-
-    return rows;
   }
 
   onAddTool(): void {

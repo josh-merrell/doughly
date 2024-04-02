@@ -1,6 +1,6 @@
-<div class="relative h-full flex flex-col w-full items-center">
+<div class="relative flex h-full w-full flex-col items-center px-dl-4">
   <!-- Search, Add-->
-  <div class="mx-dl-7 mb-dl-6 flex items-center justify-between">
+  <div class="mx-dl-7 mb-dl-6 flex items-center">
     <!-- Search Bar -->
     <div class="mt-dl-3 flex items-center">
       <svg
@@ -49,33 +49,29 @@
   </div>
 
   <!-- Friend List -->
-  <div class="relative mb-dl-4 flex flex-col flex-grow items-center">
-    <div class="flex flex-col items-center">
-      <dl-friend-card
-        (click)="onFriendClick(friend)"
-        *ngFor="let friend of filteredFriends(); let i = index"
-        class="w-dl-16 border-dl-grey-9 py-dl-3"
-        [ngClass]="{
-          'border-b-2': i !== filteredFriends().length - 1
-        }"
-        [friend]="friend"
-      ></dl-friend-card>
-    </div>
-    <span
-      *ngIf="friends().length > 0"
-      class="absolute -bottom-3 text-dl-5 font-dl-2 text-dl-grey-2"
-      >{{ friends().length }} total</span
-    >
+  <div class="relative flex flex-grow flex-col items-center overflow-y-auto">
+    <dl-friend-card
+      (click)="onFriendClick(friend)"
+      *ngFor="let friend of filteredFriends(); let i = index"
+      class="w-dl-16 border-dl-grey-9 py-dl-3"
+      [ngClass]="{
+        'border-b-2': i !== filteredFriends().length - 1
+      }"
+      [friend]="friend"
+    ></dl-friend-card>
   </div>
-  <!-- Spacer div -->
-  <div class="flex-grow"></div>
-  <!-- Add Button -->
-  <button
-    id="test-button"
-    type="button"
-    class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
-    (click)="onAddFriend()"
+  <span *ngIf="friends().length > 0" class="text-dl-5 font-dl-2 text-dl-grey-2"
+    >{{ friends().length }} total</span
   >
-    Search New Friends
-  </button>
+  <!-- Add Button -->
+  <div class="w-full">
+    <button
+      id="test-button"
+      type="button"
+      class="my-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+      (click)="onAddFriend()"
+    >
+      Search New Friends
+    </button>
+  </div>
 </div>

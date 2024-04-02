@@ -40,8 +40,8 @@ export class IngredientsComponent {
   public filters: WritableSignal<Filter[]> = signal([]);
   public filteredIngredientsNoReview: WritableSignal<any[]> = signal([]);
   public filteredIngredientsNeedsReview: WritableSignal<any[]> = signal([]);
-  public displayedRowsNoReview: WritableSignal<any[]> = signal([]);
-  public displayedRowsNeedsReview: WritableSignal<any[]> = signal([]);
+  public displayNoReview: WritableSignal<any[]> = signal([]);
+  public displayNeedsReview: WritableSignal<any[]> = signal([]);
   private reviewedCount: number = 0;
   private reviewRecipeID: WritableSignal<number | null> = signal(null);
 
@@ -111,13 +111,10 @@ export class IngredientsComponent {
             filteredIngredientsNoReview,
             [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
           );
-          const sortedRowsNoReview = this.arrangeInRows(
-            sortedIngredientsNoReview
-          );
 
-          this.displayedRowsNoReview.set(sortedRowsNoReview);
+          this.displayNoReview.set(sortedIngredientsNoReview);
         } else {
-          this.displayedRowsNoReview.set([]);
+          this.displayNoReview.set([]);
         }
       },
       { allowSignalWrites: true }
@@ -135,13 +132,10 @@ export class IngredientsComponent {
             filteredIngredientsNeedsReview,
             [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
           );
-          const sortedRowsNeedsReview = this.arrangeInRows(
-            sortedIngredientsNeedsReview
-          );
 
-          this.displayedRowsNeedsReview.set(sortedRowsNeedsReview);
+          this.displayNeedsReview.set(sortedIngredientsNeedsReview);
         } else {
-          this.displayedRowsNeedsReview.set([]);
+          this.displayNeedsReview.set([]);
         }
       },
       { allowSignalWrites: true }
@@ -177,21 +171,6 @@ export class IngredientsComponent {
       });
       this.enhancedIngredients.set(updatedIngredients);
     });
-  }
-
-  arrangeInRows(sortedIngredients: Ingredient[]) {
-    const rows: Ingredient[][] = [];
-    if (sortedIngredients.length > 0) {
-      sortedIngredients.forEach((ingredient, index) => {
-        const rowIndex = Math.floor(index / this.ingredientsPerRow);
-        if (!rows[rowIndex]) {
-          rows[rowIndex] = [];
-        }
-        rows[rowIndex].push(ingredient);
-      });
-    }
-
-    return rows;
   }
 
   onAddIngredient(): void {
@@ -281,8 +260,8 @@ export class IngredientsComponent {
       this.modalActiveForIngredientID = null;
 
       if (
-        this.displayedRowsNeedsReview().length < 2 &&
-        this.displayedRowsNoReview().length
+        this.displayNeedsReview().length < 2 &&
+        this.displayNoReview().length
       ) {
         // get current value of 'reviewRecipeID' from store
         const reviewRecipeID = this.reviewRecipeID();

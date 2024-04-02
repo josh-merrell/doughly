@@ -1,6 +1,6 @@
-<div class="relative flex h-full w-full flex-col">
+<div class="relative flex h-full w-full flex-col px-dl-4">
   <!-- header -->
-  <div class="mx-dl-5 mt-dl-4 flex items-center justify-between">
+  <div class="mt-dl-4 flex items-center justify-between">
     <div class="ml-dl-2 flex flex-col">
       <p class="text-dl-6 font-dl-2 text-dl-grey-4">
         {{ totalInStock() }} of {{ ingredients().length }} In Stock
@@ -11,7 +11,7 @@
     <button
       id="test-button"
       type="button"
-      class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      class="block min-w-dl-9 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
       (click)="onAddIngredient()"
     >
       Add Ingredient
@@ -58,19 +58,16 @@
   >
     <!-- Ingredient Rows Needs Review -->
     <p
-      *ngIf="displayedRowsNeedsReview().length"
+      *ngIf="displayNeedsReview().length"
       class="text-dl-5 font-dl-3 text-dl-yellow-4"
     >
       AI Created Ingredients, Need Review
     </p>
-    <div
-      *ngFor="let row of displayedRowsNeedsReview()"
-      class="flex w-full justify-between px-dl-5"
-    >
+    <div class="grid w-full grid-cols-2 gap-3">
       <!-- Ingredient Card -->
       <div
-        *ngFor="let ingredient of row"
-        class="ingredient-card max-w-1/2 relative mx-dl-2 my-dl-2 flex h-dl-8 min-w-dl-11 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
+        *ngFor="let ingredient of displayNeedsReview()"
+        class="ingredient-card relative flex h-dl-7 flex-col justify-between rounded-dl-1 px-dl-3 py-dl-2 shadow-md"
         [ngClass]="{
           'border-2 border-dl-yellow-9 bg-dl-yellow-10': ingredient.needsReview,
           'bg-dl-grey-8 ': ingredient.totalStock === 0,
@@ -98,15 +95,11 @@
       </div>
     </div>
 
-    <!-- Ingredient Rows No Review -->
-    <div
-      *ngFor="let row of displayedRowsNoReview()"
-      class="flex w-full justify-between px-dl-5"
-    >
-      <!-- Ingredient Card -->
+    <!-- Ingredient Card -->
+    <div class="grid w-full grid-cols-2 gap-3">
       <div
-        *ngFor="let ingredient of row"
-        class="ingredient-card max-w-1/2 relative mx-dl-2 my-dl-2 flex h-dl-8 min-w-dl-11 flex-col items-start justify-between rounded-dl-2 px-dl-4 py-dl-3 shadow-md"
+        *ngFor="let ingredient of displayNoReview()"
+        class="ingredient-card relative flex h-dl-7 flex-col justify-between rounded-dl-1 px-dl-3 py-dl-2 shadow-md"
         [ngClass]="{
           'bg-dl-grey-8 ': ingredient.totalStock === 0,
           'bg-dl-grey-10': ingredient.totalStock > 0
@@ -126,7 +119,7 @@
         </p>
         <p
           *ngIf="ingredient.totalStock === 0"
-          class="text-dl-5 font-dl-2 italic text-dl-grey-1"
+          class="text-dl-5 font-dl-2 italic text-dl-grey-3"
         >
           Out of Stock
         </p>
