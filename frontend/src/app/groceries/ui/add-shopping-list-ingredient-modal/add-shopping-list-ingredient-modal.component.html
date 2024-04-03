@@ -1,6 +1,6 @@
 <div
   *ngIf="displayIngredients().length > 0 || searchFilter() !== ''"
-  class="relative flex w-full flex-col items-center overflow-y-auto"
+  class="relative flex h-dl-21 w-full flex-col items-center overflow-x-hidden px-dl-4 pb-dl-4 pt-dl-4"
 >
   <!-- Search, Add-->
   <div class="mx-dl-7 mb-dl-6 mt-dl-5 flex justify-between">
@@ -32,8 +32,10 @@
   </div>
 
   <!-- List -->
-  <div class="relative mb-dl-5 flex flex-col items-center">
-    <div class="flex max-h-dl-17 flex-col items-center overflow-y-auto pr-dl-3">
+  <div
+    class="relative mb-dl-5 flex flex-grow flex-col items-center overflow-y-auto"
+  >
+    <div class="flex flex-col items-center pr-dl-3">
       @for (ingredient of displayIngredients(); track ingredient.ingredientID) {
       <div
         class="my-dl-3 flex w-dl-14 flex-col justify-start rounded-lg border px-dl-3 py-dl-1 shadow-md transition-all duration-200 ease-in-out"
@@ -65,41 +67,44 @@
     </div>
   </div>
 
-  <!-- Measurement -->
-  <form
-    class="w-10/12"
-    [ngClass]="{ invisible: selectedIngredient().ingredientID === 0 }"
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    *ngIf="isLoading === false"
+  <div
+    *ngIf="selectedIngredient().ingredientID !== 0"
+    class="mt-dl-4 flex w-full flex-col items-center"
   >
-    <div id="form-measurement">
-      <label class="text-dl-4 font-dl-3 text-dl-grey-4"
-        >Measurement
-        <ng-container *ngIf="selectedIngredient().ingredientID !== 0"
-          >in {{ selectedIngredient().purchaseUnit }}s</ng-container
-        ></label
-      >
-      <mat-form-field class="w-full">
-        <input matInput formControlName="measurement" />
-      </mat-form-field>
-    </div>
-  </form>
-  <!-- Add Button -->
-  <button
-    id="add-button"
-    type="button"
-    class="mb-dl-5 mt-dl-3 block h-dl-5 w-11/12 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white"
-    (click)="onSubmit()"
-    [disabled]="!form.valid || form.pristine || isLoading === true"
-    [ngClass]="{
-      ' bg-dl-pink-4  shadow-lg ': form.valid && !form.pristine,
-      'bg-dl-grey-7': !form.valid || form.pristine,
-      invisible: selectedIngredient().ingredientID === 0
-    }"
-  >
-    Add to Shopping List
-  </button>
+    <!-- Measurement -->
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      *ngIf="isLoading === false"
+    >
+      <div id="form-measurement">
+        <label class="text-dl-4 font-dl-3 text-dl-grey-4"
+          >Measurement
+          <ng-container *ngIf="selectedIngredient().ingredientID !== 0"
+            >in {{ selectedIngredient().purchaseUnit }}s</ng-container
+          ></label
+        >
+        <mat-form-field class="w-full">
+          <input matInput formControlName="measurement" />
+        </mat-form-field>
+      </div>
+    </form>
+    <!-- Add Button -->
+    <button
+      id="add-button"
+      type="button"
+      class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+      (click)="onSubmit()"
+      [disabled]="!form.valid || form.pristine || isLoading === true"
+      [ngClass]="{
+        ' bg-dl-pink-4  shadow-lg ': form.valid && !form.pristine,
+        'bg-dl-grey-7': !form.valid || form.pristine,
+        invisible: selectedIngredient().ingredientID === 0
+      }"
+    >
+      Add to Shopping List
+    </button>
+  </div>
   <div
     *ngIf="isLoading === true"
     class="flex h-full w-full items-center justify-center"

@@ -244,10 +244,6 @@ export class RecipeIngredientsModalComponent {
         });
 
         const dialogRef = this.dialog.open(AddRecipeIngredientModalComponent, {
-          // data: {
-          //   ingredientsToExclude,
-          // },
-          // not restricting users from adding ingredient to recipe more than once
           data: {
             ingredientsToExclude: [],
           },
@@ -276,7 +272,7 @@ export class RecipeIngredientsModalComponent {
                   name: ingredientName,
                   preparation: result.preparation,
                   component: result.component,
-                  needsReview: false,
+                  RIneedsReview: false,
                   toAdd: true,
                 };
 
@@ -306,6 +302,7 @@ export class RecipeIngredientsModalComponent {
           RIneedsReview: recipeIngredient.RIneedsReview,
         },
       },
+      width: '75%',
     });
     dialogRef!.afterClosed().subscribe((result: any) => {
       if (result === 'success') {
