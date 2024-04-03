@@ -15,12 +15,17 @@
       <div
         class="mb-dl-2 flex max-h-dl-17 w-dl-15 flex-wrap items-start overflow-y-auto"
       >
-        <p *ngIf="(displayNeedsReview$ | async)!.length" class="text-dl-5 font-dl-3 text-dl-yellow-4">AI Created Ingredients, Need Review</p>
+        <p
+          *ngIf="(displayNeedsReview$ | async)!.length"
+          class="text-dl-5 font-dl-3 text-dl-yellow-4"
+        >
+          AI Created Ingredients, Need Review
+        </p>
         <!-- Show Ingredients that need reviewing -->
         <ng-container *ngFor="let ingredient of displayNeedsReview$ | async">
           <div class="inline-block">
             <div
-              class="mr-dl-3 mb-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-yellow-10 border-2 border-dl-yellow-8 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4"
+              class="mb-dl-3 mr-dl-3 flex items-center whitespace-nowrap rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4"
             >
               <div (click)="onIngredientClick(ingredient)">
                 <span class="font-dl-3"
@@ -39,7 +44,7 @@
               </div>
               <button
                 type="button"
-                class="ml-dl-2 rounded-dl-2 bg-dl-yellow-10 text-dl-grey-3 "
+                class="ml-dl-2 rounded-dl-2 bg-dl-yellow-10 text-dl-grey-3"
                 (click)="
                   onDeleteClick(
                     ingredient.recipeIngredientID,
@@ -144,9 +149,9 @@
     <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
       <button
         type="button"
-        class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+        class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-1 py-dl-1 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
         [ngClass]="{
-          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+          'cursor-pointer bg-dl-pink-4 hover:bg-dl-pink-5':
             ingredientsToAdd.length > 0,
           'bg-dl-grey-7': ingredientsToAdd.length === 0
         }"
@@ -157,7 +162,7 @@
       </button>
       <button
         type="button"
-        class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+        class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-1 py-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
         Cancel

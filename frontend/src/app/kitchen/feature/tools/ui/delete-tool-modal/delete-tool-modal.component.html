@@ -1,13 +1,24 @@
-<div class="border-dl-yellow-5 bg-white p-4" [ngClass]="{'border-l-4 border-r-4': !isDeleting}">
-  <mat-spinner
-    class="my-app-custom-spinner"
+<div
+  class="flex w-full flex-col items-center border-x-4 border-dl-yellow-5 bg-white px-dl-3 pb-dl-2"
+  [ngClass]="{ 'border-l-4 border-r-4': !isDeleting }"
+>
+  <div
+    class="flex w-full flex-col items-center justify-center"
     *ngIf="isDeleting"
-  ></mat-spinner>
-  <div class="flex" *ngIf="!isDeleting">
-    <div class="flex-shrink-0">
+  >
+    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+    <h2
+      *ngIf="isDeleting"
+      class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-grey-4"
+    >
+      Processing..
+    </h2>
+  </div>
+  <div class="flex w-full flex-col items-center" *ngIf="!isDeleting">
+    <div class="flex w-full pl-dl-2 pt-dl-2">
       <svg
-        class="h-5 w-5 text-dl-yellow-5"
-        viewBox="0 0 20 20"
+        class="h-6 w-6 text-dl-yellow-5"
+        viewBox="0 0 20 11"
         fill="currentColor"
         aria-hidden="true"
       >
@@ -17,27 +28,36 @@
           clip-rule="evenodd"
         />
       </svg>
-    </div>
-    <div class="relative flex w-dl-15 max-w-full flex-col">
       <div class="ml-dl-3 flex flex-col">
-        <p class="leading-dl-4 text-dl-4 font-dl-3 text-dl-yellow-2">
+        <p class="leading-dl-4 text-dl-6 font-dl-3 text-dl-yellow-2">
           Delete Tool
         </p>
-        <div class="space-x-1">
-          <span class="mt-dl-1 text-dl-2 text-dl-grey-5">Are you sure you want to delete</span><span class="mt-dl-1 text-dl-2 text-dl-grey-2 font-dl-3">{{this.data.itemName}}</span><span class="mt-dl-1 text-dl-2 text-dl-grey-5">and all associated inventory entries?</span>
-        </div>
       </div>
-      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+    </div>
+    <div class="relative flex w-dl-15 max-w-full flex-col">
+      <div class="mt-dl-4 space-x-1">
+        <span class="mt-dl-2 text-dl-4 text-dl-grey-5"
+          >Are you sure you want to delete</span
+        ><span class="mt-dl-1 text-dl-4 font-dl-3 text-dl-grey-2">{{
+          this.data.itemName
+        }}</span
+        ><span class="mt-dl-1 text-dl-4 text-dl-grey-5"
+          >and all associated inventory entries?</span
+        >
+      </div>
+      <div
+        class="mt-dl-5 flex flex-row-reverse justify-between px-dl-4 sm:mt-dl-4 sm:flex sm:flex-row-reverse"
+      >
         <button
           type="button"
-          class="shadow-s inline-flex w-dl-6 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 sm:ml-dl-4"
+          class="shadow-sinline-flex ml-dl-4 w-2/5 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1"
           (click)="onSubmit()"
         >
           Delete
         </button>
         <button
           type="button"
-          class="mt-dl-3 inline-flex w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1 sm:mt-0 sm:w-auto"
+          class="inline-flex w-2/5 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1"
           (click)="onCancel()"
         >
           Cancel
