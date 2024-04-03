@@ -1,21 +1,14 @@
 <div
   class="relative max-h-dl-21 w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
 >
-  <mat-spinner
-    class="my-app-custom-spinner"
-    *ngIf="isAdding"
-  ></mat-spinner>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    *ngIf="!isAdding"
-  >
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
     <div class="flex w-full flex-col">
       <div class="mt-dl-2 space-x-1 whitespace-nowrap text-center">
-        <span class="text-dl-6 text-dl-grey-5"> Add more</span
+        <span class="text-dl-6 text-dl-grey-5"> Add</span
         ><span class="text-dl-6 font-dl-3 text-dl-grey-2">{{
           (ingredient$ | async)!.name
-        }}</span>
+        }}</span><span class="text-dl-6 text-dl-grey-5">Stock</span>
       </div>
 
       <!--FORM FIELDS-->
@@ -73,13 +66,13 @@
       </div>
       <!---->
 
-      <div class="mt-dl-3 ">
+      <div class="mt-dl-3">
         <button
           type="button"
           class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
-            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+            'cursor-pointer bg-dl-pink-4':
               form.valid && (!form.pristine || data.ingredientID),
             'bg-dl-grey-7': !form.valid || (!data.ingredientID && form.pristine)
           }"

@@ -1,115 +1,87 @@
 <div
-  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+  class="relative flex h-dl-17 transform flex-col overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
 >
+  <div class="mb-dl-3 text-center">
+    <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4">
+      Add Recipe Tool
+    </h3>
+  </div>
   <mat-spinner
     class="my-app-custom-spinner"
     *ngIf="isAdding$ | async"
   ></mat-spinner>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
+  <div
     *ngIf="(isAdding$ | async) === false"
+    class="w-full flex-grow overflow-y-auto"
   >
-    <div class="relative flex w-dl-13 max-w-full flex-col">
-      <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
-        <h3 class="leading-dl-4 text-dl-4 font-dl-3 text-dl-blue-4">
-          Add Recipe Tool
-        </h3>
-        <div class="mt-dl-2">
-          <p class="text-dl-2 text-dl-grey-5">
-            Add a new Tool and its required quantity to this recipe.
-          </p>
-        </div>
-      </div>
-      <div class="absolute right-0 top-0 hidden pr-dl-2 pt-dl-2 sm:block">
-        <button
-          type="button"
-          class="rounded-dl-2 bg-white text-dl-grey-6 hover:text-dl-grey-5 focus:outline-none"
-          (click)="onCancel()"
-        >
-          <span class="sr-only">Close</span>
-          <svg
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-
-      <!--FORM FIELDS-->
-      <div class="mt-dl-6">
-        <div id="form-toolName" class="relative flex flex-col">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Tool</label>
-          <mat-form-field>
-            <mat-select formControlName="toolID">
-              <ng-container *ngFor="let tool of tools$ | async">
+    <form class="h-full" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="flex h-full w-full flex-col">
+        <!--FORM FIELDS-->
+        <div class="mt-dl-3 flex-grow overflow-y-auto">
+          <div id="form-toolName" class="relative flex flex-col">
+            <label class="text-dl-2 font-dl-3 text-dl-grey-4">Tool</label>
+            <mat-form-field>
+              <mat-select formControlName="toolID">
+                <ng-container *ngFor="let tool of tools$ | async">
+                  <mat-option
+                    *ngIf="!isToolExcluded(tool.toolID)"
+                    [value]="tool.toolID"
+                  >
+                    {{ tool.name }}
+                  </mat-option>
+                </ng-container>
                 <mat-option
-                  *ngIf="!isToolExcluded(tool.toolID)"
-                  [value]="tool.toolID"
+                  class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2"
+                  (click)="onAddNewTool()"
                 >
-                  {{ tool.name }}
+                  New Tool
                 </mat-option>
-              </ng-container>
-              <mat-option
-                class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2"
-                (click)="onAddNewTool()"
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div id="form-quantity">
+            <label class="text-dl-2 font-dl-3 text-dl-grey-4">Quantity</label>
+            <mat-form-field class="w-full">
+              <input
+                matInput
+                formControlName="quantity"
+                [disabled]="!form.get('toolID')?.value"
+              />
+              <mat-error
+                class="text-dl-3"
+                *ngIf="form.get('quantity')?.hasError('notPositiveInteger')"
               >
-                New Tool
-            </mat-option>
-            </mat-select>
-          </mat-form-field>
+                Must be a positive integer
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
-        <div id="form-quantity">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4">Quantity</label>
-          <mat-form-field class="w-full">
-            <input
-              matInput
-              formControlName="quantity"
-              [disabled]="!form.get('toolID')?.value"
-            />
-            <mat-error
-              class="text-dl-3"
-              *ngIf="form.get('quantity')?.hasError('notPositiveInteger')"
-            >
-              Must be a positive integer
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-      <!---->
+        <!---->
 
-      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
-        <button
-          type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white sm:ml-dl-4"
-          [class.cursor-pointer]="form.valid && !form.pristine"
-          [ngClass]="{
-            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
-              form.valid && !form.pristine,
-            'bg-dl-grey-7': !form.valid || form.pristine
-          }"
-          [disabled]="!form.valid || form.pristine"
-          (click)="onSubmit()"
-        >
-          Submit
-        </button>
-        <button
-          type="button"
-          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
-          (click)="onCancel()"
-        >
-          Cancel
-        </button>
+        <div class="mt-dl-6">
+          <button
+            type="button"
+            class="shadow-s h-dl-5 w-full rounded-dl-1 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+            [class.cursor-pointer]="form.valid && !form.pristine"
+            [ngClass]="{
+              'cursor-pointer bg-dl-pink-4':
+                form.valid && !form.pristine,
+              'bg-dl-grey-7': !form.valid || form.pristine
+            }"
+            [disabled]="!form.valid || form.pristine"
+            (click)="onSubmit()"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            class="mt-dl-3 h-dl-5 w-full rounded-dl-1 bg-white px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+            (click)="onCancel()"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

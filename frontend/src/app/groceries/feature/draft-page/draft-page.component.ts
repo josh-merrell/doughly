@@ -333,8 +333,6 @@ export class DraftPageComponent {
       this.selectedSLIngrID.set(0);
     } else {
       const ref = this.dialog.open(AddShoppingListIngredientModalComponent, {
-        width: '75%',
-        maxWidth: '520px',
         data: {
           shoppingListIngredients: this.displaySLStandaloneIngr(),
           ingredients: this.ingredients(),

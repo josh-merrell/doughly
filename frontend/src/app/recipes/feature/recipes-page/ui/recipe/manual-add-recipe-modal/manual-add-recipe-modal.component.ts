@@ -203,11 +203,23 @@ export class ManualAddRecipeModalComponent {
                 },
               });
             } else {
+              this.sendPushNotification();
               this.dialogRef.close('success');
             }
             this.isAdding = false;
           });
       });
+  }
+
+  sendPushNotification() {
+    if (!this.form.value.isPublicRecipe && !this.form.value.isHeirloomRecipe) {
+      return;
+    }
+    if (
+      this.form.value.isHeirloomRecipe &&
+      this.form.value.isPublicRecipe === false
+    ) {
+    }
   }
 
   onCancel() {

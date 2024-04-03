@@ -88,9 +88,9 @@
     <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
       <button
         type="button"
-        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+        class="shadow-s h-dl-5 w-full cursor-pointer justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
         [ngClass]="{
-          'bg-dl-blue-4 hover:bg-dl-blue-5':
+          'bg-dl-pink-4':
             toolsToAdd.length > 0 || submitMessage === 'No tools needed',
           'bg-dl-grey-7':
             submitMessage === 'Submit Additions' && !toolsToAdd.length
@@ -102,7 +102,7 @@
       </button>
       <button
         type="button"
-        class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+        class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
         Cancel

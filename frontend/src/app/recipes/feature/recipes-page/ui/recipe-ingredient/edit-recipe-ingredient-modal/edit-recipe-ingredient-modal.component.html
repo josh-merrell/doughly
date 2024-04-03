@@ -1,173 +1,189 @@
 <div
-  class="relative max-h-dl-22 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="relative flex h-dl-21 transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all"
 >
+  <div class="mb-dl-3 text-center">
+    <div class="mt-dl-2 space-x-1 whitespace-normal">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-5"
+        >Edit
+        <span class="text-dl-6 font-dl-3 text-dl-grey-2">{{
+          recipeIngredient().ingredient
+        }}</span
+        ><span *ngIf="recipe()" class="text-dl-6 font-dl-3 text-dl-grey-5">
+          in </span
+        ><span *ngIf="recipe()" class="text-dl-6 font-dl-3 text-dl-grey-2">{{
+          recipe().title
+        }}</span></span
+      >
+    </div>
+  </div>
+  <p
+    *ngIf="recipeIngredient().RIneedsReview"
+    class="mb-dl-3 text-dl-5 font-dl-3 text-dl-pink-4"
+  >
+    Confirm existing or Edit details
+  </p>
   <mat-spinner class="my-app-custom-spinner" *ngIf="isUpdating"></mat-spinner>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isUpdating">
-    <div class="flex w-full flex-col">
-      <div class="mt-dl-1 text-center">
-        <div class="mt-dl-2 space-x-1 whitespace-normal">
-          <span class="text-dl-6 font-dl-2 text-dl-grey-5"
-            >Edit
-            <span class="text-dl-6 font-dl-3 text-dl-grey-2">{{
-              recipeIngredient().ingredient
-            }}</span
-            ><span *ngIf="recipe()" class="text-dl-6 font-dl-3 text-dl-grey-5"
-              > in </span
-            ><span
-              *ngIf="recipe()"
-              class="text-dl-6 font-dl-3 text-dl-grey-2"
-              >{{ recipe().title }}</span
-            ></span
-          >
-        </div>
-      </div>
-
-      <!--FORM FIELDS-->
-      <div class="mt-dl-6">
-        <p *ngIf="recipeIngredient().RIneedsReview" class="text-dl-5 font-dl-3 text-dl-pink-4">Confirm existing or Edit details</p>
-        <!-- Component -->
-        <div id="form-component" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Recipe Component (opt)</label>
-          <mat-form-field class="w-full">
-            <input
-              matInput
-              formControlName="component"
-              placeholder="ex: filling"
-            />
-            <mat-error
-              class="text-dl-5"
-              *ngIf="form.get('component')?.hasError('moreThan20Chars')"
+  <div class="w-full flex-grow overflow-y-auto">
+    <form
+      class="h-full"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      *ngIf="!isUpdating"
+    >
+      <div class="flex h-full w-full flex-col">
+        <!--FORM FIELDS-->
+        <div class="mt-dl-4 flex-grow overflow-y-auto">
+          <!-- Component -->
+          <div id="form-component" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+              >Recipe Component (opt)</label
             >
-              Must be less than 20 characters
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <!-- Preparation -->
-        <div id="form-preparation" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Notes</label>
-          <mat-form-field class="w-full">
-            <input
-              matInput
-              formControlName="preparation"
-              placeholder="ex: peeled and diced"
-            />
-            <mat-error
-              class="text-dl-5"
-              *ngIf="form.get('preparation')?.hasError('moreThan40Chars')"
+            <mat-form-field class="w-full">
+              <input
+                matInput
+                formControlName="component"
+                placeholder="ex: filling"
+              />
+              <mat-error
+                class="text-dl-5"
+                *ngIf="form.get('component')?.hasError('moreThan20Chars')"
+              >
+                Must be less than 20 characters
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <!-- Preparation -->
+          <div id="form-preparation" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Notes</label>
+            <mat-form-field class="w-full">
+              <input
+                matInput
+                formControlName="preparation"
+                placeholder="ex: peeled and diced"
+              />
+              <mat-error
+                class="text-dl-5"
+                *ngIf="form.get('preparation')?.hasError('moreThan40Chars')"
+              >
+                Must be less than 40 characters
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Measurement -->
+          <div id="form-measurement" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+              >Measurement</label
             >
-              Must be less than 40 characters
-            </mat-error>
-          </mat-form-field>
-        </div>
+            <mat-form-field class="w-full">
+              <input
+                matInput
+                formControlName="measurement"
+                placeholder="ex: 2.5"
+              />
+              <mat-error
+                class="text-dl-5"
+                *ngIf="form.get('measurement')?.hasError('notPositiveFloat')"
+              >
+                Must be a positive number, ex "1.45"
+              </mat-error>
+            </mat-form-field>
+          </div>
 
-        <!-- Measurement -->
-        <div id="form-measurement" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Measurement</label>
-          <mat-form-field class="w-full">
-            <input
-              matInput
-              formControlName="measurement"
-              placeholder="ex: 2.5"
-            />
-            <mat-error
-              class="text-dl-5"
-              *ngIf="form.get('measurement')?.hasError('notPositiveFloat')"
+          <div id="form-measurementUnit" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+              >Measurement Unit (curr:
+              {{ recipeIngredient().measurementUnit }})</label
             >
-              Must be a positive number, ex "1.45"
-            </mat-error>
-          </mat-form-field>
-        </div>
+            <mat-form-field>
+              <mat-select formControlName="measurementUnit">
+                <mat-option *ngFor="let unit of unitOptions" [value]="unit">
+                  {{ unit }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 
-
-        <div id="form-measurementUnit" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
-            >Measurement Unit (curr: {{recipeIngredient().measurementUnit}})</label
-          >
-          <mat-form-field>
-            <mat-select formControlName="measurementUnit">
-              <mat-option *ngFor="let unit of unitOptions" [value]="unit">
-                {{ unit }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <div id="form-purchaseUnitRatio" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
-            >{{pUnit}} per {{mUnit}}</label
-          >
-          <mat-form-field class="w-full">
-            <input
-              matInput
-              formControlName="purchaseUnitRatio"
-              [placeholder]="
-                mUnit && pUnit
-                  ? 'How many ' + pUnit + ' per ' + mUnit + '? ex: 1.45'
-                  : 'Add other fields first'
-              "
-            />
-            <mat-error
-              class="text-dl-5"
+          <div id="form-purchaseUnitRatio" class="relative flex flex-col">
+            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+              >{{ pUnit }} per {{ mUnit }}</label
+            >
+            <mat-form-field class="w-full">
+              <input
+                matInput
+                formControlName="purchaseUnitRatio"
+                [placeholder]="
+                  mUnit && pUnit
+                    ? 'How many ' + pUnit + ' per ' + mUnit + '? ex: 1.45'
+                    : 'Add other fields first'
+                "
+              />
+              <mat-error
+                class="text-dl-5"
+                *ngIf="
+                  form.get('purchaseUnitRatio')?.hasError('notPositiveFloat')
+                "
+              >
+                Must be a positive number, ex "1.45"
+              </mat-error>
+            </mat-form-field>
+            <div
+              *ngIf="gettingUnitRatio()"
+              class="absolute -bottom-1 left-3 flex"
+            >
+              <mat-spinner
+                [diameter]="18"
+                class="my-app-custom-spinner"
+              ></mat-spinner>
+              <p class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3">
+                Getting Suggested Ratio...
+              </p>
+            </div>
+            <p
               *ngIf="
-                form.get('purchaseUnitRatio')?.hasError('notPositiveFloat')
+                purchaseUnitRatioSuggestion() ===
+                form.get('purchaseUnitRatio')?.value
               "
+              class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3"
             >
-              Must be a positive number, ex "1.45"
-            </mat-error>
-          </mat-form-field>
-          <div
-            *ngIf="gettingUnitRatio()"
-            class="absolute -bottom-1 left-3 flex"
-          >
-            <mat-spinner
-              [diameter]="18"
-              class="my-app-custom-spinner"
-            ></mat-spinner>
-            <p class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3">
-              Getting Suggested Ratio...
+              Suggested Ratio
             </p>
           </div>
-          <p
-            *ngIf="purchaseUnitRatioSuggestion() === form.get('purchaseUnitRatio')?.value"
-            class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3"
+        </div>
+        <!---->
+
+        <div class="mt-dl-4">
+          <button
+            type="button"
+            *ngIf="recipeIngredient().RIneedsReview && form.pristine"
+            class="h-dl-5 w-full justify-center rounded-dl-1 border-2 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white shadow-sm"
+            (click)="onConfirm()"
           >
-            Suggested Ratio
-          </p>
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white"
+            [class.cursor-pointer]="form.valid && !form.pristine"
+            [ngClass]="{
+              'cursor-pointer bg-dl-pink-4 hover:bg-dl-blue-5':
+                form.valid && !form.pristine,
+              'bg-dl-grey-7': !form.valid || form.pristine
+            }"
+            [disabled]="!form.valid || form.pristine"
+            (click)="onSubmit()"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7"
+            (click)="onCancel()"
+          >
+            Cancel
+          </button>
         </div>
       </div>
-      <!---->
-
-      <div class="mt-dl-6">
-        <button
-          type="button"
-          *ngIf="recipeIngredient().RIneedsReview && form.pristine"
-          class="mb-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-dl-pink-4 border-2 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white shadow-sm"
-          (click)="onConfirm()"
-        >
-          Confirm
-        </button>
-        <button
-          type="button"
-          class="shadow-s inline-flex w-full mb-dl-3 justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white"
-          [class.cursor-pointer]="form.valid && !form.pristine"
-          [ngClass]="{
-            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
-              form.valid && !form.pristine,
-            'bg-dl-grey-7': !form.valid || form.pristine
-          }"
-          [disabled]="!form.valid || form.pristine"
-          (click)="onSubmit()"
-        >
-          Submit
-        </button>
-        <button
-          type="button"
-          class="inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7"
-          (click)="onCancel()"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
