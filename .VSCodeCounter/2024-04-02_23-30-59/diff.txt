@@ -1,0 +1,58 @@
+Date : 2024-04-02 23:30:59
+Directory : /home/josh/repos/doughleap/server/services
+Total : 24 files,  1550 codes, 62 comments, 57 blanks, all 1669 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         18 |      1,034 |         62 |         52 |      1,148 |
+| JSON Lines |          3 |        476 |          0 |          2 |        478 |
+| JSON       |          3 |         40 |          0 |          3 |         43 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                     | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                        |         24 |      1,550 |         62 |         57 |      1,669 |
+| . (Files)                                                                                                |          6 |      1,107 |         95 |         80 |      1,282 |
+| ..                                                                                                       |          8 |       -241 |        -36 |        -50 |       -327 |
+| ../middleware                                                                                            |          8 |       -241 |        -36 |        -50 |       -327 |
+| firebase                                                                                                 |          2 |        137 |          0 |          9 |        146 |
+| google                                                                                                   |          2 |         26 |          1 |          5 |         32 |
+| lambda                                                                                                   |          3 |         45 |          2 |         11 |         58 |
+| lambda/resetSequencesForIDs                                                                              |          3 |         45 |          2 |         11 |         58 |
+| languageModel                                                                                            |          3 |        476 |          0 |          2 |        478 |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                 | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /home/josh/repos/doughleap/server/middleware/ID.js                                                       | JavaScript |        -61 |        -21 |        -15 |        -97 |
+| /home/josh/repos/doughleap/server/middleware/auth.js                                                     | JavaScript |        -29 |         -2 |         -5 |        -36 |
+| /home/josh/repos/doughleap/server/middleware/errorHandling.js                                            | JavaScript |        -83 |         -9 |        -13 |       -105 |
+| /home/josh/repos/doughleap/server/middleware/multer.js                                                   | JavaScript |          0 |          0 |         -1 |         -1 |
+| /home/josh/repos/doughleap/server/middleware/queryParsing.js                                             | JavaScript |        -13 |         -2 |         -4 |        -19 |
+| /home/josh/repos/doughleap/server/middleware/queryStringSplitting.js                                     | JavaScript |         -9 |          0 |         -2 |        -11 |
+| /home/josh/repos/doughleap/server/middleware/test_ID.js                                                  | JavaScript |        -28 |         -2 |         -7 |        -37 |
+| /home/josh/repos/doughleap/server/middleware/validating.js                                               | JavaScript |        -18 |          0 |         -3 |        -21 |
+| /home/josh/repos/doughleap/server/services/aiHandlers.js                                                 | JavaScript |        462 |         25 |         36 |        523 |
+| /home/josh/repos/doughleap/server/services/dbLogger.js                                                   | JavaScript |        143 |          1 |          7 |        151 |
+| /home/josh/repos/doughleap/server/services/firebase/doughly-d93badfe1987.json                            | JSON       |         13 |          0 |          1 |         14 |
+| /home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js                                   | JavaScript |        124 |          0 |          8 |        132 |
+| /home/josh/repos/doughleap/server/services/google/doughly-ee4c38c0be84.json                              | JSON       |         13 |          0 |          1 |         14 |
+| /home/josh/repos/doughleap/server/services/google/google-api.js                                          | JavaScript |         13 |          1 |          4 |         18 |
+| /home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/debug_bridge.js                   | JavaScript |          9 |          0 |          3 |         12 |
+| /home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/index.js                          | JavaScript |         22 |          2 |          7 |         31 |
+| /home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/package.json                      | JSON       |         14 |          0 |          1 |         15 |
+| /home/josh/repos/doughleap/server/services/languageModel/ingredientMatching_dataset.jsonl                | JSON Lines |        326 |          0 |          1 |        327 |
+| /home/josh/repos/doughleap/server/services/languageModel/purchaseUnitLifespanDaysSelection_dataset.jsonl | JSON Lines |         50 |          0 |          1 |         51 |
+| /home/josh/repos/doughleap/server/services/languageModel/substanceUnitConversion.jsonl                   | JSON Lines |        100 |          0 |          0 |        100 |
+| /home/josh/repos/doughleap/server/services/scraper.js                                                    | JavaScript |         38 |          5 |          7 |         50 |
+| /home/josh/repos/doughleap/server/services/supply.js                                                     | JavaScript |        201 |         42 |         15 |        258 |
+| /home/josh/repos/doughleap/server/services/taxes.js                                                      | JavaScript |          6 |          0 |          2 |          8 |
+| /home/josh/repos/doughleap/server/services/unitRatioStoreService.js                                      | JavaScript |        257 |         22 |         13 |        292 |
+| Total                                                                                                    |            |      1,550 |         62 |         57 |      1,669 |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
