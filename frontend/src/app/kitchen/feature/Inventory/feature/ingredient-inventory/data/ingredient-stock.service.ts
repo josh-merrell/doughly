@@ -74,21 +74,6 @@ export class IngredientStockService {
     )
   );
 
-  deleteExpiredAndGetAll(): Observable<IngredientStock[]> {
-    // first get 'autoDeleteExpiredStock' from profile
-    const autoDeleteExpiredStock = this.profile().autoDeleteExpiredStock;
-
-    if (autoDeleteExpiredStock) {
-      // If true, delete all expired ingredientStocks and then fetch all stocks
-      return this.deleteExpiredStocks().pipe(
-        switchMap(() => this.http.get<IngredientStock[]>(this.API_URL))
-      );
-    } else {
-      // If auto-deletion is not enabled, directly return all ingredientStocks
-      return this.http.get<IngredientStock[]>(this.API_URL);
-    }
-  }
-
   getAll(): Observable<IngredientStock[]> {
     return this.http.get<IngredientStock[]>(this.API_URL);
   }
