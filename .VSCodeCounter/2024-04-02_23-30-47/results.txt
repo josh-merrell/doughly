@@ -1,0 +1,32 @@
+Date : 2024-04-02 23:30:47
+Directory : /home/josh/repos/doughleap/server/middleware
+Total : 8 files,  241 codes, 36 comments, 50 blanks, all 327 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |          8 |        241 |         36 |         50 |        327 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                 | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                    |          8 |        241 |         36 |         50 |        327 |
++----------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                             | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /home/josh/repos/doughleap/server/middleware/ID.js                   | JavaScript |         61 |         21 |         15 |         97 |
+| /home/josh/repos/doughleap/server/middleware/auth.js                 | JavaScript |         29 |          2 |          5 |         36 |
+| /home/josh/repos/doughleap/server/middleware/errorHandling.js        | JavaScript |         83 |          9 |         13 |        105 |
+| /home/josh/repos/doughleap/server/middleware/multer.js               | JavaScript |          0 |          0 |          1 |          1 |
+| /home/josh/repos/doughleap/server/middleware/queryParsing.js         | JavaScript |         13 |          2 |          4 |         19 |
+| /home/josh/repos/doughleap/server/middleware/queryStringSplitting.js | JavaScript |          9 |          0 |          2 |         11 |
+| /home/josh/repos/doughleap/server/middleware/test_ID.js              | JavaScript |         28 |          2 |          7 |         37 |
+| /home/josh/repos/doughleap/server/middleware/validating.js           | JavaScript |         18 |          0 |          3 |         21 |
+| Total                                                                |            |        241 |         36 |         50 |        327 |
++----------------------------------------------------------------------+------------+------------+------------+------------+------------+

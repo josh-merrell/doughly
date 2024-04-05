@@ -10,6 +10,10 @@ const { getIngredientStocksSchema_query, getIngredientStockSchema_params, newIng
 const router = express.Router();
 const h = handler;
 
+// allow unauthenticated access to deleteAllExpiredStock lambda
+router.post('/deleteAllExpired', errorCatcher(h.deleteAllExpiredStock));
+
+// all routes below require authentication
 router.use(authenticateJWT);
 router.get('/:ingredientStockID', routeValidator(getIngredientStockSchema_params, 'params'), errorCatcher(h.getIngredientStockByID));
 router.get('/', routeValidator(getIngredientStocksSchema_query, 'query'), errorCatcher(h.getIngredientStocks));

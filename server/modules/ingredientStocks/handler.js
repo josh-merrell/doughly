@@ -81,10 +81,24 @@ async function deleteIngredientStock(req, res) {
   }
 }
 
+async function deleteAllExpiredStock(req, res) {
+  const dbPublic = req.defaultClient.db;
+  const db = req.client.db;
+  const p = require('./processor')({ db, dbPublic });
+  try {
+    const returner = await p.deleteAllExpired({ userID: req.userID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredientStocks' 'deleteExpiredStock': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 module.exports = {
   getIngredientStocks,
   getIngredientStockByID,
   createIngredientStock,
   updateIngredientStock,
   deleteIngredientStock,
+  deleteAllExpiredStock,
 };

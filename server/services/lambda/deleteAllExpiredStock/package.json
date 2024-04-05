@@ -1,0 +1,12 @@
+{
+  "name": "deleteallexpiredstock",
+  "version": "1.0.0",
+  "description": "Runs Hourly. For each userID, we get list of non-deleted ingredientStocks. For each, if expired, we delete it and create a kitchenLog.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
