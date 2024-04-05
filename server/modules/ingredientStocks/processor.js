@@ -4,7 +4,7 @@ const { createKitchenLog } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 const { errorGen } = require('../../middleware/errorHandling');
 
-module.exports = ({ db }) => {
+module.exports = ({ db, dbPublic }) => {
   async function getAll(options) {
     const { userID, ingredientStockIDs, ingredientID, purchasedBy } = options;
 
@@ -118,7 +118,7 @@ module.exports = ({ db }) => {
   }
 
   async function deleteIngredientStock(options) {
-    const { userID, ingredientStockID, authorization } = options;
+    const { userID, ingredientStockID, authorization = 'override' } = options;
 
     //verify that the provided ingredientStockID is valid, return error if not
     const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false).single();
@@ -146,6 +146,75 @@ module.exports = ({ db }) => {
     return { success: true };
   }
 
+  async function deleteAllExpired() {
+    try {
+      // get all unique userID's who have a non-deleted ingredientStock
+      const { data: users, error: usersError } = await db.from('ingredientStockDistinctUsers').select('*');
+      if (usersError) {
+        global.logger.error(`Error getting unique userID's: ${usersError.message}`);
+        throw errorGen(`Error getting unique userID's: ${usersError.message}`, 400);
+      }
+      const promises = [];
+      for (const user of users) {
+        const { userID } = user;
+        promises.push(deleteExpiredStockForUser(userID));
+      }
+
+      // use Promise.allSettled to ensure all promises are resolved before returning
+      await Promise.allSettled(promises);
+
+      return { success: true };
+    } catch (error) {
+      global.logger.error(`Error deleting all expired ingredientStocks: ${error.message}`);
+      throw errorGen(`Error deleting all expired ingredientStocks: ${error.message}`, 400);
+    }
+  }
+
+  async function deleteExpiredStockForUser(userID) {
+    try {
+      // get 'autoDeleteExpiredStock' setting for the user
+      const { data: result, error } = await dbPublic.from('profiles').select('autoDeleteExpiredStock').eq('user_id', userID).single();
+      if (error) {
+        global.logger.error(`Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`);
+        throw errorGen(`Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`, 400);
+      }
+      if (!result.autoDeleteExpiredStock) {
+        global.logger.info(`autoDeleteExpiredStock setting is false for user ${userID}, skipping deletion`);
+        return { success: true };
+      }
+      // get all non-deleted ingredientStocks for the user
+      const { data: stocks, error: expiredStocksError } = await db.from('ingredientStocks').select().eq('userID', userID).eq('deleted', false);
+      if (expiredStocksError) {
+        global.logger.error(`Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`);
+        throw errorGen(`Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`, 400);
+      }
+      const deletePromises = [];
+      for (const stock of stocks) {
+        const { ingredientStockID, ingredientID } = stock;
+        const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientID).single();
+        if (ingredientError) {
+          global.logger.error(`Error getting ingredient for ingredientStockID ${ingredientStockID}: ${ingredientError.message}`);
+          throw errorGen(`Error getting ingredient for ingredientStockID ${ingredientStockID}: ${ingredientError.message}`, 400);
+        }
+
+        // determine expire date using ingredient.lifespanDays and stock.purchasedDate
+        const expireDate = new Date(stock.purchasedDate);
+        expireDate.setDate(expireDate.getDate() + ingredient.lifespanDays);
+        if (expireDate < new Date()) {
+          deletePromises.push(deleteIngredientStock({ userID, ingredientStockID }));
+        }
+      }
+
+      // use Promise.allSettled to ensure all promises are resolved before returning
+      await Promise.allSettled(deletePromises);
+
+      return { success: true };
+    } catch (error) {
+      global.logger.error(`Error deleting expired ingredientStocks for user ${userID}: ${error.message}`);
+      throw errorGen(`Error deleting expired ingredientStocks for user ${userID}: ${error.message}`, 400);
+    }
+  }
+
   return {
     get: {
       all: getAll,
@@ -154,5 +223,6 @@ module.exports = ({ db }) => {
     create,
     update,
     delete: deleteIngredientStock,
+    deleteAllExpired,
   };
 };

@@ -1,0 +1,40 @@
+"filename", "language", "JavaScript", "JSON", "JSON Lines", "comment", "blank", "total"
+"/home/josh/repos/doughleap/server/schemas/client-types.js", "JavaScript", 73, 0, 0, 0, 7, 80
+"/home/josh/repos/doughleap/server/schemas/employee-types.js", "JavaScript", 84, 0, 0, 0, 7, 91
+"/home/josh/repos/doughleap/server/schemas/followship-types.js", "JavaScript", 36, 0, 0, 0, 5, 41
+"/home/josh/repos/doughleap/server/schemas/friendship-types.js", "JavaScript", 53, 0, 0, 0, 7, 60
+"/home/josh/repos/doughleap/server/schemas/ingredient-types.js", "JavaScript", 187, 0, 0, 3, 20, 210
+"/home/josh/repos/doughleap/server/schemas/invoice-types.js", "JavaScript", 122, 0, 0, 0, 12, 134
+"/home/josh/repos/doughleap/server/schemas/log-types.js", "JavaScript", 69, 0, 0, 0, 7, 76
+"/home/josh/repos/doughleap/server/schemas/order-types.js", "JavaScript", 64, 0, 0, 0, 7, 71
+"/home/josh/repos/doughleap/server/schemas/payment-types.js", "JavaScript", 27, 0, 0, 0, 3, 30
+"/home/josh/repos/doughleap/server/schemas/person-types.js", "JavaScript", 73, 0, 0, 0, 7, 80
+"/home/josh/repos/doughleap/server/schemas/productStock-types.js", "JavaScript", 55, 0, 0, 0, 7, 62
+"/home/josh/repos/doughleap/server/schemas/profile-types.js", "JavaScript", 39, 0, 0, 0, 6, 45
+"/home/josh/repos/doughleap/server/schemas/pushNotification-types.js", "JavaScript", 26, 0, 0, 0, 4, 30
+"/home/josh/repos/doughleap/server/schemas/recipe-types.js", "JavaScript", 200, 0, 0, 1, 21, 222
+"/home/josh/repos/doughleap/server/schemas/shopping-types.js", "JavaScript", 127, 0, 0, 0, 16, 143
+"/home/josh/repos/doughleap/server/schemas/step-types.js", "JavaScript", 103, 0, 0, 2, 13, 118
+"/home/josh/repos/doughleap/server/schemas/stockItem-types.js", "JavaScript", 56, 0, 0, 0, 7, 63
+"/home/josh/repos/doughleap/server/schemas/stockProduct-types.js", "JavaScript", 53, 0, 0, 0, 7, 60
+"/home/josh/repos/doughleap/server/schemas/tag-types.js", "JavaScript", 117, 0, 0, 0, 15, 132
+"/home/josh/repos/doughleap/server/schemas/taskItem-types.js", "JavaScript", 56, 0, 0, 0, 7, 63
+"/home/josh/repos/doughleap/server/schemas/tool-types.js", "JavaScript", 154, 0, 0, 3, 21, 178
+"/home/josh/repos/doughleap/server/schemas/upload-types.js", "JavaScript", 12, 0, 0, 0, 2, 14
+"/home/josh/repos/doughleap/server/services/aiHandlers.js", "JavaScript", -462, 0, 0, -25, -36, -523
+"/home/josh/repos/doughleap/server/services/dbLogger.js", "JavaScript", -143, 0, 0, -1, -7, -151
+"/home/josh/repos/doughleap/server/services/firebase/doughly-d93badfe1987.json", "JSON", 0, -13, 0, 0, -1, -14
+"/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js", "JavaScript", -124, 0, 0, 0, -8, -132
+"/home/josh/repos/doughleap/server/services/google/doughly-ee4c38c0be84.json", "JSON", 0, -13, 0, 0, -1, -14
+"/home/josh/repos/doughleap/server/services/google/google-api.js", "JavaScript", -13, 0, 0, -1, -4, -18
+"/home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/debug_bridge.js", "JavaScript", -9, 0, 0, 0, -3, -12
+"/home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/index.js", "JavaScript", -22, 0, 0, -2, -7, -31
+"/home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/package.json", "JSON", 0, -14, 0, 0, -1, -15
+"/home/josh/repos/doughleap/server/services/languageModel/ingredientMatching_dataset.jsonl", "JSON Lines", 0, 0, -326, 0, -1, -327
+"/home/josh/repos/doughleap/server/services/languageModel/purchaseUnitLifespanDaysSelection_dataset.jsonl", "JSON Lines", 0, 0, -50, 0, -1, -51
+"/home/josh/repos/doughleap/server/services/languageModel/substanceUnitConversion.jsonl", "JSON Lines", 0, 0, -100, 0, 0, -100
+"/home/josh/repos/doughleap/server/services/scraper.js", "JavaScript", -38, 0, 0, -5, -7, -50
+"/home/josh/repos/doughleap/server/services/supply.js", "JavaScript", -201, 0, 0, -42, -15, -258
+"/home/josh/repos/doughleap/server/services/taxes.js", "JavaScript", -6, 0, 0, 0, -2, -8
+"/home/josh/repos/doughleap/server/services/unitRatioStoreService.js", "JavaScript", -257, 0, 0, -22, -13, -292
+"Total", "-", 511, -40, -476, -89, 101, 7

@@ -1,0 +1,48 @@
+Date : 2024-04-02 23:30:59
+Directory : /home/josh/repos/doughleap/server/services
+Total : 16 files,  1791 codes, 98 comments, 107 blanks, all 1996 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         10 |      1,275 |         98 |        102 |      1,475 |
+| JSON Lines |          3 |        476 |          0 |          2 |        478 |
+| JSON       |          3 |         40 |          0 |          3 |         43 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                     | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                        |         16 |      1,791 |         98 |        107 |      1,996 |
+| . (Files)                                                                                                |          6 |      1,107 |         95 |         80 |      1,282 |
+| firebase                                                                                                 |          2 |        137 |          0 |          9 |        146 |
+| google                                                                                                   |          2 |         26 |          1 |          5 |         32 |
+| lambda                                                                                                   |          3 |         45 |          2 |         11 |         58 |
+| lambda/resetSequencesForIDs                                                                              |          3 |         45 |          2 |         11 |         58 |
+| languageModel                                                                                            |          3 |        476 |          0 |          2 |        478 |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                 | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /home/josh/repos/doughleap/server/services/aiHandlers.js                                                 | JavaScript |        462 |         25 |         36 |        523 |
+| /home/josh/repos/doughleap/server/services/dbLogger.js                                                   | JavaScript |        143 |          1 |          7 |        151 |
+| /home/josh/repos/doughleap/server/services/firebase/doughly-d93badfe1987.json                            | JSON       |         13 |          0 |          1 |         14 |
+| /home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js                                   | JavaScript |        124 |          0 |          8 |        132 |
+| /home/josh/repos/doughleap/server/services/google/doughly-ee4c38c0be84.json                              | JSON       |         13 |          0 |          1 |         14 |
+| /home/josh/repos/doughleap/server/services/google/google-api.js                                          | JavaScript |         13 |          1 |          4 |         18 |
+| /home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/debug_bridge.js                   | JavaScript |          9 |          0 |          3 |         12 |
+| /home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/index.js                          | JavaScript |         22 |          2 |          7 |         31 |
+| /home/josh/repos/doughleap/server/services/lambda/resetSequencesForIDs/package.json                      | JSON       |         14 |          0 |          1 |         15 |
+| /home/josh/repos/doughleap/server/services/languageModel/ingredientMatching_dataset.jsonl                | JSON Lines |        326 |          0 |          1 |        327 |
+| /home/josh/repos/doughleap/server/services/languageModel/purchaseUnitLifespanDaysSelection_dataset.jsonl | JSON Lines |         50 |          0 |          1 |         51 |
+| /home/josh/repos/doughleap/server/services/languageModel/substanceUnitConversion.jsonl                   | JSON Lines |        100 |          0 |          0 |        100 |
+| /home/josh/repos/doughleap/server/services/scraper.js                                                    | JavaScript |         38 |          5 |          7 |         50 |
+| /home/josh/repos/doughleap/server/services/supply.js                                                     | JavaScript |        201 |         42 |         15 |        258 |
+| /home/josh/repos/doughleap/server/services/taxes.js                                                      | JavaScript |          6 |          0 |          2 |          8 |
+| /home/josh/repos/doughleap/server/services/unitRatioStoreService.js                                      | JavaScript |        257 |         22 |         13 |        292 |
+| Total                                                                                                    |            |      1,791 |         98 |        107 |      1,996 |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
