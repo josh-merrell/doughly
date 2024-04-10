@@ -3,6 +3,8 @@
 const { createKitchenLog } = require('../../services/dbLogger');
 const { updater } = require('../../db');
 const { errorGen } = require('../../middleware/errorHandling');
+const { default: axios } = require('axios');
+const { supplyCheckRecipeIngredient } = require('../../services/supply');
 
 module.exports = ({ db, dbPublic }) => {
   async function getAll(options) {
@@ -118,7 +120,7 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function deleteIngredientStock(options) {
-    const { userID, ingredientStockID, authorization = 'override' } = options;
+    const { userID, ingredientStockID, authorization, checkForLowStockBool = true } = options;
 
     //verify that the provided ingredientStockID is valid, return error if not
     const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false).single();
@@ -143,10 +145,17 @@ module.exports = ({ db, dbPublic }) => {
 
     //add a 'deleted' log entry
     createKitchenLog(userID, authorization, 'deleteIngredientStock', Number(ingredientStockID), Number(existingIngredientStock.ingredientID), null, null, `Deleted: ${existingIngredientStock.grams} grams of ${ingredient.name}`);
+
+    // call the 'checkForLowStock' function, passing the ingredientID and userID
+    if (checkForLowStockBool) {
+      checkForLowStock({ ingredientID: existingIngredientStock.ingredientID, userID, authorization });
+    }
+
     return { success: true };
   }
 
-  async function deleteAllExpired() {
+  async function deleteAllExpired(options) {
+    const { authorization } = options;
     try {
       // get all unique userID's who have a non-deleted ingredientStock
       const { data: users, error: usersError } = await db.from('ingredientStockDistinctUsers').select('*');
@@ -157,12 +166,13 @@ module.exports = ({ db, dbPublic }) => {
       const promises = [];
       for (const user of users) {
         const { userID } = user;
-        promises.push(deleteExpiredStockForUser(userID));
+        promises.push(deleteExpiredStockForUser(userID, authorization));
       }
 
       // use Promise.allSettled to ensure all promises are resolved before returning
       await Promise.allSettled(promises);
 
+      global.logger.info('Deleted all expired ingredientStocks');
       return { success: true };
     } catch (error) {
       global.logger.error(`Error deleting all expired ingredientStocks: ${error.message}`);
@@ -170,7 +180,7 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
-  async function deleteExpiredStockForUser(userID) {
+  async function deleteExpiredStockForUser(userID, authorization) {
     try {
       // get 'autoDeleteExpiredStock' setting for the user
       const { data: result, error } = await dbPublic.from('profiles').select('autoDeleteExpiredStock').eq('user_id', userID).single();
@@ -189,6 +199,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`, 400);
       }
       const deletePromises = [];
+      let notifications = [];
       for (const stock of stocks) {
         const { ingredientStockID, ingredientID } = stock;
         const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientID).single();
@@ -201,17 +212,225 @@ module.exports = ({ db, dbPublic }) => {
         const expireDate = new Date(stock.purchasedDate);
         expireDate.setDate(expireDate.getDate() + ingredient.lifespanDays);
         if (expireDate < new Date()) {
-          deletePromises.push(deleteIngredientStock({ userID, ingredientStockID }));
+          // don't check for low stock. We will do that once at the end for the ingr
+          deletePromises.push(deleteIngredientStock({ userID, ingredientStockID, authorization, checkForLowStockBool: false }));
+          notifications.push({
+            name: ingredient.name,
+            measurement: stock.grams / ingredient.gramRatio,
+            measurementUnit: ingredient.purchaseUnit,
+            ingredientID,
+            toSend: false,
+          });
         }
       }
 
       // use Promise.allSettled to ensure all promises are resolved before returning
       await Promise.allSettled(deletePromises);
 
+      const results = await Promise.allSettled(deletePromises);
+
+      // for each promise, if it was successful, set 'toSend' to true for the corresponding notification
+      for (let x = 0; x < results.length; x++) {
+        if (results[x].status === 'fulfilled') {
+          notifications[x].toSend = true;
+        }
+      }
+
+      // log count of deleted ingredientStocks
+      global.logger.info(`Auto Deleted ${deletePromises.length} expired ingredientStocks for user ${userID}`);
+
+      // get user push tokens
+      const { data: tokens, error: getTokensError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/${userID}`, {
+        headers: {
+          authorization,
+        },
+      });
+      if (getTokensError) {
+        global.logger.error(`Error getting push tokens for user ${userID}: ${getTokensError.message}`);
+        throw errorGen(`Error getting push tokens for user ${userID}: ${getTokensError.message}`, 400);
+      }
+
+      // NOTIFICATIONS
+      notifications = notifications.filter((notification) => notification.toSend);
+
+      // combine the measurements of multiple notifications for the same ingredient
+      const combinedNotifications = [];
+      for (const notification of notifications) {
+        const existingNotification = combinedNotifications.find((n) => n.ingredientID === notification.ingredientID);
+        if (existingNotification) {
+          existingNotification.measurement += notification.measurement;
+        } else {
+          combinedNotifications.push(notification);
+        }
+      }
+
+      // send stock deleted notifications
+      let type = combinedNotifications.length > 1 ? 'autoDeletedExpiredStocks' : 'autoDeletedExpiredStock';
+      let data = {};
+      if (type === 'autoDeletedExpiredStocks') {
+        data['name'] = combinedNotifications[0].name;
+        data['count'] = combinedNotifications.length;
+      } else {
+        data['name'] = combinedNotifications[0].name;
+        data['measurement'] = Math.round(combinedNotifications[0].measurement * 100) / 100;
+        data['measurementUnit'] = combinedNotifications[0].measurementUnit;
+      }
+      const { error: sendNotificationError } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/notification`,
+        {
+          userID,
+          type,
+          data,
+          destTokens: tokens,
+        },
+        {
+          headers: {
+            authorization,
+          },
+        },
+      );
+      if (sendNotificationError) {
+        global.logger.error(`Error sending push notifications for user ${userID}: ${sendNotificationError.message}`);
+        throw errorGen(`Error sending push notifications for user ${userID}: ${sendNotificationError.message}`, 400);
+      }
+
+      // check for low stock for each ingredient
+      for (const notification of combinedNotifications) {
+        checkForLowStock({ ingredientID: notification.ingredientID, userID, authorization });
+      }
+
       return { success: true };
     } catch (error) {
       global.logger.error(`Error deleting expired ingredientStocks for user ${userID}: ${error.message}`);
       throw errorGen(`Error deleting expired ingredientStocks for user ${userID}: ${error.message}`, 400);
+    }
+  }
+
+  async function checkForLowStock(options) {
+    const { ingredientID, userID, authorization } = options;
+
+    global.logger.info(`Checking for low stock for ingredient ${ingredientID} and user ${userID}`);
+
+    try {
+      // get user profile to check if notifications are enabled
+      const { data: profile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
+      if (profileError) {
+        global.logger.error(`Error getting profile for user ${userID}: ${profileError.message}`);
+        throw errorGen(`Error getting profile for user ${userID}: ${profileError.message}`, 400);
+      }
+
+      // get ingredient details
+      const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientID).single();
+      if (ingredientError) {
+        global.logger.error(`Error getting ingredient for ingredient ${ingredientID}: ${ingredientError.message}`);
+        throw errorGen(`Error getting ingredient for ingredient ${ingredientID}: ${ingredientError.message}`, 400);
+      }
+
+      // get all ingredientStocks for the ingredient
+      const { data: stocks, error: stocksError } = await db.from('ingredientStocks').select().eq('userID', userID).eq('ingredientID', ingredientID).eq('deleted', false);
+      if (stocksError) {
+        global.logger.error(`Error getting ingredientStocks for ingredient ${ingredientID} and user ${userID}: ${stocksError.message}`);
+        throw errorGen(`Error getting ingredientStocks for ingredient ${ingredientID} and user ${userID}: ${stocksError.message}`, 400);
+      }
+
+      // if there are no ingredientStocks, send notification to user if notifyOnNoStock is enabled
+      if (stocks.length === 0) {
+        global.logger.info(`No ingredientStocks found for ingredient ${ingredientID} and user ${userID}`);
+        if (profile.notifyOnNoStock !== 'App Push Only' && profile.notifyOnNoStock !== 'Email and App Push') {
+          return;
+        }
+        const { data: tokens, error: getTokensError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/${userID}`, {
+          headers: {
+            authorization,
+          },
+        });
+        if (getTokensError) {
+          global.logger.error(`Error getting push tokens for user ${userID}: ${getTokensError.message}`);
+          throw errorGen(`Error getting push tokens for user ${userID}: ${getTokensError.message}`, 400);
+        }
+
+        const { error: sendNotificationError } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/notification`,
+          {
+            userID,
+            type: 'noStock',
+            data: { name: ingredient.name },
+            destTokens: tokens,
+          },
+          {
+            headers: {
+              authorization,
+            },
+          },
+        );
+
+        if (sendNotificationError) {
+          global.logger.error(`Error sending push notifications for user ${userID}: ${sendNotificationError.message}`);
+          throw errorGen(`Error sending push notifications for user ${userID}: ${sendNotificationError.message}`, 400);
+        }
+      } else {
+        // get all recipeIngredients for the ingredient
+        const { data: recipeIngredients, error: recipeIngredientsError } = await db.from('recipeIngredients').select().eq('ingredientID', ingredientID);
+        if (recipeIngredientsError) {
+          global.logger.error(`Error getting recipeIngredients for ingredient ${ingredientID}: ${recipeIngredientsError.message}`);
+          throw errorGen(`Error getting recipeIngredients for ingredient ${ingredientID}: ${recipeIngredientsError.message}`, 400);
+        }
+
+        // if no recipeIngredients, return
+        if (recipeIngredients.length === 0) {
+          global.logger.info(`No recipeIngredients found for ingredient ${ingredientID}`);
+          return;
+        }
+
+        let recipeCountInsufficient = 0;
+        // for each recipeIngredient, check if the ingredientStocks are sufficient
+        for (const ri of recipeIngredients) {
+          const check = await supplyCheckRecipeIngredient(userID, authorization, ingredientID, ri.recipeID);
+          global.logger.info(`Result of supplyCheckRecipeIngredient for ingredient ${ingredientID} and user ${userID}: ${JSON.stringify(check)}`);
+          if (check.status === 'insufficient') {
+            recipeCountInsufficient++;
+          }
+        }
+
+        // if recipeCountInsufficient > 0, send notification to user if notifyOnLowStock is enabled
+        if (recipeCountInsufficient > 0) {
+          if (profile.notifyOnLowStock !== 'App Push Only' && profile.notifyOnLowStock !== 'Email and App Push') {
+            return;
+          }
+          global.logger.info(`Low stock found for ${recipeCountInsufficient} recipes`);
+          const { data: tokens, error: getTokensError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/${userID}`, {
+            headers: {
+              authorization,
+            },
+          });
+          if (getTokensError) {
+            global.logger.error(`Error getting push tokens for user ${userID}: ${getTokensError.message}`);
+            throw errorGen(`Error getting push tokens for user ${userID}: ${getTokensError.message}`, 400);
+          }
+
+          const { error: sendNotificationError } = await axios.post(
+            `${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/notification`,
+            {
+              userID,
+              type: 'lowStock',
+              data: { name: ingredient.name, count: recipeCountInsufficient },
+              destTokens: tokens,
+            },
+            {
+              headers: {
+                authorization,
+              },
+            },
+          );
+          if (sendNotificationError) {
+            global.logger.error(`Error sending push notifications for user ${userID}: ${sendNotificationError.message}`);
+            throw errorGen(`Error sending push notifications for user ${userID}: ${sendNotificationError.message}`, 400);
+          }
+        }
+      }
+    } catch (error) {
+      global.logger.error(`Error checking for low stock for ingredient ${ingredientID} and user ${userID}: ${error.message}`);
+      throw errorGen(`Error checking for low stock for ingredient ${ingredientID} and user ${userID}: ${error.message}`, 400);
     }
   }
 
@@ -224,5 +443,6 @@ module.exports = ({ db, dbPublic }) => {
     update,
     delete: deleteIngredientStock,
     deleteAllExpired,
+    checkForLowStock,
   };
 };

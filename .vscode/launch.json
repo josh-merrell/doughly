@@ -10,17 +10,28 @@
       "name": "doughly server",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/server/server.js",
-      "envFile": "${workspaceFolder}/server/.env",
+      "envFile": "${workspaceFolder}/server/.env"
     },
     {
       "type": "node",
       "request": "launch",
       "name": "lambda - resetSequencesForIDs",
-      "skipFiles": ["<node_internals>\\**"],
-      "cwd": "${workspaceFolder}\\server\\services\\lambda\\resetSequencesForIDs",
-      "envFile": "${workspaceFolder}\\server\\.env",
-      "program": "${workspaceFolder}\\server\\services\\lambda\\resetSequencesForIDs\\debug_bridge.js",
-      "outFiles": ["${workspaceFolder}\\server\\services\\lambda\\resetSequencesForIDs\\**\\*.js"],
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/server/services/lambda/resetSequencesForIDs",
+      "envFile": "${workspaceFolder}/server/.env",
+      "program": "${workspaceFolder}/server/services/lambda/resetSequencesForIDs/debug_bridge.js",
+      "outFiles": ["${workspaceFolder}/server/services/lambda/resetSequencesForIDs/**/*.js"],
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "lambda - deleteAllExpiredStock",
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/server/services/lambda/deleteAllExpiredStock",
+      "envFile": "${workspaceFolder}/server/.env",
+      "program": "${workspaceFolder}/server/services/lambda/deleteAllExpiredStock/debug_bridge.js",
+      "outFiles": ["${workspaceFolder}/server/services/lambda/deleteAllExpiredStock**/*.js"],
       "console": "integratedTerminal"
     }
   ]
