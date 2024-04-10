@@ -12,6 +12,7 @@ const h = handler;
 
 // allow unauthenticated access to deleteAllExpiredStock lambda
 router.post('/deleteAllExpired', errorCatcher(h.deleteAllExpiredStock));
+router.post('/checkForLowStock', errorCatcher(h.checkForLowStock));
 
 // all routes below require authentication
 router.use(authenticateJWT);

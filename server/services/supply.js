@@ -165,6 +165,42 @@ const supplyCheckRecipe = async (userID, authorization, recipeID) => {
   }
 };
 
+const supplyCheckRecipeIngredient = async (userID, authorization, ingredientID, recipeID) => {
+  global.logger.info(`IN supplyCheckRecipeIngredient: userID: ${userID}, ingredientID: ${ingredientID}, recipeID: ${recipeID}`);
+  const { data: recipeIngredient, error: recipeIngredientError } = await supabase.from('recipeIngredients').select('ingredientID, measurement, purchaseUnitRatio').filter('recipeID', 'eq', recipeID).filter('ingredientID', 'eq', ingredientID);
+  if (recipeIngredientError) {
+    global.logger.error(`'supplyCheckRecipeIngredient' Error getting recipeIngredient: ${recipeIngredientError.message}`);
+    throw errorGen(`'supplyCheckRecipeIngredient' Error getting recipeIngredient`, 400);
+  }
+
+  const { data: ingredient, error: ingredientError } = await supabase.from('ingredients').select('gramRatio, name').filter('ingredientID', 'eq', ingredientID).single();
+  if (ingredientError) {
+    global.logger.error(`'supplyCheckRecipeIngredient' Error getting ingredient: ${ingredientError.message}`);
+    throw errorGen(`'supplyCheckRecipeIngredient' Error getting ingredient`, 400);
+  }
+  let gramsNeeded = recipeIngredient[0].measurement * recipeIngredient[0].purchaseUnitRatio * ingredient.gramRatio;
+  global.logger.info(`gramsNeeded: ${gramsNeeded}`);
+  const { data: ingredientStock, error: ingredientStockError } = await supabase.from('ingredientStocks').select('ingredientID, grams').filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID).filter('deleted', 'eq', false);
+  if (ingredientStockError) {
+    global.logger.error(`'supplyCheckRecipeIngredient' Error getting ingredientStock: ${ingredientStockError.message}`);
+    throw errorGen(`'supplyCheckRecipeIngredient' Error getting ingredientStock`, 400);
+  }
+  for (let j = 0; j < ingredientStock.length; j++) {
+    global.logger.info(`ingredientStock[j].grams: ${ingredientStock[j].grams}`);
+    if (ingredientStock[j].grams >= gramsNeeded) {
+      gramsNeeded = 0;
+      break;
+    }
+    gramsNeeded -= ingredientStock[j].grams;
+  }
+
+  if (gramsNeeded > 0) {
+    return { status: 'insufficient', ingredientName: ingredient.name, ingredientID: ingredientID, quantity: gramsNeeded };
+  } else {
+    return { status: 'sufficient', ingredientName: ingredient.name };
+  }
+};
+
 // Uses ingredient inventory for a given recipe
 const useRecipeIngredients = async (userID, authorization, recipeID) => {
   const deletedIngredientStocks = [];
@@ -231,6 +267,12 @@ const useRecipeIngredients = async (userID, authorization, recipeID) => {
         deletedIngredientStocks.push(ingredientStocks[j].ingredientStockID);
       }
     }
+    // also need to check for low stock and send a notification if stock is low/empty. Include 'ingredientID' in the body of the request
+    const { error: checkLowStockError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks/checkForLowStock`, { userID, ingredientID: recipeIngredients[i].ingredientID }, { headers: { authorization } });
+    if (checkLowStockError) {
+      global.logger.error(`'useRecipeIngredients' Error checking low stock: ${checkLowStockError.message}`);
+      throw errorGen(`'useRecipeIngredients' Error checking low stock`, 400);
+    }
   }
   return { success: true };
 };
@@ -253,5 +295,6 @@ const rollbackDeletedIngredientStocks = async (userID, authorization, deletedIng
 module.exports = {
   supplyCheckMoreDemand,
   supplyCheckRecipe,
+  supplyCheckRecipeIngredient,
   useRecipeIngredients,
 };
