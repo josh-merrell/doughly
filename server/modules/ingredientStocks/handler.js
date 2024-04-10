@@ -69,7 +69,8 @@ async function updateIngredientStock(req, res) {
 
 async function deleteIngredientStock(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { ingredientStockID } = req.params;
   const { authorization } = req.headers;
   try {
@@ -84,12 +85,28 @@ async function deleteIngredientStock(req, res) {
 async function deleteAllExpiredStock(req, res) {
   const dbPublic = req.defaultClient.db;
   const db = req.client.db;
+  const { authorization } = req.headers;
   const p = require('./processor')({ db, dbPublic });
   try {
-    const returner = await p.deleteAllExpired({ userID: req.userID });
+    const returner = await p.deleteAllExpired({ authorization, userID: req.userID });
     return res.json(returner);
   } catch (e) {
     global.logger.error(`'ingredientStocks' 'deleteExpiredStock': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
+async function checkForLowStock(req, res) {
+  const dbPublic = req.defaultClient.db;
+  const db = req.client.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { authorization } = req.headers;
+  const { ingredientID } = req.body;
+  try {
+    const returner = await p.checkForLowStock({ ingredientID, authorization, userID: req.userID || req.body.userID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredientStocks' 'checkForLowStock': ${e.message}`);
     return res.status(e.code || 500).json({ error: e.message });
   }
 }
@@ -101,4 +118,5 @@ module.exports = {
   updateIngredientStock,
   deleteIngredientStock,
   deleteAllExpiredStock,
+  checkForLowStock,
 };
