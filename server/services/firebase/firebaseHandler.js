@@ -94,6 +94,46 @@ function getPayload(type, data) {
           body: `${data.friendName} accepted your friend request`,
         },
       };
+    case 'autoDeletedExpiredStock':
+      return {
+        message: {
+          message: 'Auto Deleted Expired Ingredient Inventory',
+        },
+        notification: {
+          title: 'Expired Ingredient Auto Deleted',
+          body: `${data['measurement']} ${data['measurementUnit']} of expired ${data['name']} was auto removed from your kitchen`,
+        },
+      };
+    case 'autoDeletedExpiredStocks':
+      return {
+        message: {
+          message: 'Auto Deleted Expired for Multiple Ingredients',
+        },
+        notification: {
+          title: 'Multiple Expired Ingredients Auto Deleted',
+          body: `${data['name']}, and ${data['count'] - 1} other ingredients had expired inventory auto removed from your kitchen`,
+        },
+      };
+    case 'noStock':
+      return {
+        message: {
+          message: 'No Stock',
+        },
+        notification: {
+          title: `No ${data['name']} Stock`,
+          body: `You have no remaining stock of ${data['name']} in your kitchen`,
+        },
+      };
+    case 'lowStock':
+      return {
+        message: {
+          message: 'Low Stock',
+        },
+        notification: {
+          title: `Low ${data['name']} Stock`,
+          body: `${data['count']} of your recipes require more ${data['name']} than you have in your kitchen`,
+        },
+      };
 
     default:
       return {
