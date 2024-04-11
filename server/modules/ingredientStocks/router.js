@@ -10,9 +10,10 @@ const { getIngredientStocksSchema_query, getIngredientStockSchema_params, newIng
 const router = express.Router();
 const h = handler;
 
-// allow unauthenticated access to deleteAllExpiredStock lambda
+// unauthenticated endpoints for lambda to call
 router.post('/deleteAllExpired', errorCatcher(h.deleteAllExpiredStock));
 router.post('/checkForLowStock', errorCatcher(h.checkForLowStock));
+router.post('/notifyOnUpcomingExpiration', errorCatcher(h.notifyOnUpcomingExpiration));
 
 // all routes below require authentication
 router.use(authenticateJWT);

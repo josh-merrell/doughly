@@ -134,6 +134,16 @@ function getPayload(type, data) {
           body: `${data['count']} of your recipes require more ${data['name']} than you have in your kitchen`,
         },
       };
+    case 'upcomingStockExpiration':
+      return {
+        message: {
+          message: 'Ingredient Expires Soon',
+        },
+        notification: {
+          title: 'Ingredient Expires Soon',
+          body: `${data['measurement']} ${data['measurementUnit']} of ${data['name']} will expire soon`,
+        },
+      };
 
     default:
       return {
