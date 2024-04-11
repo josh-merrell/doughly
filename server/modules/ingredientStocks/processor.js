@@ -306,6 +306,115 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
+  async function notifyOnUpcomingExpiration(options) {
+    const { authorization } = options;
+
+    try {
+      // get all unique userID's who have a non-deleted ingredientStock
+      const { data: users, error: usersError } = await db.from('ingredientStockDistinctUsers').select('*');
+      if (usersError) {
+        global.logger.error(`Error getting unique userID's: ${usersError.message}`);
+        throw errorGen(`Error getting unique userID's: ${usersError.message}`, 400);
+      }
+      const promises = [];
+      for (const user of users) {
+        const { userID } = user;
+        promises.push(notifyUserOfUpcomingExpiration(userID, authorization));
+      }
+
+      // use Promise.allSettled to ensure all promises are resolved before returning
+      await Promise.allSettled(promises);
+
+      global.logger.info('Notified all users of upcoming expirations');
+      return { success: true };
+    } catch (error) {
+      global.logger.error(`Error notifying users of upcoming expirations: ${error.message}`);
+      throw errorGen(`Error notifying users of upcoming expirations: ${error.message}`, 400);
+    }
+  }
+
+  async function notifyUserOfUpcomingExpiration(userID, authorization) {
+    try {
+      // get 'notifyOnUpcomingExpiry' value from user profile
+      const { data: profile, error: profileError } = await dbPublic.from('profiles').select('notifyUpcomingStockExpiry').eq('user_id', userID).single();
+      if (profileError) {
+        global.logger.error(`Error getting notifyOnUpcomingExpiry setting for user ${userID}: ${profileError.message}`);
+        throw errorGen(`Error getting notifyOnUpcomingExpiry setting for user ${userID}: ${profileError.message}`, 400);
+      }
+      if (profile.notifyUpcomingStockExpiry !== 'App Push Only' && profile.notifyUpcomingStockExpiry !== 'Email and App Push') {
+        global.logger.info(`notifyOnUpcomingExpiry setting is disabled for user ${userID}, skipping notification`);
+        return { success: true };
+      }
+      // get all non-deleted ingredientStocks for the user
+      const { data: stocks, error: expiredStocksError } = await db.from('ingredientStocks').select().eq('userID', userID).eq('deleted', false);
+      if (expiredStocksError) {
+        global.logger.error(`Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`);
+        throw errorGen(`Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`, 400);
+      }
+      const notifications = [];
+      for (const stock of stocks) {
+        const { ingredientStockID, ingredientID } = stock;
+        const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientID).single();
+        if (ingredientError) {
+          global.logger.error(`Error getting ingredient for ingredientStockID ${ingredientStockID}: ${ingredientError.message}`);
+          throw errorGen(`Error getting ingredient for ingredientStockID ${ingredientStockID}: ${ingredientError.message}`, 400);
+        }
+
+        // determine expire date using ingredient.lifespanDays and stock.purchasedDate
+        const expireDate = new Date(stock.purchasedDate);
+        expireDate.setDate(expireDate.getDate() + ingredient.lifespanDays);
+        const daysUntilExpiration = Math.floor((expireDate - new Date()) / (1000 * 60 * 60 * 24));
+        if (daysUntilExpiration === 3) {
+          notifications.push({
+            name: ingredient.name,
+            measurement: stock.grams / ingredient.gramRatio,
+            measurementUnit: ingredient.purchaseUnit,
+            ingredientID,
+            daysUntilExpiration,
+          });
+        }
+      }
+
+      // get user push tokens
+      const { data: tokens, error: getTokensError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/${userID}`, {
+        headers: {
+          authorization,
+        },
+      });
+      if (getTokensError) {
+        global.logger.error(`Error getting push tokens for user ${userID}: ${getTokensError.message}`);
+        throw errorGen(`Error getting push tokens for user ${userID}: ${getTokensError.message}`, 400);
+      }
+
+      // send expiration notifications
+      for (const notification of notifications) {
+        const { error: sendNotificationError } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/notification`,
+          {
+            userID,
+            type: 'upcomingStockExpiration',
+            data: { name: notification.name, measurement: Math.round(notification.measurement * 100) / 100, measurementUnit: notification.measurementUnit },
+            destTokens: tokens,
+          },
+          {
+            headers: {
+              authorization,
+            },
+          },
+        );
+        if (sendNotificationError) {
+          global.logger.error(`Error sending push notifications for user ${userID}: ${sendNotificationError.message}`);
+          throw errorGen(`Error sending push notifications for user ${userID}: ${sendNotificationError.message}`, 400);
+        }
+      }
+
+      return { success: true };
+    } catch (error) {
+      global.logger.error(`Error notifying user of upcoming expirations for user ${userID}: ${error.message}`);
+      throw errorGen(`Error notifying user of upcoming expirations for user ${userID}: ${error.message}`, 400);
+    }
+  }
+
   async function checkForLowStock(options) {
     const { ingredientID, userID, authorization } = options;
 
@@ -444,5 +553,6 @@ module.exports = ({ db, dbPublic }) => {
     delete: deleteIngredientStock,
     deleteAllExpired,
     checkForLowStock,
+    notifyOnUpcomingExpiration,
   };
 };

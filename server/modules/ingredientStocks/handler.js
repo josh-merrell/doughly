@@ -111,6 +111,20 @@ async function checkForLowStock(req, res) {
   }
 }
 
+async function notifyOnUpcomingExpiration(req, res) {
+  const dbPublic = req.defaultClient.db;
+  const db = req.client.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.notifyOnUpcomingExpiration({ authorization, userID: req.userID });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'ingredientStocks' 'notifyOnUpcomingExpiration': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 module.exports = {
   getIngredientStocks,
   getIngredientStockByID,
@@ -119,4 +133,5 @@ module.exports = {
   deleteIngredientStock,
   deleteAllExpiredStock,
   checkForLowStock,
+  notifyOnUpcomingExpiration,
 };
