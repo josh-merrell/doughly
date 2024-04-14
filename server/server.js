@@ -54,6 +54,7 @@ const logsRouter = require('./modules/logs/router');
 const profilesRouter = require('./modules/profiles/router');
 const shoppingRouter = require('./modules/shopping/router');
 const pushTokensRouter = require('./modules/pushNotifications/router');
+const messagesRouter = require('./modules/messages/router');
 
 // UTIL ROUTERS
 const unitRatioRouter = require('./modules/utility/unitRatios/router');
@@ -119,6 +120,7 @@ app.use('/logs', logsRouter);
 app.use('/profiles', profilesRouter);
 app.use('/unitRatios', unitRatioRouter);
 app.use('/pushTokens', pushTokensRouter);
+app.use('/messages', messagesRouter);
 
 // Start the server
 const port = 3000;

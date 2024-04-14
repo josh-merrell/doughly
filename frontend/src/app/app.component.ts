@@ -36,6 +36,7 @@ import {
 
 import { AuthService } from './shared/utils/authenticationService';
 import { PushTokenService } from './shared/utils/pushTokenService';
+import { MessageActions } from './footer/state/message-actions';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -102,6 +103,8 @@ export class AppComponent {
 
   ngOnInit() {
     //** LOAD STATE **
+    //--other
+    this.store.dispatch(MessageActions.loadMessages());
     //--kitchen
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());
