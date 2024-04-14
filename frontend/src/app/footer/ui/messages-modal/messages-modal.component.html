@@ -1,1 +1,95 @@
-<p>messages-modal works!</p>
+<div
+  class="flex h-dl-21 w-full transform items-center flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all"
+>
+  <div class="mb-dl-3 text-center">
+    <div class="mt-dl-2 space-x-1 whitespace-nowrap">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-5">Messages</span>
+    </div>
+  </div>
+  <mat-spinner *ngIf="isUpdating()" class="my-app-custom-spinner"></mat-spinner>
+  <div class="w-full flex-grow overflow-y-auto">
+    <div class="flex h-full w-full flex-col">
+      <!--Messages-->
+      <div class="mt-dl-1 flex flex-grow flex-col overflow-y-auto">
+        <div
+          *ngFor="let message of sortedMessages(); let i = index"
+          class="flex w-full flex-col items-center transition-all duration-200 ease-in-out"
+          (click)="onMessageSelect(message, i)"
+        >
+          <div
+            class="relative my-dl-4 flex h-dl-6 w-full flex-col items-start rounded-dl-3 py-dl-1 pl-dl-3 shadow-md"
+            [ngClass]="{
+              'bg-dl-pink-10': selectedMessageIndex() === i
+            }"
+          >
+            <div class="flex w-full justify-between">
+              <p class="px-dl-2 text-dl-5 font-dl-3 text-dl-grey-1">
+                {{ message.messageData.title }}
+              </p>
+              <p class="px-dl-4 text-dl-4 font-dl-2 text-dl-grey-1">
+                {{ message.displayDate }}
+              </p>
+            </div>
+            <p
+              class="w-full truncate pl-dl-2 pr-dl-4 text-dl-5 font-dl-2 text-dl-grey-4"
+            >
+              {{ message.messageData.message }}
+            </p>
+            <div
+              *ngIf="message.messageData.status === 'notAcked'"
+              class="absolute right-2 top-5 z-20 h-dl-2.5 w-dl-2.5 rounded-full bg-dl-pink-6"
+            ></div>
+          </div>
+          <div
+            *ngIf="selectedMessageIndex() === i"
+            class="mb-dl-2 flex w-full justify-between px-dl-2 transition-all duration-200 ease-in-out"
+          >
+            <button
+              (click)="onView(message, i)"
+              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+            >
+              View
+            </button>
+            <button
+              (click)="onAck(message, i)"
+              *ngIf="message.messageData.status === 'notAcked'"
+              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pink-3 sm:ml-dl-4"
+            >
+              Seen
+            </button>
+            <button
+              (click)="onDelete(message, i)"
+              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pink-3 sm:ml-dl-4"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      <!---->
+
+      <div class="mt-dl-2">
+        <button
+          type="button"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          [ngClass]="{
+            'cursor-pointer bg-dl-pink-4 hover:bg-dl-pink-5':
+              messages() && messages().length > 0,
+            'bg-dl-grey-7': !messages() || !messages().length
+          }"
+          [disabled]="!messages() || !messages().length"
+          (click)="onDeleteAll()"
+        >
+          Delete All
+        </button>
+        <button
+          type="button"
+          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

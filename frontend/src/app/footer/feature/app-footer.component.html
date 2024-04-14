@@ -1,8 +1,13 @@
 <div class="relative">
   <nav class="border-t-2 border-dl-grey-8 bg-white shadow">
     <!-- Adding Recipe Banner -->
-    <div *ngIf="addingRecipe() && currentLocation() !== '/recipes/created/add/vision'" class="items-center px-dl-4 py-dl-2 absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-dl-pink-9 flex">
-      <p class="text-dl-pink-2 mr-dl-2 text-dl-5">Adding Recipe...</p>
+    <div
+      *ngIf="
+        addingRecipe() && currentLocation() !== '/recipes/created/add/vision'
+      "
+      class="absolute -top-4 left-1/2 flex -translate-x-1/2 items-center rounded-full bg-dl-pink-9 px-dl-4 py-dl-2"
+    >
+      <p class="mr-dl-2 text-dl-5 text-dl-pink-2">Adding Recipe...</p>
       <mat-spinner class="my-app-custom-spinner" [diameter]="18"></mat-spinner>
     </div>
     <!-- Mobile menu, show/hide based on menu state. -->
@@ -18,10 +23,8 @@
               xmlns:xlink="http://www.w3.org/1999/xlink"
               version="1.1"
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1':
-                  getURL()  === 'groceries',
-                'border-transparent text-dl-grey-5 ':
-                  getURL()  !== 'groceries'
+                'border-dl-blue-8 text-dl-grey-1': getURL() === 'groceries',
+                'border-transparent text-dl-grey-5 ': getURL() !== 'groceries'
               }"
               class="ml-dl-1 inline-flex items-center"
               height="48"
@@ -37,10 +40,8 @@
             </svg>
             <a
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1':
-                  getURL() === 'groceries',
-                'border-transparent text-dl-grey-4 ':
-                  getURL() !== 'groceries'
+                'border-dl-blue-8 text-dl-grey-1': getURL() === 'groceries',
+                'border-transparent text-dl-grey-4 ': getURL() !== 'groceries'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -54,10 +55,8 @@
               xmlns="http://www.w3.org/2000/svg"
               data-name="Layer 1"
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1':
-                  getURL() === 'recipes',
-                'border-transparent text-dl-grey-5 ':
-                  getURL()  !== 'recipes'
+                'border-dl-blue-8 text-dl-grey-1': getURL() === 'recipes',
+                'border-transparent text-dl-grey-5 ': getURL() !== 'recipes'
               }"
               class="inline-flex items-center"
               viewBox="-5 0 58 70"
@@ -87,10 +86,8 @@
             </svg>
             <a
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1':
-                  getURL()  === 'recipes',
-                'border-transparent text-dl-grey-4 ':
-                  getURL()  !== 'recipes'
+                'border-dl-blue-8 text-dl-grey-1': getURL() === 'recipes',
+                'border-transparent text-dl-grey-4 ': getURL() !== 'recipes'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -115,10 +112,8 @@
             </svg>
             <a
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1':
-                  getURL()  === 'social',
-                'border-transparent text-dl-grey-4 ':
-                  getURL()  !== 'social'
+                'border-dl-blue-8 text-dl-grey-1': getURL() === 'social',
+                'border-transparent text-dl-grey-4 ': getURL() !== 'social'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -152,10 +147,8 @@
             </svg>
             <a
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1':
-                  getURL()  === 'kitchen',
-                'border-transparent text-dl-grey-4 ':
-                  getURL()  !== 'kitchen'
+                'border-dl-blue-8 text-dl-grey-1': getURL() === 'kitchen',
+                'border-transparent text-dl-grey-4 ': getURL() !== 'kitchen'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -241,7 +234,11 @@
             </a>
             <a
               (click)="onMessagesClick()"
-              class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3 text-dl-grey-3"
+              class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3"
+              [ngClass]="{
+                'bg-dl-pink-10 text-dl-grey-3': unackedMessageLength() > 0,
+                'text-dl-grey-3': unackedMessageLength() === 0
+              }"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-2"
@@ -258,6 +255,10 @@
               Sign out
             </a>
           </div>
+          <div
+            *ngIf="unackedMessageLength() > 0"
+            class="absolute -top-2 right-2 z-20 h-dl-2.5 w-dl-2.5 rounded-full bg-dl-pink-6"
+          ></div>
         </div>
       </div>
     </div>
