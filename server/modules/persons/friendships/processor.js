@@ -102,6 +102,10 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Reset friendship ${existingFriendship[0].friendshipID}`);
       createUserLog(userID, authorization, 'requestedFriendship', existingFriendship[0].friendshipID, null, null, null, 'requested friendship with: ' + profile.name_first + ' ' + profile.name_last);
+      if (status === 'receivedRequest') {
+        // add app message 'newFriendRequest' for row
+        await db.from('friendships').update({ appMessageStatusNewFriendRequest: 'notAcked', appMessageDateNewFriendRequest: new Date() }).eq('friendshipID', existingFriendship[0].friendshipID);
+      }
       // need to call function again, creating inverse of friendship request ONLY if status is 'requesting'
       if (status === 'requesting') {
         const { error: inverseFriendshipError } = await axios.post(
@@ -144,6 +148,9 @@ module.exports = ({ db, dbPublic }) => {
     if (status === 'requesting') {
       createUserLog(userID, authorization, 'requestedFriendship', friendship.friendshipID, null, null, null, 'requested friendship with: ' + profile.name_first + ' ' + profile.name_last);
     } else if (status === 'receivedRequest') {
+      // add app message 'newFriendRequest' for row
+      await db.from('friendships').update({ appMessageStatusNewFriendRequest: 'notAcked', appMessageDateNewFriendRequest: new Date() }).eq('friendshipID', friendship.friendshipID);
+
       createUserLog(userID, authorization, 'receivedFriendship', friendship.friendshipID, null, null, null, 'received friendship request from: ' + profile.name_first + ' ' + profile.name_last);
     }
 
@@ -185,8 +192,29 @@ module.exports = ({ db, dbPublic }) => {
     };
   }
 
+  async function notifyNewFriend(friendshipID) {
+    // get friendship
+    const { data: friendship, error: friendshipError } = await db.from('friendships').select().eq('friendshipID', friendshipID).single();
+    if (friendshipError) {
+      global.logger.error(`Error getting friendship ${friendshipID}: ${friendshipError.message}`);
+      throw errorGen(`Error getting friendship ${friendshipID}`, 400);
+    }
+    if (!friendship) {
+      global.logger.error(`Friendship ${friendshipID} does not exist`);
+      throw errorGen(`Friendship ${friendshipID} does not exist`, 400);
+    }
+
+    // add app message 'newFriend' for row
+    if (friendship.status === 'requesting') {
+      await db.from('friendships').update({ appMessageStatusNewFriend: 'notAcked', appMessageDateNewFriend: new Date() }).eq('friendshipID', friendshipID);
+    }
+  }
+
   async function update(options) {
     const { userID, friendshipID, status, authorization } = options;
+    if (status === 'confirmed') {
+      notifyNewFriend(friendshipID);
+    }
 
     // ensure friendship exists
     const { data: friendship, error: friendshipError } = await db.from('friendships').select().eq('friendshipID', friendshipID).single();
@@ -209,7 +237,7 @@ module.exports = ({ db, dbPublic }) => {
     }
 
     if (status === 'confirmed') {
-      createUserLog(userID, authorization, 'confirmedFriendship', friendshipID, null, null, null, 'Now friends with ' + friendship.friend);
+      createUserLog(userID, authorization, 'confirmedFriendship', friendship.friendshipID, null, null, null, 'Now friends with ' + friendship.friend);
     }
 
     // get inverse friendship

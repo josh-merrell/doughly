@@ -30,6 +30,7 @@ const friendshipUpdateSchema_body = {
   type: 'object',
   properties: {
     status: { type: 'string' },
+    inverse: { type: 'boolean' },
   },
 };
 
