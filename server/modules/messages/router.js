@@ -12,3 +12,5 @@ router.use(authenticateJWT);
 router.get('/', errorCatcher(h.getMessages));
 router.post('/acknowledge', errorCatcher(h.acknowledgeMessage));
 router.post('/delete', errorCatcher(h.deleteMessage));
+
+module.exports = router;

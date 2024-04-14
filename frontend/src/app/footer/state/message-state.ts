@@ -22,6 +22,7 @@ export interface Message {
 export interface MessageData {
   title: string;
   message: string;
+  status: string;
   data:
     | IngredientStockExpiredData
     | IngredientOutOfStockData
@@ -39,25 +40,27 @@ export interface IngredientStockExpiredData {
 }
 
 export interface IngredientOutOfStockData {
-  ingredientStockID: number;
   ingredientID: number;
   ingredientName: string;
 }
 
 export interface NewFollowerData {
-  followershipID: number;
+  followshipID: number;
   followerNameFirst: string;
   followerNameLast: string;
+  followerUserID: number;
 }
 
 export interface NewFriendData {
   friendshipID: number;
   friendNameFirst: string;
   friendNameLast: string;
+  friendUserID: number;
 }
 
 export interface NewFriendRequestData {
-  friendshipRequestID: number;
+  friendshipID: number;
   requesterNameFirst: string;
   requesterNameLast: string;
+  requesterUserID: number;
 }

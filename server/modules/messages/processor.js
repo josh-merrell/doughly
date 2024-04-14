@@ -1,19 +1,30 @@
 const { errorGen } = require('../../middleware/errorHandling');
 ('use strict');
 
-module.exports = ({ db }) => {
+module.exports = ({ db, dbPublic }) => {
   async function getAllMessages(options) {
+    global.logger.info(`Getting all messages for user ${options.userID}`);
     const { userID } = options;
     if (!userID) {
       throw errorGen('userID is required', 400);
     }
 
+    // Start all promises concurrently
+    const promises = [getIngredientStockExpiredMessages({ userID }), getIngredientOutOfStockMessages({ userID }), getNewFollowerMessages({ userID }), getNewFriendMessages({ userID }), getNewFriendRequestMessages({ userID })];
+
+    // Wait for all promises to settle
+    const results = await Promise.allSettled(promises);
+
     const messages = [];
-    messages.append(await getIngredientStockExpiredMessages({ userID }));
-    messages.append(await getIngredientOutOfStockMessages({ userID }));
-    messages.append(await getNewFollowerMessages({ userID }));
-    messages.append(await getNewFriendMessages({ userID }));
-    messages.append(await getNewFriendRequestMessages({ userID }));
+    for (const result of results) {
+      if (result.status === 'fulfilled') {
+        messages.push(...result.value);
+      } else {
+        // Log or handle the error as needed
+        global.logger.error(`Error in fetching messages: ${result.reason}`);
+        throw errorGen('Error in fetching messages', 500);
+      }
+    }
 
     return messages;
   }
@@ -23,27 +34,31 @@ module.exports = ({ db }) => {
     if (!userID) {
       throw errorGen('userID is required', 400);
     }
+    global.logger.info(`Acknowledging message ${message.type} for user ${userID}`);
 
     try {
       switch (message.type) {
         case 'ingredientStockExpired':
-          await db.from('ingredientStocks').update({ appMessage: 'acked' }).eq('userID', userID).eq('ingredientStockID', message.data.ingredientStockID);
+          await db.from('ingredientStocks').update({ appMessageStatus: 'acked' }).eq('userID', userID).eq('ingredientStockID', message.messageData.data.ingredientStockID);
           break;
         case 'ingredientOutOfStock':
-          await db.from('ingredients').update({ appMessage: 'acked' }).eq('userID', userID).eq('ingredientID', message.data.ingredientID);
+          await db.from('ingredients').update({ appMessageStatus: 'acked' }).eq('userID', userID).eq('ingredientID', message.messageData.data.ingredientID);
           break;
         case 'newFollower':
-          await db.from('followships').update({ appMessage: 'acked' }).eq('followshipID', message.data.followshipID);
+          await db.from('followships').update({ appMessageStatus: 'acked' }).eq('followshipID', message.messageData.data.followshipID);
           break;
         case 'newFriend':
-          await db.from('friendships').update({ appMessageNewFriend: 'acked' }).eq('friendshipID', message.data.friendshipID);
+          await db.from('friendships').update({ appMessageStatusNewFriend: 'acked' }).eq('friendshipID', message.messageData.data.friendshipID);
           break;
         case 'newFriendRequest':
-          await db.from('friendRequests').update({ appMessageNewFriendRequest: 'acked' }).eq('friendRequestID', message.data.friendRequestID);
+          await db.from('friendships').update({ appMessageStatusNewFriendRequest: 'acked' }).eq('friendshipID', message.messageData.data.friendshipID);
           break;
         default:
           throw errorGen('Invalid message type', 400);
       }
+      return {
+        result: 'success',
+      };
     } catch (e) {
       global.logger.error(`'messages' 'acknowledgeMessage': ${e.message}`);
       throw errorGen('Error acknowledging message', 500);
@@ -56,26 +71,30 @@ module.exports = ({ db }) => {
       throw errorGen('userID is required', 400);
     }
 
+    global.logger.info(`Deleting message ${message.type} for user ${userID}`);
     try {
       switch (message.type) {
         case 'ingredientStockExpired':
-          await db.from('ingredientStocks').update({ appMessage: null }).eq('userID', userID).eq('ingredientStockID', message.data.ingredientStockID);
+          await db.from('ingredientStocks').update({ appMessageStatus: null, appMessageDate: null }).eq('userID', userID).eq('ingredientStockID', message.messageData.data.ingredientStockID);
           break;
         case 'ingredientOutOfStock':
-          await db.from('ingredients').update({ appMessage: null }).eq('userID', userID).eq('ingredientID', message.data.ingredientID);
+          await db.from('ingredients').update({ appMessageStatus: null, appMessageDate: null }).eq('userID', userID).eq('ingredientID', message.messageData.data.ingredientID);
           break;
         case 'newFollower':
-          await db.from('followships').update({ appMessage: null }).eq('followshipID', message.data.followshipID);
+          await db.from('followships').update({ appMessageStatus: null, appMessageDate: null }).eq('followshipID', message.messageData.data.followshipID);
           break;
         case 'newFriend':
-          await db.from('friendships').update({ appMessageNewFriend: null }).eq('friendshipID', message.data.friendshipID);
+          await db.from('friendships').update({ appMessageStatusNewFriend: null, appMessageDateNewFriend: null }).eq('friendshipID', message.messageData.data.friendshipID);
           break;
         case 'newFriendRequest':
-          await db.from('friendRequests').update({ appMessageNewFriendRequest: null }).eq('friendRequestID', message.data.friendRequestID);
+          await db.from('friendships').update({ appMessageStatusNewFriendRequest: null, appMessageDateNewFriendRequest: null }).eq('friendshipID', message.messageData.data.friendshipID);
           break;
         default:
           throw errorGen('Invalid message type', 400);
       }
+      return {
+        result: 'success',
+      };
     } catch (e) {
       global.logger.error(`'messages' 'deleteMessage': ${e.message}`);
       throw errorGen('Error deleting message', 500);
@@ -89,7 +108,7 @@ module.exports = ({ db }) => {
     }
 
     try {
-      const { data: ingredientStocks, error } = await db.from('ingredientStocks').select().eq('userID', userID).in('appMessage', ['notAcked', 'acked']);
+      const { data: ingredientStocks, error } = await db.from('ingredientStocks').select().eq('userID', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
       if (error) {
         global.logger.error(`Error getting ingredientStocks: ${error.message}`);
         throw errorGen('Error getting ingredientStocks', 500);
@@ -97,23 +116,28 @@ module.exports = ({ db }) => {
 
       const messages = [];
       for (let ingredientStock of ingredientStocks) {
+        if (!ingredientStock.appMessageDate) {
+          global.logger.info(`IngredientStockExpired message missing date`);
+          continue;
+        }
         const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientStock.ingredientID).single();
         if (ingredientError) {
           global.logger.error(`Error getting ingredient: ${ingredientError.message}`);
           throw errorGen('Error getting ingredient', 500);
         }
-        const measurement = ingredientStock.measurement / ingredient.gramRatio;
-        messages.append({
+        const measurement = Math.round((ingredientStock.grams / ingredient.gramRatio) * 100) / 100;
+        messages.push({
           type: 'ingredientStockExpired',
           messageData: {
             title: 'Ingredient Stock Expired',
-            message: `${measurement} ${ingredient.measurementUnit} of ${ingredient.name} has expired.`,
+            message: `${measurement} ${ingredient.purchaseUnit} of ${ingredient.name} has expired.`,
+            status: ingredientStock.appMessageStatus,
             data: {
               ingredientStockID: ingredientStock.ingredientStockID,
               ingredientID: ingredientStock.ingredientID,
               ingredientName: ingredient.name,
               measurement,
-              measurementUnit: ingredient.measurementUnit,
+              measurementUnit: ingredient.purchaseUnit,
             },
           },
           date: ingredientStock.appMessageDate,
@@ -124,6 +148,191 @@ module.exports = ({ db }) => {
     } catch (e) {
       global.logger.error(`'messages' 'getIngredientStockExpiredMessages': ${e.message}`);
       throw errorGen('Error getting ingredientStockExpired messages', 500);
+    }
+  }
+
+  async function getIngredientOutOfStockMessages(options) {
+    const { userID } = options;
+    if (!userID) {
+      throw errorGen('userID is required', 400);
+    }
+
+    try {
+      const { data: ingredients, error } = await db.from('ingredients').select().eq('userID', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
+      if (error) {
+        global.logger.error(`Error getting ingredients: ${error.message}`);
+        throw errorGen('Error getting ingredients', 500);
+      }
+
+      const messages = [];
+      for (let ingredient of ingredients) {
+        if (!ingredient.appMessageDate) {
+          global.logger.info(`IngredientOutOfStock message missing date`);
+          continue;
+        }
+        messages.push({
+          type: 'ingredientOutOfStock',
+          messageData: {
+            title: 'Ingredient Out of Stock',
+            message: `${ingredient.name} is out of stock.`,
+            status: ingredient.appMessageStatus,
+            data: {
+              ingredientID: ingredient.ingredientID,
+              ingredientName: ingredient.name,
+            },
+          },
+          date: ingredient.appMessageDate,
+        });
+      }
+
+      return messages;
+    } catch (e) {
+      global.logger.error(`'messages' 'getIngredientOutOfStockMessages': ${e.message}`);
+      throw errorGen('Error getting ingredientOutOfStock messages', 500);
+    }
+  }
+
+  async function getNewFollowerMessages(options) {
+    const { userID } = options;
+    if (!userID) {
+      throw errorGen('userID is required', 400);
+    }
+
+    try {
+      const { data: followships, error } = await db.from('followships').select().eq('following', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
+      if (error) {
+        global.logger.error(`Error getting followships: ${error.message}`);
+        throw errorGen('Error getting followships', 500);
+      }
+
+      const messages = [];
+      for (let followship of followships) {
+        if (!followship.appMessageDate) {
+          global.logger.info(`NewFollower message missing date`);
+          continue;
+        }
+        const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', followship.userID).single();
+        if (userError) {
+          global.logger.error(`Error getting follower profile: ${userError.message}`);
+          throw errorGen('Error getting follower profile', 500);
+        }
+        messages.push({
+          type: 'newFollower',
+          messageData: {
+            title: 'New Follower',
+            message: `${user.username} is now following you.`,
+            status: followship.appMessageStatus,
+            data: {
+              followshipID: followship.followshipID,
+              followerNameFirst: user.name_first,
+              followerNameLast: user.name_last,
+              followerUserID: user.user_id,
+            },
+          },
+          date: followship.appMessageDate,
+        });
+      }
+
+      return messages;
+    } catch (e) {
+      global.logger.error(`'messages' 'getNewFollowerMessages': ${e.message}`);
+      throw errorGen('Error getting newFollower messages', 500);
+    }
+  }
+
+  async function getNewFriendMessages(options) {
+    const { userID } = options;
+    if (!userID) {
+      throw errorGen('userID is required', 400);
+    }
+
+    try {
+      const { data: friendships, error } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).in('appMessageStatusNewFriend', ['notAcked', 'acked']);
+      if (error) {
+        global.logger.error(`Error getting friendships: ${error.message}`);
+        throw errorGen('Error getting friendships', 500);
+      }
+
+      const messages = [];
+      for (let friendship of friendships) {
+        if (!friendship.appMessageDateNewFriend) {
+          global.logger.info(`NewFriend message missing date`);
+          continue;
+        }
+        const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', friendship.friend).single();
+        if (userError) {
+          global.logger.error(`Error getting friend profile: ${userError.message}`);
+          throw errorGen('Error getting friend profile', 500);
+        }
+        messages.push({
+          type: 'newFriend',
+          messageData: {
+            title: 'New Friend',
+            message: `${user.username} is now your friend.`,
+            status: friendship.appMessageStatusNewFriend,
+            data: {
+              friendshipID: friendship.friendshipID,
+              friendNameFirst: user.name_first,
+              friendNameLast: user.name_last,
+              friendUserID: user.user_id,
+            },
+          },
+          date: friendship.appMessageDateNewFriend,
+        });
+      }
+
+      return messages;
+    } catch (e) {
+      global.logger.error(`'messages' 'getNewFriendMessages': ${e.message}`);
+      throw errorGen('Error getting newFriend messages', 500);
+    }
+  }
+
+  async function getNewFriendRequestMessages(options) {
+    const { userID } = options;
+    if (!userID) {
+      throw errorGen('userID is required', 400);
+    }
+
+    try {
+      const { data: friendRequests, error } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).in('appMessageStatusNewFriendRequest', ['notAcked', 'acked']);
+      if (error) {
+        global.logger.error(`Error getting friendRequests: ${error.message}`);
+        throw errorGen('Error getting friendRequests', 500);
+      }
+
+      const messages = [];
+      for (let friendRequest of friendRequests) {
+        if (!friendRequest.appMessageDateNewFriendRequest) {
+          global.logger.info(`NewFriendRequest message missing date`);
+          continue;
+        }
+        const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', friendRequest.friend).single();
+        if (userError) {
+          global.logger.error(`Error getting friendRequest profile: ${userError.message}`);
+          throw errorGen('Error getting friendRequest profile', 500);
+        }
+        messages.push({
+          type: 'newFriendRequest',
+          messageData: {
+            title: 'New Friend Request',
+            message: `${user.username} wants to be friends.`,
+            status: friendRequest.appMessageStatusNewFriendRequest,
+            data: {
+              friendshipID: friendRequest.friendshipID,
+              requesterNameFirst: user.name_first,
+              requesterNameLast: user.name_last,
+              requesterUserID: user.user_id,
+            },
+          },
+          date: friendRequest.appMessageDateNewFriendRequest,
+        });
+      }
+
+      return messages;
+    } catch (e) {
+      global.logger.error(`'messages' 'getNewFriendRequestMessages': ${e.message}`);
+      throw errorGen('Error getting newFriendRequest messages', 500);
     }
   }
 
