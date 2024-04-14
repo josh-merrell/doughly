@@ -5,6 +5,7 @@ import {
   Component,
   WritableSignal,
   signal,
+  effect,
 } from '@angular/core';
 import {
   NavigationEnd,
@@ -21,6 +22,7 @@ import { selectCurrentUrl } from '../../shared/state/shared-selectors';
 import { AppState } from '../../shared/state/app-state';
 import { AuthService } from '../../shared/utils/authenticationService';
 import { selectAdding } from '../../recipes/state/recipe/recipe-selectors';
+import { selectMessages } from '../state/message-selectors';
 import {
   ActionPerformed,
   PushNotificationSchema,
@@ -29,8 +31,6 @@ import {
 } from '@capacitor/push-notifications';
 import { MatDialog } from '@angular/material/dialog';
 import { MessagesModalComponent } from '../ui/messages-modal/messages-modal.component';
-
-
 
 @Component({
   selector: 'app-footer',
@@ -54,6 +54,8 @@ export class AppFooterComponent {
   public profile: object | any = {};
   public addingRecipe: WritableSignal<boolean> = signal(false);
   public currentLocation: WritableSignal<string> = signal('');
+  private messages: WritableSignal<any> = signal([]);
+  public unackedMessageLength: WritableSignal<number> = signal(0);
 
   options: any = { exact: false };
 
@@ -64,7 +66,17 @@ export class AppFooterComponent {
     public authService: AuthService,
     private location: Location,
     public dialog: MatDialog
-  ) {}
+  ) {
+    effect(
+      () => {
+        this.unackedMessageLength.set(
+          this.messages().filter((message: any) => message.messageData.status === 'notAcked')
+            .length
+        );
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   ngOnInit() {
     // watch location for changes
@@ -76,6 +88,9 @@ export class AppFooterComponent {
     });
     this.store.select(selectCurrentUrl).subscribe((url) => {
       this.currentURL.set(url);
+    });
+    this.store.select(selectMessages).subscribe((messages) => {
+      this.messages.set(messages);
     });
     this.authService.$profile.subscribe((profile) => {
       this.profile = profile;
