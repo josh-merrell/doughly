@@ -54,6 +54,8 @@ import { ShoppingListRecipeReducer } from './app/groceries/state/shopping-list-r
 import { MatNativeDateModule } from '@angular/material/core';
 import { ShoppingListIngredientReducer } from './app/groceries/state/shopping-list-ingredient-reducers';
 import { ShoppingListIngredientEffects } from './app/groceries/state/shopping-list-ingredient-effects';
+import { MessageReducer } from './app/footer/state/message-reducers';
+import { MessageEffects } from './app/footer/state/message-effects';
 
 
 import {
@@ -87,6 +89,7 @@ bootstrapApplication(AppComponent, {
     provideState('shoppingList', ShoppingListReducer),
     provideState('shoppingListRecipe', ShoppingListRecipeReducer),
     provideState('shoppingListIngredient', ShoppingListIngredientReducer),
+    provideState('message', MessageReducer),
     provideEffects([
       IngredientEffects,
       IngredientStockEffects,
@@ -104,6 +107,7 @@ bootstrapApplication(AppComponent, {
       ShoppingListEffects,
       ShoppingListRecipeEffects,
       ShoppingListIngredientEffects,
+      MessageEffects,
     ]),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStoreDevtools({

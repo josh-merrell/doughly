@@ -17,6 +17,7 @@ export interface Message {
   type: string;
   messageData: MessageData;
   date: Date;
+  displayDate?: string;
 }
 
 export interface MessageData {
