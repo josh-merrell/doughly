@@ -17,10 +17,10 @@ export class MessageService {
   }
 
   acknowledge(message: Message): Observable<Message> {
-    return this.http.post<Message>(`${this.API_URL}/acknowledge`, message);
+    return this.http.post<Message>(`${this.API_URL}/acknowledge`, { message });
   }
 
   delete(message: Message): Observable<Message> {
-    return this.http.post<Message>(`${this.API_URL}/delete`, message);
+    return this.http.post<Message>(`${this.API_URL}/delete`, { message });
   }
 }
