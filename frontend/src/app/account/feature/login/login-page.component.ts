@@ -30,6 +30,7 @@ import { RecipeStepActions } from '../../.././recipes/state/recipe-step/recipe-s
 import { ShoppingListActions } from '../../.././groceries/state/shopping-list-actions';
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 import { ShoppingListRecipeActions } from 'src/app/groceries/state/shopping-list-recipe-actions';
+import { MessageActions } from 'src/app/footer/state/message-actions';
 
 declare const google: any;
 @Component({
@@ -144,6 +145,9 @@ export class LoginPageComponent {
   }
 
   loadState() {
+    //--other
+    this.store.dispatch(MessageActions.loadMessages());
+
     //--kitchen
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());

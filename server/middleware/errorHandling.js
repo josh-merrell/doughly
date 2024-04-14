@@ -31,6 +31,7 @@ module.exports.routeNotFoundHandler = (req, res, next) => {
 
 //generic erorr handler, just pass it a string and a code. All normal error should be handled by this
 module.exports.errorGen = (m, c) => {
+  if (!m || !c) return new Error('errorGen requires a message and a code');
   const e = new Error(m);
   e.code = c;
   return e;
