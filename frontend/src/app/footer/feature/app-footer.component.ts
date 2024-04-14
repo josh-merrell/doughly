@@ -27,6 +27,8 @@ import {
   PushNotifications,
   Token,
 } from '@capacitor/push-notifications';
+import { MatDialog } from '@angular/material/dialog';
+import { MessagesModalComponent } from '../ui/messages-modal/messages-modal.component';
 
 
 
@@ -60,7 +62,8 @@ export class AppFooterComponent {
     private router: Router,
     private store: Store<AppState>,
     public authService: AuthService,
-    private location: Location
+    private location: Location,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -150,6 +153,15 @@ export class AppFooterComponent {
     this.authService.logout().then(() => {
       this.router.navigate(['/login']);
     });
-    PushNotifications.unregister
+    PushNotifications.unregister;
+  }
+
+  onMessagesClick() {
+    const dialogRef = this.dialog.open(MessagesModalComponent, {
+      width: '440px',
+    });
+    dialogRef!.afterClosed().subscribe((result: any) => {
+      this.closeMenu();
+    });
   }
 }
