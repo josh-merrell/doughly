@@ -98,7 +98,7 @@ module.exports = ({ db, dbPublic }) => {
       throw errorGen('Followship already exists', 400);
     } else if (existingFollowship.length && existingFollowship[0].deleted === true) {
       // if followship exists but is deleted, undelete it
-      const { data: undelete, undeleteError } = await db.from('followships').update({ deleted: false }).eq('followshipID', existingFollowship[0].followshipID).select('*').single();
+      const { data: undelete, undeleteError } = await db.from('followships').update({ deleted: false, appMessageStatus: 'notAcked', appMessageDate: new Date() }).eq('followshipID', existingFollowship[0].followshipID).select('*').single();
       if (undeleteError) {
         global.logger.error(`Error undeleting followship ${existingFollowship[0].followshipID}: ${undeleteError.message}`);
         throw errorGen(`Error undeleting followship ${existingFollowship[0].followshipID}`, 400);
@@ -113,7 +113,7 @@ module.exports = ({ db, dbPublic }) => {
     }
 
     // create followship
-    const { data: followship, error } = await db.from('followships').insert({ followshipID: customID, userID, following, deleted: false }).select('*').single();
+    const { data: followship, error } = await db.from('followships').insert({ followshipID: customID, userID, following, deleted: false, appMessageStatus: 'notAcked', appMessageDate: new Date() }).select('*').single();
     if (error) {
       global.logger.error(`Error creating followship: ${error.message}`);
       throw errorGen('Error creating followship', 400);

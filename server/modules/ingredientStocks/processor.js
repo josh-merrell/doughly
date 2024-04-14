@@ -182,16 +182,6 @@ module.exports = ({ db, dbPublic }) => {
 
   async function deleteExpiredStockForUser(userID, authorization) {
     try {
-      // get 'autoDeleteExpiredStock' setting for the user
-      const { data: result, error } = await dbPublic.from('profiles').select('autoDeleteExpiredStock').eq('user_id', userID).single();
-      if (error) {
-        global.logger.error(`Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`);
-        throw errorGen(`Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`, 400);
-      }
-      if (!result.autoDeleteExpiredStock) {
-        global.logger.info(`autoDeleteExpiredStock setting is false for user ${userID}, skipping deletion`);
-        return { success: true };
-      }
       // get all non-deleted ingredientStocks for the user
       const { data: stocks, error: expiredStocksError } = await db.from('ingredientStocks').select().eq('userID', userID).eq('deleted', false);
       if (expiredStocksError) {
@@ -212,6 +202,22 @@ module.exports = ({ db, dbPublic }) => {
         const expireDate = new Date(stock.purchasedDate);
         expireDate.setDate(expireDate.getDate() + ingredient.lifespanDays);
         if (expireDate < new Date()) {
+          // add app message 'ingredientStockExpired' for this row
+          if (!stock.appMessageStatus) {
+            db.from('ingredientStocks').update({ appMessageStatus: 'notAcked', appMessageDate: new Date() }).eq('ingredientStockID', ingredientStockID);
+          }
+
+          // get 'autoDeleteExpiredStock' setting for the user
+          const { data: result, error } = await dbPublic.from('profiles').select('autoDeleteExpiredStock').eq('user_id', userID).single();
+          if (error) {
+            global.logger.error(`Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`);
+            throw errorGen(`Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`, 400);
+          }
+          if (!result.autoDeleteExpiredStock) {
+            global.logger.info(`autoDeleteExpiredStock setting is false for user ${userID}, skipping deletion`);
+            return { success: true };
+          }
+
           // don't check for low stock. We will do that once at the end for the ingr
           deletePromises.push(deleteIngredientStock({ userID, ingredientStockID, authorization, checkForLowStockBool: false }));
           notifications.push({
@@ -444,6 +450,9 @@ module.exports = ({ db, dbPublic }) => {
 
       // if there are no ingredientStocks, send notification to user if notifyOnNoStock is enabled
       if (stocks.length === 0) {
+        // add app message 'ingredientOutOfStock' for this row
+        await db.from('ingredients').update({ appMessageStatus: 'notAcked', appMessageDate: new Date() }).eq('ingredientID', ingredientID);
+
         global.logger.info(`No ingredientStocks found for ingredient ${ingredientID} and user ${userID}`);
         if (profile.notifyOnNoStock !== 'App Push Only' && profile.notifyOnNoStock !== 'Email and App Push') {
           return;
