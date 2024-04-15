@@ -347,7 +347,7 @@ module.exports = ({ db, dbPublic }) => {
         global.logger.error(`Error getting notifyOnUpcomingExpiry setting for user ${userID}: ${profileError.message}`);
         throw errorGen(`Error getting notifyOnUpcomingExpiry setting for user ${userID}: ${profileError.message}`, 400);
       }
-      if (profile.notifyUpcomingStockExpiry !== 'App Push Only' && profile.notifyUpcomingStockExpiry !== 'Email and App Push') {
+      if (profile.notifyUpcomingStockExpiry !== 'Enabled' && profile.notifyUpcomingStockExpiry !== 'Email and App Push') {
         global.logger.info(`notifyOnUpcomingExpiry setting is disabled for user ${userID}, skipping notification`);
         return { success: true };
       }
@@ -454,7 +454,7 @@ module.exports = ({ db, dbPublic }) => {
         await db.from('ingredients').update({ appMessageStatus: 'notAcked', appMessageDate: new Date() }).eq('ingredientID', ingredientID);
 
         global.logger.info(`No ingredientStocks found for ingredient ${ingredientID} and user ${userID}`);
-        if (profile.notifyOnNoStock !== 'App Push Only' && profile.notifyOnNoStock !== 'Email and App Push') {
+        if (profile.notifyOnNoStock !== 'Enabled' && profile.notifyOnNoStock !== 'Email and App Push') {
           return;
         }
         const { data: tokens, error: getTokensError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/${userID}`, {
@@ -512,7 +512,7 @@ module.exports = ({ db, dbPublic }) => {
 
         // if recipeCountInsufficient > 0, send notification to user if notifyOnLowStock is enabled
         if (recipeCountInsufficient > 0) {
-          if (profile.notifyOnLowStock !== 'App Push Only' && profile.notifyOnLowStock !== 'Email and App Push') {
+          if (profile.notifyOnLowStock !== 'Enabled' && profile.notifyOnLowStock !== 'Email and App Push') {
             return;
           }
           global.logger.info(`Low stock found for ${recipeCountInsufficient} recipes`);

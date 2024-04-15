@@ -277,6 +277,7 @@ export class FriendModalComponent {
                   });
                 }
                 // notify user of confirmed friendship
+                console.log('Sending push notification to new friend');
                 this.sendPushNotification('notifyConfirmFriendship');
                 this.isLoading.set(false);
               });
