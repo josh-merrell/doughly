@@ -44,6 +44,7 @@ function getPayload(type, data) {
           body: 'You have a new ping!',
         },
       };
+    // Implemented
     case 'notifyFollowersPublicRecipeCreated':
       return {
         message: {
@@ -54,6 +55,7 @@ function getPayload(type, data) {
           body: `Check out ${data.recipeName}, a new public recipe published by ${data.recipeAuthor}, who you follow!`,
         },
       };
+    // Implemented
     case 'notifyFriendsHeirloomRecipeCreated':
       return {
         message: {
@@ -64,6 +66,7 @@ function getPayload(type, data) {
           body: `You've got the inside scoop. ${data.recipeAuthor} just shared a new recipe; ${data.recipeName}, for friends only!`,
         },
       };
+    // Implemented
     case 'notifyNewFollower':
       return {
         message: {
@@ -74,13 +77,14 @@ function getPayload(type, data) {
           body: `${data.followerName} is now following you`,
         },
       };
+    // Implemented
     case 'notifyRequestFriendship':
       return {
         message: {
           friendRequest: `${data['requesterName']} sent you a friend request!`,
         },
         notification: {
-          title: 'Friend Request',
+          title: 'New Friend Request',
           body: `${data.requesterName} wants to be your friend`,
         },
       };
@@ -90,10 +94,11 @@ function getPayload(type, data) {
           friendRequest: `${data['friendName']} accepted your friend request!`,
         },
         notification: {
-          title: 'Friend Request Accepted',
+          title: 'New Friend',
           body: `${data.friendName} accepted your friend request`,
         },
       };
+    // Implemented
     case 'autoDeletedExpiredStock':
       return {
         message: {
@@ -104,6 +109,7 @@ function getPayload(type, data) {
           body: `${data['measurement']} ${data['measurementUnit']} of expired ${data['name']} was auto removed from your kitchen`,
         },
       };
+    // Implemented
     case 'autoDeletedExpiredStocks':
       return {
         message: {
@@ -114,6 +120,7 @@ function getPayload(type, data) {
           body: `${data['name']}, and ${data['count'] - 1} other ingredients had expired inventory auto removed from your kitchen`,
         },
       };
+    // Implemented
     case 'noStock':
       return {
         message: {
@@ -124,6 +131,7 @@ function getPayload(type, data) {
           body: `You have no remaining stock of ${data['name']} in your kitchen`,
         },
       };
+    // Implemented
     case 'lowStock':
       return {
         message: {
@@ -134,6 +142,7 @@ function getPayload(type, data) {
           body: `${data['count']} of your recipes require more ${data['name']} than you have in your kitchen`,
         },
       };
+    // Implemented
     case 'upcomingStockExpiration':
       return {
         message: {

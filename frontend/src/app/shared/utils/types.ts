@@ -120,9 +120,4 @@ export const worldCategories: string[] = [
   'Japanese',
 ];
 
-export const notificationMethods: string[] = [
-  'Email Only',
-  'App Push Only',
-  'Email and App Push',
-  'None',
-];
+export const notificationMethods: string[] = ['Enabled', 'None'];
