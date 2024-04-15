@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, Subscription, filter, take } from 'rxjs';
@@ -37,6 +37,9 @@ import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { Profile } from 'src/app/profile/state/profile-state';
 
 @Component({
   selector: 'dl-manual-add-recipe-modal',
@@ -61,6 +64,7 @@ export class ManualAddRecipeModalComponent {
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   recipeCategories: RecipeCategory[] = [];
+  private profile: WritableSignal<Profile | null> = signal(null);
 
   //photo upload
   photoURL!: string;
@@ -79,7 +83,8 @@ export class ManualAddRecipeModalComponent {
     private store: Store,
     private fb: FormBuilder,
     private photoUploadService: PhotoService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private pushTokenService: PushTokenService
   ) {
     this.isLoading$ = this.store.select(selectLoading);
     this.store.select(selectRecipes).subscribe((recipes) => {
@@ -88,6 +93,12 @@ export class ManualAddRecipeModalComponent {
     });
     this.categories$ = this.store.select(selectRecipeCategories);
     this.recipeCategories = this.data.recipeCategories;
+  }
+
+  ngOnInit() {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
   }
 
   setForm() {
@@ -144,7 +155,11 @@ export class ManualAddRecipeModalComponent {
     if (this.croppedImage && this.selectedFile) {
       try {
         const url: string = await this.photoUploadService
-          .getPreSignedPostUrl('recipe', this.selectedFile.name, this.selectedFile.type)
+          .getPreSignedPostUrl(
+            'recipe',
+            this.selectedFile.name,
+            this.selectedFile.type
+          )
           .toPromise();
 
         const uploadResponse = await this.photoUploadService.uploadFileToS3(
@@ -219,6 +234,43 @@ export class ManualAddRecipeModalComponent {
       this.form.value.isHeirloomRecipe &&
       this.form.value.isPublicRecipe === false
     ) {
+      this.pushTokenService
+        .getFriendPushTokensAndSendNotification(
+          'notifyFriendCreateRecipe',
+          'notifyFriendsHeirloomRecipeCreated',
+          {
+            recipeAuthor: `${this.profile()!.nameFirst} ${
+              this.profile()!.nameLast
+            }`,
+            recipeName: this.form.value.title,
+            imageUrl: this.photoURL,
+          }
+        )
+        .subscribe(
+          () => {},
+          (error) => {
+            console.error('Error sending push notification: ', error);
+          }
+        );
+    } else if (this.form.value.isPublicRecipe) {
+      this.pushTokenService
+        .getFollowerPushTokensAndSendNotification(
+          'notifyFolloweeCreateRecipe',
+          'notifyFollowersPublicRecipeCreated',
+          {
+            recipeAuthor: `${this.profile()!.nameFirst} ${
+              this.profile()!.nameLast
+            }`,
+            recipeName: this.form.value.title,
+            imageUrl: this.photoURL,
+          }
+        )
+        .subscribe(
+          () => {},
+          (error) => {
+            console.error('Error sending push notification: ', error);
+          }
+        );
     }
   }
 
