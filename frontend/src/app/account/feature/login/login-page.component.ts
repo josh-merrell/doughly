@@ -12,6 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
+import { Capacitor } from '@capacitor/core'
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 // Actions for loading state
 import { RecipeActions } from '../../.././recipes/state/recipe/recipe-actions';
@@ -45,6 +47,7 @@ declare const google: any;
     MatInputModule,
   ],
   templateUrl: './login-page.component.html',
+  styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
   error?: string;
@@ -56,57 +59,26 @@ export class LoginPageComponent {
   ) {}
 
   ngOnInit() {
-    this.initGoogleSignIn();
-  }
-
-  private initGoogleSignIn() {
-    if (
-      typeof google !== 'undefined' &&
-      google.accounts &&
-      google.accounts.id
-    ) {
-      this.renderGoogleSignInButton();
-    } else {
-      // Handle case where google script is not loaded yet
-      window.addEventListener(
-        'google-script-loaded',
-        this.renderGoogleSignInButton.bind(this)
-      );
+    // for all platforms
+    GoogleAuth.initialize({
+      clientId: '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
+      scopes: ['email', 'profile'],
+      grantOfflineAccess: true,
+    });
+    
+    // for web
+    if (!Capacitor.isNativePlatform()) {
+      // this.initGoogleSignIn();
+    }
+    
+    // for mobile
+    if (Capacitor.isNativePlatform()) {
     }
   }
 
-  private renderGoogleSignInButton() {
-    google.accounts.id.initialize({
-      client_id:
-        '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
-      callback: this.handleSignInWithGoogle.bind(this),
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    });
-
-    google.accounts.id.renderButton(document.getElementById('g_loginBtn'), {
-      theme: 'outline',
-      size: 'large',
-      type: 'icon',
-      shape: 'rectangular',
-      width: 100,
-    });
-
-    google.accounts.id.prompt();
-  }
-
-  handleSignInWithGoogle(response: CredentialResponse) {
-    // Extract the credential (token) from the response
-    const token = response.credential;
-    let decodedToken: any | null = null;
-    try {
-      decodedToken = JSON.parse(atob(token.split('.')[1]));
-      console.log('Decoded token:', decodedToken);
-    } catch (error) {
-      console.log('Error decoding token:', error);
-    }
-    // Optional: You might want to handle nonce here if you use it
-    // Use the token to sign in with Supabase
+  public async signInWithGoogle() {
+    const googleUser = await GoogleAuth.signIn();
+    const token = googleUser.authentication.idToken;
     this.ngZone.run(() => {
       this.authService
         .signInWithGoogle(token)
