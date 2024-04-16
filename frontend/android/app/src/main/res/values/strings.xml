@@ -5,4 +5,6 @@
     <string name="package_name">co.doughly.app</string>
     <string name="custom_url_scheme">co.doughly.app</string>
     <string name="server_client_id">911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">399157002973005</string>
+    <string name="facebook_client_token">9028d4c140a799dc5c08e498f3321fb9</string>
 </resources>
