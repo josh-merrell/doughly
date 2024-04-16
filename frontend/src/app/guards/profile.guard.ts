@@ -6,8 +6,10 @@ import {
   Router,
   RouterStateSnapshot,
 } from '@angular/router';
-import { first, map } from 'rxjs';
+import { first, from, map } from 'rxjs';
 import { AuthService } from '../shared/utils/authenticationService';
+
+
 
 export const canActivate: CanActivateFn = (
   route: ActivatedRouteSnapshot,

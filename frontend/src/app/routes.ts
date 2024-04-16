@@ -5,7 +5,6 @@ import { NotfoundComponent } from './shared/ui/app-notfound/app-notfound.compone
 import { KitchenPageComponent } from './kitchen/kitchen-page.component';
 import { UserRecipeComponent } from './recipes/feature/recipe/user-recipe/user-recipe.component';
 import { LoginPageComponent } from './account/feature/login/login-page.component';
-import { ProfileGuard } from './guards/profile.guard';
 import { PasswordResetPageComponent } from './account/feature/password/password-reset-page.component';
 import { SignupPageComponent } from './account/feature/signup/signup-page.component';
 import { VerifyComponent } from './account/feature/verify/verify.component';
@@ -24,12 +23,20 @@ import { SubscribedRecipesComponent } from './recipes/feature/subscribed-recipes
 import { DiscoverRecipesComponent } from './recipes/feature/discover/discover-recipes.component';
 import { SettingsComponent } from './settings/settings.component';
 import { UsingRecipeComponent } from './recipes/feature/recipe/ui/using-recipe/using-recipe.component';
+import { LoadingPageComponent } from './account/feature/loading-page/loading-page.component';
+
+import { ProfileGuard } from './guards/profile.guard';
+import { stateLoaded } from './guards/stateLoaded.guard';
 
 export const routes: Route[] = [
   {
     path: '',
     redirectTo: 'recipes',
     pathMatch: 'full',
+  },
+  {
+    path: 'loading',
+    component: LoadingPageComponent,
   },
   {
     path: 'groceries',
@@ -139,6 +146,7 @@ export const routes: Route[] = [
       {
         path: 'discover',
         component: DiscoverRecipesComponent,
+        canActivate: [stateLoaded],
       },
       {
         path: 'subscribed',
