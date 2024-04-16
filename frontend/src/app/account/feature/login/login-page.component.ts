@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { AuthService } from '../../../shared/utils/authenticationService';
@@ -12,8 +12,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
-import { Capacitor } from '@capacitor/core'
+import { Capacitor } from '@capacitor/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import {
+  FacebookLogin,
+  FacebookLoginResponse,
+} from '@capacitor-community/facebook-login';
 
 // Actions for loading state
 import { RecipeActions } from '../../.././recipes/state/recipe/recipe-actions';
@@ -50,6 +54,7 @@ declare const google: any;
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
+  public isWeb: WritableSignal<boolean> = signal(false);
   error?: string;
   constructor(
     private store: Store,
@@ -59,18 +64,25 @@ export class LoginPageComponent {
   ) {}
 
   ngOnInit() {
-    // for all platforms
+    // for google login on all platforms
     GoogleAuth.initialize({
-      clientId: '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
+      clientId:
+        '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
       scopes: ['email', 'profile'],
       grantOfflineAccess: true,
     });
-    
+
+    // for facebook login on all platforms
+    FacebookLogin.initialize({
+      appId: '399157002973005',
+    });
+
     // for web
     if (!Capacitor.isNativePlatform()) {
       // this.initGoogleSignIn();
+      this.isWeb.set(true);
     }
-    
+
     // for mobile
     if (Capacitor.isNativePlatform()) {
     }
@@ -82,6 +94,31 @@ export class LoginPageComponent {
     this.ngZone.run(() => {
       this.authService
         .signInWithGoogle(token)
+        .then(() => {
+          // Handle successful sign in
+          this.loadState();
+          this.router.navigate(['/recipes/discover']);
+        })
+        .catch((error) => {
+          // Handle sign in error
+          this.error = error.message;
+        });
+    });
+  }
+
+  public async signInWithFacebook() {
+    const FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
+    const facebookUser = await FacebookLogin.login({
+      permissions: FACEBOOK_PERMISSIONS,
+    });
+    console.log(`FACEBOOK USER: ${JSON.stringify(facebookUser)}`)
+    if (facebookUser.accessToken === null) {
+      return;
+    }
+    const token = facebookUser.accessToken.token;
+    this.ngZone.run(() => {
+      this.authService
+        .signInWithFacebook()
         .then(() => {
           // Handle successful sign in
           this.loadState();

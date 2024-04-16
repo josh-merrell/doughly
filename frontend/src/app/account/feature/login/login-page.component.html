@@ -56,6 +56,37 @@
           <span style="display: none">Sign in with Google</span>
         </div>
       </button>
+      <button
+        *ngIf="isWeb()"
+        (click)="signInWithFacebook()"
+        class="gsi-material-button mt-dl-2"
+      >
+        <div class="gsi-material-button-state"></div>
+        <div class="gsi-material-button-content-wrapper">
+          <div class="gsi-material-button-icon flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              enable-background="new 0 0 56.693 56.693"
+              id="Layer_1"
+              fill="#1877F2"
+              version="1.1"
+              height="20px"
+              width="20px"
+              viewBox="5 4 48 50"
+              xml:space="preserve"
+            >
+              <path
+                d="M40.43,21.739h-7.645v-5.014c0-1.883,1.248-2.322,2.127-2.322c0.877,0,5.395,0,5.395,0V6.125l-7.43-0.029  c-8.248,0-10.125,6.174-10.125,10.125v5.518h-4.77v8.53h4.77c0,10.947,0,24.137,0,24.137h10.033c0,0,0-13.32,0-24.137h6.77  L40.43,21.739z"
+              />
+            </svg>
+          </div>
+          <span class="gsi-material-button-contents"
+            >Sign in with Facebook</span
+          >
+          <span style="display: none">Sign in with Facebook</span>
+        </div>
+      </button>
     </div>
     <!--FORM FIELDS-->
     <div id="form-email">
