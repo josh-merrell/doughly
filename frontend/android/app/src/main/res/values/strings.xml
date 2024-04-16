@@ -4,4 +4,5 @@
     <string name="title_activity_main">doughly</string>
     <string name="package_name">co.doughly.app</string>
     <string name="custom_url_scheme">co.doughly.app</string>
+    <string name="server_client_id">911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com</string>
 </resources>
