@@ -588,12 +588,12 @@
         *ngFor="
           let component of displayIngredientsByComponent().components | keyvalue
         "
-        class="relative mt-dl-7"
+        class="w-full relative mt-dl-7"
       >
-        <div>
+        <div class="w-full flex flex-col items-center">
           <!-- Italic Label with component name -->
           <span
-            class="absolute -top-4 left-1/2 -translate-x-1/2 text-dl-6 font-dl-3 italic text-dl-grey-5"
+            class="text-dl-6 font-dl-3 italic text-dl-grey-5"
             >for {{ component.key }}</span
           >
 
