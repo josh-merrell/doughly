@@ -6,3 +6,4 @@ export const selectError = (state: any) => state.shoppingListIngredient.error;
 export const selectUpdating = (state: any) => state.shoppingListIngredient.updating;
 export const selectTempPurchasing = (state: any) => state.shoppingListIngredient.tempPurchasing;
 export const selectDeleting = (state: any) => state.shoppingListIngredient.deleting;
+export const selectLoading = (state: any) => state.shoppingListIngredient.loading;
