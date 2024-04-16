@@ -41,15 +41,17 @@ export const routes: Route[] = [
   {
     path: 'groceries',
     component: GroceriesPageComponent,
-    canActivate: [ProfileGuard],
+    canActivate: [ProfileGuard, ProfileGuard],
     children: [
       {
         path: 'draft/:shoppingListID',
         component: DraftPageComponent,
+        canActivate: [ProfileGuard, ProfileGuard],
       },
       {
         path: 'shopping/:shoppingListID',
         component: ShoppingPageComponent,
+        canActivate: [ProfileGuard, ProfileGuard],
       },
       {
         path: '',
@@ -61,27 +63,27 @@ export const routes: Route[] = [
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [ProfileGuard],
+    canActivate: [ProfileGuard, stateLoaded],
   },
   {
     path: 'ingredients',
     component: IngredientsComponent,
-    canActivate: [ProfileGuard],
+    canActivate: [ProfileGuard, stateLoaded],
   },
   {
     path: 'kitchen',
     component: KitchenPageComponent,
-    canActivate: [ProfileGuard],
+    canActivate: [ProfileGuard, stateLoaded],
     children: [
       {
         path: 'tools',
         component: ToolsComponent,
-        canActivate: [ProfileGuard],
+        canActivate: [ProfileGuard, stateLoaded],
       },
       {
         path: 'ingredients',
         component: IngredientsComponent,
-        canActivate: [ProfileGuard],
+        canActivate: [ProfileGuard, stateLoaded],
       },
     ],
   },
@@ -96,29 +98,32 @@ export const routes: Route[] = [
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [ProfileGuard],
+    canActivate: [ProfileGuard, stateLoaded],
   },
   {
     path: 'settings',
     component: SettingsComponent,
-    canActivate: [ProfileGuard],
+    canActivate: [ProfileGuard, stateLoaded],
   },
   {
     path: 'recipe/public/:recipeID',
     component: PublicRecipeComponent,
+    canActivate: [ProfileGuard, stateLoaded],
   },
   {
     path: 'recipe/using/:recipeID',
     component: UsingRecipeComponent,
+    canActivate: [ProfileGuard, stateLoaded],
   },
   {
     path: 'recipe/:recipeID',
     component: UserRecipeComponent,
+    canActivate: [ProfileGuard, stateLoaded],
   },
   {
     path: 'recipes',
     component: RecipesPageNewComponent,
-    canActivate: [ProfileGuard],
+    canActivate: [ProfileGuard, stateLoaded],
     children: [
       {
         path: 'created',
@@ -127,17 +132,17 @@ export const routes: Route[] = [
           {
             path: 'add',
             component: CreatedRecipesComponent,
-            canActivate: [ProfileGuard],
+            canActivate: [ProfileGuard, stateLoaded],
             children: [
               {
                 path: 'vision',
                 component: CreatedRecipesComponent,
-                canActivate: [ProfileGuard],
+                canActivate: [ProfileGuard, stateLoaded],
               },
               {
                 path: 'manual',
                 component: CreatedRecipesComponent,
-                canActivate: [ProfileGuard],
+                canActivate: [ProfileGuard, stateLoaded],
               },
             ],
           },
@@ -146,11 +151,12 @@ export const routes: Route[] = [
       {
         path: 'discover',
         component: DiscoverRecipesComponent,
-        canActivate: [stateLoaded],
+        canActivate: [ProfileGuard, stateLoaded],
       },
       {
         path: 'subscribed',
         component: SubscribedRecipesComponent,
+        canActivate: [ProfileGuard, stateLoaded],
       },
       {
         path: '',
@@ -166,15 +172,17 @@ export const routes: Route[] = [
   {
     path: 'social',
     component: SocialPageComponent,
-    canActivate: [ProfileGuard],
+    canActivate: [ProfileGuard, stateLoaded],
     children: [
       {
         path: 'friends',
         component: FriendsComponent,
+        canActivate: [ProfileGuard, stateLoaded],
       },
       {
         path: 'followers',
         component: FollowersComponent,
+        canActivate: [ProfileGuard, stateLoaded],
       },
     ],
   },

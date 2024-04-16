@@ -3,8 +3,7 @@ import { Component, WritableSignal, effect, signal } from '@angular/core';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-import { combineLatest, filter, map, take } from 'rxjs';
+import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
 
 // Actions for loading state
 import { RecipeActions } from '../../.././recipes/state/recipe/recipe-actions';
@@ -130,11 +129,12 @@ export class LoadingPageComponent {
   private isLoadingShoppingList: WritableSignal<boolean> = signal(true);
   private isLoadingShoppingListRecipe: WritableSignal<boolean> = signal(true);
 
-  constructor(private store: Store, private router: Router) {
+  constructor(private store: Store, private router: Router, private redirectPathService: RedirectPathService) {
     effect(() => {
       const isLoading = this.isLoadingGlobal();
       if (!isLoading) {
-        this.router.navigate(['/recipes/discover']);
+        const redirectPath = this.redirectPathService.getPath();
+        this.router.navigate([redirectPath]);
       }
     });
 
