@@ -10,6 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- Facebook login -->
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="399157002973005"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="9028d4c140a799dc5c08e498f3321fb9"/>
+
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:name=".MainActivity"
