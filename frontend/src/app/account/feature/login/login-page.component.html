@@ -96,6 +96,14 @@
         >
         <mat-form-field class="w-full" [style.width.px]="296">
           <input matInput type="email" formControlName="email" />
+          <mat-error
+            *ngIf="
+              login_form.get('email')!.touched &&
+              login_form.get('email')!.invalid
+            "
+          >
+            Please enter a valid email.
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -140,13 +148,13 @@
 
     <button
       type="submit"
-      [disabled]="login_form.invalid"
+      [disabled]="login_form.invalid || login_form.get('email')!.touched === false || login_form.get('password')!.touched === false || login_form.get('password')!.value === '' || login_form.get('email')!.value === ''"
       style="height: 40px; width: 296px"
       class="shadow-s mt-dl-5 inline-flex items-center justify-center rounded-dl-1 text-dl-5 font-dl-2 text-white"
       [ngClass]="{
         'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
-          login_form.invalid === false,
-        'bg-dl-grey-7': login_form.invalid === true
+          login_form.invalid === false && login_form.get('email')!.touched && login_form.get('password')!.touched,
+        'bg-dl-grey-7': login_form.invalid || login_form.get('email')!.touched === false || login_form.get('password')!.touched === false || login_form.get('password')!.value === '' || login_form.get('email')!.value === ''
       }"
     >
       Sign In with Email
