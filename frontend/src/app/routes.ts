@@ -31,7 +31,7 @@ import { stateLoaded } from './guards/stateLoaded.guard';
 export const routes: Route[] = [
   {
     path: '',
-    redirectTo: 'recipes',
+    redirectTo: 'login',
     pathMatch: 'full',
   },
   {
