@@ -46,6 +46,11 @@ export class LoginPageComponent {
   ) {}
 
   ngOnInit() {
+    this.authService.$profile.subscribe((profile) => {
+      if (profile) {
+        this.router.navigate(['/loading']);
+      }
+    });
     // for google login on all platforms
     GoogleAuth.initialize({
       clientId:
@@ -118,7 +123,7 @@ export class LoginPageComponent {
 
   onSubmit() {
     this.submitted = true; // Set this to true on submission
-    console.log('here')
+    console.log('here');
     if (this.login_form.valid) {
       delete this.error;
 
