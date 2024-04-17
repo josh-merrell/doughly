@@ -17,7 +17,6 @@ export const canActivate: CanActivateFn = (
 ) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-
   return authService.$profile.pipe(
     // We only want to get the first emitted value from the $profile
     first(),

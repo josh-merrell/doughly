@@ -24,6 +24,7 @@ import { DiscoverRecipesComponent } from './recipes/feature/discover/discover-re
 import { SettingsComponent } from './settings/settings.component';
 import { UsingRecipeComponent } from './recipes/feature/recipe/ui/using-recipe/using-recipe.component';
 import { LoadingPageComponent } from './account/feature/loading-page/loading-page.component';
+import { TempRouteComponent } from './shared/temp-route/temp-route.component';
 
 import { ProfileGuard } from './guards/profile.guard';
 import { stateLoaded } from './guards/stateLoaded.guard';
@@ -74,6 +75,7 @@ export const routes: Route[] = [
     path: 'kitchen',
     component: KitchenPageComponent,
     canActivate: [ProfileGuard, stateLoaded],
+    runGuardsAndResolvers: 'always',
     children: [
       {
         path: 'tools',
@@ -128,6 +130,7 @@ export const routes: Route[] = [
       {
         path: 'created',
         component: CreatedRecipesComponent,
+        canActivate: [ProfileGuard, stateLoaded],
         children: [
           {
             path: 'add',
@@ -189,6 +192,10 @@ export const routes: Route[] = [
   {
     path: 'verify-account',
     component: VerifyComponent,
+  },
+  {
+    path: 'tempRoute',
+    component: TempRouteComponent,
   },
   {
     path: '**',
