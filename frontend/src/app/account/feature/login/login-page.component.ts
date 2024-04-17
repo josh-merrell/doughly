@@ -123,7 +123,6 @@ export class LoginPageComponent {
 
   onSubmit() {
     this.submitted = true; // Set this to true on submission
-    console.log('here');
     if (this.login_form.valid) {
       delete this.error;
 
