@@ -1,6 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withRouterConfig } from '@angular/router';
 import { routes } from './app/routes';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -57,18 +57,14 @@ import { ShoppingListIngredientEffects } from './app/groceries/state/shopping-li
 import { MessageReducer } from './app/footer/state/message-reducers';
 import { MessageEffects } from './app/footer/state/message-effects';
 
-
-import {
-  ActionPerformed,
-  PushNotificationSchema,
-  PushNotifications,
-  Token,
-} from '@capacitor/push-notifications';
-
-
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withRouterConfig({
+        onSameUrlNavigation: 'reload',
+      })
+    ),
     provideStore(),
     provideState('shared', sharedReducer),
     provideState('kitchen', kitchenReducer),
@@ -124,9 +120,7 @@ bootstrapApplication(AppComponent, {
       MatDatepickerModule,
       MatMomentDateModule,
       MatNativeDateModule,
-      BrowserAnimationsModule,
+      BrowserAnimationsModule
     ),
-    // provideRouterStore(),
-    // provideEffects([RouterEffects, AuthEffects])
   ],
 }).catch((err) => console.error(err));
