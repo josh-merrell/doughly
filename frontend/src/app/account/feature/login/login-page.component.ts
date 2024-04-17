@@ -37,6 +37,7 @@ declare const google: any;
 export class LoginPageComponent {
   public isWeb: WritableSignal<boolean> = signal(false);
   error?: string;
+  submitted = false;
   constructor(
     private store: Store,
     private router: Router,
@@ -91,7 +92,7 @@ export class LoginPageComponent {
     const facebookUser = await FacebookLogin.login({
       permissions: FACEBOOK_PERMISSIONS,
     });
-    console.log(`FACEBOOK USER: ${JSON.stringify(facebookUser)}`)
+    console.log(`FACEBOOK USER: ${JSON.stringify(facebookUser)}`);
     if (facebookUser.accessToken === null) {
       return;
     }
@@ -111,11 +112,13 @@ export class LoginPageComponent {
   }
 
   login_form = new FormGroup({
-    email: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required]),
+    email: new FormControl('', []),
+    password: new FormControl('', []),
   });
 
   onSubmit() {
+    this.submitted = true; // Set this to true on submission
+    console.log('here')
     if (this.login_form.valid) {
       delete this.error;
 
@@ -130,5 +133,4 @@ export class LoginPageComponent {
         });
     }
   }
-
 }
