@@ -31,6 +31,7 @@ import {
 } from '@capacitor/push-notifications';
 import { MatDialog } from '@angular/material/dialog';
 import { MessagesModalComponent } from '../ui/messages-modal/messages-modal.component';
+import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
 
 @Component({
   selector: 'app-footer',
@@ -65,13 +66,15 @@ export class AppFooterComponent {
     private store: Store<AppState>,
     public authService: AuthService,
     private location: Location,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private redirectPathService: RedirectPathService
   ) {
     effect(
       () => {
         this.unackedMessageLength.set(
-          this.messages().filter((message: any) => message.messageData.status === 'notAcked')
-            .length
+          this.messages().filter(
+            (message: any) => message.messageData.status === 'notAcked'
+          ).length
         );
       },
       { allowSignalWrites: true }
@@ -141,7 +144,8 @@ export class AppFooterComponent {
   }
 
   navigate(link: string) {
-    this.router.navigate([link]);
+    this.redirectPathService.setPath(link);
+    this.router.navigate(['/tempRoute']);
   }
 
   profileNavigate(link: string) {
