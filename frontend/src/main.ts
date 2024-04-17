@@ -59,12 +59,7 @@ import { MessageEffects } from './app/footer/state/message-effects';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(
-      routes,
-      withRouterConfig({
-        onSameUrlNavigation: 'reload',
-      })
-    ),
+    provideRouter(routes),
     provideStore(),
     provideState('shared', sharedReducer),
     provideState('kitchen', kitchenReducer),
