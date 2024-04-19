@@ -93,15 +93,15 @@ export class LoginPageComponent {
   }
 
   public async signInWithFacebook() {
-    const FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
-    const facebookUser = await FacebookLogin.login({
-      permissions: FACEBOOK_PERMISSIONS,
-    });
-    console.log(`FACEBOOK USER: ${JSON.stringify(facebookUser)}`);
-    if (facebookUser.accessToken === null) {
-      return;
-    }
-    const token = facebookUser.accessToken.token;
+    // const FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
+    // const facebookUser = await FacebookLogin.login({
+    //   permissions: FACEBOOK_PERMISSIONS,
+    // });
+    // console.log(`FACEBOOK USER: ${JSON.stringify(facebookUser)}`);
+    // if (facebookUser.accessToken === null) {
+    //   return;
+    // }
+    // const token = facebookUser.accessToken.token;
     this.ngZone.run(() => {
       this.authService
         .signInWithFacebook()
