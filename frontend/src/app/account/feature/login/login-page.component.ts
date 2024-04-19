@@ -115,11 +115,28 @@ export class LoginPageComponent {
         });
     });
   }
+  
+  public async signInWithApple() {
+    this.ngZone.run(() => {
+      this.authService
+        .signInWithApple()
+        .then(() => {
+          // Handle successful sign in
+          this.router.navigate(['/loading']);
+        })
+        .catch((error) => {
+          // Handle sign in error
+          this.error = error.message;
+        });
+    
+    });
+  }
 
   login_form = new FormGroup({
     email: new FormControl('', []),
     password: new FormControl('', []),
   });
+
 
   onSubmit() {
     this.submitted = true; // Set this to true on submission
