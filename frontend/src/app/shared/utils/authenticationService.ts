@@ -450,4 +450,30 @@ export class AuthService {
       throw error;
     }
   }
+
+  async signInWithApple(): Promise<void> {
+    try {
+      const { data, error } = await this.supabase.supabase.auth.signInWithOAuth(
+        {
+          provider: 'apple',
+        }
+      );
+
+      if (error) throw error;
+
+      // Check if the user is successfully returned
+      console.log(`APPLE LOGIN RESULT: ${JSON.stringify(data)}`);
+      // if (data && data.user) {
+      //   this._$user.next(data.user);
+
+      //   // Wait for $profile to be set again.
+      //   // We don't want to proceed until our API request for the user's profile has completed
+      //   this.$profile.pipe(first()).subscribe(() => {
+      //     // User profile is now set
+      //   });
+    } catch (error) {
+      console.error('Error during Apple sign-in:', error);
+      throw error;
+    }
+  }
 }
