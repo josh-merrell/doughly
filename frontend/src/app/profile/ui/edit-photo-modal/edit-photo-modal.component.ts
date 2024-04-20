@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -59,14 +59,13 @@ export class EditPhotoModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.setForm();
-  }
 
-  ngOnInit() {
-    //update photoURL if it exists on auth service
-    this.authService.$profile.subscribe((profile) => {
-      if (!profile) return;
-      this.photoURL = profile?.photo_url;
-    });
+    effect(() => {
+      const profile = this.authService.profile();
+      if (profile && profile.photo_url) {
+        this.photoURL = profile.photo_url;
+      }
+    })
   }
 
   setForm() {
