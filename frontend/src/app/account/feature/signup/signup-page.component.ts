@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { AuthService, Profile } from '../../../shared/utils/authenticationService';
@@ -30,6 +30,7 @@ import {
   templateUrl: './signup-page.component.html',
 })
 export class SignupPageComponent {
+  checkEmailMessage: WritableSignal<string> = signal('');
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
@@ -87,5 +88,7 @@ export class SignupPageComponent {
       this.authService
         .signUp(email!, password!, username!)
     }
+    this.checkEmailMessage.set('Check your email to verify your account');
+    console.log(`CHECK YOUR EMAIL TO VERIFY YOUR ACCOUNT: ${this.checkEmailMessage}`)
   }
 }

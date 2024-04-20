@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AppFooterComponent } from './footer/feature/app-footer.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { Store } from '@ngrx/store';
@@ -22,6 +22,7 @@ import {
 
 import { AuthService } from './shared/utils/authenticationService';
 import { PushTokenService } from './shared/utils/pushTokenService';
+import { filter } from 'rxjs';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -34,7 +35,15 @@ import { PushTokenService } from './shared/utils/pushTokenService';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  title = 'frontend';
+  showFooter = true;
+  hideFooterRoutes = [
+    '/login',
+    '/loading',
+    '/register',
+    '/password-reset',
+    '/verify-account',
+    '/tempRoute',
+  ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
 
@@ -45,6 +54,20 @@ export class AppComponent {
     public authService: AuthService,
     public pushTokenService: PushTokenService
   ) {
+    // Listen to routing events, ensuring only NavigationEnd events are processed
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        )
+      )
+      .subscribe((event: NavigationEnd) => {
+        // Check if the current URL matches any in the list where the footer should be hidden
+        this.showFooter = !this.hideFooterRoutes.some((route) =>
+          event.urlAfterRedirects.includes(route)
+        );
+      });
+
     // listen for deep-links
     this.initializeApp();
     effect(

@@ -3,13 +3,10 @@ import { RealtimeChannel, Session, User } from '@supabase/supabase-js';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
 
-import {
-  first,
-  from,
-  Observable,
-} from 'rxjs';
+import { first, from, Observable } from 'rxjs';
 import { PushTokenService } from './pushTokenService';
 import { Capacitor } from '@capacitor/core';
+import { Router } from '@angular/router';
 
 export interface Profile {
   user_id: string;
@@ -19,6 +16,16 @@ export interface Profile {
   name_last?: string;
   photo_url?: string;
   joined_at?: Date;
+  checkIngredientStock?: boolean;
+  autoDeleteExpiredStock?: boolean;
+  notifyOnLowStock?: string;
+  notifyOnNoStock?: string;
+  notifyUpcomingStockExpiry?: string;
+  notifyExpiredStock?: string;
+  notifyFriendCreateRecipe?: string;
+  notifyFolloweeCreateRecipe?: string;
+  notifyFriendRequest?: string;
+  notifyNewFollower?: string;
 }
 
 @Injectable({
@@ -41,7 +48,10 @@ export class AuthService {
     );
   }
 
-  constructor(private pushTokenService: PushTokenService) {
+  constructor(
+    private pushTokenService: PushTokenService,
+    private router: Router
+  ) {
     this.supabase = createClient(
       environment.SUPABASE_DOUGHLEAP_URL,
       environment.SUPABASE_DOUGHLEAP_KEY
@@ -151,12 +161,13 @@ export class AuthService {
   }
 
   private handleAuthStateChange(event: string, session: Session | null) {
-    // console.log(
-    //   'onAuthStateChange: ',
-    //   JSON.stringify(event),
-    //   ' ',
-    //   JSON.stringify(session)
-    // );
+    console.log('onAuthStateChange: ', JSON.stringify(event));
+    if (event === 'PASSWORD_RECOVERY') {
+      this.router.navigate(['/reset-password']);
+    }
+    if (event === 'USER_UPDATED') {
+      this.router.navigate(['/login']);
+    }
     if (session) {
       this.getUserFromSession(session).then((user) => {
         if (user) {
@@ -230,7 +241,7 @@ export class AuthService {
       .from('profiles')
       .select('*')
       .match({ user_id: user_id })
-      .single();
+      .maybeSingle();
     if (error) {
       console.error('Error getting profile: ', error);
       return;
@@ -241,6 +252,16 @@ export class AuthService {
       user_id: newUser.id,
       email: newUser.email,
       joined_at: new Date(),
+      checkIngredientStock: true,
+      autoDeleteExpiredStock: true,
+      notifyOnLowStock: 'Enabled',
+      notifyOnNoStock: 'Enabled',
+      notifyUpcomingStockExpiry: 'Enabled',
+      notifyExpiredStock: 'Enabled',
+      notifyFriendCreateRecipe: 'Enabled',
+      notifyFolloweeCreateRecipe: 'Enabled',
+      notifyFriendRequest: 'Enabled',
+      notifyNewFollower: 'Enabled',
     };
 
     // Insert the new profile into the profiles table if the user_id doesn't exist yet
@@ -293,23 +314,39 @@ export class AuthService {
     }
   }
 
-  signIn(email: string, password: string) {
+  async signIn(email: string, password: string) {
     // Set profile back to undefined to trigger the effect to fetch the profile
     this.profile.set(undefined);
-    this.supabase.auth.signInWithPassword({
+    const { data, error } = await this.supabase.auth.signInWithPassword({
       email,
       password,
     });
+    if (error) {
+      return error;
+    }
+    return data;
   }
 
   signUp(email: string, password: string, username: string) {
     // Set profile back to undefined to trigger the effect to fetch the profile
     this.profile.set(undefined);
+    const redirectTo = Capacitor.isNativePlatform()
+      ? 'co.doughly.app://login'
+      : window.location.origin;
     this.supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: redirectTo,
+      },
     });
     this.usernameToSet.set(username);
+  }
+
+  async updateUser(password: string) {
+    await this.supabase.auth.updateUser({
+      password,
+    });
   }
 
   updateProfile(profile: any): Observable<any> {
@@ -340,6 +377,22 @@ export class AuthService {
 
   logout() {
     return this.supabase.auth.signOut();
+  }
+
+  async resetPassword(email: string) {
+    const redirectTo = Capacitor.isNativePlatform()
+      ? 'co.doughly.app://login'
+      : window.location.origin;
+    const { data, error } = await this.supabase.auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo: redirectTo,
+      }
+    );
+    if (error) {
+      return error.message;
+    }
+    return 'success';
   }
 
   isUsernameUnique(username: string): Observable<boolean> {
