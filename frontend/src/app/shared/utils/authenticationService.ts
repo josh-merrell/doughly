@@ -1,7 +1,6 @@
 import { Injectable, WritableSignal, effect, signal } from '@angular/core';
 import { RealtimeChannel, Session, User } from '@supabase/supabase-js';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { SignInWithAppleOptions } from '@capacitor-community/apple-sign-in';
 import { environment } from 'src/environments/environment';
 
 import {
