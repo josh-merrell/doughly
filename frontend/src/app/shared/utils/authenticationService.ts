@@ -1,18 +1,16 @@
 import { Injectable, WritableSignal, effect, signal } from '@angular/core';
 import { RealtimeChannel, Session, User } from '@supabase/supabase-js';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SignInWithAppleOptions } from '@capacitor-community/apple-sign-in';
 import { environment } from 'src/environments/environment';
 
 import {
-  BehaviorSubject,
-  filter,
   first,
   from,
   Observable,
-  skipWhile,
-  tap,
 } from 'rxjs';
 import { PushTokenService } from './pushTokenService';
+import { Capacitor } from '@capacitor/core';
 
 export interface Profile {
   user_id: string;
@@ -154,12 +152,12 @@ export class AuthService {
   }
 
   private handleAuthStateChange(event: string, session: Session | null) {
-    console.log(
-      'onAuthStateChange: ',
-      JSON.stringify(event),
-      ' ',
-      JSON.stringify(session)
-    );
+    // console.log(
+    //   'onAuthStateChange: ',
+    //   JSON.stringify(event),
+    //   ' ',
+    //   JSON.stringify(session)
+    // );
     if (session) {
       this.getUserFromSession(session).then((user) => {
         if (user) {
@@ -172,6 +170,10 @@ export class AuthService {
     } else {
       this.clearUserData();
     }
+  }
+
+  public async setSession(access_token, refresh_token) {
+    return this.supabase.auth.setSession({ access_token, refresh_token });
   }
 
   private async getUserFromSession(session: Session): Promise<User | null> {
@@ -365,7 +367,6 @@ export class AuthService {
       updated_at: new Date(),
     };
     console.log('updateProfileField: ' + JSON.stringify(update));
-    console.log('user_id: ' + this.user_id());
     return from(
       this.supabase
         .from('profiles')
@@ -417,14 +418,17 @@ export class AuthService {
 
   async signInWithFacebook(): Promise<void> {
     try {
+      const redirectTo = Capacitor.isNativePlatform()
+        ? 'co.doughly.app://login'
+        : window.location.origin;
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'facebook',
+        options: {
+          redirectTo: redirectTo,
+        },
       });
 
       if (error) throw error;
-
-      // Check if the user is successfully returned
-      console.log(`FACEBOOK LOGIN RESULT: ${JSON.stringify(data)}`);
     } catch (error) {
       console.error('Error during Facebook sign-in:', error);
       throw error;
@@ -433,14 +437,17 @@ export class AuthService {
 
   async signInWithApple(): Promise<void> {
     try {
+      const redirectTo = Capacitor.isNativePlatform()
+        ? 'co.doughly.app://login'
+        : window.location.origin;
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'apple',
+        options: {
+          redirectTo: redirectTo,
+        },
       });
 
       if (error) throw error;
-
-      // Check if the user is successfully returned
-      console.log(`APPLE LOGIN RESULT: ${JSON.stringify(data)}`);
     } catch (error) {
       console.error('Error during Apple sign-in:', error);
       throw error;

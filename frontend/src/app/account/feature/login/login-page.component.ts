@@ -1,7 +1,14 @@
-import { Component, NgZone, WritableSignal, effect, signal } from '@angular/core';
+import {
+  Component,
+  NgZone,
+  WritableSignal,
+  effect,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { AuthService } from '../../../shared/utils/authenticationService';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   ReactiveFormsModule,
   FormControl,
@@ -28,6 +35,7 @@ declare const google: any;
     ReactiveFormsModule,
     RouterLinkWithHref,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
     MatSelectModule,
     MatInputModule,
   ],
@@ -36,6 +44,7 @@ declare const google: any;
 })
 export class LoginPageComponent {
   public isWeb: WritableSignal<boolean> = signal(false);
+  public isLoading: WritableSignal<boolean> = signal(false);
   error?: string;
   submitted = false;
   constructor(
@@ -49,7 +58,7 @@ export class LoginPageComponent {
       if (profile) {
         this.router.navigate(['/loading']);
       }
-    })
+    });
   }
 
   ngOnInit() {
@@ -78,6 +87,7 @@ export class LoginPageComponent {
   }
 
   public async signInWithGoogle() {
+    this.isLoading.set(true);
     const googleUser = await GoogleAuth.signIn();
     const token = googleUser.authentication.idToken;
     this.ngZone.run(() => {
@@ -95,15 +105,9 @@ export class LoginPageComponent {
   }
 
   public async signInWithFacebook() {
-    // const FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
-    // const facebookUser = await FacebookLogin.login({
-    //   permissions: FACEBOOK_PERMISSIONS,
-    // });
-    // console.log(`FACEBOOK USER: ${JSON.stringify(facebookUser)}`);
-    // if (facebookUser.accessToken === null) {
-    //   return;
-    // }
-    // const token = facebookUser.accessToken.token;
+    this.isLoading.set(true);
+    if (this.isWeb()) {
+    }
     this.ngZone.run(() => {
       this.authService
         .signInWithFacebook()
@@ -117,8 +121,13 @@ export class LoginPageComponent {
         });
     });
   }
-  
+
   public async signInWithApple() {
+    this.isLoading.set(true);
+    if (!this.isWeb()) {
+    }
+    if (this.isWeb()) {
+    }
     this.ngZone.run(() => {
       this.authService
         .signInWithApple()
@@ -130,7 +139,6 @@ export class LoginPageComponent {
           // Handle sign in error
           this.error = error.message;
         });
-    
     });
   }
 
@@ -139,15 +147,13 @@ export class LoginPageComponent {
     password: new FormControl('', []),
   });
 
-
   onSubmit() {
     this.submitted = true; // Set this to true on submission
     if (this.login_form.valid) {
       delete this.error;
 
       const { email, password } = this.login_form.value;
-      this.authService
-        .signIn(email!, password!)
+      this.authService.signIn(email!, password!);
     }
   }
 }

@@ -70,24 +70,27 @@ export class AppComponent {
   }
 
   initializeApp() {
-    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
-      this.zone.run(() => {
-        // Example url: https://beerswift.app/tabs/tab2
-        // slug = /tabs/tab2
+    App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
+      const access = event.url.split('#access_token=').pop()?.split('&')[0];
+      const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
 
-        // Our app url: https://doughly.co
-        const slug = event.url.split('.co').pop();
-        if (slug) {
-          this.router.navigateByUrl(slug);
+      await this.authService.setSession(access, refresh);
+
+      this.zone.run(() => {
+        if (event.url.includes('.app')) {
+          if (event.url.includes('co.doughly.app')) {
+            // Extract the part after 'co.doughly.app/' and navigate
+            const newPath = event.url.split('co.doughly.app://')[1];
+            this.router.navigateByUrl(newPath || '/login', {
+              replaceUrl: true,
+            });
+          }
         }
-        // If no match, do nothing - let regular routing
-        // logic take over
       });
     });
   }
 
   ngOnInit() {
-
     // register for push notifications on mobile
     if (Capacitor.isNativePlatform()) {
       PushNotifications.requestPermissions().then((result) => {
