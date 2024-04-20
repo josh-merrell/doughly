@@ -86,12 +86,6 @@ export class SignupPageComponent {
       const { email, password, username } = this.signup_form.value;
       this.authService
         .signUp(email!, password!, username!)
-        .then(() => {
-          this.router.navigate(['/home']);
-        })
-        .catch((error) => {
-          this.error = error.message;
-        });
     }
   }
 }
