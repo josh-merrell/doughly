@@ -16,7 +16,7 @@
         class="flex w-full items-center justify-between space-y-1 px-dl-2 pt-1"
       >
         <div class="h-dl-5 w-dl-5"></div>
-        <ng-container *ngIf="authService.$profile | async as profile">
+        <ng-container *ngIf="authService.profile() as profile">
           <div (click)="navigate('/groceries')" class="flex flex-col">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@
             </a>
           </div>
         </ng-container>
-        <ng-container *ngIf="authService.$profile | async as profile">
+        <ng-container *ngIf="authService.profile() as profile">
           <div (click)="navigate('/recipes')" class="flex flex-col">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -95,7 +95,7 @@
             </a>
           </div>
         </ng-container>
-        <ng-container *ngIf="authService.$profile | async as profile">
+        <ng-container *ngIf="authService.profile() as profile">
           <div (click)="navigate('/social')" class="flex flex-col">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +121,7 @@
             </a>
           </div>
         </ng-container>
-        <ng-container *ngIf="authService.$profile | async as profile">
+        <ng-container *ngIf="authService.profile() as profile">
           <div (click)="navigate('/kitchen')" class="flex flex-col">
             <svg
               xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -158,7 +158,7 @@
         </ng-container>
         <!-- Profile dropdown -->
         <div
-          *ngIf="authService.$profile | async as profile"
+          *ngIf="authService.profile() as profile"
           class="relative pb-dl-3 pr-dl-3"
         >
           <div>

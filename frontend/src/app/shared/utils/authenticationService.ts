@@ -1,5 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, WritableSignal, effect, signal } from '@angular/core';
 import { RealtimeChannel, Session, User } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from 'src/environments/environment';
+
 import {
   BehaviorSubject,
   filter,
@@ -9,7 +12,6 @@ import {
   skipWhile,
   tap,
 } from 'rxjs';
-import { SupabaseService } from './supabase.service';
 import { PushTokenService } from './pushTokenService';
 
 export interface Profile {
@@ -26,21 +28,15 @@ export interface Profile {
   providedIn: 'root',
 })
 export class AuthService {
-  // Supabase user state
-  private _$user = new BehaviorSubject<User | null | undefined>(undefined);
-  $user = this._$user.pipe(
-    skipWhile((_) => typeof _ === 'undefined')
-  ) as Observable<User | null>;
-  public user_id?: string;
+  public supabase!: SupabaseClient;
+  private user: WritableSignal<User | null> = signal(null);
+  private user_id: WritableSignal<string | null | undefined> =
+    signal(undefined);
+  public profile: WritableSignal<Profile | null | undefined> =
+    signal(undefined);
+  private profileRealtime: RealtimeChannel | null = null;
 
-  // Profile state
-  private _$profile = new BehaviorSubject<Profile | null | undefined>(
-    undefined
-  );
-  $profile = this._$profile.pipe(
-    skipWhile((_) => typeof _ === 'undefined')
-  ) as Observable<Profile | null>;
-  private profile_subscription?: RealtimeChannel;
+  private usernameToSet: WritableSignal<string | null> = signal(null);
 
   isProfile(obj: any): obj is Profile {
     return (
@@ -48,95 +44,126 @@ export class AuthService {
     );
   }
 
-  constructor(
-    private supabase: SupabaseService,
-    private pushTokenService: PushTokenService
-  ) {
+  constructor(private pushTokenService: PushTokenService) {
+    this.supabase = createClient(
+      environment.SUPABASE_DOUGHLEAP_URL,
+      environment.SUPABASE_DOUGHLEAP_KEY
+    );
+
     // Check the current session on initialization
-    this.supabase.supabase.auth.getSession().then(({ data, error }) => {
+    this.supabase.auth.getSession().then(({ data, error }) => {
       if (data && data.session && !error) {
         this.handleAuthStateChange('SIGNED_IN', data.session);
       }
     });
+
     // Listen for future auth state changes
-    this.supabase.supabase.auth.onAuthStateChange(
-      this.handleAuthStateChange.bind(this)
-    );
+    this.supabase.auth.onAuthStateChange((event, session) => {
+      this.handleAuthStateChange(event, session);
+    });
 
-    // Initialize the user's profile
-    // The state of the user's profile is dependent on their being a user. If no user is set, there shouldn't be a profile.
-    this.$user.subscribe((user) => {
-      if (user) {
-        // We only make changes if the user is different
-        if (user.id !== this.user_id) {
-          const user_id = user.id;
-          this.user_id = user_id;
+    // Set username to new profile after creating it. Refer to this.signUp()
+    effect(() => {
+      const profile = this.profile();
+      const usernameToSet = this.usernameToSet();
 
-          // One-time API call to Supabase to get the user's profile
-          this.supabase.supabase
-            .from('profiles')
-            .select('*')
-            .match({ user_id: user_id })
-            .single()
-            .then((res) => {
-              // Update our profile BehaviorSubject with the current value
-              this._$profile.next(this.isProfile(res.data) ? res.data : null);
-
-              // If there is an unsaved pushToken, update the profile with it
-              if (this.pushTokenService.unsavedPushToken()) {
-                console.log(
-                  'save pushToken: ' + this.pushTokenService.unsavedPushToken()
-                );
-                this.pushTokenService.savePushToken(
-                  this.pushTokenService.unsavedPushToken()!
-                );
-              }
-              // Listen to any changes to our user's profile using Supabase Realtime
-              this.profile_subscription = this.supabase.supabase
-                .channel('public:profiles')
-                .on(
-                  'postgres_changes',
-                  {
-                    event: '*',
-                    schema: 'public',
-                    table: 'profiles',
-                    filter: 'user_id=eq.' + user.id,
-                  },
-                  (payload: any) => {
-                    // Update our profile BehaviorSubject with the newest value
-                    this._$profile.next(payload.new);
-
-                    // If there is an unsaved pushToken, update the profile with it
-                    if (this.pushTokenService.unsavedPushToken()) {
-                      console.log(
-                        'save pushToken: ' +
-                          this.pushTokenService.unsavedPushToken()
-                      );
-                      this.pushTokenService.savePushToken(
-                        this.pushTokenService.unsavedPushToken()!
-                      );
-                    }
-                  }
-                )
-                .subscribe();
-            });
-        }
-      } else {
-        // If there is no user, update the profile BehaviorSubject, delete the user_id, and unsubscribe from Supabase Realtime
-        this._$profile.next(null);
-        delete this.user_id;
-        if (this.profile_subscription) {
-          this.supabase.supabase.removeChannel(this.profile_subscription);
-        }
+      if (profile && usernameToSet) {
+        this.updateProfile({ ...profile, username: usernameToSet })
+          .pipe(first())
+          .subscribe((res) => {
+            if (res) {
+              this.usernameToSet.set(null);
+            }
+          });
       }
     });
+
+    // Initialize profile of user: The state of the user's profile requires a user. If none is set, there shouldn't be a profile.
+    effect(
+      () => {
+        const user = this.user();
+        if (user) {
+          // We only make changes if the user is different
+          if (user.id !== this.user_id()) {
+            this.user_id.set(user.id);
+
+            // One-time API call to supabase to get the user profile
+            this.supabase
+              .from('profiles')
+              .select('*')
+              .match({ user_id: user.id })
+              .single()
+              .then((res) => {
+                // Update our profile with the current value
+                this.profile.set(this.isProfile(res.data) ? res.data : null);
+
+                // If there is an unsaved pushToken, update the profile with it
+                if (this.pushTokenService.unsavedPushToken()) {
+                  console.log(
+                    'save pushToken: ' +
+                      this.pushTokenService.unsavedPushToken()
+                  );
+                  this.pushTokenService.savePushToken(
+                    this.pushTokenService.unsavedPushToken()!
+                  );
+                }
+
+                //Listen to any changes to the user profile using supabase's Realtime
+                this.profileRealtime = this.supabase
+                  .channel('public:profiles')
+                  .on(
+                    'postgres_changes',
+                    {
+                      event: '*',
+                      schema: 'public',
+                      table: 'profiles',
+                      filter: 'user_id=eq.' + user.id,
+                    },
+                    (payload: any) => {
+                      // Update the profile with the newest value
+                      this.profile.set(
+                        this.isProfile(payload.new) ? payload.new : null
+                      );
+
+                      // If there is an unsaved pushToken, update the profile with it
+                      if (this.pushTokenService.unsavedPushToken()) {
+                        console.log(
+                          'save pushToken: ' +
+                            this.pushTokenService.unsavedPushToken()
+                        );
+                        this.pushTokenService.savePushToken(
+                          this.pushTokenService.unsavedPushToken()!
+                        );
+                      }
+                    }
+                  )
+                  .subscribe();
+              });
+          }
+        } else {
+          // If there is no user, we clear the profile and stop listening to changes
+          this.profile.set(null);
+          this.user_id.set(null);
+          if (this.profileRealtime) {
+            this.supabase.removeChannel(this.profileRealtime);
+          }
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   private handleAuthStateChange(event: string, session: Session | null) {
+    console.log(
+      'onAuthStateChange: ',
+      JSON.stringify(event),
+      ' ',
+      JSON.stringify(session)
+    );
     if (session) {
       this.getUserFromSession(session).then((user) => {
         if (user) {
-          this._$user.next(user);
+          this.user.set(user);
           this.getUserProfile(user.id, session);
         } else {
           this.clearUserData();
@@ -148,27 +175,25 @@ export class AuthService {
   }
 
   private async getUserFromSession(session: Session): Promise<User | null> {
-    const { data, error } = await this.supabase.supabase.auth.getUser(
+    const { data, error } = await this.supabase.auth.getUser(
       session.access_token
     );
-    if (error || !data) return null;
+    if (error || !data) {
+      return null;
+    }
     return data.user;
   }
 
   private getUserProfile(user_id: string, session: Session) {
-    // One-time API call to Supabase to get the user's profile
-    this.supabase.supabase
+    this.supabase
       .from('profiles')
       .select('*')
       .match({ user_id: user_id })
       .single()
       .then((res) => {
         if (res.data && this.isProfile(res.data)) {
-          // If profile exists, update our profile BehaviorSubject
-          this._$profile.next(res.data);
-
-          // Initialize profile_subscription
-          this.profile_subscription = this.supabase.supabase
+          this.profile.set(res.data);
+          this.profileRealtime = this.supabase
             .channel('public:profiles')
             .on(
               'postgres_changes',
@@ -179,32 +204,36 @@ export class AuthService {
                 filter: 'user_id=eq.' + user_id,
               },
               (payload: any) => {
-                // Update profile BehaviorSubject with the newest value
-                this._$profile.next(payload.new);
+                this.profile.set(
+                  this.isProfile(payload.new) ? payload.new : null
+                );
               }
             )
             .subscribe();
         } else {
-          // If no profile exists, create a new one
+          // If no profile is found, create a new one
           this.createNewProfile(user_id, session);
         }
       });
   }
 
   private async createNewProfile(user_id: string, session: Session) {
-    // Get User Details:
+    // Get user details
     const newUser = await this.getUserFromSession(session);
-
     if (!newUser) {
       return;
     }
 
     // check whether the user_id exists in the profiles table
-    const { data, error } = await this.supabase.supabase
+    const { data, error } = await this.supabase
       .from('profiles')
       .select('*')
       .match({ user_id: user_id })
       .single();
+    if (error) {
+      console.error('Error getting profile: ', error);
+      return;
+    }
 
     // Define the new profile based on the user details
     const newProfile = {
@@ -213,19 +242,19 @@ export class AuthService {
       joined_at: new Date(),
     };
 
-    // Insert the new profile into the profiles table if it the user_id is not yet present
+    // Insert the new profile into the profiles table if the user_id doesn't exist yet
     if (error || !data) {
-      this.supabase.supabase
+      this.supabase
         .from('profiles')
-        .insert(newProfile)
+        .insert([newProfile])
         .select('*')
         .then(({ data, error }) => {
           if (error && error.code !== '406') {
-            console.error('Error creating new profile:', error);
+            console.error('Error creating new profile: ', error);
             return;
           }
           if (data && data.length > 0) {
-            this._$profile.next({
+            this.profile.set({
               user_id: data[0].user_id,
               email: data[0].email,
               username: data[0].username,
@@ -233,8 +262,8 @@ export class AuthService {
           }
         });
     }
-    // Initialize profile_subscription
-    this.profile_subscription = this.supabase.supabase
+    // Initialize the profile Realtime
+    this.profileRealtime = this.supabase
       .channel('public:profiles')
       .on(
         'postgres_changes',
@@ -245,74 +274,41 @@ export class AuthService {
           filter: 'user_id=eq.' + user_id,
         },
         (payload: any) => {
-          // Update profile BehaviorSubject with the newest value
-          this._$profile.next(payload.new);
+          this.profile.set(this.isProfile(payload.new) ? payload.new : null);
         }
       )
       .subscribe();
   }
 
   private clearUserData() {
-    this._$user.next(null);
-    this._$profile.next(null);
-    delete this.user_id;
+    this.user.set(null);
+    this.profile.set(null);
+    this.user_id.set(null);
 
-    if (this.profile_subscription) {
-      this.supabase.supabase
-        .removeChannel(this.profile_subscription)
-        .then((res) => {
-          console.log(
-            'Removed profile channel subscription with status: ',
-            res
-          );
-        });
+    if (this.profileRealtime) {
+      this.supabase.removeChannel(this.profileRealtime).then((res) => {
+        console.log('Removed profileRealtime: ', res);
+      });
     }
   }
 
   signIn(email: string, password: string) {
-    return new Promise<void>((resolve, reject) => {
-      // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
-      this._$profile.next(undefined);
-      this.supabase.supabase.auth
-        .signInWithPassword({ email, password })
-        .then(({ data, error }) => {
-          if (error || !data) reject('Invalid email/password combination');
-
-          // Wait for $profile to be set again.
-          // We don't want to proceed until our API request for the user's profile has completed
-          this.$profile.pipe(first()).subscribe(() => {
-            resolve();
-          });
-        });
+    // Set profile back to undefined to trigger the effect to fetch the profile
+    this.profile.set(undefined);
+    this.supabase.auth.signInWithPassword({
+      email,
+      password,
     });
   }
 
   signUp(email: string, password: string, username: string) {
-    return new Promise<void>((resolve, reject) => {
-      // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
-      this._$profile.next(undefined);
-
-      this.supabase.supabase.auth
-        .signUp({ email, password })
-        .then(({ data, error }) => {
-          if (error || !data) {
-            reject('Error. Try again later');
-            return;
-          }
-
-          // Wait for $profile to be set again after being created. Wait for a valid profile emission
-          this.$profile
-            .pipe(
-              filter((profile) => profile !== null && profile !== undefined),
-              first()
-            )
-            .subscribe((profile) => {
-              // Update the profile with the username
-              this.updateProfile({ ...profile, username: username });
-              resolve();
-            });
-        });
+    // Set profile back to undefined to trigger the effect to fetch the profile
+    this.profile.set(undefined);
+    this.supabase.auth.signUp({
+      email,
+      password,
     });
+    this.usernameToSet.set(username);
   }
 
   updateProfile(profile: any): Observable<any> {
@@ -320,20 +316,21 @@ export class AuthService {
       ...profile,
       updated_at: new Date(),
     };
-    console.log('updateProfile: ' + JSON.stringify(update));
-    // upsert the update into the 'profiles' table, then update the profile BehaviorSubject with the new profile
+    console.log('updateProfile: ', JSON.stringify(update));
     return from(
-      this.supabase.supabase
+      this.supabase
         .from('profiles')
         .update(update)
-        .eq('user_id', this.user_id)
+        .eq('user_id', this.user_id())
         .select('*')
         .single()
         .then(({ data, error }) => {
-          if (error)
-            console.error('Error updating profile:', JSON.stringify(error));
-          if (data !== null && data !== undefined) {
-            this._$profile.next(data);
+          if (error) {
+            console.error('Error updating profile: ', error);
+            return;
+          }
+          if (data) {
+            this.profile.set(data);
             return data;
           }
         })
@@ -341,12 +338,12 @@ export class AuthService {
   }
 
   logout() {
-    return this.supabase.supabase.auth.signOut();
+    return this.supabase.auth.signOut();
   }
 
   isUsernameUnique(username: string): Observable<boolean> {
     return from(
-      this.supabase.supabase
+      this.supabase
         .from('profiles')
         .select('*')
         .match({ username: username })
@@ -368,12 +365,12 @@ export class AuthService {
       updated_at: new Date(),
     };
     console.log('updateProfileField: ' + JSON.stringify(update));
-    console.log('user_id: ' + this.user_id);
+    console.log('user_id: ' + this.user_id());
     return from(
-      this.supabase.supabase
+      this.supabase
         .from('profiles')
         .update(update)
-        .eq('user_id', this.user_id)
+        .eq('user_id', this.user_id())
         .select('*')
         .then(({ data, error }) => {
           if (error) throw error;
@@ -389,7 +386,7 @@ export class AuthService {
             state: data[0].state,
           };
           console.log('updatedProfile', newProfile);
-          this._$profile.next(newProfile);
+          this.profile.set(newProfile);
           return data;
         })
     );
@@ -398,26 +395,19 @@ export class AuthService {
   async signInWithGoogle(token: string): Promise<void> {
     try {
       // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
-      this._$profile.next(undefined);
+      this.profile.set(undefined);
 
       // Use the token to sign in with Supabase
-      const { data, error } =
-        await this.supabase.supabase.auth.signInWithIdToken({
-          provider: 'google',
-          token: token,
-        });
+      const { data, error } = await this.supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token: token,
+      });
 
       if (error) throw error;
 
       // Check if the user is successfully returned
       if (data && data.user) {
-        this._$user.next(data.user);
-
-        // Wait for $profile to be set again.
-        // We don't want to proceed until our API request for the user's profile has completed
-        this.$profile.pipe(first()).subscribe(() => {
-          // User profile is now set
-        });
+        this.user.set(data.user);
       }
     } catch (error) {
       console.error('Error during Google sign-in:', error);
@@ -427,24 +417,14 @@ export class AuthService {
 
   async signInWithFacebook(): Promise<void> {
     try {
-      const { data, error } = await this.supabase.supabase.auth.signInWithOAuth(
-        {
-          provider: 'facebook',
-        }
-      );
+      const { data, error } = await this.supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+      });
 
       if (error) throw error;
 
       // Check if the user is successfully returned
       console.log(`FACEBOOK LOGIN RESULT: ${JSON.stringify(data)}`);
-      // if (data && data.user) {
-      //   this._$user.next(data.user);
-
-      //   // Wait for $profile to be set again.
-      //   // We don't want to proceed until our API request for the user's profile has completed
-      //   this.$profile.pipe(first()).subscribe(() => {
-      //     // User profile is now set
-      //   });
     } catch (error) {
       console.error('Error during Facebook sign-in:', error);
       throw error;
@@ -453,24 +433,14 @@ export class AuthService {
 
   async signInWithApple(): Promise<void> {
     try {
-      const { data, error } = await this.supabase.supabase.auth.signInWithOAuth(
-        {
-          provider: 'apple',
-        }
-      );
+      const { data, error } = await this.supabase.auth.signInWithOAuth({
+        provider: 'apple',
+      });
 
       if (error) throw error;
 
       // Check if the user is successfully returned
       console.log(`APPLE LOGIN RESULT: ${JSON.stringify(data)}`);
-      // if (data && data.user) {
-      //   this._$user.next(data.user);
-
-      //   // Wait for $profile to be set again.
-      //   // We don't want to proceed until our API request for the user's profile has completed
-      //   this.$profile.pipe(first()).subscribe(() => {
-      //     // User profile is now set
-      //   });
     } catch (error) {
       console.error('Error during Apple sign-in:', error);
       throw error;

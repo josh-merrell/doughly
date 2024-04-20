@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../shared/utils/authenticationService';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,18 +42,19 @@ export class ProfileComponent {
     private authService: AuthService,
     private dialog: MatDialog,
     private photoService: PhotoService
-  ) {}
-
-  ngOnInit() {
-    this.authService.$profile.subscribe((profile) => {
-      if (!profile) return;
-      this.profile = profile;
-      this.profileImageLink = profile?.photo_url;
-      this.initials =
-        (profile?.name_first?.charAt(0) || '') +
-        (profile?.name_last?.charAt(0) || '');
-      this.cd.markForCheck();
-    });
+  ) {
+    effect(() => {
+      const profile = this.authService.profile();
+      if (profile) {
+        this.profile = profile;
+        this.profileImageLink = profile?.photo_url;
+        this.initials =
+          (profile?.name_first?.charAt(0) || '') +
+          (profile?.name_last?.charAt(0) || '');
+        this.cd.markForCheck();
+      }
+    
+    })
   }
 
   toggleExpand() {

@@ -1,4 +1,4 @@
-import { Component, NgZone, WritableSignal, signal } from '@angular/core';
+import { Component, NgZone, WritableSignal, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { AuthService } from '../../../shared/utils/authenticationService';
@@ -43,14 +43,16 @@ export class LoginPageComponent {
     private router: Router,
     private authService: AuthService,
     private ngZone: NgZone
-  ) {}
-
-  ngOnInit() {
-    this.authService.$profile.subscribe((profile) => {
+  ) {
+    effect(() => {
+      const profile = this.authService.profile();
       if (profile) {
         this.router.navigate(['/loading']);
       }
-    });
+    })
+  }
+
+  ngOnInit() {
     // for google login on all platforms
     GoogleAuth.initialize({
       clientId:
@@ -146,12 +148,6 @@ export class LoginPageComponent {
       const { email, password } = this.login_form.value;
       this.authService
         .signIn(email!, password!)
-        .then(() => {
-          this.router.navigate(['/loading']);
-        })
-        .catch((error) => {
-          this.error = error.message;
-        });
     }
   }
 }
