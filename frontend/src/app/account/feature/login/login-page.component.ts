@@ -25,6 +25,7 @@ import {
   FacebookLogin,
   FacebookLoginResponse,
 } from '@capacitor-community/facebook-login';
+import { AuthError } from '@supabase/supabase-js';
 
 declare const google: any;
 @Component({
@@ -45,7 +46,9 @@ declare const google: any;
 export class LoginPageComponent {
   public isWeb: WritableSignal<boolean> = signal(false);
   public isLoading: WritableSignal<boolean> = signal(false);
-  error?: string;
+  public loginFailureMessage: WritableSignal<string> = signal('');
+  showPasswordReset: WritableSignal<boolean> = signal(false);
+  successMessage: WritableSignal<string> = signal('');
   submitted = false;
   constructor(
     private store: Store,
@@ -62,6 +65,14 @@ export class LoginPageComponent {
   }
 
   ngOnInit() {
+    // Listen for changes in the email form control
+    this.login_form.get('email')?.valueChanges.subscribe(value => {
+      // Check if the email is valid
+      const isValidEmail = this.login_form.get('email')?.valid;
+      // Set showPasswordReset based on the email validity
+      this.showPasswordReset.set(isValidEmail && value ? true : false);
+    });
+
     // for google login on all platforms
     GoogleAuth.initialize({
       clientId:
@@ -99,7 +110,7 @@ export class LoginPageComponent {
         })
         .catch((error) => {
           // Handle sign in error
-          this.error = error.message;
+          this.loginFailureMessage.set(error.message);
         });
     });
   }
@@ -117,7 +128,7 @@ export class LoginPageComponent {
         })
         .catch((error) => {
           // Handle sign in error
-          this.error = error.message;
+          this.loginFailureMessage = error.message;
         });
     });
   }
@@ -137,7 +148,7 @@ export class LoginPageComponent {
         })
         .catch((error) => {
           // Handle sign in error
-          this.error = error.message;
+          this.loginFailureMessage = error.message;
         });
     });
   }
@@ -147,13 +158,42 @@ export class LoginPageComponent {
     password: new FormControl('', []),
   });
 
-  onSubmit() {
+  async resetPassword() {
+    this.isLoading.set(true);
+    this.loginFailureMessage.set('');
+    this.successMessage.set('');
+    const result = await this.authService.resetPassword(
+      this.login_form.get('email')?.value!
+    );
+    if (result === 'success') {
+      this.successMessage.set('If email account exists, a reset link has been sent to your inbox.');
+      this.isLoading.set(false);
+    }
+    else {
+      this.loginFailureMessage.set('An error occurred while sending the reset link. Please try again.');
+      this.isLoading.set(false);
+    }
+  }
+
+  async onSubmit() {
+    this.loginFailureMessage.set('');
     this.submitted = true; // Set this to true on submission
     if (this.login_form.valid) {
-      delete this.error;
+      this.loginFailureMessage.set('');
 
       const { email, password } = this.login_form.value;
-      this.authService.signIn(email!, password!);
+      const loginResult = await this.authService.signIn(email!, password!);
+      if (loginResult instanceof AuthError) {
+        if (loginResult.message === 'Invalid login credentials') {
+          this.loginFailureMessage.set(
+            `No account found with that email and password`
+          );
+        } else {
+          this.loginFailureMessage.set(
+            `An error occurred while logging in. Please try again.`
+          );
+        }
+      }
     }
   }
 }
