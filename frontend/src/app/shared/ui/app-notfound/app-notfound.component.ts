@@ -8,5 +8,5 @@ import { CommonModule } from '@angular/common';
   templateUrl: './app-notfound.component.html',
 })
 export class NotfoundComponent {
-
+  public currUrl = window.location.href;
 }
