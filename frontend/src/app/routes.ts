@@ -94,7 +94,7 @@ export const routes: Route[] = [
     component: LoginPageComponent,
   },
   {
-    path: 'password-reset',
+    path: 'reset-password',
     component: PasswordResetPageComponent,
   },
   {

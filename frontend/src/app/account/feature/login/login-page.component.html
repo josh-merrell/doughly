@@ -1,5 +1,5 @@
 <script src="https://accounts.google.com/gsi/client" async></script>
-<div class="flex h-full w-full items-center flex-col bg-white py-dl-8 sm:px-dl-6 lg:px-dl-8">
+<div class="flex h-full w-full items-center flex-col bg-white py-dl-8 px-dl-2 sm:px-dl-6 lg:px-dl-8">
   <mat-spinner
     class="my-app-custom-spinner w-full"
     [diameter]="84"
@@ -30,7 +30,7 @@
       <div class="mb-dl-6 flex w-full flex-col items-center justify-between">
         <button
           (click)="signInWithGoogle()"
-          class="gsi-material-button !w-dl-12"
+          class="gsi-material-button !w-dl-15"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -69,7 +69,7 @@
         </button>
         <button
           (click)="signInWithFacebook()"
-          class="gsi-material-button mt-dl-2 !w-dl-12"
+          class="gsi-material-button mt-dl-2 !w-dl-15"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -99,7 +99,7 @@
         </button>
         <button
           (click)="signInWithApple()"
-          class="gsi-material-button mt-dl-2 !w-dl-12"
+          class="gsi-material-button mt-dl-2 !w-dl-15"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -140,7 +140,7 @@
         </div>
       </div>
 
-      <div id="form-password" class="mb-dl-3">
+      <div id="form-password" class="mb-dl-0">
         <div class="relative flex flex-col">
           <label class="text-dl-4 font-dl-3 text-dl-grey-5" for="email"
             >Password</label
@@ -172,10 +172,9 @@
           >
         </div>
         <!-- Forgot Password Link-->
-        <div class="leading-dl-6 text-dl-2">
+        <div class="leading-dl-6 text-dl-2 " (click)="resetPassword()" *ngIf="showPasswordReset()">
           <a
             class="cursor-pointer text-dl-5 font-dl-3 text-dl-blue-5 hover:text-dl-blue-5"
-            routerLink="/password-reset"
             >Forgot password?</a
           >
         </div>
@@ -209,11 +208,15 @@
       </button>
     </form>
 
-    <div style="color: red" *ngIf="error">{{ error }}</div>
-
     <!-- Space Div -->
     <div class="flex flex-grow"></div>
-    <p class="mt-dl-5 text-center text-dl-5 text-dl-grey-4">
+    <p *ngIf="loginFailureMessage()" class="mt-dl-4 text-center text-dl-5 text-dl-red-5">
+      {{loginFailureMessage()}}
+    </p>
+    <p *ngIf="successMessage()" class="mt-dl-4 text-center text-dl-5 text-dl-teal-4">
+      {{successMessage()}}
+    </p>
+    <p class="mt-dl-4 text-center text-dl-5 text-dl-grey-4">
       New here?
       <a
         class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-blue-5"
