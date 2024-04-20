@@ -79,6 +79,15 @@ export class AppFooterComponent {
       },
       { allowSignalWrites: true }
     );
+
+    effect(() => {
+      const profile = this.authService.profile();
+      this.profile = profile;
+      this.profileImageLink = profile?.photo_url;
+      this.initials =
+        (profile?.name_first?.charAt(0) || '') +
+        (profile?.name_last?.charAt(0) || '');
+    })
   }
 
   ngOnInit() {
@@ -94,13 +103,6 @@ export class AppFooterComponent {
     });
     this.store.select(selectMessages).subscribe((messages) => {
       this.messages.set(messages);
-    });
-    this.authService.$profile.subscribe((profile) => {
-      this.profile = profile;
-      this.profileImageLink = profile?.photo_url;
-      this.initials =
-        (profile?.name_first?.charAt(0) || '') +
-        (profile?.name_last?.charAt(0) || '');
     });
     this.router.events
       .pipe(
