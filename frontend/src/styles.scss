@@ -47,3 +47,12 @@ html, body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+body {
+  margin-top: constant(safe-area-inset-top);
+  margin-top: env(safe-area-inset-top);
+}
+
+ion-tab-bar {
+  margin-bottom: calc(7px + env(safe-area-inset-bottom));
+}
