@@ -67,13 +67,13 @@ export class LoginPageComponent {
 
   ngOnInit() {
     // Check for persistent session (remember me)
-    const sessionData = this.authService.getPersistentSession();
-    if (sessionData) {
-      this.authService.setSession(
-        sessionData.access_token,
-        sessionData.refresh_token
-      );
-    }
+    // const sessionData = this.authService.getPersistentSession();
+    // if (sessionData) {
+    //   this.authService.setSession(
+    //     sessionData.access_token,
+    //     sessionData.refresh_token
+    //   );
+    // }
     // Listen for changes in the email form control
     this.login_form.get('email')?.valueChanges.subscribe((value) => {
       // Check if the email is valid
@@ -175,7 +175,7 @@ export class LoginPageComponent {
     );
     if (result === 'success') {
       this.successMessage.set(
-        'If email account exists, a reset link has been sent to your inbox.'
+        'If email account exists, a reset link has been sent to your inbox. This might take up to 10 minutes.'
       );
       this.isLoading.set(false);
     } else {
@@ -196,7 +196,8 @@ export class LoginPageComponent {
       const loginResult = await this.authService.signIn(
         email!,
         password!,
-        this.rememberMe()
+        // this.rememberMe()
+        false
       );
       if (loginResult instanceof AuthError) {
         if (loginResult.message === 'Invalid login credentials') {
