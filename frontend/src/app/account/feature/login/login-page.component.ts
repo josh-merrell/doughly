@@ -60,7 +60,10 @@ export class LoginPageComponent {
     effect(() => {
       const profile = this.authService.profile();
       if (profile) {
-        this.router.navigate(['/loading']);
+        console.log('PROFILE PRESENT. CURRENT ROUTE: ', this.router.url);
+        if (this.router.url !== '/reset-password') {
+          this.router.navigate(['/loading']);
+        }
       }
     });
   }
@@ -180,7 +183,7 @@ export class LoginPageComponent {
       this.isLoading.set(false);
     } else {
       this.loginFailureMessage.set(
-        'An error occurred while sending the reset link. Please try again.'
+        'Could not generate a new reset link. Please try again or check your email folders for an existing one.'
       );
       this.isLoading.set(false);
     }
