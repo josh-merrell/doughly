@@ -175,6 +175,7 @@ export class AppFooterComponent {
       this.router.navigate(['/login']);
     });
     PushNotifications.unregister;
+
   }
 
   onMessagesClick() {
