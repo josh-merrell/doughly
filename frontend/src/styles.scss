@@ -16,10 +16,10 @@
 // body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 //**************
 
-@use 'tailwindcss/base';
-@use 'tailwindcss/components';
-@use 'tailwindcss/utilities';
-@use '@angular/material' as mat;
+@use "tailwindcss/base";
+@use "tailwindcss/components";
+@use "tailwindcss/utilities";
+@use "@angular/material" as mat;
 
 // Define the primary, accent, and warning palettes
 $my-primary: mat.define-palette(mat.$grey-palette, 500);
@@ -27,30 +27,34 @@ $my-accent: mat.define-palette(mat.$blue-palette, A200, A100, A400);
 $my-warn: mat.define-palette(mat.$red-palette);
 
 // Construct the theme
-$my-theme: mat.define-light-theme((
-  color: (
-    primary: $my-primary,
-    accent: $my-accent,
-    warn: $my-warn
-  ),
-  typography: mat.define-typography-config(),
-  density: 0
-));
+$my-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $my-primary,
+      accent: $my-accent,
+      warn: $my-warn,
+    ),
+    typography: mat.define-typography-config(),
+    density: 0,
+  )
+);
 
 // Include Material core and theme styles
 @include mat.core();
 @include mat.all-component-themes($my-theme);
 
 // Global styles
-html, body {
+html,
+body {
+  margin-top: env(safe-area-inset-top);
   height: 100%;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 body {
-  margin-top: constant(safe-area-inset-top);
-  margin-top: env(safe-area-inset-top);
+  /* Fallback for browsers that do not support env() */
+  margin-top: 20px; /* You might adjust this to a default value that looks good in your app */
 }
 
 ion-tab-bar {
