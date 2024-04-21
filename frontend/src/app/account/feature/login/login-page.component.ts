@@ -49,6 +49,7 @@ export class LoginPageComponent {
   public loginFailureMessage: WritableSignal<string> = signal('');
   showPasswordReset: WritableSignal<boolean> = signal(false);
   successMessage: WritableSignal<string> = signal('');
+  rememberMe: WritableSignal<boolean> = signal(false);
   submitted = false;
   constructor(
     private store: Store,
@@ -59,14 +60,25 @@ export class LoginPageComponent {
     effect(() => {
       const profile = this.authService.profile();
       if (profile) {
-        this.router.navigate(['/loading']);
+        console.log('PROFILE PRESENT. CURRENT ROUTE: ', this.router.url);
+        if (this.router.url !== '/reset-password') {
+          this.router.navigate(['/loading']);
+        }
       }
     });
   }
 
   ngOnInit() {
+    // Check for persistent session (remember me)
+    // const sessionData = this.authService.getPersistentSession();
+    // if (sessionData) {
+    //   this.authService.setSession(
+    //     sessionData.access_token,
+    //     sessionData.refresh_token
+    //   );
+    // }
     // Listen for changes in the email form control
-    this.login_form.get('email')?.valueChanges.subscribe(value => {
+    this.login_form.get('email')?.valueChanges.subscribe((value) => {
       // Check if the email is valid
       const isValidEmail = this.login_form.get('email')?.valid;
       // Set showPasswordReset based on the email validity
@@ -135,10 +147,6 @@ export class LoginPageComponent {
 
   public async signInWithApple() {
     this.isLoading.set(true);
-    if (!this.isWeb()) {
-    }
-    if (this.isWeb()) {
-    }
     this.ngZone.run(() => {
       this.authService
         .signInWithApple()
@@ -154,8 +162,11 @@ export class LoginPageComponent {
   }
 
   login_form = new FormGroup({
-    email: new FormControl('', []),
-    password: new FormControl('', []),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+    ]),
   });
 
   async resetPassword() {
@@ -166,11 +177,14 @@ export class LoginPageComponent {
       this.login_form.get('email')?.value!
     );
     if (result === 'success') {
-      this.successMessage.set('If email account exists, a reset link has been sent to your inbox.');
+      this.successMessage.set(
+        'If email account exists, a reset link has been sent to your inbox. This might take up to 10 minutes.'
+      );
       this.isLoading.set(false);
-    }
-    else {
-      this.loginFailureMessage.set('An error occurred while sending the reset link. Please try again.');
+    } else {
+      this.loginFailureMessage.set(
+        'Could not generate a new reset link. Please try again or check your email folders for an existing one.'
+      );
       this.isLoading.set(false);
     }
   }
@@ -182,7 +196,12 @@ export class LoginPageComponent {
       this.loginFailureMessage.set('');
 
       const { email, password } = this.login_form.value;
-      const loginResult = await this.authService.signIn(email!, password!);
+      const loginResult = await this.authService.signIn(
+        email!,
+        password!,
+        // this.rememberMe()
+        false
+      );
       if (loginResult instanceof AuthError) {
         if (loginResult.message === 'Invalid login credentials') {
           this.loginFailureMessage.set(
@@ -195,5 +214,9 @@ export class LoginPageComponent {
         }
       }
     }
+  }
+
+  toggleRememberMe() {
+    this.rememberMe.set(!this.rememberMe());
   }
 }
