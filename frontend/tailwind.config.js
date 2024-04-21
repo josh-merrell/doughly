@@ -185,6 +185,8 @@ module.exports = {
         "dl-13": "18rem",
         "dl-14": "24rem",
         "dl-15": "36rem",
+        "safe-top": "env(safe-area-inset-top)",
+        "safe-right": "env(safe-area-inset-right)",
       },
       padding: {
         "dl-0": "0rem",
