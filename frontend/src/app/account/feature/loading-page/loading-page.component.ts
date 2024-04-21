@@ -100,6 +100,7 @@ import {
   selectLoading as selectMessageLoading,
   selectError as selectMessageError,
 } from 'src/app/footer/state/message-selectors';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'dl-loading-page',
@@ -128,6 +129,8 @@ export class LoadingPageComponent {
   private isLoadingShoppingList: WritableSignal<boolean> = signal(true);
   private isLoadingShoppingListRecipe: WritableSignal<boolean> = signal(true);
 
+  private timeoutSubscription!: Subscription;
+  
   constructor(private store: Store, private router: Router) {
     effect(() => {
       const isLoading = this.isLoadingGlobal();
@@ -187,6 +190,31 @@ export class LoadingPageComponent {
   ngOnInit() {
     this.isLoadingGlobal.set(true);
     this.loadState();
+    this.setupTimer();
+  }
+
+  ngOnDestroy() {
+    // Ensure we clean up the subscription to prevent memory leaks
+    this.timeoutSubscription?.unsubscribe();
+  }
+
+  setupTimer() {
+    // Start a timer for 10 seconds
+    this.timeoutSubscription = timer(8000).subscribe(() => {
+      // Check if isLoadingGlobal is still true
+      if (this.isLoadingGlobal()) {
+        console.log("Navigating to login due to timeout.");
+        this.router.navigate(['/login']);
+      }
+    });
+
+    // Subscribe to isLoadingGlobal and cancel the timer if loading completes
+    effect(() => {
+      if (!this.isLoadingGlobal()) {
+        console.log("Loading completed before timeout.");
+        this.timeoutSubscription.unsubscribe();
+      }
+    });
   }
 
   loadState() {
