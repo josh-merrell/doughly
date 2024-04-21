@@ -419,7 +419,6 @@ export class AuthService {
         .select('*')
         .match({ email: email })
         .then(({ data, error }) => {
-          console.log('isEmailUnique: ' + JSON.stringify(data?.length === 0));
           if (error) throw error;
           return data?.length === 0;
         })
