@@ -1,7 +1,11 @@
-import { Component, WritableSignal, signal } from '@angular/core';
+import { Component, NgZone, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
-import { AuthService, Profile } from '../../../shared/utils/authenticationService';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {
+  AuthService,
+  Profile,
+} from '../../../shared/utils/authenticationService';
 import {
   ReactiveFormsModule,
   FormControl,
@@ -22,27 +26,70 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 @Component({
   selector: 'dl-signup-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLinkWithHref, MatFormFieldModule, MatSelectModule, MatInputModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+    RouterLinkWithHref,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+  ],
   templateUrl: './signup-page.component.html',
+  styleUrls: ['./signup-page.component.scss'],
 })
 export class SignupPageComponent {
   checkEmailMessage: WritableSignal<string> = signal('');
-  constructor(private router: Router, private authService: AuthService) {}
+  emailErrorMessage: WritableSignal<string> = signal('');
+  usernameErrorMessage: WritableSignal<string> = signal('');
+  isLoading: WritableSignal<boolean> = signal(false);
+  signUpFailureMessage: WritableSignal<string> = signal('');
+  constructor(
+    private ngZone: NgZone,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
+    this.signup_form
+      .get('email')
+      ?.valueChanges.pipe(
+        debounceTime(300), // Add debounceTime here
+        startWith(''), // To initialize the value
+        switchMap((email) => {
+          if (!email || this.signup_form.get('email')?.pristine) {
+            return of(''); // Return an observable of empty string when no need to check
+          } else {
+            return this.authService.isEmailUnique(email).pipe(
+              catchError((error) => {
+                console.error('Error checking email uniqueness', error);
+                return of(false); // Assume email is not unique in case of error
+              })
+            );
+          }
+        })
+      )
+      .subscribe((isUnique) => {
+        if (isUnique === '') {
+          this.emailErrorMessage.set('');
+        } else if (this.signup_form.get('email')?.errors?.['email']) {
+          this.emailErrorMessage.set('Invalid email address');
+        } else if (isUnique) {
+          this.emailErrorMessage.set('');
+        } else {
+          this.emailErrorMessage.set('Account with this email already exists');
+        }
+      });
     const usernameControl = this.signup_form.get('username');
-    usernameControl!.setErrors({ default: true });
     if (usernameControl) {
       usernameControl.valueChanges
         .pipe(
           startWith(usernameControl.value), // Emit the current value immediately
-          tap(() => {
-            usernameControl.setErrors({ checking: true }); // Set error to true immediately
-          }),
           debounceTime(300),
           switchMap((value) => {
             const uniqueCheck = this.authService
@@ -59,13 +106,19 @@ export class SignupPageComponent {
           })
         )
         .subscribe(({ isUnique, isValid }) => {
+          if (usernameControl.pristine || usernameControl.value === '') {
+            this.usernameErrorMessage.set('');
+            return;
+          }
           if (isUnique && isValid) {
-            usernameControl.setErrors(null);
+            this.usernameErrorMessage.set('');
           } else {
             if (!isUnique) {
-              usernameControl.setErrors({ invalidUnique: true });
+              this.usernameErrorMessage.set('Username is already taken');
             } else if (!isValid) {
-              usernameControl.setErrors({ invalidValid: true });
+              this.usernameErrorMessage.set(
+                'Username must be at least 5 characters long and contain only letters, numbers, and underscores.'
+              );
             }
           }
         });
@@ -74,21 +127,73 @@ export class SignupPageComponent {
 
   signup_form = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+    ]),
     username: new FormControl('', [Validators.required]),
   });
 
   error?: string;
 
   onSubmit() {
+    this.signUpFailureMessage.set('');
     if (this.signup_form.valid) {
       delete this.error;
 
       const { email, password, username } = this.signup_form.value;
-      this.authService
-        .signUp(email!, password!, username!)
+      this.authService.signUp(email!, password!, username!);
     }
     this.checkEmailMessage.set('Check your email to verify your account');
-    console.log(`CHECK YOUR EMAIL TO VERIFY YOUR ACCOUNT: ${this.checkEmailMessage}`)
+  }
+
+  public async signUpWithGoogle() {
+    this.isLoading.set(true);
+    const googleUser = await GoogleAuth.signIn();
+    const token = googleUser.authentication.idToken;
+    this.ngZone.run(() => {
+      this.authService
+        .signInWithGoogle(token)
+        .then(() => {
+          // Handle successful sign in
+          this.router.navigate(['/loading']);
+        })
+        .catch((error) => {
+          // Handle sign in error
+          this.signUpFailureMessage.set(error.message);
+        });
+    });
+  }
+
+  public async signUpWithFacebook() {
+    this.isLoading.set(true);
+    this.ngZone.run(() => {
+      this.authService
+        .signInWithFacebook()
+        .then(() => {
+          // Handle successful sign in
+          this.router.navigate(['/loading']);
+        })
+        .catch((error) => {
+          // Handle sign in error
+          this.signUpFailureMessage = error.message;
+        });
+    });
+  }
+
+  public async signUpWithApple() {
+    this.isLoading.set(true);
+    this.ngZone.run(() => {
+      this.authService
+        .signInWithApple()
+        .then(() => {
+          // Handle successful sign in
+          this.router.navigate(['/loading']);
+        })
+        .catch((error) => {
+          // Handle sign in error
+          this.signUpFailureMessage = error.message;
+        });
+    });
   }
 }

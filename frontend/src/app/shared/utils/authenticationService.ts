@@ -314,7 +314,7 @@ export class AuthService {
     }
   }
 
-  async signIn(email: string, password: string) {
+  async signIn(email: string, password: string, rememberMe: boolean) {
     // Set profile back to undefined to trigger the effect to fetch the profile
     this.profile.set(undefined);
     const { data, error } = await this.supabase.auth.signInWithPassword({
@@ -323,6 +323,9 @@ export class AuthService {
     });
     if (error) {
       return error;
+    }
+    if (rememberMe) {
+      this.setPersistentSession(data);
     }
     return data;
   }
@@ -376,6 +379,7 @@ export class AuthService {
   }
 
   logout() {
+    this.clearPersistentSession();
     return this.supabase.auth.signOut();
   }
 
@@ -402,6 +406,20 @@ export class AuthService {
         .select('*')
         .match({ username: username })
         .then(({ data, error }) => {
+          if (error) throw error;
+          return data?.length === 0;
+        })
+    );
+  }
+
+  isEmailUnique(email: string): Observable<boolean> {
+    return from(
+      this.supabase
+        .from('profiles')
+        .select('*')
+        .match({ email: email })
+        .then(({ data, error }) => {
+          console.log('isEmailUnique: ' + JSON.stringify(data?.length === 0));
           if (error) throw error;
           return data?.length === 0;
         })
@@ -504,5 +522,23 @@ export class AuthService {
       console.error('Error during Apple sign-in:', error);
       throw error;
     }
+  }
+
+
+  // 'Remember Me' feature
+  setPersistentSession(data: any) {
+    localStorage.setItem('supabase.auth.token', data.currentSession.access_token);
+    localStorage.setItem('supabase.auth.refreshToken', data.currentSession.refresh_token);
+  }
+
+  clearPersistentSession() {
+    localStorage.removeItem('supabase.auth.token');
+    localStorage.removeItem('supabase.auth.refreshToken');
+  }
+
+  getPersistentSession() {
+    const access_token = localStorage.getItem('supabase.auth.token');
+    const refresh_token = localStorage.getItem('supabase.auth.refreshToken');
+    return { access_token, refresh_token };
   }
 }
