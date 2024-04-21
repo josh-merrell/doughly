@@ -1,20 +1,21 @@
 <div
   class="flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 sm:px-dl-6 lg:px-dl-8"
 >
+  <div class="xm:w-full sm:mx-auto sm:max-w-md">
+    <img
+      class="mt-dl-3 mx-auto h-10 w-auto"
+      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+      alt="doughleap logo"
+    />
+  </div>
+  <!-- Spacer -->
+  <div class="flex flex-grow"></div>
   <mat-spinner
     class="my-app-custom-spinner w-full"
     [diameter]="84"
     *ngIf="isLoading()"
   ></mat-spinner>
   <div *ngIf="!isLoading()">
-    <div class="flex flex-grow"></div>
-    <div class="xm:w-full sm:mx-auto sm:max-w-md">
-      <img
-        class="mx-auto h-10 w-auto"
-        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-        alt="doughleap logo"
-      />
-    </div>
     <form
       [formGroup]="signup_form"
       (ngSubmit)="onSubmit()"
@@ -121,7 +122,7 @@
       </div>
       <!--FORM FIELDS-->
       <div id="form-email">
-        <div class="relative  flex flex-col">
+        <div class="relative flex flex-col">
           <label class="text-dl-5 font-dl-3 text-dl-grey-1" for="email"
             >Email</label
           >
@@ -139,7 +140,7 @@
               }"
               class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
-              {{ emailErrorMessage() || 'empty'}}
+              {{ emailErrorMessage() || "empty" }}
             </div>
           </div>
         </div>
@@ -169,7 +170,7 @@
       </div>
 
       <div id="form-username">
-        <label class="text-dl-5 mb-dl-4 font-dl-3 text-dl-grey-1" for="username"
+        <label class="mb-dl-4 text-dl-5 font-dl-3 text-dl-grey-1" for="username"
           >Username</label
         >
         <div class="w-dl-15">
@@ -227,4 +228,6 @@
       >
     </p>
   </div>
+  <!-- Spacer -->
+  <div class="flex flex-grow"></div>
 </div>

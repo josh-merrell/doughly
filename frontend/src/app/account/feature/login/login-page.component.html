@@ -2,21 +2,22 @@
 <div
   class="flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 sm:px-dl-6 lg:px-dl-8"
 >
+  <div class="mt-dl-3 xm:w-full sm:mx-auto sm:max-w-md">
+    <img
+      class="mx-auto h-10 w-auto"
+      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+      alt="doughleap logo"
+    />
+  </div>
+  <!-- Spacer -->
+  <div class="flex flex-grow"></div>
+
   <mat-spinner
     class="my-app-custom-spinner w-full"
     [diameter]="84"
     *ngIf="isLoading()"
   ></mat-spinner>
   <div *ngIf="!isLoading()">
-    <div class="flex flex-grow"></div>
-    <div class="xm:w-full sm:mx-auto sm:max-w-md">
-      <img
-        class="mx-auto h-10 w-auto"
-        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-        alt="doughleap logo"
-      />
-    </div>
-
     <!--main card-->
     <form
       [formGroup]="login_form"
@@ -141,7 +142,7 @@
                   !login_form.get('email')!.touched ||
                   login_form.get('email')!.valid
               }"
-              class="h-dl-4 mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
               Please enter a valid email.
             </div>
@@ -166,7 +167,7 @@
                   !login_form.get('password')!.touched ||
                   login_form.get('password')!.valid
               }"
-              class="h-dl-4 mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
               Minimum password length is 6 characters.
             </div>
@@ -177,7 +178,7 @@
       <!---->
 
       <div
-        class="mx-dl-2 flex mb-dl-4 items-center justify-between"
+        class="mx-dl-2 mb-dl-4 flex items-center justify-between"
         style="width: 296px"
       >
         <!-- Remember Me Checkbox-->
@@ -207,7 +208,6 @@
           >
         </div>
       </div>
-
 
       <button
         type="submit"
@@ -258,4 +258,6 @@
       >
     </p>
   </div>
+  <!-- Spacer -->
+  <div class="flex flex-grow"></div>
 </div>
