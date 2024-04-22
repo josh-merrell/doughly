@@ -64,7 +64,7 @@ module.exports = {
         "dl-21": "35.625rem",
         "dl-22": "38.4375rem",
         "screen-safe":
-          "calc(100vh - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 2.5rem)",
+          "calc(100vh - env(safe-area-inset-bottom) - env(safe-area-inset-top))",
       },
       maxHeight: {
         "dl-0": "0rem",
@@ -189,7 +189,7 @@ module.exports = {
         "dl-15": "36rem",
         "safe-top": "env(safe-area-inset-top)",
         "safe-right": "env(safe-area-inset-right)",
-        "safe-bottom": "calc(env(safe-area-inset-bottom) + 2.5rem)",
+        "safe-bottom": "calc(env(safe-area-inset-bottom))",
       },
       padding: {
         "dl-0": "0rem",
