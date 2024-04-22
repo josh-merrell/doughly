@@ -63,6 +63,8 @@ module.exports = {
         "dl-20": "32.8125rem",
         "dl-21": "35.625rem",
         "dl-22": "38.4375rem",
+        "screen-safe":
+          "calc(100vh - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 2.5rem)",
       },
       maxHeight: {
         "dl-0": "0rem",
