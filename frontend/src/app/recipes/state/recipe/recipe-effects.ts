@@ -370,6 +370,17 @@ export class RecipeEffects {
       )
     )
   );
+  //load recipe details after update
+  loadRecipeAfterUpdate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeActions.updateRecipeSuccess),
+      mergeMap((action) => [
+        RecipeActions.loadRecipe({ recipeID: action.recipe.recipeID }),
+      ])
+    )
+  );
+
+
 
   useRecipe$ = createEffect(() =>
     this.actions$.pipe(

@@ -1,6 +1,7 @@
 import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import { Observable, Subscription, filter, take } from 'rxjs';
 import {
   FormBuilder,
@@ -67,6 +68,7 @@ export class ManualAddRecipeModalComponent {
   private profile: WritableSignal<Profile | null> = signal(null);
 
   //photo upload
+  public recipeImageBase64: any = '';
   photoURL!: string;
   public recipeImageChangedEvent: any = '';
   public croppedImage: any = '';
@@ -129,9 +131,23 @@ export class ManualAddRecipeModalComponent {
     });
   }
 
-  recipeOnFileSelected(event: Event): void {
-    this.recipeImageChangedEvent = event; // For the cropping UI
-    this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
+  async selectImage() {
+    const image = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.Base64,
+    });
+
+    this.recipeImageBase64 = `data:image/jpeg;base64,${image.base64String}`;
+    this.croppedImage = null;
+
+    // get file from base64 string so we can update 'selectedFile'
+    const base64Response = await fetch(this.recipeImageBase64);
+    const blob = await base64Response.blob();
+    const file = new File([blob], `recipeImage_${Date.now()}`, {
+      type: 'image/jpeg',
+    });
+    this.selectedFile = file;
   }
 
   recipeImageCropped(event: ImageCroppedEvent) {

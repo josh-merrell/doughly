@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import {
   AbstractControl,
   FormBuilder,
@@ -12,13 +13,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import {
-  Observable,
-  Subject,
-  combineLatest,
-  switchMap,
-  takeUntil,
-} from 'rxjs';
+import { Observable, Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { PhotoService } from 'src/app/shared/utils/photoService';
@@ -50,9 +45,9 @@ export class EditRecipeStepModalComponent {
   private steps: any[] = [];
 
   private unsubscribe$ = new Subject<void>();
-  
+
   //photo upload
-  public stepImageChangedEvent: any = '';
+  public recipeImageBase64: any = '';
   public croppedImage: any = '';
   public selectedFile: File | null = null;
   public isImageLoaded: boolean = false;
@@ -130,9 +125,23 @@ export class EditRecipeStepModalComponent {
   }
 
   //photo selection/cropping
-  stepOnFileSelected(event: Event): void {
-    this.stepImageChangedEvent = event; // For the cropping UI
-    this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
+  async selectImage() {
+    const image = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.Base64,
+    });
+
+    this.recipeImageBase64 = `data:image/jpeg;base64,${image.base64String}`;
+    this.croppedImage = null;
+
+    // get file from base64 string so we can update 'selectedFile'
+    const base64Response = await fetch(this.recipeImageBase64);
+    const blob = await base64Response.blob();
+    const file = new File([blob], `recipeStepImage_${Date.now()}`, {
+      type: 'image/jpeg',
+    });
+    this.selectedFile = file;
   }
   stepImageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.blob;
@@ -181,7 +190,11 @@ export class EditRecipeStepModalComponent {
     if (this.croppedImage && this.selectedFile) {
       try {
         const url: string = await this.photoService
-          .getPreSignedPostUrl('recipeStep', this.selectedFile.name, this.selectedFile.type)
+          .getPreSignedPostUrl(
+            'recipeStep',
+            this.selectedFile.name,
+            this.selectedFile.type
+          )
           .toPromise();
 
         const uploadResponse = await this.photoService.uploadFileToS3(
