@@ -20,7 +20,6 @@ module.exports = ({ db, dbPublic }) => {
         <!DOCTYPE html>
         <html>
         <head>
-        <title>${htmlEscape(recipeData.title)}</title>
         <meta property="og:title" content="${htmlEscape(recipeData.title)}" />
         <meta property="og:description" content="${htmlEscape(recipeData.description)}" />
         <meta property="og:image" content="${htmlEscape(recipeData.image)}" />
