@@ -3,7 +3,7 @@ const { errorGen } = require('../../middleware/errorHandling');
 
 module.exports = ({ db, dbPublic }) => {
   function htmlEscape(str) {
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   async function recipePreview({ recipeID }) {
@@ -20,15 +20,14 @@ module.exports = ({ db, dbPublic }) => {
 <!DOCTYPE html>
 <html>
 <head>
-  <title>${recipeData.title}</title>
-  <meta property="og:title" content=${recipeData.title} />
-  <meta property="og:description" content="${recipeData.description}" />
-  <meta property="og:image" content="${recipeData.image}" />
+  <meta property='og:title' content=${recipeData.title} />
+  <meta property='og:description' content='${recipeData.description}' />
+  <meta property='og:image' content='${recipeData.image}' />
   <meta property='og:image:width' content='375' />  
-  <meta property="og:image:height" content="225" /> 
-  <meta property="og:url" content="${recipeData.url}" />
-  <meta property="og:type" content="website" />
-  <meta charset="utf-8">
+  <meta property='og:image:height' content='225' /> 
+  <meta property='og:url' content='${recipeData.url}' />
+  <meta property='og:type' content='website' />
+  <meta charset='utf-8'>
 </head>
 <body>
 </body>
