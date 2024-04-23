@@ -462,23 +462,41 @@ export class AuthService {
     );
   }
 
-  async signInWithGoogle(token: string): Promise<void> {
-    try {
-      // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
-      this.profile.set(undefined);
+  // async signInWithGoogle(token: string): Promise<void> {
+  //   try {
+  //     // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
+  //     this.profile.set(undefined);
 
-      // Use the token to sign in with Supabase
-      const { data, error } = await this.supabase.auth.signInWithIdToken({
+  //     // Use the token to sign in with Supabase
+  //     const { data, error } = await this.supabase.auth.signInWithIdToken({
+  //       provider: 'google',
+  //       token: token,
+  //     });
+
+  //     if (error) throw error;
+
+  //     // Check if the user is successfully returned
+  //     if (data && data.user) {
+  //       this.user.set(data.user);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during Google sign-in:', error);
+  //     throw error;
+  //   }
+  // }
+  async signInWithGoogle(): Promise<void> {
+    try {
+      const redirectTo = Capacitor.isNativePlatform()
+        ? 'co.doughly.app://login'
+        : window.location.origin;
+      const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
-        token: token,
+        options: {
+          redirectTo: redirectTo,
+        },
       });
 
       if (error) throw error;
-
-      // Check if the user is successfully returned
-      if (data && data.user) {
-        this.user.set(data.user);
-      }
     } catch (error) {
       console.error('Error during Google sign-in:', error);
       throw error;
