@@ -178,24 +178,17 @@
           </div>
           <div id="form-photo-recipe" class="mt-dl-1">
             <div class="relative inline-block w-full">
-              <input
-                type="file"
-                class="hidden"
-                id="fileInputRecipe"
-                (change)="recipeOnFileSelected($event)"
-                accept="image/png, image/jpeg"
-                capture="environment"
-              />
-              <label
-                for="fileInputRecipe"
+              <button
+                type="button"
                 class="shadow-s inline-flex w-full justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+                (click)="selectImage()"
               >
                 Choose New Photo
-              </label>
+              </button>
             </div>
 
             <image-cropper
-              [imageChangedEvent]="recipeImageChangedEvent"
+              [imageBase64]="recipeImageBase64"
               [maintainAspectRatio]="true"
               [aspectRatio]="5 / 3"
               (imageCropped)="recipeImageCropped($event)"

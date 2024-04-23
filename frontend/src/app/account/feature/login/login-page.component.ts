@@ -60,7 +60,6 @@ export class LoginPageComponent {
     effect(() => {
       const profile = this.authService.profile();
       if (profile) {
-        console.log('PROFILE PRESENT. CURRENT ROUTE: ', this.router.url);
         if (this.router.url !== '/reset-password') {
           this.router.navigate(['/loading']);
         }
