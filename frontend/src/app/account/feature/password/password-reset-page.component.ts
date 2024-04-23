@@ -53,14 +53,7 @@ export class PasswordResetPageComponent {
       });
 
     this.password_reset_form.get('newPassword')?.valueChanges.subscribe(() => {
-      if (
-        this.password_reset_form.get('newPassword')?.value !==
-        this.password_reset_form.get('confirmPassword')?.value
-      ) {
-        this.newPasswordErrorMessage.set('Passwords do not match');
-      } else if (
-        this.password_reset_form.get('newPassword')?.errors?.['minlength']
-      ) {
+      if (this.password_reset_form.get('newPassword')?.errors?.['minlength']) {
         this.newPasswordErrorMessage.set(
           'Minimum password length is 6 characters.'
         );

@@ -1,16 +1,9 @@
 <div
-  class="relative w-full h-dl-21 overflow-y-auto transform overflow-hidden bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="relative h-dl-21 w-full transform overflow-hidden overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
 >
-  <mat-spinner
-    class="my-app-custom-spinner"
-    *ngIf="isAdding"
-  ></mat-spinner>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    *ngIf="!isAdding"
-  >
-    <div class="relative flex flex-col w-full">
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
+    <div class="relative flex w-full flex-col">
       <div class="text-center">
         <h3 class="leading-dl-4 text-dl-7 font-dl-3 text-dl-grey-4">
           Add Recipe
@@ -40,7 +33,7 @@
         </button>
       </div>
 
-      <!--FORM FIELDS--> 
+      <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-title" class="relative flex flex-col">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4">Title</label>
@@ -174,23 +167,17 @@
         </div>
         <div id="form-photo-recipe" class="mt-dl-1">
           <div class="relative inline-block w-64">
-            <input
-              type="file"
-              class="hidden"
-              id="fileInputRecipe"
-              (change)="recipeOnFileSelected($event)"
-              accept="image/png, image/jpeg"
-            />
-            <label
-              for="fileInputRecipe"
-              class="inline-block cursor-pointer rounded bg-dl-pink-4 px-4 py-2 text-dl-5 text-white hover:bg-dl-pink-5"
+            <button
+              type="button"
+              class="shadow-s inline-flex w-full justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+              (click)="selectImage()"
             >
               Choose Photo
-            </label>
+            </button>
           </div>
 
           <image-cropper
-            [imageChangedEvent]="recipeImageChangedEvent"
+            [imageBase64]="recipeImageBase64"
             [maintainAspectRatio]="true"
             [aspectRatio]="5 / 3"
             (imageCropped)="recipeImageCropped($event)"
