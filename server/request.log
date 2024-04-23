@@ -7024,3 +7024,5 @@
 ::1 - - [23/Apr/2024:20:31:19 +0000] "GET /shopping/listRecipes HTTP/1.1" 304 - "http://localhost:4200/" "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1"
 ::1 - - [23/Apr/2024:20:31:19 +0000] "GET /messages HTTP/1.1" 304 - "http://localhost:4200/" "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1"
 ::1 - - [23/Apr/2024:20:31:20 +0000] "GET /profiles/ HTTP/1.1" 304 - "http://localhost:4200/" "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1"
+::1 - - [23/Apr/2024:21:36:18 +0000] "GET /linkPreviews/recipe/1124033100000001 HTTP/1.1" 302 40 "-" "PostmanRuntime/7.37.3"
+::1 - - [23/Apr/2024:21:37:44 +0000] "GET /linkPreviews/recipe/1124033100000001 HTTP/1.1" 302 40 "-" "PostmanRuntime/7.37.3"
