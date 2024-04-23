@@ -4,12 +4,38 @@ const { errorGen } = require('../../middleware/errorHandling');
 module.exports = ({ db, dbPublic }) => {
   async function recipePreview({ recipeID }) {
     try {
-      const result = '';
+      const recipeData = {
+        title: 'Veg Club Sandwich',
+        description: 'Check out my new recipe on Doughly.',
+        image: 'https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg',
+        url: `https://doughly.co/recipe/public/1124033000000001`,
+      };
 
-      return result;
+      // Generate HTML content with Open Graph meta tags
+      const htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>${recipeData.title}</title>
+              <meta property="og:title" content="${recipeData.title}" />
+              <meta property="og:description" content="${recipeData.description}" />
+              <meta property="og:image" content="${recipeData.image}" />
+              <meta property="og:url" content="${recipeData.url}" />
+              <meta property="og:type" content="website" />
+              <meta charset="utf-8">
+            </head>
+            <html>`;
+
+      return htmlContent;
     } catch (e) {
       global.logger.error(`Error getting recipe link preview: ${e.message}`);
       throw errorGen(`Error getting recipe link preview: ${e.message}`, 400);
     }
   }
+
+  return {
+    get: {
+      recipePreview,
+    },
+  };
 };
