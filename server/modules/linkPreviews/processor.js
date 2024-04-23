@@ -19,20 +19,22 @@ module.exports = ({ db, dbPublic }) => {
       const htmlContent = `
 <!DOCTYPE html>
 <html>
-<head>
-  <meta property='og:title' content='${recipeData.title}' />
-  <meta property='og:description' content='${recipeData.description}' />
-  <meta property='og:image' content='${recipeData.image}' />
-  <meta property='og:image:width' content='375' />  
-  <meta property='og:image:height' content='225' /> 
-  <meta property='og:url' content='${recipeData.url}' />
-  <meta property='og:type' content='website' />
-  <meta charset='utf-8'>
-</head>
-<body>
-</body>
+    <head>
+        <title>${recipeData.title}</title>
+        <meta property='og:title' content='${recipeData.title}' />
+        <meta property='og:description' content='${recipeData.description}' />
+        <meta property='og:image' content='${recipeData.image}' />
+        <meta property='og:image:width' content='375' />  
+        <meta property='og:image:height' content='225' /> 
+        <meta property='og:url' content='${recipeData.url}' />
+        <meta property='og:type' content='website' />
+        <meta charset='utf-8'>
+    </head>
+    <body>
+    </body>
 </html>`;
 
+      global.logger.info(htmlContent);
       return htmlContent;
     } catch (e) {
       global.logger.error(`Error getting recipe link preview: ${e.message}`);
