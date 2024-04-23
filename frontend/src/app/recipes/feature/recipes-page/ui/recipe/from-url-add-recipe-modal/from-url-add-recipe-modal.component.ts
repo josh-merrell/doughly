@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, WritableSignal, signal } from '@angular/core';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -11,7 +12,12 @@ import { NgZone } from '@angular/core';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { RecipeProgressService } from 'src/app/recipes/data/recipeVisionProgress.service';
 import { Observable, filter, take } from 'rxjs';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   selectAdding,
   selectError,
@@ -44,7 +50,7 @@ export class FromUrlAddRecipeModalComponent {
 
   // recipe photo upload
   photoURL!: string;
-  public recipeImageChangedEvent: any = '';
+  public recipeImageBase64: any = '';
   public croppedImage: any = '';
   public selectedFile: File | null = null;
   public isImageLoaded: boolean = false;
@@ -65,9 +71,23 @@ export class FromUrlAddRecipeModalComponent {
   ) {}
 
   // for recipe photo
-  recipeOnFileSelected(event: Event): void {
-    this.recipeImageChangedEvent = event; // For the cropping UI
-    this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
+  async selectImage() {
+    const image = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.Base64,
+    });
+
+    this.recipeImageBase64 = `data:image/jpeg;base64,${image.base64String}`;
+    this.croppedImage = null;
+
+    // get file from base64 string so we can update 'selectedFile'
+    const base64Response = await fetch(this.recipeImageBase64);
+    const blob = await base64Response.blob();
+    const file = new File([blob], `recipeImage_${Date.now()}`, {
+      type: 'image/jpeg',
+    });
+    this.selectedFile = file;
   }
   recipeImageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.blob;

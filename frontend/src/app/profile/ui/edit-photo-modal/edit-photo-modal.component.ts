@@ -1,6 +1,7 @@
 import { Component, Inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import {
   AbstractControl,
   FormBuilder,
@@ -17,8 +18,6 @@ import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
-
-
 
 @Component({
   selector: 'dl-edit-photo-modal',
@@ -39,7 +38,7 @@ export class EditPhotoModalComponent {
 
   //photo upload
   isUploadingPhoto: boolean = false;
-  public profileImageChangedEvent: any = '';
+  public recipeImageBase64: any = '';
   public croppedImage: any = '';
   public selectedFile: File | null = null;
   public isImageLoaded: boolean = false;
@@ -65,7 +64,7 @@ export class EditPhotoModalComponent {
       if (profile && profile.photo_url) {
         this.photoURL = profile.photo_url;
       }
-    })
+    });
   }
 
   setForm() {
@@ -73,10 +72,23 @@ export class EditPhotoModalComponent {
   }
 
   //photo selection/cropping
-  profileOnFileSelected(event: Event): void {
-    console.log('here');
-    this.profileImageChangedEvent = event; // For the cropping UI
-    this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
+  async selectImage() {
+    const image = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.Base64,
+    });
+
+    this.recipeImageBase64 = `data:image/jpeg;base64,${image.base64String}`;
+    this.croppedImage = null;
+
+    // get file from base64 string so we can update 'selectedFile'
+    const base64Response = await fetch(this.recipeImageBase64);
+    const blob = await base64Response.blob();
+    const file = new File([blob], `profileImage_${Date.now()}`, {
+      type: 'image/jpeg',
+    });
+    this.selectedFile = file;
   }
   profileImageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.blob;
@@ -127,7 +139,11 @@ export class EditPhotoModalComponent {
     if (this.croppedImage && this.selectedFile) {
       try {
         const url: string = await this.photoService
-          .getPreSignedPostUrl('profile', this.selectedFile.name, this.selectedFile.type)
+          .getPreSignedPostUrl(
+            'profile',
+            this.selectedFile.name,
+            this.selectedFile.type
+          )
           .toPromise();
 
         const uploadResponse = await this.photoService.uploadFileToS3(
@@ -150,7 +166,7 @@ export class EditPhotoModalComponent {
         this.isUploadingPhoto = false;
       } catch (error) {
         console.log('Error Uploading new image:', error);
-        this.dialogRef.close({ error: error })
+        this.dialogRef.close({ error: error });
       }
     }
   }

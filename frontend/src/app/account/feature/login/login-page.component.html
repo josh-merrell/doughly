@@ -202,10 +202,12 @@
         <div
           class="leading-dl-6 text-dl-2"
           (click)="resetPassword()"
-          *ngIf="showPasswordReset()"
         >
           <a
             class="cursor-pointer text-dl-5 font-dl-3 text-dl-blue-5 hover:text-dl-blue-5"
+            [ngClass]="{
+              'invisible': !showPasswordReset()
+            }"
             >Forgot password?</a
           >
         </div>

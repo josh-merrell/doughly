@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, WritableSignal, signal } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import { Store } from '@ngrx/store';
 import { NgZone } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -34,8 +35,8 @@ export class VisionAddRecipeModalComponent {
   public sourceImagePresent: boolean = false;
 
   // recipe photo upload
+  public recipeImageBase64: any = '';
   photoURL!: string;
-  public recipeImageChangedEvent: any = '';
   public croppedImage: any = '';
   public selectedFile: File | null = null;
   public isImageLoaded: boolean = false;
@@ -55,23 +56,43 @@ export class VisionAddRecipeModalComponent {
   ) {}
 
   // for recipe source image
-  recipeSourceImageOnFileSelected(event: Event): void {
-    this.sourceImageSelectedFile =
-      (event.target as HTMLInputElement).files?.[0] || null;
+  async selectSourceImage() {
+    const image = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl
+    });
+    const sourceImageBase64 = image.dataUrl;
+
+    // get file from base64 string so we can update 'selectedFile'
+    const base64Response = await fetch(sourceImageBase64!);
+    const blob = await base64Response.blob();
+    const file = new File([blob], `recipeSourceImage_${Date.now()}`, {
+      type: 'image/jpeg',
+    });
     this.sourceImagePresent = true;
-    if (this.sourceImageSelectedFile) {
-      this.sourceImageSelectedFileUrl = URL.createObjectURL(
-        this.sourceImageSelectedFile
-      );
-    } else {
-      this.sourceImageSelectedFileUrl = null;
-    }
+    this.sourceImageSelectedFile = file;
+    this.sourceImageSelectedFileUrl = sourceImageBase64!;
   }
 
   // for recipe photo
-  recipeOnFileSelected(event: Event): void {
-    this.recipeImageChangedEvent = event; // For the cropping UI
-    this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null;
+  async selectImage() {
+    const image = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.Base64,
+    });
+
+    this.recipeImageBase64 = `data:image/jpeg;base64,${image.base64String}`;
+    this.croppedImage = null;
+
+    // get file from base64 string so we can update 'selectedFile'
+    const base64Response = await fetch(this.recipeImageBase64);
+    const blob = await base64Response.blob();
+    const file = new File([blob], `recipeImage_${Date.now()}`, {
+      type: 'image/jpeg',
+    });
+    this.selectedFile = file;
   }
   recipeImageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.blob;
@@ -88,7 +109,10 @@ export class VisionAddRecipeModalComponent {
   }
 
   async uploadCroppedImage(variableName) {
-    const imageToUpload = variableName === 'selectedFile' ? this.croppedImage : this.sourceImageSelectedFile;
+    const imageToUpload =
+      variableName === 'selectedFile'
+        ? this.croppedImage
+        : this.sourceImageSelectedFile;
     if (imageToUpload) {
       try {
         const type =
@@ -124,11 +148,14 @@ export class VisionAddRecipeModalComponent {
   async removeFiles(removeRecipePhoto: boolean = false) {
     if (this.photoURL && removeRecipePhoto) {
       const result = await this.deleteFile(this.photoURL, 'recipe').toPromise();
-      console.log(`deleted recipe photo: ${result}`)
+      console.log(`deleted recipe photo: ${result}`);
     }
     if (this.sourceImageURL) {
-      const result = await this.deleteFile(this.sourceImageURL, 'temp').toPromise();
-      console.log(`deleted source Image: ${result}`)
+      const result = await this.deleteFile(
+        this.sourceImageURL,
+        'temp'
+      ).toPromise();
+      console.log(`deleted source Image: ${result}`);
     }
   }
 
@@ -214,7 +241,6 @@ export class VisionAddRecipeModalComponent {
       this.isAdding = false;
       this.removeFiles(true);
     }
-
   }
 
   onCancel() {
