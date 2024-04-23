@@ -4,7 +4,6 @@ import { Router, RouterLinkWithHref } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   AuthService,
-  Profile,
 } from '../../../shared/utils/authenticationService';
 import {
   ReactiveFormsModule,
@@ -18,15 +17,11 @@ import { MatInputModule } from '@angular/material/input';
 import {
   catchError,
   debounceTime,
-  forkJoin,
-  from,
   map,
   of,
   startWith,
   switchMap,
-  tap,
 } from 'rxjs';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 @Component({
   selector: 'dl-signup-page',
@@ -149,11 +144,9 @@ export class SignupPageComponent {
 
   public async signUpWithGoogle() {
     this.isLoading.set(true);
-    const googleUser = await GoogleAuth.signIn();
-    const token = googleUser.authentication.idToken;
     this.ngZone.run(() => {
       this.authService
-        .signInWithGoogle(token)
+        .signInWithGoogle()
         .then(() => {
           // Handle successful sign in
           this.router.navigate(['/loading']);
