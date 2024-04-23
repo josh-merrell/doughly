@@ -17,22 +17,22 @@ module.exports = ({ db, dbPublic }) => {
 
       // Generate HTML content with Open Graph meta tags
       const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-        <title>${htmlEscape(recipeData.title)}</title>
-        <meta property="og:title" content="${htmlEscape(recipeData.title)}" />
-        <meta property="og:description" content="${htmlEscape(recipeData.description)}" />
-        <meta property="og:image" content="${htmlEscape(recipeData.image)}" />
-        <meta property="og:image:width" content="375" />  
-        <meta property="og:image:height" content="225" /> 
-        <meta property="og:url" content="${htmlEscape(recipeData.url)}" />
-        <meta property="og:type" content="website" />
-        <meta charset="utf-8">
-        </head>
-        <body>
-        </body>
-        </html>`;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>${recipeData.title}</title>
+  <meta property="og:title" content=${recipeData.title} />
+  <meta property="og:description" content="${recipeData.description}" />
+  <meta property="og:image" content="${recipeData.image}" />
+  <meta property='og:image:width' content='375' />  
+  <meta property="og:image:height" content="225" /> 
+  <meta property="og:url" content="${recipeData.url}" />
+  <meta property="og:type" content="website" />
+  <meta charset="utf-8">
+</head>
+<body>
+</body>
+</html>`;
 
       return htmlContent;
     } catch (e) {
