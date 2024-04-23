@@ -20,10 +20,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
 import { Capacitor } from '@capacitor/core';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import {
   FacebookLogin,
-  FacebookLoginResponse,
 } from '@capacitor-community/facebook-login';
 import { AuthError } from '@supabase/supabase-js';
 
@@ -84,14 +82,6 @@ export class LoginPageComponent {
       this.showPasswordReset.set(isValidEmail && value ? true : false);
     });
 
-    // for google login on all platforms
-    GoogleAuth.initialize({
-      clientId:
-        '911585064385-1ei5d9gdp9h1igf9hb7hqfqp466j6l0v.apps.googleusercontent.com',
-      scopes: ['email', 'profile'],
-      grantOfflineAccess: true,
-    });
-
     // for facebook login on all platforms
     FacebookLogin.initialize({
       appId: '399157002973005',
@@ -110,11 +100,9 @@ export class LoginPageComponent {
 
   public async signInWithGoogle() {
     this.isLoading.set(true);
-    const googleUser = await GoogleAuth.signIn();
-    const token = googleUser.authentication.idToken;
     this.ngZone.run(() => {
       this.authService
-        .signInWithGoogle(token)
+        .signInWithGoogle()
         .then(() => {
           // Handle successful sign in
           this.router.navigate(['/loading']);
