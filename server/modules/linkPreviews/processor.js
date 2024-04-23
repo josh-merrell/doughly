@@ -20,7 +20,7 @@ module.exports = ({ db, dbPublic }) => {
 <!DOCTYPE html>
 <html>
 <head>
-  <meta property='og:title' content=${recipeData.title} />
+  <meta property='og:title' content='${recipeData.title}' />
   <meta property='og:description' content='${recipeData.description}' />
   <meta property='og:image' content='${recipeData.image}' />
   <meta property='og:image:width' content='375' />  
