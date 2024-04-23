@@ -30,28 +30,22 @@
         class="mb-dl-3 mt-dl-1 w-full flex-col items-center"
       >
         <div class="relative flex w-full flex-col items-center">
-          <input
-            type="file"
-            class="hidden"
-            id="fileInputRecipeSourceImage"
-            (change)="recipeSourceImageOnFileSelected($event)"
-            accept="image/png, image/jpeg"
-          />
-          <label
-            for="fileInputRecipeSourceImage"
+          <button
+            type="button"
             class="mb-dl-5 inline-block w-full cursor-pointer rounded px-4 py-2 text-dl-5"
             [ngClass]="{
               'border-2 border-dl-pink-4 bg-white text-dl-blue-4':
                 sourceImagePresent,
               'bg-dl-pink-4 text-white': !sourceImagePresent
             }"
+            (click)="selectSourceImage()"
           >
             {{
               sourceImagePresent
                 ? "Change Source Image"
                 : "Choose Recipe Source Image"
             }}
-          </label>
+          </button>
           <img
             *ngIf="sourceImagePresent"
             [src]="sourceImageSelectedFileUrl"
@@ -64,27 +58,21 @@
       <!-- Photo Selection -->
       <div class="mt-dl-1 w-full">
         <div class="relative flex w-full flex-col items-center">
-          <input
-            type="file"
-            class="hidden"
-            id="fileInputRecipe"
-            (change)="recipeOnFileSelected($event)"
-            accept="image/png, image/jpeg"
-          />
-          <label
-            for="fileInputRecipe"
+          <button
+            type="button"
             class="inline-block w-full cursor-pointer rounded px-4 py-2 text-dl-5"
             [ngClass]="{
               'border-2 border-dl-pink-4 bg-white text-dl-pink-4': imagePresent,
               'bg-dl-pink-4 text-white': !imagePresent
             }"
+            (click)="selectImage()"
           >
             {{ imagePresent ? "Change Recipe Photo" : "Choose Recipe Photo" }}
-          </label>
+          </button>
         </div>
 
         <image-cropper
-          [imageChangedEvent]="recipeImageChangedEvent"
+          [imageBase64]="recipeImageBase64"
           [maintainAspectRatio]="true"
           [aspectRatio]="5 / 3"
           (imageCropped)="recipeImageCropped($event)"

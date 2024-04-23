@@ -133,6 +133,13 @@ export class LoadingPageComponent {
   
   constructor(private store: Store, private router: Router) {
     effect(() => {
+      if (!this.isLoadingGlobal()) {
+        console.log("Loading completed before timeout.");
+        this.timeoutSubscription.unsubscribe();
+      }
+    });
+
+    effect(() => {
       const isLoading = this.isLoadingGlobal();
       if (!isLoading) {
         this.router.navigate(['/tempRoute'], { onSameUrlNavigation: 'reload' })
@@ -205,14 +212,6 @@ export class LoadingPageComponent {
       if (this.isLoadingGlobal()) {
         console.log("Navigating to login due to timeout.");
         this.router.navigate(['/login']);
-      }
-    });
-
-    // Subscribe to isLoadingGlobal and cancel the timer if loading completes
-    effect(() => {
-      if (!this.isLoadingGlobal()) {
-        console.log("Loading completed before timeout.");
-        this.timeoutSubscription.unsubscribe();
       }
     });
   }
