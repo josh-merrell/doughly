@@ -7471,3 +7471,10 @@
 2024-04-23T13:31:19 [info]: Got 1 shopping lists
 2024-04-23T13:31:19 [info]: Successfully retrieved profile for userID 714b7bec-d76e-42de-9853-a26829de2ad0
 2024-04-23T13:31:19 [info]: Got 0 shoppingListRecipes
+2024-04-23T14:28:40 [info]: Server is running at http://localhost:3000
+2024-04-23T14:32:50 [info]: Server is running at http://localhost:3000
+2024-04-23T14:35:38 [info]: Server is running at http://localhost:3000
+2024-04-23T14:36:18 [info]: linkPreviews router
+2024-04-23T14:36:18 [info]: USER AGENT REDIRECT MIDDLEWARE. REQ: 
+2024-04-23T14:37:42 [info]: Server is running at http://localhost:3000
+2024-04-23T14:37:44 [info]: USER AGENT REDIRECT MIDDLEWARE. REQ: /recipe/1124033100000001, USER AGENT: PostmanRuntime/7.37.3
