@@ -29,6 +29,8 @@ module.exports = ({ db, dbPublic }) => {
         <meta property='og:url' content='${recipeData.url}' />
         <meta property='og:type' content='website' />
         <meta charset='utf-8'>
+        <meta property='fb:app_id' content='${process.env.FB_APP_ID}' />
+        <meta property='og:image:alt' content='Image for recipe: ${recipeData.title}' />
     </head>
     <body>
     </body>
