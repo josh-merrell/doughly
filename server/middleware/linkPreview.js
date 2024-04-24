@@ -3,7 +3,7 @@ const userAgentRedirect = (req, res, next) => {
   // if user agent is not in the following list, redirect to the production app
   const userAgent = req.headers['user-agent'];
 
-  const allowedUserAgents = [/facebookexternalhit/, /Facebot/, /Twitterbot/, /WhatsApp/, /PostmanRuntime/];
+  const allowedUserAgents = [/facebookexternalhit/, /Facebot/, /Twitterbot/, /WhatsApp/, /PostmanRuntime/, /TelegramBot/, /Slackbot/, /LinkedInBot/, /Pinterest/];
 
   const redirectLink = process.env.NODE_ENV === 'production' ? 'https://doughly.co' : 'localhost:4200';
 
