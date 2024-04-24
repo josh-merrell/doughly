@@ -122,7 +122,7 @@ app.use('/profiles', profilesRouter);
 app.use('/unitRatios', unitRatioRouter);
 app.use('/pushTokens', pushTokensRouter);
 app.use('/messages', messagesRouter);
-app.use('/linkPreviews', linkPreviewsRouter);
+app.use('/link-previews', linkPreviewsRouter);
 
 // Start the server
 const port = 3000;
