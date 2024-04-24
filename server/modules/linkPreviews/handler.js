@@ -9,7 +9,8 @@ async function getRecipePreview(req, res) {
     const returner = await p.get.recipePreview({
       recipeID,
     });
-    return res.json(returner);
+    res.setHeader('Content-Type', 'text/html'); // Set the Content-Type to text/html
+    return res.send(returner);
   } catch (e) {
     global.logger.error(`'linkPreviews' 'getRecipePreview': ${e.message}`);
     return res.status(e.code || 500).json({ error: e.message });
