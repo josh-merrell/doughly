@@ -12,6 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { environment } from 'src/environments/environment';
 import {
   selectNewRecipeID,
   selectRecipeByID,
@@ -58,6 +59,8 @@ import { selectReviewRecipeID } from 'src/app/kitchen/state/kitchen-selectors';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { selectShoppingLists } from 'src/app/groceries/state/shopping-list-selectors';
 import { selectShoppingListRecipes } from 'src/app/groceries/state/shopping-list-recipe-selectors';
+// import { Share } from '/node_modules/@capacitor/share';
+import { Clipboard } from '@capacitor/clipboard';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -725,6 +728,23 @@ export class UserRecipeComponent {
         this.editRecipeIngredients();
       }
     }, 500);
+  }
+
+  async onShareClicked() {
+    console.log('Share clicked');
+    await Clipboard.write({
+      // this will send the social crawler to get the link preview details for the recipe. Users will be redirected to the app.
+      string: `${
+        environment.BACKEND
+      }/link-previews/recipe/${this.recipeID()}`,
+    });
+
+    this.dialog.open(ConfirmationModalComponent, {
+      data: {
+        confirmationMessage:
+          'Link copied to clipboard! Share in any Messenging App.',
+      },
+    });
   }
 
   //***************************************************
