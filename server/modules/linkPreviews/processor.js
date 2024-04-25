@@ -9,7 +9,7 @@ module.exports = ({ db, dbPublic }) => {
         <head>
             <title>Own Your Recipes on Doughly</title>
             <meta property='og:title' content='Own Your Recipes on Doughly' />
-            <meta property='og:description' content='Discover, create, and share your treasured recipes. Join free with 1 click.' />
+            <meta property='og:description' content='Discover, create, and share your treasured recipes. Join free with a few taps.' />
             <meta property='og:url' content='https://doughly.co' />
             <meta property='og:type' content='website' />
             <meta charset='utf-8'>
@@ -39,6 +39,9 @@ module.exports = ({ db, dbPublic }) => {
       let description = 'Check out my recipe, then make and share your own!';
       if (author.name_first) {
         description = `${author.name_first} made the recipe ${recipeData.title} public. Come check it out!`;
+        if (recipeData.type === 'heirloom') {
+          description = `${author.name_first} shared a treasured recipe for your eyes only. Come check it out! ${recipeData.title}.`;
+        }
       }
 
       // Generate HTML content with Open Graph meta tags
