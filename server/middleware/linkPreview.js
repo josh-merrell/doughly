@@ -12,14 +12,12 @@ const userAgentRedirect = (req, res, next) => {
   const mobileUserAgents = [/Android/, /webOS/, /iPhone/, /iPad/, /iPod/, /BlackBerry/, /Windows Phone/, /Mobile/];
 
   if (mobileUserAgents.some((regex) => regex.test(userAgent))) {
-    redirectLink = process.env.NODE_ENV === 'production' ? 'co.doughly.app' : 'localhost:4200';
     global.logger.info(`REDIRECT LINK FOR MOBILE: ${redirectLink}`);
     // ex url: 'recipe/1124033100000001'. Need to check if url has 'recipe'
-    // if (req.url.includes('recipe')) {
-    //   const recipeID = req.url.split('recipe/')[1];
-    //   global.logger.info(`RECIPE ID: ${recipeID}`);
-    //   redirectLink = `${redirectLink}?recipeID=${recipeID}`;
-    // }
+    if (req.url.includes('recipe')) {
+      const recipeID = req.url.split('recipe/')[1];
+      redirectLink = `${redirectLink}?recipeID=${recipeID}`;
+    }
     global.logger.info(`${req.headers['user-agent']} USER REQUEST, REDIRECTING TO ${redirectLink}`);
     return res.redirect(redirectLink);
   }
