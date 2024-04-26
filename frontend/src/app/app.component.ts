@@ -104,29 +104,11 @@ export class AppComponent {
       this.zone.run(() => {
         const domain = 'doughly.co'
         const pathArray = event.url.split(domain);
+        console.log('PATH ARRAY', pathArray);
         const appPath = pathArray.pop();
         if (appPath) {
+          console.log('NAVIGATING TO', appPath);
           this.router.navigateByUrl(appPath);
-        }
-
-
-
-        console.log('DEEP LINK URL', event.url);
-        let newPath = '';
-        if (event.url.includes('doughly.co')) {
-          // Extract the part after 'co.doughly.app/' and navigate
-          let queryParams = event.url.split('?')[1];
-          if (queryParams) {
-            // get a list of query parameters
-            const queryParamsSplit = queryParams.split('&');
-            if (queryParamsSplit[0].split('=')[0] === 'recipeID')
-              newPath += '/recipe/public/' + queryParamsSplit[0].split('=')[1];
-          }
-
-          console.log(`NAVIGATING TO ${newPath}`);
-          this.router.navigateByUrl(newPath || '/login', {
-            replaceUrl: true,
-          });
         }
       });
     });
