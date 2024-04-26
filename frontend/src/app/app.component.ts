@@ -101,7 +101,7 @@ export class AppComponent {
 
       this.zone.run(() => {
         if (event.url.includes('.app')) {
-          console.log('DEEP LINKE URL', event.url);
+          console.log('DEEP LINK URL', event.url);
           if (event.url.includes('co.doughly.app')) {
             // Extract the part after 'co.doughly.app/' and navigate
             let newPath = event.url.split('co.doughly.app://')[1];
