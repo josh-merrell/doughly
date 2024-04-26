@@ -17,11 +17,10 @@ const userAgentRedirect = (req, res, next) => {
 
   global.logger.info(`REDIRECT LINK AFTER MOBILE CHECK: ${redirectLink}`);
 
-  const url = req.url.split('link-previews/')[1];
-  global.logger.info(`URL: ${url}`);
   // ex url: 'recipe/1124033100000001'. Need to check if url has 'recipe'
-  if (url.includes('recipe')) {
-    const recipeID = url.split('/')[1];
+  if (req.url.includes('recipe')) {
+    const recipeID = req.url.split('recipe/')[1];
+    global.logger.info(`RECIPE ID: ${recipeID}`);
     redirectLink = `${redirectLink}?recipeID=${recipeID}`;
   }
 
