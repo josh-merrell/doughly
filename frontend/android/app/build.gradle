@@ -20,6 +20,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+    }
+    signingConfigs {
+        release {
+            keyAlias 'key_04252024'
+            keyPassword 'ginger'
+            storeFile file('/home/josh/keystores/upload-keystore.jks')
+            storePassword 'ginger'
         }
     }
 }
