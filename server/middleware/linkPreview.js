@@ -16,7 +16,6 @@ const userAgentRedirect = (req, res, next) => {
     // ex url: 'recipe/1124033100000001'. Need to check if url has 'recipe'
     if (req.url.includes('recipe')) {
       const recipeID = req.url.split('recipe/')[1];
-      global.logger.info(`RECIPE ID: ${recipeID}`);
       redirectLink = `${redirectLink}?recipeID=${recipeID}`;
     }
     global.logger.info(`${req.headers['user-agent']} USER REQUEST, REDIRECTING TO ${redirectLink}`);
