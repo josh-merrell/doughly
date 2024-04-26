@@ -97,9 +97,20 @@ export class AppComponent {
       const access = event.url.split('#access_token=').pop()?.split('&')[0];
       const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
 
-      await this.authService.setSession(access, refresh);
-
+      if (access && refresh) {
+        await this.authService.setSession(access, refresh);
+      }
+      
       this.zone.run(() => {
+        const domain = 'doughly.co'
+        const pathArray = event.url.split(domain);
+        const appPath = pathArray.pop();
+        if (appPath) {
+          this.router.navigateByUrl(appPath);
+        }
+
+
+
         console.log('DEEP LINK URL', event.url);
         let newPath = '';
         if (event.url.includes('doughly.co')) {
