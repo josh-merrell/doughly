@@ -100,26 +100,22 @@ export class AppComponent {
       await this.authService.setSession(access, refresh);
 
       this.zone.run(() => {
-        if (event.url.includes('.app')) {
-          console.log('DEEP LINK URL', event.url);
-          if (event.url.includes('co.doughly.app')) {
-            // Extract the part after 'co.doughly.app/' and navigate
-            let newPath = event.url.split('co.doughly.app://')[1];
-            
-            // If this is a recipe deep link, navigate to the recipe
-            const query = newPath.split('?')[1];
-            if (query) {
-              // get a list of query parameters
-              const queryParams = query.split('&');
-              if (queryParams[0].split('=')[0] === 'recipeID')
-                newPath += '/recipe/public/' + queryParams[0].split('=')[1];
-            }
-
-            console.log(`NAVIGATING TO ${newPath}`);
-            this.router.navigateByUrl(newPath || '/login', {
-              replaceUrl: true,
-            });
+        console.log('DEEP LINK URL', event.url);
+        let newPath = '';
+        if (event.url.includes('doughly.co')) {
+          // Extract the part after 'co.doughly.app/' and navigate
+          let queryParams = event.url.split('?')[1];
+          if (queryParams) {
+            // get a list of query parameters
+            const queryParamsSplit = queryParams.split('&');
+            if (queryParamsSplit[0].split('=')[0] === 'recipeID')
+              newPath += '/recipe/public/' + queryParamsSplit[0].split('=')[1];
           }
+
+          console.log(`NAVIGATING TO ${newPath}`);
+          this.router.navigateByUrl(newPath || '/login', {
+            replaceUrl: true,
+          });
         }
       });
     });
