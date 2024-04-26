@@ -7,13 +7,18 @@ const userAgentRedirect = (req, res, next) => {
 
   let redirectLink = process.env.NODE_ENV === 'production' ? 'https://doughly.co' : 'localhost:4200';
 
+  global.logger.info(`REDIRECT LINK INITIAL: ${redirectLink}`);
+
   const mobileUserAgents = [/Android/, /webOS/, /iPhone/, /iPad/, /iPod/, /BlackBerry/, /Windows Phone/, /Mobile/];
 
   if (mobileUserAgents.some((regex) => regex.test(userAgent))) {
     redirectLink = process.env.NODE_ENV === 'production' ? 'https://co.doughly.app' : 'localhost:4200';
   }
 
+  global.logger.info(`REDIRECT LINK AFTER MOBILE CHECK: ${redirectLink}`);
+
   const url = req.url.split('link-previews/')[1];
+  global.logger.info(`URL: ${url}`);
   // ex url: 'recipe/1124033100000001'. Need to check if url has 'recipe'
   if (url.includes('recipe')) {
     const recipeID = url.split('/')[1];
@@ -22,6 +27,7 @@ const userAgentRedirect = (req, res, next) => {
 
   const isAllowedUserAgent = (userAgent) => allowedUserAgents.some((regex) => regex.test(userAgent));
 
+  global.logger.info(`IS ALLOWED USER AGENT: ${isAllowedUserAgent(userAgent)}`);
   if (isAllowedUserAgent(userAgent)) {
     global.logger.info(`${req.headers['user-agent']} USER REQUEST, REDIRECTING TO ${redirectLink}`);
     return res.redirect(redirectLink);
