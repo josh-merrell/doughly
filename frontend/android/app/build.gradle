@@ -16,10 +16,30 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            keyAlias 'key_04252024'
+            keyPassword 'ginger'
+            storeFile file('/home/josh/keystores/upload-keystore.jks')
+            storePassword 'ginger'
+        }
+        debug {
+            keyAlias 'key_04252024'
+            keyPassword 'ginger'
+            storeFile file('/home/josh/keystores/upload-keystore.jks')
+            storePassword 'ginger'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
