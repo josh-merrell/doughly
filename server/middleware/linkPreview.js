@@ -28,11 +28,11 @@ const userAgentRedirect = (req, res, next) => {
   if (isAllowedUserAgent(userAgent)) {
     global.logger.info(`${req.headers['user-agent']} ALLOWED, SENDING TO GET PREVIEW DETAILS`);
     next();
+  } else {
+    // else drop the request
+    global.logger.info(`${req.headers['user-agent']} NOT USER OR LINK PREVIEW CRAWLER, DROP REQUEST`);
+    return res.status(404).send('Not Found');
   }
-
-  // else drop the request
-  global.logger.info(`${req.headers['user-agent']} NOT USER OR LINK PREVIEW CRAWLER, DROP REQUEST`);
-  return res.status(404).send('Not Found');
 };
 
 module.exports = { userAgentRedirect };
