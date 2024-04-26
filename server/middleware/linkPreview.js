@@ -15,14 +15,14 @@ const userAgentRedirect = (req, res, next) => {
 
   const url = req.url.split('link-previews/')[1];
   // ex url: 'recipe/1124033100000001'. Need to check if url has 'recipe'
-  if (!url.includes('recipe')) {
+  if (url.includes('recipe')) {
     const recipeID = url.split('/')[1];
     redirectLink = `${redirectLink}?recipeID=${recipeID}`;
   }
 
   const isAllowedUserAgent = (userAgent) => allowedUserAgents.some((regex) => regex.test(userAgent));
 
-  if (!isAllowedUserAgent(userAgent)) {
+  if (isAllowedUserAgent(userAgent)) {
     global.logger.info(`${req.headers['user-agent']} USER REQUEST, REDIRECTING TO ${redirectLink}`);
     return res.redirect(redirectLink);
   }
