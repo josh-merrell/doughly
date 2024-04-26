@@ -23,6 +23,7 @@ const userAgentRedirect = (req, res, next) => {
   const isAllowedUserAgent = (userAgent) => allowedUserAgents.some((regex) => regex.test(userAgent));
 
   if (!isAllowedUserAgent(userAgent)) {
+    global.logger.info(`${req.headers['user-agent']} USER REQUEST, REDIRECTING TO ${redirectLink}`);
     return res.redirect(redirectLink);
   }
 
