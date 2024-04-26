@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "co.doughly.app",
+      "sha256_cert_fingerprints": [
+        "66:E3:E7:C1:1E:91:E4:84:C8:6E:F5:43:D8:77:AF:19:56:4E:63:2E:FC:69:11:28:19:83:5C:0C:2E:BC:E4:B5"
+      ]
+    }
+  }
+]
