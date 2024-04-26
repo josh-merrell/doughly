@@ -13,28 +13,28 @@ const userAgentRedirect = (req, res, next) => {
 
   if (mobileUserAgents.some((regex) => regex.test(userAgent))) {
     redirectLink = process.env.NODE_ENV === 'production' ? 'https://co.doughly.app' : 'localhost:4200';
-  }
-
-  global.logger.info(`REDIRECT LINK AFTER MOBILE CHECK: ${redirectLink}`);
-
-  // ex url: 'recipe/1124033100000001'. Need to check if url has 'recipe'
-  if (req.url.includes('recipe')) {
-    const recipeID = req.url.split('recipe/')[1];
-    global.logger.info(`RECIPE ID: ${recipeID}`);
-    redirectLink = `${redirectLink}?recipeID=${recipeID}`;
-  }
-
-  const isAllowedUserAgent = (userAgent) => allowedUserAgents.some((regex) => regex.test(userAgent));
-
-  global.logger.info(`IS ALLOWED USER AGENT: ${isAllowedUserAgent(userAgent)}`);
-  if (isAllowedUserAgent(userAgent)) {
+    global.logger.info(`REDIRECT LINK FOR MOBILE: ${redirectLink}`);
+    // ex url: 'recipe/1124033100000001'. Need to check if url has 'recipe'
+    if (req.url.includes('recipe')) {
+      const recipeID = req.url.split('recipe/')[1];
+      global.logger.info(`RECIPE ID: ${recipeID}`);
+      redirectLink = `${redirectLink}?recipeID=${recipeID}`;
+    }
     global.logger.info(`${req.headers['user-agent']} USER REQUEST, REDIRECTING TO ${redirectLink}`);
     return res.redirect(redirectLink);
   }
 
+  const isAllowedUserAgent = (userAgent) => allowedUserAgents.some((regex) => regex.test(userAgent));
+
   // else continue on to get the preview details for the user agent
-  global.logger.info(`${req.headers['user-agent']} ALLOWED, SENDING TO GET PREVIEW DETAILS`);
-  next();
+  if (isAllowedUserAgent(userAgent)) {
+    global.logger.info(`${req.headers['user-agent']} ALLOWED, SENDING TO GET PREVIEW DETAILS`);
+    next();
+  }
+
+  // else drop the request
+  global.logger.info(`${req.headers['user-agent']} NOT USER OR LINK PREVIEW CRAWLER, DROP REQUEST`);
+  return res.status(404).send('Not Found');
 };
 
 module.exports = { userAgentRedirect };
