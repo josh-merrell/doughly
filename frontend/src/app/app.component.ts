@@ -96,22 +96,22 @@ export class AppComponent {
   initializeApp() {
     App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
       console.log('APP LINK OPENED: ' + event.url);
-      const access = event.url.split('#access_token=').pop()?.split('&')[0];
-      const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
+      // const access = event.url.split('#access_token=').pop()?.split('&')[0];
+      // const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
 
-      if (access && refresh) {
-        await this.authService.setSession(access, refresh);
-      }
+      // if (access && refresh) {
+      //   await this.authService.setSession(access, refresh);
+      // }
       
+      const domain = 'doughly.co'
+      const pathArray = event.url.split(domain);
+      console.log('PATH ARRAY', pathArray);
+      const appPath = pathArray.pop();
+      if (appPath) {
+        console.log('NAVIGATING TO', appPath);
+        this.router.navigateByUrl(appPath);
+      }
       this.zone.run(() => {
-        const domain = 'doughly.co'
-        const pathArray = event.url.split(domain);
-        console.log('PATH ARRAY', pathArray);
-        const appPath = pathArray.pop();
-        if (appPath) {
-          console.log('NAVIGATING TO', appPath);
-          this.router.navigateByUrl(appPath);
-        }
       });
     });
   }
