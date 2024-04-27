@@ -33,6 +33,7 @@ import { selectSubscriptionBySourceRecipeID } from 'src/app/recipes/state/recipe
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { FractionService } from 'src/app/shared/utils/fractionService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 interface displayIngredientsByComponent {
   noComponent: any[];
@@ -83,42 +84,43 @@ export class PublicRecipeComponent {
     }
     return newIngredients;
   });
-  displayIngredientsByComponent: Signal<displayIngredientsByComponent> = computed(() => {
-    const enhancedIngredients = this.enhancedIngredients();
-    if (!enhancedIngredients) return [];
+  displayIngredientsByComponent: Signal<displayIngredientsByComponent> =
+    computed(() => {
+      const enhancedIngredients = this.enhancedIngredients();
+      if (!enhancedIngredients) return [];
 
-    const mappedIngredients = enhancedIngredients.map((i) => {
-      if (!i) return null;
+      const mappedIngredients = enhancedIngredients.map((i) => {
+        if (!i) return null;
 
-      // Convert the measurement to a fraction
-      let newMeasurement = this.fractionService.decimalToFraction(
-        i.measurement
-      );
-      if (i.measurementUnit === 'single') {
+        // Convert the measurement to a fraction
+        let newMeasurement = this.fractionService.decimalToFraction(
+          i.measurement
+        );
+        if (i.measurementUnit === 'single') {
+          return {
+            ...i,
+            measurement: newMeasurement,
+            measurementUnit: '',
+          };
+        }
+
         return {
           ...i,
           measurement: newMeasurement,
-          measurementUnit: '',
+          measurementUnit:
+            Number(i.measurement) > 1
+              ? i.measurementUnit === 'box' ||
+                i.measurementUnit === 'bunch' ||
+                i.measurementUnit === 'pinch' ||
+                i.measurementUnit === 'dash'
+                ? i.measurementUnit + 'es'
+                : i.measurementUnit + 's'
+              : i.measurementUnit,
         };
-      }
+      });
 
-      return {
-        ...i,
-        measurement: newMeasurement,
-        measurementUnit:
-          Number(i.measurement) > 1
-            ? i.measurementUnit === 'box' ||
-              i.measurementUnit === 'bunch' ||
-              i.measurementUnit === 'pinch' ||
-              i.measurementUnit === 'dash'
-              ? i.measurementUnit + 'es'
-              : i.measurementUnit + 's'
-            : i.measurementUnit,
-      };
-    });
-
-    mappedIngredients.sort((a, b) => a.name.localeCompare(b.name));
-    /**
+      mappedIngredients.sort((a, b) => a.name.localeCompare(b.name));
+      /**
     displayIngredientsByComponent: {
       noComponent: [mappedIngredients],
       components: {
@@ -127,23 +129,23 @@ export class PublicRecipeComponent {
       }
     }
     **/
-    const displayIngredientsByComponent: any = {
-      noComponent: [],
-      components: {},
-    };
-    for (let i = 0; i < mappedIngredients.length; i++) {
-      const ing = mappedIngredients[i];
-      if (ing.component) {
-        if (!displayIngredientsByComponent.components[ing.component]) {
-          displayIngredientsByComponent.components[ing.component] = [];
+      const displayIngredientsByComponent: any = {
+        noComponent: [],
+        components: {},
+      };
+      for (let i = 0; i < mappedIngredients.length; i++) {
+        const ing = mappedIngredients[i];
+        if (ing.component) {
+          if (!displayIngredientsByComponent.components[ing.component]) {
+            displayIngredientsByComponent.components[ing.component] = [];
+          }
+          displayIngredientsByComponent.components[ing.component].push(ing);
+        } else {
+          displayIngredientsByComponent.noComponent.push(ing);
         }
-        displayIngredientsByComponent.components[ing.component].push(ing);
-      } else {
-        displayIngredientsByComponent.noComponent.push(ing);
       }
-    };
-    return displayIngredientsByComponent;
-  });
+      return displayIngredientsByComponent;
+    });
   ready = computed(() => {
     if (
       this.recipe() &&
@@ -178,8 +180,19 @@ export class PublicRecipeComponent {
     private recipeToolService: RecipeToolService,
     private recipeStepService: RecipeStepService,
     private stepService: StepService,
-    private fractionService: FractionService
+    private fractionService: FractionService,
+    private authService: AuthService
   ) {
+    // if user is the author, redirect to the recipe page
+    effect(() => {
+      const recipeID = this.recipeID();
+      const profile = this.authService.profile();
+      const author = this.author();
+      if (profile && author && profile.user_id === author.userID) {
+        this.router.navigate(['/recipe', recipeID]);
+      }
+    });
+
     effect(
       () => {
         const recipeID = this.recipeID();

@@ -486,9 +486,10 @@ export class AuthService {
   // }
   async signInWithGoogle(): Promise<void> {
     try {
-      const redirectTo = Capacitor.isNativePlatform()
-        ? 'co.doughly.app://login'
-        : window.location.origin;
+      // const redirectTo = Capacitor.isNativePlatform()
+      //   ? 'co.doughly.app://login'
+      //   : window.location.origin;
+      const redirectTo = 'https://doughly.co';
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -505,9 +506,10 @@ export class AuthService {
 
   async signInWithFacebook(): Promise<void> {
     try {
-      const redirectTo = Capacitor.isNativePlatform()
-        ? 'co.doughly.app://login'
-        : window.location.origin;
+      // const redirectTo = Capacitor.isNativePlatform()
+      //   ? 'co.doughly.app://login'
+      //   : window.location.origin;
+      const redirectTo = 'https://doughly.co';
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'facebook',
         options: {
@@ -524,9 +526,10 @@ export class AuthService {
 
   async signInWithApple(): Promise<void> {
     try {
-      const redirectTo = Capacitor.isNativePlatform()
-        ? 'co.doughly.app://login'
-        : window.location.origin;
+      // const redirectTo = Capacitor.isNativePlatform()
+      //   ? 'co.doughly.app://login'
+      //   : window.location.origin;
+      const redirectTo = 'https://doughly.co';
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
