@@ -95,6 +95,7 @@ export class AppComponent {
 
   initializeApp() {
     App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
+      console.log('APP LINK OPENED: ' + event.url);
       const access = event.url.split('#access_token=').pop()?.split('&')[0];
       const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
 
