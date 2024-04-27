@@ -333,9 +333,7 @@ export class AuthService {
   signUp(email: string, password: string, username: string) {
     // Set profile back to undefined to trigger the effect to fetch the profile
     this.profile.set(undefined);
-    const redirectTo = Capacitor.isNativePlatform()
-      ? 'co.doughly.app://login'
-      : window.location.origin;
+    const redirectTo = 'https://doughly.co';
     this.supabase.auth.signUp({
       email,
       password,
@@ -486,9 +484,6 @@ export class AuthService {
   // }
   async signInWithGoogle(): Promise<void> {
     try {
-      // const redirectTo = Capacitor.isNativePlatform()
-      //   ? 'co.doughly.app://login'
-      //   : window.location.origin;
       const redirectTo = 'https://doughly.co';
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -506,9 +501,6 @@ export class AuthService {
 
   async signInWithFacebook(): Promise<void> {
     try {
-      // const redirectTo = Capacitor.isNativePlatform()
-      //   ? 'co.doughly.app://login'
-      //   : window.location.origin;
       const redirectTo = 'https://doughly.co';
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'facebook',
@@ -526,9 +518,6 @@ export class AuthService {
 
   async signInWithApple(): Promise<void> {
     try {
-      // const redirectTo = Capacitor.isNativePlatform()
-      //   ? 'co.doughly.app://login'
-      //   : window.location.origin;
       const redirectTo = 'https://doughly.co';
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'apple',
