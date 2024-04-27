@@ -62,6 +62,7 @@ export class AppComponent {
         )
       )
       .subscribe((event: NavigationEnd) => {
+        console.log('NAVIGATION: ', event.urlAfterRedirects);
         // Check if the current URL matches any in the list where the footer should be hidden
         this.showFooter = !this.hideFooterRoutes.some((route) =>
           event.urlAfterRedirects.includes(route)
