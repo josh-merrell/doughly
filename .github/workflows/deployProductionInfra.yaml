@@ -115,7 +115,7 @@ jobs:
       - name: Upload .well-known files
         run: |
           aws s3 cp ./frontend/assetlinks.json s3://doughly.co/.well-known/assetlinks.json
-          aws s3 cp ./frontend/apple-app-site-association s3://doughly.co/.well-known/apple-app-site-association
+          aws s3 cp ./frontend/apple-app-site-association s3://doughly.co/.well-known/apple-app-site-association --content-type "application/json"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
