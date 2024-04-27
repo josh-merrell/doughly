@@ -333,9 +333,6 @@ export class AuthService {
   signUp(email: string, password: string, username: string) {
     // Set profile back to undefined to trigger the effect to fetch the profile
     this.profile.set(undefined);
-    // const redirectTo = Capacitor.isNativePlatform()
-    //   ? 'co.doughly.app://login'
-    //   : window.location.origin;
     const redirectTo = 'https://doughly.co';
     this.supabase.auth.signUp({
       email,
