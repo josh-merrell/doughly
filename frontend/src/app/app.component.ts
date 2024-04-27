@@ -96,15 +96,17 @@ export class AppComponent {
   initializeApp() {
     App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
       console.log('APP LINK OPENED: ' + event.url);
-      // const access = event.url.split('#access_token=').pop()?.split('&')[0];
-      // const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
-
-      // if (access && refresh) {
-      //   await this.authService.setSession(access, refresh);
-      // }
+      if (
+        event.url.includes('access_token') &&
+        event.url.includes('refresh_token')
+      ) {
+        const access = event.url.split('#access_token=').pop()?.split('&')[0];
+        const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
+        await this.authService.setSession(access, refresh);
+      }
       
       this.zone.run(() => {
-        const domain = 'doughly.co'
+        const domain = 'doughly.co';
         const pathArray = event.url.split(domain);
         console.log('PATH ARRAY', pathArray);
         const appPath = pathArray.pop();
