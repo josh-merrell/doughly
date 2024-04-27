@@ -7478,3 +7478,28 @@
 2024-04-23T14:36:18 [info]: USER AGENT REDIRECT MIDDLEWARE. REQ: 
 2024-04-23T14:37:42 [info]: Server is running at http://localhost:3000
 2024-04-23T14:37:44 [info]: USER AGENT REDIRECT MIDDLEWARE. REQ: /recipe/1124033100000001, USER AGENT: PostmanRuntime/7.37.3
+2024-04-27T11:52:28 [info]: Server is running at http://localhost:3000
+2024-04-27T11:53:30 [info]: Got 37 ingredients
+2024-04-27T11:53:30 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-27T11:53:30 [info]: Got 297 discoverRecipes
+2024-04-27T11:53:30 [info]: Got 5 tools
+2024-04-27T11:53:30 [info]: Got 34 recipeCategories
+2024-04-27T11:53:30 [info]: Got 1 ingredientStocks
+2024-04-27T11:53:30 [info]: Got 2 toolStocks
+2024-04-27T11:53:30 [info]: Got 4 recipeTools
+2024-04-27T11:53:30 [info]: Got 114 steps
+2024-04-27T11:53:30 [info]: Got 3 recipes
+2024-04-27T11:53:30 [info]: Got 43 recipeIngredients
+2024-04-27T11:53:30 [info]: Got 10 recipeSteps
+2024-04-27T11:53:31 [info]: Got 2 follower followships
+2024-04-27T11:53:31 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-27T11:53:31 [info]: Got 4 friendships
+2024-04-27T11:53:31 [info]: Got 4 followships
+2024-04-27T11:53:31 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-27T11:53:31 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-27T11:53:31 [info]: Got 1 shopping lists
+2024-04-27T11:53:31 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-27T11:53:31 [info]: Got 0 shoppingListRecipes
+2024-04-27T11:53:31 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-27T11:53:31 [info]: Successfully retrieved 2 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-27T11:53:32 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
