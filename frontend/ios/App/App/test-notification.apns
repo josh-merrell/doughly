@@ -1,0 +1,9 @@
+{
+    "Simulator Target Bundle": "co.doughly.app",
+    "aps": {
+        "alert": {
+            "title": "Test Notication",
+            "body": "This is a test of the notification system"
+        }
+    }
+}
