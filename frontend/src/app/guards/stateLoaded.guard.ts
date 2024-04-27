@@ -13,7 +13,7 @@ import { selectProfile } from '../profile/state/profile-selectors';
 
 export const stateLoaded: CanActivateFn = (
   route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot,
+  state: RouterStateSnapshot
 ) => {
   const store = inject(Store);
   const router = inject(Router);
@@ -22,7 +22,7 @@ export const stateLoaded: CanActivateFn = (
   return store.select(selectProfile).pipe(
     map((profile) => {
       if (!profile) {
-        redirectPathService.setPath(state.url);
+        redirectPathService.setPath(state.url); // '/temp' will use this path to redirect after login
         router.navigate(['/loading']); // Redirect to loading page if profile is not loaded
         return false;
       }

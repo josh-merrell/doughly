@@ -62,6 +62,7 @@ export class AppComponent {
         )
       )
       .subscribe((event: NavigationEnd) => {
+        console.log('NAVIGATION: ', event.urlAfterRedirects);
         // Check if the current URL matches any in the list where the footer should be hidden
         this.showFooter = !this.hideFooterRoutes.some((route) =>
           event.urlAfterRedirects.includes(route)
@@ -94,12 +95,13 @@ export class AppComponent {
 
   initializeApp() {
     App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
-      const access = event.url.split('#access_token=').pop()?.split('&')[0];
-      const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
+      console.log('APP LINK OPENED: ' + event.url);
+      // const access = event.url.split('#access_token=').pop()?.split('&')[0];
+      // const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
 
-      if (access && refresh) {
-        await this.authService.setSession(access, refresh);
-      }
+      // if (access && refresh) {
+      //   await this.authService.setSession(access, refresh);
+      // }
       
       this.zone.run(() => {
         const domain = 'doughly.co'
