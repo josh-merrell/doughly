@@ -103,15 +103,15 @@ export class AppComponent {
       //   await this.authService.setSession(access, refresh);
       // }
       
-      const domain = 'doughly.co'
-      const pathArray = event.url.split(domain);
-      console.log('PATH ARRAY', pathArray);
-      const appPath = pathArray.pop();
-      if (appPath) {
-        console.log('NAVIGATING TO', appPath);
-        this.router.navigateByUrl(appPath);
-      }
       this.zone.run(() => {
+        const domain = 'doughly.co'
+        const pathArray = event.url.split(domain);
+        console.log('PATH ARRAY', pathArray);
+        const appPath = pathArray.pop();
+        if (appPath) {
+          console.log('NAVIGATING TO', appPath);
+          this.router.navigateByUrl(appPath);
+        }
       });
     });
   }
