@@ -14,7 +14,11 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { UnitService } from 'src/app/shared/utils/unitService';
-import { Message } from 'src/app/footer/state/message-state';
+import {
+  FolloweePublicRecipeCreatedData,
+  IngredientStockExpiredData,
+  Message,
+} from 'src/app/footer/state/message-state';
 import { selectMessages, selectLoading } from '../../state/message-selectors';
 import { Router } from '@angular/router';
 import { MessageActions } from '../../state/message-actions';
@@ -103,7 +107,7 @@ export class MessagesModalComponent {
     }
   }
 
-  onView(message: Message, index: number) {
+  onView(message: any, index: number) {
     this.onAck(message, index);
     switch (message.type) {
       case 'ingredientStockExpired':
@@ -124,6 +128,20 @@ export class MessagesModalComponent {
         break;
       case 'newFriendRequest':
         this.router.navigate(['/social/friends']);
+        this.onCancel();
+        break;
+      case 'followeePublicRecipeCreated':
+        this.router.navigate([
+          '/recipe/public',
+          message.messageData.data.recipeID,
+        ]);
+        this.onCancel();
+        break;
+      case 'friendHeirloomRecipeCreated':
+        this.router.navigate([
+          '/recipe/public',
+          message.messageData.data.recipeID,
+        ]);
         this.onCancel();
         break;
       default:

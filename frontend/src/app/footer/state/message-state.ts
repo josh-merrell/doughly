@@ -29,7 +29,8 @@ export interface MessageData {
     | IngredientOutOfStockData
     | NewFollowerData
     | NewFriendData
-    | NewFriendRequestData;
+    | NewFriendRequestData
+    | FolloweePublicRecipeCreatedData;
 }
 
 export interface IngredientStockExpiredData {
@@ -64,4 +65,11 @@ export interface NewFriendRequestData {
   requesterNameFirst: string;
   requesterNameLast: string;
   requesterUserID: number;
+}
+
+export interface FolloweePublicRecipeCreatedData {
+  recipeID: number;
+  messageID: number;
+  recipeName: string;
+  followeeName: string;
 }
