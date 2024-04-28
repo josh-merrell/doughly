@@ -143,7 +143,9 @@ export class AppComponent {
       PushNotifications.addListener(
         'pushNotificationReceived',
         (notification: PushNotificationSchema) => {
-          // alert(JSON.stringify(notification));
+          // save current route path, then redirect to loading page to refresh state
+          this.redirectPathService.setPath(this.router.url);
+          this.router.navigateByUrl('/loading');
         }
       );
       // Method called when tapping on a notification
@@ -154,13 +156,13 @@ export class AppComponent {
           switch (notification.notification.data.type) {
             case 'followeePublicRecipeCreated':
               this.redirectPathService.setPath(
-                `/recipe/public/${notification.notification.data.recipeId}`
+                `/recipe/public/${notification.notification.data.recipeID}`
               );
               this.router.navigateByUrl('/loading');
               break;
             case 'friendHeirloomRecipeCreated':
               this.redirectPathService.setPath(
-                `/recipe/public/${notification.notification.data.recipeId}`
+                `/recipe/public/${notification.notification.data.recipeID}`
               );
               this.router.navigateByUrl('/loading');
               break;
