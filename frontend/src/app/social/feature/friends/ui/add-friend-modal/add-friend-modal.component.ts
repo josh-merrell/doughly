@@ -388,6 +388,7 @@ export class AddFriendModalComponent {
               friendName: `${this.profile().nameFirst} ${
                 this.profile().nameLast
               }`,
+              friendUserID: this.profile().userID,
             }
           )
           .subscribe(
@@ -408,6 +409,7 @@ export class AddFriendModalComponent {
               requesterName: `${this.profile().nameFirst} ${
                 this.profile().nameLast
               }`,
+              requesterUserID: this.profile().userID,
             }
           )
           .subscribe(
@@ -427,6 +429,7 @@ export class AddFriendModalComponent {
               followerName: `${this.profile().nameFirst} ${
                 this.profile().nameLast
               }`,
+              followerUserID: this.profile().userID,
             }
           )
           .subscribe(

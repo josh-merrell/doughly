@@ -445,6 +445,7 @@ export class FriendModalComponent {
               friendName: `${this.myProfile().nameFirst} ${
                 this.myProfile().nameLast
               }`,
+              friendUserID: this.myProfile().userID,
             }
           )
           .subscribe();
@@ -465,6 +466,7 @@ export class FriendModalComponent {
               followerName: `${this.myProfile().nameFirst} ${
                 this.myProfile().nameLast
               }`,
+              followerUserID: this.myProfile().userID,
             }
           )
           .subscribe();

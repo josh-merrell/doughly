@@ -399,7 +399,7 @@ module.exports = ({ db, dbPublic }) => {
           {
             userID,
             type: 'upcomingStockExpiration',
-            data: { name: notification.name, measurement: Math.round(notification.measurement * 100) / 100, measurementUnit: notification.measurementUnit },
+            data: { name: notification.name, measurement: Math.round(notification.measurement * 100) / 100, measurementUnit: notification.measurementUnit, ingredientID: notification.ingredientID },
             destTokens: tokens,
           },
           {
@@ -472,7 +472,7 @@ module.exports = ({ db, dbPublic }) => {
           {
             userID,
             type: 'noStock',
-            data: { name: ingredient.name },
+            data: { name: ingredient.name, ingredientID: ingredient.ingredientID },
             destTokens: tokens,
           },
           {
@@ -531,7 +531,7 @@ module.exports = ({ db, dbPublic }) => {
             {
               userID,
               type: 'lowStock',
-              data: { name: ingredient.name, count: recipeCountInsufficient },
+              data: { name: ingredient.name, count: recipeCountInsufficient, ingredientID: ingredient.ingredientID },
               destTokens: tokens,
             },
             {
