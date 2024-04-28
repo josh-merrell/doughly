@@ -23,6 +23,7 @@ import {
 import { AuthService } from './shared/utils/authenticationService';
 import { PushTokenService } from './shared/utils/pushTokenService';
 import { filter } from 'rxjs';
+import { RedirectPathService } from './shared/utils/redirect-path.service';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -52,7 +53,8 @@ export class AppComponent {
     private router: Router,
     private zone: NgZone,
     public authService: AuthService,
-    public pushTokenService: PushTokenService
+    public pushTokenService: PushTokenService,
+    private redirectPathService: RedirectPathService
   ) {
     // Listen to routing events, ensuring only NavigationEnd events are processed
     this.router.events
@@ -104,7 +106,7 @@ export class AppComponent {
         const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
         await this.authService.setSession(access, refresh);
       }
-      
+
       this.zone.run(() => {
         const domain = 'doughly.co';
         const pathArray = event.url.split(domain);
@@ -148,7 +150,56 @@ export class AppComponent {
       PushNotifications.addListener(
         'pushNotificationActionPerformed',
         (notification: ActionPerformed) => {
-          // alert('Push action performed: ' + JSON.stringify(notification));
+          alert('Push action performed: ' + JSON.stringify(notification));
+          switch (notification.notification.title) {
+            case 'notifyFollowersPublicRecipeCreated':
+              this.redirectPathService.setPath(
+                `/recipe/public/${notification.notification.data.recipeId}`
+              );
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'notifyFriendsHeirloomRecipeCreated':
+              this.redirectPathService.setPath(
+                `/recipe/public/${notification.notification.data.recipeId}`
+              );
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'notifyNewFollower':
+              this.redirectPathService.setPath('/social/followers');
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'notifyRequestFriendship':
+              this.redirectPathService.setPath('/social/friends');
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'notifyConfirmFriendship':
+              this.redirectPathService.setPath('/social/friends');
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'autoDeletedExpiredStock':
+              this.redirectPathService.setPath('/kitchen/ingredients');
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'autoDeletedExpiredStocks':
+              this.redirectPathService.setPath('/kitchen/ingredients');
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'noStock':
+              this.redirectPathService.setPath('/kitchen/ingredients');
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'lowStock':
+              this.redirectPathService.setPath('/kitchen/ingredients');
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'upcomingStockExpiration':
+              this.redirectPathService.setPath('/kitchen/ingredients');
+              this.router.navigateByUrl('/loading');
+              break;
+            default:
+              this.router.navigateByUrl('/home');
+              break;
+          }
         }
       );
     }

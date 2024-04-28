@@ -343,6 +343,7 @@ export class EditRecipeModalComponent {
             }`,
             recipeName: this.form.value.title,
             imageUrl: this.photoURL || this.newPhotoURL,
+            recipeID: this.data.recipeID,
           }
         )
         .subscribe(
@@ -362,6 +363,7 @@ export class EditRecipeModalComponent {
             }`,
             recipeName: this.form.value.title,
             imageUrl: this.photoURL || this.newPhotoURL,
+            recipeID: this.data.recipeID,
           }
         )
         .subscribe(

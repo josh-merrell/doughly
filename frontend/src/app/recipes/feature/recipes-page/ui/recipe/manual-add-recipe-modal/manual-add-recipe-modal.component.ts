@@ -260,6 +260,7 @@ export class ManualAddRecipeModalComponent {
             }`,
             recipeName: this.form.value.title,
             imageUrl: this.photoURL,
+            recipeID: this.data.recipeID,
           }
         )
         .subscribe(
@@ -279,6 +280,7 @@ export class ManualAddRecipeModalComponent {
             }`,
             recipeName: this.form.value.title,
             imageUrl: this.photoURL,
+            recipeID: this.recipes[0].recipeID,
           }
         )
         .subscribe(
