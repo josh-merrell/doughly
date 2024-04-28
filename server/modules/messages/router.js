@@ -10,6 +10,7 @@ const h = handler;
 router.use(authenticateJWT);
 
 router.get('/', errorCatcher(h.getMessages));
+router.post('/', errorCatcher(h.addMessage));
 router.post('/acknowledge', errorCatcher(h.acknowledgeMessage));
 router.post('/delete', errorCatcher(h.deleteMessage));
 

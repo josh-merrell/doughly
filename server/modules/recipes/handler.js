@@ -2,7 +2,8 @@
 
 async function getRecipes(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { cursor, limit, recipeIDs, title, recipeCategoryID } = req.query;
   try {
     const returner = await p.get.all({ userID: req.userID, cursor, limit, recipeIDs, title, recipeCategoryID });
@@ -15,7 +16,8 @@ async function getRecipes(req, res) {
 
 async function getDiscoverRecipes(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { cursor, limit } = req.query;
   try {
     const returner = await p.get.discover({ userID: req.userID, cursor, limit });
@@ -28,7 +30,8 @@ async function getDiscoverRecipes(req, res) {
 
 async function getRecipeIngredients(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
   try {
     const returner = await p.get.ingredients({ userID: req.userID, recipeID });
@@ -41,7 +44,8 @@ async function getRecipeIngredients(req, res) {
 
 async function getRecipeTools(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
   try {
     const returner = await p.get.tools({ userID: req.userID, recipeID });
@@ -54,7 +58,8 @@ async function getRecipeTools(req, res) {
 
 async function getRecipeSteps(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
   try {
     const returner = await p.get.steps({ userID: req.userID, recipeID });
@@ -67,7 +72,8 @@ async function getRecipeSteps(req, res) {
 
 async function getRecipeByID(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
   try {
     const returner = await p.get.byID({ userID: req.userID, recipeID });
@@ -80,7 +86,8 @@ async function getRecipeByID(req, res) {
 
 async function getRecipeSubscriptions(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { authorization } = req.headers;
   try {
     const returner = await p.get.subscriptions({ userID: req.userID, authorization });
@@ -93,7 +100,8 @@ async function getRecipeSubscriptions(req, res) {
 
 async function subscriptionsByRecipeID(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
   try {
     const returner = await p.get.subscriptionsByRecipeID({ recipeID });
@@ -106,7 +114,8 @@ async function subscriptionsByRecipeID(req, res) {
 
 async function createRecipe(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
@@ -133,7 +142,8 @@ async function createRecipe(req, res) {
 
 async function createRecipeVision(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeSourceImageURL, recipePhotoURL } = req.body;
   const { authorization } = req.headers;
   try {
@@ -152,7 +162,8 @@ async function createRecipeVision(req, res) {
 
 async function createRecipeFromURL(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeURL, recipePhotoURL } = req.body;
   const { authorization } = req.headers;
   try {
@@ -171,7 +182,8 @@ async function createRecipeFromURL(req, res) {
 
 async function updateRecipe(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
   const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = req.body;
   const { authorization } = req.headers;
@@ -198,7 +210,8 @@ async function updateRecipe(req, res) {
 
 async function deleteRecipe(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
   const { authorization } = req.headers;
   try {
@@ -216,7 +229,8 @@ async function deleteRecipe(req, res) {
 
 async function useRecipe(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
   const { satisfaction, difficulty, note, checkIngredientStock } = req.body;
   const { authorization } = req.headers;
@@ -242,7 +256,8 @@ async function useRecipe(req, res) {
 
 async function constructRecipe(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { title, sourceRecipeID, servings, recipeCategoryID, lifespanDays, timePrep, timeBake, photoURL, type, components, ingredients, tools, steps } = req.body;
   const { authorization } = req.headers;
   try {
@@ -272,7 +287,8 @@ async function constructRecipe(req, res) {
 
 async function subscribeRecipe(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { sourceRecipeID, newRecipeID } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
@@ -293,7 +309,8 @@ async function subscribeRecipe(req, res) {
 
 async function unsubscribeRecipe(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { subscriptionID } = req.params;
   const { authorization } = req.headers;
   try {

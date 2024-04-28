@@ -53,6 +53,8 @@ export class IDService {
         return 73;
       case 'shoppingLog':
         return 74;
+      case 'message':
+        return 75;
       default:
         return 0;
     }
