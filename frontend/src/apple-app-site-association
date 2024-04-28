@@ -5,7 +5,13 @@
       {
         "appID": "AFV2RTYWGX.co.doughly.app ",
         "paths": [
-          "*"
+          "*",
+          "/*"
+        ],
+        "components": [
+          {
+            "/": "/"
+          }
         ]
       }
     ]
