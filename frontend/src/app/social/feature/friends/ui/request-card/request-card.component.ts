@@ -60,8 +60,7 @@ export class RequestCardComponent {
   }
 
   ngOnInit(): void {
-    this.initials =
-      this.friendRequest.nameFirst[0] + this.friendRequest.nameLast[0];
+    this.initials = (this.friendRequest.nameFirst && this.friendRequest.nameLast) ? this.friendRequest.nameFirst[0] + this.friendRequest.nameLast[0] : 'NA'
 
     //use selectFriendshipByUserID
     this.store
@@ -120,6 +119,7 @@ export class RequestCardComponent {
               friendName: `${this.myProfile()!.nameFirst} ${
                 this.myProfile()!.nameLast
               }`,
+              friendUserID: this.myProfile()!.userID,
             }
           )
           .subscribe();

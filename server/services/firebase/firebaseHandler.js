@@ -49,6 +49,7 @@ function getPayload(type, data) {
       return {
         message: {
           newRecipe: `${data['recipeAuthor']} published a new recipe: ${data['recipeName']}`,
+          recipeID: data['recipeID'],
         },
         notification: {
           title: 'New Recipe on Doughly',
@@ -60,6 +61,7 @@ function getPayload(type, data) {
       return {
         message: {
           newRecipe: `${data['recipeAuthor']} published a new recipe: ${data['recipeName']}`,
+          recipeID: data['recipeID'],
         },
         notification: {
           title: 'New Recipe on Doughly',
@@ -71,6 +73,7 @@ function getPayload(type, data) {
       return {
         message: {
           newFollower: `${data['followerName']} started following you!`,
+          userID: data['followerUserID'],
         },
         notification: {
           title: 'New Follower',
@@ -82,6 +85,7 @@ function getPayload(type, data) {
       return {
         message: {
           friendRequest: `${data['requesterName']} sent you a friend request!`,
+          userID: data['requesterUserID'],
         },
         notification: {
           title: 'New Friend Request',
@@ -92,6 +96,7 @@ function getPayload(type, data) {
       return {
         message: {
           friendRequest: `${data['friendName']} accepted your friend request!`,
+          userID: data['friendUserID'],
         },
         notification: {
           title: 'New Friend',
@@ -125,6 +130,7 @@ function getPayload(type, data) {
       return {
         message: {
           message: 'No Stock',
+          ingredientID: data['ingredientID'],
         },
         notification: {
           title: `No ${data['name']} Stock`,
@@ -136,6 +142,7 @@ function getPayload(type, data) {
       return {
         message: {
           message: 'Low Stock',
+          ingredientID: data['ingredientID'],
         },
         notification: {
           title: `Low ${data['name']} Stock`,
@@ -147,6 +154,7 @@ function getPayload(type, data) {
       return {
         message: {
           message: 'Ingredient Expires Soon',
+          ingredientID: data['ingredientID'],
         },
         notification: {
           title: 'Ingredient Expires Soon',
