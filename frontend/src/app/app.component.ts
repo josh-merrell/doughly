@@ -135,10 +135,6 @@ export class AppComponent {
         // Send the token to the server
         this.pushTokenService.unsavedPushToken.set(token.value);
       });
-      // Some issue with our setup and push will not work
-      // PushNotifications.addListener('registrationError', (error: any) => {
-      //   alert('Error on registration: ' + JSON.stringify(error));
-      // });
       // Show us the notification payload if the app is open on our device
       PushNotifications.addListener(
         'pushNotificationReceived',

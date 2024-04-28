@@ -13,6 +13,8 @@ const { sendSSEMessage } = require('../../server.js');
 // const path = require('path');
 // const fs = require('fs');
 
+const { addFolloweePublicRecipeCreatedMessages, addFriendHeirloomRecipeCreatedMessages } = require('../messages/processor.js');
+
 module.exports = ({ db }) => {
   async function constructRecipe(options) {
     try {
@@ -1323,6 +1325,15 @@ module.exports = ({ db }) => {
 
       try {
         const updatedRecipe = await updater(options.userID, authorization, 'recipeID', recipeID, 'recipes', updateFields);
+        // if type was updated to 'public', call 'addFolloweePublicRecipeCreatedMessages'
+        if (updateFields.type === 'public') {
+          addFolloweePublicRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
+        }
+
+        // if type was updated to 'heirloom', call 'addFriendHeirloomRecipeCreatedMessages'
+        if (updateFields.type === 'heirloom') {
+          addFriendHeirloomRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
+        }
         return updatedRecipe;
       } catch (error) {
         global.logger.error(`Error calling updater: ${error.message}`);
