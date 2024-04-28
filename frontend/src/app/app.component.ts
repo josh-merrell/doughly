@@ -197,7 +197,7 @@ export class AppComponent {
               this.router.navigateByUrl('/loading');
               break;
             default:
-              this.router.navigateByUrl('/home');
+              this.router.navigateByUrl('/login');
               break;
           }
         }
