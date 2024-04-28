@@ -150,29 +150,29 @@ export class AppComponent {
       PushNotifications.addListener(
         'pushNotificationActionPerformed',
         (notification: ActionPerformed) => {
-          alert('Push action performed: ' + JSON.stringify(notification));
-          switch (notification.notification.title) {
-            case 'notifyFollowersPublicRecipeCreated':
+          // alert('Push action performed: ' + JSON.stringify(notification));
+          switch (notification.notification.data.type) {
+            case 'followeePublicRecipeCreated':
               this.redirectPathService.setPath(
                 `/recipe/public/${notification.notification.data.recipeId}`
               );
               this.router.navigateByUrl('/loading');
               break;
-            case 'notifyFriendsHeirloomRecipeCreated':
+            case 'friendHeirloomRecipeCreated':
               this.redirectPathService.setPath(
                 `/recipe/public/${notification.notification.data.recipeId}`
               );
               this.router.navigateByUrl('/loading');
               break;
-            case 'notifyNewFollower':
+            case 'newFollower':
               this.redirectPathService.setPath('/social/followers');
               this.router.navigateByUrl('/loading');
               break;
-            case 'notifyRequestFriendship':
+            case 'friendshipRequest':
               this.redirectPathService.setPath('/social/friends');
               this.router.navigateByUrl('/loading');
               break;
-            case 'notifyConfirmFriendship':
+            case 'friendshipConfirmation':
               this.redirectPathService.setPath('/social/friends');
               this.router.navigateByUrl('/loading');
               break;

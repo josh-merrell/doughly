@@ -48,6 +48,7 @@ function getPayload(type, data) {
     case 'notifyFollowersPublicRecipeCreated':
       return {
         message: {
+          type: 'followeePublicRecipeCreated',
           newRecipe: `${data['recipeAuthor']} published a new recipe: ${data['recipeName']}`,
           recipeID: data['recipeID'],
         },
@@ -60,6 +61,7 @@ function getPayload(type, data) {
     case 'notifyFriendsHeirloomRecipeCreated':
       return {
         message: {
+          type: 'friendHeirloomRecipeCreated',
           newRecipe: `${data['recipeAuthor']} published a new recipe: ${data['recipeName']}`,
           recipeID: data['recipeID'],
         },
@@ -72,6 +74,7 @@ function getPayload(type, data) {
     case 'notifyNewFollower':
       return {
         message: {
+          type: 'newFollower',
           newFollower: `${data['followerName']} started following you!`,
           userID: data['followerUserID'],
         },
@@ -84,6 +87,7 @@ function getPayload(type, data) {
     case 'notifyRequestFriendship':
       return {
         message: {
+          type: 'friendshipRequest',
           friendRequest: `${data['requesterName']} sent you a friend request!`,
           userID: data['requesterUserID'],
         },
@@ -95,6 +99,7 @@ function getPayload(type, data) {
     case 'notifyConfirmFriendship':
       return {
         message: {
+          type: 'friendshipConfirmation',
           friendRequest: `${data['friendName']} accepted your friend request!`,
           userID: data['friendUserID'],
         },
@@ -107,6 +112,7 @@ function getPayload(type, data) {
     case 'autoDeletedExpiredStock':
       return {
         message: {
+          type: 'autoDeletedExpiredStock',
           message: 'Auto Deleted Expired Ingredient Inventory',
         },
         notification: {
@@ -118,6 +124,7 @@ function getPayload(type, data) {
     case 'autoDeletedExpiredStocks':
       return {
         message: {
+          type: 'autoDeletedExpiredStocks',
           message: 'Auto Deleted Expired for Multiple Ingredients',
         },
         notification: {
@@ -129,6 +136,7 @@ function getPayload(type, data) {
     case 'noStock':
       return {
         message: {
+          type: 'noStock',
           message: 'No Stock',
           ingredientID: data['ingredientID'],
         },
@@ -141,6 +149,7 @@ function getPayload(type, data) {
     case 'lowStock':
       return {
         message: {
+          type: 'lowStock',
           message: 'Low Stock',
           ingredientID: data['ingredientID'],
         },
@@ -153,6 +162,7 @@ function getPayload(type, data) {
     case 'upcomingStockExpiration':
       return {
         message: {
+          type: 'upcomingStockExpiration',
           message: 'Ingredient Expires Soon',
           ingredientID: data['ingredientID'],
         },
