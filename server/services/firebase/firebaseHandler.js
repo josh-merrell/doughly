@@ -7,18 +7,22 @@ const app = initializeApp({
 });
 
 async function sendTokenNotifications(destTokens, type, data) {
-  for (const token of destTokens) {
-    const payload = getPayload(type, data);
-    let message = {
-      data: payload.message,
-      notification: payload.notification,
-      token: token.pushToken,
-    };
-    if (data['imageUrl']) {
-      message = addImage(message, data['imageUrl']);
+  try {
+    for (const token of destTokens) {
+      const payload = getPayload(type, data);
+      let message = {
+        data: payload.message,
+        notification: payload.notification,
+        token: token.pushToken,
+      };
+      if (data['imageUrl']) {
+        message = addImage(message, data['imageUrl']);
+      }
+      global.logger.info(`Sending token message: ${JSON.stringify(message)}`);
+      await sendTokenNotification(message);
     }
-    global.logger.info(`Sending token message: ${JSON.stringify(message)}`);
-    await sendTokenNotification(message);
+  } catch (error) {
+    global.logger.error('Error sending token message:', error);
   }
 }
 
@@ -50,7 +54,7 @@ function getPayload(type, data) {
         message: {
           type: 'followeePublicRecipeCreated',
           newRecipe: `${data['recipeAuthor']} published a new recipe: ${data['recipeName']}`,
-          recipeID: data['recipeID'],
+          recipeID: String(data['recipeID']),
         },
         notification: {
           title: 'New Recipe on Doughly',
@@ -63,7 +67,7 @@ function getPayload(type, data) {
         message: {
           type: 'friendHeirloomRecipeCreated',
           newRecipe: `${data['recipeAuthor']} published a new recipe: ${data['recipeName']}`,
-          recipeID: data['recipeID'],
+          recipeID: String(data['recipeID']),
         },
         notification: {
           title: 'New Recipe on Doughly',
@@ -76,7 +80,7 @@ function getPayload(type, data) {
         message: {
           type: 'newFollower',
           newFollower: `${data['followerName']} started following you!`,
-          userID: data['followerUserID'],
+          userID: String(data['followerUserID']),
         },
         notification: {
           title: 'New Follower',
@@ -89,7 +93,7 @@ function getPayload(type, data) {
         message: {
           type: 'friendshipRequest',
           friendRequest: `${data['requesterName']} sent you a friend request!`,
-          userID: data['requesterUserID'],
+          userID: String(data['requesterUserID']),
         },
         notification: {
           title: 'New Friend Request',
@@ -101,7 +105,7 @@ function getPayload(type, data) {
         message: {
           type: 'friendshipConfirmation',
           friendRequest: `${data['friendName']} accepted your friend request!`,
-          userID: data['friendUserID'],
+          userID: String(data['friendUserID']),
         },
         notification: {
           title: 'New Friend',
@@ -138,7 +142,7 @@ function getPayload(type, data) {
         message: {
           type: 'noStock',
           message: 'No Stock',
-          ingredientID: data['ingredientID'],
+          ingredientID: String(data['ingredientID']),
         },
         notification: {
           title: `No ${data['name']} Stock`,
@@ -151,7 +155,7 @@ function getPayload(type, data) {
         message: {
           type: 'lowStock',
           message: 'Low Stock',
-          ingredientID: data['ingredientID'],
+          ingredientID: String(data['ingredientID']),
         },
         notification: {
           title: `Low ${data['name']} Stock`,
@@ -164,7 +168,7 @@ function getPayload(type, data) {
         message: {
           type: 'upcomingStockExpiration',
           message: 'Ingredient Expires Soon',
-          ingredientID: data['ingredientID'],
+          ingredientID: String(data['ingredientID']),
         },
         notification: {
           title: 'Ingredient Expires Soon',
