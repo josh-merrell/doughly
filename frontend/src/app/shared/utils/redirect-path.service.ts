@@ -10,6 +10,10 @@ export class RedirectPathService {
   constructor(private router: Router) {}
 
   public setPath(path: string): void {
+    // don't set if path is '/loading'
+    if (path === '/loading') {
+      return;
+    }
     this.path = path;
   }
 
