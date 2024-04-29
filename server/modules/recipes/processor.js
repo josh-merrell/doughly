@@ -13,8 +13,6 @@ const { sendSSEMessage } = require('../../server.js');
 // const path = require('path');
 // const fs = require('fs');
 
-const { addFolloweePublicRecipeCreatedMessages, addFriendHeirloomRecipeCreatedMessages } = require('../messages/processor.js');
-
 module.exports = ({ db }) => {
   async function constructRecipe(options) {
     try {
@@ -1327,12 +1325,36 @@ module.exports = ({ db }) => {
         const updatedRecipe = await updater(options.userID, authorization, 'recipeID', recipeID, 'recipes', updateFields);
         // if type was updated to 'public', call 'addFolloweePublicRecipeCreatedMessages'
         if (updateFields.type === 'public') {
-          addFolloweePublicRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
+          // messageProcessor.addFolloweePublicRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
+          axios.post(
+            `${process.env.NODE_HOST}:${process.env.PORT}/messages`,
+            {
+              userID: options.userID,
+              message: {
+                type: 'addFolloweePublicRecipeCreatedMessages',
+                recipeID: options.recipeID,
+                recipeTitle: recipe[0].title,
+              },
+            },
+            { headers: { authorization } },
+          );
         }
 
         // if type was updated to 'heirloom', call 'addFriendHeirloomRecipeCreatedMessages'
         if (updateFields.type === 'heirloom') {
-          addFriendHeirloomRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
+          // messageProcessor.addFriendHeirloomRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
+          axios.post(
+            `${process.env.NODE_HOST}:${process.env.PORT}/messages`,
+            {
+              userID: options.userID,
+              message: {
+                type: 'addFriendHeirloomRecipeCreatedMessages',
+                recipeID: options.recipeID,
+                recipeTitle: recipe[0].title,
+              },
+            },
+            { headers: { authorization } },
+          );
         }
         return updatedRecipe;
       } catch (error) {

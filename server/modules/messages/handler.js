@@ -36,6 +36,25 @@ async function acknowledgeMessage(req, res) {
   }
 }
 
+async function addMessage(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { message } = req.body;
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.add({
+      userID: req.userID,
+      message,
+      authorization,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'messages' 'addMessage': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 async function deleteMessage(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
@@ -59,4 +78,5 @@ module.exports = {
   getMessages,
   acknowledgeMessage,
   deleteMessage,
+  addMessage,
 };

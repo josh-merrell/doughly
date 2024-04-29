@@ -90,7 +90,37 @@ async function generateID(req, res, next) {
   next();
 }
 
+async function generateIDFunction(type) {
+  if (!type) {
+    return 'Type parameter is missing, cannot generate custom ID';
+  }
+  if (type === 0) {
+    return 'Default Type of "0" is not allowed';
+  }
+  // if type is only 1 digit, prepend a 0
+  if (type.length === 1) {
+    type = `0${type}`;
+  }
+
+  // get current UTC time date
+  // const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+  // year = now.getUTCFullYear().toString().slice(-2);
+  // if (process.env.NODE_ENV === 'development') {
+  //   year -= 20;
+  // }
+  // month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  // day = String(now.getUTCDate()).padStart(2, '0');
+
+  const yearMonthDaySequence = await getNextYearMonthDaySequence(type);
+
+  // const id = `${type}${year}${month}${day}${sequence}`;
+  const id = `${type}${yearMonthDaySequence}`;
+
+  return id;
+}
+
 module.exports = {
   generateID,
+  generateIDFunction,
   getNextYearMonthDaySequence,
 };
