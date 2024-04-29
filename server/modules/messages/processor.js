@@ -1,4 +1,5 @@
 const { errorGen } = require('../../middleware/errorHandling');
+const { generateIDFunction } = require('../../middleware/ID');
 ('use strict');
 
 module.exports = ({ db, dbPublic }) => {
@@ -10,7 +11,7 @@ module.exports = ({ db, dbPublic }) => {
     }
 
     // get 'lastMessageSyncTime' from profile
-    const { data: profile, error: profileError } = await dbPublic.from().select('lastMessageSyncTime').eq('user_id', userID).single();
+    const { data: profile, error: profileError } = await dbPublic.from('profiles').select('lastMessageSyncTime').eq('user_id', userID).single();
     if (profileError) {
       global.logger.error(`Error getting profile: ${profileError.message}`);
       throw errorGen('Error getting profile', 500);
@@ -453,11 +454,31 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
+  async function add(options) {
+    const { userID, message } = options;
+    if (!userID) {
+      throw errorGen('userID is required', 400);
+    }
+    try {
+      switch (message.type) {
+        case 'addFolloweePublicRecipeCreatedMessages':
+          await addFolloweePublicRecipeCreatedMessages({ userID, recipeID: message.recipeID, recipeTitle: message.recipeTitle });
+          break;
+        case 'addFriendHeirloomRecipeCreatedMessages':
+          await addFriendHeirloomRecipeCreatedMessages({ userID, recipeID: message.recipeID, recipeTitle: message.recipeTitle });
+          break;
+      }
+    } catch (e) {
+      global.logger.error(`'messages' 'add': ${e.message}`);
+      throw errorGen('Error adding message', 500);
+    }
+  }
+
   // get messages for 'lowStock' events
 
   // get messages for 'upcomingStockExpiration' events
 
-  exports.addFolloweePublicRecipeCreatedMessages = async function (options) {
+  async function addFolloweePublicRecipeCreatedMessages(options) {
     const { userID, recipeID, recipeTitle } = options;
     if (!userID) {
       throw errorGen('userID is required', 400);
@@ -478,20 +499,23 @@ module.exports = ({ db, dbPublic }) => {
 
       // for each follower, add a message to 'messages' table
       for (let followship of followships) {
-        // update status of existing messages with this recipeID and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
-        const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', followship.userID).eq('type', 'followeePublicRecipeCreated').eq('dataNum1', recipeID).neq('status', 'deleted');
-        if (updateMessagesError) {
-          global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
-          throw errorGen('Error updating messages', 500);
-        }
+        // // update status of existing messages with this recipeID and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
+        // const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', followship.userID).eq('type', 'followeePublicRecipeCreated').eq('dataNum1', Number(recipeID)).neq('status', 'deleted');
+        // if (updateMessagesError) {
+        //   global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
+        //   throw errorGen('Error updating messages', 500);
+        // }
 
         // add a message to 'messages' table
+        const newMessageID = await generateIDFunction(75);
         const { error: addMessageError } = await db.from('messages').insert({
+          messageID: Number(newMessageID),
           userID: followship.userID,
+          createdTime: new Date().toISOString(),
           type: 'followeePublicRecipeCreated',
           title: `New Recipe from ${authorProfile.username}`,
           message: `${authorProfile.username} has made '${recipeTitle}' public.`,
-          dataNum1: recipeID,
+          dataNum1: Number(recipeID),
           dataStr1: recipeTitle,
           dataStr2: authorProfile.username,
           status: 'notAcked',
@@ -505,9 +529,9 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.error(`'messages' 'addFolloweePublicRecipeCreatedMessages': ${e.message}`);
       throw errorGen('Error adding followeePublicRecipeCreated messages', 500);
     }
-  };
+  }
 
-  exports.addFriendHeirloomRecipeCreatedMessages = async function (options) {
+  async function addFriendHeirloomRecipeCreatedMessages(options) {
     const { userID, recipeID, recipeTitle } = options;
     if (!userID) {
       throw errorGen('userID is required', 400);
@@ -528,20 +552,23 @@ module.exports = ({ db, dbPublic }) => {
 
       // for each friend, add a message to 'messages' table
       for (let friendship of friendships) {
-        // update status of existing messages with this recipeID and 'type' is 'friendHeirloomRecipeCreated' and 'status' is not 'deleted'
-        const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', friendship.friend).eq('type', 'friendHeirloomRecipeCreated').eq('dataNum1', recipeID).neq('status', 'deleted');
-        if (updateMessagesError) {
-          global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
-          throw errorGen('Error updating messages', 500);
-        }
+        // // update status of existing messages with this recipeID and 'type' is 'friendHeirloomRecipeCreated' and 'status' is not 'deleted'
+        // const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', friendship.friend).eq('type', 'friendHeirloomRecipeCreated').eq('dataNum1', Number(recipeID)).neq('status', 'deleted');
+        // if (updateMessagesError) {
+        //   global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
+        //   throw errorGen('Error updating messages', 500);
+        // }
 
         // add a message to 'messages' table
+        const newMessageID = await generateIDFunction(75);
         const { error: addMessageError } = await db.from('messages').insert({
+          messageID: Number(newMessageID),
+          createdTime: new Date().toISOString(),
           userID: friendship.friend,
           type: 'friendHeirloomRecipeCreated',
           title: `New Heirloom Recipe from ${authorProfile.username}`,
           message: `${authorProfile.username} has shared '${recipeTitle}' with friends.`,
-          dataNum1: recipeID,
+          dataNum1: Number(recipeID),
           dataStr1: recipeTitle,
           dataStr2: authorProfile.username,
           status: 'notAcked',
@@ -555,7 +582,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.error(`'messages' 'addFriendHeirloomRecipeCreatedMessages': ${e.message}`);
       throw errorGen('Error adding friendHeirloomRecipeCreated messages', 500);
     }
-  };
+  }
 
   return {
     get: {
@@ -563,5 +590,8 @@ module.exports = ({ db, dbPublic }) => {
     },
     acknowledge: acknowledgeMessage,
     delete: deleteMessage,
+    addFolloweePublicRecipeCreatedMessages,
+    addFriendHeirloomRecipeCreatedMessages,
+    add,
   };
 };
