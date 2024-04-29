@@ -132,16 +132,12 @@ export class LoadingPageComponent {
   private timeoutSubscription!: Subscription;
   
   constructor(private store: Store, private router: Router) {
-    effect(() => {
-      if (!this.isLoadingGlobal()) {
-        console.log("Loading completed before timeout.");
-        this.timeoutSubscription.unsubscribe();
-      }
-    });
 
     effect(() => {
       const isLoading = this.isLoadingGlobal();
       if (!isLoading) {
+        console.log("Loading completed before timeout.");
+        this.timeoutSubscription.unsubscribe();
         this.router.navigate(['/tempRoute'], { onSameUrlNavigation: 'reload' })
       }
     });
