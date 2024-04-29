@@ -140,6 +140,7 @@ export class AppComponent {
         'pushNotificationReceived',
         (notification: PushNotificationSchema) => {
           // save current route path, then redirect to loading page to refresh state
+          console.log(`PUSH RECEIVED. SAVING PATH: ${this.router.url}`)
           this.redirectPathService.setPath(this.router.url);
           this.router.navigateByUrl('/loading');
         }

@@ -17,7 +17,7 @@
           (click)="onMessageSelect(message, i)"
         >
           <div
-            class="relative my-dl-4 flex h-dl-6 w-full flex-col items-start rounded-dl-3 py-dl-1 pl-dl-3 shadow-md"
+            class="relative my-dl-4 flex w-full flex-col items-start rounded-dl-3 py-dl-1 pl-dl-3 shadow-md"
             [ngClass]="{
               'bg-dl-pink-10': selectedMessageIndex() === i
             }"
@@ -31,13 +31,16 @@
               </p>
             </div>
             <p
-              class="w-full truncate pl-dl-2 pr-dl-4 text-dl-5 font-dl-2 text-dl-grey-4"
+              class="w-full pl-dl-2 pr-dl-4 text-dl-5 font-dl-2 text-dl-grey-4"
+              [ngClass]="{
+                'truncate': selectedMessageIndex() !== i,
+              }"
             >
               {{ message.messageData.message }}
             </p>
             <div
               *ngIf="message.messageData.status === 'notAcked'"
-              class="absolute right-2 top-5 z-20 h-dl-2.5 w-dl-2.5 rounded-full bg-dl-pink-6"
+              class="absolute right-2 top-6 z-20 h-dl-2.5 w-dl-2.5 rounded-full bg-dl-pink-6"
             ></div>
           </div>
           <div

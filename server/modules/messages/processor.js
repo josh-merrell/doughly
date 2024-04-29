@@ -499,12 +499,12 @@ module.exports = ({ db, dbPublic }) => {
 
       // for each follower, add a message to 'messages' table
       for (let followship of followships) {
-        // // update status of existing messages with this recipeID and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
-        // const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', followship.userID).eq('type', 'followeePublicRecipeCreated').eq('dataNum1', Number(recipeID)).neq('status', 'deleted');
-        // if (updateMessagesError) {
-        //   global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
-        //   throw errorGen('Error updating messages', 500);
-        // }
+        // update status of existing messages with this recipeID and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
+        const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', followship.userID).eq('type', 'followeePublicRecipeCreated').eq('dataNum1', Number(recipeID)).neq('status', 'deleted');
+        if (updateMessagesError) {
+          global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
+          throw errorGen('Error updating messages', 500);
+        }
 
         // add a message to 'messages' table
         const newMessageID = await generateIDFunction(75);
@@ -552,12 +552,12 @@ module.exports = ({ db, dbPublic }) => {
 
       // for each friend, add a message to 'messages' table
       for (let friendship of friendships) {
-        // // update status of existing messages with this recipeID and 'type' is 'friendHeirloomRecipeCreated' and 'status' is not 'deleted'
-        // const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', friendship.friend).eq('type', 'friendHeirloomRecipeCreated').eq('dataNum1', Number(recipeID)).neq('status', 'deleted');
-        // if (updateMessagesError) {
-        //   global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
-        //   throw errorGen('Error updating messages', 500);
-        // }
+        // update status of existing messages with this recipeID and 'type' is 'friendHeirloomRecipeCreated' and 'status' is not 'deleted'
+        const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', friendship.friend).eq('type', 'friendHeirloomRecipeCreated').eq('dataNum1', Number(recipeID)).neq('status', 'deleted');
+        if (updateMessagesError) {
+          global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
+          throw errorGen('Error updating messages', 500);
+        }
 
         // add a message to 'messages' table
         const newMessageID = await generateIDFunction(75);
