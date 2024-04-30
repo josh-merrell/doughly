@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
 import { Router, RouterLinkWithHref } from '@angular/router';
+import { AuthService } from '../utils/authenticationService';
 
 @Component({
   selector: 'dl-temp-route',
@@ -11,15 +12,21 @@ import { Router, RouterLinkWithHref } from '@angular/router';
 export class TempRouteComponent {
   constructor(
     private redirectPathService: RedirectPathService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const path = this.redirectPathService.getPath();
-    if (path) {
-      this.router.navigate([path], { onSameUrlNavigation: 'reload' });
-    } else {
-      this.router.navigate(['/']);
+    const profile = this.authService.profile();
+    switch (profile?.onboardingState) {
+      case 1:
+      default: // onboardingState 0 (done)
+        if (path) {
+          this.router.navigate([path], { onSameUrlNavigation: 'reload' });
+        } else {
+          this.router.navigate(['/']);
+        }
     }
   }
 }
