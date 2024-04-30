@@ -15,6 +15,7 @@ import { selectFriendships } from '../../state/friendship-selectors';
 import {
   selectFriendRequests,
   selectFriends,
+  selectProfile,
 } from 'src/app/profile/state/profile-selectors';
 import { FriendCardComponent } from './ui/friend-card/friend-card.component';
 import { FriendModalComponent } from './ui/friend-modal/friend-modal.component';
@@ -22,16 +23,19 @@ import { Profile } from 'src/app/profile/state/profile-state';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { FriendRequestsModalComponent } from './ui/friend-requests-modal/friend-requests-modal.component';
 import { AddFriendModalComponent } from './ui/add-friend-modal/add-friend-modal.component';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { TestComponentModalComponent } from './ui/test-component-modal/test-component-modal.component';
 
 @Component({
   selector: 'dl-friends',
   standalone: true,
-  imports: [CommonModule, FriendCardComponent],
+  imports: [CommonModule, FriendCardComponent, TestComponentModalComponent],
   templateUrl: './friends.component.html',
 })
 export class FriendsComponent {
   public friendships: WritableSignal<Friendship[]> = signal([]);
   public friends: WritableSignal<Profile[]> = signal([]);
+  public testModalOpen: WritableSignal<boolean> = signal(false);
   public filteredFriends = computed(() => {
     const searchFilter = this.searchFilter();
     let friends = this.friends();
@@ -53,11 +57,25 @@ export class FriendsComponent {
   constructor(
     private store: Store,
     public dialog: MatDialog,
-    private socialService: SocialService
-  ) {
-  }
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    console.log('friends component init');
+    this.store.select(selectProfile).subscribe((profile) => {
+      console.log('profile', profile);
+      if (profile.onboardingState === 1) {
+        console.log('opening test modal');
+        this.testModalOpen.set(true);
+        const dialogRef = this.dialog.open(TestComponentModalComponent, {
+          width: '40%',
+          maxWidth: '500px',
+        });
+        dialogRef.afterClosed().subscribe(() => {
+          this.testModalOpen.set(false);
+        });
+      }
+    });
     this.store.select(selectFriendships).subscribe((friendships: any) => {
       this.friendships.set(friendships);
     });
