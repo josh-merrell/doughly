@@ -12,6 +12,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { Store } from '@ngrx/store';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { ExtraStuffService } from './shared/utils/extraStuffService';
 
 import {
   ActionPerformed,
@@ -54,7 +55,8 @@ export class AppComponent {
     private zone: NgZone,
     public authService: AuthService,
     public pushTokenService: PushTokenService,
-    private redirectPathService: RedirectPathService
+    private redirectPathService: RedirectPathService,
+    private extraStuffService: ExtraStuffService
   ) {
     // Listen to routing events, ensuring only NavigationEnd events are processed
     this.router.events
@@ -140,8 +142,9 @@ export class AppComponent {
         'pushNotificationReceived',
         (notification: PushNotificationSchema) => {
           // save current route path, then redirect to loading page to refresh state
-          console.log(`PUSH RECEIVED. SAVING PATH: ${this.router.url}`)
+          console.log(`PUSH RECEIVED. SAVING PATH: ${this.router.url}`);
           this.redirectPathService.setPath(this.router.url);
+          this.extraStuffService.stateToLoad.set('messages');
           this.router.navigateByUrl('/loading');
         }
       );

@@ -3,6 +3,7 @@ import { Component, WritableSignal, effect, signal } from '@angular/core';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 // Actions for loading state
 import { RecipeActions } from '../../.././recipes/state/recipe/recipe-actions';
@@ -130,20 +131,24 @@ export class LoadingPageComponent {
   private isLoadingShoppingListRecipe: WritableSignal<boolean> = signal(true);
 
   private timeoutSubscription!: Subscription;
-  
-  constructor(private store: Store, private router: Router) {
 
+  constructor(
+    private store: Store,
+    private router: Router,
+    private extraStuffService: ExtraStuffService
+  ) {
     effect(() => {
       const isLoading = this.isLoadingGlobal();
       if (!isLoading) {
-        console.log("Loading completed before timeout.");
+        console.log('Loading completed before timeout.');
         this.timeoutSubscription.unsubscribe();
-        this.router.navigate(['/tempRoute'], { onSameUrlNavigation: 'reload' })
+        this.router.navigate(['/tempRoute'], { onSameUrlNavigation: 'reload' });
       }
     });
 
     effect(
       () => {
+        const stateToLoad = this.extraStuffService.stateToLoad();
         const isLoadingMessage = this.isLoadingMessage();
         const isLoadingIngredient = this.isLoadingIngredient();
         const isLoadingIngredientStock = this.isLoadingIngredientStock();
@@ -160,30 +165,36 @@ export class LoadingPageComponent {
         const isLoadingProfile = this.isLoadingProfile();
         const isLoadingShoppingList = this.isLoadingShoppingList();
         const isLoadingShoppingListRecipe = this.isLoadingShoppingListRecipe();
-        // console.log(
-        //   `LOADING STATES: ${isLoadingMessage}, ${isLoadingIngredient}, ${isLoadingIngredientStock}, ${isLoadingTool}, ${isLoadingToolStock}, ${isLoadingRecipe}, ${isLoadingRecipeCategory}, ${isLoadingRecipeIngredient}, ${isLoadingRecipeTool}, ${isLoadingStep}, ${isLoadingRecipeStep}, ${isLoadingFriendship}, ${isLoadingFollowship}, ${isLoadingProfile}, ${isLoadingShoppingList}, ${isLoadingShoppingListRecipe}`
-        // );
 
-        // if all loading states are false, set global loading state to false
-        if (
-          !isLoadingMessage &&
-          !isLoadingIngredient &&
-          !isLoadingIngredientStock &&
-          !isLoadingTool &&
-          !isLoadingToolStock &&
-          !isLoadingRecipe &&
-          !isLoadingRecipeCategory &&
-          !isLoadingRecipeIngredient &&
-          !isLoadingRecipeTool &&
-          !isLoadingStep &&
-          !isLoadingRecipeStep &&
-          !isLoadingFriendship &&
-          !isLoadingFollowship &&
-          !isLoadingProfile &&
-          !isLoadingShoppingList &&
-          !isLoadingShoppingListRecipe
-        ) {
-          this.isLoadingGlobal.set(false);
+        switch (stateToLoad) {
+          case 'messages':
+            if (!isLoadingMessage) {
+              this.extraStuffService.stateToLoad.set('');
+              this.isLoadingGlobal.set(false);
+            }
+            break;
+          default:
+            if (
+              !isLoadingMessage &&
+              !isLoadingIngredient &&
+              !isLoadingIngredientStock &&
+              !isLoadingTool &&
+              !isLoadingToolStock &&
+              !isLoadingRecipe &&
+              !isLoadingRecipeCategory &&
+              !isLoadingRecipeIngredient &&
+              !isLoadingRecipeTool &&
+              !isLoadingStep &&
+              !isLoadingRecipeStep &&
+              !isLoadingFriendship &&
+              !isLoadingFollowship &&
+              !isLoadingProfile &&
+              !isLoadingShoppingList &&
+              !isLoadingShoppingListRecipe
+            ) {
+              this.extraStuffService.stateToLoad.set('');
+              this.isLoadingGlobal.set(false);
+            }
         }
       },
       { allowSignalWrites: true }
@@ -206,14 +217,40 @@ export class LoadingPageComponent {
     this.timeoutSubscription = timer(8000).subscribe(() => {
       // Check if isLoadingGlobal is still true
       if (this.isLoadingGlobal()) {
-        console.log("Navigating to login due to timeout.");
+        console.log('Navigating to login due to timeout.');
         this.router.navigate(['/login']);
       }
     });
   }
 
   loadState() {
-    //--message
+    switch (this.extraStuffService.stateToLoad()) {
+      case 'messages':
+        console.log('Loading message state');
+        this.loadMessageState();
+        break;
+      default:
+        console.log('Loading all states');
+        this.loadMessageState();
+        this.loadIngredientState();
+        this.loadIngredientStockState();
+        this.loadToolState();
+        this.loadToolStockState();
+        this.loadRecipeState();
+        this.loadRecipeCategoryState();
+        this.loadRecipeIngredientState();
+        this.loadRecipeToolState();
+        this.loadStepState();
+        this.loadRecipeStepState();
+        this.loadFriendshipState();
+        this.loadFollowshipState();
+        this.loadProfileState();
+        this.loadShoppingListState();
+        this.loadShoppingListRecipeState();
+    }
+  }
+
+  loadMessageState() {
     this.store.dispatch(MessageActions.loadMessages());
     this.store.select(selectMessageLoading).subscribe((state) => {
       this.store.select(selectMessageError).subscribe((error) => {
@@ -226,8 +263,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--ingredient
+  loadIngredientState() {
     this.store.dispatch(IngredientActions.loadIngredients());
     this.store.select(selectIngredientLoading).subscribe((state) => {
       this.store.select(selectIngredientError).subscribe((error) => {
@@ -240,8 +278,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--ingredientStock
+  loadIngredientStockState() {
     this.store.dispatch(IngredientStockActions.loadIngredientStocks());
     this.store.select(selectIngredientStockLoading).subscribe((state) => {
       this.store.select(selectIngredientStockError).subscribe((error) => {
@@ -254,8 +293,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--tool
+  loadToolState() {
     this.store.dispatch(ToolActions.loadTools());
     this.store.select(selectToolLoading).subscribe((state) => {
       this.store.select(selectToolError).subscribe((error) => {
@@ -268,8 +308,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--toolStock
+  loadToolStockState() {
     this.store.dispatch(ToolStockActions.loadToolStocks());
     this.store.select(selectToolStockLoading).subscribe((state) => {
       this.store.select(selectToolStockError).subscribe((error) => {
@@ -282,8 +323,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--recipes
+  loadRecipeState() {
     this.store.dispatch(RecipeActions.loadRecipes());
     this.store.dispatch(RecipeActions.loadRecipeSubscriptions());
     this.store.dispatch(RecipeActions.loadDiscoverRecipes());
@@ -298,8 +340,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--recipeCategory
+  loadRecipeCategoryState() {
     this.store.dispatch(RecipeCategoryActions.loadRecipeCategories());
     this.store.select(selectRecipeCategoryLoading).subscribe((state) => {
       this.store.select(selectRecipeCategoryError).subscribe((error) => {
@@ -312,8 +355,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--recipeIngredient
+  loadRecipeIngredientState() {
     this.store.dispatch(RecipeIngredientActions.loadRecipeIngredients());
     this.store.select(selectRecipeIngredientLoading).subscribe((state) => {
       this.store.select(selectRecipeIngredientError).subscribe((error) => {
@@ -326,8 +370,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--recipeTool
+  loadRecipeToolState() {
     this.store.dispatch(RecipeToolActions.loadRecipeTools());
     this.store.select(selectRecipeToolLoading).subscribe((state) => {
       this.store.select(selectRecipeToolError).subscribe((error) => {
@@ -340,8 +385,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--step
+  loadStepState() {
     this.store.dispatch(StepActions.loadSteps());
     this.store.select(selectStepLoading).subscribe((state) => {
       this.store.select(selectStepError).subscribe((error) => {
@@ -354,8 +400,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--recipeStep
+  loadRecipeStepState() {
     this.store.dispatch(RecipeStepActions.loadRecipeSteps());
     this.store.select(selectLoadingRecipeStep).subscribe((state) => {
       this.store.select(selectErrorRecipeStep).subscribe((error) => {
@@ -368,8 +415,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--friendship
+  loadFriendshipState() {
     this.store.dispatch(FriendshipActions.loadFriendships());
     this.store.select(selectFriendshipLoading).subscribe((state) => {
       this.store.select(selectFriendshipError).subscribe((error) => {
@@ -382,8 +430,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--followship
+  loadFollowshipState() {
     this.store.dispatch(FollowshipActions.loadFollowships());
     this.store.dispatch(FollowshipActions.loadFollowers());
     this.store.select(selectFollowshipLoading).subscribe((state) => {
@@ -397,8 +446,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--profile
+  loadProfileState() {
     this.store.dispatch(ProfileActions.loadFollowers());
     this.store.dispatch(ProfileActions.loadFollowing());
     this.store.dispatch(ProfileActions.loadProfile({}));
@@ -416,8 +466,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--shoppingList
+  loadShoppingListState() {
     this.store.dispatch(ShoppingListActions.loadShoppingLists());
     this.store.select(selectShoppingListLoading).subscribe((state) => {
       this.store.select(selectShoppingListError).subscribe((error) => {
@@ -430,8 +481,9 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
 
-    //--shoppingListRecipe
+  loadShoppingListRecipeState() {
     this.store.dispatch(ShoppingListRecipeActions.loadAllShoppingListRecipes());
     this.store.select(selectShoppingListRecipeLoading).subscribe((state) => {
       this.store.select(selectShoppingListRecipeError).subscribe((error) => {
