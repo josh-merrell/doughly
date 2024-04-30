@@ -20,9 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
 import { Capacitor } from '@capacitor/core';
-import {
-  FacebookLogin,
-} from '@capacitor-community/facebook-login';
+import { FacebookLogin } from '@capacitor-community/facebook-login';
 import { AuthError } from '@supabase/supabase-js';
 
 declare const google: any;

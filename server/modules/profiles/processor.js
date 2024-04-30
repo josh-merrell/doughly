@@ -83,6 +83,7 @@ module.exports = ({ db, dbPublic }) => {
       followerCount: followerIDs.length ? followerIDs.length : 0,
       recipes: recipesWithSubscriptions,
       timelineEvents: [],
+      onboardingState: profile.onboardingState,
       checkIngredientStock: profile.checkIngredientStock,
       autoDeleteExpiredStock: profile.autoDeleteExpiredStock,
       notifyOnLowStock: profile.notifyOnLowStock,
