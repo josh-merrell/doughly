@@ -16,6 +16,7 @@ export interface Profile {
   name_last?: string;
   photo_url?: string;
   joined_at?: Date;
+  onboardingState?: number;
   checkIngredientStock?: boolean;
   autoDeleteExpiredStock?: boolean;
   notifyOnLowStock?: string;
@@ -252,6 +253,7 @@ export class AuthService {
       user_id: newUser.id,
       email: newUser.email,
       joined_at: new Date(),
+      onboardingState: 1,
       checkIngredientStock: true,
       autoDeleteExpiredStock: true,
       notifyOnLowStock: 'Enabled',
@@ -280,6 +282,7 @@ export class AuthService {
               user_id: data[0].user_id,
               email: data[0].email,
               username: data[0].username,
+              onboardingState: data[0].onboardingState,
             });
           }
         });

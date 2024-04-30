@@ -16,6 +16,7 @@ export interface Profile {
   recipes: Recipe[];
   timelineEvents: TimelineEvent[];
   friendshipStatus?: string;
+  onboardingState: number;
 
   // settings
   checkIngredientStock: boolean;
