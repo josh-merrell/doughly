@@ -1,4 +1,9 @@
-<div class="relative flex h-full w-full flex-col items-center px-dl-4">
+<div
+  class="relative flex h-full w-full flex-col items-center px-dl-4"
+  [ngClass]="{
+    'blur-sm': testModalOpen()
+  }"
+>
   <!-- Search, Add-->
   <div class="mx-dl-7 mb-dl-6 flex items-center">
     <!-- Search Bar -->
