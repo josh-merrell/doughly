@@ -18,6 +18,9 @@ import { Recipe } from '../../state/recipe/recipe-state';
 import { selectDiscoverRecipes } from '../../state/recipe/recipe-selectors';
 import { selectRecipeByID } from '../../state/recipe/recipe-selectors';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { MatDialog } from '@angular/material/dialog';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { StringsService } from 'src/app/shared/utils/strings';
 @Component({
   selector: 'dl-discover-recipes',
   standalone: true,
@@ -26,6 +29,7 @@ import { selectProfile } from 'src/app/profile/state/profile-selectors';
 })
 export class DiscoverRecipesComponent {
   public discoverRecipes: WritableSignal<Recipe[]> = signal([]);
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
   public selectedCategory: WritableSignal<RecipeCategory | null> = signal(null);
   private categories: WritableSignal<RecipeCategory[]> = signal([]);
   public dayCategories: WritableSignal<RecipeCategory[]> = signal([]);
@@ -35,8 +39,15 @@ export class DiscoverRecipesComponent {
   constructor(
     private store: Store,
     private router: Router,
-    private el: ElementRef
+    private el: ElementRef,
+    private dialog: MatDialog,
+    private stringsService: StringsService
   ) {
+    effect(() => {
+      const profile = this.profile();
+      if (!profile || profile.onboardingState === 0) return;
+      this.onboardingHandler(profile.onboardingState);
+    });
     effect(
       () => {
         const categories = this.categories();
@@ -125,4 +136,26 @@ export class DiscoverRecipesComponent {
     this.worldCategories.set(worldCategories);
   }
   // ********************************
+
+  onboardingHandler(onboardingState: number) {
+    if (onboardingState === 1) {
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.welcomeToDoughly,
+        },
+        position: {
+          top: '40%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.showOnboardingBadge.set(true);
+        console.log('showOnboardingBadge', this.showOnboardingBadge());
+      });
+    }
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(this.profile().onboardingState);
+  }
 }
