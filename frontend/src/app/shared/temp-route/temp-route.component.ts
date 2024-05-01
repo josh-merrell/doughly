@@ -21,7 +21,7 @@ export class TempRouteComponent {
     const profile = this.authService.profile();
     switch (profile?.onboardingState) {
       case 1:
-        this.router.navigate(['/social/friends']);
+        this.router.navigate(['/recipes/discover']);
         break;
       default: // onboardingState 0 (done)
         if (path) {
