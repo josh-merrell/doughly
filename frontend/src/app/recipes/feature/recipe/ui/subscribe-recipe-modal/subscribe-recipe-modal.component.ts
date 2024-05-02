@@ -32,6 +32,11 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { Router } from '@angular/router';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { SortingService } from 'src/app/shared/utils/sortingService';
+import { StringsService } from 'src/app/shared/utils/strings';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { selectUpdating } from 'src/app/profile/state/profile-selectors';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-subscribe-recipe-modal',
@@ -64,15 +69,23 @@ export class SubscribeRecipeModalComponent {
   public userIngredients: WritableSignal<any[]> = signal([]);
   public userTools: WritableSignal<any[]> = signal([]);
 
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+  private onboarding: boolean = false;
+
   constructor(
     public dialogRef: MatDialogRef<SubscribeRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public store: Store,
     public recipeService: RecipeService,
     public dialog: MatDialog,
-    private router: Router, 
+    private router: Router,
     private unitService: UnitService,
-    private sortingService: SortingService
+    private sortingService: SortingService,
+    private strings: StringsService,
+    private extraStuffService: ExtraStuffService
   ) {
     effect(
       () => {
@@ -124,7 +137,6 @@ export class SubscribeRecipeModalComponent {
 
   ngOnInit(): void {
     if (!this.data.tools) this.toolsReady.set(true);
-
     this.recipe = this.data.recipe;
     this.data.ingredients.map((i: any) => {
       i.userIngredientID = 0;
@@ -137,15 +149,22 @@ export class SubscribeRecipeModalComponent {
     });
     this.steps = this.data.steps;
     this.author = this.data.author;
-    this.initials = this.author.nameFirst[0] + this.author.nameLast[0];
+    if (!this.author) {
+      //close the modal
+      this.dialogRef.close('error');
+    }
+    this.onboarding = this.data.onboarding;
+    this.initials =
+      this.author.nameFirst && this.author.nameLast
+        ? this.author.nameFirst[0] + this.author.nameLast[0]
+        : 'NA';
 
     // Load User Kitchen Items
     this.store.select(selectIngredients).subscribe((ingredients) => {
       // sort by name then set
-      const sortedIngredients = this.sortingService.applySorts(
-            ingredients,
-            [{ prop: 'name', sortOrderIndex: 0, direction: 'asc' }]
-          );
+      const sortedIngredients = this.sortingService.applySorts(ingredients, [
+        { prop: 'name', sortOrderIndex: 0, direction: 'asc' },
+      ]);
       this.userIngredients.set(sortedIngredients);
       // Iterate over each source ingredient and premap any where the name matches that of a user ingredient
       const updatedIngredients = this.ingredients().map((sourceIngredient) => {
@@ -156,7 +175,6 @@ export class SubscribeRecipeModalComponent {
         if (matchingUserIngredient) {
           sourceIngredient.userIngredientID =
             matchingUserIngredient.ingredientID;
-
         }
         return sourceIngredient;
       });
@@ -186,7 +204,11 @@ export class SubscribeRecipeModalComponent {
 
     // Get unit ratio suggestions for any ingredient that has a userIngredientID and no userPurchaseUnitRatio
     this.getUnitRatios();
-    
+
+    // initialize onboarding
+    if (this.onboarding) {
+      this.onboardingHandler(4);
+    }
   }
 
   getIngredientPlaceholder(sourceIngredient: any): string {
@@ -423,8 +445,38 @@ export class SubscribeRecipeModalComponent {
                   },
                 });
               } else {
+                // advance onboarding if it is active
+                if (this.onboarding) {
+                  this.store.dispatch(
+                    ProfileActions.updateProfileProperty({
+                      property: 'onboardingState',
+                      value: 5,
+                    })
+                  );
+                  this.store
+                    .select(selectUpdating)
+                    .pipe(
+                      filter((updating) => !updating),
+                      take(1)
+                    )
+                    .subscribe(() => {
+                      this.store
+                        .select(selectError)
+                        .pipe(take(1))
+                        .subscribe((error) => {
+                          if (error) {
+                            console.error(
+                              `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+                            );
+                          }
+                        });
+                    });
+                }
                 this.store.select(selectNewRecipeID).subscribe((recipeID) => {
                   if (recipeID) {
+                    this.extraStuffService.onboardingSubscribedRecipe.set(
+                      recipeID
+                    );
                     this.router.navigate(['/recipe', recipeID]);
                   }
                   this.dialogRef.close('success');
@@ -434,5 +486,30 @@ export class SubscribeRecipeModalComponent {
             });
         });
     }
+  }
+
+  onboardingHandler(state: number) {
+    if (state !== 4) return;
+    this.onboardingModalOpen.set(true);
+    this.reopenOnboardingModal.set(false);
+    const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+      data: {
+        message: this.strings.onboardingStrings.subscribeRecipeModal,
+        currentStep: 4,
+        showNextButton: false,
+      },
+      position: {
+        top: '50%',
+      },
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.onboardingModalOpen.set(false);
+      this.showOnboardingBadge.set(true);
+    });
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(4);
   }
 }
