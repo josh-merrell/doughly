@@ -32,6 +32,9 @@ import { RecipeStepsModalComponent } from '../../ui/recipe-step/recipe-steps-mod
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { filter, map, takeUntil } from 'rxjs';
+import { StringsService } from 'src/app/shared/utils/strings';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -61,6 +64,13 @@ export class RecipeListComponent {
   public listView: WritableSignal<string> = signal('all');
   public searchFilter: WritableSignal<string> = signal('');
   public categories: WritableSignal<RecipeCategory[]> = signal([]);
+  private profile: WritableSignal<any> = signal(null);
+
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+
   public filteredCategories = computed(() => {
     const searchFilter = this.searchFilter();
     const categories = this.categories();
@@ -112,8 +122,20 @@ export class RecipeListComponent {
     private store: Store,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private stringsService: StringsService
   ) {
+    effect(
+      () => {
+        const profile = this.profile();
+        if (!profile || profile.onboardingState === 0) return;
+        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          this.onboardingHandler(profile.onboardingState);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+
     effect(
       () => {
         const filteredCategories = this.filteredCategories();
@@ -157,6 +179,9 @@ export class RecipeListComponent {
         this.checkUrlAndAct(navigationEndEvent.urlAfterRedirects);
       });
 
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.store.select(selectRecipes).subscribe((recipes) => {
       recipes = recipes.filter((recipe) => {
         return this.type === 'subscription'
@@ -209,7 +234,7 @@ export class RecipeListComponent {
   }
   onAddClick(): void {
     // update url to include '/add' if it's not already there
-    this.location.go('/recipes/created/add')
+    this.location.go('/recipes/created/add');
 
     const dialogRef = this.dialog.open(AddRecipeModalComponent, {
       data: {
@@ -227,7 +252,7 @@ export class RecipeListComponent {
         });
       }
       // remove '/add' from the url
-      this.location.go('/recipes/created')
+      this.location.go('/recipes/created');
     });
   }
   categoryCardClick(category: RecipeCategory): void {
@@ -316,4 +341,33 @@ export class RecipeListComponent {
   }
 
   // ***************************************************
+
+  onboardingHandler(onboardingState: number): void {
+    if (onboardingState === 8) {
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
+      this.onboardingModalOpen.set(true);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.recipesCreatedPage,
+          currentStep: 8,
+          showNextButton: true,
+        },
+        position: {
+          bottom: '30%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    } else if (onboardingState === 9) {
+      this.router.navigate(['/recipes/created/add']);
+    }
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(this.profile().onboardingState);
+  }
 }

@@ -24,18 +24,25 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { FriendRequestsModalComponent } from './ui/friend-requests-modal/friend-requests-modal.component';
 import { AddFriendModalComponent } from './ui/add-friend-modal/add-friend-modal.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
-import { TestComponentModalComponent } from './ui/test-component-modal/test-component-modal.component';
+import { StringsService } from 'src/app/shared/utils/strings';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 
 @Component({
   selector: 'dl-friends',
   standalone: true,
-  imports: [CommonModule, FriendCardComponent, TestComponentModalComponent],
+  imports: [CommonModule, FriendCardComponent],
   templateUrl: './friends.component.html',
 })
 export class FriendsComponent {
   public friendships: WritableSignal<Friendship[]> = signal([]);
   public friends: WritableSignal<Profile[]> = signal([]);
-  public testModalOpen: WritableSignal<boolean> = signal(false);
+  private profile: WritableSignal<any> = signal(null);
+
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+
   public filteredFriends = computed(() => {
     const searchFilter = this.searchFilter();
     let friends = this.friends();
@@ -57,24 +64,23 @@ export class FriendsComponent {
   constructor(
     private store: Store,
     public dialog: MatDialog,
-    private authService: AuthService
-  ) {}
+    private stringsService: StringsService,
+  ) {
+    effect(
+      () => {
+        const profile = this.profile();
+        if (!profile || profile.onboardingState === 0) return;
+        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          this.onboardingHandler(profile.onboardingState);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   ngOnInit(): void {
-    console.log('friends component init');
     this.store.select(selectProfile).subscribe((profile) => {
-      console.log('profile', profile);
-      if (profile.onboardingState === 1) {
-        console.log('opening test modal');
-        this.testModalOpen.set(true);
-        const dialogRef = this.dialog.open(TestComponentModalComponent, {
-          width: '40%',
-          maxWidth: '500px',
-        });
-        dialogRef.afterClosed().subscribe(() => {
-          this.testModalOpen.set(false);
-        });
-      }
+      this.profile.set(profile);
     });
     this.store.select(selectFriendships).subscribe((friendships: any) => {
       this.friendships.set(friendships);
@@ -131,5 +137,50 @@ export class FriendsComponent {
 
   updateSearchFilter(searchFilter: string): void {
     this.searchFilter.set(searchFilter);
+  }
+
+  onboardingHandler(onboardingState: number): void {
+    if (onboardingState === 6) {
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
+      this.onboardingModalOpen.set(true);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.socialPageOverview,
+          currentStep: 6,
+          showNextButton: true,
+        },
+        position: {
+          bottom: '70%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    } else if (onboardingState === 7) {
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
+      this.onboardingModalOpen.set(true);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.shoppingPageOverview,
+          currentStep: 7,
+          showNextButton: false,
+        },
+        position: {
+          bottom: '40%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    }
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(this.profile().onboardingState);
   }
 }

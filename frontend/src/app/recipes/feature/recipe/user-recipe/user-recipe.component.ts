@@ -61,6 +61,8 @@ import { selectShoppingLists } from 'src/app/groceries/state/shopping-list-selec
 import { selectShoppingListRecipes } from 'src/app/groceries/state/shopping-list-recipe-selectors';
 // import { Share } from '/node_modules/@capacitor/share';
 import { Clipboard } from '@capacitor/clipboard';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { StringsService } from 'src/app/shared/utils/strings';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -107,6 +109,11 @@ export class UserRecipeComponent {
   public recipeIngredientsNeedReview: WritableSignal<boolean> = signal(false);
   public profile: WritableSignal<Profile | null> = signal(null);
 
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+
   //****** Usage Logs ******
   //default datestring 30 days prior
   defaultDateStr = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
@@ -145,7 +152,8 @@ export class UserRecipeComponent {
     private router: Router,
     private recipeService: RecipeService,
     private profileService: ProfileService,
-    private fractionService: FractionService
+    private fractionService: FractionService,
+    private stringsService: StringsService
   ) {
     effect(
       () => {
@@ -259,6 +267,17 @@ export class UserRecipeComponent {
     effect(() => {
       this.recipeService.loadUses(this.recipeID(), this.logsAfterDate());
     });
+
+    effect(
+      () => {
+        const profile = this.profile();
+        if (!profile || profile.onboardingState === 0) return;
+        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          this.onboardingHandler(profile.onboardingState);
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit(): void {
@@ -667,24 +686,6 @@ export class UserRecipeComponent {
     });
   }
   useRecipe() {
-    // const dialogRef = this.dialog.open(UseRecipeModalComponent, {
-    //   data: {
-    //     recipeName: this.recipe().title,
-    //     recipeID: this.recipeID(),
-    //     logsAfterDate: this.logsAfterDate(),
-    //   },
-    // });
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result === 'cancel') return;
-    //   if (result === 'success') {
-    //     this.dialog.open(ConfirmationModalComponent, {
-    //       maxWidth: '380px',
-    //       data: {
-    //         confirmationMessage: 'Recipe used successfully',
-    //       },
-    //     });
-    //   }
-    // });
     this.router.navigate(['/recipe/using/' + this.recipeID()]);
   }
   editRecipeSteps() {
@@ -734,9 +735,7 @@ export class UserRecipeComponent {
     console.log('Share clicked');
     await Clipboard.write({
       // this will send the social crawler to get the link preview details for the recipe. Users will be redirected to the app.
-      string: `${
-        environment.BACKEND
-      }/link-previews/recipe/${this.recipeID()}`,
+      string: `${environment.BACKEND}/link-previews/recipe/${this.recipeID()}`,
     });
 
     this.dialog.open(ConfirmationModalComponent, {
@@ -748,4 +747,30 @@ export class UserRecipeComponent {
   }
 
   //***************************************************
+
+  onboardingHandler(state: number) {
+    if (state === 5) {
+      this.onboardingModalOpen.set(true);
+      this.reopenOnboardingModal.set(false);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.subscribeRecipePage,
+          currentStep: 5,
+          showNextButton: false,
+        },
+        position: {
+          top: '10%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    }
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(this.profile()!.onboardingState);
+  }
 }
