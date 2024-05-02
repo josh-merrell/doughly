@@ -34,6 +34,9 @@ import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { FractionService } from 'src/app/shared/utils/fractionService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { StringsService } from 'src/app/shared/utils/strings';
 
 interface displayIngredientsByComponent {
   noComponent: any[];
@@ -61,6 +64,13 @@ export class PublicRecipeComponent {
   ingredients: WritableSignal<any[]> = signal([]);
   recipeIngredients: WritableSignal<RecipeIngredient[]> = signal([]);
   recipeSubscription: WritableSignal<any> = signal(null);
+  private profile: WritableSignal<any> = signal(null);
+
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+
   enhancedIngredients = computed(() => {
     const recipeIngredients = this.recipeIngredients();
     const ingredients = this.ingredients();
@@ -181,8 +191,21 @@ export class PublicRecipeComponent {
     private recipeStepService: RecipeStepService,
     private stepService: StepService,
     private fractionService: FractionService,
-    private authService: AuthService
+    private authService: AuthService,
+    private stringsService: StringsService
   ) {
+    // handle onboarding
+    effect(
+      () => {
+        const profile = this.profile();
+        if (!profile || profile.onboardingState === 0) return;
+        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          this.onboardingHandler(profile.onboardingState);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+
     // if user is the author, redirect to the recipe page
     effect(() => {
       const recipeID = this.recipeID();
@@ -290,6 +313,9 @@ export class PublicRecipeComponent {
   }
 
   ngOnInit(): void {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.route.paramMap.subscribe((params) => {
       this.recipeID.set(Number(params.get('recipeID')!));
     });
@@ -322,6 +348,7 @@ export class PublicRecipeComponent {
           tools: this.tools(),
           steps: this.steps(),
           author: this.author(),
+          onboarding: this.profile().onboardingState === (3 || 4)
         },
         width: '90%',
         maxWidth: '640px',
@@ -338,5 +365,34 @@ export class PublicRecipeComponent {
         }
       });
     }
+  }
+
+  onboardingHandler(onboardingState: number) {
+    if (onboardingState === 3) {
+      this.onboardingModalOpen.set(true);
+      this.reopenOnboardingModal.set(false);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.publicRecipePage,
+          currentStep: 3,
+          showNextButton: false,
+        },
+        position: {
+          top: '40%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    }
+    if (onboardingState === 4) {
+      this.onSubscribeClick();
+    }
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(this.profile().onboardingState);
   }
 }

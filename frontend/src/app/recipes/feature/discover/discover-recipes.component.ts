@@ -21,6 +21,14 @@ import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { MatDialog } from '@angular/material/dialog';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { StringsService } from 'src/app/shared/utils/strings';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { filter, take } from 'rxjs';
+import {
+  selectError,
+  selectUpdating,
+} from 'src/app/profile/state/profile-selectors';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+
 @Component({
   selector: 'dl-discover-recipes',
   standalone: true,
@@ -29,25 +37,35 @@ import { StringsService } from 'src/app/shared/utils/strings';
 })
 export class DiscoverRecipesComponent {
   public discoverRecipes: WritableSignal<Recipe[]> = signal([]);
-  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
   public selectedCategory: WritableSignal<RecipeCategory | null> = signal(null);
   private categories: WritableSignal<RecipeCategory[]> = signal([]);
   public dayCategories: WritableSignal<RecipeCategory[]> = signal([]);
   public worldCategories: WritableSignal<RecipeCategory[]> = signal([]);
   private profile: WritableSignal<any> = signal(null);
 
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+
   constructor(
     private store: Store,
     private router: Router,
     private el: ElementRef,
     private dialog: MatDialog,
-    private stringsService: StringsService
+    private stringsService: StringsService,
+    private extraStuffService: ExtraStuffService
   ) {
-    effect(() => {
-      const profile = this.profile();
-      if (!profile || profile.onboardingState === 0) return;
-      this.onboardingHandler(profile.onboardingState);
-    });
+    effect(
+      () => {
+        const profile = this.profile();
+        if (!profile || profile.onboardingState === 0) return;
+        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          this.onboardingHandler(profile.onboardingState);
+        }
+      },
+      { allowSignalWrites: true }
+    );
     effect(
       () => {
         const categories = this.categories();
@@ -97,6 +115,38 @@ export class DiscoverRecipesComponent {
   }
 
   onRecipeCardClick(recipeID: number): void {
+    if (this.profile().onboardingState === 1) {
+      this.onboardingHandler(1);
+      return;
+    } else if (this.profile().onboardingState === 2) {
+      //save selected recipe to extraStuffService
+      this.extraStuffService.onboardingPublicRecipe.set(recipeID);
+      //need to advance onboarding state to 3
+      this.store.dispatch(
+        ProfileActions.updateProfileProperty({
+          property: 'onboardingState',
+          value: 3,
+        })
+      );
+      this.store
+        .select(selectUpdating)
+        .pipe(
+          filter((updating) => !updating),
+          take(1)
+        )
+        .subscribe(() => {
+          this.store
+            .select(selectError)
+            .pipe(take(1))
+            .subscribe((error) => {
+              if (error) {
+                console.error(
+                  `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+                );
+              }
+            });
+        });
+    }
     this.store
       .select(selectRecipeByID(recipeID))
       .subscribe((recipe: unknown) => {
@@ -139,19 +189,40 @@ export class DiscoverRecipesComponent {
 
   onboardingHandler(onboardingState: number) {
     if (onboardingState === 1) {
+      this.reopenOnboardingModal.set(true);
+      this.onboardingModalOpen.set(true);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
           message: this.stringsService.onboardingStrings.welcomeToDoughly,
+          currentStep: 1,
+          showNextButton: true,
         },
         position: {
-          top: '40%',
+          top: '50%',
         },
       });
       dialogRef.afterClosed().subscribe(() => {
         this.showOnboardingBadge.set(true);
-        console.log('showOnboardingBadge', this.showOnboardingBadge());
+        this.onboardingModalOpen.set(false);
       });
-    }
+    } else if (onboardingState === 2) {
+      this.reopenOnboardingModal.set(false);
+      this.onboardingModalOpen.set(true);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.discoverPageOverview,
+          currentStep: 2,
+          showNextButton: false,
+        },
+        position: {
+          top: '20%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    } else return;
   }
 
   onboardingBadgeClick() {

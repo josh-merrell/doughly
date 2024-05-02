@@ -44,6 +44,10 @@ import { ShoppingListActions } from '../../state/shopping-list-actions';
 import { Router } from '@angular/router';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { StringsService } from 'src/app/shared/utils/strings';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
 
 @Component({
   selector: 'dl-draft-page',
@@ -141,14 +145,31 @@ export class DraftPageComponent {
   allFetchesComplete: WritableSignal<boolean> = signal(false);
   selectedRecipeID: WritableSignal<number> = signal(0);
   selectedSLIngrID: WritableSignal<number> = signal(0);
+  private profile: WritableSignal<any> = signal(null);
+
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(true);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
 
   constructor(
     public dialog: MatDialog,
     private renderer: Renderer2,
     private store: Store,
     private recipeService: RecipeService,
-    public router: Router
+    public router: Router,
+    private stringsService: StringsService
   ) {
+    effect(
+      () => {
+        const profile = this.profile();
+        if (!profile || profile.onboardingState === 0) return;
+        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          this.onboardingHandler(profile.onboardingState);
+        }
+      },
+      { allowSignalWrites: true }
+    );
     effect(
       () => {
         const displayRecipes = this.displayRecipes();
@@ -239,6 +260,9 @@ export class DraftPageComponent {
 
   // LIFECYCLE HOOKS  *********************************
   ngOnInit(): void {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.store.select(selectShoppingLists).subscribe((shoppingLists: any) => {
       this.shoppingLists.set(shoppingLists);
     });
@@ -317,6 +341,12 @@ export class DraftPageComponent {
               confirmationMessage: 'Recipe added to shopping list',
             },
           });
+          this.store.dispatch(
+            ProfileActions.updateProfileProperty({
+              property: 'onboardingState',
+              value: 8,
+            })
+          );
         }
         this.store.dispatch(
           ShoppingListRecipeActions.loadShoppingListRecipes({
@@ -624,5 +654,34 @@ export class DraftPageComponent {
         },
       });
     }
+  }
+
+  onboardingHandler(onboardingState: number) {
+    if (onboardingState === 7) {
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
+      this.onboardingModalOpen.set(true);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.shoppingPageOverview,
+          currentStep: 7,
+          showNextButton: false,
+        },
+        position: {
+          bottom: '50%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    } else if (onboardingState === 8) {
+      this.router.navigate(['/recipes/created']);
+    }
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(this.profile().onboardingState);
   }
 }
