@@ -1,5 +1,6 @@
 <div class="flex flex-col rounded-dl-2 bg-dl-blue-10 p-dl-4">
-  <div class="mb-dl-3 flex">
+  <mat-spinner class="w-full my-app-custom-spinner" *ngIf="isEditing()"></mat-spinner>
+  <div class="mb-dl-3 flex" *ngIf="!isEditing()">
     <div class="flex-shrink-0">
       <svg
         class="h-11 w-8 text-dl-blue-7"
@@ -42,11 +43,11 @@
         </g>
       </svg>
     </div>
-    <div class="ml-dl-3 flex w-full flex-col items-center">
-      <p class="text-dl-6 font-dl-3 text-dl-blue-2">{{ data.message }}</p>
+    <div class="ml-dl-3 flex w-full flex-col items-center" *ngIf="!isEditing()">
+      <p class="text-dl-5 font-dl-3 text-dl-blue-2">{{ data.message }}</p>
     </div>
   </div>
-  <div class="flex justify-between items-center">
+  <div class="flex justify-between items-center" *ngIf="!isEditing()">
     <!-- spacer div-->
     <div class="flex flex-grow"></div>
     <ng-container *ngFor="let item of arrayFromCurrentStep()" >
