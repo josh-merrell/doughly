@@ -42,17 +42,17 @@ export const routes: Route[] = [
   {
     path: 'groceries',
     component: GroceriesPageComponent,
-    canActivate: [ProfileGuard, ProfileGuard],
+    canActivate: [ProfileGuard, stateLoaded],
     children: [
       {
         path: 'draft/:shoppingListID',
         component: DraftPageComponent,
-        canActivate: [ProfileGuard, ProfileGuard],
+        canActivate: [ProfileGuard, stateLoaded],
       },
       {
         path: 'shopping/:shoppingListID',
         component: ShoppingPageComponent,
-        canActivate: [ProfileGuard, ProfileGuard],
+        canActivate: [ProfileGuard, stateLoaded],
       },
       {
         path: '',

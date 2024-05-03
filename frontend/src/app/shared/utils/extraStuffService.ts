@@ -8,6 +8,7 @@ export class ExtraStuffService {
   public stateToLoad: WritableSignal<string> = signal('');
   public onboardingPublicRecipe: WritableSignal<number> = signal(0);
   public onboardingSubscribedRecipe: WritableSignal<number> = signal(0);
+  public onboardingVisionRecipe: WritableSignal<number> = signal(0);
 
   constructor(private http: HttpClient) {
     //     effect(() => {
