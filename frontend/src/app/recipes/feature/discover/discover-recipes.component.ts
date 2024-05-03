@@ -188,6 +188,8 @@ export class DiscoverRecipesComponent {
   // ********************************
 
   onboardingHandler(onboardingState: number) {
+    if (!onboardingState) return;
+    console.log('STATE: ', onboardingState);
     if (onboardingState === 1) {
       this.reopenOnboardingModal.set(true);
       this.onboardingModalOpen.set(true);
@@ -222,7 +224,7 @@ export class DiscoverRecipesComponent {
         this.onboardingModalOpen.set(false);
         this.showOnboardingBadge.set(true);
       });
-    } else return;
+    } else this.router.navigate(['/tempRoute']);
   }
 
   onboardingBadgeClick() {

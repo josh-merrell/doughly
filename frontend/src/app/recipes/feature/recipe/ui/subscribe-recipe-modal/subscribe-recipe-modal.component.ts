@@ -153,6 +153,7 @@ export class SubscribeRecipeModalComponent {
       //close the modal
       this.dialogRef.close('error');
     }
+    console.log('this.data', this.data);
     this.onboarding = this.data.onboarding;
     this.initials =
       this.author.nameFirst && this.author.nameLast

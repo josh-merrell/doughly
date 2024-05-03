@@ -146,7 +146,7 @@ export class AddRecipeModalComponent {
   onboardingHandler(onboardingState: number): void {
     if (onboardingState === 9) {
       this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
+      this.reopenOnboardingModal.set(true);
       this.onboardingModalOpen.set(true);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
@@ -164,7 +164,7 @@ export class AddRecipeModalComponent {
       });
     } else if (onboardingState === 10) {
       this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
+      this.reopenOnboardingModal.set(true);
       this.onboardingModalOpen.set(true);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
@@ -186,18 +186,21 @@ export class AddRecipeModalComponent {
       this.onboardingModalOpen.set(true);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
-          message: this.stringsService.onboardingStrings.recipeCreateImageButton,
+          message:
+            this.stringsService.onboardingStrings.recipeCreateImageButton,
           currentStep: 11,
           showNextButton: true,
         },
         position: {
-          bottom: '60%',
+          bottom: '70%',
         },
       });
       dialogRef.afterClosed().subscribe(() => {
         this.onboardingModalOpen.set(false);
         this.showOnboardingBadge.set(true);
       });
+    } else if (onboardingState === 12) {
+      this.router.navigate(['/recipes/created/add/vision']);
     }
   }
 

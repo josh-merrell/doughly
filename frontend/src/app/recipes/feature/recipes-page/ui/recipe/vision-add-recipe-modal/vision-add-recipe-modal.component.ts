@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, WritableSignal, signal } from '@angular/core';
+import { Component, WritableSignal, effect, signal } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Store } from '@ngrx/store';
@@ -17,6 +17,14 @@ import {
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { Router } from '@angular/router';
+import { StringsService } from 'src/app/shared/utils/strings';
+import {
+  selectProfile,
+  selectUpdating,
+} from 'src/app/profile/state/profile-selectors';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
@@ -34,6 +42,11 @@ export class VisionAddRecipeModalComponent {
   public sourceImageSelectedFileUrl: string | null = null;
   public sourceImagePresent: boolean = false;
 
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+
   // recipe photo upload
   public recipeImageBase64: any = '';
   photoURL!: string;
@@ -44,6 +57,7 @@ export class VisionAddRecipeModalComponent {
   public imageLoadFailed: boolean = false;
   public imagePresent: boolean = false;
   public isChecked = true;
+  public profile: WritableSignal<any> = signal(null);
 
   constructor(
     public dialogRef: MatDialogRef<VisionAddRecipeModalComponent>,
@@ -52,15 +66,28 @@ export class VisionAddRecipeModalComponent {
     public store: Store,
     public recipeProgressService: RecipeProgressService,
     private ngZone: NgZone,
-    private router: Router
-  ) {}
+    private router: Router,
+    private stringsService: StringsService,
+    private extraStuffService: ExtraStuffService
+  ) {
+    effect(
+      () => {
+        const profile = this.profile();
+        if (!profile || profile.onboardingState === 0) return;
+        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          this.onboardingHandler(profile.onboardingState);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   // for recipe source image
   async selectSourceImage() {
     const image = await Camera.getPhoto({
       quality: 100,
       allowEditing: false,
-      resultType: CameraResultType.DataUrl
+      resultType: CameraResultType.DataUrl,
     });
     const sourceImageBase64 = image.dataUrl;
 
@@ -73,6 +100,12 @@ export class VisionAddRecipeModalComponent {
     this.sourceImagePresent = true;
     this.sourceImageSelectedFile = file;
     this.sourceImageSelectedFileUrl = sourceImageBase64!;
+  }
+
+  ngOnInit() {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
   }
 
   // for recipe photo
@@ -227,6 +260,36 @@ export class VisionAddRecipeModalComponent {
                     if (!newRecipeID) {
                       this.dialogRef.close('success');
                     } else {
+                      //advance onboarding
+                      this.extraStuffService.onboardingVisionRecipe.set(
+                        newRecipeID.recipeID
+                      );
+                      if (this.profile().onboardingState === 12) {
+                        this.store.dispatch(
+                          ProfileActions.updateProfileProperty({
+                            property: 'onboardingState',
+                            value: 13,
+                          })
+                        );
+                        this.store
+                          .select(selectUpdating)
+                          .pipe(
+                            filter((updating) => !updating),
+                            take(1)
+                          )
+                          .subscribe(() => {
+                            this.store
+                              .select(selectError)
+                              .pipe(take(1))
+                              .subscribe((error) => {
+                                if (error) {
+                                  console.error(
+                                    `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+                                  );
+                                }
+                              });
+                          });
+                      }
                       //navigate to recipe page
                       this.router.navigate(['/recipe', newRecipeID.recipeID]);
                       this.dialog.closeAll();
@@ -250,5 +313,33 @@ export class VisionAddRecipeModalComponent {
   onDestroy() {
     this.removeFiles(false);
     this.recipeProgressService.stopListening();
+  }
+
+  onboardingHandler(onboardingState: number): void {
+    if (onboardingState === 12) {
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
+      if (this.onboardingModalOpen()) return;
+      this.onboardingModalOpen.set(true);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.recipeCreateImage,
+          currentStep: 12,
+          showNextButton: false,
+        },
+        position: {
+          top: '30%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    }
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(this.profile().onboardingState);
   }
 }

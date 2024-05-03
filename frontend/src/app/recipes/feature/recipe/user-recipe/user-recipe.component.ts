@@ -17,6 +17,7 @@ import {
   selectNewRecipeID,
   selectRecipeByID,
   selectSubscriptionByNewRecipeID,
+  selectUpdating,
 } from '../../../state/recipe/recipe-selectors';
 import { selectRecipeIngredientsByRecipeID } from '../../../state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
@@ -56,13 +57,18 @@ import JSConfetti from 'js-confetti';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { setReviewRecipe } from 'src/app/kitchen/state/kitchen-actions';
 import { selectReviewRecipeID } from 'src/app/kitchen/state/kitchen-selectors';
-import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import {
+  selectError,
+  selectProfile,
+} from 'src/app/profile/state/profile-selectors';
 import { selectShoppingLists } from 'src/app/groceries/state/shopping-list-selectors';
 import { selectShoppingListRecipes } from 'src/app/groceries/state/shopping-list-recipe-selectors';
 // import { Share } from '/node_modules/@capacitor/share';
 import { Clipboard } from '@capacitor/clipboard';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { StringsService } from 'src/app/shared/utils/strings';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { filter, take } from 'rxjs';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -765,6 +771,84 @@ export class UserRecipeComponent {
       dialogRef.afterClosed().subscribe(() => {
         this.onboardingModalOpen.set(false);
         this.showOnboardingBadge.set(true);
+      });
+    } else if (state === 13) {
+      this.onboardingModalOpen.set(true);
+      this.reopenOnboardingModal.set(false);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message:
+            this.stringsService.onboardingStrings.recipeCreateImageSuccess,
+          currentStep: 13,
+          showNextButton: true,
+        },
+        position: {
+          bottom: '70%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    } else if (state === 14) {
+      this.onboardingModalOpen.set(true);
+      this.reopenOnboardingModal.set(false);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message:
+            this.stringsService.onboardingStrings.recipeCreateCreditUsage,
+          currentStep: 14,
+          showNextButton: true,
+        },
+        position: {
+          bottom: '20%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    } else if (state === 15) {
+      this.onboardingModalOpen.set(true);
+      this.reopenOnboardingModal.set(false);
+      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+        data: {
+          message: this.stringsService.onboardingStrings.onboardingComplete,
+          currentStep: 15,
+          showNextButton: false,
+        },
+        position: {
+          bottom: '50%',
+        },
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(false);
+        // set onboardingState back to 0 (done)
+        this.store.dispatch(
+          ProfileActions.updateProfileProperty({
+            property: 'onboardingState',
+            value: 0,
+          })
+        );
+        this.store
+          .select(selectUpdating)
+          .pipe(
+            filter((updating) => !updating),
+            take(1)
+          )
+          .subscribe(() => {
+            this.store
+              .select(selectError)
+              .pipe(take(1))
+              .subscribe((error) => {
+                if (error) {
+                  console.error(
+                    `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+                  );
+                }
+              });
+          });
       });
     }
   }
