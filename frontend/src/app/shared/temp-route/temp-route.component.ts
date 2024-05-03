@@ -37,11 +37,14 @@ export class TempRouteComponent {
     });
     const path = this.redirectPathService.getPath();
     const profile = this.profile();
+    console.log('onboardingState: ', profile?.onboardingState);
     switch (profile?.onboardingState) {
-      case 1 || 2:
+      case 1:
+      case 2:
         this.router.navigate(['/recipes/discover']);
         break;
-      case 3 || 4:
+      case 3:
+      case 4:
         if (this.extraStuffService.onboardingPublicRecipe()) {
           this.router.navigate([
             '/recipe/public/' + this.extraStuffService.onboardingPublicRecipe(),
@@ -116,13 +119,13 @@ export class TempRouteComponent {
             '/recipe/' + this.extraStuffService.onboardingSubscribedRecipe(),
           ]);
         } else {
-          // set onboardingState back to 3 to have user select a recipe for routing again
+          // set onboardingState back to 2 to have user select a recipe for routing again
           this.isLoading.set(true);
           console.log('onboardingSubscribedRecipe not set');
           this.store.dispatch(
             ProfileActions.updateProfileProperty({
               property: 'onboardingState',
-              value: 3,
+              value: 2,
             })
           );
           this.store
@@ -142,7 +145,9 @@ export class TempRouteComponent {
                     );
                   } else {
                     this.isLoading.set(false);
-                    this.router.navigate(['/tempRoute'], { onSameUrlNavigation: 'reload' });
+                    this.router.navigate(['/recipes/discover'], {
+                      onSameUrlNavigation: 'reload',
+                    });
                   }
                 });
             });
@@ -157,17 +162,59 @@ export class TempRouteComponent {
       case 8:
         this.router.navigate(['/recipes/created']);
         break;
-      case 9 | 10 | 11:
+      case 9:
+      case 10:
+      case 11:
+        console.log(`FOUND ONBOARDING STATE: ${profile?.onboardingState}`);
         this.router.navigate(['/recipes/created/add']);
         break;
       case 12:
-        this.router.navigate(['/recipes/created/add/image']);
+        this.router.navigate(['/recipes/created/add/vision']);
+        break;
+      case 13:
+      case 14:
+      case 15:
+        if (this.extraStuffService.onboardingVisionRecipe()) {
+          this.router.navigate([
+            '/recipe/' + this.extraStuffService.onboardingVisionRecipe(),
+          ]);
+        } else {
+          // set onboardingState back to 12
+          this.isLoading.set(true);
+          this.store.dispatch(
+            ProfileActions.updateProfileProperty({
+              property: 'onboardingState',
+              value: 12,
+            })
+          );
+          this.store
+            .select(selectUpdating)
+            .pipe(
+              filter((updating) => !updating),
+              take(1)
+            )
+            .subscribe(() => {
+              this.store
+                .select(selectError)
+                .pipe(take(1))
+                .subscribe((error) => {
+                  if (error) {
+                    console.error(
+                      `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+                    );
+                  } else {
+                    this.isLoading.set(false);
+                    this.router.navigate(['/recipes/created/add/vision'], {
+                      onSameUrlNavigation: 'reload',
+                    });
+                  }
+                });
+            });
+        }
         break;
       default: // onboardingState 0 (done)
         if (path) {
           this.router.navigate([path], { onSameUrlNavigation: 'reload' });
-        } else {
-          this.router.navigate(['/']);
         }
     }
   }
