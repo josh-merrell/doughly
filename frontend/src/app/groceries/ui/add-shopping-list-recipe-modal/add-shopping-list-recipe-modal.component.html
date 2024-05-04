@@ -27,7 +27,7 @@
   </div>
 
   <!-- Search, Add-->
-  <div class="mx-dl-7 mb-dl-6 flex justify-between">
+  <div class="mx-dl-7 mb-dl-4 flex justify-between">
     <!-- Search Bar -->
     <div class="mt-dl-3 flex items-center">
       <svg
@@ -62,7 +62,7 @@
   </div>
 
   <!-- Planned Date-->
-  <div class="mb-dl-3 flex">
+  <div class="mb-dl-4 flex">
     <p class="text-dl-5 font-dl-2 text-dl-grey-4">Planned Date:</p>
     <div
       style="position: relative"
@@ -89,12 +89,10 @@
   </div>
 
   <!-- List -->
-  <div class="relative mb-dl-3 flex w-full flex-col items-center">
-    <div
-      *ngIf="view() === 'byCategory'"
-      class="flex max-h-dl-19 w-full flex-col items-center"
-      #scrollContainer
-    >
+  <div
+    class="relative mb-dl-5 flex h-dl-16 w-full flex-col items-center overflow-y-auto"
+  >
+    <div *ngIf="view() === 'byCategory'" #scrollContainer>
       <dl-recipe-category-card
         *ngFor="let category of displayCategories()"
         (click)="categoryCardClick(category)"
@@ -102,11 +100,7 @@
         [inModal]="true"
       ></dl-recipe-category-card>
     </div>
-    <div
-      *ngIf="view() === 'all'"
-      class="flex max-h-dl-19 w-full flex-col items-center"
-      #scrollContainer
-    >
+    <div *ngIf="view() === 'all'" #scrollContainer>
       <dl-recipe-card
         *ngFor="let recipe of displayRecipes()"
         (click)="recipeCardClick(recipe)"
@@ -122,10 +116,13 @@
   <button
     id="add-button"
     type="button"
-    class="mb-dl-4 block h-dl-5 w-11/12 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+    class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
     (click)="onAddClick()"
     [ngClass]="{
-      invisible: view() !== 'all' || selectedRecipeID() === 0 || isLoading()
+      'cursor-pointer bg-dl-pink-4':
+        view() === 'all' && selectedRecipeID() !== 0 && !isLoading(),
+      'bg-dl-grey-7':
+        view() !== 'all' || selectedRecipeID() === 0 || isLoading()
     }"
   >
     Add to Shopping List
