@@ -61,6 +61,7 @@ export class DiscoverRecipesComponent {
         const profile = this.profile();
         if (!profile || profile.onboardingState === 0) return;
         if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          console.log(`EFFECT CALLING HANDLER`);
           this.onboardingHandler(profile.onboardingState);
         }
       },
@@ -191,7 +192,7 @@ export class DiscoverRecipesComponent {
     if (!onboardingState) return;
     console.log('STATE: ', onboardingState);
     if (onboardingState === 1) {
-      this.reopenOnboardingModal.set(true);
+      this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
@@ -203,9 +204,12 @@ export class DiscoverRecipesComponent {
           top: '50%',
         },
       });
-      dialogRef.afterClosed().subscribe(() => {
+      dialogRef.afterClosed().subscribe((result) => {
         this.showOnboardingBadge.set(true);
         this.onboardingModalOpen.set(false);
+        if (result === 'nextClicked') {
+          this.onboardingCallback();
+        }
       });
     } else if (onboardingState === 2) {
       this.reopenOnboardingModal.set(false);
@@ -225,6 +229,12 @@ export class DiscoverRecipesComponent {
         this.showOnboardingBadge.set(true);
       });
     } else this.router.navigate(['/tempRoute']);
+  }
+
+  onboardingCallback() {
+    setTimeout(() => {
+      this.onboardingHandler(this.profile().onboardingState);
+    }, 1000);
   }
 
   onboardingBadgeClick() {

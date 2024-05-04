@@ -33,6 +33,9 @@ export class OnboardingMessageModalComponent {
   ) {}
 
   ngOnInit(): void {
+    console.log(
+      `ONBOARDING MODAL STEP: ${JSON.stringify(this.data.currentStep)}`
+    );
     this.showNextButton = this.data.showNextButton || false;
     this.currentStep = this.data.currentStep || 1;
   }
@@ -61,8 +64,8 @@ export class OnboardingMessageModalComponent {
                 `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
               );
             } else {
-              this.isEditing.set(false);
-              this.dialogRef.close();
+              // this.isEditing.set(false);
+              this.dialogRef.close('nextClicked');
             }
           });
       });
