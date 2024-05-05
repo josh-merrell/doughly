@@ -144,7 +144,7 @@ export class SubscribeRecipeModalComponent {
       this.ingredients.set([...this.ingredients(), i]);
     });
     this.data.tools.map((t: any) => {
-      t.userToolID = null;
+      t.userToolID = 0;
       this.tools.set([...this.tools(), t]);
     });
     this.steps = this.data.steps;
@@ -228,7 +228,7 @@ export class SubscribeRecipeModalComponent {
       );
       return matchedTool ? matchedTool.name : 'Select Tool';
     }
-    return 'Select Tool';
+    return 'Copy to Kitchen';
   }
 
   private findMatchingUserIngredient(

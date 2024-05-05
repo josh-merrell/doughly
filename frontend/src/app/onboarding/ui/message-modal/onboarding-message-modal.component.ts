@@ -35,6 +35,7 @@ import { States } from 'src/app/shared/utils/types';
   templateUrl: './onboarding-message-modal.component.html',
 })
 export class OnboardingMessageModalComponent {
+  public states = Object.values(States);
   isEditing: WritableSignal<boolean> = signal(false);
   usernameErrorMessage: WritableSignal<string> = signal('');
   nameFirstErrorMessage: WritableSignal<string> = signal('');
@@ -66,9 +67,6 @@ export class OnboardingMessageModalComponent {
   ) {}
 
   ngOnInit(): void {
-    console.log(
-      `ONBOARDING MODAL STEP: ${JSON.stringify(this.data.currentStep)}`
-    );
     this.showNextButton = this.data.showNextButton || false;
     this.currentStep.set(this.data.currentStep || 1);
     if (this.data.currentStep === 0.5) {
@@ -219,8 +217,8 @@ export class OnboardingMessageModalComponent {
         ProfileActions.updateProfile({
           profile: {
             username,
-            name_last: nameFirst,
-            name_first: nameLast,
+            name_first: nameFirst,
+            name_last: nameLast,
             city,
             state,
             onboardingState: 1,
@@ -240,7 +238,7 @@ export class OnboardingMessageModalComponent {
             .subscribe((error) => {
               if (error) {
                 console.error(
-                  `Error updating profile: ${error.message}, CODE: ${error.statusCode}`
+                  `Error updating profile: ${error.message}, CODE: ${error.statusCode}, RAW: ${JSON.stringify(error)}`
                 );
                 this.submitFailureMessage.set('Error updating profile');
               } else {
@@ -266,7 +264,7 @@ export class OnboardingMessageModalComponent {
       username: [
         {
           value: this.data.username || '',
-          disabled: this.data.username !== '',
+          disabled: this.data.username !== '' && this.data.username !== null,
         },
         Validators.required,
       ],

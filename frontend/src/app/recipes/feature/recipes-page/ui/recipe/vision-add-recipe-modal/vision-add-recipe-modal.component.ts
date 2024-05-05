@@ -45,7 +45,7 @@ export class VisionAddRecipeModalComponent {
   // Onboarding
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
   public onboardingModalOpen: WritableSignal<boolean> = signal(false);
-  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
 
   // recipe photo upload
   public recipeImageBase64: any = '';
@@ -104,6 +104,9 @@ export class VisionAddRecipeModalComponent {
 
   ngOnInit() {
     this.store.select(selectProfile).subscribe((profile) => {
+      if (profile && profile.onboardingState !== 0) {
+        this.showOnboardingBadge.set(true);
+      }
       this.profile.set(profile);
     });
   }
@@ -317,10 +320,10 @@ export class VisionAddRecipeModalComponent {
 
   onboardingHandler(onboardingState: number): void {
     if (onboardingState === 12) {
-      this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
       if (this.onboardingModalOpen()) return;
       this.onboardingModalOpen.set(true);
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
           message: this.stringsService.onboardingStrings.recipeCreateImage,

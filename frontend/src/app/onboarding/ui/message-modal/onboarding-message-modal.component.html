@@ -157,7 +157,7 @@
           </div>
         </div>
 
-        <!-- State -->
+        <!-- State
         <div id="form-state">
           <label class="mb-dl-4 text-dl-5 font-dl-3 text-dl-blue-1" for="state"
             >State</label
@@ -168,6 +168,32 @@
               formControlName="state"
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
+            <div
+              [ngClass]="{
+                invisible: !stateErrorMessage()
+              }"
+              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+            >
+              {{ stateErrorMessage() }}
+            </div>
+          </div>
+        </div> -->
+
+        <!-- State -->
+        <div id="form-state">
+          <label class="mb-dl-4 text-dl-5 font-dl-3 text-dl-blue-1" for="state"
+            >State</label
+          >
+          <div class="w-dl-13">
+            <select
+              formControlName="state"
+              class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
+            >
+              <option value="">Select a state</option>
+              <option *ngFor="let state of states" [value]="state">
+                {{ state }}
+              </option>
+            </select>
             <div
               [ngClass]="{
                 invisible: !stateErrorMessage()
@@ -196,7 +222,7 @@
       [ngClass]="{
         'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
           form.invalid === false,
-        'bg-dl-blue-7':
+        'bg-dl-grey-7':
           form.invalid === true ||
           usernameErrorMessage() !== '' ||
           nameFirstErrorMessage() !== '' ||

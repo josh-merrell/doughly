@@ -211,7 +211,6 @@ export class ProfileEffects {
     this.actions$.pipe(
       ofType(ProfileActions.updateProfile),
       tap((action) => console.log('Action profile:', action.profile)),
-      filter((action) => !!action.profile),
       mergeMap((action) =>
         this.authService.updateProfile(action.profile).pipe(
           map((profile) => ProfileActions.updateProfileSuccess({ profile })),
@@ -219,8 +218,9 @@ export class ProfileEffects {
             of(
               ProfileActions.updateProfileFailure({
                 error: {
-                  message: error.error.error,
-                  statusCode: error.status,
+                  // message: error.error.error,
+                  // statusCode: error.status,
+                  // rawError: error,
                   rawError: error,
                 },
               })
@@ -241,7 +241,6 @@ export class ProfileEffects {
   updateProfileProperty$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProfileActions.updateProfileProperty),
-      tap(action => console.log('PROFILE PROPERTY ACTION PAYLOAD:', action.property, action.value)),
       mergeMap((action) =>
         this.authService.updateField(action.property, action.value).pipe(
           map((profile) =>

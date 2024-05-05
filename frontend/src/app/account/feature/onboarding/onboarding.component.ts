@@ -23,6 +23,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
 export class OnboardingComponent {
   private profile: WritableSignal<any> = signal(null);
   isLoading: WritableSignal<boolean> = signal(false);
+  modalOpen: WritableSignal<boolean> = signal(false);
   constructor(
     public dialog: MatDialog,
     private store: Store,
@@ -83,28 +84,32 @@ export class OnboardingComponent {
               });
           });
       } else {
-        const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-          data: {
-            message: this.stringsService.onboardingStrings.collectUserDetails,
-            currentStep: 0.5,
-            showNextButton: false,
-            username: this.profile().username,
-            nameFirst: this.profile().nameFirst,
-            nameLast: this.profile().nameLast,
-            city: this.profile().city,
-            state: this.profile().state,
-          },
-          position: {
-            top: '10%',
-          },
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result !== 'success') {
-            this.onboardingCallback();
-          } else {
-            this.router.navigate(['/recipes/discover']);
-          }
-        });
+        if (!this.modalOpen()) {
+          this.modalOpen.set(true);
+          const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
+            data: {
+              message: this.stringsService.onboardingStrings.collectUserDetails,
+              currentStep: 0.5,
+              showNextButton: false,
+              username: this.profile().username,
+              nameFirst: this.profile().nameFirst,
+              nameLast: this.profile().nameLast,
+              city: this.profile().city,
+              state: this.profile().state,
+            },
+            position: {
+              top: '10%',
+            },
+          });
+          dialogRef.afterClosed().subscribe((result) => {
+            this.modalOpen.set(false);
+            if (result !== 'success') {
+              this.onboardingCallback();
+            } else {
+              this.router.navigate(['/recipes/discover']);
+            }
+          });
+        }
       }
     } else {
       this.router.navigate(['/recipes/discover']);

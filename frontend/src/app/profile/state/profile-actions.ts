@@ -92,15 +92,15 @@ const updateProfileFailure = createAction(
 );
 
 const updateProfileProperty = createAction(
-  '[Profile] Update',
+  '[Profile Property] Update',
   props<{ property: string; value: any }>()
 );
 const updateProfilePropertySuccess = createAction(
-  '[Profile] Update Success',
-  props<{ profile: any }>()
+  '[Profile Property] Update Success',
+  props<{ profile: Profile }>()
 );
 const updateProfilePropertyFailure = createAction(
-  '[Profile] Update Failure',
+  '[Profile Property] Update Failure',
   props<{ error: any }>()
 );
 
