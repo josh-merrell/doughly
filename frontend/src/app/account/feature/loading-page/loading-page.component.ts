@@ -140,7 +140,6 @@ export class LoadingPageComponent {
     effect(() => {
       const isLoading = this.isLoadingGlobal();
       if (!isLoading) {
-        console.log('Loading completed before timeout.');
         this.timeoutSubscription.unsubscribe();
         this.router.navigate(['/tempRoute'], { onSameUrlNavigation: 'reload' });
       }
@@ -217,7 +216,6 @@ export class LoadingPageComponent {
     this.timeoutSubscription = timer(8000).subscribe(() => {
       // Check if isLoadingGlobal is still true
       if (this.isLoadingGlobal()) {
-        console.log('Navigating to login due to timeout.');
         this.router.navigate(['/login']);
       }
     });
@@ -226,11 +224,9 @@ export class LoadingPageComponent {
   loadState() {
     switch (this.extraStuffService.stateToLoad()) {
       case 'messages':
-        console.log('Loading message state');
         this.loadMessageState();
         break;
       default:
-        console.log('Loading all states');
         this.loadMessageState();
         this.loadIngredientState();
         this.loadIngredientStockState();

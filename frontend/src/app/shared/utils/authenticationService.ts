@@ -107,10 +107,10 @@ export class AuthService {
 
                 // If there is an unsaved pushToken, update the profile with it
                 if (this.pushTokenService.unsavedPushToken()) {
-                  console.log(
-                    'save pushToken: ' +
-                      this.pushTokenService.unsavedPushToken()
-                  );
+                  // console.log(
+                  //   'save pushToken: ' +
+                  //     this.pushTokenService.unsavedPushToken()
+                  // );
                   this.pushTokenService.savePushToken(
                     this.pushTokenService.unsavedPushToken()!
                   );
@@ -135,10 +135,10 @@ export class AuthService {
 
                       // If there is an unsaved pushToken, update the profile with it
                       if (this.pushTokenService.unsavedPushToken()) {
-                        console.log(
-                          'save pushToken: ' +
-                            this.pushTokenService.unsavedPushToken()
-                        );
+                        // console.log(
+                        //   'save pushToken: ' +
+                        //     this.pushTokenService.unsavedPushToken()
+                        // );
                         this.pushTokenService.savePushToken(
                           this.pushTokenService.unsavedPushToken()!
                         );
@@ -162,7 +162,7 @@ export class AuthService {
   }
 
   private handleAuthStateChange(event: string, session: Session | null) {
-    console.log('onAuthStateChange: ', JSON.stringify(event));
+    // console.log('onAuthStateChange: ', JSON.stringify(event));
     if (event === 'PASSWORD_RECOVERY') {
       this.router.navigate(['/reset-password']);
     }
@@ -312,7 +312,7 @@ export class AuthService {
 
     if (this.profileRealtime) {
       this.supabase.removeChannel(this.profileRealtime).then((res) => {
-        console.log('Removed profileRealtime: ', res);
+        // console.log('Removed profileRealtime: ', res);
       });
     }
   }
@@ -353,12 +353,16 @@ export class AuthService {
     });
   }
 
-  updateProfile(profile: any): Observable<any> {
+  updateProfile(profileProperties: any): Observable<any> {
     const update = {
-      ...profile,
       updated_at: new Date(),
     };
-    console.log('updateProfile: ', JSON.stringify(update));
+    Object.keys(profileProperties).forEach((key) => {
+      if (profileProperties[key]) {
+        update[key] = profileProperties[key];
+      }
+    });
+    console.log('UPDATE PROFILE: ', JSON.stringify(update));
     return from(
       this.supabase
         .from('profiles')
@@ -372,7 +376,18 @@ export class AuthService {
             return;
           }
           if (data) {
-            this.profile.set(data);
+            const newProfile = {
+              user_id: data[0].user_id,
+              email: data[0].email,
+              username: data[0].username,
+              name_first: data[0].name_first,
+              name_last: data[0].name_last,
+              photo_url: data[0].photo_url,
+              joined_at: data[0].joined_at,
+              city: data[0].city,
+              state: data[0].state,
+            };
+            this.profile.set(newProfile);
             return data;
           }
         })
@@ -436,7 +451,7 @@ export class AuthService {
       [field]: value,
       updated_at: new Date(),
     };
-    console.log('updateProfileField: ' + JSON.stringify(update));
+    console.log('UPDATE PROFILE FIELD: ', JSON.stringify(update));
     return from(
       this.supabase
         .from('profiles')
@@ -456,7 +471,6 @@ export class AuthService {
             city: data[0].city,
             state: data[0].state,
           };
-          console.log('updatedProfile', newProfile);
           this.profile.set(newProfile);
           return data;
         })
@@ -536,11 +550,16 @@ export class AuthService {
     }
   }
 
-
   // 'Remember Me' feature
   setPersistentSession(data: any) {
-    localStorage.setItem('supabase.auth.token', data.currentSession.access_token);
-    localStorage.setItem('supabase.auth.refreshToken', data.currentSession.refresh_token);
+    localStorage.setItem(
+      'supabase.auth.token',
+      data.currentSession.access_token
+    );
+    localStorage.setItem(
+      'supabase.auth.refreshToken',
+      data.currentSession.refresh_token
+    );
   }
 
   clearPersistentSession() {

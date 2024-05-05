@@ -2,23 +2,49 @@ import { CommonModule } from '@angular/common';
 import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { filter, take } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  filter,
+  map,
+  of,
+  startWith,
+  switchMap,
+  take,
+} from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import {
   selectError,
   selectUpdating,
 } from 'src/app/profile/state/profile-selectors';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { isState } from 'src/app/shared/utils/formValidator';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { States } from 'src/app/shared/utils/types';
 
 @Component({
   selector: 'dl-message-modal',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatProgressSpinnerModule, ReactiveFormsModule],
   templateUrl: './onboarding-message-modal.component.html',
 })
 export class OnboardingMessageModalComponent {
   isEditing: WritableSignal<boolean> = signal(false);
-  public currentStep = 1;
+  usernameErrorMessage: WritableSignal<string> = signal('');
+  nameFirstErrorMessage: WritableSignal<string> = signal('');
+  nameLastErrorMessage: WritableSignal<string> = signal('');
+  cityErrorMessage: WritableSignal<string> = signal('');
+  stateErrorMessage: WritableSignal<string> = signal('');
+  submitFailureMessage: WritableSignal<string> = signal('');
+
+  form!: FormGroup;
+  public currentStep: WritableSignal<number> = signal(1);
   public totalSteps = 15;
   public showNextButton = false;
   constructor(
@@ -27,9 +53,16 @@ export class OnboardingMessageModalComponent {
       message: string;
       showNextButton: boolean;
       currentStep: number;
+      username?: string;
+      nameFirst?: string;
+      nameLast?: string;
+      city?: string;
+      state?: string;
     },
     public dialogRef: MatDialogRef<OnboardingMessageModalComponent>,
-    private store: Store
+    private store: Store,
+    private fb: FormBuilder,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -37,7 +70,112 @@ export class OnboardingMessageModalComponent {
       `ONBOARDING MODAL STEP: ${JSON.stringify(this.data.currentStep)}`
     );
     this.showNextButton = this.data.showNextButton || false;
-    this.currentStep = this.data.currentStep || 1;
+    this.currentStep.set(this.data.currentStep || 1);
+    if (this.data.currentStep === 0.5) {
+      this.setForm();
+    }
+    if (this.data.currentStep === 0.5) {
+      const usernameControl = this.form.get('username');
+      if (usernameControl) {
+        usernameControl.valueChanges
+          .pipe(
+            startWith(usernameControl.value), // Emit the current value immediately
+            debounceTime(300),
+            switchMap((value) => {
+              const uniqueCheck = this.authService
+                .isUsernameUnique(value ?? '')
+                .pipe(catchError(() => of(false)));
+
+              const isValid = this.authService.isUsernameValid(value ?? '');
+
+              return uniqueCheck.pipe(
+                map((isUnique) => {
+                  return { isUnique, isValid };
+                })
+              );
+            })
+          )
+          .subscribe(({ isUnique, isValid }) => {
+            if (usernameControl.pristine || usernameControl.value === '') {
+              this.usernameErrorMessage.set('');
+              return;
+            }
+            if (isUnique && isValid) {
+              this.usernameErrorMessage.set('');
+            } else {
+              if (!isUnique) {
+                this.usernameErrorMessage.set('Username is already taken');
+              } else if (!isValid) {
+                this.usernameErrorMessage.set(
+                  'Username must be at least 5 characters long and contain only letters, numbers, and underscores.'
+                );
+              }
+            }
+          });
+      }
+
+      const nameFirstControl = this.form.get('nameFirst');
+      if (nameFirstControl) {
+        nameFirstControl.valueChanges
+          .pipe(
+            startWith(nameFirstControl.value), // Emit the current value immediately
+            debounceTime(300)
+          )
+          .subscribe((value) => {
+            console.log(`VALUE: ${value}`);
+            if (nameFirstControl.pristine) {
+              this.nameFirstErrorMessage.set('');
+              return;
+            }
+            if (value.length > 0) {
+              this.nameFirstErrorMessage.set('');
+            } else {
+              this.nameFirstErrorMessage.set('First name is required');
+            }
+          });
+      }
+
+      const nameLastControl = this.form.get('nameLast');
+      if (nameLastControl) {
+        nameLastControl.valueChanges
+          .pipe(
+            startWith(nameLastControl.value), // Emit the current value immediately
+            debounceTime(300)
+          )
+          .subscribe((value) => {
+            if (nameLastControl.pristine) {
+              this.nameLastErrorMessage.set('');
+              return;
+            }
+            if (value.length > 0) {
+              this.nameLastErrorMessage.set('');
+            } else {
+              this.nameLastErrorMessage.set('Last name is required');
+            }
+          });
+      }
+
+      const stateControl = this.form.get('state');
+      if (stateControl) {
+        stateControl.valueChanges
+          .pipe(
+            startWith(stateControl.value), // Emit the current value immediately
+            debounceTime(300)
+          )
+          .subscribe((value) => {
+            // use isState() validator
+            if (stateControl.pristine || stateControl.value === '') {
+              this.stateErrorMessage.set('');
+              return;
+            }
+            if (Object.values(States).includes(value)) {
+              this.stateErrorMessage.set('');
+            } else {
+              this.stateErrorMessage.set('Please select a valid state');
+            }
+          });
+      }
+    }
   }
 
   onNextClick(): void {
@@ -45,7 +183,7 @@ export class OnboardingMessageModalComponent {
     this.store.dispatch(
       ProfileActions.updateProfileProperty({
         property: 'onboardingState',
-        value: this.currentStep + 1,
+        value: this.currentStep() + 1,
       })
     );
     this.store
@@ -71,10 +209,71 @@ export class OnboardingMessageModalComponent {
       });
   }
 
+  onSubmit() {
+    console.log('submitting form');
+    // get form values then use ProfileActions.updateProfile
+    this.submitFailureMessage.set('');
+    if (this.form.valid && this.currentStep() === 0.5) {
+      const { username, nameFirst, nameLast, city, state } = this.form.value;
+      this.store.dispatch(
+        ProfileActions.updateProfile({
+          profile: {
+            username,
+            name_last: nameFirst,
+            name_first: nameLast,
+            city,
+            state,
+            onboardingState: 1,
+          },
+        })
+      );
+      this.store
+        .select(selectUpdating)
+        .pipe(
+          filter((updating) => !updating),
+          take(1)
+        )
+        .subscribe(() => {
+          this.store
+            .select(selectError)
+            .pipe(take(1))
+            .subscribe((error) => {
+              if (error) {
+                console.error(
+                  `Error updating profile: ${error.message}, CODE: ${error.statusCode}`
+                );
+                this.submitFailureMessage.set('Error updating profile');
+              } else {
+                console.log('CLOSING DIALOG');
+                this.dialogRef.close('success');
+              }
+            });
+        });
+    }
+  }
+
   arrayFromCurrentStep(): Array<any> {
-    return new Array(this.currentStep);
+    const result = new Array(this.currentStep());
+    return result;
   }
   arrayFromTotalStepsMinusCurrent(): Array<any> {
-    return new Array(this.totalSteps - this.currentStep);
+    const result = new Array(this.totalSteps - this.currentStep());
+    return result;
+  }
+
+  setForm() {
+    this.form = this.fb.group({
+      username: [
+        {
+          value: this.data.username || '',
+          disabled: this.data.username !== '',
+        },
+        Validators.required,
+      ],
+      nameFirst: [this.data.nameFirst || '', [Validators.required]],
+      nameLast: [this.data.nameLast || '', [Validators.required]],
+      city: [this.data.city || ''],
+      state: [this.data.state || '', [isState()]],
+    });
   }
 }

@@ -156,6 +156,7 @@ export const ProfileReducer = createReducer(
   })),
   on(ProfileActions.updateProfileSuccess, (state, { profile }) => ({
     ...state,
+    profile,
     updating: false,
   })),
   on(ProfileActions.updateProfileFailure, (state, { error }) => ({

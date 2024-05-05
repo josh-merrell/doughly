@@ -61,7 +61,6 @@ export class DiscoverRecipesComponent {
         const profile = this.profile();
         if (!profile || profile.onboardingState === 0) return;
         if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
-          console.log(`EFFECT CALLING HANDLER`);
           this.onboardingHandler(profile.onboardingState);
         }
       },
@@ -190,7 +189,6 @@ export class DiscoverRecipesComponent {
 
   onboardingHandler(onboardingState: number) {
     if (!onboardingState) return;
-    console.log('STATE: ', onboardingState);
     if (onboardingState === 1) {
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
