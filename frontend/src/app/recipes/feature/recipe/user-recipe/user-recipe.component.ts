@@ -786,9 +786,12 @@ export class UserRecipeComponent {
           bottom: '70%',
         },
       });
-      dialogRef.afterClosed().subscribe(() => {
+      dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
         this.showOnboardingBadge.set(true);
+        if (result === 'nextClicked') {
+          this.onboardingCallback();
+        }
       });
     } else if (state === 14) {
       this.onboardingModalOpen.set(true);
@@ -804,9 +807,12 @@ export class UserRecipeComponent {
           bottom: '20%',
         },
       });
-      dialogRef.afterClosed().subscribe(() => {
+      dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
         this.showOnboardingBadge.set(true);
+        if (result === 'nextClicked') {
+          this.onboardingCallback();
+        }
       });
     } else if (state === 15) {
       this.onboardingModalOpen.set(true);
@@ -851,6 +857,12 @@ export class UserRecipeComponent {
           });
       });
     }
+  }
+
+  onboardingCallback() {
+    setTimeout(() => {
+      this.onboardingHandler(this.profile()!.onboardingState);
+    }, 1000);
   }
 
   onboardingBadgeClick() {

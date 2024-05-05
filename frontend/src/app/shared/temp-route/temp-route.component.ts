@@ -39,6 +39,9 @@ export class TempRouteComponent {
     const profile = this.profile();
     console.log('onboardingState: ', profile?.onboardingState);
     switch (profile?.onboardingState) {
+      case 0.5:
+        this.router.navigate(['/onboarding']);
+        break;
       case 1:
       case 2:
         this.router.navigate(['/recipes/discover']);

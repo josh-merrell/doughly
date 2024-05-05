@@ -148,7 +148,7 @@ export class DraftPageComponent {
   private profile: WritableSignal<any> = signal(null);
 
   // Onboarding
-  public showOnboardingBadge: WritableSignal<boolean> = signal(true);
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
   public onboardingModalOpen: WritableSignal<boolean> = signal(false);
   private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
 
@@ -261,6 +261,9 @@ export class DraftPageComponent {
   // LIFECYCLE HOOKS  *********************************
   ngOnInit(): void {
     this.store.select(selectProfile).subscribe((profile) => {
+      if (profile.onboardingState !== 0) {
+        this.showOnboardingBadge.set(true);
+      }
       this.profile.set(profile);
     });
     this.store.select(selectShoppingLists).subscribe((shoppingLists: any) => {

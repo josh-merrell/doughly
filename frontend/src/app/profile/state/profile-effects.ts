@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ProfileService } from '../data/profile.service';
 import { ProfileActions } from './profile-actions';
@@ -210,6 +210,8 @@ export class ProfileEffects {
   updateProfile$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProfileActions.updateProfile),
+      tap((action) => console.log('Action profile:', action.profile)),
+      filter((action) => !!action.profile),
       mergeMap((action) =>
         this.authService.updateProfile(action.profile).pipe(
           map((profile) => ProfileActions.updateProfileSuccess({ profile })),
@@ -239,6 +241,7 @@ export class ProfileEffects {
   updateProfileProperty$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProfileActions.updateProfileProperty),
+      tap(action => console.log('PROFILE PROPERTY ACTION PAYLOAD:', action.property, action.value)),
       mergeMap((action) =>
         this.authService.updateField(action.property, action.value).pipe(
           map((profile) =>

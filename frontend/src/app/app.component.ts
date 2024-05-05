@@ -45,6 +45,7 @@ export class AppComponent {
     '/password-reset',
     '/verify-account',
     '/tempRoute',
+    '/onboarding',
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);

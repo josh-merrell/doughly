@@ -5,12 +5,13 @@ import { Injectable } from '@angular/core';
 })
 export class StringsService {
   public readonly onboardingStrings = {
+    collectUserDetails: 'First things first. Choose a username and share some details about yourself.',
     welcomeToDoughly: `Welcome to Doughly! Let's show you around before you get cooking.`,
     discoverPageOverview: `Recipes in Doughly can be set to be Public, Private, or Heirloom (friends only). This Discover page features popular Public recipes. Open one that catches your eye!`,
     publicRecipePage: `A great Choice! You'll find details about the recipe, ingredients, tools, and steps here. If you want to hold on to this for later, make use of the "Subscribe" button near the top. Let's try that now.`,
     subscribeRecipeModal: `Map each recipe ingredient and tool to your own (we started you with a few) or choose "Copy to Kitchen". Doughly keeps track of all units and inventory behind the scenes, so we'll need some conversions as well. Our AI will offer suggestions, but you can always adjust them.`,
     subscribeRecipePage: `We made it! This copy of the Public recipe is now connected to your kitchen. Explore the "Make Now!" button, then navigate to "Social".`,
-    socialPageOverview: `The Social page is where you can find and connect with friends. You can see their recipes and they'll see yours here. Finally, keep your cherished recipes in one place for family to refer to any time they're feeling hungry or nostalgic~`,
+    socialPageOverview: `The Social page is where you can find and connect with friends. You can see their recipes and they'll see yours here. We hope you'll love keeping your cherished recipes in one place for family to refer to any time they're feeling hungry or nostalgic~`,
     shoppingPageOverview: `To prep for a new grocery run, visit "Groceries" and add your recently subscribed recipe to the draft list. Once added, you'll see all needed ingredients appended. You can also add non-recipe items manually.`,
     recipesCreatedPage: `We're rounding the corner! On this page, you'll see all the recipes you've created. You have a few options when adding a new one.`,
     recipeCreateManual: `Want to get your hands dirty? You can start a new recipe from scratch here.`,
