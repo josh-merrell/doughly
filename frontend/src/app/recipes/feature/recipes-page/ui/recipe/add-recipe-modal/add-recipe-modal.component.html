@@ -80,7 +80,7 @@
     </p>
   </div>
   <div
-    *ngIf="showOnboardingBadge()"
+    *ngIf="showOnboardingBadge() === true"
     (click)="onboardingBadgeClick()"
     class="fixed left-12 top-28 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-blue-9"
   >
