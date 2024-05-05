@@ -253,7 +253,7 @@ export class AuthService {
       user_id: newUser.id,
       email: newUser.email,
       joined_at: new Date(),
-      onboardingState: 1,
+      onboardingState: .5,
       checkIngredientStock: true,
       autoDeleteExpiredStock: true,
       notifyOnLowStock: 'Enabled',
