@@ -253,8 +253,8 @@ export class AuthService {
       user_id: newUser.id,
       email: newUser.email,
       joined_at: new Date(),
-      onboardingState: .5,
-      checkIngredientStock: true,
+      onboardingState: 0.5,
+      checkIngredientStock: false,
       autoDeleteExpiredStock: true,
       notifyOnLowStock: 'Enabled',
       notifyOnNoStock: 'Enabled',
@@ -362,7 +362,6 @@ export class AuthService {
         update[key] = profileProperties[key];
       }
     });
-    console.log('UPDATE PROFILE: ', JSON.stringify(update));
     return from(
       this.supabase
         .from('profiles')
@@ -373,23 +372,21 @@ export class AuthService {
         .then(({ data, error }) => {
           if (error) {
             console.error('Error updating profile: ', error);
-            return;
+            throw error;
           }
-          if (data) {
-            const newProfile = {
-              user_id: data[0].user_id,
-              email: data[0].email,
-              username: data[0].username,
-              name_first: data[0].name_first,
-              name_last: data[0].name_last,
-              photo_url: data[0].photo_url,
-              joined_at: data[0].joined_at,
-              city: data[0].city,
-              state: data[0].state,
-            };
-            this.profile.set(newProfile);
-            return data;
-          }
+          const newProfile = {
+            user_id: data.user_id,
+            email: data.email,
+            username: data.username,
+            name_first: data.name_first,
+            name_last: data.name_last,
+            photo_url: data.photo_url,
+            joined_at: data.joined_at,
+            city: data.city,
+            state: data.state,
+          };
+          this.profile.set(newProfile);
+          return data;
         })
     );
   }

@@ -46,6 +46,7 @@ export class ProfileComponent {
     effect(() => {
       const profile = this.authService.profile();
       if (profile) {
+        console.log('profile', profile);
         this.profile = profile;
         this.profileImageLink = profile?.photo_url;
         this.initials =

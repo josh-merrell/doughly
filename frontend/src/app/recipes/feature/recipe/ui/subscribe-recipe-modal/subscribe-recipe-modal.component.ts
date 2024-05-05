@@ -228,7 +228,7 @@ export class SubscribeRecipeModalComponent {
       );
       return matchedTool ? matchedTool.name : 'Select Tool';
     }
-    return 'Select Tool';
+    return 'Copy to Kitchen';
   }
 
   private findMatchingUserIngredient(
