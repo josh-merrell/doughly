@@ -8,6 +8,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { Store } from '@ngrx/store';
 import { EditPhotoModalComponent } from './ui/edit-photo-modal/edit-photo-modal.component';
 import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/confirmation-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'dl-profile',
@@ -41,7 +42,8 @@ export class ProfileComponent {
     private store: Store,
     private authService: AuthService,
     private dialog: MatDialog,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private router: Router
   ) {
     effect(() => {
       const profile = this.authService.profile();
@@ -104,6 +106,10 @@ export class ProfileComponent {
         });
       }
     });
+  }
+
+  onPrivacyClick() {
+    this.router.navigate(['/privacy']);
   }
 
 }

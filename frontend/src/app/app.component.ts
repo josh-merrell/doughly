@@ -46,6 +46,7 @@ export class AppComponent {
     '/verify-account',
     '/tempRoute',
     '/onboarding',
+    '/privacy'
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
