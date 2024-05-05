@@ -197,53 +197,48 @@
 
   <!-- Recipes that don't come from me -->
   <div
-    *ngIf="view === 'recipes' && otherRecipes().length"
-    class="mb-dl-6 flex h-dl-12 flex-col items-center overflow-y-auto"
+    *ngIf="view === 'recipes'"
+    class="mb-dl-5 flex h-dl-14 flex-col items-center overflow-y-auto"
   >
-    <dl-recipe-card
-      *ngFor="let recipe of otherRecipes()"
-      [friendUserID]="friend.userID"
-      [recipe]="recipe"
-      [fromMyRecipes]="false"
-      (click)="onRecipeCardClick(recipe.recipeID)"
-      [isSelected]="false"
-      [inModal]="true"
-    >
-    </dl-recipe-card>
+    <div *ngIf="otherRecipes().length">
+      <dl-recipe-card
+        *ngFor="let recipe of otherRecipes()"
+        [friendUserID]="friend.userID"
+        [recipe]="recipe"
+        [fromMyRecipes]="false"
+        (click)="onRecipeCardClick(recipe.recipeID)"
+        [isSelected]="false"
+        [inModal]="true"
+      >
+      </dl-recipe-card>
+    </div>
+
+    <!-- Subscriptions of my Recipes -->
+    <div *ngIf="recipesFromMe().length">
+      <span
+        class="items-center px-1 pt-1 text-dl-5 font-dl-3 text-dl-grey-2 transition-all duration-200 ease-in-out"
+        (click)="view = 'recipes'"
+      >
+        Subscribed from My Recipes
+      </span>
+      <dl-recipe-card
+        *ngFor="let recipe of recipesFromMe()"
+        [friendUserID]="friend.userID"
+        [recipe]="recipe"
+        [isSelected]="false"
+        [inModal]="true"
+        [fromMyRecipes]="true"
+      >
+      </dl-recipe-card>
+    </div>
     <span
       *ngIf="friend.recipes.length > 0"
       class="absolute bottom-3 left-1/2 -translate-x-1/2 text-dl-5 font-dl-2 text-dl-grey-2"
       >{{ friend.recipes.length }} total</span
     >
   </div>
-
-  <!-- Subscriptions of my Recipes -->
-  <div
-    *ngIf="view === 'recipes' && recipesFromMe().length"
-    class="mb-dl-6 flex h-dl-12 flex-col items-center overflow-y-auto"
-  >
-    <span
-      class="items-center px-1 pt-1 text-dl-5 font-dl-3 text-dl-grey-2 transition-all duration-200 ease-in-out"
-      (click)="view = 'recipes'"
-    >
-      Subscribed from My Recipes
-    </span>
-    <dl-recipe-card
-      *ngFor="let recipe of recipesFromMe()"
-      [friendUserID]="friend.userID"
-      [recipe]="recipe"
-      [isSelected]="false"
-      [inModal]="true"
-      [fromMyRecipes]="true"
-    >
-    </dl-recipe-card>
-    <span
-      *ngIf="friend.recipes.length > 0"
-      class="absolute bottom-3 left-1/2 -translate-x-1/2 text-dl-5 font-dl-2 text-dl-grey-2"
-      >{{ friend.recipes.length }} total</span
-    >
-  </div>
-
   <!-- Timeline -->
-  <dl-timeline *ngIf="view === 'timeline'" [logs]="logs"> </dl-timeline>
+  <div *ngIf="view === 'timeline'" class="mb-dl-5 h-dl-14 overflow-y-auto">
+    <dl-timeline [logs]="logs"> </dl-timeline>
+  </div>
 </div>
