@@ -28,6 +28,7 @@ import { TempRouteComponent } from './shared/temp-route/temp-route.component';
 
 import { ProfileGuard } from './guards/profile.guard';
 import { stateLoaded } from './guards/stateLoaded.guard';
+import { OnboardingComponent } from './account/feature/onboarding/onboarding.component';
 
 export const routes: Route[] = [
   {
@@ -96,6 +97,10 @@ export const routes: Route[] = [
   {
     path: 'reset-password',
     component: PasswordResetPageComponent,
+  },
+  {
+    path: 'onboarding',
+    component: OnboardingComponent,
   },
   {
     path: 'profile',

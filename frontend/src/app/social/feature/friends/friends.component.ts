@@ -64,7 +64,7 @@ export class FriendsComponent {
   constructor(
     private store: Store,
     public dialog: MatDialog,
-    private stringsService: StringsService,
+    private stringsService: StringsService
   ) {
     effect(
       () => {
@@ -154,9 +154,12 @@ export class FriendsComponent {
           bottom: '70%',
         },
       });
-      dialogRef.afterClosed().subscribe(() => {
+      dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
         this.showOnboardingBadge.set(true);
+        if (result === 'nextClicked') {
+          this.onboardingCallback();
+        }
       });
     } else if (onboardingState === 7) {
       this.showOnboardingBadge.set(false);
@@ -177,6 +180,12 @@ export class FriendsComponent {
         this.showOnboardingBadge.set(true);
       });
     }
+  }
+
+  onboardingCallback() {
+    setTimeout(() => {
+      this.onboardingHandler(this.profile().onboardingState);
+    }, 1000);
   }
 
   onboardingBadgeClick() {

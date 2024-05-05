@@ -43,8 +43,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './add-shopping-list-recipe-modal.component.html',
 })
 export class AddShoppingListRecipeModalComponent {
-  @ViewChild('scrollContainer', { static: false })
-  public isLoading: boolean = false;
+  public isLoading: WritableSignal<boolean> = signal(false);
   scrollContainer!: ElementRef;
   showScrollDownArrow = false;
   showScrollUpArrow = false;
@@ -182,26 +181,6 @@ export class AddShoppingListRecipeModalComponent {
     );
   }
 
-  ngAfterViewInit(): void {
-    const checkScrollHeight = () => {
-      const childHeight = Array.from(
-        this.scrollContainer.nativeElement.children as HTMLElement[]
-      ).reduce((height, child: HTMLElement) => height + child.clientHeight, 0);
-      this.showScrollDownArrow =
-        childHeight > this.scrollContainer.nativeElement.clientHeight;
-    };
-    checkScrollHeight();
-  }
-
-  checkScroll(target: EventTarget | null) {
-    if (target) {
-      let element = target as HTMLElement;
-      this.showScrollUpArrow = element.scrollTop > 0;
-      this.showScrollDownArrow =
-        element.scrollHeight - element.scrollTop - element.clientHeight > 1;
-    }
-  }
-
   onViewClick(view: string): void {
     this.view.set(view);
     this.searchFilter.set('');
@@ -293,7 +272,7 @@ export class AddShoppingListRecipeModalComponent {
     }
   }
   onAddClick(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.store.dispatch(
       ShoppingListRecipeActions.addShoppingListRecipe({
         shoppingListID: this.data.shoppingListID,
@@ -326,7 +305,7 @@ export class AddShoppingListRecipeModalComponent {
             } else {
               this.dialogRef.close('success');
             }
-            this.isLoading = false;
+            this.isLoading.set(false);
           });
       });
   }
