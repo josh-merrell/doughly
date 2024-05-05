@@ -150,7 +150,7 @@ export class AddRecipeModalComponent {
   onboardingHandler(onboardingState: number): void {
     if (onboardingState === 9) {
       this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(true);
+      this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
@@ -163,12 +163,12 @@ export class AddRecipeModalComponent {
         },
       });
       dialogRef.afterClosed().subscribe((result) => {
+        this.showOnboardingBadge.set(false);
         this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
         this.reopenOnboardingModal.set(false);
         if (result === 'nextClicked') {
           this.onboardingCallback();
-        }
+        } else this.showOnboardingBadge.set(true);
       });
     } else if (onboardingState === 10) {
       this.showOnboardingBadge.set(false);
@@ -186,10 +186,9 @@ export class AddRecipeModalComponent {
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
         if (result === 'nextClicked') {
           this.onboardingCallback();
-        }
+        } else this.showOnboardingBadge.set(true);
       });
     } else if (onboardingState === 11) {
       this.showOnboardingBadge.set(false);
@@ -206,12 +205,9 @@ export class AddRecipeModalComponent {
           bottom: '70%',
         },
       });
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed().subscribe(() => {
         this.onboardingModalOpen.set(false);
         this.showOnboardingBadge.set(true);
-        if (result === 'nextClicked') {
-          this.onboardingCallback();
-        }
       });
     } else if (onboardingState === 12) {
       this.router.navigate(['/recipes/created/add/vision']);

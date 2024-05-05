@@ -756,6 +756,7 @@ export class UserRecipeComponent {
 
   onboardingHandler(state: number) {
     if (state === 5) {
+      this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
@@ -773,6 +774,7 @@ export class UserRecipeComponent {
         this.showOnboardingBadge.set(true);
       });
     } else if (state === 13) {
+      this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
@@ -788,12 +790,12 @@ export class UserRecipeComponent {
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
         if (result === 'nextClicked') {
           this.onboardingCallback();
-        }
+        } else this.showOnboardingBadge.set(true);
       });
     } else if (state === 14) {
+      this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
@@ -809,12 +811,12 @@ export class UserRecipeComponent {
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
         if (result === 'nextClicked') {
           this.onboardingCallback();
-        }
+        } else this.showOnboardingBadge.set(true);
       });
     } else if (state === 15) {
+      this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {

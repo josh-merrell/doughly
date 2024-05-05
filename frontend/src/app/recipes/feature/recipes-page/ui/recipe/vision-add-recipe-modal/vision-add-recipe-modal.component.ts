@@ -317,10 +317,10 @@ export class VisionAddRecipeModalComponent {
 
   onboardingHandler(onboardingState: number): void {
     if (onboardingState === 12) {
-      this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
       if (this.onboardingModalOpen()) return;
       this.onboardingModalOpen.set(true);
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
           message: this.stringsService.onboardingStrings.recipeCreateImage,

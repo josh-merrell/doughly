@@ -359,10 +359,9 @@ export class RecipeListComponent {
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
         if (result === 'nextClicked') {
           this.onboardingCallback();
-        }
+        } else this.showOnboardingBadge.set(true);
       });
     } else if (onboardingState === 9) {
       this.router.navigate(['/recipes/created/add']);
