@@ -109,7 +109,7 @@
     <div
       (click)="updateProfile('name_first')"
       *ngIf="profile.name_first"
-      class="ml-dl-5 mt-dl-4 flex flex-col"
+      class="ml-dl-5 mt-dl-1 flex flex-col"
     >
       <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{
         profile.name_first
@@ -217,6 +217,19 @@
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7"
         >Tap to add State</span
       >
+    </div>
+  </div>
+  <!-- Links for Privacy, Help, etc -->
+  <div class="items-left mt-dl-3 flex flex-col bg-white pb-dl-3">
+    <span class="ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-blue-5"
+      >Links</span
+    >
+    <!--Privacy-->
+    <div
+      (click)="onPrivacyClick()"
+      class="ml-dl-5 flex flex-col"
+    >
+      <span class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2">Privacy Policy</span>
     </div>
   </div>
   <!-- Spacer Div-->

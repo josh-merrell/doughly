@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     namespace "co.doughly.app"
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -18,10 +22,10 @@ android {
     }
     signingConfigs {
         release {
-            keyAlias 'key_04252024'
-            keyPassword 'ginger'
-            storeFile file('/home/josh/keystores/upload-keystore.jks')
-            storePassword 'ginger'
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
         debug {
             keyAlias 'key_04252024'
