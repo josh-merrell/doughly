@@ -97,7 +97,7 @@ const updateProfileProperty = createAction(
 );
 const updateProfilePropertySuccess = createAction(
   '[Profile Property] Update Success',
-  props<{ profile: any }>()
+  props<{ profile: Profile }>()
 );
 const updateProfilePropertyFailure = createAction(
   '[Profile Property] Update Failure',

@@ -455,18 +455,19 @@ export class AuthService {
         .update(update)
         .eq('user_id', this.user_id())
         .select('*')
+        .single()
         .then(({ data, error }) => {
           if (error) throw error;
           const newProfile = {
-            user_id: data[0].user_id,
-            email: data[0].email,
-            username: data[0].username,
-            name_first: data[0].name_first,
-            name_last: data[0].name_last,
-            photo_url: data[0].photo_url,
-            joined_at: data[0].joined_at,
-            city: data[0].city,
-            state: data[0].state,
+            user_id: data.user_id,
+            email: data.email,
+            username: data.username,
+            name_first: data.name_first,
+            name_last: data.name_last,
+            photo_url: data.photo_url,
+            joined_at: data.joined_at,
+            city: data.city,
+            state: data.state,
           };
           this.profile.set(newProfile);
           return data;

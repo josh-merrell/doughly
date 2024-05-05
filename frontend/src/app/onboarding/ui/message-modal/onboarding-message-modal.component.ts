@@ -67,9 +67,6 @@ export class OnboardingMessageModalComponent {
   ) {}
 
   ngOnInit(): void {
-    console.log(
-      `ONBOARDING MODAL STEP: ${JSON.stringify(this.data.currentStep)}`
-    );
     this.showNextButton = this.data.showNextButton || false;
     this.currentStep.set(this.data.currentStep || 1);
     if (this.data.currentStep === 0.5) {
