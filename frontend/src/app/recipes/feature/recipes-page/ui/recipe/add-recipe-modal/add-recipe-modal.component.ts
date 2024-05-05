@@ -34,9 +34,9 @@ export class AddRecipeModalComponent {
   public profile: WritableSignal<any> = signal(null);
 
   // Onboarding
-  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public showOnboardingBadge: WritableSignal<boolean> = signal(true);
   public onboardingModalOpen: WritableSignal<boolean> = signal(false);
-  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeModalComponent>,
@@ -55,6 +55,8 @@ export class AddRecipeModalComponent {
         const profile = this.profile();
         if (!profile || profile.onboardingState === 0) return;
         if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          console.log('onboardingModalOpen', this.onboardingModalOpen());
+          console.log('reopenOnboardingModal', this.reopenOnboardingModal());
           console.log(`EFFECT CALLING HANDLER`);
           this.onboardingHandler(profile.onboardingState);
         }
@@ -80,9 +82,9 @@ export class AddRecipeModalComponent {
       });
 
     this.store.select(selectProfile).subscribe((profile) => {
-      if (profile && profile.onboardingState !== 0) {
-        this.showOnboardingBadge.set(true);
-      }
+      // if (profile && profile.onboardingState !== 0) {
+      //   this.showOnboardingBadge.set(true);
+      // }
       this.profile.set(profile);
     });
   }
@@ -150,7 +152,7 @@ export class AddRecipeModalComponent {
   onboardingHandler(onboardingState: number): void {
     if (onboardingState === 9) {
       this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(true);
+      this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
       const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
         data: {
@@ -163,12 +165,12 @@ export class AddRecipeModalComponent {
         },
       });
       dialogRef.afterClosed().subscribe((result) => {
+        this.showOnboardingBadge.set(false);
         this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
         this.reopenOnboardingModal.set(false);
         if (result === 'nextClicked') {
           this.onboardingCallback();
-        }
+        } else this.showOnboardingBadge.set(true);
       });
     } else if (onboardingState === 10) {
       this.showOnboardingBadge.set(false);
@@ -186,10 +188,9 @@ export class AddRecipeModalComponent {
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
         if (result === 'nextClicked') {
           this.onboardingCallback();
-        }
+        } else this.showOnboardingBadge.set(true);
       });
     } else if (onboardingState === 11) {
       this.showOnboardingBadge.set(false);
@@ -208,13 +209,10 @@ export class AddRecipeModalComponent {
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
         if (result === 'nextClicked') {
-          this.onboardingCallback();
-        }
+          this.router.navigate(['tempRoute']);
+        } else this.showOnboardingBadge.set(true);
       });
-    } else if (onboardingState === 12) {
-      this.router.navigate(['/recipes/created/add/vision']);
     }
   }
 

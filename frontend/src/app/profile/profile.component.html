@@ -200,7 +200,7 @@
     <!--State-->
     <div
       (click)="updateProfile('state')"
-      *ngIf="profile.city"
+      *ngIf="profile.state"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{
@@ -210,7 +210,7 @@
     </div>
     <div
       (click)="updateProfile('state')"
-      *ngIf="!profile.city"
+      *ngIf="!profile.state"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span class="text-dl-6 font-dl-2 text-dl-grey-6">State</span>
