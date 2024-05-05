@@ -25,6 +25,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { UsingRecipeComponent } from './recipes/feature/recipe/ui/using-recipe/using-recipe.component';
 import { LoadingPageComponent } from './account/feature/loading-page/loading-page.component';
 import { TempRouteComponent } from './shared/temp-route/temp-route.component';
+import { PrivacyPageComponent } from './privacy/privacy-page/privacy-page.component';
 
 import { ProfileGuard } from './guards/profile.guard';
 import { stateLoaded } from './guards/stateLoaded.guard';
@@ -101,6 +102,10 @@ export const routes: Route[] = [
   {
     path: 'onboarding',
     component: OnboardingComponent,
+  },
+  {
+    path: 'privacy',
+    component: PrivacyPageComponent,
   },
   {
     path: 'profile',
