@@ -210,7 +210,7 @@ export class AddRecipeModalComponent {
       dialogRef.afterClosed().subscribe((result) => {
         this.onboardingModalOpen.set(false);
         if (result === 'nextClicked') {
-          this.router.navigate(['/recipes/created/add/vision']);
+          this.router.navigate(['tempRoute']);
         } else this.showOnboardingBadge.set(true);
       });
     }
