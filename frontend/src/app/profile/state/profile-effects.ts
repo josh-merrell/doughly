@@ -261,4 +261,26 @@ export class ProfileEffects {
       )
     )
   );
+
+  deleteProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProfileActions.deleteProfile),
+      mergeMap((action) =>
+        this.profileService.deleteProfile(action.userID).pipe(
+          map(() => ProfileActions.deleteProfileSuccess()),
+          catchError((error) =>
+            of(
+              ProfileActions.deleteProfileFailure({
+                error: {
+                  message: error.error.error,
+                  statusCode: error.status,
+                  rawError: error,
+                },
+              })
+            )
+          )
+        )
+      )
+    )
+  );
 }

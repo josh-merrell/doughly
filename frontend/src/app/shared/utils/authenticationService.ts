@@ -570,4 +570,9 @@ export class AuthService {
     const refresh_token = localStorage.getItem('supabase.auth.refreshToken');
     return { access_token, refresh_token };
   }
+
+  deleteProfile() {
+    // server will delete the supabase user and profile, here we just need to clear profile state which will clear the session and require fresh login
+    this.profile.set(null);
+  }
 }

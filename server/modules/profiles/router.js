@@ -11,6 +11,7 @@ const h = handler;
 
 router.use(authenticateJWT);
 
+router.delete('/:userID', errorCatcher(h.deleteProfile));
 router.get('/friends/:friendUserID', routeValidator(getFriendSchema_params, 'params'), errorCatcher(h.getFriend));
 router.get('/friends', routeValidator(getFriendSchema_query, 'query'), errorCatcher(h.getFriends));
 router.get('/followers/:followerUserID', routeValidator(getFollowerSchema_params, 'params'), errorCatcher(h.getFollower));
