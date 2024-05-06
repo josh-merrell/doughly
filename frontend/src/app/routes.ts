@@ -111,6 +111,13 @@ export const routes: Route[] = [
     path: 'profile',
     component: ProfileComponent,
     canActivate: [ProfileGuard, stateLoaded],
+    children: [
+      {
+        path: 'delete',
+        component: ProfileComponent,
+        canActivate: [ProfileGuard, stateLoaded],
+      }
+    ]
   },
   {
     path: 'settings',

@@ -60,6 +60,18 @@ export class ProfileComponent {
     });
   }
 
+  ngOnInit(): void {
+    // Check the initial URL
+    this.checkUrlAndAct(this.router.url);
+  }
+
+  private checkUrlAndAct(fullUrl: string) {
+    if (fullUrl.includes('/delete')) {
+      this.onDeleteAccountClick();
+    }
+    // Any other URL checks can be added here
+  }
+
   toggleExpand() {
     if (this.profileImageLink) this.expanded = !this.expanded;
     else this.selectImage();
