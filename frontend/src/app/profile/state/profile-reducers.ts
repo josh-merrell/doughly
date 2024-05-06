@@ -216,5 +216,20 @@ export const ProfileReducer = createReducer(
     ...state,
     error,
     deleting: false,
+  })),
+  on(ProfileActions.deleteProfile, (state) => ({
+    ...state,
+    deleting: true,
+    error: null,
+  })),
+  on(ProfileActions.deleteProfileSuccess, (state) => ({
+    ...state,
+    deleting: false,
+    profile: null,
+  })),
+  on(ProfileActions.deleteProfileFailure, (state, { error }) => ({
+    ...state,
+    error,
+    deleting: false,
   }))
 );

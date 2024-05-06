@@ -55,7 +55,8 @@ export class LoginPageComponent {
   ) {
     effect(() => {
       const profile = this.authService.profile();
-      if (profile) {
+      if (profile && profile.user_id) {
+        console.log('PROFILE', profile);
         if (this.router.url !== '/reset-password') {
           this.router.navigate(['/loading']);
         }

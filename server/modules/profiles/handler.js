@@ -120,6 +120,22 @@ async function searchProfiles(req, res) {
   }
 }
 
+async function deleteProfile(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { userID } = req.params;
+  try {
+    const returner = await p.deleteProfile({
+      userID,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'deleteProfile': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 module.exports = {
   getProfile,
   getFriends,
@@ -128,4 +144,5 @@ module.exports = {
   getFollower,
   getFollowing,
   searchProfiles,
+  deleteProfile,
 };
