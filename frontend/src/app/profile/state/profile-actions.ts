@@ -124,6 +124,13 @@ const deleteFollowerFailure = createAction(
   props<{ error: any }>()
 );
 
+const deleteProfile = createAction('[Profile] Delete', props<{ userID: string }>());
+const deleteProfileSuccess = createAction('[Profile] Delete Success');
+const deleteProfileFailure = createAction(
+  '[Profile] Delete Failure',
+  props<{ error: any }>()
+);
+
 export const ProfileActions = {
   loadProfile,
   loadProfileSuccess,
@@ -161,4 +168,7 @@ export const ProfileActions = {
   deleteFollower,
   deleteFollowerSuccess,
   deleteFollowerFailure,
+  deleteProfile,
+  deleteProfileSuccess,
+  deleteProfileFailure,
 };

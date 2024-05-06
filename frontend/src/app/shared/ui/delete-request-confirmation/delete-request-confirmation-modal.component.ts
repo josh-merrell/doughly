@@ -12,7 +12,7 @@ export class DeleteRequestConfirmationModalComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    public data: { result: any; deleteSuccessMessage: string },
+    public data: { result: any; deleteSuccessMessage: string,  },
     public dialogRef: MatDialogRef<DeleteRequestConfirmationModalComponent>
   ) {}
 

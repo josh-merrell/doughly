@@ -67,4 +67,8 @@ export class ProfileService {
       `${this.API_URL}/search?searchQuery=${searchQuery}`
     );
   }
+
+  deleteProfile(userID: string): Observable<any> {
+    return this.http.delete(`${this.API_URL}/${userID}`);
+  }
 }

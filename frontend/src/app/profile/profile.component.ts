@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, effect } from '@angular/core';
+import { ChangeDetectorRef, Component, WritableSignal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../shared/utils/authenticationService';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { EditPhotoModalComponent } from './ui/edit-photo-modal/edit-photo-modal.component';
 import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/confirmation-modal.component';
 import { Router } from '@angular/router';
+import { DeleteProfileModalComponent } from './ui/delete-profile-modal/delete-profile-modal.component';
 
 @Component({
   selector: 'dl-profile',
@@ -56,8 +57,7 @@ export class ProfileComponent {
           (profile?.name_last?.charAt(0) || '');
         this.cd.markForCheck();
       }
-    
-    })
+    });
   }
 
   toggleExpand() {
@@ -93,18 +93,18 @@ export class ProfileComponent {
     const dialogRef = this.dialog.open(EditPhotoModalComponent, {
       data: {
         currentPhotoURL: this.profile.photo_url,
-      }
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'cancel' || !result)
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: 'Profile photo updated successfully!',
-          },
-        });
-      }
+        if (result === 'success') {
+          this.dialog.open(ConfirmationModalComponent, {
+            data: {
+              confirmationMessage: 'Profile photo updated successfully!',
+            },
+          });
+        }
     });
   }
 
@@ -112,4 +112,23 @@ export class ProfileComponent {
     this.router.navigate(['/privacy']);
   }
 
+  onDeleteAccountClick() {
+    const dialogRef = this.dialog.open(DeleteProfileModalComponent, {
+      data: {
+        isFinal: false,
+        userID: this.profile.user_id,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'confirm') {
+        this.dialog.open(DeleteProfileModalComponent, {
+          data: {
+            isFinal: true,
+            userID: this.profile.user_id,
+          },
+        });
+      }
+    });
+  }
 }
