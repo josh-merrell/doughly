@@ -286,6 +286,32 @@ module.exports = ({ db, dbPublic }) => {
     return validProfiles;
   }
 
+  async function deleteProfile(options) {
+    // call the 'permanent_profile_delete' function in supabase. A return number 1 indicates the user was found and deleted. A return number 0 indicates the user was not found.
+    global.logger.info(`Deleting profile for userID ${options.userID}`);
+    const { userID } = options;
+    const { data, error } = await dbPublic.rpc('permanent_profile_delete', { userid: userID });
+    global.logger.info(`data: ${data}`);
+    if (error) {
+      global.logger.error(`Error deleting profile for userID ${userID}: ${error.message}`);
+      throw errorGen(`Error deleting profile for userID ${userID}: ${error.message}`, 400);
+    }
+    if (data === 0) {
+      global.logger.error(`No profile found for userID ${userID}`);
+      throw errorGen(`No profile found for userID ${userID}`, 400);
+    }
+
+    // now that profile and data is deleted, call supabase method 'auth.admin.deleteUser'
+    const { error: errorDeleteUser } = await dbPublic.auth.admin.deleteUser(userID);
+    if (errorDeleteUser) {
+      global.logger.error(`Error deleting user for userID ${userID}: ${errorDeleteUser.message}`);
+      throw errorGen(`Error deleting user for userID ${userID}: ${errorDeleteUser.message}`, 400);
+    }
+
+    global.logger.info(`Successfully deleted profile for userID ${userID}`);
+    return true;
+  }
+
   return {
     getProfile,
     getFriends,
@@ -294,5 +320,6 @@ module.exports = ({ db, dbPublic }) => {
     getFollowing,
     getFollower,
     searchProfiles,
+    deleteProfile,
   };
 };
