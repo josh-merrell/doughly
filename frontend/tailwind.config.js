@@ -27,6 +27,9 @@ module.exports = {
     },
   },
   theme: {
+    screens: {
+      md: { max: '767px' },
+    },
     extend: {
       display: [
         "responseive",
@@ -305,5 +308,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms")],
+  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms"), require('tailwind-scrollbar-hide')],
 };

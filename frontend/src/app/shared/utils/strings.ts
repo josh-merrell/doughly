@@ -5,7 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class StringsService {
   public readonly onboardingStrings = {
-    collectUserDetails: 'First things first. Choose a username and share some details about yourself.',
+    collectUserDetails:
+      'First things first. Choose a username and share some details about yourself.',
     welcomeToDoughly: `Welcome to Doughly! Let's show you around before you get cooking.`,
     discoverPageOverview: `Recipes in Doughly can be set to be Public, Private, or Heirloom (friends only). This Discover page features popular Public recipes. Open one that catches your eye!`,
     publicRecipePage: `A great Choice! You'll find details about the recipe, ingredients, tools, and steps here. If you want to hold on to this for later, make use of the "Subscribe" button near the top. Let's try that now.`,
@@ -21,6 +22,28 @@ export class StringsService {
     recipeCreateImageSuccess: `Amazing! While not always perfect, this tool gets the bulk of the work done for you. Review and confirm any yellow Ingredients in order to use this recipe.`,
     recipeCreateCreditUsage: `Using AI to create recipes gives our systems a workout, so it requires credits. We start you off with a few. To add more, upgrade to a Subscription plan in the Profile page.`,
     onboardingComplete: `We hope you're excited to build your collection for your loved ones to enjoy for years to come. Best wishes from Doughly.`,
+  };
+  public readonly productStrings = {
+    subscribeFinePrint: `Subscriptions are billed monthly and can be canceled at any time. Unused credits do not roll over to the next month. You can upgrade or downgrade your plan at any time.`,
+    noSubscribeOfferings: `We're sorry, xbut we couldn't find any subscription offerings at this time. Please try again later.`,
+    subscribeOverviewBenefit1of2: `Doughly Premium users import recipes`,
+    subscribeOverviewBenefitmultiplier: ' 6.2 ',
+    subscribeOverviewBenefit2of2: `times faster with AI!`,
+    subscribeChartBenefit: `Premium users get the most from thier recipes`,
+    subscribeOverviewPoints: [
+      {
+        title: `Unlimited Recipes`,
+        description: `Create as many and Subscribe to as many recipes as you like`,
+      },
+      {
+        title: `Monthly AI Credits`,
+        description: `Regularly top up your credits to import recipes in a snap`,
+      },
+      {
+        title: `Daily Data Backups`,
+        description: `Maintain peace of mind knowing your recipes are safe`,
+      },
+    ]
   };
   constructor() {}
 }
