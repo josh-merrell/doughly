@@ -1,5 +1,5 @@
 <div class="relative flex h-full w-full flex-col px-dl-4 pt-dl-6">
-  <!-- Overview -->
+  <!-- BENEFITS OVERVIEW -->
   <div
     *ngIf="view() === 'overview'"
     class="flex h-full w-full flex-col items-center overflow-y-auto"
@@ -8,7 +8,7 @@
       class="mx-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
       >{{ stringsService.productStrings.subscribeOverviewBenefit1of2
       }}<span
-        class="items-center text-dl-7 font-dl-4 text-dl-pink-7 transition-all duration-100 ease-in-out"
+        class="items-center text-dl-7 font-dl-4 text-dl-pink-8 transition-all duration-100 ease-in-out"
         >{{
           stringsService.productStrings.subscribeOverviewBenefitmultiplier
         }} </span
@@ -36,21 +36,36 @@
       NO THANKS
     </button>
   </div>
-  <div *ngIf="view() === 'chart'" class="flex w-full flex-col items-center">
-    <dl-benefits-chart></dl-benefits-chart>
+
+  <!-- BENEFITS CHART -->
+  <div *ngIf="view() === 'chart'" class="flex h-full w-full flex-col items-center overflow-y-auto">
+    <dl-benefits-chart class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"></dl-benefits-chart>
+    <!-- Spacer Div -->
+    <dl class="flex flex-grow"></dl>
     <!-- Buttons -->
     <button
       type="button"
-      class="mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border bg-dl-pink-3 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+      class="mt-dl-3 mb-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onConfirm()"
     >
-      See Options
+      SEE OPTIONS
     </button>
   </div>
-  <div *ngIf="view() === 'options' && subscribeOfferings().length > 0">
+
+  <!-- SUBSCRIBE OPTIONS -->
+  <div *ngIf="view() === 'options' && subscribeOfferings().length > 0" class="flex flex-col h-full items-center">
+    <span
+    class="mb-dl-7 mx-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"      >Choose a plan</span
+    >
     <div *ngFor="let offering of subscribeOfferings()">
       <dl-product-card></dl-product-card>
     </div>
+    <!-- Spacer Div -->
+    <dl class="flex flex-grow"></dl>
+    <span
+      class="inline-flex items-center text-dl-4 font-dl-2 text-dl-grey-10 transition-all duration-100 ease-in-out"
+      >Recurring billing, cancel anytime</span
+    >
     <!-- Buttons -->
     <button
       type="button"
@@ -60,14 +75,22 @@
       Upgrade Now
     </button>
     <span
-      class="inline-flex items-center text-dl-4 font-dl-2 text-dl-grey-5 transition-all duration-100 ease-in-out"
+      class="inline-flex items-center text-dl-3 font-dl-2 text-dl-grey-9 transition-all duration-100 ease-in-out"
       >{{ stringsService.productStrings.subscribeFinePrint }}</span
     >
   </div>
-  <div *ngIf="view() === 'options' && subscribeOfferings().length === 0">
+  <div *ngIf="view() === 'options' && subscribeOfferings().length === 0" class="flex flex-col h-full items-center">
     <span
-      class="inline-flex items-center text-dl-6 font-dl-2 text-dl-grey-5 transition-all duration-100 ease-in-out"
-      >{{ stringsService.productStrings.noSubscribeOfferings }}</span
+    class="mb-dl-7 mx-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"      >{{ stringsService.productStrings.noSubscribeOfferings }}</span
     >
+    <!-- Spacer Div -->
+    <dl class="flex flex-grow"></dl>
+    <button
+      type="button"
+      class="mt-dl-3 mb-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
+      (click)="onCancel()"
+    >
+      Back to Account
+    </button>
   </div>
 </div>

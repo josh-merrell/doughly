@@ -20,7 +20,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
 })
 export class UpgradePageComponent {
   public view: WritableSignal<string> = signal('overview');
-  public subscribeOfferings: WritableSignal<any> = signal(null);
+  public subscribeOfferings: WritableSignal<any[]> = signal([]);
   constructor(
     private router: Router,
     private productService: ProductService,
@@ -32,7 +32,7 @@ export class UpgradePageComponent {
         if (offerings.length) {
           this.subscribeOfferings.set(offerings);
         } else {
-          this.subscribeOfferings.set(null);
+          this.subscribeOfferings.set([]);
         }
       },
       { allowSignalWrites: true }
