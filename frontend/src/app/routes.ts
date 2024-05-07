@@ -30,6 +30,9 @@ import { PrivacyPageComponent } from './privacy/privacy-page/privacy-page.compon
 import { ProfileGuard } from './guards/profile.guard';
 import { stateLoaded } from './guards/stateLoaded.guard';
 import { OnboardingComponent } from './account/feature/onboarding/onboarding.component';
+import { ProductsPageComponent } from './account/feature/products/products-page/products-page.component';
+import { UpgradePageComponent } from './account/feature/products/ui/upgrade-page/upgrade-page.component';
+import { YourPremiumComponent } from './account/feature/products/ui/your-premium/your-premium-page.component';
 
 export const routes: Route[] = [
   {
@@ -106,6 +109,23 @@ export const routes: Route[] = [
   {
     path: 'privacy',
     component: PrivacyPageComponent,
+  },
+  {
+    path: 'products',
+    component: ProductsPageComponent,
+    canActivate: [ProfileGuard, stateLoaded],
+    children: [
+      {
+        path: 'upgrade',
+        component: UpgradePageComponent,
+        canActivate: [ProfileGuard, stateLoaded],
+      },
+      {
+        path: 'your-premium',
+        component: YourPremiumComponent,
+        canActivate: [ProfileGuard, stateLoaded],
+      },
+    ]
   },
   {
     path: 'profile',

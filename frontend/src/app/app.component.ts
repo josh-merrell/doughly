@@ -13,6 +13,7 @@ import { Store } from '@ngrx/store';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ExtraStuffService } from './shared/utils/extraStuffService';
+import { GlassfyOffering } from 'capacitor-plugin-glassfy';
 
 import {
   ActionPerformed,
@@ -25,6 +26,7 @@ import { AuthService } from './shared/utils/authenticationService';
 import { PushTokenService } from './shared/utils/pushTokenService';
 import { filter } from 'rxjs';
 import { RedirectPathService } from './shared/utils/redirect-path.service';
+import { ProductService } from './shared/utils/productService';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -46,10 +48,12 @@ export class AppComponent {
     '/verify-account',
     '/tempRoute',
     '/onboarding',
-    '/privacy'
+    '/privacy',
+    '/products',
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
+  offerings: WritableSignal<GlassfyOffering[]> = this.productService.offerings;
 
   constructor(
     public store: Store,
@@ -58,7 +62,8 @@ export class AppComponent {
     public authService: AuthService,
     public pushTokenService: PushTokenService,
     private redirectPathService: RedirectPathService,
-    private extraStuffService: ExtraStuffService
+    private extraStuffService: ExtraStuffService,
+    private productService: ProductService
   ) {
     // Listen to routing events, ensuring only NavigationEnd events are processed
     this.router.events
@@ -97,6 +102,11 @@ export class AppComponent {
       },
       { allowSignalWrites: true }
     );
+
+    // log product offerings
+    effect(() => {
+      console.log('OFFERINGS: ', this.offerings());
+    });
   }
 
   initializeApp() {
