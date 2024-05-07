@@ -41,6 +41,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@types/google-one-tap": "^1.2.6",
     "aws-sdk": "^2.1415.0",
+    "capacitor-plugin-glassfy": "^3.3.4",
     "cordova-plugin-purchase": "^13.10.1",
     "dayjs": "^1.11.9",
     "fraction.js": "^4.3.7",
@@ -50,6 +51,7 @@
     "ngx-image-cropper": "^7.0.2",
     "rxjs": "~7.8.0",
     "sass": "^1.69.5",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "tslib": "^2.6.0",
     "zone.js": "~0.14.2"
   },
