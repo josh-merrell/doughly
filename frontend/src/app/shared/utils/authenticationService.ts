@@ -27,6 +27,12 @@ export interface Profile {
   notifyFolloweeCreateRecipe?: string;
   notifyFriendRequest?: string;
   notifyNewFollower?: string;
+
+  //permissions
+  isPremium: boolean;
+  permRecipeSubscribeUnlimited: boolean;
+  permRecipeCreateUnlimited: boolean;
+  permDataBackupDaily6MonthRetention: boolean;
 }
 
 @Injectable({
@@ -283,6 +289,11 @@ export class AuthService {
               email: data[0].email,
               username: data[0].username,
               onboardingState: data[0].onboardingState,
+              isPremium: false,
+              //permissions
+              permRecipeSubscribeUnlimited: false,
+              permRecipeCreateUnlimited: false,
+              permDataBackupDaily6MonthRetention: false,
             });
           }
         });
@@ -384,6 +395,12 @@ export class AuthService {
             joined_at: data.joined_at,
             city: data.city,
             state: data.state,
+            isPremium: data.isPremium,
+            //permissions
+            permRecipeSubscribeUnlimited: data.permRecipeSubscribeUnlimited,
+            permRecipeCreateUnlimited: data.permRecipeCreateUnlimited,
+            permDataBackupDaily6MonthRetention:
+              data.permDataBackupDaily6MonthRetention,
           };
           this.profile.set(newProfile);
           return data;
@@ -468,6 +485,13 @@ export class AuthService {
             joined_at: data.joined_at,
             city: data.city,
             state: data.state,
+            //permissions
+            isPremium: data.isPremium,
+            permRecipeSubscribeUnlimited: data.permRecipeSubscribeUnlimited,
+            permRecipeCreateUnlimited: data.permRecipeCreateUnlimited,
+            permDataBackupDaily6MonthRetention:
+              data.permDataBackupDaily6MonthRetention,
+
           };
           this.profile.set(newProfile);
           return data;

@@ -17,7 +17,9 @@
         >{{ stringsService.productStrings.subscribeOverviewBenefit2of2 }}</span
       ></span
     >
-    <dl-benefits-overview class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"></dl-benefits-overview>
+    <dl-benefits-overview
+      class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"
+    ></dl-benefits-overview>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
     <!-- Buttons -->
@@ -38,14 +40,19 @@
   </div>
 
   <!-- BENEFITS CHART -->
-  <div *ngIf="view() === 'chart'" class="flex h-full w-full flex-col items-center overflow-y-auto">
-    <dl-benefits-chart class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"></dl-benefits-chart>
+  <div
+    *ngIf="view() === 'chart'"
+    class="flex h-full w-full flex-col items-center overflow-y-auto"
+  >
+    <dl-benefits-chart
+      class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"
+    ></dl-benefits-chart>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
     <!-- Buttons -->
     <button
       type="button"
-      class="mt-dl-3 mb-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onConfirm()"
     >
       SEE OPTIONS
@@ -53,12 +60,22 @@
   </div>
 
   <!-- SUBSCRIBE OPTIONS -->
-  <div *ngIf="view() === 'options' && subscribeOfferings().length > 0" class="flex flex-col h-full items-center">
+  <div
+    *ngIf="view() === 'options' && subscribeSKUs().length > 0"
+    class="flex h-full w-full flex-col items-center"
+  >
     <span
-    class="mb-dl-7 mx-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"      >Choose a plan</span
+      class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
+      >Choose a plan</span
     >
-    <div *ngFor="let offering of subscribeOfferings()">
-      <dl-product-card></dl-product-card>
+    <div class="flex w-full flex-col items-center">
+      <dl-subscription-sku-card
+        class="mb-dl-6 flex w-full flex-col items-center"
+        *ngFor="let sku of subscribeSKUs()"
+        (click)="skuClick(sku)"
+        [sku]="sku"
+        [isSelected]="selectedSKU() === sku.product.basePlanId"
+      ></dl-subscription-sku-card>
     </div>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
@@ -69,25 +86,29 @@
     <!-- Buttons -->
     <button
       type="button"
-      class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 bg-dl-pink-6 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white transition-all duration-200 ease-in-out"
+      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 transition-all duration-200 ease-in-out"
       (click)="onConfirm()"
     >
-      Upgrade Now
+      UPGRADE NOW
     </button>
     <span
-      class="inline-flex items-center text-dl-3 font-dl-2 text-dl-grey-9 transition-all duration-100 ease-in-out"
+      class="inline-flex items-center text-center text-dl-3 font-dl-2 text-dl-grey-9 transition-all duration-100 ease-in-out"
       >{{ stringsService.productStrings.subscribeFinePrint }}</span
     >
   </div>
-  <div *ngIf="view() === 'options' && subscribeOfferings().length === 0" class="flex flex-col h-full items-center">
+  <div
+    *ngIf="view() === 'options' && subscribeSKUs().length === 0"
+    class="flex h-full flex-col items-center"
+  >
     <span
-    class="mb-dl-7 mx-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"      >{{ stringsService.productStrings.noSubscribeOfferings }}</span
+      class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
+      >{{ stringsService.productStrings.noSubscribeOfferings }}</span
     >
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
     <button
       type="button"
-      class="mt-dl-3 mb-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onCancel()"
     >
       Back to Account
