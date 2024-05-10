@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input, WritableSignal, signal } from '@angular/core';
 import { StringsService } from 'src/app/shared/utils/strings';
 
 @Component({
@@ -9,6 +9,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
   templateUrl: './benefits-chart.component.html',
 })
 export class BenefitsChartComponent {
+  @Input() view!: string;
 
   constructor(public stringsService: StringsService) {}
 

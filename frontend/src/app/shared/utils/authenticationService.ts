@@ -33,6 +33,8 @@ export interface Profile {
   permRecipeSubscribeUnlimited: boolean;
   permRecipeCreateUnlimited: boolean;
   permDataBackupDaily6MonthRetention: boolean;
+  permAITokenCount: number;
+  permAITokenLastRefreshDate: string | null;
 }
 
 @Injectable({
@@ -294,6 +296,8 @@ export class AuthService {
               permRecipeSubscribeUnlimited: false,
               permRecipeCreateUnlimited: false,
               permDataBackupDaily6MonthRetention: false,
+              permAITokenCount: 2,
+              permAITokenLastRefreshDate: null,
             });
           }
         });
@@ -401,6 +405,8 @@ export class AuthService {
             permRecipeCreateUnlimited: data.permRecipeCreateUnlimited,
             permDataBackupDaily6MonthRetention:
               data.permDataBackupDaily6MonthRetention,
+            permAITokenCount: data.permAITokenCount,
+            permAITokenLastRefreshDate: data.permAITokenLastRefreshDate,
           };
           this.profile.set(newProfile);
           return data;
@@ -491,7 +497,8 @@ export class AuthService {
             permRecipeCreateUnlimited: data.permRecipeCreateUnlimited,
             permDataBackupDaily6MonthRetention:
               data.permDataBackupDaily6MonthRetention,
-
+            permAITokenCount: data.permAITokenCount,
+            permAITokenLastRefreshDate: data.permAITokenLastRefreshDate,
           };
           this.profile.set(newProfile);
           return data;

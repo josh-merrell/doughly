@@ -30,6 +30,8 @@ export class StringsService {
     subscribeOverviewBenefitmultiplier: ' 6.2 ',
     subscribeOverviewBenefit2of2: `times faster with AI!`,
     subscribeChartBenefit: `Premium users get the most from thier recipes!`,
+    subscribeYourPremium: `Your Premium Subscription is serving you well. Thank you for your support!`,
+    manageSubscription: `You can manage your subscription in Google Play or App Store.`,
     subscribeOverviewPoints: [
       {
         title: `Unlimited Recipes`,

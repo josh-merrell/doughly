@@ -50,6 +50,13 @@ export class ProductService {
     console.log('Glassfy Permissions restored: ', permissions);
   }
 
+  async updatePermissions() {
+    // called when permissions may have changed
+    const permissions = await Glassfy.permissions();
+    console.log('Updated Glassfy Permissions: ', permissions);
+    this.handleExistingPermissions(permissions);
+  }
+
   async purchase(sku: GlassfySku): Promise<PurchaseResult> {
     try {
       const transaction = await Glassfy.purchaseSku({ sku });

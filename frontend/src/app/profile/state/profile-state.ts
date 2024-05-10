@@ -34,6 +34,8 @@ export interface Profile {
   permRecipeSubscribeUnlimited: boolean;
   permRecipeCreateUnlimited: boolean;
   permDataBackupDaily6MonthRetention: boolean;
+  permAITokenCount: number;
+  permAITokenLastRefreshDate: string;
 }
 
 export interface ProfileState {
