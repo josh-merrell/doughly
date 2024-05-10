@@ -1,0 +1,406 @@
+2024-04-28T15:24:56 [info]: Server is running at http://localhost:3000
+2024-04-28T15:25:40 [info]: Got 297 discoverRecipes
+2024-04-28T15:25:40 [info]: Got 1 ingredientStocks
+2024-04-28T15:25:40 [info]: Got 5 tools
+2024-04-28T15:25:40 [info]: Got 2 toolStocks
+2024-04-28T15:25:40 [info]: Got 37 ingredients
+2024-04-28T15:25:40 [info]: Got 3 recipes
+2024-04-28T15:25:40 [info]: Got 34 recipeCategories
+2024-04-28T15:25:40 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:25:40 [info]: Got 43 recipeIngredients
+2024-04-28T15:25:40 [info]: Got 4 recipeTools
+2024-04-28T15:25:40 [info]: Got 10 recipeSteps
+2024-04-28T15:25:40 [info]: Got 114 steps
+2024-04-28T15:25:41 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:25:41 [info]: Got 4 followships
+2024-04-28T15:25:41 [info]: Got 3 follower followships
+2024-04-28T15:25:41 [info]: Got 5 friendships
+2024-04-28T15:25:41 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:25:41 [info]: Got 1 shopping lists
+2024-04-28T15:25:41 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:25:41 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:25:41 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:25:41 [info]: Got 0 shoppingListRecipes
+2024-04-28T15:25:41 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:25:41 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T15:25:41 [info]: Got 2 recipeFeedback logs
+2024-04-28T15:25:41 [info]: Got 2 recipeFeedback logs
+2024-04-28T15:25:47 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:25:53 [error]: Error creating recipeLog: duplicate key value violates unique constraint "recipeLogs_pkey"
+2024-04-28T15:25:53 [error]: 'recipeLogs' 'createLog': Error creating recipeLog: duplicate key value violates unique constraint "recipeLogs_pkey"
+2024-04-28T15:25:53 [error]: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:25:53 [error]: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:25:53 [error]: Unhandled Error: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:25:53 [error]: 'recipes' 'updateRecipe': Unhandled Error: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:26:28 [info]: Server is running at http://localhost:3000
+2024-04-28T15:26:35 [info]: Got 3 recipes
+2024-04-28T15:26:35 [info]: Got 37 ingredients
+2024-04-28T15:26:35 [info]: Got 5 tools
+2024-04-28T15:26:35 [info]: Got 1 ingredientStocks
+2024-04-28T15:26:35 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:26:35 [info]: Got 297 discoverRecipes
+2024-04-28T15:26:35 [info]: Got 2 toolStocks
+2024-04-28T15:26:35 [info]: Got 4 recipeTools
+2024-04-28T15:26:35 [info]: Got 114 steps
+2024-04-28T15:26:35 [info]: Got 43 recipeIngredients
+2024-04-28T15:26:35 [info]: Got 34 recipeCategories
+2024-04-28T15:26:35 [info]: Got 10 recipeSteps
+2024-04-28T15:26:35 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:26:35 [info]: Got 5 friendships
+2024-04-28T15:26:35 [info]: Got 4 followships
+2024-04-28T15:26:35 [info]: Got 3 follower followships
+2024-04-28T15:26:35 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:26:35 [info]: Got 1 shopping lists
+2024-04-28T15:26:35 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:26:35 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:26:35 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:26:35 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:26:36 [info]: Got 0 shoppingListRecipes
+2024-04-28T15:26:36 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:26:36 [info]: Got 2 recipeFeedback logs
+2024-04-28T15:26:36 [info]: Got 2 recipeFeedback logs
+2024-04-28T15:26:36 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T15:27:01 [info]: Server is running at http://localhost:3000
+2024-04-28T15:27:10 [error]: Error creating recipeLog: duplicate key value violates unique constraint "recipeLogs_pkey"
+2024-04-28T15:27:10 [error]: 'recipeLogs' 'createLog': Error creating recipeLog: duplicate key value violates unique constraint "recipeLogs_pkey"
+2024-04-28T15:27:10 [error]: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:27:10 [error]: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:27:10 [error]: Unhandled Error: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:27:10 [error]: 'recipes' 'updateRecipe': Unhandled Error: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:28:06 [info]: Server is running at http://localhost:3000
+2024-04-28T15:28:41 [info]: Server is running at http://localhost:3000
+2024-04-28T15:28:45 [info]: Got 1 ingredientStocks
+2024-04-28T15:28:45 [info]: Got 37 ingredients
+2024-04-28T15:28:45 [info]: Got 3 recipes
+2024-04-28T15:28:45 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:28:45 [info]: Got 5 tools
+2024-04-28T15:28:45 [info]: Got 2 toolStocks
+2024-04-28T15:28:45 [info]: Got 297 discoverRecipes
+2024-04-28T15:28:45 [info]: Got 34 recipeCategories
+2024-04-28T15:28:45 [info]: Got 43 recipeIngredients
+2024-04-28T15:28:45 [info]: Got 114 steps
+2024-04-28T15:28:45 [info]: Got 10 recipeSteps
+2024-04-28T15:28:45 [info]: Got 4 recipeTools
+2024-04-28T15:28:45 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:28:45 [info]: Got 5 friendships
+2024-04-28T15:28:45 [info]: Got 3 follower followships
+2024-04-28T15:28:45 [info]: Got 4 followships
+2024-04-28T15:28:46 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:28:46 [info]: Got 1 shopping lists
+2024-04-28T15:28:46 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:28:46 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:28:46 [info]: Got 0 shoppingListRecipes
+2024-04-28T15:28:46 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:28:46 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:28:47 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:28:47 [info]: Got 2 recipeFeedback logs
+2024-04-28T15:28:47 [info]: Got 2 recipeFeedback logs
+2024-04-28T15:28:47 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T15:29:20 [error]: Error creating recipeLog: duplicate key value violates unique constraint "recipeLogs_pkey"
+2024-04-28T15:29:20 [error]: 'recipeLogs' 'createLog': Error creating recipeLog: duplicate key value violates unique constraint "recipeLogs_pkey"
+2024-04-28T15:29:20 [error]: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:29:20 [error]: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:29:20 [error]: Unhandled Error: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:29:20 [error]: 'recipes' 'updateRecipe': Unhandled Error: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:29:32 [info]: Server is running at http://localhost:3000
+2024-04-28T15:29:35 [info]: Got 37 ingredients
+2024-04-28T15:29:35 [info]: Got 2 toolStocks
+2024-04-28T15:29:35 [info]: Got 1 ingredientStocks
+2024-04-28T15:29:35 [info]: Got 5 tools
+2024-04-28T15:29:35 [info]: Got 3 recipes
+2024-04-28T15:29:35 [info]: Got 297 discoverRecipes
+2024-04-28T15:29:35 [info]: Got 34 recipeCategories
+2024-04-28T15:29:35 [info]: Got 43 recipeIngredients
+2024-04-28T15:29:35 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:29:35 [info]: Got 114 steps
+2024-04-28T15:29:35 [info]: Got 10 recipeSteps
+2024-04-28T15:29:35 [info]: Got 4 recipeTools
+2024-04-28T15:29:35 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:29:35 [info]: Got 3 follower followships
+2024-04-28T15:29:35 [info]: Got 5 friendships
+2024-04-28T15:29:35 [info]: Got 4 followships
+2024-04-28T15:29:35 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:29:35 [info]: Got 1 shopping lists
+2024-04-28T15:29:35 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:29:35 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:29:35 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:29:36 [info]: Got 0 shoppingListRecipes
+2024-04-28T15:29:36 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:29:37 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:29:37 [info]: Got 2 recipeFeedback logs
+2024-04-28T15:29:37 [info]: Got 2 recipeFeedback logs
+2024-04-28T15:29:37 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T15:29:48 [info]: Server is running at http://localhost:3000
+2024-04-28T15:29:54 [error]: Error creating recipeLog: duplicate key value violates unique constraint "recipeLogs_pkey"
+2024-04-28T15:29:54 [error]: 'recipeLogs' 'createLog': Error creating recipeLog: duplicate key value violates unique constraint "recipeLogs_pkey"
+2024-04-28T15:29:54 [error]: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:29:54 [error]: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:29:54 [error]: Unhandled Error: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:29:54 [error]: 'recipes' 'updateRecipe': Unhandled Error: Error calling updater: Error creating recipe log: Request failed with status code 400
+2024-04-28T15:30:56 [info]: Server is running at http://localhost:3000
+2024-04-28T15:30:59 [info]: Got 5 tools
+2024-04-28T15:30:59 [info]: Got 37 ingredients
+2024-04-28T15:30:59 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:30:59 [info]: Got 1 ingredientStocks
+2024-04-28T15:30:59 [info]: Got 3 recipes
+2024-04-28T15:30:59 [info]: Got 2 toolStocks
+2024-04-28T15:30:59 [info]: Got 4 recipeTools
+2024-04-28T15:30:59 [info]: Got 297 discoverRecipes
+2024-04-28T15:30:59 [info]: Got 34 recipeCategories
+2024-04-28T15:30:59 [info]: Got 43 recipeIngredients
+2024-04-28T15:30:59 [info]: Got 114 steps
+2024-04-28T15:30:59 [info]: Got 10 recipeSteps
+2024-04-28T15:30:59 [info]: Got 5 friendships
+2024-04-28T15:30:59 [info]: Got 3 follower followships
+2024-04-28T15:31:00 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:31:00 [info]: Got 4 followships
+2024-04-28T15:31:00 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:31:00 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:31:00 [info]: Got 1 shopping lists
+2024-04-28T15:31:01 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:31:01 [info]: Got 0 shoppingListRecipes
+2024-04-28T15:31:01 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:31:01 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:31:01 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:31:01 [info]: Got 0 recipeFeedback logs
+2024-04-28T15:31:01 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T15:31:01 [info]: Got 0 recipeFeedback logs
+2024-04-28T15:31:10 [info]: **RECIPE LOG ENTRY ID: 7124042800011118** updateRecipes-type|subjectID:1124033100000001|oldValue:heirloom|newValue:public
+2024-04-28T15:31:13 [error]: Error calling updater: addFolloweePublicRecipeCreatedMessages is not a function
+2024-04-28T15:31:13 [error]: Unhandled Error: Error calling updater: addFolloweePublicRecipeCreatedMessages is not a function
+2024-04-28T15:31:13 [error]: 'recipes' 'updateRecipe': Unhandled Error: Error calling updater: addFolloweePublicRecipeCreatedMessages is not a function
+2024-04-28T15:31:13 [info]: **RECIPE LOG ENTRY ID: 7124042800011119** updateRecipeVersion|subjectID:1124033100000001|oldValue:26|newValue:27
+2024-04-28T15:32:54 [info]: Server is running at http://localhost:3000
+2024-04-28T15:32:58 [info]: Got 37 ingredients
+2024-04-28T15:32:58 [info]: Got 5 tools
+2024-04-28T15:32:58 [info]: Got 2 toolStocks
+2024-04-28T15:32:58 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:32:58 [info]: Got 1 ingredientStocks
+2024-04-28T15:32:58 [info]: Got 3 recipes
+2024-04-28T15:32:58 [info]: Got 43 recipeIngredients
+2024-04-28T15:32:58 [info]: Got 34 recipeCategories
+2024-04-28T15:32:58 [info]: Got 10 recipeSteps
+2024-04-28T15:32:58 [info]: Got 297 discoverRecipes
+2024-04-28T15:32:58 [info]: Got 114 steps
+2024-04-28T15:32:58 [info]: Got 4 recipeTools
+2024-04-28T15:32:58 [info]: Got 5 friendships
+2024-04-28T15:32:58 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:32:58 [info]: Got 4 followships
+2024-04-28T15:32:58 [info]: Got 3 follower followships
+2024-04-28T15:32:58 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:32:59 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:32:59 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:32:59 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:32:59 [info]: Got 1 shopping lists
+2024-04-28T15:32:59 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:32:59 [info]: Got 0 shoppingListRecipes
+2024-04-28T15:33:00 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:33:00 [info]: Got 0 recipeFeedback logs
+2024-04-28T15:33:00 [info]: Got 0 recipeFeedback logs
+2024-04-28T15:33:00 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T15:33:11 [info]: **RECIPE LOG ENTRY ID: 7124042800011120** updateRecipes-type|subjectID:1124033100000001|oldValue:public|newValue:heirloom
+2024-04-28T15:33:15 [error]: Error calling updater: addFriendHeirloomRecipeCreatedMessages is not a function
+2024-04-28T15:33:15 [error]: Unhandled Error: Error calling updater: addFriendHeirloomRecipeCreatedMessages is not a function
+2024-04-28T15:33:15 [error]: 'recipes' 'updateRecipe': Unhandled Error: Error calling updater: addFriendHeirloomRecipeCreatedMessages is not a function
+2024-04-28T15:33:15 [info]: **RECIPE LOG ENTRY ID: 7124042800011121** updateRecipeVersion|subjectID:1124033100000001|oldValue:27|newValue:28
+2024-04-28T15:38:55 [info]: Server is running at http://localhost:3000
+2024-04-28T15:38:58 [info]: Got 5 tools
+2024-04-28T15:38:58 [info]: Got 37 ingredients
+2024-04-28T15:38:58 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:38:58 [info]: Got 3 recipes
+2024-04-28T15:38:58 [info]: Got 1 ingredientStocks
+2024-04-28T15:38:58 [info]: Got 2 toolStocks
+2024-04-28T15:38:58 [info]: Got 297 discoverRecipes
+2024-04-28T15:38:58 [info]: Got 34 recipeCategories
+2024-04-28T15:38:58 [info]: Got 4 recipeTools
+2024-04-28T15:38:58 [info]: Got 114 steps
+2024-04-28T15:38:58 [info]: Got 43 recipeIngredients
+2024-04-28T15:38:58 [info]: Got 10 recipeSteps
+2024-04-28T15:38:59 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:38:59 [info]: Got 5 friendships
+2024-04-28T15:38:59 [info]: Got 4 followships
+2024-04-28T15:38:59 [info]: Got 3 follower followships
+2024-04-28T15:38:59 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:38:59 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:38:59 [info]: Got 1 shopping lists
+2024-04-28T15:38:59 [info]: Got 0 shoppingListRecipes
+2024-04-28T15:38:59 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:38:59 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:38:59 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:39:00 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:39:01 [info]: Got 0 recipeFeedback logs
+2024-04-28T15:39:01 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T15:39:01 [info]: Got 0 recipeFeedback logs
+2024-04-28T15:39:09 [info]: **RECIPE LOG ENTRY ID: 7124042800011122** updateRecipes-type|subjectID:1124033100000001|oldValue:heirloom|newValue:public
+2024-04-28T15:54:40 [info]: Server is running at http://localhost:3000
+2024-04-28T15:54:54 [info]: **RECIPE LOG ENTRY ID: 7124042800011126** updateRecipes-type|subjectID:1124033100000001|oldValue:public|newValue:heirloom
+2024-04-28T15:54:54 [info]: **RECIPE LOG ENTRY ID: 7124042800011127** updateRecipeVersion|subjectID:1124033100000001|oldValue:31|newValue:32
+2024-04-28T15:57:32 [info]: Server is running at http://localhost:3000
+2024-04-28T15:57:49 [info]: **RECIPE LOG ENTRY ID: 7124042800011128** updateRecipes-type|subjectID:1124033100000001|oldValue:heirloom|newValue:public
+2024-04-28T15:58:23 [info]: Server is running at http://localhost:3000
+2024-04-28T15:58:29 [info]: Got 1 ingredientStocks
+2024-04-28T15:58:29 [info]: Got 2 toolStocks
+2024-04-28T15:58:29 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:58:30 [info]: Got 3 recipes
+2024-04-28T15:58:30 [info]: Got 5 tools
+2024-04-28T15:58:30 [info]: Got 37 ingredients
+2024-04-28T15:58:30 [info]: Got 297 discoverRecipes
+2024-04-28T15:58:30 [info]: Got 34 recipeCategories
+2024-04-28T15:58:30 [info]: Got 43 recipeIngredients
+2024-04-28T15:58:30 [info]: Got 114 steps
+2024-04-28T15:58:30 [info]: Got 10 recipeSteps
+2024-04-28T15:58:30 [info]: Got 4 recipeTools
+2024-04-28T15:58:30 [info]: Got 4 followships
+2024-04-28T15:58:30 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:58:30 [info]: Got 5 friendships
+2024-04-28T15:58:30 [info]: Got 3 follower followships
+2024-04-28T15:58:30 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:58:30 [info]: Got 1 shopping lists
+2024-04-28T15:58:31 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:58:31 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:58:31 [info]: Got 0 shoppingListRecipes
+2024-04-28T15:58:31 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:58:31 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:58:31 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T15:58:32 [info]: Got 0 recipeFeedback logs
+2024-04-28T15:58:32 [info]: Got 0 recipeFeedback logs
+2024-04-28T15:58:32 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T15:58:51 [info]: **RECIPE LOG ENTRY ID: 7124042800011129** updateRecipes-type|subjectID:1124033100000001|oldValue:public|newValue:heirloom
+2024-04-28T15:59:18 [info]: Got 3 push tokens for other user: 70384f78-1d94-49de-b7ad-5c18072e79be
+2024-04-28T15:59:18 [info]: **RECIPE LOG ENTRY ID: 7124042800011130** updateRecipeVersion|subjectID:1124033100000001|oldValue:33|newValue:34
+2024-04-28T15:59:18 [info]: Got 3 push tokens for other user: 4225b995-4211-40ef-aa35-c5f8b70eaa97
+2024-04-28T15:59:18 [info]: Got recipe
+2024-04-28T15:59:18 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFriendsHeirloomRecipeCreated, data: [object Object]
+2024-04-28T15:59:18 [info]: in sendNotification: destTokens: [{"pushToken":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T08:07:19.325+00:00","lastUsedTime":null,"tokenID":"65f3d242-998d-4d76-8a82-a8cb2b193b1a"},{"pushToken":"dXlk2o-PFk7bjfbjXMXn74:APA91bEtibTYrBmI8xptufdI2vcGGybac-vgI7KA7aLgnnTKRc__ukN3lG-o29xJVbWZo6xNioMBX3AQuUodPrjELHcOtc5NEqPGvK2i2f1GQ0nYEAg3l2Ax_XQLUEU2gtoTNjNMnTFY","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T09:13:32.994+00:00","lastUsedTime":null,"tokenID":"011f4a85-1193-41e4-857e-ad266c4343ea"},{"pushToken":"dD1Glk2XkUIRkw2XOZnzcE:APA91bE5HvixZc3VXKv1uidJBlJHZzSakqRTEr9w5TgxtS5ib7F1hy_sJ-A11kMYXOBICwtpdyZwFXl2QZhqEVElKJrLynVpEOhFxR2Rn_rlZkZwYPIYclnTQw-sP-qzz-A0KbmCqmC9","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T10:19:06.089+00:00","lastUsedTime":null,"tokenID":"fad49845-043e-49f0-b8a1-6cc43566fb26"}], type: notifyFriendsHeirloomRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T15:59:18 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T15:59:19 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFriendsHeirloomRecipeCreated, data: [object Object]
+2024-04-28T15:59:19 [info]: in sendNotification: destTokens: [{"pushToken":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-26T23:40:21.051+00:00","lastUsedTime":null,"tokenID":"f0ff9f0b-addc-4076-86f3-79a687d43efe"},{"pushToken":"ffwXGuzeQ5O4V9JPzzdZLc:APA91bE9UdbCbw_ZEOR6VDOOrHeRgc3mA9LHBr2COSbALy4hISwaCABY345JskYQrko24K-KHkb3g7WSjO4gqZ3TX5gVP1qXVvkLDS-5am0d51QGp8pCPznb4r1HtX1Vhz4FX5Xfhx-V","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-27T18:28:41.47+00:00","lastUsedTime":null,"tokenID":"ef048275-2526-4803-8985-c514c100af57"},{"pushToken":"dI6UhZRNRbuzokuz7GDRlP:APA91bF9kd0VW8GAcjC8p06c-omeh8CW9Ces1kJlLCRQNO_eWVqpwPI3FgBQx2HQE-VJPRYAjJcGuQa9HAnaXd0tJZ1MXbd-WZQNIfZe0Xv7FpNlRX_-cVGYxfsEsctCdQC1KHiWcS0e","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-28T22:39:52.581+00:00","lastUsedTime":null,"tokenID":"a7d84fe5-01b3-481c-8cc2-e9d11727507b"}], type: notifyFriendsHeirloomRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T15:59:19 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:01:54 [info]: Server is running at http://localhost:3000
+2024-04-28T16:01:59 [info]: Got 5 tools
+2024-04-28T16:01:59 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:01:59 [info]: Got 3 recipes
+2024-04-28T16:01:59 [info]: Got 37 ingredients
+2024-04-28T16:01:59 [info]: Got 2 toolStocks
+2024-04-28T16:01:59 [info]: Got 1 ingredientStocks
+2024-04-28T16:01:59 [info]: Got 34 recipeCategories
+2024-04-28T16:01:59 [info]: Got 297 discoverRecipes
+2024-04-28T16:01:59 [info]: Got 114 steps
+2024-04-28T16:01:59 [info]: Got 43 recipeIngredients
+2024-04-28T16:01:59 [info]: Got 4 recipeTools
+2024-04-28T16:01:59 [info]: Got 10 recipeSteps
+2024-04-28T16:01:59 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:01:59 [info]: Got 4 followships
+2024-04-28T16:01:59 [info]: Got 3 follower followships
+2024-04-28T16:02:00 [info]: Got 5 friendships
+2024-04-28T16:02:00 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:02:00 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:02:00 [info]: Got 1 shopping lists
+2024-04-28T16:02:00 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:02:00 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:02:00 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:02:00 [info]: Got 0 shoppingListRecipes
+2024-04-28T16:02:06 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:02:06 [info]: Got 0 recipeFeedback logs
+2024-04-28T16:02:06 [info]: Got 0 recipeFeedback logs
+2024-04-28T16:02:06 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T16:02:17 [info]: **RECIPE LOG ENTRY ID: 7124042800011133** updateRecipes-type|subjectID:1124033100000001|oldValue:public|newValue:heirloom
+2024-04-28T16:02:22 [info]: Got 3 push tokens for other user: 70384f78-1d94-49de-b7ad-5c18072e79be
+2024-04-28T16:02:22 [info]: Got recipe
+2024-04-28T16:02:22 [info]: Got 3 push tokens for other user: 4225b995-4211-40ef-aa35-c5f8b70eaa97
+2024-04-28T16:02:22 [info]: **RECIPE LOG ENTRY ID: 7124042800011134** updateRecipeVersion|subjectID:1124033100000001|oldValue:35|newValue:36
+2024-04-28T16:02:22 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFriendsHeirloomRecipeCreated, data: [object Object]
+2024-04-28T16:02:22 [info]: in sendNotification: destTokens: [{"pushToken":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T08:07:19.325+00:00","lastUsedTime":null,"tokenID":"65f3d242-998d-4d76-8a82-a8cb2b193b1a"},{"pushToken":"dXlk2o-PFk7bjfbjXMXn74:APA91bEtibTYrBmI8xptufdI2vcGGybac-vgI7KA7aLgnnTKRc__ukN3lG-o29xJVbWZo6xNioMBX3AQuUodPrjELHcOtc5NEqPGvK2i2f1GQ0nYEAg3l2Ax_XQLUEU2gtoTNjNMnTFY","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T09:13:32.994+00:00","lastUsedTime":null,"tokenID":"011f4a85-1193-41e4-857e-ad266c4343ea"},{"pushToken":"dD1Glk2XkUIRkw2XOZnzcE:APA91bE5HvixZc3VXKv1uidJBlJHZzSakqRTEr9w5TgxtS5ib7F1hy_sJ-A11kMYXOBICwtpdyZwFXl2QZhqEVElKJrLynVpEOhFxR2Rn_rlZkZwYPIYclnTQw-sP-qzz-A0KbmCqmC9","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T10:19:06.089+00:00","lastUsedTime":null,"tokenID":"fad49845-043e-49f0-b8a1-6cc43566fb26"}], type: notifyFriendsHeirloomRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:02:22 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:02:22 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFriendsHeirloomRecipeCreated, data: [object Object]
+2024-04-28T16:02:22 [info]: in sendNotification: destTokens: [{"pushToken":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-26T23:40:21.051+00:00","lastUsedTime":null,"tokenID":"f0ff9f0b-addc-4076-86f3-79a687d43efe"},{"pushToken":"ffwXGuzeQ5O4V9JPzzdZLc:APA91bE9UdbCbw_ZEOR6VDOOrHeRgc3mA9LHBr2COSbALy4hISwaCABY345JskYQrko24K-KHkb3g7WSjO4gqZ3TX5gVP1qXVvkLDS-5am0d51QGp8pCPznb4r1HtX1Vhz4FX5Xfhx-V","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-27T18:28:41.47+00:00","lastUsedTime":null,"tokenID":"ef048275-2526-4803-8985-c514c100af57"},{"pushToken":"dI6UhZRNRbuzokuz7GDRlP:APA91bF9kd0VW8GAcjC8p06c-omeh8CW9Ces1kJlLCRQNO_eWVqpwPI3FgBQx2HQE-VJPRYAjJcGuQa9HAnaXd0tJZ1MXbd-WZQNIfZe0Xv7FpNlRX_-cVGYxfsEsctCdQC1KHiWcS0e","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-28T22:39:52.581+00:00","lastUsedTime":null,"tokenID":"a7d84fe5-01b3-481c-8cc2-e9d11727507b"}], type: notifyFriendsHeirloomRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:02:22 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:03:10 [info]: Server is running at http://localhost:3000
+2024-04-28T16:03:16 [info]: **RECIPE LOG ENTRY ID: 7124042800011135** updateRecipes-type|subjectID:1124033100000001|oldValue:heirloom|newValue:public
+2024-04-28T16:03:40 [info]: **RECIPE LOG ENTRY ID: 7124042800011136** updateRecipeVersion|subjectID:1124033100000001|oldValue:36|newValue:37
+2024-04-28T16:04:04 [info]: Got recipe
+2024-04-28T16:04:04 [info]: Got 3 push tokens for other user: 4225b995-4211-40ef-aa35-c5f8b70eaa97
+2024-04-28T16:04:04 [info]: Got 3 push tokens for other user: 70384f78-1d94-49de-b7ad-5c18072e79be
+2024-04-28T16:04:04 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFollowersPublicRecipeCreated, data: [object Object]
+2024-04-28T16:04:04 [info]: in sendNotification: destTokens: [{"pushToken":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-26T23:40:21.051+00:00","lastUsedTime":null,"tokenID":"f0ff9f0b-addc-4076-86f3-79a687d43efe"},{"pushToken":"ffwXGuzeQ5O4V9JPzzdZLc:APA91bE9UdbCbw_ZEOR6VDOOrHeRgc3mA9LHBr2COSbALy4hISwaCABY345JskYQrko24K-KHkb3g7WSjO4gqZ3TX5gVP1qXVvkLDS-5am0d51QGp8pCPznb4r1HtX1Vhz4FX5Xfhx-V","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-27T18:28:41.47+00:00","lastUsedTime":null,"tokenID":"ef048275-2526-4803-8985-c514c100af57"},{"pushToken":"dI6UhZRNRbuzokuz7GDRlP:APA91bF9kd0VW8GAcjC8p06c-omeh8CW9Ces1kJlLCRQNO_eWVqpwPI3FgBQx2HQE-VJPRYAjJcGuQa9HAnaXd0tJZ1MXbd-WZQNIfZe0Xv7FpNlRX_-cVGYxfsEsctCdQC1KHiWcS0e","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-28T22:39:52.581+00:00","lastUsedTime":null,"tokenID":"a7d84fe5-01b3-481c-8cc2-e9d11727507b"}], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:04:04 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"Check out Veg Club Sandwich, a new public recipe published by Josh Merrell, who you follow!"},"token":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:04:04 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFollowersPublicRecipeCreated, data: [object Object]
+2024-04-28T16:04:04 [info]: in sendNotification: destTokens: [{"pushToken":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T08:07:19.325+00:00","lastUsedTime":null,"tokenID":"65f3d242-998d-4d76-8a82-a8cb2b193b1a"},{"pushToken":"dXlk2o-PFk7bjfbjXMXn74:APA91bEtibTYrBmI8xptufdI2vcGGybac-vgI7KA7aLgnnTKRc__ukN3lG-o29xJVbWZo6xNioMBX3AQuUodPrjELHcOtc5NEqPGvK2i2f1GQ0nYEAg3l2Ax_XQLUEU2gtoTNjNMnTFY","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T09:13:32.994+00:00","lastUsedTime":null,"tokenID":"011f4a85-1193-41e4-857e-ad266c4343ea"},{"pushToken":"dD1Glk2XkUIRkw2XOZnzcE:APA91bE5HvixZc3VXKv1uidJBlJHZzSakqRTEr9w5TgxtS5ib7F1hy_sJ-A11kMYXOBICwtpdyZwFXl2QZhqEVElKJrLynVpEOhFxR2Rn_rlZkZwYPIYclnTQw-sP-qzz-A0KbmCqmC9","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T10:19:06.089+00:00","lastUsedTime":null,"tokenID":"fad49845-043e-49f0-b8a1-6cc43566fb26"}], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:04:04 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"Check out Veg Club Sandwich, a new public recipe published by Josh Merrell, who you follow!"},"token":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:06:22 [error]: Error updating messages: permission denied for table messages
+2024-04-28T16:08:12 [info]: Server is running at http://localhost:3000
+2024-04-28T16:08:19 [info]: **RECIPE LOG ENTRY ID: 7124042800011137** updateRecipes-type|subjectID:1124033100000001|oldValue:public|newValue:heirloom
+2024-04-28T16:08:24 [info]: Got 3 push tokens for other user: 70384f78-1d94-49de-b7ad-5c18072e79be
+2024-04-28T16:08:24 [info]: **RECIPE LOG ENTRY ID: 7124042800011138** updateRecipeVersion|subjectID:1124033100000001|oldValue:37|newValue:38
+2024-04-28T16:08:24 [info]: Got 3 push tokens for other user: 4225b995-4211-40ef-aa35-c5f8b70eaa97
+2024-04-28T16:08:24 [info]: Got recipe
+2024-04-28T16:08:24 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFriendsHeirloomRecipeCreated, data: [object Object]
+2024-04-28T16:08:24 [info]: in sendNotification: destTokens: [{"pushToken":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T08:07:19.325+00:00","lastUsedTime":null,"tokenID":"65f3d242-998d-4d76-8a82-a8cb2b193b1a"},{"pushToken":"dXlk2o-PFk7bjfbjXMXn74:APA91bEtibTYrBmI8xptufdI2vcGGybac-vgI7KA7aLgnnTKRc__ukN3lG-o29xJVbWZo6xNioMBX3AQuUodPrjELHcOtc5NEqPGvK2i2f1GQ0nYEAg3l2Ax_XQLUEU2gtoTNjNMnTFY","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T09:13:32.994+00:00","lastUsedTime":null,"tokenID":"011f4a85-1193-41e4-857e-ad266c4343ea"},{"pushToken":"dD1Glk2XkUIRkw2XOZnzcE:APA91bE5HvixZc3VXKv1uidJBlJHZzSakqRTEr9w5TgxtS5ib7F1hy_sJ-A11kMYXOBICwtpdyZwFXl2QZhqEVElKJrLynVpEOhFxR2Rn_rlZkZwYPIYclnTQw-sP-qzz-A0KbmCqmC9","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T10:19:06.089+00:00","lastUsedTime":null,"tokenID":"fad49845-043e-49f0-b8a1-6cc43566fb26"}], type: notifyFriendsHeirloomRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:08:24 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:08:24 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFriendsHeirloomRecipeCreated, data: [object Object]
+2024-04-28T16:08:24 [info]: in sendNotification: destTokens: [{"pushToken":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-26T23:40:21.051+00:00","lastUsedTime":null,"tokenID":"f0ff9f0b-addc-4076-86f3-79a687d43efe"},{"pushToken":"ffwXGuzeQ5O4V9JPzzdZLc:APA91bE9UdbCbw_ZEOR6VDOOrHeRgc3mA9LHBr2COSbALy4hISwaCABY345JskYQrko24K-KHkb3g7WSjO4gqZ3TX5gVP1qXVvkLDS-5am0d51QGp8pCPznb4r1HtX1Vhz4FX5Xfhx-V","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-27T18:28:41.47+00:00","lastUsedTime":null,"tokenID":"ef048275-2526-4803-8985-c514c100af57"},{"pushToken":"dI6UhZRNRbuzokuz7GDRlP:APA91bF9kd0VW8GAcjC8p06c-omeh8CW9Ces1kJlLCRQNO_eWVqpwPI3FgBQx2HQE-VJPRYAjJcGuQa9HAnaXd0tJZ1MXbd-WZQNIfZe0Xv7FpNlRX_-cVGYxfsEsctCdQC1KHiWcS0e","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-28T22:39:52.581+00:00","lastUsedTime":null,"tokenID":"a7d84fe5-01b3-481c-8cc2-e9d11727507b"}], type: notifyFriendsHeirloomRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:08:24 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:09:31 [error]: Error adding message: permission denied for table messages
+2024-04-28T16:10:28 [info]: Server is running at http://localhost:3000
+2024-04-28T16:10:38 [info]: **RECIPE LOG ENTRY ID: 7124042800011139** updateRecipes-type|subjectID:1124033100000001|oldValue:heirloom|newValue:public
+2024-04-28T16:10:38 [info]: **RECIPE LOG ENTRY ID: 7124042800011140** updateRecipeVersion|subjectID:1124033100000001|oldValue:38|newValue:39
+2024-04-28T16:10:38 [info]: Got recipe
+2024-04-28T16:10:38 [info]: Got 3 push tokens for other user: 4225b995-4211-40ef-aa35-c5f8b70eaa97
+2024-04-28T16:10:38 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFollowersPublicRecipeCreated, data: [object Object]
+2024-04-28T16:10:38 [info]: in sendNotification: destTokens: [{"pushToken":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-26T23:40:21.051+00:00","lastUsedTime":null,"tokenID":"f0ff9f0b-addc-4076-86f3-79a687d43efe"},{"pushToken":"ffwXGuzeQ5O4V9JPzzdZLc:APA91bE9UdbCbw_ZEOR6VDOOrHeRgc3mA9LHBr2COSbALy4hISwaCABY345JskYQrko24K-KHkb3g7WSjO4gqZ3TX5gVP1qXVvkLDS-5am0d51QGp8pCPznb4r1HtX1Vhz4FX5Xfhx-V","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-27T18:28:41.47+00:00","lastUsedTime":null,"tokenID":"ef048275-2526-4803-8985-c514c100af57"},{"pushToken":"dI6UhZRNRbuzokuz7GDRlP:APA91bF9kd0VW8GAcjC8p06c-omeh8CW9Ces1kJlLCRQNO_eWVqpwPI3FgBQx2HQE-VJPRYAjJcGuQa9HAnaXd0tJZ1MXbd-WZQNIfZe0Xv7FpNlRX_-cVGYxfsEsctCdQC1KHiWcS0e","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-28T22:39:52.581+00:00","lastUsedTime":null,"tokenID":"a7d84fe5-01b3-481c-8cc2-e9d11727507b"}], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:10:38 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"Check out Veg Club Sandwich, a new public recipe published by Josh Merrell, who you follow!"},"token":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:10:42 [info]: Got 3 push tokens for other user: 70384f78-1d94-49de-b7ad-5c18072e79be
+2024-04-28T16:13:16 [error]: Error sending message: Requested entity was not found.
+2024-04-28T16:13:16 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"Check out Veg Club Sandwich, a new public recipe published by Josh Merrell, who you follow!"},"token":"ffwXGuzeQ5O4V9JPzzdZLc:APA91bE9UdbCbw_ZEOR6VDOOrHeRgc3mA9LHBr2COSbALy4hISwaCABY345JskYQrko24K-KHkb3g7WSjO4gqZ3TX5gVP1qXVvkLDS-5am0d51QGp8pCPznb4r1HtX1Vhz4FX5Xfhx-V","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:13:16 [info]: Successfully sent token message:
+2024-04-28T16:13:16 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"Check out Veg Club Sandwich, a new public recipe published by Josh Merrell, who you follow!"},"token":"dI6UhZRNRbuzokuz7GDRlP:APA91bF9kd0VW8GAcjC8p06c-omeh8CW9Ces1kJlLCRQNO_eWVqpwPI3FgBQx2HQE-VJPRYAjJcGuQa9HAnaXd0tJZ1MXbd-WZQNIfZe0Xv7FpNlRX_-cVGYxfsEsctCdQC1KHiWcS0e","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:13:16 [error]: Error adding message: permission denied for table messages
+2024-04-28T16:14:23 [info]: Server is running at http://localhost:3000
+2024-04-28T16:14:28 [info]: Got 2 toolStocks
+2024-04-28T16:14:28 [info]: Got 1 ingredientStocks
+2024-04-28T16:14:28 [info]: Got 37 ingredients
+2024-04-28T16:14:28 [info]: Got 5 tools
+2024-04-28T16:14:28 [info]: Got 3 recipes
+2024-04-28T16:14:28 [info]: Got 0 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:14:28 [info]: Got 34 recipeCategories
+2024-04-28T16:14:28 [info]: Got 43 recipeIngredients
+2024-04-28T16:14:28 [info]: Got 4 recipeTools
+2024-04-28T16:14:28 [info]: Got 297 discoverRecipes
+2024-04-28T16:14:28 [info]: Got 114 steps
+2024-04-28T16:14:28 [info]: Got 10 recipeSteps
+2024-04-28T16:14:29 [info]: Got 4 followships
+2024-04-28T16:14:29 [info]: Got 5 friendships
+2024-04-28T16:14:29 [info]: Got 3 follower followships
+2024-04-28T16:14:29 [info]: Successfully retrieved profile for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:14:29 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:14:29 [info]: Got 1 shopping lists
+2024-04-28T16:14:29 [info]: Successfully retrieved 3 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:14:29 [info]: Successfully retrieved 1 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:14:29 [info]: Got 0 shoppingListRecipes
+2024-04-28T16:14:29 [info]: Getting all messages for user ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:14:29 [info]: Successfully retrieved 4 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:14:30 [info]: Got 0 recipeFeedback logs
+2024-04-28T16:14:30 [info]: Found 0 recipeSubscriptions for recipeID: 1124033100000001
+2024-04-28T16:14:30 [info]: Got 0 recipeFeedback logs
+2024-04-28T16:14:30 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced
+2024-04-28T16:14:35 [info]: **RECIPE LOG ENTRY ID: 7124042800011141** updateRecipes-type|subjectID:1124033100000001|oldValue:public|newValue:heirloom
+2024-04-28T16:14:37 [info]: Got recipe
+2024-04-28T16:14:37 [info]: Got 3 push tokens for other user: 4225b995-4211-40ef-aa35-c5f8b70eaa97
+2024-04-28T16:14:37 [info]: Got 3 push tokens for other user: 70384f78-1d94-49de-b7ad-5c18072e79be
+2024-04-28T16:14:37 [info]: **RECIPE LOG ENTRY ID: 7124042800011142** updateRecipeVersion|subjectID:1124033100000001|oldValue:39|newValue:40
+2024-04-28T16:14:40 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFriendsHeirloomRecipeCreated, data: [object Object]
+2024-04-28T16:14:40 [info]: in sendNotification: destTokens: [{"pushToken":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-26T23:40:21.051+00:00","lastUsedTime":null,"tokenID":"f0ff9f0b-addc-4076-86f3-79a687d43efe"},{"pushToken":"ffwXGuzeQ5O4V9JPzzdZLc:APA91bE9UdbCbw_ZEOR6VDOOrHeRgc3mA9LHBr2COSbALy4hISwaCABY345JskYQrko24K-KHkb3g7WSjO4gqZ3TX5gVP1qXVvkLDS-5am0d51QGp8pCPznb4r1HtX1Vhz4FX5Xfhx-V","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-27T18:28:41.47+00:00","lastUsedTime":null,"tokenID":"ef048275-2526-4803-8985-c514c100af57"},{"pushToken":"dI6UhZRNRbuzokuz7GDRlP:APA91bF9kd0VW8GAcjC8p06c-omeh8CW9Ces1kJlLCRQNO_eWVqpwPI3FgBQx2HQE-VJPRYAjJcGuQa9HAnaXd0tJZ1MXbd-WZQNIfZe0Xv7FpNlRX_-cVGYxfsEsctCdQC1KHiWcS0e","userID":"4225b995-4211-40ef-aa35-c5f8b70eaa97","createTime":"2024-04-28T22:39:52.581+00:00","lastUsedTime":null,"tokenID":"a7d84fe5-01b3-481c-8cc2-e9d11727507b"}], type: notifyFriendsHeirloomRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:14:40 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"cJo7Zf9PQw6B28rECn20kT:APA91bFjiB9b6penpXE104MZSOaJO1BJaGgFTp2YvkA9gAc-sc9077zp4W85zW2FToEM_FOWh-pe4NNtxCK5TEZShthTLSWGO6c6YykjEG3AVpcn16WXvi9mUcnqKok-EnV9FuMpfaL7","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:14:40 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object], type: notifyFriendsHeirloomRecipeCreated, data: [object Object]
+2024-04-28T16:14:40 [info]: in sendNotification: destTokens: [{"pushToken":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T08:07:19.325+00:00","lastUsedTime":null,"tokenID":"65f3d242-998d-4d76-8a82-a8cb2b193b1a"},{"pushToken":"dXlk2o-PFk7bjfbjXMXn74:APA91bEtibTYrBmI8xptufdI2vcGGybac-vgI7KA7aLgnnTKRc__ukN3lG-o29xJVbWZo6xNioMBX3AQuUodPrjELHcOtc5NEqPGvK2i2f1GQ0nYEAg3l2Ax_XQLUEU2gtoTNjNMnTFY","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T09:13:32.994+00:00","lastUsedTime":null,"tokenID":"011f4a85-1193-41e4-857e-ad266c4343ea"},{"pushToken":"dD1Glk2XkUIRkw2XOZnzcE:APA91bE5HvixZc3VXKv1uidJBlJHZzSakqRTEr9w5TgxtS5ib7F1hy_sJ-A11kMYXOBICwtpdyZwFXl2QZhqEVElKJrLynVpEOhFxR2Rn_rlZkZwYPIYclnTQw-sP-qzz-A0KbmCqmC9","userID":"70384f78-1d94-49de-b7ad-5c18072e79be","createTime":"2024-04-28T10:19:06.089+00:00","lastUsedTime":null,"tokenID":"fad49845-043e-49f0-b8a1-6cc43566fb26"}], type: notifyFriendsHeirloomRecipeCreated, data: {"recipeAuthor":"Josh Merrell","recipeName":"Veg Club Sandwich","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg","recipeID":1124033100000001}
+2024-04-28T16:14:40 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"c_nMXHpXU0e-jREo4kVQNR:APA91bHaDMzi0i-k2awhJw8xkK-lvqlGKizYIv12_BenUe8b9QqTKrwzmmqFMtxh6JFi2ZAO9_rl9bMwyDjD8OivFGMIpQZA3ebZmsWfGfptY-bMgSD8FgCcRZrfpEjjQbN0bdGxkcqk","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:14:43 [error]: Error sending message: Requested entity was not found.
+2024-04-28T16:14:43 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"ffwXGuzeQ5O4V9JPzzdZLc:APA91bE9UdbCbw_ZEOR6VDOOrHeRgc3mA9LHBr2COSbALy4hISwaCABY345JskYQrko24K-KHkb3g7WSjO4gqZ3TX5gVP1qXVvkLDS-5am0d51QGp8pCPznb4r1HtX1Vhz4FX5Xfhx-V","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:14:43 [error]: Error sending message: Requested entity was not found.
+2024-04-28T16:14:43 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"dXlk2o-PFk7bjfbjXMXn74:APA91bEtibTYrBmI8xptufdI2vcGGybac-vgI7KA7aLgnnTKRc__ukN3lG-o29xJVbWZo6xNioMBX3AQuUodPrjELHcOtc5NEqPGvK2i2f1GQ0nYEAg3l2Ax_XQLUEU2gtoTNjNMnTFY","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:14:44 [error]: Error sending message: Requested entity was not found.
+2024-04-28T16:14:44 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"dD1Glk2XkUIRkw2XOZnzcE:APA91bE5HvixZc3VXKv1uidJBlJHZzSakqRTEr9w5TgxtS5ib7F1hy_sJ-A11kMYXOBICwtpdyZwFXl2QZhqEVElKJrLynVpEOhFxR2Rn_rlZkZwYPIYclnTQw-sP-qzz-A0KbmCqmC9","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:14:44 [info]: Successfully sent token message:
+2024-04-28T16:14:44 [info]: Sending token message: {"data":{"type":"friendHeirloomRecipeCreated","newRecipe":"Josh Merrell published a new recipe: Veg Club Sandwich","recipeID":"1124033100000001"},"notification":{"title":"New Recipe on Doughly","body":"You've got the inside scoop. Josh Merrell just shared a new recipe; Veg Club Sandwich, for friends only!"},"token":"dI6UhZRNRbuzokuz7GDRlP:APA91bF9kd0VW8GAcjC8p06c-omeh8CW9Ces1kJlLCRQNO_eWVqpwPI3FgBQx2HQE-VJPRYAjJcGuQa9HAnaXd0tJZ1MXbd-WZQNIfZe0Xv7FpNlRX_-cVGYxfsEsctCdQC1KHiWcS0e","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images/recipe/ade96f70-4ec5-4ab9-adfe-0645b16e1ced/1000021838.jpg"}}}
+2024-04-28T16:14:44 [info]: Successfully sent token message:
+2024-04-28T16:14:44 [info]: Successfully sent token message:

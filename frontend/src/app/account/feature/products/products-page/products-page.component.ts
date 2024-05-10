@@ -7,6 +7,7 @@ import {
 } from '@angular/router';
 import { filter } from 'rxjs';
 import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 @Component({
   selector: 'dl-products-page',
@@ -15,9 +16,14 @@ import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component'
   templateUrl: './products-page.component.html',
 })
 export class ProductsPageComponent {
+  public profile: object | any = {};
   public view: WritableSignal<string> = signal('upgrade');
 
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     effect(() => {
       const view = this.view();
       if (view === 'upgrade') {
@@ -26,6 +32,19 @@ export class ProductsPageComponent {
         this.router.navigate(['/products/your-premium']);
       }
     });
+
+    effect(
+      () => {
+        const profile = this.authService.profile();
+        this.profile = profile;
+        if (profile) {
+          if (profile.permRecipeCreateUnlimited) {
+            this.view.set('your-premium');
+          }
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit(): void {

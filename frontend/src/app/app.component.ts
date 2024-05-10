@@ -105,7 +105,18 @@ export class AppComponent {
 
     // log product offerings
     effect(() => {
-      console.log('OFFERINGS: ', this.offerings());
+      const offerings = this.offerings();
+      console.log('OFFERINGS: ', offerings)
+      // for (const offering of offerings) {
+      //   console.log('OFFERING ID: ', offering.offeringId);
+      //   console.log('SKUS:');
+      //   for (let sku of offering.skus) {
+      //     console.log('SKU PRODUCT: ', sku.product.title);
+      //     console.log('SKU PRICE: ', sku.product.price);
+      //     console.log('SKU PERIOD: ', sku.product.period);
+      //     console.log('SKU PRODUCT ID: ', sku.productId);
+      //   }
+      // };
     });
   }
 
