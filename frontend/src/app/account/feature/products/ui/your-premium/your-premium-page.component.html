@@ -1,1 +1,18 @@
-<p>your-premium works!</p>
+<div class="relative flex h-full w-full flex-col items-center px-dl-4 pt-dl-6">
+  <div
+    *ngIf="!isLoading()"
+    class="flex h-full w-full flex-col items-center overflow-y-auto"
+  >
+    <dl-benefits-chart
+      [view]="'your-premium'"
+      class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"
+    ></dl-benefits-chart>
+    <!-- Spacer Div -->
+    <dl class="flex flex-grow"></dl>
+    <span
+      class="mx-dl-7 my-dl-3 items-center text-center text-dl-4 font-dl-3 text-dl-grey-9 transition-all duration-100 ease-in-out"
+      >{{stringsService.productStrings.manageSubscription}}</span
+    >
+  </div>
+  
+</div>

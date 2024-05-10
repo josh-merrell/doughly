@@ -28,7 +28,7 @@ module.exports = {
   },
   theme: {
     screens: {
-      md: { max: '767px' },
+      md: { max: "767px" },
     },
     extend: {
       display: [
@@ -197,6 +197,7 @@ module.exports = {
       padding: {
         "dl-0": "0rem",
         "dl-1": ".1875rem",
+        "dl-1.5": ".2875rem",
         "dl-2": ".375rem",
         "dl-3": ".5625rem",
         "dl-4": ".75rem",
@@ -239,6 +240,7 @@ module.exports = {
       colors: {
         dl: {
           //primary
+          "mid-teal-6-to-blue-7": "hsl(174, 73%, 58%)",
           "blue-1": "hsl(204, 96%, 27%)",
           "blue-2": "hsl(203, 87%, 34%)",
           "blue-3": "hsl(202, 83%, 41%)",
@@ -308,5 +310,9 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms"), require('tailwind-scrollbar-hide')],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/forms"),
+    require("tailwind-scrollbar-hide"),
+  ],
 };
