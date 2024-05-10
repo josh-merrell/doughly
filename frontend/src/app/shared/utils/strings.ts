@@ -24,12 +24,14 @@ export class StringsService {
     onboardingComplete: `We hope you're excited to build your collection for your loved ones to enjoy for years to come. Best wishes from Doughly.`,
   };
   public readonly productStrings = {
-    subscribeFinePrint: `Subscriptions are billed monthly and can be canceled at any time. Unused credits do not roll over to the next month. You can upgrade or downgrade your plan at any time.`,
-    noSubscribeOfferings: `We're sorry, xbut we couldn't find any subscription offerings at this time. Please try again later.`,
+    subscribeFinePrint: `You will be automatically billed at the end of each period. You may cancel anytime in Google Play or App Store.`,
+    noSubscribeOfferings: `We're sorry, we couldn't find any subscription offerings at this time. Please check again later.`,
     subscribeOverviewBenefit1of2: `Doughly Premium users import recipes`,
     subscribeOverviewBenefitmultiplier: ' 6.2 ',
     subscribeOverviewBenefit2of2: `times faster with AI!`,
-    subscribeChartBenefit: `Premium users get the most from thier recipes`,
+    subscribeChartBenefit: `Premium users get the most from thier recipes!`,
+    subscribeYourPremium: `Your Premium Subscription is serving you well. Thank you for your support!`,
+    manageSubscription: `You can manage your subscription in Google Play or App Store.`,
     subscribeOverviewPoints: [
       {
         title: `Unlimited Recipes`,
@@ -43,7 +45,7 @@ export class StringsService {
         title: `Daily Data Backups`,
         description: `Maintain peace of mind knowing your recipes are safe`,
       },
-    ]
+    ],
   };
   constructor() {}
 }
