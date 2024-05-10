@@ -7,7 +7,10 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { GlassfyOffering, GlassfySku } from 'capacitor-plugin-glassfy';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 @Component({
   selector: 'dl-upgrade-page',
   standalone: true,
@@ -16,14 +19,18 @@ import { GlassfyOffering, GlassfySku } from 'capacitor-plugin-glassfy';
     BenefitsOverviewComponent,
     BenefitsChartComponent,
     SubscriptionSkuCardComponent,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './upgrade-page.component.html',
 })
 export class UpgradePageComponent {
+  public isLoading: WritableSignal<boolean> = signal(false);
   public view: WritableSignal<string> = signal('overview');
   public subscribeSKUs: WritableSignal<GlassfySku[]> = signal([]);
-  public selectedSKU: WritableSignal<string> = signal('per-6-month-17-94');
+  public selectedBasePlanId: WritableSignal<string> =
+    signal('per-6-month-17-94');
   constructor(
+    public dialog: MatDialog,
     private router: Router,
     private productService: ProductService,
     public stringsService: StringsService
@@ -55,8 +62,8 @@ export class UpgradePageComponent {
       this.setView('chart');
     } else if (this.view() === 'chart') {
       this.setView('options');
-    } else if (this.view() === 'options' && this.selectedSKU()) {
-      this.makePurchase(this.selectedSKU());
+    } else if (this.view() === 'options' && this.selectedBasePlanId()) {
+      this.makePurchase(this.selectedBasePlanId());
     }
   }
 
@@ -70,19 +77,35 @@ export class UpgradePageComponent {
       (sku) => sku.product.basePlanId === basePlanId
     );
     if (sku) {
-      await this.productService.purchase(sku);
+      this.isLoading.set(true);
+      const result = await this.productService.purchase(sku);
+      this.isLoading.set(false);
+      if (result.error) {
+        this.dialog.open(ErrorModalComponent, {
+          data: {
+            errorMessage: `Error purchasing "${basePlanId}"${result.error}`,
+            statusCode: '500',
+          },
+        });
+      } else {
+        this.dialog.open(ConfirmationModalComponent, {
+          maxWidth: '380px',
+          data: {
+            confirmationMessage: 'Purchase successful!',
+          },
+        });
+      }
+      this.router.navigate(['/recipes/discover']);
     }
   }
 
-  async restore() {
-    await this.productService.restore();
-  }
+  // async restore() {
+  //   await this.productService.restore();
+  // }
 
   skuClick(sku) {
-    if (sku.product.basePlanId === this.selectedSKU()) {
-      this.selectedSKU.set('');
-    } else {
-      this.selectedSKU.set(sku.product.basePlanId);
+    if (sku.product.basePlanId !== this.selectedBasePlanId()) {
+      this.selectedBasePlanId.set(sku.product.basePlanId);
     }
   }
 

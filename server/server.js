@@ -56,6 +56,7 @@ const shoppingRouter = require('./modules/shopping/router');
 const pushTokensRouter = require('./modules/pushNotifications/router');
 const messagesRouter = require('./modules/messages/router');
 const linkPreviewsRouter = require('./modules/linkPreviews/router');
+const purchasesRouter = require('./modules/purchases/router');
 
 // UTIL ROUTERS
 const unitRatioRouter = require('./modules/utility/unitRatios/router');
@@ -123,6 +124,7 @@ app.use('/unitRatios', unitRatioRouter);
 app.use('/pushTokens', pushTokensRouter);
 app.use('/messages', messagesRouter);
 app.use('/link-previews', linkPreviewsRouter);
+app.use('/purchases', purchasesRouter);
 
 // Start the server
 const port = 3000;

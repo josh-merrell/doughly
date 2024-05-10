@@ -9,13 +9,22 @@ import {
 } from 'capacitor-plugin-glassfy';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
+import { HttpClient } from '@angular/common/http';
+
+// define PurchaseResult interface
+interface PurchaseResult {
+  productId: string | null;
+  permissions: GlassfyPermissions | null;
+  error: any;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
+  private readonly API_URL = `${environment.BACKEND}/purchases`;
   public offerings: WritableSignal<GlassfyOffering[]> = signal([]);
-  constructor(private authService: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.initGlassfy();
   }
 
@@ -41,15 +50,30 @@ export class ProductService {
     console.log('Glassfy Permissions restored: ', permissions);
   }
 
-  async purchase(sku: GlassfySku) {
+  async purchase(sku: GlassfySku): Promise<PurchaseResult> {
     try {
       const transaction = await Glassfy.purchaseSku({ sku });
       console.log('Transaction: ', transaction);
       if (transaction.receiptValidated) {
         this.handleSuccessfulTransactionResult(transaction, sku);
+        return {
+          productId: transaction.productId,
+          permissions: transaction.permissions,
+          error: null,
+        };
       }
+      return {
+        productId: null,
+        permissions: null,
+        error: 'Receipt not validated',
+      };
     } catch (error) {
       console.error('Error purchasing SKU: ', error);
+      return {
+        productId: null,
+        permissions: null,
+        error: error,
+      };
     }
   }
 
@@ -57,32 +81,14 @@ export class ProductService {
     transaction: GlassfyTransaction,
     sku: GlassfySku
   ) {
-    if (transaction.productId.indexOf('doughly_premium_monthly_2.99')) {
-      // update profile with 'premium' "true" status
-      this.authService.updateField('isPremium', 'true');
-    }
+    // send to backend for processing/adding profile perms
+    const body = { transaction, sku };
+    this.http.post(`${this.API_URL}/newPurchase`, body);
   }
 
   async handleExistingPermissions(permissions: GlassfyPermissions) {
-    for (const perm of permissions.all) {
-      let permRecipeSubscribeUnlimited = false;
-      let permRecipeCreateUnlimited = false;
-      let permDataBackupDaily6MonthRetention = false;
-      if (perm.permissionId === 'recipe-subscribed-count-unlimited') {
-        permRecipeSubscribeUnlimited = true;
-      } else if (perm.permissionId === 'recipe-created-count-unlimited') {
-        permRecipeCreateUnlimited = true;
-      } else if (perm.permissionId === 'data-backup-daily-6-month-retention') {
-        permDataBackupDaily6MonthRetention = true;
-      }
-
-      // send an update to the profile with all theses permissions
-      const updateBody = {
-        permRecipeSubscribeUnlimited: permRecipeSubscribeUnlimited,
-        permRecipeCreateUnlimited: permRecipeCreateUnlimited,
-        permDataBackupDaily6MonthRetention: permDataBackupDaily6MonthRetention,
-      };
-      this.authService.updateProfile({ profile: updateBody });
-    }
+    // send to backend for updating profile perms (including adding AI tokens if time to)
+    const body = { permissions };
+    this.http.post(`${this.API_URL}/updatePermissions`, body);
   }
 }
