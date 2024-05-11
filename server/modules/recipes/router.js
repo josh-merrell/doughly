@@ -36,6 +36,8 @@ router.post('/fromURL', routeValidator(newRecipeFromUrlSchema_body, 'body'), err
 router.post('/constructed', routeValidator(constructRecipeSchema_body, 'body'), errorCatcher(h.constructRecipe));
 router.post('/use/:recipeID', routeValidator(useRecipeSchema_params, 'params'), routeValidator(useRecipeSchema_body, 'body'), errorCatcher(h.useRecipe));
 router.post('/subscribe', generateID, routeValidator(subscribeRecipe_body, 'body'), errorCatcher(h.subscribeRecipe));
+router.post('/hide/recipes', errorCatcher(h.hideRecipes));
+router.post('/hide/subscriptions', errorCatcher(h.hideSubscriptions));
 router.post('/', generateID, routeValidator(newRecipeSchema_body, 'body'), errorCatcher(h.createRecipe));
 
 router.get('/discover', errorCatcher(h.getDiscoverRecipes));

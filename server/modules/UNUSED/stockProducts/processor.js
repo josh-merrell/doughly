@@ -52,7 +52,7 @@ module.exports = ({ db }) => {
     }
 
     //validate recipe, return error if it doesn't exist
-    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
+    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('hidden', false);
     if (error) {
       global.logger.info(`Error validating recipe ID: ${recipeID} while creating stockProduct ${error.message}`);
       return { error: error.message };
