@@ -67,7 +67,7 @@
       type="button"
       class="whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
       (click)="onAddClick()"
-      [ngClass]="{ invisible: listView() !== 'all' }"
+      [ngClass]="{ invisible: listView() !== 'all' || type !== 'created' }"
     >
       Add Recipe
     </button>

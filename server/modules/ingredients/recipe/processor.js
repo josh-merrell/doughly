@@ -52,7 +52,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that the provided recipeID exists, return error if not
-    const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID).eq('deleted', false);
+    const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID).eq('deleted', false).eq('hidden', false);
     if (error) {
       global.logger.error(`Error validating provided recipeID: ${error.message}`);
       throw errorGen(`Error validating provided recipeID`, 400);

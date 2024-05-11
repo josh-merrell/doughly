@@ -471,7 +471,6 @@ export class AuthService {
       [field]: value,
       updated_at: new Date(),
     };
-    console.log('UPDATE PROFILE FIELD: ', JSON.stringify(update));
     return from(
       this.supabase
         .from('profiles')

@@ -31,10 +31,12 @@ import { RecipeToolsModalComponent } from '../../ui/recipe-tool/recipe-tools-mod
 import { RecipeStepsModalComponent } from '../../ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 import { filter, map, takeUntil } from 'rxjs';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { ProductService } from 'src/app/shared/utils/productService';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -123,7 +125,8 @@ export class RecipeListComponent {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private location: Location,
-    private stringsService: StringsService
+    private stringsService: StringsService,
+    private productService: ProductService
   ) {
     effect(
       () => {
@@ -233,27 +236,56 @@ export class RecipeListComponent {
     this.searchFilter.set(searchFilter);
   }
   onAddClick(): void {
-    // update url to include '/add' if it's not already there
-    this.location.go('/recipes/created/add');
+    let allowCreate = false;
+    // check perms for profile
+    const license =
+      this.type === 'subscription'
+        ? this.productService.licences.recipeSubscribeLimit
+        : this.productService.licences.recipeCreateLimit;
 
-    const dialogRef = this.dialog.open(AddRecipeModalComponent, {
-      data: {
-        recipeCategories: this.categories(),
-      },
-      width: '80%',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.closeAll();
-        this.dialog.open(ConfirmationModalComponent, {
+    if (this.profile().permRecipeCreateUnlimited === false) {
+      if (license <= this.recipes().length) {
+        // open upgradePromptModal
+        const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
           data: {
-            confirmationMessage: `Recipe added successfully.`,
+            promptMessage: `You have reached the number of allowed free-tier Created Recipes. Please upgrade to create more.`,
           },
         });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'routeToUpgrade') {
+            this.router.navigate(['/products']);
+          }
+        });
+      } else {
+        allowCreate = true;
       }
-      // remove '/add' from the url
-      this.location.go('/recipes/created');
-    });
+    } else {
+      allowCreate = true;
+    }
+
+    if (allowCreate) {
+      // update url to include '/add' if it's not already there
+      this.location.go('/recipes/created/add');
+
+      const dialogRef = this.dialog.open(AddRecipeModalComponent, {
+        data: {
+          recipeCategories: this.categories(),
+        },
+        width: '80%',
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialog.closeAll();
+          this.dialog.open(ConfirmationModalComponent, {
+            data: {
+              confirmationMessage: `Recipe added successfully.`,
+            },
+          });
+        }
+        // remove '/add' from the url
+        this.location.go('/recipes/created');
+      });
+    }
   }
   categoryCardClick(category: RecipeCategory): void {
     this.updateSearchFilter(category.name);

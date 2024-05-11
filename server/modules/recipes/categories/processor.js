@@ -1,8 +1,8 @@
 ('use strict');
 
-const axios = require('axios');
-const { createRecipeLog } = require('../../../services/dbLogger');
-const { updater } = require('../../../db');
+// const axios = require('axios');
+// const { createRecipeLog } = require('../../../services/dbLogger');
+// const { updater } = require('../../../db');
 const { errorGen } = require('../../../middleware/errorHandling');
 
 module.exports = ({ db }) => {
@@ -88,7 +88,7 @@ module.exports = ({ db }) => {
   //   }
 
   //   //collect list of recipes that reference this category
-  //   const { data: recipes, error: recipeError } = await db.from('recipes').select().eq('recipeCategoryID', options.recipeCategoryID).eq('deleted', false);
+  //   const { data: recipes, error: recipeError } = await db.from('recipes').select().eq('recipeCategoryID', options.recipeCategoryID).eq('deleted', false).eq('hidden', false);
 
   //   if (recipeError) {
   //     global.logger.info(`Error getting recipes associated with category to delete. Backing out: ${recipeError.message}`);

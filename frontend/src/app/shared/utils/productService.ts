@@ -24,6 +24,10 @@ interface PurchaseResult {
 export class ProductService {
   private readonly API_URL = `${environment.BACKEND}/purchases`;
   public offerings: WritableSignal<GlassfyOffering[]> = signal([]);
+  public licences = {
+    recipeSubscribeLimit: 3,
+    recipeCreateLimit: 3,
+  };
   constructor(private http: HttpClient, private authService: AuthService) {
     this.initGlassfy();
   }
