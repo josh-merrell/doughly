@@ -1,18 +1,45 @@
 <div class="relative flex h-full w-full flex-col items-center px-dl-4 pt-dl-6">
   <div
-    *ngIf="!isLoading()"
+    *ngIf="!isLoading() && view() === 'benefits'"
     class="flex h-full w-full flex-col items-center overflow-y-auto"
   >
     <dl-benefits-chart
       [view]="'your-premium'"
-      class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"
+      class="mt-dl-2 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"
     ></dl-benefits-chart>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
     <span
-      class="mx-dl-7 my-dl-3 items-center text-center text-dl-4 font-dl-3 text-dl-grey-9 transition-all duration-100 ease-in-out"
-      >{{stringsService.productStrings.manageSubscription}}</span
+      (click)="onConfirm()"
+      class="mx-dl-7 mb-dl-4 items-center text-center text-dl-4 font-dl-3 text-dl-grey-8 transition-all duration-100 ease-in-out"
+      >{{ stringsService.productStrings.changeSubscription }}</span
     >
   </div>
-  
+  <div *ngIf="!isLoading() && view() === 'chooseMapping'">
+    <!-- Prompt User to Select Recipes to Keep-->
+    <span
+      class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
+      >{{ stringsService.productStrings.beforeCanceling1 }}</span
+    >
+    <!-- Buttons -->
+    <button
+      type="button"
+      class="mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
+      (click)="onSelectRecipes()"
+    >
+      SELECT RECIPES
+    </button>
+    <button
+      type="button"
+      class="mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
+      (click)="onConfirm()"
+    >
+      BACK TO ACCOUNT
+    </button>
+    <span
+      (click)="onConfirm()"
+      class="mx-dl-7 mb-dl-3 items-center text-center text-dl-3 font-dl-3 text-dl-grey-9 transition-all duration-100 ease-in-out"
+      >{{ stringsService.productStrings.manageSubscription }}</span
+    >
+  </div>
 </div>

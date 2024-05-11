@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that provided recipeID and compomentID (recipe) exist, return error if not
-    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
+    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('hidden', false);
     if (error) {
       global.logger.error(`Error getting recipe: ${error.message}`);
       throw errorGen(`Error getting recipe`, 400);
@@ -50,7 +50,7 @@ module.exports = ({ db }) => {
       global.logger.error(`Recipe with provided ID (${recipeID}) does not exist`);
       throw errorGen(`Recipe with provided ID (${recipeID}) does not exist`, 400);
     }
-    const { data: component, error: error2 } = await db.from('recipes').select().eq('recipeID', componentID);
+    const { data: component, error: error2 } = await db.from('recipes').select().eq('recipeID', componentID).eq('hidden', false);
     if (error2) {
       global.logger.error(`Error getting component Recipe: ${error2.message}`);
       throw errorGen(`Error getting component Recipe`, 400);

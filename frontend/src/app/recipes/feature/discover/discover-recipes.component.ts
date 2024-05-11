@@ -230,7 +230,6 @@ export class DiscoverRecipesComponent {
   }
 
   onboardingCallback() {
-    console.log('IN CALLBACK. PROFILE: ', this.profile());
     setTimeout(() => {
       this.onboardingHandler(this.profile().onboardingState);
     }, 1000);

@@ -94,6 +94,12 @@ module.exports = ({ db, dbPublic }) => {
       notifyFolloweeCreateRecipe: profile.notifyFolloweeCreateRecipe,
       notifyFriendRequest: profile.notifyFriendRequest,
       notifyNewFollower: profile.notifyNewFollower,
+      // permissions
+      permRecipeSubscribeUnlimited: profile.permRecipeSubscribeUnlimited,
+      permRecipeCreateUnlimited: profile.permRecipeCreateUnlimited,
+      permDataBackupDaily6MonthRetention: profile.permDataBackupDaily6MonthRetention,
+      permAITokenCount: profile.permAITokenCount,
+      permAITokenLastRefreshDate: profile.permAITokenLastRefreshDate,
     };
     return result;
   }

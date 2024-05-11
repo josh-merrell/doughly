@@ -32,6 +32,9 @@ export class StringsService {
     subscribeChartBenefit: `Premium users get the most from thier recipes!`,
     subscribeYourPremium: `Your Premium Subscription is serving you well. Thank you for your support!`,
     manageSubscription: `You can manage your subscription in Google Play or App Store.`,
+    timeToUpgrade: `Time to upgrade your account!`,
+    changeSubscription: `change subscription`,
+    beforeCanceling1: `Before canceling, select which created Recipes and Subscriptions you'd like to keep as part of your free tier access. Don't worry, we'll keep the others in case you choose to resubscribe later.`,
     subscribeOverviewPoints: [
       {
         title: `Unlimited Recipes`,

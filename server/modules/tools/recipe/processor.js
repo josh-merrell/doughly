@@ -47,7 +47,7 @@ module.exports = ({ db }) => {
     const { customID, authorization, userID, recipeID, toolID, quantity } = options;
 
     //validate that provided recipeID exists
-    const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID);
+    const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID).eq('hidden', false);
     if (recipeError) {
       global.logger.error(`Error validating recipe ID: ${recipeID}: ${recipeError}`);
       throw errorGen(`Error validating recipe ID: ${recipeID}`, 400);
@@ -304,7 +304,7 @@ module.exports = ({ db }) => {
     }
 
     //get current details of associated recipe
-    const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeTool[0].recipeID).single();
+    const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeTool[0].recipeID).eq('hidden', false).single();
     if (recipeError) {
       global.logger.error(`Error getting associated recipe: ${recipeError}`);
       throw errorGen(`Error getting associated recipe: ${recipeError}`, 400);

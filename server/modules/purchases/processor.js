@@ -1,7 +1,21 @@
 const { errorGen } = require('../../middleware/errorHandling');
 const { productConstants } = require('../../services/purchaseService');
 ('use strict');
-module.exports = ({ dbDefault }) => {
+module.exports = ({ db, dbDefault }) => {
+  const unhideRecipes = async (userID) => {
+    // just set 'hidden' to false for all user recipes and recipe subscriptions
+    const { error: error } = await db.from('recipes').update({ hidden: false }).eq('userID', userID);
+    if (error) {
+      throw errorGen(`Error unhiding recipes: ${error.message}`, 400);
+    }
+    const { error: error2 } = await db.from('recipeSubscriptions').update({ hidden: false }).eq('userID', userID);
+    if (error2) {
+      throw errorGen(`Error unhiding recipe subscriptions: ${error2.message}`, 400);
+    }
+
+    return 'success';
+  };
+
   const calculateAITokenUpdate = async (userID) => {
     const tokenUpdate = {
       needsUpdate: false,
@@ -74,6 +88,13 @@ module.exports = ({ dbDefault }) => {
             throw errorGen('Invalid transaction productId', 400);
         }
 
+        // unhide all recipes and recipe subscriptions
+        const unhideResult = await unhideRecipes(req.userID);
+        if (unhideResult !== 'success') {
+          throw errorGen('Error unhiding recipes', 400);
+        }
+
+        // now update profile with new permissions
         const tokenUpdate = await calculateAITokenUpdate(req.userID);
         if (tokenUpdate.needsUpdate) {
           newProfile['permAITokenCount'] = tokenUpdate.newCount;
@@ -108,9 +129,15 @@ module.exports = ({ dbDefault }) => {
           let tokenUpdate;
           switch (permission.permissionId) {
             case 'recipe-subscribed-count-unlimited':
+              if (permission.value === true) {
+                await unhideRecipes(req.userID);
+              }
               newProfile['permRecipeSubscribeUnlimited'] = permission.value;
               break;
             case 'recipe-create-count-unlimited':
+              if (permission.value === true) {
+                await unhideRecipes(req.userID);
+              }
               newProfile['permRecipeCreateUnlimited'] = permission.value;
               break;
             case 'data-backup-daily-6-month-retention':
