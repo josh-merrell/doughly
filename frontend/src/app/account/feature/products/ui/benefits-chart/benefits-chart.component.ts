@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, WritableSignal, signal } from '@angular/core';
+import { ProductService } from 'src/app/shared/utils/productService';
 import { StringsService } from 'src/app/shared/utils/strings';
 
 @Component({
@@ -11,7 +12,10 @@ import { StringsService } from 'src/app/shared/utils/strings';
 export class BenefitsChartComponent {
   @Input() view!: string;
 
-  constructor(public stringsService: StringsService) {}
+  constructor(
+    public stringsService: StringsService,
+    public productService: ProductService
+  ) {}
 
   features = [
     {
@@ -21,23 +25,23 @@ export class BenefitsChartComponent {
     },
     {
       title: 'Subscribed Recipes',
-      freeTier: '5',
+      freeTier: this.productService.licences.recipeSubscribeLimit.toString(),
       premiumTier: 'no limit!',
     },
     {
       title: 'Created Recipes',
-      freeTier: '5',
-      premiumTier: 'no limit!'
+      freeTier: this.productService.licences.recipeCreateLimit.toString(),
+      premiumTier: 'no limit!',
     },
     {
       title: 'Monthly AI Credits',
       freeTier: 'dash',
-      premiumTier: '12'
+      premiumTier: '12',
     },
     {
       title: 'Daily Data Backups',
       freeTier: 'dash',
-      premiumTier: 'check'
-    }
+      premiumTier: 'check',
+    },
   ];
 }

@@ -173,11 +173,10 @@ export class RecipeService {
                   if (!ingredient) {
                     return null; // We will filter out these nulls later
                   }
-                  const quantity =
-                    Math.ceil(
-                      (recipeIngredient.measurement *
-                        recipeIngredient.purchaseUnitRatio) 
-                    );
+                  const quantity = Math.ceil(
+                    recipeIngredient.measurement *
+                      recipeIngredient.purchaseUnitRatio
+                  );
                   return {
                     type: 'ingredient',
                     ingredientName: ingredient.name,
@@ -244,8 +243,8 @@ export class RecipeService {
             return { ingredients: [] }; // Return default ShoppingList when no ingredients are found
           }
           let neededGrams =
-            (recipeIngredient.measurement *
-              recipeIngredient.purchaseUnitRatio) *
+            recipeIngredient.measurement *
+            recipeIngredient.purchaseUnitRatio *
             ingredient.gramRatio;
           for (const stock of ingredientStocks) {
             const expirationDate = new Date(stock.purchasedDate);
@@ -355,5 +354,19 @@ export class RecipeService {
     return this.http.delete<any>(
       `${this.API_URL}/subscriptions/${subscriptionID}`
     );
+  }
+
+  hideRecipes(keepRecipeIDs: number[]): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/hide/recipes`, {
+      keepRecipeIDs,
+    });
+  }
+
+  hideRecipeSubscriptions(
+    keepRecipeSubscriptionIDs: number[]
+  ): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/hide/subscriptions`, {
+      keepRecipeSubscriptionIDs,
+    });
   }
 }

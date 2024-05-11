@@ -55,7 +55,7 @@ module.exports = ({ db }) => {
     }
 
     //verify that provided recipeID exists
-    const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID);
+    const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID.eq('hidden', false));
     if (recipeError) {
       global.logger.info(`Error validating recipe ID: ${recipeID} while creating orderTaskItem ${recipeError.message}`);
       return { error: recipeError.message };

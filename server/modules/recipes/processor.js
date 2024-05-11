@@ -408,7 +408,7 @@ module.exports = ({ db }) => {
   async function getAll(options) {
     try {
       const { userID, recipeIDs, title, recipeCategoryID } = options;
-      let q = db.from('recipes').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeID', { ascending: true });
+      let q = db.from('recipes').select().filter('userID', 'eq', userID).eq('deleted', false).eq('hidden', false).order('recipeID', { ascending: true });
       if (recipeIDs) {
         q = q.in('recipeID', recipeIDs);
       }
@@ -435,7 +435,7 @@ module.exports = ({ db }) => {
   async function getDiscover() {
     try {
       // const { userID, authorization } = options;
-      const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false);
+      const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false).eq('hidden', false);
       if (error) {
         global.logger.error(`Error getting discoverRecipes: ${error.message}`);
         throw errorGen(`Error getting discoverRecipes: ${error.message}`, 400);
@@ -451,7 +451,7 @@ module.exports = ({ db }) => {
   async function getByID(options) {
     try {
       const { recipeID } = options;
-      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
+      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false).eq('hidden', false);
       if (error) {
         global.logger.error(`Error getting recipe: ${recipeID}: ${error.message}`);
         throw errorGen(`Error getting recipe: ${recipeID}: ${error.message}`, 400);
@@ -516,7 +516,7 @@ module.exports = ({ db }) => {
   async function getRecipeSubscriptions(options) {
     try {
       const { userID, authorization } = options;
-      const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('userID', userID).eq('deleted', false);
+      const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('userID', userID).eq('deleted', false).eq('hidden', false);
       if (error) {
         global.logger.error(`Error getting recipeSubscriptions for userID: ${userID}: ${error.message}`);
         throw errorGen(`Error getting recipeSubscriptions for userID: ${userID}: ${error.message}`, 400);
@@ -560,7 +560,7 @@ module.exports = ({ db }) => {
   async function getRecipeSubscriptionsByRecipeID(options) {
     try {
       const { recipeID } = options;
-      const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('sourceRecipeID', recipeID).eq('deleted', false);
+      const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('sourceRecipeID', recipeID).eq('deleted', false).eq('hidden', false);
       if (error) {
         global.logger.error(`Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`);
         throw errorGen(`Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`, 400);
@@ -1265,7 +1265,7 @@ module.exports = ({ db }) => {
     try {
       const { recipeID, authorization, recipeCategoryID, timePrep, timeBake } = options;
       //verify that the provided recipeID exists, return error if not
-      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
+      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('hidden', false);
 
       if (error) {
         global.logger.error(`Error getting recipe: ${error.message}`);
@@ -1370,7 +1370,7 @@ module.exports = ({ db }) => {
   async function deleteRecipe(options) {
     try {
       //verify that the provided recipeID exists, return error if not
-      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', options.recipeID).eq('deleted', false);
+      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', options.recipeID).eq('deleted', false).eq('hidden', false);
       if (error) {
         global.logger.error(`Error getting recipe: ${error.message}`);
         throw errorGen(`Error getting recipe: ${error.message}`, 400);
@@ -1535,7 +1535,7 @@ module.exports = ({ db }) => {
     }
 
     //ensure provided recipeID exists
-    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
+    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false).eq('hidden', false);
     if (error) {
       global.logger.error(`Error getting recipe details: ${error.message}`);
       throw errorGen(`Error getting recipe details while using recipe: ${error.message}`, 400);
@@ -1614,7 +1614,7 @@ module.exports = ({ db }) => {
       const { customID, sourceRecipeID, newRecipeID, userID } = options;
 
       //ensure provided sourceRecipeID exists and is not deleted
-      const { data: sourceRecipe, error } = await db.from('recipes').select().eq('recipeID', sourceRecipeID).eq('deleted', false);
+      const { data: sourceRecipe, error } = await db.from('recipes').select().eq('recipeID', sourceRecipeID).eq('deleted', false).eq('hidden', false);
       if (error) {
         global.logger.error(`Error getting sourceRecipe: ${error.message}`);
         throw errorGen(`Error getting sourceRecipe: ${error.message}`, 400);
@@ -1629,7 +1629,7 @@ module.exports = ({ db }) => {
       }
 
       //ensure provided newRecipeID exists and is not deleted
-      const { data: newRecipe, error: newRecipeError } = await db.from('recipes').select().eq('recipeID', newRecipeID).eq('deleted', false);
+      const { data: newRecipe, error: newRecipeError } = await db.from('recipes').select().eq('recipeID', newRecipeID).eq('deleted', false).eq('hidden', false);
       if (newRecipeError) {
         global.logger.error(`Error getting newRecipe: ${newRecipeError.message}`);
         throw errorGen(`Error getting newRecipe: ${newRecipeError.message}`, 400);
@@ -1646,7 +1646,7 @@ module.exports = ({ db }) => {
       }
 
       //ensure provided sourceRecipeID is not already subscribed to newRecipeID
-      const { data: existingSubscription, error: existingSubscriptionError } = await db.from('recipeSubscriptions').select('*').eq('sourceRecipeID', sourceRecipeID).eq('newRecipeID', newRecipeID);
+      const { data: existingSubscription, error: existingSubscriptionError } = await db.from('recipeSubscriptions').select('*').eq('sourceRecipeID', sourceRecipeID).eq('newRecipeID', newRecipeID).eq('hidden', false);
       if (existingSubscriptionError) {
         global.logger.error(`Error getting existing subscription: ${existingSubscriptionError.message}`);
         throw errorGen(`Error getting existing subscription: ${existingSubscriptionError.message}`, 400);
@@ -1688,7 +1688,7 @@ module.exports = ({ db }) => {
       const { subscriptionID, authorization, userID } = options;
 
       //ensure provided subscriptionID exists and is not deleted
-      const { data: subscription, error } = await db.from('recipeSubscriptions').select().eq('subscriptionID', subscriptionID).eq('deleted', false);
+      const { data: subscription, error } = await db.from('recipeSubscriptions').select().eq('subscriptionID', subscriptionID).eq('deleted', false).eq('hidden');
       if (error) {
         global.logger.error(`Error getting subscription: ${error.message}`);
         throw errorGen(`Error getting subscription: ${error.message}`, 400);
@@ -1723,6 +1723,66 @@ module.exports = ({ db }) => {
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    }
+  }
+
+  async function hideRecipes(options) {
+    try {
+      const { userID, keepRecipeIDs } = options;
+
+      // first get all user recipes that are not hidden or deleted
+      const { data: userRecipes, error: userRecipesError } = await db.from('recipes').select('recipeID').eq('userID', userID).eq('hidden', false).eq('deleted', false);
+      if (userRecipesError) {
+        global.logger.error(`Error getting user recipes: ${userRecipesError.message}`);
+        throw errorGen(`Error getting user recipes: ${userRecipesError.message}`, 400);
+      }
+
+      const hideIDs = [];
+      userRecipes.forEach((recipe) => {
+        if (!keepRecipeIDs.includes(recipe.recipeID)) {
+          hideIDs.push(recipe.recipeID);
+        }
+      });
+
+      // update 'hidden' to true for any recipes not in keepRecipeIDs
+      const { error } = await db.from('recipes').update({ hidden: true }).in('recipeID', hideIDs).eq('userID', userID);
+      if (error) {
+        global.logger.error(`Error hiding recipes: ${error.message}`);
+        throw errorGen(`Error hiding recipes: ${error.message}`, 400);
+      }
+    } catch (err) {
+      global.logger.error(`Error hiding recipes: ${err.message}`);
+      throw errorGen(`Error hiding recipes: ${err.message}`, 400);
+    }
+  }
+
+  async function hideSubscriptions(options) {
+    try {
+      const { userID, keepRecipeSubscriptionIDs } = options;
+
+      // first get all user subscriptions that are not hidden or deleted
+      const { data: userSubscriptions, error: userSubscriptionsError } = await db.from('recipeSubscriptions').select('subscriptionID').eq('userID', userID).eq('hidden', false).eq('deleted', false);
+      if (userSubscriptionsError) {
+        global.logger.error(`Error getting user subscriptions: ${userSubscriptionsError.message}`);
+        throw errorGen(`Error getting user subscriptions: ${userSubscriptionsError.message}`, 400);
+      }
+
+      const hideIDs = [];
+      userSubscriptions.forEach((sub) => {
+        if (!keepRecipeSubscriptionIDs.includes(sub.subscriptionID)) {
+          hideIDs.push(sub.subscriptionID);
+        }
+      });
+
+      // update 'hidden' to true for any subscriptions not in keepRecipeSubscriptionIDs
+      const { error } = await db.from('recipeSubscriptions').update({ hidden: true }).in('subscriptionID', hideIDs).eq('userID', userID);
+      if (error) {
+        global.logger.error(`Error hiding subscriptions: ${error.message}`);
+        throw errorGen(`Error hiding subscriptions: ${error.message}`, 400);
+      }
+    } catch (err) {
+      global.logger.error(`Error hiding subscriptions: ${err.message}`);
+      throw errorGen(`Error hiding subscriptions: ${err.message}`, 400);
     }
   }
 
@@ -1890,5 +1950,7 @@ module.exports = ({ db }) => {
     use: useRecipe,
     subscribe: subscribeRecipe,
     unsubscribe: deleteRecipeSubscription,
+    hideRecipes,
+    hideSubscriptions,
   };
 };

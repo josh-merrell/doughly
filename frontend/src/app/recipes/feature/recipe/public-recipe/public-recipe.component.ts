@@ -29,7 +29,10 @@ import { FriendModalComponent } from 'src/app/social/feature/friends/ui/friend-m
 import { SubscribeRecipeModalComponent } from '../ui/subscribe-recipe-modal/subscribe-recipe-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
-import { selectSubscriptionBySourceRecipeID } from 'src/app/recipes/state/recipe/recipe-selectors';
+import {
+  selectRecipeSubscriptions,
+  selectSubscriptionBySourceRecipeID,
+} from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { FractionService } from 'src/app/shared/utils/fractionService';
@@ -37,7 +40,8 @@ import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { StringsService } from 'src/app/shared/utils/strings';
-
+import { ProductService } from 'src/app/shared/utils/productService';
+import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 interface displayIngredientsByComponent {
   noComponent: any[];
   components: { [componentName: string]: any[] };
@@ -177,6 +181,8 @@ export class PublicRecipeComponent {
 
   public subscriptions: WritableSignal<any[]> = signal([]);
 
+  private userSubscriptions: WritableSignal<any[]> = signal([]);
+
   constructor(
     private route: ActivatedRoute,
     private store: Store,
@@ -192,7 +198,8 @@ export class PublicRecipeComponent {
     private stepService: StepService,
     private fractionService: FractionService,
     private authService: AuthService,
-    private stringsService: StringsService
+    private stringsService: StringsService,
+    private productService: ProductService
   ) {
     // handle onboarding
     effect(
@@ -313,6 +320,9 @@ export class PublicRecipeComponent {
   }
 
   ngOnInit(): void {
+    this.store.select(selectRecipeSubscriptions).subscribe((subscriptions) => {
+      this.userSubscriptions.set(subscriptions);
+    });
     this.store.select(selectProfile).subscribe((profile) => {
       this.profile.set(profile);
     });
@@ -337,33 +347,60 @@ export class PublicRecipeComponent {
   }
 
   onSubscribeClick() {
-    if (this.recipeSubscription()) {
-      this.router.navigate(['/recipe', this.recipeSubscription().newRecipeID]);
+    let allowSubscribe = false;
+    // check perms for profile
+    const license = this.productService.licences.recipeSubscribeLimit;
+    if (this.profile().permRecipeSubscribeUnlimited === false) {
+      if (this.userSubscriptions().length >= license) {
+        const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
+          data: {
+            promptMessage: `You have reached the number of allowed free-tier Subscribed Recipes. Please upgrade to add more.`,
+          },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'routeToUpgrade') {
+            this.router.navigate(['/products']);
+          }
+        });
+      } else {
+        allowSubscribe = true;
+      }
+    } else {
+      allowSubscribe = true;
     }
-    if (!this.recipeSubscription()) {
-      const dialogRef = this.dialog.open(SubscribeRecipeModalComponent, {
-        data: {
-          recipe: this.recipe(),
-          ingredients: this.enhancedIngredients(),
-          tools: this.tools(),
-          steps: this.steps(),
-          author: this.author(),
-          onboarding: this.profile().onboardingState === (3 || 4)
-        },
-        width: '90%',
-        maxWidth: '640px',
-        maxHeight: '840px',
-      });
 
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.open(ConfirmationModalComponent, {
-            data: {
-              confirmationMessage: `Subscribed. Recipe added.`,
-            },
-          });
-        }
-      });
+    if (allowSubscribe) {
+      if (this.recipeSubscription()) {
+        this.router.navigate([
+          '/recipe',
+          this.recipeSubscription().newRecipeID,
+        ]);
+      }
+      if (!this.recipeSubscription()) {
+        const dialogRef = this.dialog.open(SubscribeRecipeModalComponent, {
+          data: {
+            recipe: this.recipe(),
+            ingredients: this.enhancedIngredients(),
+            tools: this.tools(),
+            steps: this.steps(),
+            author: this.author(),
+            onboarding: this.profile().onboardingState === (3 || 4),
+          },
+          width: '90%',
+          maxWidth: '640px',
+          maxHeight: '840px',
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            this.dialog.open(ConfirmationModalComponent, {
+              data: {
+                confirmationMessage: `Subscribed. Recipe added.`,
+              },
+            });
+          }
+        });
+      }
     }
   }
 

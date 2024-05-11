@@ -326,6 +326,32 @@ async function unsubscribeRecipe(req, res) {
   }
 }
 
+async function hideRecipes(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  try {
+    const returner = await p.hideRecipes({ userID: req.userID, keepRecipeIDs: req.body.keepRecipeIDs });
+    return res.json(returner);
+  } catch (err) {
+    global.logger.error(`'recipes' 'hideRecipes': ${err.message}`);
+    return res.status(err.code || 500).json({ error: err.message });
+  }
+}
+
+async function hideSubscriptions(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  try {
+    const returner = await p.hideSubscriptions({ userID: req.userID, keepRecipeSubscriptionIDs: req.body.keepRecipeSubscriptionIDs });
+    return res.json(returner);
+  } catch (err) {
+    global.logger.error(`'recipes' 'hideSubscriptions': ${err.message}`);
+    return res.status(err.code || 500).json({ error: err.message });
+  }
+}
+
 module.exports = {
   subscriptionsByRecipeID,
   getRecipes,
@@ -344,4 +370,6 @@ module.exports = {
   constructRecipe,
   subscribeRecipe,
   unsubscribeRecipe,
+  hideRecipes,
+  hideSubscriptions,
 };
