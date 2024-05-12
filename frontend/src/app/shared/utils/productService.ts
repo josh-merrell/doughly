@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 
 // define PurchaseResult interface--
 interface PurchaseResult {
-  productId: string | null;
+  skuId: string | null;
   permissions: GlassfyPermissions | null;
   error: any;
 }
@@ -70,20 +70,20 @@ export class ProductService {
       if (transaction.permissions) {
         this.handleSuccessfulTransactionResult(transaction, sku);
         return {
-          productId: transaction.productId,
+          skuId: sku.skuId,
           permissions: transaction.permissions,
           error: null,
         };
       }
       return {
-        productId: null,
+        skuId: null,
         permissions: null,
         error: 'Receipt not validated',
       };
     } catch (error) {
       console.error('Error purchasing SKU: ', error);
       return {
-        productId: null,
+        skuId: null,
         permissions: null,
         error: error,
       };
