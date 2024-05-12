@@ -53,10 +53,16 @@ module.exports = ({ db, dbDefault }) => {
       // determine new 'permAITokenCount' value. Choose smaller of either productConstants.maxAITokens or current 'permAITokenCount' + productConstants.AITokensPerMonth * monthsPassed
       if (addAITokens) {
         tokenUpdate.needsUpdate = true;
+        global.logger.info(`PERMAITOKENCOUNT: ${profile.permAITokenCount}. CONST: ${productConstants.AITokensPerMonth}. MONTHS PASSED: ${monthsPassed}`);
         tokenUpdate.newCount = Math.min(productConstants.maxAITokens, profile.permAITokenCount + productConstants.AITokensPerMonth * monthsPassed);
         // set 'permAITokenLastRefreshDate' to be 'monthsPassed' months from previous 'permAITokenLastRefreshDate'
-        const newRefreshDate = new Date(profile.permAITokenLastRefreshDate);
-        newRefreshDate.setMonth(newRefreshDate.getMonth() + monthsPassed);
+        let newRefreshDate;
+        if (!profile.permAITokenLastRefreshDate) {
+          newRefreshDate = today;
+        } else {
+          new Date(profile.permAITokenLastRefreshDate);
+          newRefreshDate.setMonth(newRefreshDate.getMonth() + monthsPassed);
+        }
         tokenUpdate.newDate = newRefreshDate.toISOString();
         global.logger.info(`New permAITokenCount: ${tokenUpdate.newCount}, New permAITokenLastRefreshDate: ${tokenUpdate.newDate}`);
       }
@@ -134,7 +140,6 @@ module.exports = ({ db, dbDefault }) => {
         const newProfile = {};
         for (const permission of permissions.all) {
           let tokenUpdate;
-          global.logger.info(`PERMISSION: ${JSON.stringify(permission)}`);
           switch (permission.permissionId) {
             case 'recipe-subscribed-count-unlimited':
               newProfile['permRecipeSubscribeUnlimited'] = permission.isValid;
