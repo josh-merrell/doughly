@@ -39,7 +39,7 @@ module.exports = ({ db }) => {
     const { customID, userID, recipeID, tagID } = options;
 
     //verify that the provided recipeID exists, return error if not
-    const { data: recipeCheck, error: recipeCheckError } = await db.from('recipes').select().eq('recipeID', recipeID).eq('hidden', false);
+    const { data: recipeCheck, error: recipeCheckError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (recipeCheckError) {
       global.logger.info(`Error checking whether provided recipe exists: ${recipeCheckError.message}`);
       return { error: recipeCheckError.message };
