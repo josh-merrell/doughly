@@ -78,6 +78,11 @@ module.exports = ({ db, dbDefault }) => {
         const newProfile = {};
         switch (transaction.productId) {
           case 'doughly_premium_monthly_2.99':
+            newProfile['isPremium'] = true;
+            newProfile['permRecipeSubscribeUnlimited'] = true;
+            newProfile['permRecipeCreateUnlimited'] = true;
+            newProfile['permDataBackupDaily6MonthRetention'] = true;
+            break;
           case 'doughly_premium_6months_17.94':
             newProfile['isPremium'] = true;
             newProfile['permRecipeSubscribeUnlimited'] = true;
@@ -134,7 +139,7 @@ module.exports = ({ db, dbDefault }) => {
               }
               newProfile['permRecipeSubscribeUnlimited'] = permission.value;
               break;
-            case 'recipe-create-count-unlimited':
+            case 'recipe-created-count-unlimited':
               if (permission.value === true) {
                 await unhideRecipes(userID);
               }
