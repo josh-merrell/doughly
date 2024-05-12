@@ -50,11 +50,11 @@ module.exports = ({ db, dbDefault }) => {
         }
       }
 
-      // determine new 'permAITokenCount' value. Choose smaller of either productConstants.maxAITokens or current 'permAITokenCount' + productConstants.AITokensPerMonth * monthsPassed
+      // determine new 'permAITokenCount' value. Choose smaller of either productConstants.maxAITokens or current 'permAITokenCount' + productConstants.monthlyAICredits * monthsPassed
       if (addAITokens) {
         tokenUpdate.needsUpdate = true;
-        global.logger.info(`PERMAITOKENCOUNT: ${profile.permAITokenCount}. CONST: ${productConstants.subscription.AITokensPerMonth}. MONTHS PASSED: ${monthsPassed}`);
-        tokenUpdate.newCount = Math.min(productConstants.subscription.maxAITokens, profile.permAITokenCount + productConstants.subscription.AITokensPerMonth * monthsPassed);
+        global.logger.info(`PERMAITOKENCOUNT: ${profile.permAITokenCount}. CONST: ${productConstants.subscription.monthlyAICredits}. MONTHS PASSED: ${monthsPassed}`);
+        tokenUpdate.newCount = Math.min(productConstants.subscription.maxAITokens, profile.permAITokenCount + productConstants.subscription.monthlyAICredits * monthsPassed);
         // set 'permAITokenLastRefreshDate' to be 'monthsPassed' months from previous 'permAITokenLastRefreshDate'
         let newRefreshDate;
         if (!profile.permAITokenLastRefreshDate) {
