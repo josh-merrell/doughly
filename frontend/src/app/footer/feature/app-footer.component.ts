@@ -21,7 +21,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectCurrentUrl } from '../../shared/state/shared-selectors';
 import { AppState } from '../../shared/state/app-state';
 import { AuthService } from '../../shared/utils/authenticationService';
-import { selectAdding } from '../../recipes/state/recipe/recipe-selectors';
+import {
+  selectAdding,
+  selectNewRecipeID,
+} from '../../recipes/state/recipe/recipe-selectors';
 import { selectMessages } from '../state/message-selectors';
 import {
   ActionPerformed,
@@ -45,6 +48,7 @@ import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service'
   templateUrl: './app-footer.component.html',
 })
 export class AppFooterComponent {
+  iconPing: WritableSignal<boolean> = signal(false);
   @ViewChild('menu') menu!: ElementRef;
   globalClickListener: () => void = () => {};
   isMenuOpen = false;
@@ -87,7 +91,7 @@ export class AppFooterComponent {
       this.initials =
         (profile?.name_first?.charAt(0) || '') +
         (profile?.name_last?.charAt(0) || '');
-    })
+    });
   }
 
   ngOnInit() {
@@ -115,6 +119,15 @@ export class AppFooterComponent {
         })
       )
       .subscribe();
+    this.store.select(selectNewRecipeID).subscribe((newRecipeID) => {
+      if (newRecipeID) {
+        // this means user just used AI credit for vision/url recipe create. Cause the premium icon to ping for a couple seconds
+        this.iconPing.set(true);
+        setTimeout(() => {
+          this.iconPing.set(false);
+        }, 2800);
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -175,7 +188,6 @@ export class AppFooterComponent {
       this.router.navigate(['/login']);
     });
     PushNotifications.unregister;
-
   }
 
   onMessagesClick() {

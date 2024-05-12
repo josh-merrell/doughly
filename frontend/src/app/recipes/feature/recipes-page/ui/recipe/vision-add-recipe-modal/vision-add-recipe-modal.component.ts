@@ -25,6 +25,7 @@ import {
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
@@ -68,7 +69,8 @@ export class VisionAddRecipeModalComponent {
     private ngZone: NgZone,
     private router: Router,
     private stringsService: StringsService,
-    private extraStuffService: ExtraStuffService
+    private extraStuffService: ExtraStuffService,
+    private authService: AuthService
   ) {
     effect(
       () => {
@@ -257,6 +259,11 @@ export class VisionAddRecipeModalComponent {
               } else {
                 this.removeFiles(false);
                 this.recipeProgressService.stopListening();
+                // reduce AI Token count by 1
+                this.authService.updateField(
+                  'permAITokenCount',
+                  `${this.profile().permAITokenCount - 1}`
+                );
                 this.store
                   .select(selectNewRecipeID)
                   .subscribe((newRecipeID) => {

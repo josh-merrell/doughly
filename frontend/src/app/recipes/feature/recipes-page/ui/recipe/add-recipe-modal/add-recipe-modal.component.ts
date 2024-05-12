@@ -22,7 +22,8 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { Store } from '@ngrx/store';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
-
+import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
+import { ProductService } from 'src/app/shared/utils/productService';
 @Component({
   selector: 'dl-add-recipe-modal',
   standalone: true,
@@ -34,7 +35,7 @@ export class AddRecipeModalComponent {
   public profile: WritableSignal<any> = signal(null);
 
   // Onboarding
-  public showOnboardingBadge: WritableSignal<boolean> = signal(true);
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
   public onboardingModalOpen: WritableSignal<boolean> = signal(false);
   private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
 
@@ -46,7 +47,8 @@ export class AddRecipeModalComponent {
     public router: Router,
     public location: Location,
     private store: Store,
-    private stringsService: StringsService
+    private stringsService: StringsService,
+    private productService: ProductService
   ) {
     this.recipeCategories = this.data.recipeCategories;
 
@@ -82,9 +84,9 @@ export class AddRecipeModalComponent {
       });
 
     this.store.select(selectProfile).subscribe((profile) => {
-      // if (profile && profile.onboardingState !== 0) {
-      //   this.showOnboardingBadge.set(true);
-      // }
+      if (profile && profile.onboardingState !== 0) {
+        this.showOnboardingBadge.set(true);
+      }
       this.profile.set(profile);
     });
   }
@@ -114,35 +116,83 @@ export class AddRecipeModalComponent {
   }
 
   onVisionAddClick(): void {
-    // update url to include '/vision' if it's not already there
-    this.location.go('/recipes/created/add/vision');
+    // first ensure user has at least one AI credit
+    if (this.profile().permAITokenCount < 1) {
+      const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
+        data: {
+          titleMessage: this.stringsService.productStrings.timeToTopUp,
+          promptMessage: `Your Premium Subscription will add ${
+            this.productService.licences.premiumMonthlyAICredits
+          } tokens on ${this.getNextTokenRefreshDate()}. Buy an extra pack now to create new recipes before then.`,
+          buttonMessage: 'ADD MORE TOKENS',
+        },
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        this.dialogRef.close();
+        if (result === 'routeToUpgrade') {
+          this.router.navigate(['/products']);
+        }
+      });
+    } else {
+      // update url to include '/vision' if it's not already there
+      this.location.go('/recipes/created/add/vision');
 
-    const dialogRef = this.dialog.open(VisionAddRecipeModalComponent, {
-      width: '90%',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      // remove '/vision' from the url
-      this.location.go('/recipes/created/add');
-      if (result === 'success') {
-        this.dialogRef.close('success');
-      }
-    });
+      const dialogRef = this.dialog.open(VisionAddRecipeModalComponent, {
+        width: '90%',
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        // remove '/vision' from the url
+        this.location.go('/recipes/created/add');
+        if (result === 'success') {
+          this.dialogRef.close('success');
+        }
+      });
+    }
   }
 
   onFromUrlAddClick(): void {
-    // update url to include '/from-url' if it's not already there
-    this.location.go('/recipes/created/add/from-url');
+    // first ensure user has at least one AI credit
+    if (this.profile().permAITokenCount < 1) {
+      const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
+        data: {
+          titleMessage: this.stringsService.productStrings.timeToTopUp,
+          promptMessage: `Your Premium Subscription will add ${
+            this.productService.licences.premiumMonthlyAICredits
+          } tokens on ${this.getNextTokenRefreshDate()}. Buy an extra pack now to create new recipes before then.`,
+          buttonMessage: 'ADD MORE TOKENS',
+        },
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'routeToUpgrade') {
+          this.router.navigate(['/products']);
+        }
+      });
+    } else {
+      // update url to include '/from-url' if it's not already there
+      this.location.go('/recipes/created/add/from-url');
 
-    const dialogRef = this.dialog.open(FromUrlAddRecipeModalComponent, {
-      width: '90%',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      // remove '/from-url' from the url
-      this.location.go('/recipes/created/add');
-      if (result === 'success') {
-        this.dialogRef.close('success');
-      }
-    });
+      const dialogRef = this.dialog.open(FromUrlAddRecipeModalComponent, {
+        width: '90%',
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        // remove '/from-url' from the url
+        this.location.go('/recipes/created/add');
+        if (result === 'success') {
+          this.dialogRef.close('success');
+        }
+      });
+    }
+  }
+
+  getNextTokenRefreshDate() {
+    const previousRefreshDate = new Date(
+      this.profile().permAITokenLastRefreshDate
+    );
+    // add 1 month to the previous refresh date
+    const nextRefreshDate = new Date(
+      previousRefreshDate.setMonth(previousRefreshDate.getMonth() + 1)
+    );
+    return nextRefreshDate.toDateString();
   }
 
   onDestroy() {
