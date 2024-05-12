@@ -29,6 +29,7 @@ import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 @Component({
   selector: 'dl-from-url-add-recipe-modal',
@@ -47,6 +48,7 @@ export class FromUrlAddRecipeModalComponent {
   form!: FormGroup;
   isAdding: boolean = false;
   statusMessage: WritableSignal<string> = signal('');
+  private profile: WritableSignal<any> = this.authService.profile;
 
   // recipe photo upload
   photoURL!: string;
@@ -67,7 +69,8 @@ export class FromUrlAddRecipeModalComponent {
     public recipeProgressService: RecipeProgressService,
     private ngZone: NgZone,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private authService: AuthService
   ) {}
 
   // for recipe photo
@@ -207,6 +210,11 @@ export class FromUrlAddRecipeModalComponent {
               } else {
                 this.removeFiles(false);
                 this.recipeProgressService.stopListening();
+                // reduce AI Token count by 1
+                this.authService.updateField(
+                  'permAITokenCount',
+                  `${this.profile().permAITokenCount - 1}`
+                );
                 this.store
                   .select(selectNewRecipeID)
                   .subscribe((newRecipeID) => {

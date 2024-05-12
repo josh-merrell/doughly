@@ -27,6 +27,7 @@ export class ProductService {
   public licences = {
     recipeSubscribeLimit: 3,
     recipeCreateLimit: 3,
+    premiumMonthlyAICredits: 12,
   };
   constructor(private http: HttpClient, private authService: AuthService) {
     this.initGlassfy();
