@@ -132,7 +132,7 @@ module.exports = ({ db, dbDefault }) => {
 
         global.logger.info(`PERMISSIONS TO UPDATE PROFILE: ${JSON.stringify(permissions.all)}`);
         const newProfile = {};
-        for (const permission in permissions.all) {
+        for (const permission of permissions.all) {
           let tokenUpdate;
           global.logger.info(`PERMISSION: ${JSON.stringify(permission)}`);
           switch (permission.permissionId) {
