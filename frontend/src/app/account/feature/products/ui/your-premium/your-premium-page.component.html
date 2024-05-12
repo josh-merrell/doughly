@@ -15,23 +15,35 @@
       >{{ stringsService.productStrings.changeSubscription }}</span
     >
   </div>
-  <div *ngIf="!isLoading() && view() === 'chooseMapping'">
+  <div
+    *ngIf="!isLoading() && view() === 'chooseMapping'"
+    class="flex h-full flex-col"
+  >
     <!-- Prompt User to Select Recipes to Keep-->
     <span
       class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
       >{{ stringsService.productStrings.beforeCanceling1 }}</span
     >
+    <!-- Spacer Div -->
+    <dl class="flex flex-grow"></dl>
     <!-- Buttons -->
     <button
       type="button"
       class="mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onSelectRecipes()"
     >
-      SELECT RECIPES
+      SELECT FREE TIER RECIPES
     </button>
     <button
       type="button"
       class="mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
+      (click)="onSelectSubscriptions()"
+    >
+      SELECT FREE TIER SUBSCRIPTIONS
+    </button>
+    <button
+      type="button"
+      class="mb-dl-4 mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onConfirm()"
     >
       BACK TO ACCOUNT

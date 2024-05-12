@@ -52,7 +52,7 @@ module.exports = ({ db }) => {
   async function create(options) {
     const { customID, authorization, userID, recipeID, stepID, sequence, photoURL } = options;
     //validate that provided recipeID exists
-    const { data: recipe, validationError } = await db.from('recipes').select().eq('recipeID', recipeID).eq('hidden', false);
+    const { data: recipe, validationError } = await db.from('recipes').select().eq('recipeID', recipeID);
     if (validationError) {
       global.logger.error(`Error validating recipe ID: ${recipeID} while creating recipeStep ${validationError.message}`);
       throw errorGen(`Error validating recipe ID: ${recipeID} while creating recipeStep`, 400);

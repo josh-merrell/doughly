@@ -1,0 +1,126 @@
+<div
+  *ngIf="displayRecipes().length > 0"
+  class="relative flex w-full flex-col items-center overflow-x-hidden p-dl-4 pb-dl-4 pt-dl-5"
+>
+  <span
+    class="mx-dl-7 mb-dl-4 items-center text-dl-5 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out"
+    >{{ stringsService.productStrings.freeTierRecipeSelection }}</span
+  >
+  <!-- List View Header -->
+  <div *ngIf="!isLoading()" class="mb-dl-5 flex w-full justify-around">
+    <span
+      (click)="onViewClick('byCategory')"
+      class="items-center border-b-4 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+      [ngClass]="{
+        ' border-dl-blue-7 font-dl-3 text-dl-grey-2': view() === 'byCategory',
+        'border-transparent font-dl-2 text-dl-grey-4': view() !== 'byCategory'
+      }"
+    >
+      By Category
+    </span>
+    <span
+      (click)="onViewClick('all')"
+      class="items-center border-b-4 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+      [ngClass]="{
+        ' border-dl-blue-7 font-dl-3 text-dl-grey-2': view() === 'all',
+        'border-transparent font-dl-2 text-dl-grey-4': view() !== 'all'
+      }"
+    >
+      All Recipes
+    </span>
+  </div>
+
+  <!-- Search, Add-->
+  <div class="mx-dl-7 mb-dl-4 flex justify-between">
+    <!-- Search Bar -->
+    <div class="mt-dl-3 flex items-center">
+      <svg
+        width="35"
+        height="35"
+        viewBox="0 0 15 15"
+        class="pt-dl-1 text-dl-grey-3"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z"
+          fill="currentColor"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+      <input
+        #searchInput
+        type="text"
+        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+        [placeholder]="
+          !searchFilter()
+            ? view() === 'byCategory'
+              ? 'Search by name'
+              : 'Search by title or category'
+            : searchFilter()
+        "
+        (input)="updateSearchFilter(searchInput.value)"
+      />
+    </div>
+  </div>
+
+  <!-- List -->
+  <div
+    class="relative mb-dl-5 flex h-dl-15 w-full flex-col items-center overflow-y-auto"
+  >
+    <div *ngIf="view() === 'byCategory'" #scrollContainer>
+      <dl-recipe-category-card
+        *ngFor="let category of displayCategories()"
+        (click)="categoryCardClick(category)"
+        [category]="category"
+        [inModal]="true"
+      ></dl-recipe-category-card>
+    </div>
+    <div *ngIf="view() === 'all'" #scrollContainer>
+      <dl-recipe-card
+        *ngFor="let recipe of displayRecipes()"
+        (click)="recipeCardClick(recipe)"
+        [recipe]="recipe"
+        [fromMyRecipes]="true"
+        [isSelected]="selectedRecipeIDs().includes(recipe.recipeID)"
+        [inModal]="true"
+      ></dl-recipe-card>
+    </div>
+  </div>
+
+  <span
+    class="mx-dl-7 mb-dl-4 items-center text-dl-4 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out"
+    >Remaining Selections: {{ remainingSelectionCount() }}</span
+  >
+  <!-- Submit Button -->
+  <button
+    id="add-button"
+    type="button"
+    class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white"
+    (click)="onSubmitClick()"
+    [ngClass]="{
+      'cursor-pointer bg-dl-pink-4':
+        view() === 'all' &&
+        !arraysEqual(selectedRecipeIDs(), originalSelectedRecipeIDs()) &&
+        !isLoading(),
+      'bg-dl-grey-7':
+        view() !== 'all' ||
+        arraysEqual(selectedRecipeIDs(), originalSelectedRecipeIDs()) ||
+        isLoading()
+    }"
+  >
+    Save Changes
+  </button>
+  <div
+    *ngIf="isLoading()"
+    class="flex h-full w-full items-center justify-center"
+  >
+    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+  </div>
+</div>
+<div class="flex flex-col items-center" *ngIf="displayRecipes().length === 0">
+  <p class="p-dl-3 text-dl-7 font-dl-3 text-dl-grey-2">
+    No Recipes Found to Add
+  </p>
+</div>

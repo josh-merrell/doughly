@@ -21,7 +21,7 @@ module.exports = ({ db, dbPublic }) => {
     `;
     try {
       // get recipe data
-      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false).eq('hidden', false);
+      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
         global.logger.error(`Error getting recipe: ${recipeID}: ${error.message}. Returning fallback content.`);
         return fallbackContent;

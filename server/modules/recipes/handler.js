@@ -326,28 +326,30 @@ async function unsubscribeRecipe(req, res) {
   }
 }
 
-async function hideRecipes(req, res) {
+async function archiveCreatedRecipes(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
+  const recipeIDs = req.body.recipeIDs;
   const p = require('./processor')({ db, dbPublic });
   try {
-    const returner = await p.hideRecipes({ userID: req.userID, keepRecipeIDs: req.body.keepRecipeIDs });
+    const returner = await p.archiveCreatedRecipes({ userID: req.userID, recipeIDs });
     return res.json(returner);
   } catch (err) {
-    global.logger.error(`'recipes' 'hideRecipes': ${err.message}`);
+    global.logger.error(`'recipes' 'archiveCreatedRecipes': ${err.message}`);
     return res.status(err.code || 500).json({ error: err.message });
   }
 }
 
-async function hideSubscriptions(req, res) {
+async function archiveSubscriptions(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
+  const subscriptionIDs = req.body.subscriptionIDs;
   const p = require('./processor')({ db, dbPublic });
   try {
-    const returner = await p.hideSubscriptions({ userID: req.userID, keepRecipeSubscriptionIDs: req.body.keepRecipeSubscriptionIDs });
+    const returner = await p.archiveSubscriptions({ userID: req.userID, subscriptionIDs });
     return res.json(returner);
   } catch (err) {
-    global.logger.error(`'recipes' 'hideSubscriptions': ${err.message}`);
+    global.logger.error(`'recipes' 'archiveSubscriptions': ${err.message}`);
     return res.status(err.code || 500).json({ error: err.message });
   }
 }
@@ -370,6 +372,6 @@ module.exports = {
   constructRecipe,
   subscribeRecipe,
   unsubscribeRecipe,
-  hideRecipes,
-  hideSubscriptions,
+  archiveCreatedRecipes,
+  archiveSubscriptions,
 };

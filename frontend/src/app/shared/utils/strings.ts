@@ -34,7 +34,9 @@ export class StringsService {
     manageSubscription: `You can manage your subscription in Google Play or App Store.`,
     timeToUpgrade: `Time to upgrade your account!`,
     changeSubscription: `change subscription`,
-    beforeCanceling1: `Before canceling, select which created Recipes and Subscriptions you'd like to keep as part of your free tier access. Don't worry, we'll keep the others in case you choose to resubscribe later.`,
+    beforeCanceling1: `Before canceling, select Recipes to keep as part of your free tier access. We'll hold onto the others in case you choose to resubscribe later.`,
+    freeTierRecipeSelection: `Any Recipe not selected will be unavailable and archived upon canceling your Premium Membership.`,
+    freeTierSubscriptionSelection: `Any Recipe Subscriptions not selected will be unavailable and archived upon canceling your Premium Membership.`,
     subscribeOverviewPoints: [
       {
         title: `Unlimited Recipes`,

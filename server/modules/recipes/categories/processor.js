@@ -88,7 +88,7 @@ module.exports = ({ db }) => {
   //   }
 
   //   //collect list of recipes that reference this category
-  //   const { data: recipes, error: recipeError } = await db.from('recipes').select().eq('recipeCategoryID', options.recipeCategoryID).eq('deleted', false).eq('hidden', false);
+  //   const { data: recipes, error: recipeError } = await db.from('recipes').select().eq('recipeCategoryID', options.recipeCategoryID).eq('deleted', false);
 
   //   if (recipeError) {
   //     global.logger.info(`Error getting recipes associated with category to delete. Backing out: ${recipeError.message}`);
