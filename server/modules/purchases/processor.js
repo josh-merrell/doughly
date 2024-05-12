@@ -134,7 +134,7 @@ module.exports = ({ db, dbDefault }) => {
               }
               newProfile['permRecipeSubscribeUnlimited'] = permission.value;
               break;
-            case 'recipe-create-count-unlimited':
+            case 'recipe-created-count-unlimited':
               if (permission.value === true) {
                 await unhideRecipes(userID);
               }
