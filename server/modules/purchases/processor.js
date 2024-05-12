@@ -67,7 +67,7 @@ module.exports = ({ db, dbDefault }) => {
     processNewPurchase: async (options) => {
       const { userID, transaction, sku } = options;
       try {
-        global.logger.log(`PROCESSING NEW PURCHASE: ${JSON.stringify(transaction)}, ${JSON.stringify(sku)}`);
+        global.logger.info(`PROCESSING NEW PURCHASE: ${JSON.stringify(transaction)}, ${JSON.stringify(sku)}`);
         if (!transaction || !sku) {
           throw errorGen('Missing transaction or sku', 400);
         }
@@ -101,7 +101,7 @@ module.exports = ({ db, dbDefault }) => {
           newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
         }
 
-        global.logger.log(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);
+        global.logger.info(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
           throw errorGen(`Error updating profile: ${error.message}`, 400);
@@ -120,7 +120,7 @@ module.exports = ({ db, dbDefault }) => {
           throw errorGen('Missing transaction productId', 400);
         }
 
-        global.logger.log(`PERMISSIONS TO UPDATE PROFILE: ${JSON.stringify(permissions.all)}`);
+        global.logger.info(`PERMISSIONS TO UPDATE PROFILE: ${JSON.stringify(permissions.all)}`);
         const newProfile = {};
         for (const permission in permissions.all) {
           if (!permissions.isValid) {
@@ -156,7 +156,7 @@ module.exports = ({ db, dbDefault }) => {
         }
 
         // update profile with new permissions
-        global.logger.log(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);
+        global.logger.info(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
           throw errorGen(`Error updating profile: ${error.message}`, 400);
