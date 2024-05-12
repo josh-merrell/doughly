@@ -20,7 +20,8 @@ async function processNewPurchase(req, res) {
 
 async function updatePermissions(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
   const { permissions } = req.body;
   try {
     const returner = await p.updatePermissions({
