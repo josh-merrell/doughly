@@ -1,5 +1,5 @@
-import { Tool } from "src/app/kitchen/feature/tools/state/tool-state";
-import { Ingredient } from "src/app/kitchen/state/kitchen-interfaces";
+import { Tool } from 'src/app/kitchen/feature/tools/state/tool-state';
+import { Ingredient } from 'src/app/kitchen/state/kitchen-interfaces';
 
 export interface RecipeState {
   recipes: Recipe[];
@@ -51,6 +51,8 @@ export interface Recipe {
   photoURL?: string;
   version?: number;
   subscription?: RecipeSubscription;
+  hidden: boolean;
+  freeTier: boolean;
 }
 
 export interface RecipeError {
@@ -61,18 +63,18 @@ export interface RecipeError {
 }
 
 export interface ShoppingListIngredient {
-  type: 'ingredient',
-  ingredientName: string,
-  ingredientID: number,
-  quantity: number,
-  unit: string,
-  purchaseAfter: string | null,
+  type: 'ingredient';
+  ingredientName: string;
+  ingredientID: number;
+  quantity: number;
+  unit: string;
+  purchaseAfter: string | null;
 }
 
 export interface ShoppingListTool {
-  type: 'tool',
-  tool: Tool,
-  quantity: number,
+  type: 'tool';
+  tool: Tool;
+  quantity: number;
 }
 
 export interface RecipeShoppingList {
@@ -86,5 +88,3 @@ export enum RecipeStatus {
   noSteps = 'noSteps',
   published = 'published',
 }
-
-

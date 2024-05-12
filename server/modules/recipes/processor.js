@@ -1786,6 +1786,56 @@ module.exports = ({ db }) => {
     }
   }
 
+  async function archiveCreatedRecipes(options) {
+    try {
+      const { userID, recipeIDs } = options;
+
+      // update all user recipes 'freeTier' property to false
+      const { error } = await db.from('recipes').update({ freeTier: false }).neq('type', 'subscription').eq('userID', userID);
+      if (error) {
+        global.logger.error(`Error setting all recipes 'freeTier' to true: ${error.message}`);
+        throw errorGen(`Error setting all recipes 'freeTier' to true: ${error.message}`, 400);
+      }
+
+      // update 'freeTier' to true for any recipes in recipeIDs
+      const { error: archiveError } = await db.from('recipes').update({ freeTier: true }).in('recipeID', recipeIDs).eq('userID', userID);
+      if (archiveError) {
+        global.logger.error(`Error archiving created recipes: ${archiveError.message}`);
+        throw errorGen(`Error archiving created recipes: ${archiveError.message}`, 400);
+      }
+
+      global.logger.info(`Updated 'freeTier' recipe selections: ${recipeIDs}`);
+    } catch (err) {
+      global.logger.error(`Error archiving created recipes: ${err.message}`);
+      throw errorGen(`Error archiving created recipes: ${err.message}`, 400);
+    }
+  }
+
+  async function archiveSubscriptions(options) {
+    try {
+      const { userID, subscriptionIDs } = options;
+
+      // update all user subscriptions 'freeTier' property to false
+      const { error } = await db.from('recipes').update({ freeTier: false }).eq('type', 'subscription').eq('userID', userID);
+      if (error) {
+        global.logger.error(`Error setting all subscriptions 'freeTier' to true: ${error.message}`);
+        throw errorGen(`Error setting all subscriptions 'freeTier' to true: ${error.message}`, 400);
+      }
+
+      // update 'freeTier' to true for any subscriptions in subscriptionIDs
+      const { error: archiveError } = await db.from('recipes').update({ freeTier: true }).in('recipeID', subscriptionIDs).eq('userID', userID);
+      if (archiveError) {
+        global.logger.error(`Error archiving subscriptions: ${archiveError.message}`);
+        throw errorGen(`Error archiving subscriptions: ${archiveError.message}`, 400);
+      }
+
+      global.logger.info(`Updated 'freeTier' subscription selections: ${subscriptionIDs}`);
+    } catch (err) {
+      global.logger.error(`Error archiving subscriptions: ${err.message}`);
+      throw errorGen(`Error archiving subscriptions: ${err.message}`, 400);
+    }
+  }
+
   function singularUnit(ingredient) {
     // use switch case to convert plural units to singular, return the ingredient
     switch (ingredient.measurementUnit) {
@@ -1952,5 +2002,7 @@ module.exports = ({ db }) => {
     unsubscribe: deleteRecipeSubscription,
     hideRecipes,
     hideSubscriptions,
+    archiveCreatedRecipes,
+    archiveSubscriptions,
   };
 };

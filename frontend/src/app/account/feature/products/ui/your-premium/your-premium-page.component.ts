@@ -6,12 +6,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
-import { SelectRecipesToKeepModalComponent } from '../select-recipes-to-keep-modal/select-recipes-to-keep-modal.component';
+import { SelectFreeTierRecipesModalComponent } from '../select-free-tier-recipes-modal/select-free-tier-recipes-modal.component';
+import { SelectFreeTierSubscriptionsModalComponent } from '../select-free-tier-subscriptions-modal/select-free-tier-subscriptions-modal.component';
 @Component({
   selector: 'dl-your-premium',
   standalone: true,
   imports: [
-    SelectRecipesToKeepModalComponent,
+    SelectFreeTierRecipesModalComponent,
     CommonModule,
     MatProgressSpinnerModule,
     BenefitsChartComponent,
@@ -36,18 +37,14 @@ export class YourPremiumComponent {
   }
 
   onSelectRecipes() {
-    const ref = this.dialog.open(SelectRecipesToKeepModalComponent, {
+    this.dialog.open(SelectFreeTierRecipesModalComponent, {
       width: '90%',
     });
-    ref.afterClosed().subscribe((result) => {
-      if (result === 'mapped') {
-        this.dialog.open(ConfirmationModalComponent, {
-          maxWidth: '380px',
-          data: {
-            confirmationMessage: 'Recipe selections saved',
-          },
-        });
-      }
+  }
+
+  onSelectSubscriptions() {
+    this.dialog.open(SelectFreeTierSubscriptionsModalComponent, {
+      width: '90%',
     });
   }
 

@@ -64,6 +64,8 @@ export class RecipeService {
             timeBake: recipe.timeBake,
             recipeCategoryName: `Other`,
             photoURL: recipe.photoURL,
+            hidden: recipe.hidden,
+            freeTier: recipe.freeTier,
           };
         }
         return {
@@ -79,6 +81,8 @@ export class RecipeService {
           timeBake: recipe.timeBake,
           recipeCategoryName: recipeCategory.name,
           photoURL: recipe.photoURL,
+          hidden: recipe.hidden,
+          freeTier: recipe.freeTier,
         };
       });
     })
@@ -367,6 +371,18 @@ export class RecipeService {
   ): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/hide/subscriptions`, {
       keepRecipeSubscriptionIDs,
+    });
+  }
+
+  setFreeTierCreated(recipeIDs: number[]): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/archive/created`, {
+      recipeIDs,
+    });
+  }
+
+  setFreeTierSubscribed(subscriptionIDs: number[]): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/archive/subscriptions`, {
+      subscriptionIDs,
     });
   }
 }

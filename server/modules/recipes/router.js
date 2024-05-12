@@ -38,6 +38,8 @@ router.post('/use/:recipeID', routeValidator(useRecipeSchema_params, 'params'), 
 router.post('/subscribe', generateID, routeValidator(subscribeRecipe_body, 'body'), errorCatcher(h.subscribeRecipe));
 router.post('/hide/recipes', errorCatcher(h.hideRecipes));
 router.post('/hide/subscriptions', errorCatcher(h.hideSubscriptions));
+router.post('/archive/created', errorCatcher(h.archiveCreatedRecipes));
+router.post('/archive/subscriptions', errorCatcher(h.archiveSubscriptions));
 router.post('/', generateID, routeValidator(newRecipeSchema_body, 'body'), errorCatcher(h.createRecipe));
 
 router.get('/discover', errorCatcher(h.getDiscoverRecipes));
