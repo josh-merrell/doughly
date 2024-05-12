@@ -80,10 +80,24 @@ export class UpgradePageComponent {
       this.isLoading.set(true);
       const result = await this.productService.purchase(sku);
       this.isLoading.set(false);
-      if (result.error) {
+      if (result.result === 'no permissions') {
         this.dialog.open(ErrorModalComponent, {
           data: {
-            errorMessage: `Error purchasing "${basePlanId}"${result.error}`,
+            errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
+            statusCode: '500',
+          },
+        });
+      } else if (result.result === 'cancelled') {
+        this.dialog.open(ErrorModalComponent, {
+          data: {
+            errorMessage: `Purchase cancelled. Please try again.`,
+            statusCode: '500',
+          },
+        });
+      } else if (result.result === 'error') {
+        this.dialog.open(ErrorModalComponent, {
+          data: {
+            errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
             statusCode: '500',
           },
         });

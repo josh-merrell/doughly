@@ -16,6 +16,7 @@ import { Observable } from 'rxjs';
 interface PurchaseResult {
   skuId: string | null;
   permissions: GlassfyPermissions | null;
+  result: string;
   error: any;
 }
 
@@ -75,19 +76,30 @@ export class ProductService {
         return {
           skuId: sku.skuId,
           permissions: transaction.permissions,
+          result: 'success',
           error: null,
         };
       }
       return {
         skuId: null,
         permissions: null,
+        result: 'no permissions',
         error: 'Receipt not validated',
       };
-    } catch (error) {
+    } catch (error: any) {
+      if (error.message.includes('USER_CANCELLED')) {
+        return {
+          skuId: null,
+          permissions: null,
+          result: 'cancelled',
+          error: 'Purchase cancelled by user',
+        };
+      }
       console.error('Error purchasing SKU: ', error);
       return {
         skuId: null,
         permissions: null,
+        result: 'error',
         error: error,
       };
     }

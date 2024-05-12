@@ -83,6 +83,8 @@ export class AuthService {
       const profile = this.profile();
       const usernameToSet = this.usernameToSet();
 
+      console.log(`GOT PROFILE CHANGE: ${JSON.stringify(profile)}`);
+
       if (profile && usernameToSet) {
         this.updateProfile({ ...profile, username: usernameToSet })
           .pipe(first())
