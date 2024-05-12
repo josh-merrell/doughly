@@ -6,7 +6,7 @@ async function processNewPurchase(req, res) {
   const { transaction, sku } = req.body;
   const p = require('./processor')({ db, dbDefault });
   try {
-    const returner = await p.create({
+    const returner = await p.processNewPurchase({
       userID: req.userID,
       transaction,
       sku,
