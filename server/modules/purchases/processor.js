@@ -78,6 +78,7 @@ module.exports = ({ db, dbDefault }) => {
     processNewPurchase: async (options) => {
       const { userID, transaction, sku } = options;
       try {
+        global.logger.info(`PROCESSING NEW PURCHASE. SKU: ${JSON.stringify(sku)}`);
         // get current profile
         const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
         if (error1) {
