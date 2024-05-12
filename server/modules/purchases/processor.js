@@ -94,7 +94,8 @@ module.exports = ({ db, dbDefault }) => {
             newProfile['permDataBackupDaily6MonthRetention'] = true;
             break;
           default:
-            throw errorGen('Invalid transaction productId', 400);
+            global.logger.error(`Invalid transaction productId: ${transaction.productId}`);
+            break;
         }
 
         // unhide all recipes and recipe subscriptions
@@ -153,7 +154,8 @@ module.exports = ({ db, dbDefault }) => {
             case 'recipe-credits-10':
               break;
             default:
-              throw errorGen('Unhandled permissionId', 400);
+              global.logger.error(`Unhandled permissionId: ${permission.permissionId}`);
+              break;
           }
         }
 
