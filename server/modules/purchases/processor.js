@@ -134,6 +134,7 @@ module.exports = ({ db, dbDefault }) => {
         const newProfile = {};
         for (const permission in permissions.all) {
           let tokenUpdate;
+          global.logger.info(`PERMISSION: ${JSON.stringify(permission)}`);
           switch (permission.permissionId) {
             case 'recipe-subscribed-count-unlimited':
               newProfile['permRecipeSubscribeUnlimited'] = permission.isValid;
