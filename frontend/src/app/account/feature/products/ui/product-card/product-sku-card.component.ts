@@ -19,10 +19,8 @@ export class ProductSkuCardComponent {
 
   getTitleString(planId: string) {
     switch (planId) {
-      case 'per-month-3-99':
-        return 'Month to month';
-      case 'per-6-month-17-94':
-        return '6 month bundle';
+      case 'doughly_aicredits10_once_2.99':
+        return '10 AI Tokens';
     }
     return planId; // Return original if no match
   }

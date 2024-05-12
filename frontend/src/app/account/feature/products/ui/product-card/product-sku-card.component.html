@@ -1,5 +1,5 @@
 <div
-  class="h-dl-8 w-10/12 rounded-dl-3 p-dl-1"
+  class="h-dl-8 w-10/12 rounded-dl-3 p-dl-1 mx-dl-3"
   [ngStyle]="
     isSelected
       ? { transform: 'scale(1.1)', transition: 'transform 0.3s ease-in-out' }
@@ -19,7 +19,7 @@
   >
     <!-- Most Popular -->
     <div
-      *ngIf="sku.product.basePlanId === 'per-6-month-17-94'"
+      *ngIf="sku.skuId === 'doughly_aicredits10_once_2.99'"
       class="absolute left-0 top-0 flex w-dl-9 flex-col items-center rounded-br-xl rounded-tl-md py-dl-1.5"
       [ngClass]="{
         'bg-dl-grey-9': !isSelected,
@@ -40,16 +40,16 @@
     <div
       class="flex flex-col"
       [ngClass]="{
-      'mt-dl-7': sku.product.basePlanId === 'per-6-month-17-94',
+      'mt-dl-7': sku.skuId === 'doughly_aicredits10_once_2.99',
     }"
     >
       <p class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-blue-2">
-        {{ getTitleString(sku.product.basePlanId) }}
+        {{ getTitleString(sku.skuId) }}
       </p>
     </div>
 
     <!-- Price -->
-    <span class="whitespace-nowrap text-dl-5 font-dl-2 text-dl-blue-2">{{
+    <span class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-blue-2">{{
       sku.product.price | number : "1.0-2" | currency : sku.product.currencyCode
     }}</span>
   </div>

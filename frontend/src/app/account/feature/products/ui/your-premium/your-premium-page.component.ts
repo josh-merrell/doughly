@@ -28,7 +28,7 @@ export class YourPremiumComponent {
   public view: WritableSignal<string> = signal('benefits');
   public isLoading: WritableSignal<boolean> = signal(false);
   public productSKUs: WritableSignal<GlassfySku[]> = signal([]);
-  public selectedBasePlanId: WritableSignal<string> = signal(
+  public selectedIdentifier: WritableSignal<string> = signal(
     'doughly_aicredits10_once_2.99'
   );
   constructor(
@@ -62,15 +62,15 @@ export class YourPremiumComponent {
       this.setView('chooseMapping');
     } else if (this.view() === 'chooseMapping') {
       this.router.navigate(['/recipes/discover']);
-    } else if (this.view() === 'addTokens') {
-      this.makePurchase(this.selectedBasePlanId());
+    } else if (this.view() === 'options') {
+      this.makePurchase(this.selectedIdentifier());
     }
   }
 
-  async makePurchase(basePlanId: string) {
-    // get sku with matching 'basePlanId'
+  async makePurchase(skuId: string) {
+    // get sku with matching 'skuId'
     const sku = this.productSKUs().find(
-      (sku) => sku.product.basePlanId === basePlanId
+      (sku) => sku.skuId === skuId
     );
     if (sku) {
       this.isLoading.set(true);
@@ -79,7 +79,7 @@ export class YourPremiumComponent {
       if (result.error) {
         this.dialog.open(ErrorModalComponent, {
           data: {
-            errorMessage: `Error purchasing "${basePlanId}"${result.error}`,
+            errorMessage: `Error purchasing "${skuId}"${result.error}`,
             statusCode: '500',
           },
         });
@@ -96,8 +96,8 @@ export class YourPremiumComponent {
   }
 
   skuClick(sku) {
-    if (sku.product.basePlanId !== this.selectedBasePlanId()) {
-      this.selectedBasePlanId.set(sku.product.basePlanId);
+    if (sku.skuId !== this.selectedIdentifier()) {
+      this.selectedIdentifier.set(sku.skuId);
     }
   }
 
@@ -114,7 +114,7 @@ export class YourPremiumComponent {
   }
 
   onAddTokens() {
-    this.setView('addTokens');
+    this.setView('options');
   }
 
   setView(view: string) {
