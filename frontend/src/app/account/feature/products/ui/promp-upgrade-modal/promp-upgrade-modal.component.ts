@@ -11,7 +11,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
 export class PrompUpgradeModalComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    public data: { promptMessage: string },
+    public data: { titleMessage: string, promptMessage: string, buttonMessage: string},
     public dialogRef: MatDialogRef<PrompUpgradeModalComponent>,
     public stringsService: StringsService
   ) {}

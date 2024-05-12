@@ -254,12 +254,14 @@ export class RecipeListComponent {
         ? this.productService.licences.recipeSubscribeLimit
         : this.productService.licences.recipeCreateLimit;
 
-    if (this.profile().permRecipeCreateUnlimited === false) {
+    if (this.profile() && this.profile().permRecipeCreateUnlimited === false) {
       if (license <= this.recipes().length) {
         // open upgradePromptModal
         const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
           data: {
+            titleMessage: this.stringsService.productStrings.timeToUpgrade,
             promptMessage: `You have reached the number of allowed free-tier Created Recipes. Please upgrade to create more.`,
+            buttonMessage: 'UPGRADE',
           },
         });
         dialogRef.afterClosed().subscribe((result) => {

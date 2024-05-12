@@ -8,6 +8,7 @@ import {
 import { filter } from 'rxjs';
 import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'dl-products-page',
@@ -22,7 +23,8 @@ export class ProductsPageComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {
     effect(() => {
       const view = this.view();
@@ -48,6 +50,8 @@ export class ProductsPageComponent {
   }
 
   ngOnInit(): void {
+    // close all modals
+    this.dialog.closeAll();
     this.checkAndUpdateView();
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
