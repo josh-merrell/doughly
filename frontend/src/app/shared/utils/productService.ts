@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
 import { HttpClient } from '@angular/common/http';
 
-// define PurchaseResult interface
+// define PurchaseResult interface--
 interface PurchaseResult {
   productId: string | null;
   permissions: GlassfyPermissions | null;

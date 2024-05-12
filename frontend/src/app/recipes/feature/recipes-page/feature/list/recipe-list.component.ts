@@ -87,8 +87,17 @@ export class RecipeListComponent {
   public displayCategories: WritableSignal<RecipeCategory[]> = signal([]);
   public recipes: WritableSignal<Recipe[]> = signal([]);
   displayRecipes = computed(() => {
-    const recipes = this.recipes();
+    let recipes = this.recipes();
+    const profile = this.profile();
     const categories = this.displayCategories();
+
+    // if user does not have premium membership, only show repices where 'freeTier' is true
+    if (profile && profile.permRecipeCreateUnlimited === false) {
+      recipes = recipes.filter((recipe) => {
+        return recipe.freeTier === true;
+      });
+    }
+
     const recipesWithCategoryName = recipes.map((recipe) => {
       const category = categories.find((category) => {
         return category.recipeCategoryID === recipe.recipeCategoryID;
@@ -142,7 +151,8 @@ export class RecipeListComponent {
     effect(
       () => {
         const filteredCategories = this.filteredCategories();
-        const recipes = this.recipes();
+        let recipes = this.recipes();
+
         let newCategories: RecipeCategory[] = filteredCategories.map(
           (category) => {
             const recipeCount = recipes.filter((recipe) => {
@@ -191,6 +201,7 @@ export class RecipeListComponent {
           ? recipe.type === 'subscription'
           : recipe.type !== 'subscription';
       });
+
       this.recipes.set(
         [...recipes].sort((a, b) => a.title.localeCompare(b.title))
       );
