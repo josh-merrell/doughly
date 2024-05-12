@@ -360,20 +360,6 @@ export class RecipeService {
     );
   }
 
-  hideRecipes(keepRecipeIDs: number[]): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/hide/recipes`, {
-      keepRecipeIDs,
-    });
-  }
-
-  hideRecipeSubscriptions(
-    keepRecipeSubscriptionIDs: number[]
-  ): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/hide/subscriptions`, {
-      keepRecipeSubscriptionIDs,
-    });
-  }
-
   setFreeTierCreated(recipeIDs: number[]): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/archive/created`, {
       recipeIDs,

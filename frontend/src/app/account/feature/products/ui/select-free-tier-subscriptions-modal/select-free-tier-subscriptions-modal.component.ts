@@ -212,8 +212,7 @@ export class SelectFreeTierSubscriptionsModalComponent {
       )
     ) {
       this.isLoading.set(true);
-      this.recipeService
-        .setFreeTierSubscribed(this.selectedRecipeIDs())
+      this.recipeService.setFreeTierSubscribed(this.selectedRecipeIDs())
         .subscribe((error) => {
           this.isLoading.set(false);
           if (error) {
