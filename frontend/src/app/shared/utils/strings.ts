@@ -33,6 +33,7 @@ export class StringsService {
     subscribeYourPremium: `Your Premium Subscription is serving you well. Thank you for your support!`,
     manageSubscription: `You can manage your subscription in Google Play or App Store.`,
     timeToUpgrade: `Time to upgrade your account!`,
+    timeToTopUp: `Time to top up your AI Tokens!`,
     changeSubscription: `change subscription`,
     beforeCanceling1: `Before canceling, select Recipes to keep as part of your free tier access. We'll hold onto the others in case you choose to resubscribe later.`,
     freeTierRecipeSelection: `Any Recipe not selected will be unavailable and archived upon canceling your Premium Membership.`,
