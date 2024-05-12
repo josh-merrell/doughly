@@ -10,6 +10,7 @@ import {
 import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 // define PurchaseResult interface--
 interface PurchaseResult {
@@ -41,7 +42,7 @@ export class ProductService {
       });
       const permissions = await Glassfy.permissions();
       console.log('Glassfy Permissions: ', permissions);
-      this.handleExistingPermissions(permissions);
+      await this.handleExistingPermissions(permissions).subscribe();
 
       const offerings: GlassfyOfferings = await Glassfy.offerings();
       this.offerings.set(offerings.all);
@@ -59,7 +60,7 @@ export class ProductService {
     // called when permissions may have changed
     const permissions = await Glassfy.permissions();
     console.log('Updated Glassfy Permissions: ', permissions);
-    this.handleExistingPermissions(permissions);
+    await this.handleExistingPermissions(permissions).subscribe();
   }
 
   async purchase(sku: GlassfySku): Promise<PurchaseResult> {
@@ -95,12 +96,13 @@ export class ProductService {
   ) {
     // send to backend for processing/adding profile perms
     const body = { transaction, sku };
-    this.http.post(`${this.API_URL}/newPurchase`, body);
+    return this.http.post(`${this.API_URL}/newPurchase`, body);
   }
 
-  async handleExistingPermissions(permissions: GlassfyPermissions) {
+  handleExistingPermissions(permissions: GlassfyPermissions): Observable<any> {
     // send to backend for updating profile perms (including adding AI tokens if time to)
     const body = { permissions };
-    this.http.post(`${this.API_URL}/updatePermissions`, body);
+    console.log(`SENDING PERMISSIONS TO BACKEND: `, body)
+    return this.http.post(`${this.API_URL}/updatePermissions`, body);
   }
 }
