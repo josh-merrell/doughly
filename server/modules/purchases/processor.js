@@ -111,7 +111,7 @@ module.exports = ({ db, dbDefault }) => {
         if (error) {
           throw errorGen(`Error updating profile: ${error.message}`, 400);
         }
-        return res.json({ updatedProfile });
+        return updatedProfile;
       } catch (e) {
         global.logger.error(`Error processing new purchase. transaction: ${JSON.stringify(transaction)}, sku: ${JSON.stringify(sku)} ${e.message}`);
         throw errorGen(`Error processing new purchase. transaction: ${JSON.stringify(transaction)}, sku: ${JSON.stringify(sku)} ${e.message}`, 400);
@@ -166,7 +166,7 @@ module.exports = ({ db, dbDefault }) => {
         if (error) {
           throw errorGen(`Error updating profile: ${error.message}`, 400);
         }
-        return res.json({ updatedProfile });
+        return updatedProfile;
       } catch (e) {
         global.logger.error(`Error updating account permissions. Glassfy permissions: ${JSON.stringify(permissions)} ${e.message}`);
         throw errorGen(`Error updating account permissions. Glassfy permissions: ${JSON.stringify(permissions)} ${e.message}`, 400);
