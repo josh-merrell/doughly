@@ -68,7 +68,10 @@ export class ProductService {
       const transaction = await Glassfy.purchaseSku({ sku });
       console.log('Transaction: ', transaction);
       if (transaction.permissions) {
-        this.handleSuccessfulTransactionResult(transaction, sku);
+        await this.handleSuccessfulTransactionResult(
+          transaction,
+          sku
+        ).subscribe();
         return {
           skuId: sku.skuId,
           permissions: transaction.permissions,
@@ -90,10 +93,10 @@ export class ProductService {
     }
   }
 
-  async handleSuccessfulTransactionResult(
+  handleSuccessfulTransactionResult(
     transaction: GlassfyTransaction,
     sku: GlassfySku
-  ) {
+  ): Observable<any> {
     // send to backend for processing/adding profile perms
     const body = { transaction, sku };
     return this.http.post(`${this.API_URL}/newPurchase`, body);
