@@ -78,16 +78,29 @@ module.exports = ({ db, dbDefault }) => {
     processNewPurchase: async (options) => {
       const { userID, transaction, sku } = options;
       try {
+        // get current profile
+        const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
+        if (error1) {
+          throw errorGen(`Error getting profile: ${error1.message}`, 400);
+        }
+        if (!profile) {
+          throw errorGen('Profile not found', 400);
+        }
+
         global.logger.info(`PROCESSING NEW PURCHASE: ${JSON.stringify(transaction)}, ${JSON.stringify(sku)}`);
         if (!transaction || !sku) {
           throw errorGen('Missing transaction or sku', 400);
         }
-        if (!transaction.productId) {
+        if (!transaction.permissions) {
           throw errorGen('Missing transaction productId', 400);
         }
 
         const newProfile = {};
-        switch (transaction.productId) {
+        let addTokens;
+        switch (sku.skuId) {
+          case 'doughly_aicredits10_once_2.99':
+            addTokens = 10;
+            break;
           case 'doughly_premium_monthly_2.99':
             newProfile['isPremium'] = true;
             newProfile['permRecipeSubscribeUnlimited'] = true;
@@ -105,17 +118,14 @@ module.exports = ({ db, dbDefault }) => {
             break;
         }
 
-        // unhide all recipes and recipe subscriptions
-        const unhideResult = await unhideRecipes(userID);
-        if (unhideResult !== 'success') {
-          throw errorGen('Error unhiding recipes', 400);
-        }
-
-        // now update profile with new permissions
-        const tokenUpdate = await calculateAITokenUpdate(userID);
-        if (tokenUpdate.needsUpdate) {
-          newProfile['permAITokenCount'] = tokenUpdate.newCount;
-          newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
+        if (sku.skuId !== 'doughly_aicredits10_once_2.99') {
+          const tokenUpdate = await calculateAITokenUpdate(userID);
+          if (tokenUpdate.needsUpdate) {
+            newProfile['permAITokenCount'] = tokenUpdate.newCount;
+            newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
+          }
+        } else {
+          newProfile['permAITokenCount'] = Math.min(productConstants.subscription.maxAICredits, profile.permAITokenCount + addTokens);
         }
 
         global.logger.info(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);

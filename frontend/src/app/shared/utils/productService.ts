@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 
 // define PurchaseResult interface--
 interface PurchaseResult {
-  productId: string | null;
+  skuId: string | null;
   permissions: GlassfyPermissions | null;
   error: any;
 }
@@ -67,23 +67,23 @@ export class ProductService {
     try {
       const transaction = await Glassfy.purchaseSku({ sku });
       console.log('Transaction: ', transaction);
-      if (transaction.receiptValidated) {
+      if (transaction.permissions) {
         this.handleSuccessfulTransactionResult(transaction, sku);
         return {
-          productId: transaction.productId,
+          skuId: sku.skuId,
           permissions: transaction.permissions,
           error: null,
         };
       }
       return {
-        productId: null,
+        skuId: null,
         permissions: null,
         error: 'Receipt not validated',
       };
     } catch (error) {
       console.error('Error purchasing SKU: ', error);
       return {
-        productId: null,
+        skuId: null,
         permissions: null,
         error: error,
       };
@@ -102,7 +102,7 @@ export class ProductService {
   handleExistingPermissions(permissions: GlassfyPermissions): Observable<any> {
     // send to backend for updating profile perms (including adding AI tokens if time to)
     const body = { permissions };
-    console.log(`SENDING PERMISSIONS TO BACKEND: `, body)
+    console.log(`SENDING PERMISSIONS TO BACKEND: `, body);
     return this.http.post(`${this.API_URL}/updatePermissions`, body);
   }
 }
