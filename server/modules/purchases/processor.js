@@ -39,6 +39,7 @@ module.exports = ({ db, dbDefault }) => {
       // if profile.permAITokenLastRefreshDate is not set or is at least a month old (same day of month), set 'addAITokens' to true
       if (!profile.permAITokenLastRefreshDate) {
         global.logger.info('No permAITokenLastRefreshDate found');
+        monthsPassed = 1;
         addAITokens = true;
       } else {
         // determine how many months have passed since the last refresh
@@ -50,11 +51,11 @@ module.exports = ({ db, dbDefault }) => {
         }
       }
 
-      // determine new 'permAITokenCount' value. Choose smaller of either productConstants.maxAITokens or current 'permAITokenCount' + productConstants.monthlyAICredits * monthsPassed
+      // determine new 'permAITokenCount' value. Choose smaller of either productConstants.maxAICredits or current 'permAITokenCount' + productConstants.monthlyAICredits * monthsPassed
       if (addAITokens) {
         tokenUpdate.needsUpdate = true;
         global.logger.info(`PERMAITOKENCOUNT: ${profile.permAITokenCount}. CONST: ${productConstants.subscription.monthlyAICredits}. MONTHS PASSED: ${monthsPassed}`);
-        tokenUpdate.newCount = Math.min(productConstants.subscription.maxAITokens, profile.permAITokenCount + productConstants.subscription.monthlyAICredits * monthsPassed);
+        tokenUpdate.newCount = Math.min(productConstants.subscription.maxAICredits, profile.permAITokenCount + productConstants.subscription.monthlyAICredits * monthsPassed);
         // set 'permAITokenLastRefreshDate' to be 'monthsPassed' months from previous 'permAITokenLastRefreshDate'
         let newRefreshDate;
         if (!profile.permAITokenLastRefreshDate) {
