@@ -23,6 +23,7 @@ module.exports = ({ db, dbDefault }) => {
       newDate: null,
     };
     try {
+      global.logger.info(`CALCULATING AI TOKEN UPDATE FOR USER: ${userID}`);
       // check for 'permAITokenLastRefreshData' value
       const { data: profile, error: error } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
       if (error) {
@@ -37,12 +38,14 @@ module.exports = ({ db, dbDefault }) => {
 
       // if profile.permAITokenLastRefreshDate is not set or is at least a month old (same day of month), set 'addAITokens' to true
       if (!profile.permAITokenLastRefreshDate) {
+        global.logger.info('No permAITokenLastRefreshDate found');
         addAITokens = true;
       } else {
         // determine how many months have passed since the last refresh
         const lastRefreshDate = new Date(profile.permAITokenLastRefreshDate);
         monthsPassed = (today.getFullYear() - lastRefreshDate.getFullYear()) * 12 + today.getMonth() - lastRefreshDate.getMonth();
         if (monthsPassed >= 1) {
+          global.logger.info(`More than a month since last refresh: ${monthsPassed}`);
           addAITokens = true;
         }
       }
@@ -55,6 +58,7 @@ module.exports = ({ db, dbDefault }) => {
         const newRefreshDate = new Date(profile.permAITokenLastRefreshDate);
         newRefreshDate.setMonth(newRefreshDate.getMonth() + monthsPassed);
         tokenUpdate.newDate = newRefreshDate.toISOString();
+        global.logger.info(`New permAITokenCount: ${tokenUpdate.newCount}, New permAITokenLastRefreshDate: ${tokenUpdate.newDate}`);
       }
       return tokenUpdate;
     } catch (e) {
@@ -128,25 +132,16 @@ module.exports = ({ db, dbDefault }) => {
         global.logger.info(`PERMISSIONS TO UPDATE PROFILE: ${JSON.stringify(permissions.all)}`);
         const newProfile = {};
         for (const permission in permissions.all) {
-          if (!permissions.isValid) {
-            continue;
-          }
           let tokenUpdate;
           switch (permission.permissionId) {
             case 'recipe-subscribed-count-unlimited':
-              if (permission.value === true) {
-                await unhideRecipes(userID);
-              }
-              newProfile['permRecipeSubscribeUnlimited'] = permission.value;
+              newProfile['permRecipeSubscribeUnlimited'] = permission.isValid;
               break;
             case 'recipe-created-count-unlimited':
-              if (permission.value === true) {
-                await unhideRecipes(userID);
-              }
-              newProfile['permRecipeCreateUnlimited'] = permission.value;
+              newProfile['permRecipeCreateUnlimited'] = permission.isValid;
               break;
             case 'data-backup-daily-6-month-retention':
-              newProfile['permDataBackupDaily6MonthRetention'] = permission.value;
+              newProfile['permDataBackupDaily6MonthRetention'] = permission.isValid;
               break;
             case 'recipe-create-AI-credit-count-12':
               tokenUpdate = await calculateAITokenUpdate(userID);
@@ -155,8 +150,10 @@ module.exports = ({ db, dbDefault }) => {
                 newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
               }
               break;
+            case 'recipe-credits-10':
+              break;
             default:
-              throw errorGen('Unhandles permissionId', 400);
+              throw errorGen('Unhandled permissionId', 400);
           }
         }
 
