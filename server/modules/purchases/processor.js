@@ -64,8 +64,8 @@ module.exports = ({ db, dbDefault }) => {
   };
 
   return {
-    processNewPurchase: async (req, res) => {
-      const { transaction, sku } = req.body;
+    processNewPurchase: async (options) => {
+      const { userID, transaction, sku } = options;
       try {
         global.logger.log(`PROCESSING NEW PURCHASE: ${JSON.stringify(transaction)}, ${JSON.stringify(sku)}`);
         if (!transaction || !sku) {
@@ -89,20 +89,20 @@ module.exports = ({ db, dbDefault }) => {
         }
 
         // unhide all recipes and recipe subscriptions
-        const unhideResult = await unhideRecipes(req.userID);
+        const unhideResult = await unhideRecipes(userID);
         if (unhideResult !== 'success') {
           throw errorGen('Error unhiding recipes', 400);
         }
 
         // now update profile with new permissions
-        const tokenUpdate = await calculateAITokenUpdate(req.userID);
+        const tokenUpdate = await calculateAITokenUpdate(userID);
         if (tokenUpdate.needsUpdate) {
           newProfile['permAITokenCount'] = tokenUpdate.newCount;
           newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
         }
 
         global.logger.log(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);
-        const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', req.userID);
+        const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
           throw errorGen(`Error updating profile: ${error.message}`, 400);
         }
@@ -113,8 +113,8 @@ module.exports = ({ db, dbDefault }) => {
       }
     },
 
-    updatePermissions: async (req, res) => {
-      const { permissions } = req.body;
+    updatePermissions: async (options) => {
+      const { userID, permissions } = options;
       try {
         if (!permissions) {
           throw errorGen('Missing transaction productId', 400);
@@ -130,13 +130,13 @@ module.exports = ({ db, dbDefault }) => {
           switch (permission.permissionId) {
             case 'recipe-subscribed-count-unlimited':
               if (permission.value === true) {
-                await unhideRecipes(req.userID);
+                await unhideRecipes(userID);
               }
               newProfile['permRecipeSubscribeUnlimited'] = permission.value;
               break;
             case 'recipe-create-count-unlimited':
               if (permission.value === true) {
-                await unhideRecipes(req.userID);
+                await unhideRecipes(userID);
               }
               newProfile['permRecipeCreateUnlimited'] = permission.value;
               break;
@@ -144,7 +144,7 @@ module.exports = ({ db, dbDefault }) => {
               newProfile['permDataBackupDaily6MonthRetention'] = permission.value;
               break;
             case 'recipe-create-AI-credit-count-12':
-              tokenUpdate = await calculateAITokenUpdate(req.userID);
+              tokenUpdate = await calculateAITokenUpdate(userID);
               if (tokenUpdate.needsUpdate) {
                 newProfile['permAITokenCount'] = tokenUpdate.newCount;
                 newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
@@ -157,7 +157,7 @@ module.exports = ({ db, dbDefault }) => {
 
         // update profile with new permissions
         global.logger.log(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);
-        const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', req.userID);
+        const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
           throw errorGen(`Error updating profile: ${error.message}`, 400);
         }
