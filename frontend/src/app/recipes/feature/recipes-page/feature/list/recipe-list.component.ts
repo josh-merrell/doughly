@@ -91,14 +91,12 @@ export class RecipeListComponent {
     const profile = this.profile();
     const categories = this.displayCategories();
 
-    console.log(`RECIPES: `, recipes);
-    // if user does not have premium membership, only show free-tier recipes
+    // if user does not have premium membership, only show repices where 'freeTier' is true
     if (profile && profile.permRecipeCreateUnlimited === false) {
       recipes = recipes.filter((recipe) => {
-        recipe.freeTier === true;
+        return recipe.freeTier === true;
       });
     }
-    console.log(`RECIPES AFTER: `, recipes);
 
     const recipesWithCategoryName = recipes.map((recipe) => {
       const category = categories.find((category) => {
