@@ -12,6 +12,9 @@ import { GlassfySku } from 'capacitor-plugin-glassfy';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ProductSkuCardComponent } from '../product-card/product-sku-card.component';
+import { Store } from '@ngrx/store';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 @Component({
   selector: 'dl-your-premium',
   standalone: true,
@@ -35,7 +38,8 @@ export class YourPremiumComponent {
     public stringsService: StringsService,
     private router: Router,
     private dialog: MatDialog,
-    private productService: ProductService
+    private productService: ProductService,
+    private authService: AuthService
   ) {
     effect(
       () => {
@@ -69,14 +73,33 @@ export class YourPremiumComponent {
 
   async makePurchase(skuId: string) {
     // get sku with matching 'skuId'
-    const sku = this.productSKUs().find(
-      (sku) => sku.skuId === skuId
-    );
+    const sku = this.productSKUs().find((sku) => sku.skuId === skuId);
     if (sku) {
       this.isLoading.set(true);
       const result = await this.productService.purchase(sku);
       this.isLoading.set(false);
-      if (result.error) {
+      if (result.result === 'no permissions') {
+        this.dialog.open(ErrorModalComponent, {
+          data: {
+            errorMessage: `Error purchasing "${skuId}"${result.error}`,
+            statusCode: '500',
+          },
+        });
+      } else if (result.result === 'cancelled') {
+        this.dialog.open(ErrorModalComponent, {
+          data: {
+            errorMessage: `Purchase cancelled. Please try again.`,
+            statusCode: '500',
+          },
+        });
+      } else if (result.result === 'alreadyOwned') {
+        this.dialog.open(ErrorModalComponent, {
+          data: {
+            errorMessage: `You already have this. Please sign out and log back in to refresh.`,
+            statusCode: '500',
+          },
+        });
+      } else if (result.result === 'error') {
         this.dialog.open(ErrorModalComponent, {
           data: {
             errorMessage: `Error purchasing "${skuId}"${result.error}`,
@@ -84,6 +107,9 @@ export class YourPremiumComponent {
           },
         });
       } else {
+        setTimeout(() => {
+          this.authService.refreshProfile();
+        }, 1500);
         this.dialog.open(ConfirmationModalComponent, {
           maxWidth: '380px',
           data: {
