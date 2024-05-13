@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 @Component({
   selector: 'dl-upgrade-page',
   standalone: true,
@@ -33,7 +34,8 @@ export class UpgradePageComponent {
     public dialog: MatDialog,
     private router: Router,
     private productService: ProductService,
-    public stringsService: StringsService
+    public stringsService: StringsService,
+    private authService: AuthService
   ) {
     effect(
       () => {
@@ -94,6 +96,13 @@ export class UpgradePageComponent {
             statusCode: '500',
           },
         });
+      } else if (result.result === 'alreadyOwned') {
+        this.dialog.open(ErrorModalComponent, {
+          data: {
+            errorMessage: `You already have this. Please sign out and log back in to refresh.`,
+            statusCode: '500',
+          },
+        });
       } else if (result.result === 'error') {
         this.dialog.open(ErrorModalComponent, {
           data: {
@@ -102,6 +111,9 @@ export class UpgradePageComponent {
           },
         });
       } else {
+        setTimeout(() => {
+          this.authService.refreshProfile();
+        }, 1500);
         this.dialog.open(ConfirmationModalComponent, {
           maxWidth: '380px',
           data: {

@@ -10,7 +10,10 @@ import {
 import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { ProfileService } from 'src/app/profile/data/profile.service';
 
 // define PurchaseResult interface--
 interface PurchaseResult {
@@ -69,6 +72,7 @@ export class ProductService {
       const transaction = await Glassfy.purchaseSku({ sku });
       console.log('Transaction: ', transaction);
       if (transaction.permissions) {
+        // Ensure the observable completes by converting it to a promise
         await this.handleSuccessfulTransactionResult(
           transaction,
           sku
@@ -87,11 +91,23 @@ export class ProductService {
         error: 'Receipt not validated',
       };
     } catch (error: any) {
-      if (error.message.includes('USER_CANCELLED')) {
+      console.log(`GOT ERROR: `, error);
+      // Log standard properties
+      console.log('Error message:', error.message);
+
+      if (error.message.includes('UserCancelPurchase')) {
         return {
           skuId: null,
           permissions: null,
           result: 'cancelled',
+          error: 'Purchase cancelled by user',
+        };
+      }
+      if (error.message.includes('ProductAlreadyOwned')) {
+        return {
+          skuId: null,
+          permissions: null,
+          result: 'alreadyOwned',
           error: 'Purchase cancelled by user',
         };
       }
@@ -118,6 +134,9 @@ export class ProductService {
     // send to backend for updating profile perms (including adding AI tokens if time to)
     const body = { permissions };
     console.log(`SENDING PERMISSIONS TO BACKEND: `, body);
+    setTimeout(() => {
+      this.authService.refreshProfile();
+    }, 1500);
     return this.http.post(`${this.API_URL}/updatePermissions`, body);
   }
 }

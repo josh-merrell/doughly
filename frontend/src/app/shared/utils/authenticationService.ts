@@ -207,6 +207,16 @@ export class AuthService {
     return data.user;
   }
 
+  public refreshProfile() {
+    const user = this.user();
+    if (user) {
+      this.supabase.from('profiles').select('*').match({ user_id: user.id }).single().then((res) => {
+        this.profile.set(this.isProfile(res.data) ? res.data : null);
+      });
+      
+    }
+  }
+
   private getUserProfile(user_id: string, session: Session) {
     this.supabase
       .from('profiles')
