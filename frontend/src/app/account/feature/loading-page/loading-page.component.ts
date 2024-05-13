@@ -102,6 +102,7 @@ import {
   selectError as selectMessageError,
 } from 'src/app/footer/state/message-selectors';
 import { Subscription, timer } from 'rxjs';
+import { ProductService } from 'src/app/shared/utils/productService';
 
 @Component({
   selector: 'dl-loading-page',
@@ -135,7 +136,8 @@ export class LoadingPageComponent {
   constructor(
     private store: Store,
     private router: Router,
-    private extraStuffService: ExtraStuffService
+    private extraStuffService: ExtraStuffService,
+    private ProductService: ProductService
   ) {
     effect(() => {
       const isLoading = this.isLoadingGlobal();
@@ -243,6 +245,7 @@ export class LoadingPageComponent {
         this.loadProfileState();
         this.loadShoppingListState();
         this.loadShoppingListRecipeState();
+        this.ProductService.initGlassfy();
     }
   }
 
