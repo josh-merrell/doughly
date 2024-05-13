@@ -69,6 +69,7 @@ export class ProductService {
 
   async purchase(sku: GlassfySku): Promise<PurchaseResult> {
     try {
+      console.log(`PURCHASING SKU: ${JSON.stringify(sku)}`)
       const transaction = await Glassfy.purchaseSku({ sku });
       console.log('Transaction: ', transaction);
       if (transaction.permissions) {
