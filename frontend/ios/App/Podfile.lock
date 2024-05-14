@@ -26,6 +26,8 @@ PODS:
     - Capacitor
   - CapacitorShare (5.0.7):
     - Capacitor
+  - CapacitorStatusBar (5.0.7):
+    - Capacitor
   - CodetrixStudioCapacitorGoogleAuth (0.0.1):
     - Capacitor
     - GoogleSignIn (~> 6.2.4)
@@ -121,6 +123,7 @@ DEPENDENCIES:
   - CapacitorPluginGlassfy (from `../../node_modules/capacitor-plugin-glassfy`)
   - "CapacitorPushNotifications (from `../../node_modules/@capacitor/push-notifications`)"
   - "CapacitorShare (from `../../node_modules/@capacitor/share`)"
+  - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - "CodetrixStudioCapacitorGoogleAuth (from `../../node_modules/@codetrix-studio/capacitor-google-auth`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - Firebase/Messaging
@@ -166,6 +169,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/push-notifications"
   CapacitorShare:
     :path: "../../node_modules/@capacitor/share"
+  CapacitorStatusBar:
+    :path: "../../node_modules/@capacitor/status-bar"
   CodetrixStudioCapacitorGoogleAuth:
     :path: "../../node_modules/@codetrix-studio/capacitor-google-auth"
   CordovaPlugins:
@@ -182,6 +187,7 @@ SPEC CHECKSUMS:
   CapacitorPluginGlassfy: b3fabae488929afe1a7cc42aa2104a98d9fc5db2
   CapacitorPushNotifications: 2327900bc002f5ff49ee6d2231796d0635b4a1b0
   CapacitorShare: c6a1ebbf0114ff9e863b966cd6052678fa25d480
+  CapacitorStatusBar: f390fbb49b82ffb754ea4b3cf71dc8b048baf3e7
   CodetrixStudioCapacitorGoogleAuth: fcce058390347c1ce5d8ac4764bdf1f5c1ee233b
   CordovaPlugins: af720891c2ab245218e3626fe90551bc7380e2ae
   FBAEMKit: af2972f39bb0f3f7c45998f435b007833c32ffb2
@@ -203,6 +209,6 @@ SPEC CHECKSUMS:
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
-PODFILE CHECKSUM: a7459a53d29273c8bce2209e46781d3743326eaa
+PODFILE CHECKSUM: 6878bca9f2af7e697bb2a7cf830a2f0e758b503b
 
 COCOAPODS: 1.15.2
