@@ -76,7 +76,7 @@
         *ngFor="let sku of subscribeSKUs()"
         (click)="skuClick(sku)"
         [sku]="sku"
-        [isSelected]="selectedBasePlanId() === sku.product.basePlanId"
+        [isSelected]="selectedIdentifier() === sku.skuId"
       ></dl-subscription-sku-card>
     </div>
     <!-- Spacer Div -->
