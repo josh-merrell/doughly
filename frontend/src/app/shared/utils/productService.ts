@@ -11,6 +11,8 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
 import { HttpClient } from '@angular/common/http';
 import { Observable, lastValueFrom } from 'rxjs';
+import { Capacitor } from '@capacitor/core';
+
 import { Store } from '@ngrx/store';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ProfileService } from 'src/app/profile/data/profile.service';
@@ -34,27 +36,31 @@ export class ProductService {
     recipeCreateLimit: 3,
     premiumMonthlyAICredits: 12,
     extraAITokenPurchaseCount: 10,
-    maxAICredits: 30
+    maxAICredits: 30,
   };
-  constructor(private http: HttpClient, private authService: AuthService) {
-    this.initGlassfy();
-  }
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   async initGlassfy() {
     try {
-      await Glassfy.initialize({
-        apiKey: environment.GLASSFY_ApiKey,
-        watcherMode: false,
-      });
-      const permissions = await Glassfy.permissions();
-      console.log('Glassfy Permissions: ', permissions);
-      await this.handleExistingPermissions(permissions).subscribe();
+      if (Capacitor.isNativePlatform()) {
+        await Glassfy.initialize({
+          apiKey: environment.GLASSFY_ApiKey,
+          watcherMode: false,
+        });
+        const permissions = await Glassfy.permissions();
+        console.log('Glassfy Permissions: ', permissions);
+        await this.handleExistingPermissions(permissions).subscribe();
 
-      const offerings: GlassfyOfferings = await Glassfy.offerings();
-      this.offerings.set(offerings.all);
+        const offerings: GlassfyOfferings = await Glassfy.offerings();
+        this.offerings.set(offerings.all);
+      } else return;
     } catch (error) {
       console.error('Error initializing Glassfy: ', error);
     }
+  }
+
+  ngOnInit() {
+    this.initGlassfy();
   }
 
   async restore() {
@@ -71,7 +77,7 @@ export class ProductService {
 
   async purchase(sku: GlassfySku): Promise<PurchaseResult> {
     try {
-      console.log(`PURCHASING SKU: ${JSON.stringify(sku)}`)
+      console.log(`PURCHASING SKU: ${JSON.stringify(sku)}`);
       const transaction = await Glassfy.purchaseSku({ sku });
       console.log('Transaction: ', transaction);
       if (transaction.permissions) {

@@ -25,6 +25,7 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { filter, take } from 'rxjs';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
+import { Capacitor } from '@capacitor/core';
 
 import {
   selectError,
@@ -113,8 +114,10 @@ export class DiscoverRecipesComponent {
   }
 
   ngOnInit(): void {
-    // set nav and status bar styles
-    this.setStatusBarStyleLight();
+    if (Capacitor.isNativePlatform()) {
+      // set nav and status bar styles
+      this.setStatusBarStyleLight();
+    }
 
     this.store.select(selectRecipeCategories).subscribe((categories) => {
       this.categories.set(categories);

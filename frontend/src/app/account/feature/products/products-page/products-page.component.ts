@@ -11,6 +11,8 @@ import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { MatDialog } from '@angular/material/dialog';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
+import { Capacitor } from '@capacitor/core';
+
 
 @Component({
   selector: 'dl-products-page',
@@ -61,7 +63,9 @@ export class ProductsPageComponent {
   }
 
   ngOnInit(): void {
-    this.setStatusBarStyleDark();
+    if (Capacitor.isNativePlatform()) {
+      this.setStatusBarStyleDark();
+    }
     // close all modals
     this.dialog.closeAll();
     this.checkAndUpdateView();

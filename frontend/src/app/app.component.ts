@@ -143,7 +143,9 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    this.setStatusBarStyleLight();
+    if (Capacitor.isNativePlatform()) {
+      this.setStatusBarStyleLight();
+    }
     // register for push notifications on mobile
     if (Capacitor.isNativePlatform()) {
       PushNotifications.requestPermissions().then((result) => {
