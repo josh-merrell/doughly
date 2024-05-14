@@ -23,6 +23,10 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { StringsService } from 'src/app/shared/utils/strings';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { filter, take } from 'rxjs';
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
+import { Capacitor } from '@capacitor/core';
+
 import {
   selectError,
   selectUpdating,
@@ -101,8 +105,20 @@ export class DiscoverRecipesComponent {
       { allowSignalWrites: true }
     );
   }
+  async setStatusBarStyleLight() {
+    await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
+    await StatusBar.setStyle({ style: Style.Light });
+
+    // for bottom nav bar
+    NavigationBar.setColor({ color: '#FFFFFF', darkButtons: true });
+  }
 
   ngOnInit(): void {
+    if (Capacitor.isNativePlatform()) {
+      // set nav and status bar styles
+      this.setStatusBarStyleLight();
+    }
+
     this.store.select(selectRecipeCategories).subscribe((categories) => {
       this.categories.set(categories);
     });

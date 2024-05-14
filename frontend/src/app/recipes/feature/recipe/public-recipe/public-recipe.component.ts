@@ -63,7 +63,7 @@ export class PublicRecipeComponent {
   recipeID: WritableSignal<number> = signal(0);
   public recipe: WritableSignal<any> = signal(null);
   public recipeCategory: WritableSignal<RecipeCategory | null> = signal(null);
-  public author: WritableSignal<any> = signal(null);
+  public author: WritableSignal<any> = signal(false);
   public initials: WritableSignal<string> = signal('');
   ingredients: WritableSignal<any[]> = signal([]);
   recipeIngredients: WritableSignal<RecipeIngredient[]> = signal([]);
@@ -165,9 +165,11 @@ export class PublicRecipeComponent {
       this.recipe() &&
       this.displayIngredientsByComponent() &&
       this.steps() &&
-      this.tools()
-    )
+      this.tools() &&
+      this.author()
+    ) {
       return true;
+    }
     return false;
   });
   tools: WritableSignal<any[]> = signal([]);
