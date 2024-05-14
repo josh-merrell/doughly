@@ -87,8 +87,6 @@ module.exports = ({ db, dbDefault }) => {
         if (!profile) {
           throw errorGen('Profile not found', 400);
         }
-
-        global.logger.info(`PROCESSING NEW PURCHASE: ${JSON.stringify(transaction)}, ${JSON.stringify(sku)}`);
         if (!transaction || !sku) {
           throw errorGen('Missing transaction or sku', 400);
         }
@@ -102,7 +100,7 @@ module.exports = ({ db, dbDefault }) => {
           case 'doughly_aicredits10_once_2.99':
             addTokens = 10;
             break;
-          case 'doughly_premium_monthly_2.99':
+          case 'doughly_premium_monthly_3.99':
             newProfile['isPremium'] = true;
             newProfile['permRecipeSubscribeUnlimited'] = true;
             newProfile['permRecipeCreateUnlimited'] = true;
@@ -115,7 +113,7 @@ module.exports = ({ db, dbDefault }) => {
             newProfile['permDataBackupDaily6MonthRetention'] = true;
             break;
           default:
-            global.logger.error(`Invalid transaction productId: ${transaction.productId}`);
+            global.logger.error(`Invalid purchase sku.skuId: ${sku.skuId}`);
             break;
         }
 
