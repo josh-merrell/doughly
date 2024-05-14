@@ -33,6 +33,8 @@ export class ProductService {
     recipeSubscribeLimit: 3,
     recipeCreateLimit: 3,
     premiumMonthlyAICredits: 12,
+    extraAITokenPurchaseCount: 10,
+    maxAICredits: 30
   };
   constructor(private http: HttpClient, private authService: AuthService) {
     this.initGlassfy();

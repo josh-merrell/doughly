@@ -15,6 +15,7 @@ import { ProductSkuCardComponent } from '../product-card/product-sku-card.compon
 import { Store } from '@ngrx/store';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 @Component({
   selector: 'dl-your-premium',
   standalone: true,
@@ -28,6 +29,8 @@ import { AuthService } from 'src/app/shared/utils/authenticationService';
   templateUrl: './your-premium-page.component.html',
 })
 export class YourPremiumComponent {
+  public allowExtraTokenPurchase: WritableSignal<boolean> = signal(false);
+  private profile: WritableSignal<any> = signal({});
   public view: WritableSignal<string> = signal('benefits');
   public isLoading: WritableSignal<boolean> = signal(false);
   public productSKUs: WritableSignal<GlassfySku[]> = signal([]);
@@ -39,7 +42,8 @@ export class YourPremiumComponent {
     private router: Router,
     private dialog: MatDialog,
     private productService: ProductService,
-    private authService: AuthService
+    private authService: AuthService,
+    private store: Store
   ) {
     effect(
       () => {
@@ -59,6 +63,17 @@ export class YourPremiumComponent {
       },
       { allowSignalWrites: true }
     );
+  }
+
+  ngOnInit() {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+      if (profile) {
+        if (profile.permAITokenCount < this.productService.licences.maxAICredits - this.productService.licences.extraAITokenPurchaseCount) {
+          this.allowExtraTokenPurchase.set(true);
+        }
+      }
+    });
   }
 
   onConfirm() {

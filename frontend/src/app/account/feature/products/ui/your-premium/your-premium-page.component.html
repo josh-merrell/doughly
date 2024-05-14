@@ -11,6 +11,7 @@
     <dl class="flex flex-grow"></dl>
     <!-- Buttons -->
     <button
+      *ngIf="allowExtraTokenPurchase()"
       type="button"
       class="mb-dl-3 mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-grey-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onAddTokens()"

@@ -18,6 +18,10 @@ PODS:
     - FBSDKCoreKit (= 16.1.3)
     - FBSDKLoginKit (= 16.1.3)
   - CapacitorCordova (5.7.5)
+  - CapacitorPluginGlassfy (3.3.4):
+    - Capacitor
+    - Glassfy (= 1.4.0)
+    - GlassfyGlue (= 1.4.5)
   - CapacitorPushNotifications (5.1.1):
     - Capacitor
   - CapacitorShare (5.0.7):
@@ -25,6 +29,8 @@ PODS:
   - CodetrixStudioCapacitorGoogleAuth (0.0.1):
     - Capacitor
     - GoogleSignIn (~> 6.2.4)
+  - CordovaPlugins (5.6.0):
+    - CapacitorCordova
   - FBAEMKit (16.1.3):
     - FBSDKCoreKit_Basics (= 16.1.3)
   - FBSDKCoreKit (16.1.3):
@@ -58,6 +64,9 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - nanopb (< 2.30911.0, >= 2.30908.0)
+  - Glassfy (1.4.0)
+  - GlassfyGlue (1.4.5):
+    - Glassfy (= 1.4.0)
   - GoogleDataTransport (9.4.1):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30911.0, >= 2.30908.0)
@@ -109,9 +118,11 @@ DEPENDENCIES:
   - "CapacitorClipboard (from `../../node_modules/@capacitor/clipboard`)"
   - "CapacitorCommunityFacebookLogin (from `../../node_modules/@capacitor-community/facebook-login`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - CapacitorPluginGlassfy (from `../../node_modules/capacitor-plugin-glassfy`)
   - "CapacitorPushNotifications (from `../../node_modules/@capacitor/push-notifications`)"
   - "CapacitorShare (from `../../node_modules/@capacitor/share`)"
   - "CodetrixStudioCapacitorGoogleAuth (from `../../node_modules/@codetrix-studio/capacitor-google-auth`)"
+  - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - Firebase/Messaging
 
 SPEC REPOS:
@@ -126,6 +137,8 @@ SPEC REPOS:
     - FirebaseCoreInternal
     - FirebaseInstallations
     - FirebaseMessaging
+    - Glassfy
+    - GlassfyGlue
     - GoogleDataTransport
     - GoogleSignIn
     - GoogleUtilities
@@ -147,12 +160,16 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor-community/facebook-login"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
+  CapacitorPluginGlassfy:
+    :path: "../../node_modules/capacitor-plugin-glassfy"
   CapacitorPushNotifications:
     :path: "../../node_modules/@capacitor/push-notifications"
   CapacitorShare:
     :path: "../../node_modules/@capacitor/share"
   CodetrixStudioCapacitorGoogleAuth:
     :path: "../../node_modules/@codetrix-studio/capacitor-google-auth"
+  CordovaPlugins:
+    :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
   AppAuth: 182c5b88630569df5acb672720534756c29b3358
@@ -162,9 +179,11 @@ SPEC CHECKSUMS:
   CapacitorClipboard: 45e5e25f2271f98712985d422776cdc5a779cca1
   CapacitorCommunityFacebookLogin: c0e2bb54cb567d90443a80ae20569fdac0df3f89
   CapacitorCordova: c946a6052b547e1e185fc46862003f7b9130ead1
+  CapacitorPluginGlassfy: b3fabae488929afe1a7cc42aa2104a98d9fc5db2
   CapacitorPushNotifications: 2327900bc002f5ff49ee6d2231796d0635b4a1b0
   CapacitorShare: c6a1ebbf0114ff9e863b966cd6052678fa25d480
   CodetrixStudioCapacitorGoogleAuth: fcce058390347c1ce5d8ac4764bdf1f5c1ee233b
+  CordovaPlugins: af720891c2ab245218e3626fe90551bc7380e2ae
   FBAEMKit: af2972f39bb0f3f7c45998f435b007833c32ffb2
   FBSDKCoreKit: 19e2e18b3be578d7a51fed8fdd8c152bef0b9511
   FBSDKCoreKit_Basics: dd9826ce3c9fd9f8cdf8dbbd0ef0a53e6c0c9e7e
@@ -174,6 +193,8 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: bcb5acffd4ea05e12a783ecf835f2210ce3dc6af
   FirebaseInstallations: 8f581fca6478a50705d2bd2abd66d306e0f5736e
   FirebaseMessaging: 4d52717dd820707cc4eadec5eb981b4832ec8d5d
+  Glassfy: 6c13edc242715212cfd01a0a12c8553f2f06cfcb
+  GlassfyGlue: 828c39792238a84c07d27a71c9eb4819b0b1dfa9
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
@@ -182,6 +203,6 @@ SPEC CHECKSUMS:
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
-PODFILE CHECKSUM: c1b4d3dece62082dc7793ee6d86400c556adc5cb
+PODFILE CHECKSUM: a7459a53d29273c8bce2209e46781d3743326eaa
 
 COCOAPODS: 1.15.2
