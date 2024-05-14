@@ -14,7 +14,7 @@ import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ExtraStuffService } from './shared/utils/extraStuffService';
 import { GlassfyOffering } from 'capacitor-plugin-glassfy';
-
+import { StatusBar, Style } from '@capacitor/status-bar';
 import {
   ActionPerformed,
   PushNotificationSchema,
@@ -106,7 +106,7 @@ export class AppComponent {
     // log product offerings
     effect(() => {
       const offerings = this.offerings();
-      console.log('OFFERINGS: ', offerings)
+      console.log('OFFERINGS: ', offerings);
       // for (const offering of offerings) {
       //   console.log('OFFERING ID: ', offering.offeringId);
       //   console.log('SKUS:');
@@ -145,7 +145,12 @@ export class AppComponent {
     });
   }
 
+  async setStatusBarStyleLight() {
+    await StatusBar.setStyle({ style: Style.Light });
+  }
+
   ngOnInit() {
+    this.setStatusBarStyleLight();
     // register for push notifications on mobile
     if (Capacitor.isNativePlatform()) {
       PushNotifications.requestPermissions().then((result) => {
