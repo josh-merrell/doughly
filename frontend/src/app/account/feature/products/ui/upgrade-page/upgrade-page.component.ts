@@ -28,8 +28,8 @@ export class UpgradePageComponent {
   public isLoading: WritableSignal<boolean> = signal(false);
   public view: WritableSignal<string> = signal('overview');
   public subscribeSKUs: WritableSignal<GlassfySku[]> = signal([]);
-  public selectedBasePlanId: WritableSignal<string> =
-    signal('per-6-month-17-94');
+  public selectedIdentifier: WritableSignal<string> =
+    signal('doughly_premium_6months_17.94');
   constructor(
     public dialog: MatDialog,
     private router: Router,
@@ -64,8 +64,8 @@ export class UpgradePageComponent {
       this.setView('chart');
     } else if (this.view() === 'chart') {
       this.setView('options');
-    } else if (this.view() === 'options' && this.selectedBasePlanId()) {
-      this.makePurchase(this.selectedBasePlanId());
+    } else if (this.view() === 'options' && this.selectedIdentifier()) {
+      this.makePurchase(this.selectedIdentifier());
     }
   }
 
@@ -73,10 +73,10 @@ export class UpgradePageComponent {
     this.router.navigate(['/recipes/discover']);
   }
 
-  async makePurchase(basePlanId: string) {
-    // get sku with matching 'basePlanId'
+  async makePurchase(skuId: string) {
+    // get sku with matching 'skuId'
     const sku = this.subscribeSKUs().find(
-      (sku) => sku.product.basePlanId === basePlanId
+      (sku) => sku.skuId === skuId
     );
     if (sku) {
       this.isLoading.set(true);
@@ -130,8 +130,8 @@ export class UpgradePageComponent {
   // }
 
   skuClick(sku) {
-    if (sku.product.basePlanId !== this.selectedBasePlanId()) {
-      this.selectedBasePlanId.set(sku.product.basePlanId);
+    if (sku.skuId !== this.selectedIdentifier()) {
+      this.selectedIdentifier.set(sku.skuId);
     }
   }
 
