@@ -33,6 +33,7 @@
     "@capacitor/share": "^5.0.7",
     "@capacitor/status-bar": "^5.0.7",
     "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.0",
+    "@hugotomazi/capacitor-navigation-bar": "^3.0.0",
     "@ionic/angular": "^8.0.0",
     "@ngrx/effects": "^17.0.0",
     "@ngrx/store": "^17.0.0",

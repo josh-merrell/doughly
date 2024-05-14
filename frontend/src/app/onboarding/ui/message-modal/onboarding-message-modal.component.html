@@ -60,9 +60,9 @@
     [formGroup]="form"
     (ngSubmit)="onSubmit()"
   >
-    <div class="flex h-full w-full flex-col items-center">
+    <div class="flex h-full w-full items-center">
       <!--FORM FIELDS-->
-      <div class="mt-dl-1 flex-grow overflow-y-auto">
+      <div class="mt-dl-1 flex flex-grow flex-col items-center overflow-y-auto">
         <!-- Username -->
         <div id="form-username">
           <label
@@ -77,10 +77,8 @@
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
             <div
-              [ngClass]="{
-                invisible: !usernameErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+              *ngIf="usernameErrorMessage()"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
               {{ usernameErrorMessage() }}
             </div>
@@ -101,10 +99,8 @@
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
             <div
-              [ngClass]="{
-                invisible: !nameFirstErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+              *ngIf="nameFirstErrorMessage()"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
               {{ nameFirstErrorMessage() }}
             </div>
@@ -125,10 +121,8 @@
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
             <div
-              [ngClass]="{
-                invisible: !nameLastErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+              *ngIf="nameLastErrorMessage()"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
               {{ nameLastErrorMessage() }}
             </div>
@@ -147,10 +141,8 @@
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
             <div
-              [ngClass]="{
-                invisible: !cityErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+              *ngIf="cityErrorMessage()"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
               {{ cityErrorMessage() }}
             </div>
@@ -172,7 +164,7 @@
               [ngClass]="{
                 invisible: !stateErrorMessage()
               }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
               {{ stateErrorMessage() }}
             </div>
@@ -195,10 +187,8 @@
               </option>
             </select>
             <div
-              [ngClass]="{
-                invisible: !stateErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+              *ngIf="stateErrorMessage()"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
             >
               {{ stateErrorMessage() }}
             </div>
@@ -218,7 +208,7 @@
         cityErrorMessage() !== '' ||
         stateErrorMessage() !== ''
       "
-      class="shadow-s inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+      class="shadow-s sm:ml-dl-4 mt-dl-3 inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white"
       [ngClass]="{
         'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
           form.invalid === false,
@@ -237,7 +227,7 @@
       [ngClass]="{
         invisible: !submitFailureMessage()
       }"
-      class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+      class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
     >
       {{ submitFailureMessage() }}
     </div>
