@@ -27,6 +27,7 @@ import { PushTokenService } from './shared/utils/pushTokenService';
 import { filter } from 'rxjs';
 import { RedirectPathService } from './shared/utils/redirect-path.service';
 import { ProductService } from './shared/utils/productService';
+import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -98,7 +99,6 @@ export class AppComponent {
             })
             .subscribe();
         }
-        // }
       },
       { allowSignalWrites: true }
     );
@@ -106,23 +106,12 @@ export class AppComponent {
     // log product offerings
     effect(() => {
       const offerings = this.offerings();
-      console.log('OFFERINGS: ', offerings);
-      // for (const offering of offerings) {
-      //   console.log('OFFERING ID: ', offering.offeringId);
-      //   console.log('SKUS:');
-      //   for (let sku of offering.skus) {
-      //     console.log('SKU PRODUCT: ', sku.product.title);
-      //     console.log('SKU PRICE: ', sku.product.price);
-      //     console.log('SKU PERIOD: ', sku.product.period);
-      //     console.log('SKU PRODUCT ID: ', sku.productId);
-      //   }
-      // };
+      // console.log('OFFERINGS: ', offerings);
     });
   }
 
   initializeApp() {
     App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
-      console.log('APP LINK OPENED: ' + event.url);
       if (
         event.url.includes('access_token') &&
         event.url.includes('refresh_token')
@@ -147,6 +136,10 @@ export class AppComponent {
 
   async setStatusBarStyleLight() {
     await StatusBar.setStyle({ style: Style.Light });
+    await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
+
+    // for bottom nav bar
+    NavigationBar.setColor({ color: '#FFFFFF', darkButtons: true });
   }
 
   ngOnInit() {

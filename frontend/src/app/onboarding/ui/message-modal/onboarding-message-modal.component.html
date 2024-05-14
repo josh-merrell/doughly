@@ -76,15 +76,13 @@
               formControlName="username"
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
-            <div
-              [ngClass]="{
-                invisible: !usernameErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
-            >
-              {{ usernameErrorMessage() }}
-            </div>
           </div>
+        </div>
+        <div
+          *ngIf="usernameErrorMessage()"
+          class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+        >
+          {{ usernameErrorMessage() }}
         </div>
 
         <!-- nameFirst -->
@@ -100,15 +98,13 @@
               formControlName="nameFirst"
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
-            <div
-              [ngClass]="{
-                invisible: !nameFirstErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
-            >
-              {{ nameFirstErrorMessage() }}
-            </div>
           </div>
+        </div>
+        <div
+          *ngIf="nameFirstErrorMessage()"
+          class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+        >
+          {{ nameFirstErrorMessage() }}
         </div>
 
         <!-- nameLast -->
@@ -124,15 +120,13 @@
               formControlName="nameLast"
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
-            <div
-              [ngClass]="{
-                invisible: !nameLastErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
-            >
-              {{ nameLastErrorMessage() }}
-            </div>
           </div>
+        </div>
+        <div
+          *ngIf="nameLastErrorMessage()"
+          class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+        >
+          {{ nameLastErrorMessage() }}
         </div>
 
         <!-- City -->
@@ -146,15 +140,13 @@
               formControlName="city"
               class="w-dl-13 rounded-md border-0 text-dl-blue-2 ring-1 ring-inset ring-dl-blue-7 placeholder:text-dl-blue-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
             />
-            <div
-              [ngClass]="{
-                invisible: !cityErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
-            >
-              {{ cityErrorMessage() }}
-            </div>
           </div>
+        </div>
+        <div
+          *ngIf="cityErrorMessage()"
+          class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+        >
+          {{ cityErrorMessage() }}
         </div>
 
         <!-- State
@@ -194,15 +186,13 @@
                 {{ state }}
               </option>
             </select>
-            <div
-              [ngClass]="{
-                invisible: !stateErrorMessage()
-              }"
-              class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
-            >
-              {{ stateErrorMessage() }}
-            </div>
           </div>
+        </div>
+        <div
+          *ngIf="stateErrorMessage()"
+          class="mt-dl-1 h-dl-3 text-dl-4 font-dl-2 text-dl-red-5"
+        >
+          {{ stateErrorMessage() }}
         </div>
       </div>
     </div>
@@ -218,7 +208,7 @@
         cityErrorMessage() !== '' ||
         stateErrorMessage() !== ''
       "
-      class="shadow-s inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+      class="shadow-s sm:ml-dl-4 inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white"
       [ngClass]="{
         'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
           form.invalid === false,

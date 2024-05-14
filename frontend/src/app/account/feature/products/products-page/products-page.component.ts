@@ -9,6 +9,8 @@ import { filter } from 'rxjs';
 import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { MatDialog } from '@angular/material/dialog';
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 
 @Component({
   selector: 'dl-products-page',
@@ -49,7 +51,17 @@ export class ProductsPageComponent {
     );
   }
 
+  async setStatusBarStyleDark() {
+    await StatusBar.setStyle({ style: Style.Dark });
+    // set status bar color do 'dl-blue-5'
+    await StatusBar.setBackgroundColor({ color: '#2bb0ed' });
+
+    // set nav bar color to 'dl-blue-3'
+    NavigationBar.setColor({ color: '#127fbf', darkButtons: false });
+  }
+
   ngOnInit(): void {
+    this.setStatusBarStyleDark();
     // close all modals
     this.dialog.closeAll();
     this.checkAndUpdateView();
