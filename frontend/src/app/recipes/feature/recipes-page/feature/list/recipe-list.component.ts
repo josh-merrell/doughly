@@ -86,6 +86,7 @@ export class RecipeListComponent {
   });
   public displayCategories: WritableSignal<RecipeCategory[]> = signal([]);
   public recipes: WritableSignal<Recipe[]> = signal([]);
+  public freeTierRecipeCount: WritableSignal<number> = signal(0);
   displayRecipes = computed(() => {
     let recipes = this.recipes();
     const profile = this.profile();
@@ -205,6 +206,9 @@ export class RecipeListComponent {
       this.recipes.set(
         [...recipes].sort((a, b) => a.title.localeCompare(b.title))
       );
+      this.freeTierRecipeCount.set(
+        recipes.filter((recipe) => recipe.freeTier === true).length
+      );
     });
     this.store.select(selectRecipeCategories).subscribe((categories) => {
       this.categories.set(categories);
@@ -255,7 +259,7 @@ export class RecipeListComponent {
         : this.productService.licences.recipeCreateLimit;
 
     if (this.profile() && this.profile().permRecipeCreateUnlimited === false) {
-      if (license <= this.recipes().length) {
+      if (license <= this.freeTierRecipeCount()) {
         // open upgradePromptModal
         const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
           data: {
