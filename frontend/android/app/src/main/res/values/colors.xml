@@ -1,0 +1,7 @@
+<resources>
+    <color name="statusBarColor">#FFFFFF</color>
+    <color name="colorPrimary">#3F51B5</color> <!-- example primary color -->
+    <color name="colorPrimaryDark">#303F9F</color> <!-- example primary dark color -->
+    <color name="colorAccent">#5ED0FA</color>
+    <color name="navigationBarColor">#FFFFFF</color> <!-- set to white -->
+</resources>
