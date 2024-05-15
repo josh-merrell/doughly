@@ -138,7 +138,11 @@ module.exports = ({ db, dbPublic }) => {
     }
 
     // create friendship
-    const { data: friendship, error } = await db.from('friendships').insert({ friendshipID: customID, userID, friend, status, version: 1 }).select('*').single();
+    const { data: friendship, error } = await db
+      .from('friendships')
+      .insert({ friendshipID: customID, userID, friend, status: status === 'confirmedInverse' ? 'confirmed' : status, version: 1 })
+      .select('*')
+      .single();
 
     if (error) {
       global.logger.error(`Error creating friendship: ${error.message}`);
@@ -162,6 +166,35 @@ module.exports = ({ db, dbPublic }) => {
           userID: friend,
           friend: userID,
           status: 'receivedRequest',
+          IDtype: 23,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        },
+      );
+      if (error) {
+        global.logger.error(`Error creating inverse friendship: ${error.message}`);
+        //rollback friendship creation
+        const { error } = await db.from('friendships').delete().eq('friendshipID', friendship.friendshipID);
+        if (error) {
+          global.logger.error(`Error rolling back friendship creation: ${error.message}`);
+          throw errorGen(`Error rolling back friendship creation`, 400);
+        }
+        throw errorGen(`Error creating inverse friendship`, 400);
+      }
+      return inverseFriendship;
+    }
+    if (status === 'confirmed') {
+      // need to call function again, creating inverse of friendship request
+      const { data: inverseFriendship, error } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/persons/friendships`,
+        {
+          userID: friend,
+          friend: userID,
+          status: 'confirmedInverse',
           IDtype: 23,
         },
         {
