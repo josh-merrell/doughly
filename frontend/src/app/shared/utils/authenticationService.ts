@@ -7,6 +7,7 @@ import { first, from, Observable } from 'rxjs';
 import { PushTokenService } from './pushTokenService';
 import { Capacitor } from '@capacitor/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 export interface Profile {
   user_id: string;
@@ -208,10 +209,14 @@ export class AuthService {
   public refreshProfile() {
     const user = this.user();
     if (user) {
-      this.supabase.from('profiles').select('*').match({ user_id: user.id }).single().then((res) => {
-        this.profile.set(this.isProfile(res.data) ? res.data : null);
-      });
-      
+      this.supabase
+        .from('profiles')
+        .select('*')
+        .match({ user_id: user.id })
+        .single()
+        .then((res) => {
+          this.profile.set(this.isProfile(res.data) ? res.data : null);
+        });
     }
   }
 

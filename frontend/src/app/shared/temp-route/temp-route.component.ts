@@ -37,7 +37,7 @@ export class TempRouteComponent {
     });
     const path = this.redirectPathService.getPath();
     const profile = this.profile();
-    console.log('onboardingState: ', profile?.onboardingState);
+    console.log('IN TEMP ROUTE. ONBOARDING STATE: ', profile?.onboardingState);
     switch (profile?.onboardingState) {
       case 0.5:
         this.router.navigate(['/onboarding']);
@@ -168,7 +168,6 @@ export class TempRouteComponent {
       case 9:
       case 10:
       case 11:
-        console.log(`FOUND ONBOARDING STATE: ${profile?.onboardingState}`);
         this.router.navigate(['/recipes/created/add']);
         break;
       case 12:

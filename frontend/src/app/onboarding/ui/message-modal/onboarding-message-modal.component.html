@@ -199,6 +199,7 @@
 
     <!-- Submit Button -->
     <button
+      *ngIf="initialAccountStateReady() === true"
       type="submit"
       [disabled]="
         form.invalid ||
@@ -223,6 +224,17 @@
     >
       Submit
     </button>
+    <div
+      *ngIf="initialAccountStateReady() === false"
+      class="mt-dl-1 flex w-dl-12 text-dl-5 font-dl-3 italic text-dl-grey-2"
+    >
+      <mat-spinner
+        class="my-app-custom-spinner mr-dl-4 w-full"
+        *ngIf="isEditing()"
+        [diameter]="18"
+      ></mat-spinner>
+      Loading Initial Account Data
+    </div>
     <div
       [ngClass]="{
         invisible: !submitFailureMessage()

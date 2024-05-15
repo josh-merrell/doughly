@@ -105,15 +105,44 @@
       >Account</span
     >
 
+    <!--Email-->
+    <div *ngIf="profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2">{{
+        profile.email
+      }}</span>
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7">Email</span>
+    </div>
+    <div *ngIf="!profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-6">Email</span>
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7"
+        >Tap to add Email</span
+      >
+    </div>
+
+    <!--Username-->
+    <div *ngIf="profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2">{{
+        profile.username
+      }}</span>
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7">Username</span>
+    </div>
+    <div *ngIf="!profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
+      <span class="text-dl-6 font-dl-2 text-dl-grey-6">Username</span>
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7"
+        >Tap to add Username</span
+      >
+    </div>
+
     <!--First Name-->
     <div
       (click)="updateProfile('name_first')"
       *ngIf="profile.name_first"
       class="ml-dl-5 mt-dl-1 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{
-        profile.name_first
-      }}</span>
+      <span
+        class="w-dl-13 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2"
+        >{{ profile.name_first }}</span
+      >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7">First Name</span>
     </div>
     <div
@@ -131,11 +160,12 @@
     <div
       (click)="updateProfile('name_last')"
       *ngIf="profile.name_last"
-      class="ml-dl-5 mt-dl-4 flex flex-col"
+      class="ml-dl-5 mt-dl-4 flex flex-col rounded-dl-3"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{
-        profile.name_last
-      }}</span>
+      <span
+        class="w-dl-13 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2"
+        >{{ profile.name_last }}</span
+      >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7">Last Name</span>
     </div>
     <div
@@ -143,37 +173,9 @@
       *ngIf="!profile.name_last"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-grey-6">Last Name</span>
+      <span class="p-dl-1 text-dl-6 font-dl-2 text-dl-grey-6">Last Name</span>
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7"
         >Tap to add Last Name</span
-      >
-    </div>
-
-    <!--Email-->
-    <div *ngIf="profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
-      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{
-        profile.email
-      }}</span>
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7">Email</span>
-    </div>
-    <div *ngIf="!profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
-      <span class="text-dl-6 font-dl-2 text-dl-grey-6">Email</span>
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7"
-        >Tap to add Email</span
-      >
-    </div>
-
-    <!--Username-->
-    <div *ngIf="profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
-      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{
-        profile.username
-      }}</span>
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7">Username</span>
-    </div>
-    <div *ngIf="!profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
-      <span class="text-dl-6 font-dl-2 text-dl-grey-6">Username</span>
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7"
-        >Tap to add Username</span
       >
     </div>
 
@@ -183,7 +185,10 @@
       *ngIf="profile.city"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{ profile.city }}</span>
+      <span
+        class="w-dl-13 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2"
+        >{{ profile.city }}</span
+      >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7">City</span>
     </div>
     <div
@@ -203,9 +208,10 @@
       *ngIf="profile.state"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-grey-2">{{
-        profile.state
-      }}</span>
+      <span
+        class="w-dl-6 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2"
+        >{{ profile.state }}</span
+      >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7">State</span>
     </div>
     <div
