@@ -136,6 +136,22 @@ async function deleteProfile(req, res) {
   }
 }
 
+async function populateAccount(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { userID } = req.params;
+  try {
+    const returner = await p.populateAccount({
+      userID,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'populateAccount': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 module.exports = {
   getProfile,
   getFriends,
@@ -145,4 +161,5 @@ module.exports = {
   getFollowing,
   searchProfiles,
   deleteProfile,
+  populateAccount,
 };

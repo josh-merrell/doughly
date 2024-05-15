@@ -1,52 +1,50 @@
 <div
-  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-lg sm:p-dl-6"
+  class="flex h-dl-12 w-full transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all"
 >
+  <div class="mb-dl-3 text-center">
+    <span class="text-dl-6 font-dl-2 text-dl-grey-5">Edit Profile Photo</span>
+  </div>
   <mat-spinner
     class="my-app-custom-spinner"
     *ngIf="isUploadingPhoto"
   ></mat-spinner>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    *ngIf="isUploadingPhoto === false"
-  >
-    <div class="flex w-full max-w-full flex-col">
-      <div class="text-center">
-        <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3">
-          Edit Profile Photo
-        </h3>
-      </div>
 
-      <!--FORM FIELDS-->
-      <div class="mt-dl-6">
-        <div id="form-photo-profile" class="mt-dl-1">
-          <div class="relative inline-block w-64">
-            <button
-              type="button"
-              class="inline-block cursor-pointer rounded bg-dl-blue-4 px-4 py-2 text-dl-5 text-white hover:bg-dl-blue-5"
-              (click)="selectImage()"
-            >
-              Choose New Photo
-            </button>
+  <div class="w-full flex-grow overflow-y-auto">
+    <form
+      class="h-full"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      *ngIf="isUploadingPhoto === false"
+    >
+      <div class="flex h-full w-full flex-col">
+        <!--FORM FIELDS-->
+        <div class="mt-dl-1 flex-grow overflow-y-auto">
+          <div id="form-photo-profile" class="mt-dl-1">
+            <div class="relative inline-block w-full">
+              <button
+                type="button"
+                class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white"
+                (click)="selectImage()"
+              >
+                Choose New Photo
+              </button>
+            </div>
+
+            <image-cropper
+              [imageBase64]="recipeImageBase64"
+              [maintainAspectRatio]="true"
+              [aspectRatio]="1 / 1"
+              (imageCropped)="profileImageCropped($event)"
+              (imageLoaded)="profileImageLoaded()"
+              (cropperReady)="profileCropperReady()"
+              (loadImageFailed)="profileLoadImageFailed()"
+            ></image-cropper>
           </div>
-
-          <image-cropper
-            [imageBase64]="recipeImageBase64"
-            [maintainAspectRatio]="true"
-            [aspectRatio]="1 / 1"
-            (imageCropped)="profileImageCropped($event)"
-            (imageLoaded)="profileImageLoaded()"
-            (cropperReady)="profileCropperReady()"
-            (loadImageFailed)="profileLoadImageFailed()"
-          ></image-cropper>
         </div>
-      </div>
-      <!---->
-
-      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+        <!---->
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
             'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
@@ -60,12 +58,12 @@
         </button>
         <button
           type="button"
-          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10"
           (click)="onCancel()"
         >
           Cancel
         </button>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

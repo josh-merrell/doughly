@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, WritableSignal, effect } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  WritableSignal,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../shared/utils/authenticationService';
 import { MatDialog } from '@angular/material/dialog';
@@ -106,6 +111,7 @@ export class ProfileComponent {
       data: {
         currentPhotoURL: this.profile.photo_url,
       },
+      width: '70%',
     });
 
     dialogRef.afterClosed().subscribe((result) => {

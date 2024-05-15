@@ -1,5 +1,7 @@
 ('use strict');
 const { errorGen } = require('../../middleware/errorHandling');
+const { initialData } = require('../../services/account/populateAccount');
+const { default: axios } = require('axios');
 
 module.exports = ({ db, dbPublic }) => {
   async function retrieveProfile(userID, friendStatus = 'confirmed') {
@@ -318,6 +320,296 @@ module.exports = ({ db, dbPublic }) => {
     return true;
   }
 
+  async function populateAccount(options) {
+    const { userID } = options;
+
+    global.logger.info(`Populating initial account data for userID ${userID}`);
+    try {
+      // first check 'dataLoadStatus' in dbPublic.profiles for userID. If it is 'done', return 'success
+      const { data: dataLoadStatus, error } = await dbPublic.from('profiles').select('dataLoadStatus').eq('user_id', userID).single();
+      if (error) {
+        global.logger.error(`Error getting dataLoadStatus for userID ${userID}: ${error.message}`);
+        throw errorGen(`Error getting dataLoadStatus for userID ${userID}: ${error.message}`, 400);
+      }
+      if (dataLoadStatus === 'done') {
+        global.logger.info(`Data already loaded for userID ${userID}`);
+        return 'success';
+      }
+
+      // get the initial data to populate the account
+      const initData = initialData;
+      let currentStep = initData[dataLoadStatus].sequence;
+
+      // attempt all remaining data loading steps
+      global.logger.info(`Starting data load for userID ${userID}`);
+      for (let i = currentStep; i < 6; i++) {
+        // call helper function for this step
+        let stepFunction;
+        switch (i) {
+          case 1:
+            stepFunction = populateFriendships;
+            break;
+          case 2:
+            stepFunction = populateFollowships;
+            break;
+          case 3:
+            stepFunction = populateIngredients;
+            break;
+          case 4:
+            stepFunction = populateTools;
+            break;
+          case 5:
+            stepFunction = populateRecipes;
+            break;
+          default:
+            break;
+        }
+
+        if (!stepFunction) {
+          global.logger.error(`No function found for step ${i}`);
+          throw errorGen(`No function found for step ${i}`, 400);
+        }
+
+        const nextStep = await stepFunction(userID, initData[dataLoadStatus].data);
+        if (nextStep === 'success') {
+          currentStep = i + 1;
+        } else {
+          global.logger.error(`Error in step ${i}: ${nextStep}`);
+          throw errorGen(`Error in step ${i}: ${nextStep}`, 400);
+        }
+      }
+
+      // if we get here, all data is loaded. Update 'dataLoadStatus' to 'done'
+      const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'done' }).eq('user_id', userID);
+      if (errorUpdateDataLoadStatus) {
+        global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
+        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+      }
+      return 'success';
+    } catch (error) {
+      global.logger.error(`Error populating initial account data for userID ${userID}: ${error.message}`);
+      throw errorGen(`Error populating initial account data for userID ${userID}: ${error.message}`, 400);
+    }
+  }
+
+  async function populateFriendships(userID, array) {
+    global.logger.info(`Populating friendships for userID ${userID}`);
+    // remove any existing friendships for userID, we'll start from scratch
+    const { error: errorDeleteFriendships } = await db.from('friendships').delete().eq('userID', userID);
+    if (errorDeleteFriendships) {
+      global.logger.error(`Error deleting friendships for userID ${userID}: ${errorDeleteFriendships.message}`);
+      throw errorGen(`Error deleting friendships for userID ${userID}: ${errorDeleteFriendships.message}`, 400);
+    }
+    // also delete any friendships where friend = userID
+    const { error: errorDeleteFriendships2 } = await db.from('friendships').delete().eq('friend', userID);
+    if (errorDeleteFriendships2) {
+      global.logger.error(`Error deleting friendships for friend ${userID}: ${errorDeleteFriendships2.message}`);
+      throw errorGen(`Error deleting friendships for friend ${userID}: ${errorDeleteFriendships2.message}`, 400);
+    }
+
+    // create initial friendships (inverse will be handled by the endpoint)
+    for (let f = 0; f < array.length; f++) {
+      const { error: errorCreateFriendship } = await axios.post(
+        `${process.env.NODE_HOST}:/${process.env.PORT}/persons/friendships`,
+        {
+          userID: userID,
+          friend: array[f].friend,
+          status: 'confirmed',
+          IDtype: 23,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        },
+      );
+      if (errorCreateFriendship) {
+        global.logger.error(`Error creating friendship for userID ${userID} and friend ${f.friend}: ${errorCreateFriendship.message}`);
+        throw errorGen(`Error creating friendship for userID ${userID} and friend ${f.friend}: ${errorCreateFriendship.message}`, 400);
+      }
+    }
+
+    // assuming we're here, we've successfully created all friendships. Update 'dataLoadStatus'
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'followships' }).eq('user_id', userID);
+    if (errorUpdateDataLoadStatus) {
+      global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
+      throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+    }
+
+    return 'success';
+  }
+
+  async function populateFollowships(userID, array) {
+    global.logger.info(`Populating followships for userID ${userID}`);
+    // remove any existing followships for userID, we'll start from scratch
+    const { error: errorDeleteFollowships } = await db.from('followships').delete().eq('userID', userID);
+    if (errorDeleteFollowships) {
+      global.logger.error(`Error deleting followships for userID ${userID}: ${errorDeleteFollowships.message}`);
+      throw errorGen(`Error deleting followships for userID ${userID}: ${errorDeleteFollowships.message}`, 400);
+    }
+
+    // also delete any followships where following = userID
+    const { error: errorDeleteFollowships2 } = await db.from('followships').delete().eq('following', userID);
+    if (errorDeleteFollowships2) {
+      global.logger.error(`Error deleting followships for following ${userID}: ${errorDeleteFollowships2.message}`);
+      throw errorGen(`Error deleting followships for following ${userID}: ${errorDeleteFollowships2.message}`, 400);
+    }
+
+    // create initial followships
+    for (let f = 0; f < array.length; f++) {
+      const { error: errorCreateFollowship } = await axios.post(
+        `${process.env.NODE_HOST}:/${process.env.PORT}/persons/followships`,
+        {
+          userID: userID,
+          following: array[f].following,
+          IDtype: 24,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        },
+      );
+      if (errorCreateFollowship) {
+        global.logger.error(`Error creating followship for userID ${userID} and following ${f.following}: ${errorCreateFollowship.message}`);
+        throw errorGen(`Error creating followship for userID ${userID} and following ${f.following}: ${errorCreateFollowship.message}`, 400);
+      }
+    }
+
+    // assuming we're here, we've successfully created all followships. Update 'dataLoadStatus'
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'ingredients' }).eq('user_id', userID);
+    if (errorUpdateDataLoadStatus) {
+      global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
+      throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+    }
+
+    return 'success';
+  }
+
+  async function populateIngredients(userID, array) {
+    global.logger.info(`Populating ingredients for userID ${userID}`);
+    // remove any existing ingredients for userID, we'll start from scratch
+    const { error: errorDeleteIngredients } = await db.from('ingredients').delete().eq('userID', userID);
+    if (errorDeleteIngredients) {
+      global.logger.error(`Error deleting ingredients for userID ${userID}: ${errorDeleteIngredients.message}`);
+      throw errorGen(`Error deleting ingredients for userID ${userID}: ${errorDeleteIngredients.message}`, 400);
+    }
+
+    // create initial ingredients
+    for (let i = 0; i < array.length; i++) {
+      const { error: errorCreateIngredient } = await axios.post(
+        `${process.env.NODE_HOST}:/${process.env.PORT}/ingredients`,
+        {
+          userID: userID,
+          name: array[i].name,
+          lifespanDays: array[i].lifespanDays,
+          purchaseUnit: array[i].purchaseUnit,
+          gramRatio: array[i].gramRatio,
+          brand: array[i].brand,
+          needsReview: array[i].needsReview,
+          IDtype: 12,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        },
+      );
+      if (errorCreateIngredient) {
+        global.logger.error(`Error creating ingredient for userID ${userID}: ${errorCreateIngredient.message}`);
+        throw errorGen(`Error creating ingredient for userID ${userID}: ${errorCreateIngredient.message}`, 400);
+      }
+    }
+
+    // assuming we're here, we've successfully created all ingredients. Update 'dataLoadStatus'
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'tools' }).eq('user_id', userID);
+    if (errorUpdateDataLoadStatus) {
+      global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
+      throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+    }
+
+    return 'success';
+  }
+
+  async function populateTools(userID, array) {
+    global.logger.info(`Populating tools for userID ${userID}`);
+    // remove any existing tools for userID, we'll start from scratch
+    const { error: errorDeleteTools } = await db.from('tools').delete().eq('userID', userID);
+    if (errorDeleteTools) {
+      global.logger.error(`Error deleting tools for userID ${userID}: ${errorDeleteTools.message}`);
+      throw errorGen(`Error deleting tools for userID ${userID}: ${errorDeleteTools.message}`, 400);
+    }
+
+    // create initial tools
+    for (let i = 0; i < array.length; i++) {
+      const { error: errorCreateTool } = await axios.post(
+        `${process.env.NODE_HOST}:/${process.env.PORT}/tools`,
+        {
+          userID: userID,
+          name: array[i].name,
+          brand: array[i].brand,
+          IDtype: 14,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: 'override',
+          },
+        },
+      );
+      if (errorCreateTool) {
+        global.logger.error(`Error creating tool for userID ${userID}: ${errorCreateTool.message}`);
+        throw errorGen(`Error creating tool for userID ${userID}: ${errorCreateTool.message}`, 400);
+      }
+    }
+
+    // assuming we're here, we've successfully created all tools. Update 'dataLoadStatus'
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'recipes' }).eq('user_id', userID);
+    if (errorUpdateDataLoadStatus) {
+      global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
+      throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+    }
+
+    return 'success';
+  }
+
+  async function populateRecipes(userID, array) {
+    global.logger.info(`Populating recipes for userID ${userID}`);
+    //11
+    // remove any existing recipes for userID, we'll start from scratch
+    const { error: errorDeleteRecipes } = await db.from('recipes').delete().eq('userID', userID);
+    if (errorDeleteRecipes) {
+      global.logger.error(`Error deleting recipes for userID ${userID}: ${errorDeleteRecipes.message}`);
+      throw errorGen(`Error deleting recipes for userID ${userID}: ${errorDeleteRecipes.message}`, 400);
+    }
+
+    for (let i = 0; i < array.length; i++) {
+      // create initial recipes
+      const { error: errorCreateRecipe } = await axios.post(`${process.env.NODE_HOST}:/${process.env.PORT}/recipes/constructed`, array[i], {
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: 'override',
+        },
+      });
+      if (errorCreateRecipe) {
+        global.logger.error(`Error creating recipe for userID ${userID}: ${errorCreateRecipe.message}`);
+        throw errorGen(`Error creating recipe for userID ${userID}: ${errorCreateRecipe.message}`, 400);
+      }
+    }
+
+    // assuming we're here, we've successfully created all recipes. Update 'dataLoadStatus'
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'recipeSubscriptions' }).eq('user_id', userID);
+    if (errorUpdateDataLoadStatus) {
+      global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
+      throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+    }
+
+    return 'success';
+  }
+
   return {
     getProfile,
     getFriends,
@@ -327,5 +619,6 @@ module.exports = ({ db, dbPublic }) => {
     getFollower,
     searchProfiles,
     deleteProfile,
+    populateAccount,
   };
 };

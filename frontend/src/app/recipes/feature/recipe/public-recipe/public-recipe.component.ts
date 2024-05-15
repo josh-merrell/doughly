@@ -31,6 +31,7 @@ import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-requ
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import {
   selectRecipeSubscriptions,
+  selectRecipes,
   selectSubscriptionBySourceRecipeID,
 } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
@@ -69,6 +70,7 @@ export class PublicRecipeComponent {
   recipeIngredients: WritableSignal<RecipeIngredient[]> = signal([]);
   recipeSubscription: WritableSignal<any> = signal(null);
   private profile: WritableSignal<any> = signal(null);
+  private freeTierSubscribedRecipeCount: WritableSignal<number|null> = signal(null);
 
   // Onboarding
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
@@ -166,7 +168,8 @@ export class PublicRecipeComponent {
       this.displayIngredientsByComponent() &&
       this.steps() &&
       this.tools() &&
-      this.author()
+      this.author() &&
+      this.freeTierSubscribedRecipeCount() !== null
     ) {
       return true;
     }
@@ -322,6 +325,12 @@ export class PublicRecipeComponent {
   }
 
   ngOnInit(): void {
+    this.store.select(selectRecipes).subscribe((recipes) => {
+      const subscriptions = recipes.filter((r) => r.type === 'subscription');
+      this.freeTierSubscribedRecipeCount.set(
+        subscriptions.filter((r) => r.freeTier === true).length
+      );
+    });
     this.store.select(selectRecipeSubscriptions).subscribe((subscriptions) => {
       this.userSubscriptions.set(subscriptions);
     });
@@ -353,10 +362,12 @@ export class PublicRecipeComponent {
     // check perms for profile
     const license = this.productService.licences.recipeSubscribeLimit;
     if (this.profile().permRecipeSubscribeUnlimited === false) {
-      if (this.userSubscriptions().length >= license) {
+      if (this.freeTierSubscribedRecipeCount()! >= license) {
         const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
           data: {
+            titleMessage: this.stringsService.productStrings.timeToUpgrade,
             promptMessage: `You have reached the number of allowed free-tier Subscribed Recipes. Please upgrade to add more.`,
+            buttonMessage: 'UPGRADE',
           },
         });
         dialogRef.afterClosed().subscribe((result) => {

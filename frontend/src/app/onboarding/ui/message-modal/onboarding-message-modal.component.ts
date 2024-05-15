@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, WritableSignal, signal } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { environment } from 'src/environments/environment';
+
 import {
   catchError,
   debounceTime,
@@ -27,6 +33,9 @@ import {
 import { isState } from 'src/app/shared/utils/formValidator';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { States } from 'src/app/shared/utils/types';
+import { HttpClient } from '@angular/common/http';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'dl-message-modal',
@@ -35,6 +44,8 @@ import { States } from 'src/app/shared/utils/types';
   templateUrl: './onboarding-message-modal.component.html',
 })
 export class OnboardingMessageModalComponent {
+  private API_URL = `${environment.BACKEND}/profiles`;
+  public initialAccountStateReady: WritableSignal<boolean> = signal(false);
   public states = Object.values(States);
   isEditing: WritableSignal<boolean> = signal(false);
   usernameErrorMessage: WritableSignal<string> = signal('');
@@ -63,7 +74,10 @@ export class OnboardingMessageModalComponent {
     public dialogRef: MatDialogRef<OnboardingMessageModalComponent>,
     private store: Store,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient,
+    public dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +85,26 @@ export class OnboardingMessageModalComponent {
     this.currentStep.set(this.data.currentStep || 1);
     if (this.data.currentStep === 0.5) {
       this.setForm();
+      // call backend '/profiles/:userID' to populate the account with initial data
+      this.http
+        .post(`${this.API_URL}/${this.authService.profile()!.user_id}`, {})
+        .subscribe((res: any) => {
+          console.log('Initial profile data populated');
+          if (res === 'success') {
+            this.initialAccountStateReady.set(true);
+          } else {
+            const ref = this.dialog.open(ErrorModalComponent, {
+              data: {
+                errorMessage: `Unable to load Initial Account Data, try Again later. Error: ${res.error}`,
+                statusCode: '500',
+              },
+            });
+            ref.afterClosed().subscribe(() => {
+              this.authService.logout();
+              this.router.navigate(['/login']);
+            });
+          }
+        });
     }
     if (this.data.currentStep === 0.5) {
       const usernameControl = this.form.get('username');
@@ -173,6 +207,8 @@ export class OnboardingMessageModalComponent {
             }
           });
       }
+    } else {
+      this.initialAccountStateReady.set(true);
     }
   }
 
@@ -238,7 +274,9 @@ export class OnboardingMessageModalComponent {
             .subscribe((error) => {
               if (error) {
                 console.error(
-                  `Error updating profile: ${error.message}, CODE: ${error.statusCode}, RAW: ${JSON.stringify(error)}`
+                  `Error updating profile: ${error.message}, CODE: ${
+                    error.statusCode
+                  }, RAW: ${JSON.stringify(error)}`
                 );
                 this.submitFailureMessage.set('Error updating profile');
               } else {
