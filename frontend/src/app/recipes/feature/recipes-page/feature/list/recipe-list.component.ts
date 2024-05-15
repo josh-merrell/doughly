@@ -89,6 +89,7 @@ export class RecipeListComponent {
   public freeTierRecipeCount: WritableSignal<number> = signal(0);
   displayRecipes = computed(() => {
     let recipes = this.recipes();
+    console.log('recipes: ', recipes);
     const profile = this.profile();
     const categories = this.displayCategories();
 

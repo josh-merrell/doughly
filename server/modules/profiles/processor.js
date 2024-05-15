@@ -325,40 +325,62 @@ module.exports = ({ db, dbPublic }) => {
 
     global.logger.info(`Populating initial account data for userID ${userID}`);
     try {
-      // first check 'dataLoadStatus' in dbPublic.profiles for userID. If it is 'done', return 'success
-      const { data: dataLoadStatus, error } = await dbPublic.from('profiles').select('dataLoadStatus').eq('user_id', userID).single();
+      // Prevent concurrent execution by using a lock (example using a simple flag in the database)
+      const { data: lockData, error: lockError } = await dbPublic.from('profiles').select('isPopulating').eq('user_id', userID).single();
+
+      if (lockError) {
+        global.logger.error(`Error checking lock status for userID ${userID}: ${lockError.message}`);
+        throw errorGen(`Error checking lock status for userID ${userID}: ${lockError.message}`, 400);
+      }
+
+      if (lockData.isPopulating) {
+        global.logger.info(`PopulateAccount is already running for userID ${userID}`);
+        return;
+      }
+
+      // Set lock
+      await dbPublic.from('profiles').update({ isPopulating: true }).eq('user_id', userID);
+
+      // Check 'dataLoadStatus'
+      const { data, error } = await dbPublic.from('profiles').select('dataLoadStatus').eq('user_id', userID).single();
       if (error) {
         global.logger.error(`Error getting dataLoadStatus for userID ${userID}: ${error.message}`);
         throw errorGen(`Error getting dataLoadStatus for userID ${userID}: ${error.message}`, 400);
       }
-      if (dataLoadStatus === 'done') {
+      if (data.dataLoadStatus === 'done') {
         global.logger.info(`Data already loaded for userID ${userID}`);
         return 'success';
       }
 
-      // get the initial data to populate the account
+      // Get the initial data to populate the account
       const initData = initialData;
-      let currentStep = initData[dataLoadStatus].sequence;
+      let currentStatus = data.dataLoadStatus;
+      let currentSequence = initData[currentStatus].sequence;
 
-      // attempt all remaining data loading steps
-      global.logger.info(`Starting data load for userID ${userID}`);
-      for (let i = currentStep; i < 6; i++) {
-        // call helper function for this step
+      // Attempt all remaining data loading steps
+      for (let i = currentSequence; i < 6; i++) {
+        global.logger.info(`Starting data load for userID ${userID}. Current step: ${currentSequence}`);
+        // Call helper function for this step
         let stepFunction;
         switch (i) {
           case 1:
+            currentStatus = 'friendships';
             stepFunction = populateFriendships;
             break;
           case 2:
+            currentStatus = 'followships';
             stepFunction = populateFollowships;
             break;
           case 3:
+            currentStatus = 'ingredients';
             stepFunction = populateIngredients;
             break;
           case 4:
+            currentStatus = 'tools';
             stepFunction = populateTools;
             break;
           case 5:
+            currentStatus = 'recipes';
             stepFunction = populateRecipes;
             break;
           default:
@@ -370,23 +392,26 @@ module.exports = ({ db, dbPublic }) => {
           throw errorGen(`No function found for step ${i}`, 400);
         }
 
-        const nextStep = await stepFunction(userID, initData[dataLoadStatus].data);
+        const nextStep = await stepFunction(userID, initData[currentStatus].data);
         if (nextStep === 'success') {
-          currentStep = i + 1;
+          currentSequence = i + 1;
         } else {
           global.logger.error(`Error in step ${i}: ${nextStep}`);
           throw errorGen(`Error in step ${i}: ${nextStep}`, 400);
         }
       }
 
-      // if we get here, all data is loaded. Update 'dataLoadStatus' to 'done'
-      const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'done' }).eq('user_id', userID);
+      // All data is loaded. Update 'dataLoadStatus' to 'done'
+      const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'done', isPopulating: false }).eq('user_id', userID);
+
       if (errorUpdateDataLoadStatus) {
         global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
         throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
       }
       return 'success';
     } catch (error) {
+      // Ensure lock is released in case of an error
+      await dbPublic.from('profiles').update({ isPopulating: false }).eq('user_id', userID);
       global.logger.error(`Error populating initial account data for userID ${userID}: ${error.message}`);
       throw errorGen(`Error populating initial account data for userID ${userID}: ${error.message}`, 400);
     }
@@ -410,7 +435,7 @@ module.exports = ({ db, dbPublic }) => {
     // create initial friendships (inverse will be handled by the endpoint)
     for (let f = 0; f < array.length; f++) {
       const { error: errorCreateFriendship } = await axios.post(
-        `${process.env.NODE_HOST}:/${process.env.PORT}/persons/friendships`,
+        `${process.env.NODE_HOST}:${process.env.PORT}/persons/friendships`,
         {
           userID: userID,
           friend: array[f].friend,
@@ -459,7 +484,7 @@ module.exports = ({ db, dbPublic }) => {
     // create initial followships
     for (let f = 0; f < array.length; f++) {
       const { error: errorCreateFollowship } = await axios.post(
-        `${process.env.NODE_HOST}:/${process.env.PORT}/persons/followships`,
+        `${process.env.NODE_HOST}:${process.env.PORT}/persons/followships`,
         {
           userID: userID,
           following: array[f].following,
@@ -500,7 +525,7 @@ module.exports = ({ db, dbPublic }) => {
     // create initial ingredients
     for (let i = 0; i < array.length; i++) {
       const { error: errorCreateIngredient } = await axios.post(
-        `${process.env.NODE_HOST}:/${process.env.PORT}/ingredients`,
+        `${process.env.NODE_HOST}:${process.env.PORT}/ingredients`,
         {
           userID: userID,
           name: array[i].name,
@@ -546,7 +571,7 @@ module.exports = ({ db, dbPublic }) => {
     // create initial tools
     for (let i = 0; i < array.length; i++) {
       const { error: errorCreateTool } = await axios.post(
-        `${process.env.NODE_HOST}:/${process.env.PORT}/tools`,
+        `${process.env.NODE_HOST}:${process.env.PORT}/tools`,
         {
           userID: userID,
           name: array[i].name,
@@ -587,8 +612,10 @@ module.exports = ({ db, dbPublic }) => {
     }
 
     for (let i = 0; i < array.length; i++) {
+      const body = array[i];
+      body.userID = userID;
       // create initial recipes
-      const { error: errorCreateRecipe } = await axios.post(`${process.env.NODE_HOST}:/${process.env.PORT}/recipes/constructed`, array[i], {
+      const { error: errorCreateRecipe } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, body, {
         headers: {
           'Content-Type': 'application/json',
           authorization: 'override',
@@ -598,6 +625,12 @@ module.exports = ({ db, dbPublic }) => {
         global.logger.error(`Error creating recipe for userID ${userID}: ${errorCreateRecipe.message}`);
         throw errorGen(`Error creating recipe for userID ${userID}: ${errorCreateRecipe.message}`, 400);
       }
+    }
+    // update 'freeTier' to true for all userID's recipes
+    const { error: errorUpdateFreeTier } = await db.from('recipes').update({ freeTier: true }).eq('userID', userID);
+    if (errorUpdateFreeTier) {
+      global.logger.error(`Error updating freeTier for userID ${userID}: ${errorUpdateFreeTier.message}`);
+      throw errorGen(`Error updating freeTier for userID ${userID}: ${errorUpdateFreeTier.message}`, 400);
     }
 
     // assuming we're here, we've successfully created all recipes. Update 'dataLoadStatus'
