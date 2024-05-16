@@ -93,6 +93,9 @@ export class OnboardingMessageModalComponent {
           if (res === 'success') {
             this.initialAccountStateReady.set(true);
           } else {
+            this.submitFailureMessage.set(
+              `Unable to load Initial Account Data, try Again later. Error: ${res.error}`
+            );
             const ref = this.dialog.open(ErrorModalComponent, {
               data: {
                 errorMessage: `Unable to load Initial Account Data, try Again later. Error: ${res.error}`,

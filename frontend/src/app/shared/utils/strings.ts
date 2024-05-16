@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class StringsService {
   public readonly onboardingStrings = {
     collectUserDetails:
-      'First things first. Choose a username and share some details about yourself.',
+      'First things first! Choose a username and tell us about yourself.',
     welcomeToDoughly: `Welcome to Doughly! Let's show you around before you get cooking.`,
     discoverPageOverview: `Recipes in Doughly can be set to be Public, Private, or Heirloom (friends only). This Discover page features popular Public recipes. Open one that catches your eye!`,
     publicRecipePage: `A great Choice! You'll find details about the recipe, ingredients, tools, and steps here. If you want to hold on to this for later, make use of the "Subscribe" button near the top. Let's try that now.`,

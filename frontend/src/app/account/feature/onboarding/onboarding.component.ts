@@ -98,7 +98,6 @@ export class OnboardingComponent {
               state: this.profile().state,
             },
             position: {
-              top: '10%',
             },
           });
           dialogRef.afterClosed().subscribe((result) => {
