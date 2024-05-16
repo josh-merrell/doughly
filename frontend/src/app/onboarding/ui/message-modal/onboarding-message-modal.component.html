@@ -5,7 +5,7 @@
   ></mat-spinner>
 
   <!-- Icon and Message -->
-  <div class="mb-dl-3 flex" *ngIf="!isEditing()">
+  <div class="mb-dl-3 mr-dl-7 flex" *ngIf="!isEditing()">
     <div class="flex-shrink-0">
       <svg
         class="h-11 w-8 text-dl-blue-7"
@@ -48,7 +48,7 @@
         </g>
       </svg>
     </div>
-    <div class="ml-dl-3 flex w-full flex-col items-center" *ngIf="!isEditing()">
+    <div class="ml-dl-5 flex w-full flex-col items-center" *ngIf="!isEditing()">
       <p class="text-dl-5 font-dl-3 text-dl-blue-2">{{ data.message }}</p>
     </div>
   </div>
@@ -64,7 +64,7 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-1 flex flex-grow flex-col items-center overflow-y-auto">
         <!-- Username -->
-        <div id="form-username">
+        <div class="mb-dl-3" id="form-username">
           <label
             class="mb-dl-2 text-dl-5 font-dl-3 text-dl-blue-1"
             for="username"
@@ -86,7 +86,7 @@
         </div>
 
         <!-- nameFirst -->
-        <div id="form-nameFirst">
+        <div class="mb-dl-3" id="form-nameFirst">
           <label
             class="mb-dl-2 text-dl-5 font-dl-3 text-dl-blue-1"
             for="nameFirst"
@@ -108,7 +108,7 @@
         </div>
 
         <!-- nameLast -->
-        <div id="form-nameLast">
+        <div class="mb-dl-3" id="form-nameLast">
           <label
             class="mb-dl-2 text-dl-5 font-dl-3 text-dl-blue-1"
             for="nameLast"
@@ -130,7 +130,7 @@
         </div>
 
         <!-- City -->
-        <div id="form-city">
+        <div class="mb-dl-3" id="form-city">
           <label class="mb-dl-2 text-dl-5 font-dl-3 text-dl-blue-1" for="city"
             >City</label
           >
@@ -172,7 +172,7 @@
         </div> -->
 
         <!-- State -->
-        <div id="form-state">
+        <div class="mb-dl-3" id="form-state">
           <label class="mb-dl-4 text-dl-5 font-dl-3 text-dl-blue-1" for="state"
             >State</label
           >
@@ -199,7 +199,7 @@
 
     <!-- Submit Button -->
     <button
-      *ngIf="initialAccountStateReady() === true"
+      *ngIf="initialAccountStateReady() === true && !submitFailureMessage()"
       type="submit"
       [disabled]="
         form.invalid ||
@@ -226,12 +226,11 @@
     </button>
     <div
       *ngIf="initialAccountStateReady() === false"
-      class="mt-dl-1 flex w-dl-12 text-dl-5 font-dl-3 italic text-dl-grey-2"
+      class="mb-dl-2 mt-dl-5 flex w-dl-13 text-dl-5 font-dl-3 italic text-dl-blue-1"
     >
       <mat-spinner
         class="my-app-custom-spinner mr-dl-4 w-full"
-        *ngIf="isEditing()"
-        [diameter]="18"
+        [diameter]="22"
       ></mat-spinner>
       Loading Initial Account Data
     </div>
@@ -248,7 +247,7 @@
   <!-- Progress Bar and Optional Next Button -->
   <div
     class="flex w-full items-center justify-between"
-    *ngIf="!isEditing() && currentStep() !== 0.5"
+    *ngIf="!isEditing() && currentStep() !== 0.5 && !submitFailureMessage()"
   >
     <!-- spacer div-->
     <div class="flex flex-grow"></div>
