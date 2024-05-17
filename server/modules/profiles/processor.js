@@ -2,6 +2,9 @@
 const { errorGen } = require('../../middleware/errorHandling');
 const { initialData } = require('../../services/account/populateAccount');
 const { default: axios } = require('axios');
+const { uploadBackup, deleteOldBackup } = require('../../services/fileService');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = ({ db, dbPublic }) => {
   async function retrieveProfile(userID, friendStatus = 'confirmed') {
@@ -643,6 +646,164 @@ module.exports = ({ db, dbPublic }) => {
     return 'success';
   }
 
+  async function createUserBackupFile(userID) {
+    // for the given user, create a new sql backup file with all 'bakery' schema table rows. Add these rows in the order they should be loaded into the db.
+    global.logger.info(`Creating backup file for userID ${userID}`);
+    const tables = [
+      'pushTokens',
+      'friendships',
+      'followships',
+      'ingredients',
+      'ingredientStocks',
+      'tools',
+      'toolStocks',
+      'steps',
+      'recipes',
+      'recipeIngredients',
+      'recipeTools',
+      'recipeSteps',
+      'recipeSubscriptions',
+      'shoppingLists',
+      'shoppingListIngredients',
+      'shoppingListRecipes',
+      'shoppingLogs',
+      'userLogs',
+      'recipeLogs',
+      'recipeFeedbacks',
+      'kitchenLogs',
+      'messages',
+    ];
+
+    try {
+      let backupScript = '';
+
+      for (const table of tables) {
+        const { data, error } = await db.from(table).select('*').eq('userID', userID);
+        if (error) {
+          global.logger.error(`Error getting data for table ${table} and userID ${userID}: ${error.message}`);
+          throw errorGen(`Error getting data for table ${table} and userID ${userID}: ${error.message}`, 400);
+        }
+
+        if (data.length) {
+          const columnNames = Object.keys(data[0]);
+          const quotedColumnNames = columnNames.map((name) => `"${name}"`);
+          data.forEach((row) => {
+            const values = columnNames.map((column) => (row[column] !== null ? `'${String(row[column]).replace(/'/g, "''")}'` : 'NULL')).join(', ');
+            backupScript += `INSERT INTO bakery."${table}" (${quotedColumnNames.join(', ')}) VALUES (${values});\n`;
+          });
+        }
+      }
+      // create dateString such as '05212024' for May 21, 2024. Include trailing 0's for single digit months and days.
+      const date = new Date();
+      const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+      const datestring = `${month}${day}${date.getFullYear()}`;
+      const dirPath = path.join(__dirname, '../../temp');
+      const filePath = path.join(dirPath, `backup-bakery_${datestring}.sql`);
+
+      // const tempFilePath = path.join(__dirname, filePath);
+
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath);
+      }
+
+      fs.writeFileSync(filePath, backupScript);
+      global.logger.info(`Successfully created backup file for userID ${userID} on ${datestring}`);
+
+      return { filePath };
+    } catch (error) {
+      global.logger.error(`Error creating backup file: ${error.message}`);
+      throw new Error(`Error creating backup file: ${error.message}`);
+    }
+  }
+
+  async function createDailyBackup(options) {
+    const { userID } = options;
+
+    try {
+      const { filePath } = await createUserBackupFile(userID);
+
+      const uploadResponse = await uploadBackup('daily', userID, filePath);
+      if (uploadResponse.error) {
+        global.logger.error(`Error uploading daily backup for user ${userID}: ${uploadResponse.error.message}`);
+        throw errorGen(`Error uploading daily backup for user ${userID}: ${uploadResponse.error.message}`, 400);
+      }
+      global.logger.info(`Successfully uploaded daily backup for user ${userID}, filename: ${filePath}`);
+
+      const { data: profile, errorProfile } = await dbPublic.from('profiles').select('joined_at').eq('user_id', userID).single();
+      if (errorProfile) {
+        global.logger.error(`Error getting joined_at date for user ${userID}: ${errorProfile.message}`);
+        throw errorGen(`Error getting joined_at date for user ${userID}: ${errorProfile.message}`, 400);
+      }
+
+      const daysSinceJoin = Math.floor((new Date() - new Date(profile.joined_at)) / (1000 * 60 * 60 * 24));
+
+      const deleteSchedules = [
+        { days: 1 },
+        { days: 2 },
+        { days: 3 },
+        { days: 4 },
+        { days: 5 },
+        { days: 6 },
+        { days: 7 },
+        { days: 14 },
+        { days: 21 },
+        { days: 28 },
+        { days: 35 },
+        { days: 42 },
+        { days: 49 },
+        { days: 56 },
+        { days: 63 },
+        { days: 70 },
+        { days: 77 },
+        { days: 84 },
+        { days: 91 },
+        { days: 98 },
+        { days: 105 },
+        { days: 112 },
+        { days: 119 },
+        { days: 126 },
+        { days: 133 },
+        { days: 140 },
+        { days: 147 },
+        { days: 154 },
+        { days: 161 },
+        { days: 168 },
+        { days: 182 },
+      ];
+
+      deleteSchedules.forEach(async (schedule) => {
+        const deleteDate = new Date(new Date(profile.joined_at).getTime() + schedule.days * 24 * 60 * 60 * 1000);
+        if (new Date() > deleteDate && daysSinceJoin % schedule.days !== 0) {
+          const oldFilename = `backup-bakery_${deleteDate.getMonth() + 1}${deleteDate.getDate()}${deleteDate.getFullYear()}.sql`;
+          await deleteOldBackup(userID, oldFilename);
+        }
+      });
+      global.logger.info(`Successfully created daily backup for user ${userID}`);
+    } catch (error) {
+      global.logger.error(`Error creating daily backup for user ${userID}: ${error.message}`);
+      throw errorGen(`Error creating daily backup for user ${userID}: ${error.message}`, 400);
+    }
+  }
+
+  async function dailyBackupAllUsers() {
+    // get all userIDs
+    const { data: userIDs, error } = await dbPublic.from('profiles').select('user_id');
+    if (error) {
+      global.logger.error(`Error getting userIDs for daily backup: ${error.message}`);
+      throw errorGen(`Error getting userIDs for daily backup: ${error.message}`, 400);
+    }
+
+    // for each userID, create a daily backup. avoid doing this for username 'Doughly' (it has 300 recipes, we have a separate master backup for it)
+    for (let i = 0; i < userIDs.length; i++) {
+      if (userIDs[i].user_id !== 'a525810e-5531-4f97-95a4-39a082f7416b') {
+        await createDailyBackup({ userID: userIDs[i].user_id });
+      }
+    }
+
+    global.logger.info(`Successfully created daily backups for all ${userIDs.length} users`);
+  }
+
   return {
     getProfile,
     getFriends,
@@ -653,5 +814,7 @@ module.exports = ({ db, dbPublic }) => {
     searchProfiles,
     deleteProfile,
     populateAccount,
+    createDailyBackup,
+    dailyBackupAllUsers,
   };
 };

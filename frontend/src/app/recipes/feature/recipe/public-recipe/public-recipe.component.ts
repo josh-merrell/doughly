@@ -70,7 +70,8 @@ export class PublicRecipeComponent {
   recipeIngredients: WritableSignal<RecipeIngredient[]> = signal([]);
   recipeSubscription: WritableSignal<any> = signal(null);
   private profile: WritableSignal<any> = signal(null);
-  private freeTierSubscribedRecipeCount: WritableSignal<number|null> = signal(null);
+  private freeTierSubscribedRecipeCount: WritableSignal<number | null> =
+    signal(null);
 
   // Onboarding
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
@@ -390,7 +391,7 @@ export class PublicRecipeComponent {
         ]);
       }
       if (!this.recipeSubscription()) {
-        const dialogRef = this.dialog.open(SubscribeRecipeModalComponent, {
+        this.dialog.open(SubscribeRecipeModalComponent, {
           data: {
             recipe: this.recipe(),
             ingredients: this.enhancedIngredients(),
@@ -402,16 +403,6 @@ export class PublicRecipeComponent {
           width: '90%',
           maxWidth: '640px',
           maxHeight: '840px',
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result === 'success') {
-            this.dialog.open(ConfirmationModalComponent, {
-              data: {
-                confirmationMessage: `Subscribed. Recipe added.`,
-              },
-            });
-          }
         });
       }
     }
