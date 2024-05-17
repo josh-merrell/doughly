@@ -38,6 +38,7 @@ async function deleteS3Photo(req, res) {
   }
 }
 
+
 module.exports = {
   createPresignedURL,
   deleteS3Photo,

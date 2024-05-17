@@ -105,7 +105,7 @@ export class OnboardingComponent {
             if (result !== 'success') {
               this.onboardingCallback();
             } else {
-              this.router.navigate(['/recipes/discover']);
+              this.router.navigate(['/loading']);
             }
           });
         }
