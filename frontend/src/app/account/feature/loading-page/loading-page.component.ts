@@ -127,7 +127,6 @@ export class LoadingPageComponent {
   private isLoadingFriendship: WritableSignal<boolean> = signal(true);
   private isLoadingFollowship: WritableSignal<boolean> = signal(true);
   private isLoadingProfile: WritableSignal<boolean> = signal(true);
-  6;
   private isLoadingShoppingList: WritableSignal<boolean> = signal(true);
   private isLoadingShoppingListRecipe: WritableSignal<boolean> = signal(true);
 

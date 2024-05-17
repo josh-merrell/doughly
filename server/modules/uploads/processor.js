@@ -25,6 +25,49 @@ module.exports = ({ db, dbDefault }) => {
     return url;
   }
 
+  async function uploadBackup(filepath, filename) {
+    // read the file from the path
+    const fs = require('fs');
+    const path = require('path');
+    const file = fs.readFileSync(path.join(__dirname, filepath, filename));
+
+    // take the file and path as args. Upload the file to the path
+    const s3Client = new S3Client({ region: 'us-west-2' });
+
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_BACKUP_BUCKET_NAME,
+      Key: filepath,
+      Body: file,
+    });
+
+    try {
+      await s3Client.send(command);
+      fs.unlinkSync(filepath);
+      return { message: 'Successfully uploaded file' };
+    } catch (err) {
+      global.logger.error(`Error uploading file to S3. Path:${path}, Error:`, err);
+      throw errorGen(`Error uploading file to S3. Path:${path}`, 400);
+    }
+  }
+
+  async function deleteOldBackup(userID, filename) {
+    const s3Client = new S3Client({ region: 'us-west-2' });
+
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.AWS_BACKUP_BUCKET_NAME,
+      Key: `${type}/${userID}/${filename}`,
+    });
+
+    try {
+      await s3Client.send(command);
+      global.logger.info(`Successfully deleted old backup file: backups/${userID}/${filename}`);
+      return { message: 'Successfully deleted old backup file' };
+    } catch (err) {
+      console.error(`Error deleting old backup file from S3. Path: backups/${userID}/${filename}, Error:`, err);
+      throw new Error(`Error deleting old backup file from S3. Path: backups/${userID}/${filename}`);
+    }
+  }
+
   async function remove(options) {
     const { userID, photoURL, type, id } = options;
 
@@ -96,5 +139,7 @@ module.exports = ({ db, dbDefault }) => {
   return {
     create,
     remove,
+    uploadBackup,
+    deleteOldBackup,
   };
 };

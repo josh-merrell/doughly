@@ -152,6 +152,35 @@ async function populateAccount(req, res) {
   }
 }
 
+async function createDailyBackup(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { userID } = req.params;
+  try {
+    const returner = await p.createDailyBackup({
+      userID,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'createDailyBackup': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
+async function dailyBackupAllUsers(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  try {
+    const returner = await p.dailyBackupAllUsers();
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'profiles' 'dailyBackupAllUsers': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 module.exports = {
   getProfile,
   getFriends,
@@ -162,4 +191,6 @@ module.exports = {
   searchProfiles,
   deleteProfile,
   populateAccount,
+  createDailyBackup,
+  dailyBackupAllUsers,
 };
