@@ -16,6 +16,7 @@ import { Store } from '@ngrx/store';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { ModalService } from 'src/app/shared/utils/modalService';
 @Component({
   selector: 'dl-your-premium',
   standalone: true,
@@ -43,7 +44,8 @@ export class YourPremiumComponent {
     private dialog: MatDialog,
     private productService: ProductService,
     private authService: AuthService,
-    private store: Store
+    private store: Store,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -69,7 +71,11 @@ export class YourPremiumComponent {
     this.store.select(selectProfile).subscribe((profile) => {
       this.profile.set(profile);
       if (profile) {
-        if (profile.permAITokenCount < this.productService.licences.maxAICredits - this.productService.licences.extraAITokenPurchaseCount) {
+        if (
+          profile.permAITokenCount <
+          this.productService.licences.maxAICredits -
+            this.productService.licences.extraAITokenPurchaseCount
+        ) {
           this.allowExtraTokenPurchase.set(true);
         }
       }
@@ -94,43 +100,68 @@ export class YourPremiumComponent {
       const result = await this.productService.purchase(sku);
       this.isLoading.set(false);
       if (result.result === 'no permissions') {
-        this.dialog.open(ErrorModalComponent, {
-          data: {
-            errorMessage: `Error purchasing "${skuId}"${result.error}`,
-            statusCode: '500',
+        this.modalService.open(
+          ErrorModalComponent,
+          {
+            data: {
+              errorMessage: `Error purchasing "${skuId}"${result.error}`,
+              statusCode: '500',
+            },
           },
-        });
+          1,
+          true
+        );
       } else if (result.result === 'cancelled') {
-        this.dialog.open(ErrorModalComponent, {
-          data: {
-            errorMessage: `Purchase cancelled. Please try again.`,
-            statusCode: '500',
+        this.modalService.open(
+          ErrorModalComponent,
+          {
+            data: {
+              errorMessage: `Purchase cancelled. Please try again.`,
+              statusCode: '500',
+            },
           },
-        });
+          1,
+          true
+        );
       } else if (result.result === 'alreadyOwned') {
-        this.dialog.open(ErrorModalComponent, {
-          data: {
-            errorMessage: `You already have this. Please sign out and log back in to refresh.`,
-            statusCode: '500',
+        this.modalService.open(
+          ErrorModalComponent,
+          {
+            data: {
+              errorMessage: `You already have this. Please sign out and log back in to refresh.`,
+              statusCode: '500',
+            },
           },
-        });
+          1,
+          true
+        );
       } else if (result.result === 'error') {
-        this.dialog.open(ErrorModalComponent, {
-          data: {
-            errorMessage: `Error purchasing "${skuId}"${result.error}`,
-            statusCode: '500',
+        this.modalService.open(
+          ErrorModalComponent,
+          {
+            data: {
+              errorMessage: `Error purchasing "${skuId}"${result.error}`,
+              statusCode: '500',
+            },
           },
-        });
+          1,
+          true
+        );
       } else {
         setTimeout(() => {
           this.authService.refreshProfile();
         }, 1500);
-        this.dialog.open(ConfirmationModalComponent, {
-          maxWidth: '380px',
-          data: {
-            confirmationMessage: 'Purchase successful!',
+        this.modalService.open(
+          ConfirmationModalComponent,
+          {
+            maxWidth: '380px',
+            data: {
+              confirmationMessage: 'Purchase successful!',
+            },
           },
-        });
+          1,
+          true
+        );
       }
       this.router.navigate(['/recipes/discover']);
     }
@@ -143,15 +174,25 @@ export class YourPremiumComponent {
   }
 
   onSelectRecipes() {
-    this.dialog.open(SelectFreeTierRecipesModalComponent, {
-      width: '90%',
-    });
+    this.modalService.open(
+      SelectFreeTierRecipesModalComponent,
+      {
+        width: '90%',
+      },
+      1,
+      true
+    );
   }
 
   onSelectSubscriptions() {
-    this.dialog.open(SelectFreeTierSubscriptionsModalComponent, {
-      width: '90%',
-    });
+    this.modalService.open(
+      SelectFreeTierSubscriptionsModalComponent,
+      {
+        width: '90%',
+      },
+      1,
+      true
+    );
   }
 
   onAddTokens() {

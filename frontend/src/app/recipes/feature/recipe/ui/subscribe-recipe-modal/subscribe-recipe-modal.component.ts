@@ -37,6 +37,7 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { selectUpdating } from 'src/app/profile/state/profile-selectors';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-subscribe-recipe-modal',
@@ -85,7 +86,8 @@ export class SubscribeRecipeModalComponent {
     private unitService: UnitService,
     private sortingService: SortingService,
     private strings: StringsService,
-    private extraStuffService: ExtraStuffService
+    private extraStuffService: ExtraStuffService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -438,13 +440,18 @@ export class SubscribeRecipeModalComponent {
                 console.error(
                   `Recipe add failed: ${error.message}, CODE: ${error.statusCode}`
                 );
-                this.dialog.open(ErrorModalComponent, {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: error.message,
-                    statusCode: error.statusCode,
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
                   },
-                });
+                  2,
+                  true
+                );
               } else {
                 // advance onboarding if it is active
                 if (this.onboarding) {
@@ -493,20 +500,28 @@ export class SubscribeRecipeModalComponent {
     if (state !== 4) return;
     this.onboardingModalOpen.set(true);
     this.reopenOnboardingModal.set(false);
-    const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-      data: {
-        message: this.strings.onboardingStrings.subscribeRecipeModal,
-        currentStep: 4,
-        showNextButton: false,
+    const dialogRef = this.modalService.open(
+      OnboardingMessageModalComponent,
+      {
+        data: {
+          message: this.strings.onboardingStrings.subscribeRecipeModal,
+          currentStep: 4,
+          showNextButton: false,
+        },
+        position: {
+          top: '50%',
+        },
       },
-      position: {
-        top: '50%',
-      },
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      this.onboardingModalOpen.set(false);
-      this.showOnboardingBadge.set(true);
-    });
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe(() => {
+        this.onboardingModalOpen.set(false);
+        this.showOnboardingBadge.set(true);
+      });
+    } else {
+      console.warn('A modal at level 1 is already open.');
+    }
   }
 
   onboardingBadgeClick() {

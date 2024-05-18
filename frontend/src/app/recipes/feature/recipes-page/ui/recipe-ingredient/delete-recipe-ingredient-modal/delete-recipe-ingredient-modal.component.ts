@@ -2,12 +2,20 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, Subscription, filter, take } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { selectDeleting, selectError } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
+import {
+  selectDeleting,
+  selectError,
+} from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { RecipeIngredientActions } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-actions';
-import { selectIngredientByID } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors'
+import { selectIngredientByID } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-delete-recipe-ingredient-modal',
@@ -24,13 +32,14 @@ export class DeleteRecipeIngredientModalComponent {
     public dialogRef: MatDialogRef<DeleteRecipeIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {
-    this.store.select(
-      selectIngredientByID(this.data.ingredientID)).subscribe((ingredient) => {
+    this.store
+      .select(selectIngredientByID(this.data.ingredientID))
+      .subscribe((ingredient) => {
         this.ingredient = ingredient;
-      }
-    );
+      });
   }
 
   onSubmit(): void {
@@ -54,13 +63,18 @@ export class DeleteRecipeIngredientModalComponent {
               console.error(
                 `Recipe Ingredient deletion failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                3,
+                true
+              );
             } else {
               this.dialogRef.close('success');
             }

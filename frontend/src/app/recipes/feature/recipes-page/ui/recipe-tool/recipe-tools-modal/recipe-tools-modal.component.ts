@@ -31,6 +31,7 @@ import { selectTools } from 'src/app/kitchen/feature/tools/state/tool-selectors'
 import { DeleteRecipeToolModalComponent } from '../delete-recipe-tool-modal/delete-recipe-tool-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-recipe-tools-modal',
@@ -54,7 +55,8 @@ export class RecipeToolsModalComponent {
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<RecipeToolsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private store: Store
+    private store: Store,
+    private modalService: ModalService
   ) {
     this.recipe = this.data.recipe;
     this.recipeTools$ = this.store.select(
@@ -119,13 +121,18 @@ export class RecipeToolsModalComponent {
                 console.log(
                   `Error adding default recipe tool: ${error.message}, CODE: ${error.statusCode}`
                 );
-                this.dialog.open(ErrorModalComponent, {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: error.message,
-                    statusCode: error.statusCode,
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
                   },
-                });
+                  2,
+                  true
+                );
                 this.isLoading = false;
               }
             });
@@ -151,13 +158,18 @@ export class RecipeToolsModalComponent {
                   if (error) {
                     this.isLoading = false;
                     hasErrorOccurred = true; // Set flag on error
-                    this.dialog.open(ErrorModalComponent, {
-                      maxWidth: '380px',
-                      data: {
-                        errorMessage: error.message,
-                        statusCode: error.statusCode,
+                    this.modalService.open(
+                      ErrorModalComponent,
+                      {
+                        maxWidth: '380px',
+                        data: {
+                          errorMessage: error.message,
+                          statusCode: error.statusCode,
+                        },
                       },
-                    });
+                      2,
+                      true
+                    );
                     this.dialogRef.close(); // Close the current modal
                   }
                 })
@@ -180,22 +192,34 @@ export class RecipeToolsModalComponent {
 
   onDeleteClick(toolID: number, recipeToolID: number) {
     if (recipeToolID) {
-      const dialogRef = this.dialog.open(DeleteRecipeToolModalComponent, {
-        data: {
-          recipeToolID,
-          toolID,
+      const dialogRef = this.modalService.open(
+        DeleteRecipeToolModalComponent,
+        {
+          data: {
+            recipeToolID,
+            toolID,
+          },
         },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.open(ConfirmationModalComponent, {
-            data: {
-              confirmationMessage: `Tool successfully removed from recipe!`,
-            },
-          });
-        }
-      });
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                data: {
+                  confirmationMessage: `Tool successfully removed from recipe!`,
+                },
+              },
+              2,
+              true
+            );
+          }
+        });
+      } else {
+        console.warn('A modal at level 2 is already open.');
+      }
     } else {
       this.toolsToAdd = this.toolsToAdd.filter(
         (tool) => tool.toolID !== toolID
@@ -222,37 +246,44 @@ export class RecipeToolsModalComponent {
           toolsToExclude.push(tool.toolID);
         });
 
-        const dialogRef = this.dialog.open(AddRecipeToolModalComponent, {
-          data: {
-            toolsToExclude,
+        const dialogRef = this.modalService.open(
+          AddRecipeToolModalComponent,
+          {
+            data: {
+              toolsToExclude,
+            },
           },
-        });
+          2
+        );
+        if (dialogRef) {
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result?.toolID) {
+              this.tools$
+                .pipe(
+                  map(
+                    (tools) =>
+                      tools.find((tool) => tool.toolID === result.toolID)?.name
+                  ),
+                  take(1)
+                )
+                .subscribe((toolName) => {
+                  const addedRecipeTool: any = {
+                    recipeID: this.recipe.recipeID,
+                    toolID: result.toolID,
+                    quantity: result.quantity,
+                    name: toolName,
+                    toAdd: true,
+                  };
 
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result?.toolID) {
-            this.tools$
-              .pipe(
-                map(
-                  (tools) =>
-                    tools.find((tool) => tool.toolID === result.toolID)?.name
-                ),
-                take(1)
-              )
-              .subscribe((toolName) => {
-                const addedRecipeTool: any = {
-                  recipeID: this.recipe.recipeID,
-                  toolID: result.toolID,
-                  quantity: result.quantity,
-                  name: toolName,
-                  toAdd: true,
-                };
-
-                this.toolsToAdd.push(addedRecipeTool);
-                this.submitMessage = 'Submit Additions';
-                this.toolsToAddSubject.next(this.toolsToAdd);
-              });
-          }
-        });
+                  this.toolsToAdd.push(addedRecipeTool);
+                  this.submitMessage = 'Submit Additions';
+                  this.toolsToAddSubject.next(this.toolsToAdd);
+                });
+            }
+          });
+        } else {
+          console.warn('A modal at level 2 is already open.');
+        }
       });
   }
 

@@ -12,6 +12,7 @@ import {
   selectProfile,
   selectUpdating,
 } from 'src/app/profile/state/profile-selectors';
+import { ModalService } from 'src/app/shared/utils/modalService';
 import { StringsService } from 'src/app/shared/utils/strings';
 
 @Component({
@@ -28,7 +29,8 @@ export class OnboardingComponent {
     public dialog: MatDialog,
     private store: Store,
     public router: Router,
-    private stringsService: StringsService
+    private stringsService: StringsService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -86,28 +88,36 @@ export class OnboardingComponent {
       } else {
         if (!this.modalOpen()) {
           this.modalOpen.set(true);
-          const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-            data: {
-              message: this.stringsService.onboardingStrings.collectUserDetails,
-              currentStep: 0.5,
-              showNextButton: false,
-              username: this.profile().username,
-              nameFirst: this.profile().nameFirst,
-              nameLast: this.profile().nameLast,
-              city: this.profile().city,
-              state: this.profile().state,
+          const dialogRef = this.modalService.open(
+            OnboardingMessageModalComponent,
+            {
+              data: {
+                message:
+                  this.stringsService.onboardingStrings.collectUserDetails,
+                currentStep: 0.5,
+                showNextButton: false,
+                username: this.profile().username,
+                nameFirst: this.profile().nameFirst,
+                nameLast: this.profile().nameLast,
+                city: this.profile().city,
+                state: this.profile().state,
+              },
+              position: {},
             },
-            position: {
-            },
-          });
-          dialogRef.afterClosed().subscribe((result) => {
-            this.modalOpen.set(false);
-            if (result !== 'success') {
-              this.onboardingCallback();
-            } else {
-              this.router.navigate(['/loading']);
-            }
-          });
+            1
+          );
+          if (dialogRef) {
+            dialogRef.afterClosed().subscribe((result) => {
+              this.modalOpen.set(false);
+              if (result !== 'success') {
+                this.onboardingCallback();
+              } else {
+                this.router.navigate(['/loading']);
+              }
+            });
+          } else {
+            console.log('A modal at level 1 is already open.');
+          }
         }
       }
     } else {

@@ -1,6 +1,5 @@
 import { Component, WritableSignal, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableFullComponent } from 'src/app/shared/ui/dl-table-full/dl-table-full.component';
 import {
   Filter,
   FilterOperatorEnum,
@@ -22,12 +21,12 @@ import { selectIngredientStocks } from '../Inventory/feature/ingredient-inventor
 import { Router } from '@angular/router';
 import { removeReviewRecipe } from '../../state/kitchen-actions';
 import { selectReviewRecipeID } from '../../state/kitchen-selectors';
+import { ModalService } from 'src/app/shared/utils/modalService';
 @Component({
   selector: 'dl-ingredients',
   standalone: true,
   imports: [
     CommonModule,
-    TableFullComponent,
     AddIngredientModalComponent,
     EditIngredientModalComponent,
   ],
@@ -58,7 +57,8 @@ export class IngredientsComponent {
     private sortingService: SortingService,
     private filterService: FilterService,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -174,36 +174,60 @@ export class IngredientsComponent {
   }
 
   onAddIngredient(): void {
-    const dialogRef = this.dialog.open(AddIngredientModalComponent, {
-      data: {},
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      // if result is a number, it is the ingredientID of the newly added ingredient
-      if (typeof result === 'number') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Added Ingredient`,
-          },
-        });
-      }
-    });
+    const dialogRef = this.modalService.open(
+      AddIngredientModalComponent,
+      {
+        data: {},
+      },
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        // if result is a number, it is the ingredientID of the newly added ingredient
+        if (typeof result === 'number') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Added Ingredient`,
+              },
+            },
+            1,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn(`A modal at level 1 is already open.`);
+    }
   }
 
   onAddStock(): void {
-    const dialogRef = this.dialog.open(AddIngredientStockModalComponent, {
-      data: {},
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Added Ingredient Stock`,
-          },
-        });
-      }
-    });
+    const dialogRef = this.modalService.open(
+      AddIngredientStockModalComponent,
+      {
+        data: {},
+      },
+      1
+    );
+    if (dialogRef) {
+      console.warn(`A modal at level 1 is already open.`);
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Added Ingredient Stock`,
+              },
+            },
+            1,
+            true
+          );
+        }
+      });
+    } else {
+    }
   }
 
   updateSearchFilter(value: string) {
@@ -245,35 +269,43 @@ export class IngredientsComponent {
 
   ingredientCardClick(ingredient: any) {
     const openEdit = ingredient.needsReview ? true : false;
-    const dialogRef = this.dialog.open(IngredientDetailsModalComponent, {
-      data: {
-        ingredient: ingredient,
-        openEdit,
+    const dialogRef = this.modalService.open(
+      IngredientDetailsModalComponent,
+      {
+        data: {
+          ingredient: ingredient,
+          openEdit,
+        },
+        width: '75%',
       },
-      width: '75%',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (openEdit && result === 'success') {
-        this.reviewedCount++;
-      }
-      // close any other open modals
-      this.modalActiveForIngredientID = null;
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (openEdit && result === 'success') {
+          this.reviewedCount++;
+        }
+        // close any other open modals
+        this.modalActiveForIngredientID = null;
 
-      if (
-        this.displayNeedsReview().length < 2 &&
-        this.displayNoReview().length
-      ) {
-        // get current value of 'reviewRecipeID' from store
-        const reviewRecipeID = this.reviewRecipeID();
-        if (reviewRecipeID) {
-          // if defined, set 'reviewRecipeID' to null in store and navigate to recipe
-          if (this.reviewedCount > 0) {
-            this.store.dispatch(removeReviewRecipe());
-            this.router.navigate(['recipe', reviewRecipeID]);
+        if (
+          this.displayNeedsReview().length < 2 &&
+          this.displayNoReview().length
+        ) {
+          // get current value of 'reviewRecipeID' from store
+          const reviewRecipeID = this.reviewRecipeID();
+          if (reviewRecipeID) {
+            // if defined, set 'reviewRecipeID' to null in store and navigate to recipe
+            if (this.reviewedCount > 0) {
+              this.store.dispatch(removeReviewRecipe());
+              this.router.navigate(['recipe', reviewRecipeID]);
+            }
           }
         }
-      }
-    });
+      });
+    } else {
+      console.warn(`A modal at level 1 is already open.`);
+    }
   }
 
   ingredientCardTouchStart(ingredientID: number) {

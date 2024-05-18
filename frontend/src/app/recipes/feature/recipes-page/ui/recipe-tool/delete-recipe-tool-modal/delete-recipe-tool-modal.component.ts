@@ -12,9 +12,10 @@ import {
   selectDeleting,
   selectError,
 } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
-import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool-actions'
-import { selectToolByID } from 'src/app/kitchen/feature/tools/state/tool-selectors'
+import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool-actions';
+import { selectToolByID } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-delete-recipe-tool-modal',
@@ -31,12 +32,15 @@ export class DeleteRecipeToolModalComponent {
     public dialogRef: MatDialogRef<DeleteRecipeToolModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {
     if (this.data.toolID) {
-      this.store.select(selectToolByID(this.data.toolID)).subscribe((tool) => this.tool = tool);
+      this.store
+        .select(selectToolByID(this.data.toolID))
+        .subscribe((tool) => (this.tool = tool));
     } else {
-      this.tool = { name: 'dummy'}
+      this.tool = { name: 'dummy' };
     }
   }
 
@@ -51,22 +55,36 @@ export class DeleteRecipeToolModalComponent {
     // Initiate the subscription after dispatching the action
     this.deletingSubscription = this.store
       .select(selectDeleting)
-      .pipe(filter((isDeleting) => !isDeleting), take(1)).subscribe(() => {
-        this.store.select(selectError).pipe(take(1)).subscribe((error) => {
-          if (error) {
-            console.error(`Error deleting recipe tool: ${error.message}, CODE: ${error.statusCode}`);
-            this.dialog.open(ErrorModalComponent, {
-              maxWidth: '380px',
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
-              },
-            });
-          } else {
-            this.dialogRef.close('success');
-          }
-          this.isDeleting = false;
-        });
+      .pipe(
+        filter((isDeleting) => !isDeleting),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectError)
+          .pipe(take(1))
+          .subscribe((error) => {
+            if (error) {
+              console.error(
+                `Error deleting recipe tool: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
+                },
+                2,
+                true
+              );
+            } else {
+              this.dialogRef.close('success');
+            }
+            this.isDeleting = false;
+          });
       });
   }
 

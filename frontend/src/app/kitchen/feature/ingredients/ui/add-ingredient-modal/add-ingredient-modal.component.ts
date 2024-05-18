@@ -47,6 +47,7 @@ import {
 } from '../../state/ingredient-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { UnitService } from 'src/app/shared/utils/unitService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-add-ingredient-modal',
@@ -81,7 +82,8 @@ export class AddIngredientModalComponent {
     private store: Store,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private unitService: UnitService
+    private unitService: UnitService,
+    private modalService: ModalService
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
     this.isLoading$ = this.store.select(selectLoading);
@@ -200,13 +202,13 @@ export class AddIngredientModalComponent {
         this.store.select(selectError).subscribe((error) => {
           if (error) {
             this.dialogRef.close(error);
-            this.dialog.open(ErrorModalComponent, {
+            this.modalService.open(ErrorModalComponent, {
               maxWidth: '380px',
               data: {
                 errorMessage: error.message,
                 statusCode: error.statusCode,
               },
-            });
+            }, 2, true);
           } else {
             // this.dialogRef.close('success');
             // return the new ingredientID after selecting the new ingredient from the store by name

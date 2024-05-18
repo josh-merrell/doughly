@@ -28,6 +28,7 @@ import { FractionService } from 'src/app/shared/utils/fractionService';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { UseRecipeModalComponent } from '../use-recipe-modal/use-recipe-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 interface displayIngredientsByComponent {
   noComponent: any[];
@@ -60,7 +61,8 @@ export class UsingRecipeComponent {
     private recipeService: RecipeService,
     private route: ActivatedRoute,
     private unitService: UnitService,
-    private fractionService: FractionService
+    private fractionService: FractionService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -102,10 +104,13 @@ export class UsingRecipeComponent {
       { allowSignalWrites: true }
     );
 
-    effect(() => {
-      const currentStepIndex = this.currentStepIndex();
-      this.scrollToCurrentStep(currentStepIndex);
-    }, { allowSignalWrites: true })
+    effect(
+      () => {
+        const currentStepIndex = this.currentStepIndex();
+        this.scrollToCurrentStep(currentStepIndex);
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit() {
@@ -231,24 +236,37 @@ export class UsingRecipeComponent {
   }
 
   onUseRecipe() {
-    const dialogRef = this.dialog.open(UseRecipeModalComponent, {
-      data: {
-        recipeName: this.recipe().title,
-        recipeID: this.recipeID(),
+    const dialogRef = this.modalService.open(
+      UseRecipeModalComponent,
+      {
+        data: {
+          recipeName: this.recipe().title,
+          recipeID: this.recipeID(),
+        },
       },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'cancel') return;
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          maxWidth: '380px',
-          data: {
-            confirmationMessage: 'Bon appétit!',
-          },
-        });
-        this.router.navigate(['/recipe/' + this.recipeID()]);
-      }
-    });
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'cancel') return;
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              maxWidth: '380px',
+              data: {
+                confirmationMessage: 'Bon appétit!',
+              },
+            },
+            1,
+            true
+          );
+          this.router.navigate(['/recipe/' + this.recipeID()]);
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open.');
+    }
   }
 
   onExitClick() {

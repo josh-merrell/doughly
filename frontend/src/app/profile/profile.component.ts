@@ -16,6 +16,7 @@ import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/conf
 import { Router } from '@angular/router';
 import { DeleteProfileModalComponent } from './ui/delete-profile-modal/delete-profile-modal.component';
 import { Browser } from '@capacitor/browser';
+import { ModalService } from '../shared/utils/modalService';
 
 @Component({
   selector: 'dl-profile',
@@ -50,7 +51,8 @@ export class ProfileComponent {
     private authService: AuthService,
     private dialog: MatDialog,
     private photoService: PhotoService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {
     effect(() => {
       const profile = this.authService.profile();
@@ -88,43 +90,69 @@ export class ProfileComponent {
   }
 
   updateProfile(property: string) {
-    const dialogRef = this.dialog.open(EditProfileModalComponent, {
-      data: {
-        property,
-        value: this.profile[property],
+    const dialogRef = this.modalService.open(
+      EditProfileModalComponent,
+      {
+        data: {
+          property,
+          value: this.profile[property],
+        },
       },
-    });
+      1
+    );
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'cancel' || !result) return;
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: 'Profile updated successfully!',
-          },
-        });
-      }
-    });
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'cancel' || !result) return;
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: 'Profile updated successfully!',
+              },
+            },
+            1,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open.');
+    }
   }
 
   updatePhoto() {
-    const dialogRef = this.dialog.open(EditPhotoModalComponent, {
-      data: {
-        currentPhotoURL: this.profile.photo_url,
+    const dialogRef = this.modalService.open(
+      EditPhotoModalComponent,
+      {
+        data: {
+          currentPhotoURL: this.profile.photo_url,
+        },
+        width: '70%',
       },
-      width: '70%',
-    });
+      1
+    );
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'cancel' || !result)
-        if (result === 'success') {
-          this.dialog.open(ConfirmationModalComponent, {
-            data: {
-              confirmationMessage: 'Profile photo updated successfully!',
-            },
-          });
-        }
-    });
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'cancel' || !result)
+          if (result === 'success') {
+            this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                data: {
+                  confirmationMessage: 'Profile photo updated successfully!',
+                },
+              },
+              1,
+              true
+            );
+          }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open.');
+    }
   }
 
   onPrivacyClick() {
@@ -137,22 +165,34 @@ export class ProfileComponent {
   }
 
   onDeleteAccountClick() {
-    const dialogRef = this.dialog.open(DeleteProfileModalComponent, {
-      data: {
-        isFinal: false,
-        userID: this.profile.user_id,
+    const dialogRef = this.modalService.open(
+      DeleteProfileModalComponent,
+      {
+        data: {
+          isFinal: false,
+          userID: this.profile.user_id,
+        },
       },
-    });
+      1
+    );
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'confirm') {
-        this.dialog.open(DeleteProfileModalComponent, {
-          data: {
-            isFinal: true,
-            userID: this.profile.user_id,
-          },
-        });
-      }
-    });
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'confirm') {
+          this.modalService.open(
+            DeleteProfileModalComponent,
+            {
+              data: {
+                isFinal: true,
+                userID: this.profile.user_id,
+              },
+            },
+            2
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open.');
+    }
   }
 }

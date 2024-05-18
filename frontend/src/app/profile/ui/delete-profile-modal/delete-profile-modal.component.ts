@@ -18,6 +18,7 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Router } from '@angular/router';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-delete-profile-modal',
@@ -40,7 +41,8 @@ export class DeleteProfileModalComponent {
     private store: Store,
     public dialog: MatDialog,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {
     this.store.select(selectProfile).subscribe((profile) => {});
   }
@@ -76,12 +78,17 @@ export class DeleteProfileModalComponent {
                 console.error(
                   `Profile deletion failed: ${error.message}, CODE: ${error.statusCode}`
                 );
-                this.dialog.open(ErrorModalComponent, {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: error.message,
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                    },
                   },
-                });
+                  2,
+                  true
+                );
               } else {
                 PushNotifications.unregister;
                 // wait for logout to process

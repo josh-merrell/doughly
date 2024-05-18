@@ -51,6 +51,7 @@ import { RecipeStep } from 'src/app/recipes/state/recipe-step/recipe-step-state'
 import { DeleteRecipeStepModalComponent } from '../delete-recipe-step-modal/delete-recipe-step-modal.component';
 import { EditRecipeStepModalComponent } from '../edit-recipe-step-modal/edit-recipe-step-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 interface RecipeStepToUpdate {
   recipeStepID: any; // Replace 'any' with a more specific type if possible
@@ -140,7 +141,8 @@ export class RecipeStepsModalComponent {
     public dialog: MatDialog,
     private store: Store,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private actions$: Actions
+    private actions$: Actions,
+    private modalService: ModalService
   ) {
     this.recipe = this.data.recipe;
     this.isAdding$ = this.store.select(selectAddingRecipeStep);
@@ -213,72 +215,86 @@ export class RecipeStepsModalComponent {
   }
 
   onAddClick() {
-    const dialogRef = this.dialog.open(AddRecipeStepModalComponent, {
-      width: '75%',
-      data: { recipeID: this.recipe.recipeID },
-    });
+    const dialogRef = this.modalService.open(
+      AddRecipeStepModalComponent,
+      {
+        width: '75%',
+        data: { recipeID: this.recipe.recipeID },
+      },
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result?.title) {
+          // Get the current value of displayRecipeSteps from the BehaviorSubject
+          this.displayRecipeStepsSubject
+            .pipe(take(1))
+            .subscribe((displayRecipeSteps) => {
+              const addedRecipeStep: any = {
+                title: result.title,
+                description: result.description,
+                sequence: displayRecipeSteps.length + 1,
+                photoURL: result.photoURL,
+                toAdd: true,
+                sequenceChanged: false,
+              };
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.title) {
-        // Get the current value of displayRecipeSteps from the BehaviorSubject
-        this.displayRecipeStepsSubject
-          .pipe(take(1))
-          .subscribe((displayRecipeSteps) => {
-            const addedRecipeStep: any = {
-              title: result.title,
-              description: result.description,
-              sequence: displayRecipeSteps.length + 1,
-              photoURL: result.photoURL,
-              toAdd: true,
-              sequenceChanged: false,
-            };
+              // Add the new step to the local copy of the array
+              displayRecipeSteps.push(addedRecipeStep);
 
-            // Add the new step to the local copy of the array
-            displayRecipeSteps.push(addedRecipeStep);
-
-            // Push the updated steps back into the BehaviorSubject
-            this.displayRecipeStepsSubject.next(displayRecipeSteps);
-          });
-      }
-    });
+              // Push the updated steps back into the BehaviorSubject
+              this.displayRecipeStepsSubject.next(displayRecipeSteps);
+            });
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open');
+    }
   }
 
   onUpdateClick(displayRecipeStep: any, index: number) {
     this.activateModalForRow(index);
-    const dialogRef = this.dialog.open(EditRecipeStepModalComponent, {
-      data: displayRecipeStep,
-      width: '75%',
-    });
+    const dialogRef = this.modalService.open(
+      EditRecipeStepModalComponent,
+      {
+        data: displayRecipeStep,
+        width: '75%',
+      },
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        this.deactivateModalForRow();
+        if (result?.title || result?.description) {
+          // Get the current value of displayRecipeSteps from the BehaviorSubject
+          this.displayRecipeStepsSubject
+            .pipe(take(1))
+            .subscribe((displayRecipeSteps) => {
+              const updatedRecipeStep: any = {
+                title: result.title,
+                description: result.description,
+                sequence: displayRecipeStep.sequence,
+                photoURL: result.photoURL,
+                toUpdate: true,
+                stepID: displayRecipeStep.stepID,
+                recipeStepID: displayRecipeStep.recipeStepID,
+                recipeID: displayRecipeStep.recipeID,
+              };
 
-    dialogRef.afterClosed().subscribe((result) => {
-      this.deactivateModalForRow();
-      if (result?.title || result?.description) {
-        // Get the current value of displayRecipeSteps from the BehaviorSubject
-        this.displayRecipeStepsSubject
-          .pipe(take(1))
-          .subscribe((displayRecipeSteps) => {
-            const updatedRecipeStep: any = {
-              title: result.title,
-              description: result.description,
-              sequence: displayRecipeStep.sequence,
-              photoURL: result.photoURL,
-              toUpdate: true,
-              stepID: displayRecipeStep.stepID,
-              recipeStepID: displayRecipeStep.recipeStepID,
-              recipeID: displayRecipeStep.recipeID,
-            };
+              // Replace the displayRecipeSteps entry matching the recipeStepID with the updatedRecipeStep
+              const index = displayRecipeSteps.findIndex(
+                (step) => step.recipeStepID === displayRecipeStep.recipeStepID
+              );
+              displayRecipeSteps[index] = updatedRecipeStep;
 
-            // Replace the displayRecipeSteps entry matching the recipeStepID with the updatedRecipeStep
-            const index = displayRecipeSteps.findIndex(
-              (step) => step.recipeStepID === displayRecipeStep.recipeStepID
-            );
-            displayRecipeSteps[index] = updatedRecipeStep;
-
-            // Push the updated steps back into the BehaviorSubject
-            this.displayRecipeStepsSubject.next(displayRecipeSteps);
-          });
-      }
-    });
+              // Push the updated steps back into the BehaviorSubject
+              this.displayRecipeStepsSubject.next(displayRecipeSteps);
+            });
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open');
+    }
   }
 
   checkSequence() {
@@ -334,73 +350,93 @@ export class RecipeStepsModalComponent {
   onDeleteClick(displayRecipeStep: any, index: number) {
     this.activateModalForRow(index);
     if (displayRecipeStep.recipeStepID) {
-      const dialogRef = this.dialog.open(DeleteRecipeStepModalComponent, {
-        data: {
-          recipeStep: displayRecipeStep,
+      const dialogRef = this.modalService.open(
+        DeleteRecipeStepModalComponent,
+        {
+          data: {
+            recipeStep: displayRecipeStep,
+          },
         },
-      });
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.deactivateModalForRow();
+          if (result === 'success') {
+            this.modalService.open(
+              DeleteRequestConfirmationModalComponent,
+              {
+                data: {
+                  deleteSuccessMessage:
+                    'Step successfully removed from recipe!',
+                },
+              },
+              2,
+              true
+            );
 
-      dialogRef.afterClosed().subscribe((result) => {
-        this.deactivateModalForRow();
-        if (result === 'success') {
-          this.dialog.open(DeleteRequestConfirmationModalComponent, {
-            data: {
-              deleteSuccessMessage: 'Step successfully removed from recipe!',
-            },
-          });
+            // Compose a new 'updatedDisplayRecipeSteps' list
+            this.displayRecipeSteps$
+              .pipe(take(1))
+              .subscribe((displayRecipeSteps) => {
+                let updatedDisplayRecipeSteps = [...displayRecipeSteps];
 
-          // Compose a new 'updatedDisplayRecipeSteps' list
-          this.displayRecipeSteps$
-            .pipe(take(1))
-            .subscribe((displayRecipeSteps) => {
-              let updatedDisplayRecipeSteps = [...displayRecipeSteps];
+                // Retrieve the latest recipe steps from the store
+                this.store
+                  .select(selectRecipeStepsByID(this.recipe.recipeID))
+                  .pipe(take(1))
+                  .subscribe((recipeSteps) => {
+                    recipeSteps.forEach((freshStep) => {
+                      const correspondingStep = updatedDisplayRecipeSteps.find(
+                        (step) => step.recipeStepID === freshStep.recipeStepID
+                      );
+                      if (correspondingStep) {
+                        correspondingStep.sequence = freshStep.sequence;
+                      }
+                    });
 
-              // Retrieve the latest recipe steps from the store
-              this.store
-                .select(selectRecipeStepsByID(this.recipe.recipeID))
-                .pipe(take(1))
-                .subscribe((recipeSteps) => {
-                  recipeSteps.forEach((freshStep) => {
-                    const correspondingStep = updatedDisplayRecipeSteps.find(
-                      (step) => step.recipeStepID === freshStep.recipeStepID
+                    // Remove the deleted recipe step
+                    updatedDisplayRecipeSteps =
+                      updatedDisplayRecipeSteps.filter(
+                        (step) =>
+                          step.recipeStepID !== displayRecipeStep.recipeStepID
+                      );
+
+                    // Decrement the sequence for 'toAdd' === true or 'sequenceChanged' === true
+                    updatedDisplayRecipeSteps.forEach((step) => {
+                      if (
+                        step.toAdd === true ||
+                        (step.sequenceChanged === true &&
+                          step.sequence > displayRecipeStep.sequence)
+                      ) {
+                        step.sequence--;
+                      }
+                    });
+
+                    // Update the displayRecipeStepsSubject
+                    this.displayRecipeStepsSubject.next(
+                      updatedDisplayRecipeSteps
                     );
-                    if (correspondingStep) {
-                      correspondingStep.sequence = freshStep.sequence;
-                    }
                   });
-
-                  // Remove the deleted recipe step
-                  updatedDisplayRecipeSteps = updatedDisplayRecipeSteps.filter(
-                    (step) =>
-                      step.recipeStepID !== displayRecipeStep.recipeStepID
-                  );
-
-                  // Decrement the sequence for 'toAdd' === true or 'sequenceChanged' === true
-                  updatedDisplayRecipeSteps.forEach((step) => {
-                    if (
-                      step.toAdd === true ||
-                      (step.sequenceChanged === true &&
-                        step.sequence > displayRecipeStep.sequence)
-                    ) {
-                      step.sequence--;
-                    }
-                  });
-
-                  // Update the displayRecipeStepsSubject
-                  this.displayRecipeStepsSubject.next(
-                    updatedDisplayRecipeSteps
-                  );
-                });
-            });
-        } else if (result) {
-          this.dialog.open(DeleteRequestErrorModalComponent, {
-            data: {
-              error: result,
-              deleteFailureMessage: 'Step could not be removed from recipe.',
-            },
-          });
-        }
-      });
+              });
+          } else if (result) {
+            this.modalService.open(
+              DeleteRequestErrorModalComponent,
+              {
+                data: {
+                  error: result,
+                  deleteFailureMessage:
+                    'Step could not be removed from recipe.',
+                },
+              },
+              2,
+              true
+            );
+          }
+        });
+      } else {
+        console.warn('A modal at level 2 is already open');
+      }
     } else {
       // Update the steps in the BehaviorSubject for local removal
       this.displayRecipeSteps$.pipe(take(1)).subscribe((steps) => {
@@ -578,13 +614,18 @@ export class RecipeStepsModalComponent {
                   console.error(
                     `Failed to update Recipe Step: ${error.message}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
               })
             );

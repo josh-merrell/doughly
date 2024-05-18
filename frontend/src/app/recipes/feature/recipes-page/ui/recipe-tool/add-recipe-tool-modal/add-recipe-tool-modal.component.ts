@@ -26,6 +26,7 @@ import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-requ
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import { AddToolModalComponent } from 'src/app/kitchen/feature/tools/ui/add-tool-modal/add-tool-modal.component';
 import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-add-recipe-tool-modal',
@@ -53,7 +54,8 @@ export class AddRecipeToolModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {
     this.tools$ = this.store.select(selectTools);
     this.isAdding$ = this.store.select(selectAdding);
@@ -73,34 +75,51 @@ export class AddRecipeToolModalComponent {
   }
 
   onAddNewTool(): void {
-    const dialogRef = this.dialog.open(AddToolModalComponent, {
-      data: {},
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: {
-            result: result,
-            addSuccessMessage: 'Tool added successfully!',
-          },
-        });
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            result: result,
-            addErrorMessage: 'Failed to add tool.',
-          },
-        });
-      }
-    });
+    const dialogRef = this.modalService.open(
+      AddToolModalComponent,
+      {
+        data: {},
+      },
+      3
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.modalService.open(
+            AddRequestConfirmationModalComponent,
+            {
+              data: {
+                result: result,
+                addSuccessMessage: 'Tool added successfully!',
+              },
+            },
+            3,
+            true
+          );
+        } else if (result) {
+          this.modalService.open(
+            AddRequestErrorModalComponent,
+            {
+              data: {
+                result: result,
+                addErrorMessage: 'Failed to add tool.',
+              },
+            },
+            3,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 3 is already open.');
+    }
   }
 
   onSubmit() {
     const formValue = this.form.value;
     const newRecipeTool = {
       ...formValue,
-      quantity: parseInt(formValue.quantity, 10)
+      quantity: parseInt(formValue.quantity, 10),
     };
     this.dialogRef.close(newRecipeTool);
   }

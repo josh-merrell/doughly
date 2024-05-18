@@ -24,6 +24,7 @@ import {
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { StringsService } from 'src/app/shared/utils/strings';
 
@@ -117,7 +118,8 @@ export class SelectFreeTierSubscriptionsModalComponent {
     private recipeService: RecipeService,
     private dialog: MatDialog,
     private router: Router,
-    private dialogRef: MatDialogRef<SelectFreeTierSubscriptionsModalComponent>
+    private dialogRef: MatDialogRef<SelectFreeTierSubscriptionsModalComponent>,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -212,24 +214,35 @@ export class SelectFreeTierSubscriptionsModalComponent {
       )
     ) {
       this.isLoading.set(true);
-      this.recipeService.setFreeTierSubscribed(this.selectedRecipeIDs())
+      this.recipeService
+        .setFreeTierSubscribed(this.selectedRecipeIDs())
         .subscribe((error) => {
           this.isLoading.set(false);
           if (error) {
-            this.dialog.open(ErrorModalComponent, {
-              maxWidth: '380px',
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
+            this.modalService.open(
+              ErrorModalComponent,
+              {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
               },
-            });
+              2,
+              true
+            );
           } else {
             this.store.dispatch(RecipeActions.loadRecipes());
-            this.dialog.open(ConfirmationModalComponent, {
-              data: {
-                confirmationMessage: 'Recipe Subscription selection updated',
+            this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                data: {
+                  confirmationMessage: 'Recipe Subscription selection updated',
+                },
               },
-            });
+              2,
+              true
+            );
             this.router.navigate(['/recipes/discover']);
             this.dialogRef.close();
           }

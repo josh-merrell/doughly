@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 @Component({
   selector: 'dl-upgrade-page',
   standalone: true,
@@ -28,14 +29,16 @@ export class UpgradePageComponent {
   public isLoading: WritableSignal<boolean> = signal(false);
   public view: WritableSignal<string> = signal('overview');
   public subscribeSKUs: WritableSignal<GlassfySku[]> = signal([]);
-  public selectedIdentifier: WritableSignal<string> =
-    signal('doughly_premium_6months_17.94');
+  public selectedIdentifier: WritableSignal<string> = signal(
+    'doughly_premium_6months_17.94'
+  );
   constructor(
     public dialog: MatDialog,
     private router: Router,
     private productService: ProductService,
     public stringsService: StringsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -75,51 +78,74 @@ export class UpgradePageComponent {
 
   async makePurchase(skuId: string) {
     // get sku with matching 'skuId'
-    const sku = this.subscribeSKUs().find(
-      (sku) => sku.skuId === skuId
-    );
+    const sku = this.subscribeSKUs().find((sku) => sku.skuId === skuId);
     if (sku) {
       this.isLoading.set(true);
       const result = await this.productService.purchase(sku);
       this.isLoading.set(false);
       if (result.result === 'no permissions') {
-        this.dialog.open(ErrorModalComponent, {
-          data: {
-            errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
-            statusCode: '500',
+        this.modalService.open(
+          ErrorModalComponent,
+          {
+            data: {
+              errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
+              statusCode: '500',
+            },
           },
-        });
+          1,
+          true
+        );
       } else if (result.result === 'cancelled') {
-        this.dialog.open(ErrorModalComponent, {
-          data: {
-            errorMessage: `Purchase cancelled. Please try again.`,
-            statusCode: '500',
+        this.modalService.open(
+          ErrorModalComponent,
+          {
+            data: {
+              errorMessage: `Purchase cancelled. Please try again.`,
+              statusCode: '500',
+            },
           },
-        });
+          1,
+          true
+        );
       } else if (result.result === 'alreadyOwned') {
-        this.dialog.open(ErrorModalComponent, {
-          data: {
-            errorMessage: `You already have this. Please sign out and log back in to refresh.`,
-            statusCode: '500',
+        this.modalService.open(
+          ErrorModalComponent,
+          {
+            data: {
+              errorMessage: `You already have this. Please sign out and log back in to refresh.`,
+              statusCode: '500',
+            },
           },
-        });
+          1,
+          true
+        );
       } else if (result.result === 'error') {
-        this.dialog.open(ErrorModalComponent, {
-          data: {
-            errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
-            statusCode: '500',
+        this.modalService.open(
+          ErrorModalComponent,
+          {
+            data: {
+              errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
+              statusCode: '500',
+            },
           },
-        });
+          1,
+          true
+        );
       } else {
         setTimeout(() => {
           this.authService.refreshProfile();
         }, 1500);
-        this.dialog.open(ConfirmationModalComponent, {
-          maxWidth: '380px',
-          data: {
-            confirmationMessage: 'Purchase successful!',
+        this.modalService.open(
+          ConfirmationModalComponent,
+          {
+            maxWidth: '380px',
+            data: {
+              confirmationMessage: 'Purchase successful!',
+            },
           },
-        });
+          1,
+          true
+        );
       }
       this.router.navigate(['/recipes/discover']);
     }

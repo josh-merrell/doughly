@@ -11,6 +11,7 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { selectError as selectErrorProfile, selectUpdating as selectUpdatingProfile } from 'src/app/profile/state/profile-selectors';
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-edit-profile-modal',
@@ -44,7 +45,8 @@ export class EditProfileModalComponent {
     public dialogRef: MatDialogRef<EditProfileModalComponent>,
     public authService: AuthService,
     private store: Store,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private modalService: ModalService
   ) {
   }
 
@@ -90,13 +92,13 @@ export class EditProfileModalComponent {
             console.error(
               `Error updating profile: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.dialog.open(ErrorModalComponent, {
+            this.modalService.open(ErrorModalComponent, {
               maxWidth: '380px',
               data: {
                 errorMessage: error.message,
                 statusCode: error.statusCode,
               },
-            });
+            }, 2, true);
           } else {
             this.dialogRef.close('success');
           }

@@ -53,6 +53,7 @@ import {
   selectFriendByUserID,
 } from 'src/app/profile/state/profile-selectors';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-edit-recipe-modal',
@@ -102,7 +103,8 @@ export class EditRecipeModalComponent {
     private dialogRef: MatDialogRef<EditRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialog: MatDialog,
-    private pushTokenService: PushTokenService
+    private pushTokenService: PushTokenService,
+    private modalService: ModalService
   ) {
     this.setForm();
   }
@@ -309,13 +311,13 @@ export class EditRecipeModalComponent {
               console.error(
                 `Recipe update failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 2, true);
             } else {
               this.sendPushNotification();
               this.dialogRef.close('success');

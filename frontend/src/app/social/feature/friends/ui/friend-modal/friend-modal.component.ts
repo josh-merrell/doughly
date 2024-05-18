@@ -41,6 +41,7 @@ import { LogService } from 'src/app/shared/utils/logService';
 import { Log } from 'src/app/shared/state/shared-state';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-friend-modal',
@@ -79,7 +80,8 @@ export class FriendModalComponent {
     public router: Router,
     public dialog: MatDialog,
     private logService: LogService,
-    private pushTokenService: PushTokenService
+    private pushTokenService: PushTokenService,
+    private modalService: ModalService
   ) {
     this.buttonTexts.set({ friendButton: '', followButton: '' });
 
@@ -233,13 +235,18 @@ export class FriendModalComponent {
                   console.error(
                     `Error deleting friendship: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 this.isLoading.set(false);
               });
@@ -268,13 +275,18 @@ export class FriendModalComponent {
                   console.error(
                     `Error accepting friendship: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 // notify user of confirmed friendship
                 console.log('Sending push notification to new friend');
@@ -305,13 +317,18 @@ export class FriendModalComponent {
                   console.error(
                     `Error canceling friendship request: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 this.isLoading.set(false);
                 this.dialogRef.close();
@@ -347,13 +364,18 @@ export class FriendModalComponent {
                 console.error(
                   `Error deleting followship: ${error.message}, CODE: ${error.statusCode}`
                 );
-                this.dialog.open(ErrorModalComponent, {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: error.message,
-                    statusCode: error.statusCode,
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
                   },
-                });
+                  2,
+                  true
+                );
               }
               this.isLoading.set(false);
             });
@@ -380,13 +402,18 @@ export class FriendModalComponent {
                 console.error(
                   `Error adding followship: ${error.message}, CODE: ${error.statusCode}`
                 );
-                this.dialog.open(ErrorModalComponent, {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: error.message,
-                    statusCode: error.statusCode,
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
+                    },
                   },
-                });
+                  2,
+                  true
+                );
               }
               // notify user of new follower
               this.sendPushNotification('notifyNewFollower');
@@ -438,38 +465,43 @@ export class FriendModalComponent {
             this.friend.notifyFriendRequest === 'Email Only'
           )
         ) {
-          this.pushTokenService.sendPushNotificationToUserNoCheck(
-            this.friend.userID,
-            'notifyConfirmFriendship',
-            {
-              friendName: `${this.myProfile().nameFirst} ${
-                this.myProfile().nameLast
-              }`,
-              friendUserID: this.myProfile().userID,
-            }
-          )
-          .subscribe();
+          this.pushTokenService
+            .sendPushNotificationToUserNoCheck(
+              this.friend.userID,
+              'notifyConfirmFriendship',
+              {
+                friendName: `${this.myProfile().nameFirst} ${
+                  this.myProfile().nameLast
+                }`,
+                friendUserID: this.myProfile().userID,
+              }
+            )
+            .subscribe();
         }
         return null;
       case 'notifyNewFollower':
-        console.log('Sending push notification to new followee', this.friend.notifyNewFollower);
+        console.log(
+          'Sending push notification to new followee',
+          this.friend.notifyNewFollower
+        );
         if (
           !(
             this.friend.notifyNewFollower === 'None' ||
             this.friend.notifyNewFollower === 'Email Only'
           )
         ) {
-          this.pushTokenService.sendPushNotificationToUserNoCheck(
-            this.friend.userID,
-            'notifyNewFollower',
-            {
-              followerName: `${this.myProfile().nameFirst} ${
-                this.myProfile().nameLast
-              }`,
-              followerUserID: this.myProfile().userID,
-            }
-          )
-          .subscribe();
+          this.pushTokenService
+            .sendPushNotificationToUserNoCheck(
+              this.friend.userID,
+              'notifyNewFollower',
+              {
+                followerName: `${this.myProfile().nameFirst} ${
+                  this.myProfile().nameLast
+                }`,
+                followerUserID: this.myProfile().userID,
+              }
+            )
+            .subscribe();
         }
         return null;
       default:

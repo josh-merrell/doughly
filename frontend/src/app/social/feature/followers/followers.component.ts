@@ -8,8 +8,7 @@ import { selectFollowers } from 'src/app/profile/state/profile-selectors';
 import { selectFollowing } from 'src/app/profile/state/profile-selectors';
 import { FriendModalComponent } from '../friends/ui/friend-modal/friend-modal.component';
 import { FriendCardComponent } from '../friends/ui/friend-card/friend-card.component';
-
-
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-followers',
@@ -39,7 +38,11 @@ export class FollowersComponent {
     }
   });
 
-  constructor(private store: Store, public dialog: MatDialog) {}
+  constructor(
+    private store: Store,
+    public dialog: MatDialog,
+    public modalService: ModalService
+  ) {}
 
   ngOnInit(): void {
     // this.store.dispatch(ProfileActions.loadProfile({}));
@@ -59,10 +62,14 @@ export class FollowersComponent {
   }
 
   onPersonClick(person: Profile): void {
-    this.dialog.open(FriendModalComponent, {
-      data: person,
-      width: '80%',
-      maxWidth: '540px',
-    });
+    this.modalService.open(
+      FriendModalComponent,
+      {
+        data: person,
+        width: '80%',
+        maxWidth: '540px',
+      },
+      1
+    );
   }
 }

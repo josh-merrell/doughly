@@ -34,6 +34,7 @@ import {
 } from 'src/app/kitchen/feature/tools/state/tool-selectors';
 import { ToolStockActions } from '../../state/tool-stock-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-add-tool-stock-modal',
@@ -68,7 +69,8 @@ export class AddToolStockModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {}
 
   setForm() {
@@ -136,13 +138,13 @@ export class AddToolStockModalComponent {
               console.error(
                 `Tool stock add failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 2, true);
             } else {
               this.dialogRef.close('success');
             }

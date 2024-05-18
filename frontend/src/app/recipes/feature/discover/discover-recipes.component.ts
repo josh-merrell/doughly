@@ -32,6 +32,7 @@ import {
   selectUpdating,
 } from 'src/app/profile/state/profile-selectors';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-discover-recipes',
@@ -58,7 +59,8 @@ export class DiscoverRecipesComponent {
     private el: ElementRef,
     private dialog: MatDialog,
     private stringsService: StringsService,
-    private extraStuffService: ExtraStuffService
+    private extraStuffService: ExtraStuffService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -208,40 +210,57 @@ export class DiscoverRecipesComponent {
     if (onboardingState === 1) {
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.welcomeToDoughly,
-          currentStep: 1,
-          showNextButton: true,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.welcomeToDoughly,
+            currentStep: 1,
+            showNextButton: true,
+          },
+          position: {
+            top: '50%',
+          },
         },
-        position: {
-          top: '50%',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.showOnboardingBadge.set(true);
-        this.onboardingModalOpen.set(false);
-        if (result === 'nextClicked') {
-          this.onboardingCallback();
-        }
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.showOnboardingBadge.set(true);
+          this.onboardingModalOpen.set(false);
+          if (result === 'nextClicked') {
+            this.onboardingCallback();
+          }
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     } else if (onboardingState === 2) {
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.discoverPageOverview,
-          currentStep: 2,
-          showNextButton: false,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.discoverPageOverview,
+            currentStep: 2,
+            showNextButton: false,
+          },
+          position: {
+            top: '20%',
+          },
         },
-        position: {
-          top: '20%',
-        },
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
-      });
+        1,
+        true
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe(() => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     } else this.router.navigate(['/tempRoute']);
   }
 
