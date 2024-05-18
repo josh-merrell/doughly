@@ -198,7 +198,6 @@ export class IngredientsComponent {
         }
       });
     } else {
-      console.warn(`A modal at level 1 is already open.`);
     }
   }
 
@@ -211,7 +210,6 @@ export class IngredientsComponent {
       1
     );
     if (ref) {
-      console.warn(`A modal at level 1 is already open.`);
       ref.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.modalService.open(
@@ -304,7 +302,6 @@ export class IngredientsComponent {
         }
       });
     } else {
-      console.warn(`A modal at level 1 is already open.`);
     }
   }
 

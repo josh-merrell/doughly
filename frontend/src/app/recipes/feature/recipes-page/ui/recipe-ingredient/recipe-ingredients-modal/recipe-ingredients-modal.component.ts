@@ -233,7 +233,6 @@ export class RecipeIngredientsModalComponent {
           }
         });
       } else {
-        console.warn('A modal at level 2 is already open!');
       }
     } else {
       this.ingredientsToAdd = this.ingredientsToAdd.filter(
@@ -306,7 +305,6 @@ export class RecipeIngredientsModalComponent {
             }
           });
         } else {
-          console.warn('A modal at level 2 is already open');
         }
       });
   }
@@ -350,7 +348,6 @@ export class RecipeIngredientsModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open');
     }
   }
 

@@ -282,7 +282,6 @@ export class RecipeListComponent {
             }
           });
         } else {
-          console.warn('A modal at level 1 is already open.');
         }
       } else {
         allowCreate = true;
@@ -324,7 +323,6 @@ export class RecipeListComponent {
           this.location.go('/recipes/created');
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     }
   }
@@ -373,7 +371,6 @@ export class RecipeListComponent {
           }
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     } else if (recipe.status === 'noTools') {
       //else if the recipe has status of 'noTools', show the 'addRecipeTools' modal
@@ -415,7 +412,6 @@ export class RecipeListComponent {
           }
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     } else if (recipe.status === 'noSteps') {
       //else if the recipe has status of 'noSteps', show the 'addRecipeSteps' modal
@@ -457,7 +453,6 @@ export class RecipeListComponent {
           }
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     } else {
       this.router.navigate(['/recipe', recipe.recipeID]);
@@ -490,7 +485,6 @@ export class RecipeListComponent {
           this.router.navigate(['/tempRoute']);
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     }
   }

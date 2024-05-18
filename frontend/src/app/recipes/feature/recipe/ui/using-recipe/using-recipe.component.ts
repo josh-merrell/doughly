@@ -265,7 +265,6 @@ export class UsingRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open.');
     }
   }
 

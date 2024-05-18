@@ -218,7 +218,6 @@ export class RecipeToolsModalComponent {
           }
         });
       } else {
-        console.warn('A modal at level 2 is already open.');
       }
     } else {
       this.toolsToAdd = this.toolsToAdd.filter(
@@ -282,7 +281,6 @@ export class RecipeToolsModalComponent {
             }
           });
         } else {
-          console.warn('A modal at level 2 is already open.');
         }
       });
   }

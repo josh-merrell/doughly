@@ -114,7 +114,6 @@ export class OnboardingComponent {
               }
             });
           } else {
-            console.log('A modal at level 1 is already open.');
           }
         }
       }

@@ -412,7 +412,7 @@ export class UserRecipeComponent {
       if (ref) {
         ref.afterClosed().subscribe((result) => {
           if (result === 'success') {
-            const confirmDialogRef = this.modalService.open(
+            this.modalService.open(
               ConfirmationModalComponent,
               {
                 data: {
@@ -424,17 +424,10 @@ export class UserRecipeComponent {
               1,
               true
             );
-            if (confirmDialogRef) {
-              confirmDialogRef.afterClosed().subscribe(() => {
-                this.router.navigate(['/recipes']);
-              });
-            } else {
-              console.warn('A modal at level 1 is already open');
-            }
+            this.router.navigate(['/recipes']);
           }
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     }
   }
@@ -476,7 +469,6 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
   onDeleteClick() {
@@ -504,7 +496,6 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
   // ***************************************************
@@ -717,7 +708,6 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
   editRecipeTools() {
@@ -748,7 +738,6 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
   viewShoppingList() {
@@ -813,7 +802,6 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
 
@@ -881,7 +869,6 @@ export class UserRecipeComponent {
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     } else if (state === 13) {
       this.showOnboardingBadge.set(false);
@@ -910,7 +897,6 @@ export class UserRecipeComponent {
           } else this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     } else if (state === 14) {
       this.showOnboardingBadge.set(false);
@@ -933,7 +919,6 @@ export class UserRecipeComponent {
       );
       if (ref) {
       } else {
-        console.warn('A modal at level 1 is already open');
       }
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -943,7 +928,6 @@ export class UserRecipeComponent {
           } else this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     } else if (state === 15) {
       this.showOnboardingBadge.set(false);
@@ -965,7 +949,6 @@ export class UserRecipeComponent {
       );
       if (ref) {
       } else {
-        console.warn('A modal at level 1 is already open');
       }
       if (ref) {
         ref.afterClosed().subscribe(() => {
@@ -998,7 +981,6 @@ export class UserRecipeComponent {
             });
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     }
   }

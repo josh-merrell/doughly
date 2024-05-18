@@ -208,6 +208,10 @@ export class VisionAddRecipeModalComponent {
     await this.uploadCroppedImage('selectedFile');
 
     try {
+      // if Onboarding is active, don't allow user to close modal
+      if (this.profile().onboardingState === 12) {
+        this.dialogRef.disableClose = true;
+      }
       // Start listening for SSE messages relating to the recipe vision progress
       this.recipeProgressService.startListening().subscribe({
         next: (message) => {
@@ -358,7 +362,6 @@ export class VisionAddRecipeModalComponent {
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 3 is already open');
       }
     }
   }

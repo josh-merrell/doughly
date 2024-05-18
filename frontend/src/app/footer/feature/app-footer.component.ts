@@ -205,7 +205,6 @@ export class AppFooterComponent {
         this.closeMenu();
       });
     } else {
-      console.log('A modal at level 1 is already open.');
     }
   }
 }

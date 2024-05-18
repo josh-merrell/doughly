@@ -131,7 +131,6 @@ export class FriendsComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open.');
     }
   }
 
@@ -189,7 +188,6 @@ export class FriendsComponent {
           }
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     } else if (onboardingState === 7) {
       this.showOnboardingBadge.set(false);
@@ -215,7 +213,6 @@ export class FriendsComponent {
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     }
   }

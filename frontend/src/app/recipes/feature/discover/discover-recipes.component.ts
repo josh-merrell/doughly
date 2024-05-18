@@ -233,7 +233,6 @@ export class DiscoverRecipesComponent {
           }
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     } else if (onboardingState === 2) {
       this.reopenOnboardingModal.set(false);
@@ -259,7 +258,6 @@ export class DiscoverRecipesComponent {
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     } else this.router.navigate(['/tempRoute']);
   }

@@ -21,6 +21,11 @@ export class ModalService {
     level: number = 1,
     allowMultipleSameLevel: boolean = false
   ): MatDialogRef<T> | null {
+    console.log(`TRYING TO OPEN MODAL. COMPONENT: `, component)
+    if (!component || component === null) {
+      console.error(`No component ref provided, not opening modal.`);
+      return null;
+    }
     if (this.isLevelOpen(level) && !allowMultipleSameLevel) {
       console.warn(`A modal at level ${level} is already open.`);
       return null;

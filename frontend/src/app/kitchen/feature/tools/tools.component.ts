@@ -129,7 +129,6 @@ export class ToolsComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open.');
     }
   }
 

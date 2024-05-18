@@ -115,7 +115,6 @@ export class OnboardingMessageModalComponent {
                 this.router.navigate(['/login']);
               });
             } else {
-              console.warn('A modal at level 2 is already open');
             }
           }
         });

@@ -25,6 +25,7 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
 @Component({
   selector: 'dl-add-recipe-modal',
   standalone: true,
@@ -94,6 +95,7 @@ export class AddRecipeModalComponent {
   }
 
   private checkUrlAndAct(fullUrl: string) {
+    console.log('fullUrl', fullUrl)
     if (fullUrl.includes('/vision')) {
       this.onVisionAddClick();
     }
@@ -121,11 +123,11 @@ export class AddRecipeModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open.');
     }
   }
 
   onVisionAddClick(): void {
+    console.log('onVisionAddClick')
     // first ensure user has at least one AI credit
     if (this.profile().permAITokenCount < 1) {
       const dialogRef = this.modalService.open(
@@ -149,9 +151,17 @@ export class AddRecipeModalComponent {
           }
         });
       } else {
-        console.warn('A modal at level 2 is already open.');
       }
     } else {
+      // if onboarding state is 11, progress to 12
+      if (this.profile().onboardingState === 11) {
+        this.store.dispatch(
+          ProfileActions.updateProfileProperty({
+            property: 'onboardingState',
+            value: 12,
+          })
+        );
+      }
       // update url to include '/vision' if it's not already there
       this.location.go('/recipes/created/add/vision');
 
@@ -171,8 +181,7 @@ export class AddRecipeModalComponent {
           }
         });
       } else {
-        console.warn('A modal at level 2 is already open.');
-      }
+     }
     }
   }
 
@@ -199,7 +208,6 @@ export class AddRecipeModalComponent {
           }
         });
       } else {
-        console.warn('A modal at level 2 is already open.');
       }
     } else {
       // update url to include '/from-url' if it's not already there
@@ -207,7 +215,7 @@ export class AddRecipeModalComponent {
 
       const dialogRef = this.modalService.open(FromUrlAddRecipeModalComponent, {
         width: '90%',
-      });
+      }, 2);
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
           // remove '/from-url' from the url
@@ -217,7 +225,6 @@ export class AddRecipeModalComponent {
           }
         });
       } else {
-        console.warn('A modal at level 2 is already open.');
       }
     }
   }
@@ -266,7 +273,6 @@ export class AddRecipeModalComponent {
           } else this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 2 is already open.');
       }
     } else if (onboardingState === 10) {
       this.showOnboardingBadge.set(false);
@@ -294,7 +300,6 @@ export class AddRecipeModalComponent {
           } else this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 2 is already open.');
       }
     } else if (onboardingState === 11) {
       this.showOnboardingBadge.set(false);
@@ -323,8 +328,9 @@ export class AddRecipeModalComponent {
           } else this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 2 is already open.');
       }
+    } else if (onboardingState === 12) {
+      this.onVisionAddClick();
     }
   }
 

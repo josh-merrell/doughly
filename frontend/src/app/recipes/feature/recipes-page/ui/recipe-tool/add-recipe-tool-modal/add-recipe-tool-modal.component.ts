@@ -111,7 +111,6 @@ export class AddRecipeToolModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 3 is already open.');
     }
   }
 

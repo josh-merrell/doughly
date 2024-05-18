@@ -389,7 +389,6 @@ export class PublicRecipeComponent {
             }
           });
         } else {
-          console.warn('A modal at level 1 is already open.');
         }
       } else {
         allowSubscribe = true;
@@ -451,7 +450,6 @@ export class PublicRecipeComponent {
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     }
     if (onboardingState === 4) {
