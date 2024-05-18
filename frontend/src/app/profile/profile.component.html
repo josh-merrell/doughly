@@ -227,20 +227,26 @@
   </div>
   <!-- Links for Privacy, Help, etc -->
   <div class="items-left mt-dl-3 flex flex-col bg-white pb-dl-3">
-    <span class="ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-blue-5"
+    <span class="mb-dl-2 ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-blue-5"
       >Links</span
     >
-    <!--Privacy-->
-    <div (click)="onPrivacyClick()" class="ml-dl-5 flex flex-col">
-      <span class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2"
-        >Privacy Policy</span
-      >
-    </div>
-    <!--Delete Account Data-->
-    <div (click)="onDeleteAccountClick()" class="ml-dl-5 flex flex-col">
-      <span class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2"
-        >Delete Account and Data</span
-      >
+    <div class="ml-dl-2 flex flex-col">
+      <!--Help-->
+      <div (click)="onHelpClick()" class="mb-dl-3 ml-dl-5 flex flex-col">
+        <span class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2">Help</span>
+      </div>
+      <!--Privacy-->
+      <div (click)="onPrivacyClick()" class="mb-dl-3 ml-dl-5 flex flex-col">
+        <span class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2"
+          >Privacy Policy</span
+        >
+      </div>
+      <!--Delete Account Data-->
+      <div (click)="onDeleteAccountClick()" class="ml-dl-5 flex flex-col">
+        <span class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2"
+          >Delete Account and Data</span
+        >
+      </div>
     </div>
   </div>
   <!-- Spacer Div-->

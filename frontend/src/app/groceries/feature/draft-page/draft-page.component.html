@@ -71,6 +71,7 @@
         </div>
       </div>
       <button
+      *ngIf="selectedRecipeID() !== 0"
         type="button"
         class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3"
         [ngClass]="{

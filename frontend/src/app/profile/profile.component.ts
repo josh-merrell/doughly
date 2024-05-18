@@ -15,6 +15,7 @@ import { EditPhotoModalComponent } from './ui/edit-photo-modal/edit-photo-modal.
 import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/confirmation-modal.component';
 import { Router } from '@angular/router';
 import { DeleteProfileModalComponent } from './ui/delete-profile-modal/delete-profile-modal.component';
+import { Browser } from '@capacitor/browser';
 
 @Component({
   selector: 'dl-profile',
@@ -128,6 +129,11 @@ export class ProfileComponent {
 
   onPrivacyClick() {
     this.router.navigate(['/privacy']);
+  }
+
+  onHelpClick() {
+    // external naviegation to "help.doughly.co"
+    Browser.open({ url: 'https://help.doughly.co' });
   }
 
   onDeleteAccountClick() {
