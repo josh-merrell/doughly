@@ -30,6 +30,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-from-url-add-recipe-modal',
@@ -70,7 +71,8 @@ export class FromUrlAddRecipeModalComponent {
     private ngZone: NgZone,
     private router: Router,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: ModalService
   ) {}
 
   // for recipe photo
@@ -200,13 +202,13 @@ export class FromUrlAddRecipeModalComponent {
                 // remove the recipe photo if it was uploaded
                 this.removeFiles(true);
                 // show error modal
-                this.dialog.open(ErrorModalComponent, {
+                this.modalService.open(ErrorModalComponent, {
                   maxWidth: '380px',
                   data: {
                     errorMessage: `We couldn't add a recipe using that link. Make sure that web page has all details of a recipe and try again.`,
                     statusCode: error.statusCode,
                   },
-                });
+                }, 3, true);
               } else {
                 this.removeFiles(false);
                 this.recipeProgressService.stopListening();

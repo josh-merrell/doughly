@@ -35,6 +35,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MessagesModalComponent } from '../ui/messages-modal/messages-modal.component';
 import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'app-footer',
@@ -71,7 +72,8 @@ export class AppFooterComponent {
     public authService: AuthService,
     private location: Location,
     public dialog: MatDialog,
-    private redirectPathService: RedirectPathService
+    private redirectPathService: RedirectPathService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -191,11 +193,19 @@ export class AppFooterComponent {
   }
 
   onMessagesClick() {
-    const dialogRef = this.dialog.open(MessagesModalComponent, {
-      width: '440px',
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      this.closeMenu();
-    });
+    const dialogRef = this.modalService.open(
+      MessagesModalComponent,
+      {
+        width: '440px',
+      },
+      1
+    );
+    if (dialogRef) {
+      dialogRef!.afterClosed().subscribe((result: any) => {
+        this.closeMenu();
+      });
+    } else {
+      console.log('A modal at level 1 is already open.');
+    }
   }
 }

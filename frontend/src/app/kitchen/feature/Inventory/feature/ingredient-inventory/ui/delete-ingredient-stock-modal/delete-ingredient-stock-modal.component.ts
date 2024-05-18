@@ -14,6 +14,7 @@ import {
 } from '../../state/ingredient-stock-selectors';
 import { Observable, Subscription, filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-delete-ingredient-stock-modal',
@@ -29,7 +30,8 @@ export class DeleteIngredientStockModalComponent {
     public dialogRef: MatDialogRef<DeleteIngredientStockModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {}
 
   onSubmit(): void {
@@ -52,13 +54,13 @@ export class DeleteIngredientStockModalComponent {
             console.error(
               `Deleting Ingredient Stock failed: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.dialog.open(ErrorModalComponent, {
+            this.modalService.open(ErrorModalComponent, {
               maxWidth: '380px',
               data: {
                 message: error.message,
                 statusCode: error.statusCode,
               },
-            });
+            }, 2, true);
           } else {
             this.dialogRef.close('success');
           }

@@ -36,6 +36,7 @@ import { States } from 'src/app/shared/utils/types';
 import { HttpClient } from '@angular/common/http';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { Router } from '@angular/router';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-message-modal',
@@ -77,7 +78,8 @@ export class OnboardingMessageModalComponent {
     private authService: AuthService,
     private http: HttpClient,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -96,16 +98,25 @@ export class OnboardingMessageModalComponent {
             this.submitFailureMessage.set(
               `Unable to load Initial Account Data, try Again later. Error: ${res.error}`
             );
-            const ref = this.dialog.open(ErrorModalComponent, {
-              data: {
-                errorMessage: `Unable to load Initial Account Data, try Again later. Error: ${res.error}`,
-                statusCode: '500',
+            const ref = this.modalService.open(
+              ErrorModalComponent,
+              {
+                data: {
+                  errorMessage: `Unable to load Initial Account Data, try Again later. Error: ${res.error}`,
+                  statusCode: '500',
+                },
               },
-            });
-            ref.afterClosed().subscribe(() => {
-              this.authService.logout();
-              this.router.navigate(['/login']);
-            });
+              2,
+              true
+            );
+            if (ref) {
+              ref.afterClosed().subscribe(() => {
+                this.authService.logout();
+                this.router.navigate(['/login']);
+              });
+            } else {
+              console.warn('A modal at level 2 is already open');
+            }
           }
         });
     }

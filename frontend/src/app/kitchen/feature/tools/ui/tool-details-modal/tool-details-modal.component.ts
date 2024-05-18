@@ -38,6 +38,7 @@ import { DeleteToolModalComponent } from '../delete-tool-modal/delete-tool-modal
 import { selectRecipeIDsByToolID } from 'src/app/recipes/state/recipe-tool/recipe-tool-selectors';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-tool-details-modal',
@@ -65,7 +66,8 @@ export class ToolDetailsModalComponent {
     private store: Store,
     private recipeService: RecipeService,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {
     effect(() => {
       const profile = this.profile();
@@ -164,90 +166,113 @@ export class ToolDetailsModalComponent {
   }
 
   onAddStock() {
-    const dialogRef = this.dialog.open(AddToolStockModalComponent, {
+    const dialogRef = this.modalService.open(AddToolStockModalComponent, {
       data: {
         toolID: this.tool.toolID,
       },
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Tool Stock added`,
-          },
-        });
-      }
-    });
+    }, 2);
+    if (dialogRef) {
+      dialogRef!.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(ConfirmationModalComponent, {
+            data: {
+              confirmationMessage: `Tool Stock added`,
+            },
+          }, 2, true);
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open.');
+    }
   }
 
   openEditStockDialog(toolStockID: number) {
-    const dialogRef = this.dialog.open(EditToolStockModalComponent, {
+    const dialogRef = this.modalService.open(EditToolStockModalComponent, {
       data: {
         itemID: toolStockID,
       },
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Tool Stock edited`,
-          },
-        });
-      }
-    });
+    }, 2);
+    if (dialogRef) {
+      dialogRef!.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(ConfirmationModalComponent, {
+            data: {
+              confirmationMessage: `Tool Stock edited`,
+            },
+          }, 2, true);
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open.');
+    }
   }
 
   openEditToolDialog() {
-    const dialogRef = this.dialog.open(EditToolModalComponent, {
+    const dialogRef = this.modalService.open(EditToolModalComponent, {
       data: {
         itemID: this.tool.toolID,
       },
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Tool edited successfully`,
-          },
-        });
-      }
-    });
+    }, 2);
+    if (dialogRef) {
+      dialogRef!.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(ConfirmationModalComponent, {
+            data: {
+              confirmationMessage: `Tool edited successfully`,
+            },
+          }, 2, true);
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open.');
+    
+    }
   }
 
   openDeleteStockDialog(toolStockID: number) {
-    const dialogRef = this.dialog.open(DeleteToolStockModalComponent, {
+    const dialogRef = this.modalService.open(DeleteToolStockModalComponent, {
       data: {
         itemID: toolStockID,
         toolName: this.tool.name,
       },
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Tool Stock deleted`,
-          },
-        });
-      }
-    });
+    }, 2);
+    if (dialogRef) {
+      dialogRef!.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(ConfirmationModalComponent, {
+            data: {
+              confirmationMessage: `Tool Stock deleted`,
+            },
+          }, 2, true);
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open.');
+    
+    }
   }
 
   openDeleteToolDialog() {
-    const dialogRef = this.dialog.open(DeleteToolModalComponent, {
+    const dialogRef = this.modalService.open(DeleteToolModalComponent, {
       data: {
         itemID: this.tool.toolID,
         itemName: this.tool.name,
       },
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Tool deleted successfully`,
-          },
-        });
-        this.dialogRef.close();
-      }
-    });
+    }, 2);
+    if (dialogRef) {
+      dialogRef!.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(ConfirmationModalComponent, {
+            data: {
+              confirmationMessage: `Tool deleted successfully`,
+            },
+          }, 2, true);
+          this.dialogRef.close();
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open.');
+    
+    }
   }
 }

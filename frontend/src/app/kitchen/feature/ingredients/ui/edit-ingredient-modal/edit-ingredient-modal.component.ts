@@ -43,6 +43,7 @@ import { positiveFloatValidator, positiveIntegerValidator } from 'src/app/shared
 import { IngredientActions } from '../../state/ingredient-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { UnitService } from 'src/app/shared/utils/unitService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-edit-ingredient-modal',
@@ -79,7 +80,8 @@ export class EditIngredientModalComponent {
     private store: Store<any>,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private unitService: UnitService
+    private unitService: UnitService,
+    private modalService: ModalService
   ) {
     this.ingredients$ = this.store.select(selectIngredients);
   }
@@ -231,13 +233,13 @@ export class EditIngredientModalComponent {
             console.error(
               `Ingredient update failed: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.dialog.open(ErrorModalComponent, {
+            this.modalService.open(ErrorModalComponent, {
               maxWidth: '380px',
               data: {
                 errorMessage: error.message,
                 statusCode: error.statusCode,
               },
-            });
+            }, 2, true);
           } else {
             this.dialogRef.close('success');
           }

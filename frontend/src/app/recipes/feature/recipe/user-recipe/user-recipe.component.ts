@@ -69,6 +69,7 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { StringsService } from 'src/app/shared/utils/strings';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { filter, take } from 'rxjs';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -159,7 +160,8 @@ export class UserRecipeComponent {
     private recipeService: RecipeService,
     private profileService: ProfileService,
     private fractionService: FractionService,
-    private stringsService: StringsService
+    private stringsService: StringsService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -326,11 +328,16 @@ export class UserRecipeComponent {
         });
         this.store.dispatch(RecipeActions.clearNewRecipeID());
         // also open the ConfirmationModal
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Recipe added successfully! Edit details as needed.`,
+        this.modalService.open(
+          ConfirmationModalComponent,
+          {
+            data: {
+              confirmationMessage: `Recipe added successfully! Edit details as needed.`,
+            },
           },
-        });
+          1,
+          true
+        );
       }
     });
   }
@@ -391,72 +398,114 @@ export class UserRecipeComponent {
   onUnsubscribeClick() {
     this.closeMenu();
     if (this.recipeSubscription()) {
-      const dialogRef = this.dialog.open(UnsubscribeRecipeModalComponent, {
-        data: {
-          subscriptionID: this.recipeSubscription().subscriptionID,
-          title: this.recipe().title,
-          authorName: this.sourceAuthor()!.username,
+      const dialogRef = this.modalService.open(
+        UnsubscribeRecipeModalComponent,
+        {
+          data: {
+            subscriptionID: this.recipeSubscription().subscriptionID,
+            title: this.recipe().title,
+            authorName: this.sourceAuthor()!.username,
+          },
         },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          const confirmDialogRef = this.dialog.open(
-            ConfirmationModalComponent,
-            {
-              data: {
-                confirmationMessage: `Unsubscribed from ${this.recipe().title}`,
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            const confirmDialogRef = this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                data: {
+                  confirmationMessage: `Unsubscribed from ${
+                    this.recipe().title
+                  }`,
+                },
               },
+              1,
+              true
+            );
+            if (confirmDialogRef) {
+              confirmDialogRef.afterClosed().subscribe(() => {
+                this.router.navigate(['/recipes']);
+              });
+            } else {
+              console.warn('A modal at level 1 is already open');
             }
-          );
-          confirmDialogRef.afterClosed().subscribe(() => {
-            this.router.navigate(['/recipes']);
-          });
-        }
-      });
+          }
+        });
+      } else {
+        console.warn('A modal at level 1 is already open');
+      }
     }
   }
   onUpdateClick() {
     this.closeMenu();
-    const dialogRef = this.dialog.open(EditRecipeModalComponent, {
-      data: this.recipe(),
-      width: '90%',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result instanceof HttpErrorResponse) {
-        this.dialog.open(UpdateRequestErrorModalComponent, {
-          data: {
-            error: result,
-            updateFailureMessage: `Recipe could not be updated. Try again later.`,
-          },
-        });
-      } else if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Recipe updated!`,
-          },
-        });
-      }
-    });
+    const dialogRef = this.modalService.open(
+      EditRecipeModalComponent,
+      {
+        data: this.recipe(),
+        width: '90%',
+      },
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result instanceof HttpErrorResponse) {
+          this.modalService.open(
+            UpdateRequestErrorModalComponent,
+            {
+              data: {
+                error: result,
+                updateFailureMessage: `Recipe could not be updated. Try again later.`,
+              },
+            },
+            1,
+            true
+          );
+        } else if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Recipe updated!`,
+              },
+            },
+            1,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open');
+    }
   }
   onDeleteClick() {
     this.closeMenu();
-    const dialogRef = this.dialog.open(DeleteRecipeModalComponent, {
-      data: {
-        recipeID: this.recipeID(),
+    const dialogRef = this.modalService.open(
+      DeleteRecipeModalComponent,
+      {
+        data: {
+          recipeID: this.recipeID(),
+        },
       },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          maxWidth: '380px',
-          data: {
-            confirmationMessage: 'Recipe deleted successfully!',
-          },
-        });
-        //navigate to recipes page
-        this.router.navigate(['/recipes']);
-      }
-    });
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.modalService.open(ConfirmationModalComponent, {
+            maxWidth: '380px',
+            data: {
+              confirmationMessage: 'Recipe deleted successfully!',
+            },
+          });
+          //navigate to recipes page
+          this.router.navigate(['/recipes']);
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open');
+    }
   }
   // ***************************************************
 
@@ -641,83 +690,131 @@ export class UserRecipeComponent {
     return `${hours}h ${mins}m`;
   }
   editRecipeIngredients() {
-    const dialogRef = this.dialog.open(RecipeIngredientsModalComponent, {
-      data: {
-        recipe: {
-          recipeID: this.recipeID(),
+    const dialogRef = this.modalService.open(
+      RecipeIngredientsModalComponent,
+      {
+        data: {
+          recipe: {
+            recipeID: this.recipeID(),
+          },
         },
       },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: 'Recipe Ingredients edited successfully!',
-          },
-        });
-      }
-    });
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: 'Recipe Ingredients edited successfully!',
+              },
+            },
+            1,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open');
+    }
   }
   editRecipeTools() {
-    const dialogRef = this.dialog.open(RecipeToolsModalComponent, {
-      data: {
-        recipe: {
-          recipeID: this.recipeID(),
+    const dialogRef = this.modalService.open(
+      RecipeToolsModalComponent,
+      {
+        data: {
+          recipe: {
+            recipeID: this.recipeID(),
+          },
         },
       },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: 'Recipe Tools edited successfully!',
-          },
-        });
-      }
-    });
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: 'Recipe Tools edited successfully!',
+              },
+            },
+            1,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open');
+    }
   }
   viewShoppingList() {
-    this.dialog.open(RecipeShoppingListModalComponent, {
-      data: {
-        shoppingList: this.shoppingList(),
-        usageDate: this.usageDate,
-        recipeName: this.recipe().title,
-        recipeID: this.recipeID(),
-        checkIngredientStock: this.profile()!.checkIngredientStock,
-        shoppingLists: this.shoppingLists(),
-        listRecipes: this.listRecipes(),
-        plannedDate: this.usageDate,
+    this.modalService.open(
+      RecipeShoppingListModalComponent,
+      {
+        data: {
+          shoppingList: this.shoppingList(),
+          usageDate: this.usageDate,
+          recipeName: this.recipe().title,
+          recipeID: this.recipeID(),
+          checkIngredientStock: this.profile()!.checkIngredientStock,
+          shoppingLists: this.shoppingLists(),
+          listRecipes: this.listRecipes(),
+          plannedDate: this.usageDate,
+        },
+        width: '90%',
       },
-      width: '90%',
-    });
+      1
+    );
   }
   useRecipe() {
     this.router.navigate(['/recipe/using/' + this.recipeID()]);
   }
   editRecipeSteps() {
-    const dialogRef = this.dialog.open(RecipeStepsModalComponent, {
-      data: {
-        recipe: {
-          recipeID: this.recipeID(),
+    const dialogRef = this.modalService.open(
+      RecipeStepsModalComponent,
+      {
+        data: {
+          recipe: {
+            recipeID: this.recipeID(),
+          },
         },
       },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: 'Recipe Steps edited successfully!',
-          },
-        });
-      } else if (isRecipeStepError(result)) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: 'Recipe Steps could not be edited.',
-          },
-        });
-      }
-    });
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: 'Recipe Steps edited successfully!',
+              },
+            },
+            1,
+            true
+          );
+        } else if (isRecipeStepError(result)) {
+          this.modalService.open(
+            AddRequestErrorModalComponent,
+            {
+              data: {
+                error: result,
+                addFailureMessage: 'Recipe Steps could not be edited.',
+              },
+            },
+            1,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open');
+    }
   }
 
   reviewIngredients() {
@@ -744,12 +841,17 @@ export class UserRecipeComponent {
       string: `${environment.BACKEND}/link-previews/recipe/${this.recipeID()}`,
     });
 
-    this.dialog.open(ConfirmationModalComponent, {
-      data: {
-        confirmationMessage:
-          'Link copied to clipboard! Share in any Messenging App.',
+    this.modalService.open(
+      ConfirmationModalComponent,
+      {
+        data: {
+          confirmationMessage:
+            'Link copied to clipboard! Share in any Messenging App.',
+        },
       },
-    });
+      1,
+      true
+    );
   }
 
   //***************************************************
@@ -759,105 +861,145 @@ export class UserRecipeComponent {
       this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.subscribeRecipePage,
-          currentStep: 5,
-          showNextButton: false,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.subscribeRecipePage,
+            currentStep: 5,
+            showNextButton: false,
+          },
+          position: {
+            top: '10%',
+          },
         },
-        position: {
-          top: '10%',
-        },
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe(() => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 1 is already open');
+      }
     } else if (state === 13) {
       this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message:
-            this.stringsService.onboardingStrings.recipeCreateImageSuccess,
-          currentStep: 13,
-          showNextButton: true,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message:
+              this.stringsService.onboardingStrings.recipeCreateImageSuccess,
+            currentStep: 13,
+            showNextButton: true,
+          },
+          position: {
+            bottom: '70%',
+          },
         },
-        position: {
-          bottom: '70%',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.onboardingModalOpen.set(false);
-        if (result === 'nextClicked') {
-          this.onboardingCallback();
-        } else this.showOnboardingBadge.set(true);
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.onboardingModalOpen.set(false);
+          if (result === 'nextClicked') {
+            this.onboardingCallback();
+          } else this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 1 is already open');
+      }
     } else if (state === 14) {
       this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message:
-            this.stringsService.onboardingStrings.recipeCreateCreditUsage,
-          currentStep: 14,
-          showNextButton: true,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message:
+              this.stringsService.onboardingStrings.recipeCreateCreditUsage,
+            currentStep: 14,
+            showNextButton: true,
+          },
+          position: {
+            bottom: '20%',
+          },
         },
-        position: {
-          bottom: '20%',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.onboardingModalOpen.set(false);
-        if (result === 'nextClicked') {
-          this.onboardingCallback();
-        } else this.showOnboardingBadge.set(true);
-      });
+        1
+      );
+      if (dialogRef) {
+      } else {
+        console.warn('A modal at level 1 is already open');
+      }
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.onboardingModalOpen.set(false);
+          if (result === 'nextClicked') {
+            this.onboardingCallback();
+          } else this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 1 is already open');
+      }
     } else if (state === 15) {
       this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.onboardingComplete,
-          currentStep: 15,
-          showNextButton: false,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.onboardingComplete,
+            currentStep: 15,
+            showNextButton: false,
+          },
+          position: {
+            bottom: '50%',
+          },
         },
-        position: {
-          bottom: '50%',
-        },
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(false);
-        // set onboardingState back to 0 (done)
-        this.store.dispatch(
-          ProfileActions.updateProfileProperty({
-            property: 'onboardingState',
-            value: 0,
-          })
-        );
-        this.store
-          .select(selectUpdating)
-          .pipe(
-            filter((updating) => !updating),
-            take(1)
-          )
-          .subscribe(() => {
-            this.store
-              .select(selectError)
-              .pipe(take(1))
-              .subscribe((error) => {
-                if (error) {
-                  console.error(
-                    `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-                  );
-                }
-              });
-          });
-      });
+        1
+      );
+      if (dialogRef) {
+      } else {
+        console.warn('A modal at level 1 is already open');
+      }
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe(() => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(false);
+          // set onboardingState back to 0 (done)
+          this.store.dispatch(
+            ProfileActions.updateProfileProperty({
+              property: 'onboardingState',
+              value: 0,
+            })
+          );
+          this.store
+            .select(selectUpdating)
+            .pipe(
+              filter((updating) => !updating),
+              take(1)
+            )
+            .subscribe(() => {
+              this.store
+                .select(selectError)
+                .pipe(take(1))
+                .subscribe((error) => {
+                  if (error) {
+                    console.error(
+                      `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+                    );
+                  }
+                });
+            });
+        });
+      } else {
+        console.warn('A modal at level 1 is already open');
+      }
     }
   }
 

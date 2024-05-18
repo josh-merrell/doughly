@@ -43,6 +43,7 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { StringsService } from 'src/app/shared/utils/strings';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 interface displayIngredientsByComponent {
   noComponent: any[];
   components: { [componentName: string]: any[] };
@@ -205,7 +206,8 @@ export class PublicRecipeComponent {
     private fractionService: FractionService,
     private authService: AuthService,
     private stringsService: StringsService,
-    private productService: ProductService
+    private productService: ProductService,
+    private modalService: ModalService
   ) {
     // handle onboarding
     effect(
@@ -344,11 +346,16 @@ export class PublicRecipeComponent {
   }
 
   onFriendClick(friend: any): void {
-    this.dialog.open(FriendModalComponent, {
-      data: friend,
-      width: '80%',
-      maxWidth: '540px',
-    });
+    this.modalService.open(
+      FriendModalComponent,
+      {
+        data: friend,
+        width: '80%',
+        maxWidth: '540px',
+      },
+      1,
+      true
+    );
   }
 
   timeString(minutes: number) {
@@ -364,18 +371,26 @@ export class PublicRecipeComponent {
     const license = this.productService.licences.recipeSubscribeLimit;
     if (this.profile().permRecipeSubscribeUnlimited === false) {
       if (this.freeTierSubscribedRecipeCount()! >= license) {
-        const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
-          data: {
-            titleMessage: this.stringsService.productStrings.timeToUpgrade,
-            promptMessage: `You have reached the number of allowed free-tier Subscribed Recipes. Please upgrade to add more.`,
-            buttonMessage: 'UPGRADE',
+        const dialogRef = this.modalService.open(
+          PrompUpgradeModalComponent,
+          {
+            data: {
+              titleMessage: this.stringsService.productStrings.timeToUpgrade,
+              promptMessage: `You have reached the number of allowed free-tier Subscribed Recipes. Please upgrade to add more.`,
+              buttonMessage: 'UPGRADE',
+            },
           },
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result === 'routeToUpgrade') {
-            this.router.navigate(['/products']);
-          }
-        });
+          1
+        );
+        if (dialogRef) {
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result === 'routeToUpgrade') {
+              this.router.navigate(['/products']);
+            }
+          });
+        } else {
+          console.warn('A modal at level 1 is already open.');
+        }
       } else {
         allowSubscribe = true;
       }
@@ -391,19 +406,23 @@ export class PublicRecipeComponent {
         ]);
       }
       if (!this.recipeSubscription()) {
-        this.dialog.open(SubscribeRecipeModalComponent, {
-          data: {
-            recipe: this.recipe(),
-            ingredients: this.enhancedIngredients(),
-            tools: this.tools(),
-            steps: this.steps(),
-            author: this.author(),
-            onboarding: this.profile().onboardingState === (3 || 4),
+        this.modalService.open(
+          SubscribeRecipeModalComponent,
+          {
+            data: {
+              recipe: this.recipe(),
+              ingredients: this.enhancedIngredients(),
+              tools: this.tools(),
+              steps: this.steps(),
+              author: this.author(),
+              onboarding: this.profile().onboardingState === (3 || 4),
+            },
+            width: '90%',
+            maxWidth: '640px',
+            maxHeight: '840px',
           },
-          width: '90%',
-          maxWidth: '640px',
-          maxHeight: '840px',
-        });
+          1
+        );
       }
     }
   }
@@ -412,20 +431,28 @@ export class PublicRecipeComponent {
     if (onboardingState === 3) {
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.publicRecipePage,
-          currentStep: 3,
-          showNextButton: false,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.publicRecipePage,
+            currentStep: 3,
+            showNextButton: false,
+          },
+          position: {
+            top: '40%',
+          },
         },
-        position: {
-          top: '40%',
-        },
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe(() => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     }
     if (onboardingState === 4) {
       this.onSubscribeClick();

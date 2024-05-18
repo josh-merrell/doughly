@@ -37,6 +37,7 @@ import { EditIngredientStockModalComponent } from '../../../Inventory/feature/in
 import { DeleteIngredientStockModalComponent } from '../../../Inventory/feature/ingredient-inventory/ui/delete-ingredient-stock-modal/delete-ingredient-stock-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-ingredient-details-modal',
@@ -63,7 +64,8 @@ export class IngredientDetailsModalComponent {
     private store: Store,
     private recipeService: RecipeService,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -73,13 +75,18 @@ export class IngredientDetailsModalComponent {
             switchMap((recipes: any[]) => {
               // Map each recipe to an observable fetching its shopping list
               const shoppingListObservables = recipes.map((recipe) =>
-                this.recipeService.getShoppingList(recipe.recipeID, profile.checkIngredientStock).pipe(
-                  take(1),
-                  map((shoppingList) => ({
-                    ...recipe,
-                    shoppingList: shoppingList,
-                  }))
-                )
+                this.recipeService
+                  .getShoppingList(
+                    recipe.recipeID,
+                    profile.checkIngredientStock
+                  )
+                  .pipe(
+                    take(1),
+                    map((shoppingList) => ({
+                      ...recipe,
+                      shoppingList: shoppingList,
+                    }))
+                  )
               );
               // Use forkJoin to execute all observables concurrently and wait for all to complete
               return forkJoin(shoppingListObservables);
@@ -163,103 +170,171 @@ export class IngredientDetailsModalComponent {
   }
 
   onAddStock() {
-    const dialogRef = this.dialog.open(AddIngredientStockModalComponent, {
-      data: {
-        ingredientID: this.ingredient.ingredientID,
+    const dialogRef = this.modalService.open(
+      AddIngredientStockModalComponent,
+      {
+        data: {
+          ingredientID: this.ingredient.ingredientID,
+        },
       },
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: {
-            results: result,
-            addSuccessMessage: `Ingredient Stock added successfully!`,
-          },
-        });
-      } else if (result === 'error') {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: `Ingredient Stock could not be added.`,
-          },
-        });
-      }
-    });
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(
+            AddRequestConfirmationModalComponent,
+            {
+              data: {
+                results: result,
+                addSuccessMessage: `Ingredient Stock added successfully!`,
+              },
+            },
+            2,
+            true
+          );
+        } else if (result === 'error') {
+          this.modalService.open(
+            AddRequestErrorModalComponent,
+            {
+              data: {
+                error: result,
+                addFailureMessage: `Ingredient Stock could not be added.`,
+              },
+            },
+            2,
+            true
+          );
+        }
+      });
+    } else {
+      console.log('A modal at level 2 is already open.');
+    }
   }
 
   openEditStockDialog(ingredientStockID: number) {
-    const dialogRef = this.dialog.open(EditIngredientStockModalComponent, {
-      data: {
-        itemID: ingredientStockID,
+    const dialogRef = this.modalService.open(
+      EditIngredientStockModalComponent,
+      {
+        data: {
+          itemID: ingredientStockID,
+        },
       },
-    });
-
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Ingredient Stock updated`,
-          },
-        });
-        this.dialogRef.close();
-      }
-    });
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Ingredient Stock updated`,
+              },
+            },
+            2,
+            true
+          );
+          this.dialogRef.close();
+        }
+      });
+    } else {
+      console.log('A modal at level 2 is already open.');
+    }
   }
 
   openEditIngredientDialog() {
-    const dialogRef = this.dialog.open(EditIngredientModalComponent, {
-      width: '440px',
-      data: {
-        itemID: this.ingredient.ingredientID,
+    const dialogRef = this.modalService.open(
+      EditIngredientModalComponent,
+      {
+        width: '440px',
+        data: {
+          itemID: this.ingredient.ingredientID,
+        },
       },
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Ingredient updated`,
-          },
-        });
-        this.dialogRef.close('success');
-      }
-    });
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Ingredient updated`,
+              },
+            },
+            2,
+            true
+          );
+          this.dialogRef.close('success');
+        }
+      });
+    } else {
+      console.log('A modal at level 2 is already open.');
+    }
   }
 
   openDeleteStockDialog(ingredientStockID: number) {
-    const dialogRef = this.dialog.open(DeleteIngredientStockModalComponent, {
-      data: {
-        itemID: ingredientStockID,
-        ingredientName: this.ingredient.name,
+    const dialogRef = this.modalService.open(
+      DeleteIngredientStockModalComponent,
+      {
+        data: {
+          itemID: ingredientStockID,
+          ingredientName: this.ingredient.name,
+        },
       },
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Ingredient Stock deleted`,
-          },
-        });
-      }
-    });
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Ingredient Stock deleted`,
+              },
+            },
+            2,
+            true
+          );
+        }
+      });
+    } else {
+      console.log('A modal at level 2 is already open.');
+    }
   }
 
   openDeleteIngredientDialog() {
-    const dialogRef = this.dialog.open(DeleteIngredientModalComponent, {
-      data: {
-        itemID: this.ingredient.ingredientID,
-        itemName: this.ingredient.name,
+    const dialogRef = this.modalService.open(
+      DeleteIngredientModalComponent,
+      {
+        data: {
+          itemID: this.ingredient.ingredientID,
+          itemName: this.ingredient.name,
+        },
       },
-    });
-
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Ingredient deleted`,
-          },
-        });
-        this.dialogRef.close();
-      }
-    });
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Ingredient deleted`,
+              },
+            },
+            2,
+            true
+          );
+          this.dialogRef.close();
+        }
+      });
+    } else {
+      console.log('A modal at level 2 is already open.');
+    }
   }
 }

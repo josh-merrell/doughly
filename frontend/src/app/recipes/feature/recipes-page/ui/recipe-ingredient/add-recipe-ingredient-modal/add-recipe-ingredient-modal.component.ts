@@ -44,6 +44,7 @@ import {
   lessThan20CharsValidator,
 } from 'src/app/shared/utils/formValidator';
 import { UnitService } from 'src/app/shared/utils/unitService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -77,14 +78,14 @@ export class AddRecipeIngredientModalComponent {
   public purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
   public gettingUnitRatio: WritableSignal<boolean> = signal(false);
 
-
   constructor(
     public dialogRef: MatDialogRef<AddRecipeIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private unitService: UnitService
+    private unitService: UnitService,
+    private modalService: ModalService
   ) {
     this.ingredientsToExclude = this.data.ingredientsToExclude;
     this.isAdding$ = this.store.select(selectAdding);
@@ -217,10 +218,10 @@ export class AddRecipeIngredientModalComponent {
             this.gettingUnitRatio.set(false);
             this.purchaseUnitRatioSuggestion.set(response.ratio);
             if (typeof response.ratio === 'number') {
-                this.form.get('purchaseUnitRatio')?.setErrors(null);
-                this.form.patchValue({
-                  purchaseUnitRatio: response.ratio,
-                });
+              this.form.get('purchaseUnitRatio')?.setErrors(null);
+              this.form.patchValue({
+                purchaseUnitRatio: response.ratio,
+              });
             }
           },
           error: (error) => {
@@ -231,34 +232,51 @@ export class AddRecipeIngredientModalComponent {
   }
 
   onAddNewIngredient() {
-    const dialogRef = this.dialog.open(AddIngredientModalComponent, {
-      data: {
-        recipeCategories: this.data.recipeCategories,
+    const dialogRef = this.modalService.open(
+      AddIngredientModalComponent,
+      {
+        data: {
+          recipeCategories: this.data.recipeCategories,
+        },
       },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      // if result is a number, it is the ingredientID of the newly added ingredient
-      if (typeof result === 'number') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: {
-            result: result,
-            addSuccessMessage: 'Ingredient added successfully!',
-          },
-        });
-        // update the value of the ingredientID form control
-        this.form.get('ingredientID')?.setValue(result);
-      } else if (result) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            error: result,
-            addFailureMessage: 'Failed to add Ingredient.',
-          },
-        });
-      }
-    });
+      3
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        // if result is a number, it is the ingredientID of the newly added ingredient
+        if (typeof result === 'number') {
+          this.modalService.open(
+            AddRequestConfirmationModalComponent,
+            {
+              data: {
+                result: result,
+                addSuccessMessage: 'Ingredient added successfully!',
+              },
+            },
+            3,
+            true
+          );
+          // update the value of the ingredientID form control
+          this.form.get('ingredientID')?.setValue(result);
+        } else if (result) {
+          this.modalService.open(
+            AddRequestErrorModalComponent,
+            {
+              data: {
+                error: result,
+                addFailureMessage: 'Failed to add Ingredient.',
+              },
+            },
+            3,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 3 is already open');
+    }
   }
-  
+
   onSubmit() {
     const formValue = this.form.value;
     const newRecipeIngredient = {

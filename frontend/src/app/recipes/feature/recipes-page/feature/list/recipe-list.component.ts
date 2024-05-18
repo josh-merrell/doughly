@@ -37,6 +37,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { ProductService } from 'src/app/shared/utils/productService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -137,7 +138,8 @@ export class RecipeListComponent {
     private route: ActivatedRoute,
     private location: Location,
     private stringsService: StringsService,
-    private productService: ProductService
+    private productService: ProductService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -262,18 +264,26 @@ export class RecipeListComponent {
     if (this.profile() && this.profile().permRecipeCreateUnlimited === false) {
       if (license <= this.freeTierRecipeCount()) {
         // open upgradePromptModal
-        const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
-          data: {
-            titleMessage: this.stringsService.productStrings.timeToUpgrade,
-            promptMessage: `You have reached the number of allowed free-tier Created Recipes. Please upgrade to create more.`,
-            buttonMessage: 'UPGRADE',
+        const dialogRef = this.modalService.open(
+          PrompUpgradeModalComponent,
+          {
+            data: {
+              titleMessage: this.stringsService.productStrings.timeToUpgrade,
+              promptMessage: `You have reached the number of allowed free-tier Created Recipes. Please upgrade to create more.`,
+              buttonMessage: 'UPGRADE',
+            },
           },
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result === 'routeToUpgrade') {
-            this.router.navigate(['/products']);
-          }
-        });
+          1
+        );
+        if (dialogRef) {
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result === 'routeToUpgrade') {
+              this.router.navigate(['/products']);
+            }
+          });
+        } else {
+          console.warn('A modal at level 1 is already open.');
+        }
       } else {
         allowCreate = true;
       }
@@ -285,24 +295,37 @@ export class RecipeListComponent {
       // update url to include '/add' if it's not already there
       this.location.go('/recipes/created/add');
 
-      const dialogRef = this.dialog.open(AddRecipeModalComponent, {
-        data: {
-          recipeCategories: this.categories(),
+      const dialogRef = this.modalService.open(
+        AddRecipeModalComponent,
+        {
+          data: {
+            recipeCategories: this.categories(),
+          },
+          width: '80%',
         },
-        width: '80%',
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.closeAll();
-          this.dialog.open(ConfirmationModalComponent, {
-            data: {
-              confirmationMessage: `Recipe added successfully.`,
-            },
-          });
-        }
-        // remove '/add' from the url
-        this.location.go('/recipes/created');
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            this.dialog.closeAll();
+            this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                data: {
+                  confirmationMessage: `Recipe added successfully.`,
+                },
+              },
+              1,
+              true
+            );
+          }
+          // remove '/add' from the url
+          this.location.go('/recipes/created');
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     }
   }
   categoryCardClick(category: RecipeCategory): void {
@@ -312,79 +335,130 @@ export class RecipeListComponent {
   recipeCardClick(recipe: Recipe) {
     if (recipe.status === 'noIngredients') {
       //if the recipe status of 'noIngredients', show the 'RecipeIngredients' modal
-      const dialogRef = this.dialog.open(RecipeIngredientsModalComponent, {
-        data: {
-          recipe,
+      const dialogRef = this.modalService.open(
+        RecipeIngredientsModalComponent,
+        {
+          data: {
+            recipe,
+          },
         },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.open(AddRequestConfirmationModalComponent, {
-            data: {
-              results: result,
-              addSuccessMessage: 'Recipe Ingredients added successfully!',
-            },
-          });
-        } else if (isRecipeIngredientError(result)) {
-          this.dialog.open(AddRequestErrorModalComponent, {
-            data: {
-              error: result,
-              addFailureMessage: 'Recipe Ingredients could not be added.',
-            },
-          });
-        }
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            this.modalService.open(
+              AddRequestConfirmationModalComponent,
+              {
+                data: {
+                  results: result,
+                  addSuccessMessage: 'Recipe Ingredients added successfully!',
+                },
+              },
+              1,
+              true
+            );
+          } else if (isRecipeIngredientError(result)) {
+            this.modalService.open(
+              AddRequestErrorModalComponent,
+              {
+                data: {
+                  error: result,
+                  addFailureMessage: 'Recipe Ingredients could not be added.',
+                },
+              },
+              1,
+              true
+            );
+          }
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     } else if (recipe.status === 'noTools') {
       //else if the recipe has status of 'noTools', show the 'addRecipeTools' modal
-      const dialogRef = this.dialog.open(RecipeToolsModalComponent, {
-        data: {
-          recipe,
+      const dialogRef = this.modalService.open(
+        RecipeToolsModalComponent,
+        {
+          data: {
+            recipe,
+          },
         },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.open(AddRequestConfirmationModalComponent, {
-            data: {
-              results: result,
-              addSuccessMessage: 'Recipe Tools added successfully!',
-            },
-          });
-        } else if (isRecipeToolError(result)) {
-          this.dialog.open(AddRequestErrorModalComponent, {
-            data: {
-              error: result,
-              addFailureMessage: 'Recipe Tools could not be added.',
-            },
-          });
-        }
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            this.modalService.open(
+              AddRequestConfirmationModalComponent,
+              {
+                data: {
+                  results: result,
+                  addSuccessMessage: 'Recipe Tools added successfully!',
+                },
+              },
+              1,
+              true
+            );
+          } else if (isRecipeToolError(result)) {
+            this.modalService.open(
+              AddRequestErrorModalComponent,
+              {
+                data: {
+                  error: result,
+                  addFailureMessage: 'Recipe Tools could not be added.',
+                },
+              },
+              1,
+              true
+            );
+          }
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     } else if (recipe.status === 'noSteps') {
       //else if the recipe has status of 'noSteps', show the 'addRecipeSteps' modal
-      const dialogRef = this.dialog.open(RecipeStepsModalComponent, {
-        data: {
-          recipe,
+      const dialogRef = this.modalService.open(
+        RecipeStepsModalComponent,
+        {
+          data: {
+            recipe,
+          },
         },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.open(AddRequestConfirmationModalComponent, {
-            data: {
-              results: result,
-              addSuccessMessage: 'Recipe Steps added successfully!',
-            },
-          });
-        } else if (isRecipeStepError(result)) {
-          this.dialog.open(AddRequestErrorModalComponent, {
-            data: {
-              error: result,
-              addFailureMessage: 'Recipe Steps could not be added.',
-            },
-          });
-        }
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            this.modalService.open(
+              AddRequestConfirmationModalComponent,
+              {
+                data: {
+                  results: result,
+                  addSuccessMessage: 'Recipe Steps added successfully!',
+                },
+              },
+              1,
+              true
+            );
+          } else if (isRecipeStepError(result)) {
+            this.modalService.open(
+              AddRequestErrorModalComponent,
+              {
+                data: {
+                  error: result,
+                  addFailureMessage: 'Recipe Steps could not be added.',
+                },
+              },
+              1,
+              true
+            );
+          }
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     } else {
       this.router.navigate(['/recipe', recipe.recipeID]);
     }
@@ -397,19 +471,27 @@ export class RecipeListComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.recipesCreatedPage,
-          currentStep: 8,
-          showNextButton: true,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.recipesCreatedPage,
+            currentStep: 8,
+            showNextButton: true,
+          },
+          position: {
+            bottom: '30%',
+          },
         },
-        position: {
-          bottom: '30%',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.router.navigate(['/tempRoute']);
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.router.navigate(['/tempRoute']);
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     }
   }
 

@@ -15,6 +15,7 @@ import { selectAdding, selectError, selectLoading, selectTools } from '../../sta
 import { nonDuplicateString } from 'src/app/shared/utils/formValidator';
 import { ToolActions } from '../../state/tool-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-add-tool-modal',
@@ -45,7 +46,8 @@ export class AddToolModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {
     this.tools$ = this.store.select(selectTools);
     this.isLoading$ = this.store.select(selectLoading);
@@ -82,13 +84,13 @@ export class AddToolModalComponent {
             console.error(
               `Error adding tool: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.dialog.open(ErrorModalComponent, {
+            this.modalService.open(ErrorModalComponent, {
               maxWidth: '380px',
               data: {
                 errorMessage: error.message,
                 statusCode: error.statusCode,
               },
-            });
+            }, 1, true);
           } else {
             this.dialogRef.close('success');
           }

@@ -26,6 +26,7 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
@@ -70,7 +71,8 @@ export class VisionAddRecipeModalComponent {
     private router: Router,
     private stringsService: StringsService,
     private extraStuffService: ExtraStuffService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -249,13 +251,18 @@ export class VisionAddRecipeModalComponent {
                 this.removeFiles(true);
                 this.recipeProgressService.stopListening();
                 // show the error modal
-                this.dialog.open(ErrorModalComponent, {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: `We couldn't add a recipe using that image. Make sure the image clearly shows all details of a recipe and try again.`,
-                    statusCode: error.statusCode,
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: `We couldn't add a recipe using that image. Make sure the image clearly shows all details of a recipe and try again.`,
+                      statusCode: error.statusCode,
+                    },
                   },
-                });
+                  3,
+                  true
+                );
               } else {
                 this.removeFiles(false);
                 this.recipeProgressService.stopListening();
@@ -331,20 +338,28 @@ export class VisionAddRecipeModalComponent {
       this.onboardingModalOpen.set(true);
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.recipeCreateImage,
-          currentStep: 12,
-          showNextButton: false,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.recipeCreateImage,
+            currentStep: 12,
+            showNextButton: false,
+          },
+          position: {
+            top: '30%',
+          },
         },
-        position: {
-          top: '30%',
-        },
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
-      });
+        3
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe(() => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 3 is already open');
+      }
     }
   }
 

@@ -1,8 +1,10 @@
 import { Component, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableFullComponent } from 'src/app/shared/ui/dl-table-full/dl-table-full.component';
 import {
-  Filter, FilterTypeEnum, FilterOperatorEnum, Sort,
+  Filter,
+  FilterTypeEnum,
+  FilterOperatorEnum,
+  Sort,
 } from 'src/app/shared/state/shared-state';
 import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import { Tool } from './state/tool-state';
@@ -25,11 +27,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AddToolStockModalComponent } from '../Inventory/feature/tool-inventory/ui/add-tool-stock-modal/add-tool-stock-modal.component';
 import { ToolDetailsModalComponent } from './ui/tool-details-modal/tool-details-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-tools',
   standalone: true,
-  imports: [CommonModule, TableFullComponent],
+  imports: [CommonModule],
   templateUrl: './tools.component.html',
 })
 export class ToolsComponent {
@@ -38,7 +41,8 @@ export class ToolsComponent {
     private dialog: MatDialog,
     private toolService: ToolService,
     private sortingService: SortingService,
-    private filterService: FilterService
+    private filterService: FilterService,
+    private modalService: ModalService
   ) {}
 
   public tools$: Observable<Tool[]> = this.toolService.rows$;
@@ -102,43 +106,31 @@ export class ToolsComponent {
   }
 
   onAddTool(): void {
-    const dialogRef = this.dialog.open(AddToolModalComponent, {
-      data: {},
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Added Tool`,
-          },
-        });
-      }
-    });
-  }
-
-  onAddStock(): void {
-    const dialogRef = this.dialog.open(AddToolStockModalComponent, {
-      data: {},
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialog.open(AddRequestConfirmationModalComponent, {
-          data: {
-            result: result,
-            addSuccessMessage: `Added Tool Stock: ${result.toolStockID}`,
-          },
-        });
-      } else if (result instanceof HttpErrorResponse) {
-        this.dialog.open(AddRequestErrorModalComponent, {
-          data: {
-            result: result,
-            addFailureMessage: `Failed to add Tool. Error: ${result.message}`,
-          },
-        });
-      }
-    });
+    const dialogRef = this.modalService.open(
+      AddToolModalComponent,
+      {
+        data: {},
+      },
+      1
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Added Tool`,
+              },
+            },
+            1,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open.');
+    }
   }
 
   updateSearchFilter(value: string) {
@@ -169,12 +161,12 @@ export class ToolsComponent {
   }
 
   toolCardClick(tool: any) {
-    this.dialog.open(ToolDetailsModalComponent, {
+    this.modalService.open(ToolDetailsModalComponent, {
       data: {
         tool: tool,
       },
       width: '75%',
-    });
+    }, 1);
   }
 
   toolCardTouchStart(toolID: number) {

@@ -24,6 +24,7 @@ import {
 } from 'src/app/profile/state/profile-selectors';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-request-card',
@@ -42,7 +43,8 @@ export class RequestCardComponent {
   constructor(
     private store: Store,
     public dialog: MatDialog,
-    private pushTokenService: PushTokenService
+    private pushTokenService: PushTokenService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -60,7 +62,10 @@ export class RequestCardComponent {
   }
 
   ngOnInit(): void {
-    this.initials = (this.friendRequest.nameFirst && this.friendRequest.nameLast) ? this.friendRequest.nameFirst[0] + this.friendRequest.nameLast[0] : 'NA'
+    this.initials =
+      this.friendRequest.nameFirst && this.friendRequest.nameLast
+        ? this.friendRequest.nameFirst[0] + this.friendRequest.nameLast[0]
+        : 'NA';
 
     //use selectFriendshipByUserID
     this.store
@@ -93,13 +98,18 @@ export class RequestCardComponent {
               console.error(
                 `Error deleting friendship: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                2,
+                true
+              );
             }
             this.sendPushNotification('notifyConfirmFriendship');
             this.isUpdating.set(false);
