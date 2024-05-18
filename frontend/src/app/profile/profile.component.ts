@@ -90,7 +90,7 @@ export class ProfileComponent {
   }
 
   updateProfile(property: string) {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       EditProfileModalComponent,
       {
         data: {
@@ -101,8 +101,8 @@ export class ProfileComponent {
       1
     );
 
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'cancel' || !result) return;
         if (result === 'success') {
           this.modalService.open(
@@ -123,7 +123,7 @@ export class ProfileComponent {
   }
 
   updatePhoto() {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       EditPhotoModalComponent,
       {
         data: {
@@ -134,8 +134,8 @@ export class ProfileComponent {
       1
     );
 
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'cancel' || !result)
           if (result === 'success') {
             this.modalService.open(
@@ -165,7 +165,7 @@ export class ProfileComponent {
   }
 
   onDeleteAccountClick() {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       DeleteProfileModalComponent,
       {
         data: {
@@ -176,8 +176,8 @@ export class ProfileComponent {
       1
     );
 
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'confirm') {
           this.modalService.open(
             DeleteProfileModalComponent,

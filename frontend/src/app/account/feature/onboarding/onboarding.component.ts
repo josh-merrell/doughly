@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, WritableSignal, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -26,7 +25,6 @@ export class OnboardingComponent {
   isLoading: WritableSignal<boolean> = signal(false);
   modalOpen: WritableSignal<boolean> = signal(false);
   constructor(
-    public dialog: MatDialog,
     private store: Store,
     public router: Router,
     private stringsService: StringsService,

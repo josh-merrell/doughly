@@ -210,7 +210,7 @@ export class DiscoverRecipesComponent {
     if (onboardingState === 1) {
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -224,8 +224,8 @@ export class DiscoverRecipesComponent {
         },
         1
       );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe((result) => {
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
           this.showOnboardingBadge.set(true);
           this.onboardingModalOpen.set(false);
           if (result === 'nextClicked') {
@@ -238,7 +238,7 @@ export class DiscoverRecipesComponent {
     } else if (onboardingState === 2) {
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -253,8 +253,8 @@ export class DiscoverRecipesComponent {
         1,
         true
       );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe(() => {
+      if (ref) {
+        ref.afterClosed().subscribe(() => {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(true);
         });

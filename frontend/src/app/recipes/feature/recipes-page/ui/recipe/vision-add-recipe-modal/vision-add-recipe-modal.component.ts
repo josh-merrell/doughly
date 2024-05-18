@@ -309,7 +309,7 @@ export class VisionAddRecipeModalComponent {
                       }
                       //navigate to recipe page
                       this.router.navigate(['/recipe', newRecipeID.recipeID]);
-                      this.dialog.closeAll();
+                      this.modalService.closeAll();
                     }
                   });
               }

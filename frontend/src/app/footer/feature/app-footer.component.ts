@@ -193,15 +193,15 @@ export class AppFooterComponent {
   }
 
   onMessagesClick() {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       MessagesModalComponent,
       {
         width: '440px',
       },
       1
     );
-    if (dialogRef) {
-      dialogRef!.afterClosed().subscribe((result: any) => {
+    if (ref) {
+      ref!.afterClosed().subscribe((result: any) => {
         this.closeMenu();
       });
     } else {
