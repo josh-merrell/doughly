@@ -15,6 +15,7 @@ import { RecipeToolActions } from 'src/app/recipes/state/recipe-tool/recipe-tool
 import { StepActions } from 'src/app/recipes/state/step/step-actions';
 import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-unsubscribe-recipe-modal',
@@ -32,7 +33,8 @@ export class UnsubscribeRecipeModalComponent {
     public dialogRef: MatDialogRef<UnsubscribeRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -62,13 +64,13 @@ export class UnsubscribeRecipeModalComponent {
               console.error(
                 `Error deleting recipe subscription: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 2, true);
             } else {
               this.dialogRef.close('success');
             }

@@ -28,6 +28,7 @@ import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { selectError as selectErrorShoppingListRecipe } from '../../state/shopping-list-recipe-selectors';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-add-shopping-list-recipe-modal',
@@ -131,7 +132,8 @@ export class AddShoppingListRecipeModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private dialogRef: MatDialogRef<AddShoppingListRecipeModalComponent>,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -295,15 +297,15 @@ export class AddShoppingListRecipeModalComponent {
               console.error(
                 `Shopping list recipe add failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 2, true);
             } else {
-              this.dialogRef.close('success');
+              this.dialogRef.close('successOnboarding');
             }
             this.isLoading.set(false);
           });

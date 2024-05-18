@@ -24,6 +24,7 @@ import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 import { ProductService } from 'src/app/shared/utils/productService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 @Component({
   selector: 'dl-add-recipe-modal',
   standalone: true,
@@ -48,7 +49,8 @@ export class AddRecipeModalComponent {
     public location: Location,
     private store: Store,
     private stringsService: StringsService,
-    private productService: ProductService
+    private productService: ProductService,
+    private modalService: ModalService
   ) {
     this.recipeCategories = this.data.recipeCategories;
 
@@ -102,85 +104,121 @@ export class AddRecipeModalComponent {
   }
 
   onManualAddClick(): void {
-    const dialogRef = this.dialog.open(ManualAddRecipeModalComponent, {
-      data: {
-        recipeCategories: this.data.categories,
+    const dialogRef = this.modalService.open(
+      ManualAddRecipeModalComponent,
+      {
+        data: {
+          recipeCategories: this.data.categories,
+        },
+        width: '90%',
       },
-      width: '90%',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'success') {
-        this.dialogRef.close('success');
-      }
-    });
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.dialogRef.close('success');
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open.');
+    }
   }
 
   onVisionAddClick(): void {
     // first ensure user has at least one AI credit
     if (this.profile().permAITokenCount < 1) {
-      const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
-        data: {
-          titleMessage: this.stringsService.productStrings.timeToTopUp,
-          promptMessage: `Your Premium Subscription will add ${
-            this.productService.licences.premiumMonthlyAICredits
-          } tokens on ${this.getNextTokenRefreshDate()}. Buy an extra pack now to create new recipes before then.`,
-          buttonMessage: 'ADD MORE TOKENS',
+      const dialogRef = this.modalService.open(
+        PrompUpgradeModalComponent,
+        {
+          data: {
+            titleMessage: this.stringsService.productStrings.timeToTopUp,
+            promptMessage: `Your Premium Subscription will add ${
+              this.productService.licences.premiumMonthlyAICredits
+            } tokens on ${this.getNextTokenRefreshDate()}. Buy an extra pack now to create new recipes before then.`,
+            buttonMessage: 'ADD MORE TOKENS',
+          },
         },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.dialogRef.close();
-        if (result === 'routeToUpgrade') {
-          this.router.navigate(['/products']);
-        }
-      });
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.dialogRef.close();
+          if (result === 'routeToUpgrade') {
+            this.router.navigate(['/products']);
+          }
+        });
+      } else {
+        console.warn('A modal at level 2 is already open.');
+      }
     } else {
       // update url to include '/vision' if it's not already there
       this.location.go('/recipes/created/add/vision');
 
-      const dialogRef = this.dialog.open(VisionAddRecipeModalComponent, {
-        width: '90%',
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        // remove '/vision' from the url
-        this.location.go('/recipes/created/add');
-        if (result === 'success') {
-          this.dialogRef.close('success');
-        }
-      });
+      const dialogRef = this.modalService.open(
+        VisionAddRecipeModalComponent,
+        {
+          width: '90%',
+        },
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          // remove '/vision' from the url
+          this.location.go('/recipes/created/add');
+          if (result === 'success') {
+            this.dialogRef.close('success');
+          }
+        });
+      } else {
+        console.warn('A modal at level 2 is already open.');
+      }
     }
   }
 
   onFromUrlAddClick(): void {
     // first ensure user has at least one AI credit
     if (this.profile().permAITokenCount < 1) {
-      const dialogRef = this.dialog.open(PrompUpgradeModalComponent, {
-        data: {
-          titleMessage: this.stringsService.productStrings.timeToTopUp,
-          promptMessage: `Your Premium Subscription will add ${
-            this.productService.licences.premiumMonthlyAICredits
-          } tokens on ${this.getNextTokenRefreshDate()}. Buy an extra pack now to create new recipes before then.`,
-          buttonMessage: 'ADD MORE TOKENS',
+      const dialogRef = this.modalService.open(
+        PrompUpgradeModalComponent,
+        {
+          data: {
+            titleMessage: this.stringsService.productStrings.timeToTopUp,
+            promptMessage: `Your Premium Subscription will add ${
+              this.productService.licences.premiumMonthlyAICredits
+            } tokens on ${this.getNextTokenRefreshDate()}. Buy an extra pack now to create new recipes before then.`,
+            buttonMessage: 'ADD MORE TOKENS',
+          },
         },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'routeToUpgrade') {
-          this.router.navigate(['/products']);
-        }
-      });
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'routeToUpgrade') {
+            this.router.navigate(['/products']);
+          }
+        });
+      } else {
+        console.warn('A modal at level 2 is already open.');
+      }
     } else {
       // update url to include '/from-url' if it's not already there
       this.location.go('/recipes/created/add/from-url');
 
-      const dialogRef = this.dialog.open(FromUrlAddRecipeModalComponent, {
+      const dialogRef = this.modalService.open(FromUrlAddRecipeModalComponent, {
         width: '90%',
       });
-      dialogRef.afterClosed().subscribe((result) => {
-        // remove '/from-url' from the url
-        this.location.go('/recipes/created/add');
-        if (result === 'success') {
-          this.dialogRef.close('success');
-        }
-      });
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          // remove '/from-url' from the url
+          this.location.go('/recipes/created/add');
+          if (result === 'success') {
+            this.dialogRef.close('success');
+          }
+        });
+      } else {
+        console.warn('A modal at level 2 is already open.');
+      }
     }
   }
 
@@ -204,65 +242,89 @@ export class AddRecipeModalComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.recipeCreateManual,
-          currentStep: 9,
-          showNextButton: true,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.recipeCreateManual,
+            currentStep: 9,
+            showNextButton: true,
+          },
+          position: {
+            bottom: '10%',
+          },
         },
-        position: {
-          bottom: '10%',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.showOnboardingBadge.set(false);
-        this.onboardingModalOpen.set(false);
-        this.reopenOnboardingModal.set(false);
-        if (result === 'nextClicked') {
-          this.onboardingCallback();
-        } else this.showOnboardingBadge.set(true);
-      });
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.showOnboardingBadge.set(false);
+          this.onboardingModalOpen.set(false);
+          this.reopenOnboardingModal.set(false);
+          if (result === 'nextClicked') {
+            this.onboardingCallback();
+          } else this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 2 is already open.');
+      }
     } else if (onboardingState === 10) {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.recipeCreateURL,
-          currentStep: 10,
-          showNextButton: true,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.recipeCreateURL,
+            currentStep: 10,
+            showNextButton: true,
+          },
+          position: {
+            bottom: '30%',
+          },
         },
-        position: {
-          bottom: '30%',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.onboardingModalOpen.set(false);
-        if (result === 'nextClicked') {
-          this.onboardingCallback();
-        } else this.showOnboardingBadge.set(true);
-      });
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.onboardingModalOpen.set(false);
+          if (result === 'nextClicked') {
+            this.onboardingCallback();
+          } else this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 2 is already open.');
+      }
     } else if (onboardingState === 11) {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message:
-            this.stringsService.onboardingStrings.recipeCreateImageButton,
-          currentStep: 11,
-          showNextButton: true,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message:
+              this.stringsService.onboardingStrings.recipeCreateImageButton,
+            currentStep: 11,
+            showNextButton: true,
+          },
+          position: {
+            bottom: '70%',
+          },
         },
-        position: {
-          bottom: '70%',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.onboardingModalOpen.set(false);
-        if (result === 'nextClicked') {
-          this.router.navigate(['tempRoute']);
-        } else this.showOnboardingBadge.set(true);
-      });
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.onboardingModalOpen.set(false);
+          if (result === 'nextClicked') {
+            this.router.navigate(['tempRoute']);
+          } else this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 2 is already open.');
+      }
     }
   }
 

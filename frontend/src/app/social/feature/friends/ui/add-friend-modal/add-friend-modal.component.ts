@@ -29,6 +29,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-add-friend-modal',
@@ -50,7 +51,8 @@ export class AddFriendModalComponent {
   constructor(
     private store: Store,
     public dialog: MatDialog,
-    private pushTokenService: PushTokenService
+    private pushTokenService: PushTokenService,
+    private modalService: ModalService
   ) {
     this.store.select(selectSearchResultsProfile).subscribe((searchResults) => {
       this.searchResults.set(searchResults);
@@ -136,13 +138,18 @@ export class AddFriendModalComponent {
               console.error(
                 `Error searching profiles: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                2,
+                true
+              );
             }
             this.isLoading.set(false);
           });
@@ -174,13 +181,18 @@ export class AddFriendModalComponent {
                   console.error(
                     `Error deleting friendship: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 this.isLoading.set(false);
               });
@@ -210,13 +222,18 @@ export class AddFriendModalComponent {
                   console.error(
                     `Error accepting friendship: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 // notify user of confirmed friendship
                 this.sendPushNotification('notifyConfirmFriendship');
@@ -247,13 +264,18 @@ export class AddFriendModalComponent {
                   console.error(
                     `Error canceling friendship request: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 this.isLoading.set(false);
               });
@@ -281,13 +303,18 @@ export class AddFriendModalComponent {
                   console.error(
                     `Error adding friendship: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 // notify user of friend request
                 this.sendPushNotification('notifyRequestFriendship');
@@ -326,13 +353,18 @@ export class AddFriendModalComponent {
                   console.error(
                     `Error deleting followship: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 this.isLoading.set(false);
               });
@@ -360,13 +392,18 @@ export class AddFriendModalComponent {
                   console.error(
                     `Error adding followship: ${error.message}, CODE: ${error.statusCode}`
                   );
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                 }
                 //notify user of followship request
                 this.sendPushNotification('notifyNewFollower');

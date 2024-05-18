@@ -39,6 +39,7 @@ import { DeleteRecipeIngredientModalComponent } from '../delete-recipe-ingredien
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { EditRecipeIngredientModalComponent } from '../edit-recipe-ingredient-modal/edit-recipe-ingredient-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-recipe-ingredients-modal',
@@ -66,7 +67,8 @@ export class RecipeIngredientsModalComponent {
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<RecipeIngredientsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private store: Store
+    private store: Store,
+    private modalService: ModalService
   ) {
     this.recipe = this.data.recipe;
     this.isLoading$ = this.store.select(selectLoading);
@@ -172,13 +174,18 @@ export class RecipeIngredientsModalComponent {
                 if (error) {
                   this.isAdding = false;
                   hasErrorOccurred = true; // Set flag on error
-                  this.dialog.open(ErrorModalComponent, {
-                    maxWidth: '380px',
-                    data: {
-                      errorMessage: error.message,
-                      statusCode: error.statusCode,
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
                     },
-                  });
+                    2,
+                    true
+                  );
                   this.dialogRef.close(); // Close the current modal
                 }
               })
@@ -200,22 +207,34 @@ export class RecipeIngredientsModalComponent {
 
   onDeleteClick(recipeIngredientID: number, ingredientID: number) {
     if (recipeIngredientID) {
-      const dialogRef = this.dialog.open(DeleteRecipeIngredientModalComponent, {
-        data: {
-          recipeIngredientID,
-          ingredientID,
+      const dialogRef = this.modalService.open(
+        DeleteRecipeIngredientModalComponent,
+        {
+          data: {
+            recipeIngredientID,
+            ingredientID,
+          },
         },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.open(ConfirmationModalComponent, {
-            data: {
-              confirmationMessage: `Ingredient successfully removed from recipe!`,
-            },
-          });
-        }
-      });
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                data: {
+                  confirmationMessage: `Ingredient successfully removed from recipe!`,
+                },
+              },
+              2,
+              true
+            );
+          }
+        });
+      } else {
+        console.warn('A modal at level 2 is already open!');
+      }
     } else {
       this.ingredientsToAdd = this.ingredientsToAdd.filter(
         (ingredient) => ingredient.ingredientID !== ingredientID
@@ -243,76 +262,96 @@ export class RecipeIngredientsModalComponent {
           ingredientsToExclude.push(ingredient.ingredientID);
         });
 
-        const dialogRef = this.dialog.open(AddRecipeIngredientModalComponent, {
-          data: {
-            ingredientsToExclude: [],
+        const dialogRef = this.modalService.open(
+          AddRecipeIngredientModalComponent,
+          {
+            data: {
+              ingredientsToExclude: [],
+            },
+            width: '75%',
           },
-          width: '75%',
-        });
+          2
+        );
+        if (dialogRef) {
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result?.ingredientID) {
+              this.ingredients$
+                .pipe(
+                  map(
+                    (ingredients) =>
+                      ingredients.find(
+                        (ing) => ing.ingredientID === result.ingredientID
+                      )?.name
+                  ),
+                  take(1)
+                )
+                .subscribe((ingredientName) => {
+                  const addedRecipeIngredient: any = {
+                    recipeID: this.recipe.recipeID,
+                    ingredientID: result.ingredientID,
+                    measurement: result.measurement,
+                    measurementUnit: result.measurementUnit,
+                    purchaseUnitRatio: result.purchaseUnitRatio,
+                    name: ingredientName,
+                    preparation: result.preparation,
+                    component: result.component,
+                    RIneedsReview: false,
+                    toAdd: true,
+                  };
 
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result?.ingredientID) {
-            this.ingredients$
-              .pipe(
-                map(
-                  (ingredients) =>
-                    ingredients.find(
-                      (ing) => ing.ingredientID === result.ingredientID
-                    )?.name
-                ),
-                take(1)
-              )
-              .subscribe((ingredientName) => {
-                const addedRecipeIngredient: any = {
-                  recipeID: this.recipe.recipeID,
-                  ingredientID: result.ingredientID,
-                  measurement: result.measurement,
-                  measurementUnit: result.measurementUnit,
-                  purchaseUnitRatio: result.purchaseUnitRatio,
-                  name: ingredientName,
-                  preparation: result.preparation,
-                  component: result.component,
-                  RIneedsReview: false,
-                  toAdd: true,
-                };
+                  this.ingredientsToAdd.push(addedRecipeIngredient);
 
-                this.ingredientsToAdd.push(addedRecipeIngredient);
-
-                this.ingredientsToAddSubject.next(this.ingredientsToAdd);
-              });
-          }
-        });
+                  this.ingredientsToAddSubject.next(this.ingredientsToAdd);
+                });
+            }
+          });
+        } else {
+          console.warn('A modal at level 2 is already open');
+        }
       });
   }
 
   onIngredientClick(recipeIngredient: any) {
-    const dialogRef = this.dialog.open(EditRecipeIngredientModalComponent, {
-      data: {
-        recipeIngredient: {
-          ingredient: recipeIngredient.name,
-          recipeID: this.recipe.recipeID,
-          recipeIngredientID: recipeIngredient.recipeIngredientID,
-          ingredientID: recipeIngredient.ingredientID,
-          measurement: recipeIngredient.measurement,
-          measurementUnit: recipeIngredient.measurementUnit,
-          purchaseUnit: recipeIngredient.purchaseUnit,
-          purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
-          preparation: recipeIngredient.preparation,
-          component: recipeIngredient.component,
-          RIneedsReview: recipeIngredient.RIneedsReview,
-        },
-      },
-      width: '75%',
-    });
-    dialogRef!.afterClosed().subscribe((result: any) => {
-      if (result === 'success') {
-        this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            confirmationMessage: `Recipe Ingredient updated`,
+    const dialogRef = this.modalService.open(
+      EditRecipeIngredientModalComponent,
+      {
+        data: {
+          recipeIngredient: {
+            ingredient: recipeIngredient.name,
+            recipeID: this.recipe.recipeID,
+            recipeIngredientID: recipeIngredient.recipeIngredientID,
+            ingredientID: recipeIngredient.ingredientID,
+            measurement: recipeIngredient.measurement,
+            measurementUnit: recipeIngredient.measurementUnit,
+            purchaseUnit: recipeIngredient.purchaseUnit,
+            purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+            preparation: recipeIngredient.preparation,
+            component: recipeIngredient.component,
+            RIneedsReview: recipeIngredient.RIneedsReview,
           },
-        });
-      }
-    });
+        },
+        width: '75%',
+      },
+      2
+    );
+    if (dialogRef) {
+      dialogRef!.afterClosed().subscribe((result: any) => {
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: `Recipe Ingredient updated`,
+              },
+            },
+            2,
+            true
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 2 is already open');
+    }
   }
 
   onCancel() {

@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectDeleting, selectError } from '../../state/ingredient-selectors';
 import { Observable, Subscription, filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-delete-ingredient-modal',
@@ -26,7 +27,8 @@ export class DeleteIngredientModalComponent {
     public dialogRef: MatDialogRef<DeleteIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {}
 
   onSubmit(): void {
@@ -49,13 +51,13 @@ export class DeleteIngredientModalComponent {
             console.error(
               `Deleting Ingredient failed: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.dialog.open(ErrorModalComponent, {
+            this.modalService.open(ErrorModalComponent, {
               maxWidth: '380px',
               data: {
                 message: error.message,
                 statusCode: error.statusCode,
               },
-            });
+            }, 2, true);
           } else {
             this.dialogRef.close('success');
           }

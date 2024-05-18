@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectDeleting, selectError } from '../../state/tool-stock-selectors';
 import { ToolStockActions } from '../../state/tool-stock-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-delete-tool-stock-modal',
@@ -26,7 +27,8 @@ export class DeleteToolStockModalComponent {
     public dialogRef: MatDialogRef<DeleteToolStockModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {}
 
   onSubmit(): void {
@@ -49,13 +51,13 @@ export class DeleteToolStockModalComponent {
             console.error(
               `Error deleting tool stock: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.dialog.open(ErrorModalComponent, {
+            this.modalService.open(ErrorModalComponent, {
               maxWidth: '380px',
               data: {
                 errorMessage: error.message,
                 statusCode: error.statusCode,
               },
-            });
+            }, 2, true);
           } else {
             this.dialogRef.close('success');
           }

@@ -41,6 +41,7 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { Profile } from 'src/app/profile/state/profile-state';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-manual-add-recipe-modal',
@@ -86,7 +87,8 @@ export class ManualAddRecipeModalComponent {
     private fb: FormBuilder,
     private photoUploadService: PhotoService,
     public dialog: MatDialog,
-    private pushTokenService: PushTokenService
+    private pushTokenService: PushTokenService,
+    private modalService: ModalService
   ) {
     this.isLoading$ = this.store.select(selectLoading);
     this.store.select(selectRecipes).subscribe((recipes) => {
@@ -226,13 +228,18 @@ export class ManualAddRecipeModalComponent {
               console.error(
                 `Recipe addition failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                3,
+                true
+              );
             } else {
               this.sendPushNotification();
               this.dialogRef.close('success');

@@ -30,6 +30,7 @@ import { PurchaseIngredientsModalComponent } from './ui/purchase-ingredients-mod
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-shopping-page',
@@ -102,7 +103,8 @@ export class ShoppingPageComponent {
     private renderer: Renderer2,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -152,58 +154,71 @@ export class ShoppingPageComponent {
   onSaveClick() {
     this.isLoading.set(true);
     // open storeSelect Modal
-    const ref = this.dialog.open(PurchaseIngredientsModalComponent, {
-      width: '50%',
-      maxWidth: '360px',
-    });
+    const ref = this.modalService.open(
+      PurchaseIngredientsModalComponent,
+      {
+        width: '50%',
+        maxWidth: '360px',
+      },
+      1
+    );
     let modalResult;
-    ref.afterClosed().subscribe((result) => {
-      if (result.status === 'cancel') {
-        this.isLoading.set(false);
-        return;
-      } else if (result.status === 'confirm') {
-        modalResult = result;
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
+        if (result.status === 'cancel') {
+          this.isLoading.set(false);
+          return;
+        } else if (result.status === 'confirm') {
+          modalResult = result;
 
-        const itemsToSave = this.displaySLIngr().itemsToSave;
-        itemsToSave.forEach((item: any) => {
-          item.purchasedDate = new Date().toISOString();
-        });
-        const neededItemCount = this.displaySLIngr().items.filter(
-          (item: any) => !item.store
-        ).length;
-        this.store.dispatch(
-          ShoppingListIngredientActions.batchUpdateShoppingListIngredientStocks(
-            {
-              shoppingListID: this.shoppingListID(),
-              store: modalResult.store,
-              shoppingListIngredients: itemsToSave,
-              listComplete: itemsToSave.length === neededItemCount,
-            }
-          )
-        );
-
-        // subscribe to 'selectTempPurchase'. When it is false, then set isLoading to false and navigate navigate to /groceries page
-        this.store
-          .select(selectTempPurchasing)
-          .subscribe((tempPurchasing: any) => {
-            if (!tempPurchasing) {
-              this.isLoading.set(false);
-              if (itemsToSave.length === neededItemCount) {
-                this.dialog.open(ConfirmationModalComponent, {
-                  data: {
-                    confirmationMessage: 'Shopping List Completed',
-                  },
-                });
-              } else {
-                this.router.navigate(['/groceries']);
-              }
-            }
+          const itemsToSave = this.displaySLIngr().itemsToSave;
+          itemsToSave.forEach((item: any) => {
+            item.purchasedDate = new Date().toISOString();
           });
-      } else {
-        this.isLoading.set(false);
-        return;
-      }
-    });
+          const neededItemCount = this.displaySLIngr().items.filter(
+            (item: any) => !item.store
+          ).length;
+          this.store.dispatch(
+            ShoppingListIngredientActions.batchUpdateShoppingListIngredientStocks(
+              {
+                shoppingListID: this.shoppingListID(),
+                store: modalResult.store,
+                shoppingListIngredients: itemsToSave,
+                listComplete: itemsToSave.length === neededItemCount,
+              }
+            )
+          );
+
+          // subscribe to 'selectTempPurchase'. When it is false, then set isLoading to false and navigate navigate to /groceries page
+          this.store
+            .select(selectTempPurchasing)
+            .subscribe((tempPurchasing: any) => {
+              if (!tempPurchasing) {
+                this.isLoading.set(false);
+                if (itemsToSave.length === neededItemCount) {
+                  this.modalService.open(
+                    ConfirmationModalComponent,
+                    {
+                      data: {
+                        confirmationMessage: 'Shopping List Completed',
+                      },
+                    },
+                    1,
+                    true
+                  );
+                } else {
+                  this.router.navigate(['/groceries']);
+                }
+              }
+            });
+        } else {
+          this.isLoading.set(false);
+          return;
+        }
+      });
+    } else {
+      console.log('A modal at level 1 is already open.');
+    }
   }
 
   onPurchasedAmountChange(ingredientID: number, newAmount: number): void {
@@ -246,20 +261,30 @@ export class ShoppingPageComponent {
               console.error(
                 `Shopping List Ingredient delete failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                1,
+                true
+              );
             } else {
-              this.dialog.open(ConfirmationModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  confirmationMessage: 'Item removed from Shopping List.',
+              this.modalService.open(
+                ConfirmationModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    confirmationMessage: 'Item removed from Shopping List.',
+                  },
                 },
-              });
+                1,
+                true
+              );
             }
             this.isDeleting.set(false);
           });

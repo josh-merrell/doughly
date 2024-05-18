@@ -46,6 +46,7 @@ import {
 import { selectRecipeByID } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
 import { UnitService } from 'src/app/shared/utils/unitService';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-edit-recipe-ingredient-modal',
@@ -77,7 +78,8 @@ export class EditRecipeIngredientModalComponent {
     private store: Store<any>,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private unitService: UnitService
+    private unitService: UnitService,
+    private modalService: ModalService
   ) {
     effect(() => {
       const recipeIngredient = this.recipeIngredient();
@@ -226,13 +228,13 @@ export class EditRecipeIngredientModalComponent {
             console.error(
               `Recipe Ingredient Upddate failed: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.dialog.open(ErrorModalComponent, {
+            this.modalService.open(ErrorModalComponent, {
               maxWidth: '380px',
               data: {
                 errorMessage: error.message,
                 statusCode: error.statusCode,
               },
-            });
+            }, 3, true);
           } else {
             this.dialogRef.close('success');
           }

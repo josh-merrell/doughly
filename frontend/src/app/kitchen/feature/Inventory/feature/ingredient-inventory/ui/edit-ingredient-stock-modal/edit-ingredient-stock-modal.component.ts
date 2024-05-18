@@ -48,6 +48,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-edit-ingredient-stock-modal',
@@ -81,7 +82,8 @@ export class EditIngredientStockModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {
     this.setForm();
     effect(
@@ -185,13 +187,13 @@ export class EditIngredientStockModalComponent {
               console.error(
                 `Updating Ingredient Stock failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   message: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 2, true);
             } else {
               this.dialogRef.close('success');
             }

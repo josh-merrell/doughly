@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { selectDeleting, selectError } from '../../state/tool-selectors';
 import { ToolActions } from '../../state/tool-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-delete-tool-modal',
@@ -26,7 +27,8 @@ export class DeleteToolModalComponent {
     public dialogRef: MatDialogRef<DeleteToolModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {}
 
   onSubmit(): void {
@@ -52,13 +54,13 @@ export class DeleteToolModalComponent {
               console.error(
                 `Error deleting tool: ${error.message}, CODE: ${error.code}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 1, true);
             } else {
               this.dialogRef.close('success');
             }

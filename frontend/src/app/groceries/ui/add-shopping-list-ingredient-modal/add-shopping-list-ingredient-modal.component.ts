@@ -31,6 +31,7 @@ import { IngredientService } from 'src/app/kitchen/feature/ingredients/data/ingr
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { selectError as selectErrorShoppingListIngredient } from '../../state/shopping-list-ingredient-selectors';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-add-shopping-list-ingredient-modal',
@@ -86,7 +87,8 @@ export class AddShoppingListIngredientModalComponent {
     private store: Store,
     private fb: FormBuilder,
     private ingredientService: IngredientService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {}
 
   setForm() {
@@ -148,13 +150,13 @@ export class AddShoppingListIngredientModalComponent {
               console.error(
                 `Shopping List Ingredient add failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 1, true);
             } else {
               this.dialogRef.close('success');
             }

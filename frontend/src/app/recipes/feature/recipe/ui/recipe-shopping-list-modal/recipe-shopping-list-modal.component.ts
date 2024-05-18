@@ -24,6 +24,7 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectShoppingLists } from 'src/app/groceries/state/shopping-list-selectors';
 import { selectShoppingListRecipes } from 'src/app/groceries/state/shopping-list-recipe-selectors';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-recipe-shopping-list-modal',
@@ -49,7 +50,8 @@ export class RecipeShoppingListModalComponent {
     public dialogRef: MatDialogRef<RecipeShoppingListModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private modalService: ModalService
   ) {
     this.shoppingList = this.data.shoppingList;
     this.usageDate = this.data.usageDate;
@@ -119,21 +121,31 @@ export class RecipeShoppingListModalComponent {
               console.error(
                 `Shopping list recipe add failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                2,
+                true
+              );
             } else {
-              this.dialog.open(ConfirmationModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  confirmationMessage:
-                    'Recipe added to draft list successfully.',
+              this.modalService.open(
+                ConfirmationModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    confirmationMessage:
+                      'Recipe added to draft list successfully.',
+                  },
                 },
-              });
+                2,
+                true
+              );
             }
             this.isLoading = false;
           });

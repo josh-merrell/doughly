@@ -28,6 +28,7 @@ import {
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { Router } from '@angular/router';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 
 @Component({
@@ -57,7 +58,8 @@ export class UseRecipeModalComponent {
     private dialogRef: MatDialogRef<UseRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {
     this.setForm();
   }
@@ -106,13 +108,13 @@ export class UseRecipeModalComponent {
               console.error(
                 `Recipe use failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 2, true);
             } else {
               this.dialogRef.close('success');
             }

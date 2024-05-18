@@ -82,10 +82,11 @@ export class GroceriesPageComponent {
       this.shoppingLists.set(shoppingLists);
       if (shoppingLists.length === 0) {
         this.status.set('noList');
+        // this.generateList();
       } else if (shoppingLists.length === 1) {
         this.status.set(shoppingLists[0].status);
       } else {
-        this.status.set('multipleLists');
+        this.status.set(shoppingLists[0].status);
       }
     });
 

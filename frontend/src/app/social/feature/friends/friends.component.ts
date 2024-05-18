@@ -26,6 +26,7 @@ import { AddFriendModalComponent } from './ui/add-friend-modal/add-friend-modal.
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-friends',
@@ -64,7 +65,8 @@ export class FriendsComponent {
   constructor(
     private store: Store,
     public dialog: MatDialog,
-    private stringsService: StringsService
+    private stringsService: StringsService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -105,34 +107,54 @@ export class FriendsComponent {
   }
 
   onRequestsClick(): void {
-    const dialogRef = this.dialog.open(FriendRequestsModalComponent, {
-      width: '90%',
-      maxWidth: '500px',
-    });
+    const dialogRef = this.modalService.open(
+      FriendRequestsModalComponent,
+      {
+        width: '90%',
+        maxWidth: '500px',
+      },
+      1
+    );
 
-    //upon closing, if a profile is sent back, use it to open FriendModalComponent.
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.profile) {
-        this.dialog.open(FriendModalComponent, {
-          data: result.profile,
-          width: '90%',
-        });
-      }
-    });
+    if (dialogRef) {
+      //upon closing, if a profile is sent back, use it to open FriendModalComponent.
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result?.profile) {
+          this.modalService.open(
+            FriendModalComponent,
+            {
+              data: result.profile,
+              width: '90%',
+            },
+            1
+          );
+        }
+      });
+    } else {
+      console.warn('A modal at level 1 is already open.');
+    }
   }
 
   onAddFriend(): void {
-    this.dialog.open(AddFriendModalComponent, {
-      width: '90%',
-      maxWidth: '500px',
-    });
+    this.modalService.open(
+      AddFriendModalComponent,
+      {
+        width: '90%',
+        maxWidth: '500px',
+      },
+      1
+    );
   }
 
   onFriendClick(friend: any): void {
-    this.dialog.open(FriendModalComponent, {
-      data: friend,
-      width: '90%',
-    });
+    this.modalService.open(
+      FriendModalComponent,
+      {
+        data: friend,
+        width: '90%',
+      },
+      1
+    );
   }
 
   updateSearchFilter(searchFilter: string): void {
@@ -144,41 +166,57 @@ export class FriendsComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.socialPageOverview,
-          currentStep: 6,
-          showNextButton: true,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.socialPageOverview,
+            currentStep: 6,
+            showNextButton: true,
+          },
+          position: {
+            bottom: '70%',
+          },
         },
-        position: {
-          bottom: '70%',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
-        if (result === 'nextClicked') {
-          this.onboardingCallback();
-        }
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+          if (result === 'nextClicked') {
+            this.onboardingCallback();
+          }
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     } else if (onboardingState === 7) {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.shoppingPageOverview,
-          currentStep: 7,
-          showNextButton: false,
+      const dialogRef = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.shoppingPageOverview,
+            currentStep: 7,
+            showNextButton: false,
+          },
+          position: {
+            bottom: '40%',
+          },
         },
-        position: {
-          bottom: '40%',
-        },
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
-      });
+        1
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe(() => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.warn('A modal at level 1 is already open.');
+      }
     }
   }
 

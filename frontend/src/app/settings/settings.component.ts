@@ -33,6 +33,7 @@ import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from '../shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/confirmation-modal.component';
 import { notificationMethods } from '../shared/utils/types';
+import { ModalService } from '../shared/utils/modalService';
 
 @Component({
   selector: 'dl-settings',
@@ -56,7 +57,8 @@ export class SettingsComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private store: Store,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private modalService: ModalService
   ) {
     effect(() => {
       const newProfile = this.profile();
@@ -122,19 +124,29 @@ export class SettingsComponent {
       .subscribe(() => {
         this.store.select(selectErrorProfile).subscribe((error) => {
           if (error) {
-            this.dialog.open(ErrorModalComponent, {
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
+            this.modalService.open(
+              ErrorModalComponent,
+              {
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
               },
-            });
+              1,
+              true
+            );
           } else {
-            this.dialog.open(ConfirmationModalComponent, {
-              maxWidth: '380px',
-              data: {
-                confirmationMessage: 'Updated settings successfully!',
+            this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                maxWidth: '380px',
+                data: {
+                  confirmationMessage: 'Updated settings successfully!',
+                },
               },
-            });
+              1,
+              true
+            );
           }
           this.isEditing = false;
         });

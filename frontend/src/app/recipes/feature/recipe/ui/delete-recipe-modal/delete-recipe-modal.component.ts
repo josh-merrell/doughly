@@ -15,6 +15,7 @@ import {
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-delete-recipe-modal',
@@ -32,7 +33,8 @@ export class DeleteRecipeModalComponent {
     public dialogRef: MatDialogRef<DeleteRecipeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -63,13 +65,13 @@ export class DeleteRecipeModalComponent {
               console.error(
                 `Recipe deletion failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
+              this.modalService.open(ErrorModalComponent, {
                 maxWidth: '380px',
                 data: {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              });
+              }, 2, true);
             } else {
               this.dialogRef.close('success');
             }

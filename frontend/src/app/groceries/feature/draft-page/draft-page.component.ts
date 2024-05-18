@@ -48,6 +48,7 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { StringsService } from 'src/app/shared/utils/strings';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 @Component({
   selector: 'dl-draft-page',
@@ -158,7 +159,8 @@ export class DraftPageComponent {
     private store: Store,
     private recipeService: RecipeService,
     public router: Router,
-    private stringsService: StringsService
+    private stringsService: StringsService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -327,36 +329,52 @@ export class DraftPageComponent {
       this.deleteListRecipe(this.selectedRecipeID());
       this.selectedRecipeID.set(0);
     } else {
-      const ref = this.dialog.open(AddShoppingListRecipeModalComponent, {
-        width: '90%',
-        data: {
-          shoppingListRecipes: this.listRecipes(),
-          recipes: this.recipes(),
-          shoppingListID: this.shoppingLists()[0].shoppingListID,
+      const ref = this.modalService.open(
+        AddShoppingListRecipeModalComponent,
+        {
+          width: '90%',
+          data: {
+            shoppingListRecipes: this.listRecipes(),
+            recipes: this.recipes(),
+            shoppingListID: this.shoppingLists()[0].shoppingListID,
+          },
         },
-      });
-      // after the modal closes, trigger the 'loadShoppingListRecipes' action
-      ref.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.open(ConfirmationModalComponent, {
-            maxWidth: '380px',
-            data: {
-              confirmationMessage: 'Recipe added to shopping list',
-            },
-          });
+        1
+      );
+
+      if (ref) {
+        // after the modal closes, trigger the 'loadShoppingListRecipes' action
+        ref.afterClosed().subscribe((result) => {
+          if (result === 'successOnboarding') {
+            this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                maxWidth: '380px',
+                data: {
+                  confirmationMessage: 'Recipe added to shopping list',
+                },
+              },
+              1,
+              true
+            );
+            if (this.profile().onboardingState === 7) {
+              this.store.dispatch(
+                ProfileActions.updateProfileProperty({
+                  property: 'onboardingState',
+                  value: 8,
+                })
+              );
+            }
+          }
           this.store.dispatch(
-            ProfileActions.updateProfileProperty({
-              property: 'onboardingState',
-              value: 8,
+            ShoppingListRecipeActions.loadShoppingListRecipes({
+              shoppingListID: this.shoppingLists()[0].shoppingListID,
             })
           );
-        }
-        this.store.dispatch(
-          ShoppingListRecipeActions.loadShoppingListRecipes({
-            shoppingListID: this.shoppingLists()[0].shoppingListID,
-          })
-        );
-      });
+        });
+      } else {
+        console.log('A modal at level 1 is already open.');
+      }
     }
   }
 
@@ -365,30 +383,43 @@ export class DraftPageComponent {
       this.deleteStandaloneItem(this.selectedSLIngrID());
       this.selectedSLIngrID.set(0);
     } else {
-      const ref = this.dialog.open(AddShoppingListIngredientModalComponent, {
-        data: {
-          shoppingListIngredients: this.displaySLStandaloneIngr(),
-          ingredients: this.ingredients(),
-          shoppingListID: this.shoppingLists()[0].shoppingListID,
-        },
-      });
-      // after the modal closes, trigger the 'loadShoppingListIngredients' action
-      ref.afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.dialog.open(ConfirmationModalComponent, {
-            maxWidth: '380px',
-            data: {
-              confirmationMessage:
-                'Standalone Ingredient added to shopping list',
-            },
-          });
-        }
-        this.store.dispatch(
-          ShoppingListIngredientActions.loadShoppingListIngredients({
+      const ref = this.modalService.open(
+        AddShoppingListIngredientModalComponent,
+        {
+          data: {
+            shoppingListIngredients: this.displaySLStandaloneIngr(),
+            ingredients: this.ingredients(),
             shoppingListID: this.shoppingLists()[0].shoppingListID,
-          })
-        );
-      });
+          },
+        },
+        1
+      );
+      // after the modal closes, trigger the 'loadShoppingListIngredients' action
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
+          if (result === 'success') {
+            this.modalService.open(
+              ConfirmationModalComponent,
+              {
+                maxWidth: '380px',
+                data: {
+                  confirmationMessage:
+                    'Standalone Ingredient added to shopping list',
+                },
+              },
+              1,
+              true
+            );
+          }
+          this.store.dispatch(
+            ShoppingListIngredientActions.loadShoppingListIngredients({
+              shoppingListID: this.shoppingLists()[0].shoppingListID,
+            })
+          );
+        });
+      } else {
+        console.log('A modal at level 1 is already open.');
+      }
     }
   }
 
@@ -416,20 +447,30 @@ export class DraftPageComponent {
               console.error(
                 `Failed to delete shopping list: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                1,
+                true
+              );
             } else {
-              this.dialog.open(ConfirmationModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  confirmationMessage: 'Shopping list deleted',
+              this.modalService.open(
+                ConfirmationModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    confirmationMessage: 'Shopping list deleted',
+                  },
                 },
-              });
+                1,
+                true
+              );
             }
             this.isDeleting.set(false);
           });
@@ -467,30 +508,45 @@ export class DraftPageComponent {
               console.error(
                 `Failed to remove recipe from shopping list: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                1,
+                true
+              );
             } else {
               if (reason === 'date') {
                 console.log('deleting list recipe due to date');
-                this.dialog.open(ConfirmationModalComponent, {
+                this.modalService.open(
+                  ConfirmationModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      confirmationMessage:
+                        'Removed recipe planned for a past date',
+                    },
+                  },
+                  1,
+                  true
+                );
+              }
+              this.modalService.open(
+                ConfirmationModalComponent,
+                {
                   maxWidth: '380px',
                   data: {
-                    confirmationMessage:
-                      'Removed recipe planned for a past date',
+                    confirmationMessage: 'Recipe removed from shopping list',
                   },
-                });
-              }
-              this.dialog.open(ConfirmationModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  confirmationMessage: 'Recipe removed from shopping list',
                 },
-              });
+                1,
+                true
+              );
             }
             this.isDeleting.set(false);
           });
@@ -520,21 +576,31 @@ export class DraftPageComponent {
               console.error(
                 `Failed to remove standalone ingredient from shopping list: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.dialog.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              });
+                1,
+                true
+              );
             } else {
-              this.dialog.open(ConfirmationModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  confirmationMessage:
-                    'Standalone ingredient removed from shopping list',
+              this.modalService.open(
+                ConfirmationModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    confirmationMessage:
+                      'Standalone ingredient removed from shopping list',
+                  },
                 },
-              });
+                1,
+                true
+              );
             }
             this.isDeleting.set(false);
           });
@@ -580,7 +646,7 @@ export class DraftPageComponent {
                   )}`
                 );
                 this.isLoading.set(false);
-                this.dialog.open(ErrorModalComponent, {
+                this.modalService.open(ErrorModalComponent, {
                   maxWidth: '380px',
                   data: {
                     errorMessage: `Error creating shopping list ingredients for recipes on list: ${JSON.stringify(
@@ -615,7 +681,7 @@ export class DraftPageComponent {
                             )}`
                           );
                           this.isLoading.set(false);
-                          this.dialog.open(ErrorModalComponent, {
+                          this.modalService.open(ErrorModalComponent, {
                             maxWidth: '380px',
                             data: {
                               errorMessage: `Error updating shopping list status to 'shopping': ${JSON.stringify(
@@ -647,7 +713,7 @@ export class DraftPageComponent {
         `Error creating shopping list ingredients: ${JSON.stringify(err)}`
       );
       this.isLoading.set(false);
-      this.dialog.open(ErrorModalComponent, {
+      this.modalService.open(ErrorModalComponent, {
         maxWidth: '380px',
         data: {
           errorMessage: `Error creating shopping list ingredients: ${JSON.stringify(
@@ -664,20 +730,28 @@ export class DraftPageComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.dialog.open(OnboardingMessageModalComponent, {
-        data: {
-          message: this.stringsService.onboardingStrings.shoppingPageOverview,
-          currentStep: 7,
-          showNextButton: false,
+      const ref = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.shoppingPageOverview,
+            currentStep: 7,
+            showNextButton: false,
+          },
+          position: {
+            bottom: '50%',
+          },
         },
-        position: {
-          bottom: '50%',
-        },
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
-      });
+        1
+      );
+      if (ref) {
+        ref.afterClosed().subscribe(() => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+        });
+      } else {
+        console.log('A modal at level 1 is already open.');
+      }
     } else if (onboardingState === 8) {
       this.router.navigate(['/recipes/created']);
     }
