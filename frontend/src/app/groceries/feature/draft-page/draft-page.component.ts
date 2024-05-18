@@ -373,7 +373,6 @@ export class DraftPageComponent {
           );
         });
       } else {
-        console.log('A modal at level 1 is already open.');
       }
     }
   }
@@ -418,7 +417,6 @@ export class DraftPageComponent {
           );
         });
       } else {
-        console.log('A modal at level 1 is already open.');
       }
     }
   }
@@ -750,7 +748,6 @@ export class DraftPageComponent {
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.log('A modal at level 1 is already open.');
       }
     } else if (onboardingState === 8) {
       this.router.navigate(['/recipes/created']);

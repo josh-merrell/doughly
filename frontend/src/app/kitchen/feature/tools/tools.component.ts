@@ -106,15 +106,15 @@ export class ToolsComponent {
   }
 
   onAddTool(): void {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       AddToolModalComponent,
       {
         data: {},
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.modalService.open(
             ConfirmationModalComponent,
@@ -129,7 +129,6 @@ export class ToolsComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open.');
     }
   }
 

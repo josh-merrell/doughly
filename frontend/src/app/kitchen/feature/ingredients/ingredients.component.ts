@@ -174,15 +174,15 @@ export class IngredientsComponent {
   }
 
   onAddIngredient(): void {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       AddIngredientModalComponent,
       {
         data: {},
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         // if result is a number, it is the ingredientID of the newly added ingredient
         if (typeof result === 'number') {
           this.modalService.open(
@@ -198,21 +198,19 @@ export class IngredientsComponent {
         }
       });
     } else {
-      console.warn(`A modal at level 1 is already open.`);
     }
   }
 
   onAddStock(): void {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       AddIngredientStockModalComponent,
       {
         data: {},
       },
       1
     );
-    if (dialogRef) {
-      console.warn(`A modal at level 1 is already open.`);
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.modalService.open(
             ConfirmationModalComponent,
@@ -269,7 +267,7 @@ export class IngredientsComponent {
 
   ingredientCardClick(ingredient: any) {
     const openEdit = ingredient.needsReview ? true : false;
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       IngredientDetailsModalComponent,
       {
         data: {
@@ -280,8 +278,8 @@ export class IngredientsComponent {
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (openEdit && result === 'success') {
           this.reviewedCount++;
         }
@@ -304,7 +302,6 @@ export class IngredientsComponent {
         }
       });
     } else {
-      console.warn(`A modal at level 1 is already open.`);
     }
   }
 

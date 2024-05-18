@@ -248,7 +248,6 @@ export class RecipeStepsModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open');
     }
   }
 
@@ -293,7 +292,6 @@ export class RecipeStepsModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open');
     }
   }
 
@@ -435,7 +433,6 @@ export class RecipeStepsModalComponent {
           }
         });
       } else {
-        console.warn('A modal at level 2 is already open');
       }
     } else {
       // Update the steps in the BehaviorSubject for local removal

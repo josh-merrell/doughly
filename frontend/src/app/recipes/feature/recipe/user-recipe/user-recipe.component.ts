@@ -398,7 +398,7 @@ export class UserRecipeComponent {
   onUnsubscribeClick() {
     this.closeMenu();
     if (this.recipeSubscription()) {
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         UnsubscribeRecipeModalComponent,
         {
           data: {
@@ -409,10 +409,10 @@ export class UserRecipeComponent {
         },
         1
       );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe((result) => {
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
           if (result === 'success') {
-            const confirmDialogRef = this.modalService.open(
+            this.modalService.open(
               ConfirmationModalComponent,
               {
                 data: {
@@ -424,23 +424,16 @@ export class UserRecipeComponent {
               1,
               true
             );
-            if (confirmDialogRef) {
-              confirmDialogRef.afterClosed().subscribe(() => {
-                this.router.navigate(['/recipes']);
-              });
-            } else {
-              console.warn('A modal at level 1 is already open');
-            }
+            this.router.navigate(['/recipes']);
           }
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     }
   }
   onUpdateClick() {
     this.closeMenu();
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       EditRecipeModalComponent,
       {
         data: this.recipe(),
@@ -448,8 +441,8 @@ export class UserRecipeComponent {
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result instanceof HttpErrorResponse) {
           this.modalService.open(
             UpdateRequestErrorModalComponent,
@@ -476,12 +469,11 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
   onDeleteClick() {
     this.closeMenu();
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       DeleteRecipeModalComponent,
       {
         data: {
@@ -490,8 +482,8 @@ export class UserRecipeComponent {
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.modalService.open(ConfirmationModalComponent, {
             maxWidth: '380px',
@@ -504,7 +496,6 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
   // ***************************************************
@@ -690,7 +681,7 @@ export class UserRecipeComponent {
     return `${hours}h ${mins}m`;
   }
   editRecipeIngredients() {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       RecipeIngredientsModalComponent,
       {
         data: {
@@ -701,8 +692,8 @@ export class UserRecipeComponent {
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.modalService.open(
             ConfirmationModalComponent,
@@ -717,11 +708,10 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
   editRecipeTools() {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       RecipeToolsModalComponent,
       {
         data: {
@@ -732,8 +722,8 @@ export class UserRecipeComponent {
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.modalService.open(
             ConfirmationModalComponent,
@@ -748,7 +738,6 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
   viewShoppingList() {
@@ -774,7 +763,7 @@ export class UserRecipeComponent {
     this.router.navigate(['/recipe/using/' + this.recipeID()]);
   }
   editRecipeSteps() {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       RecipeStepsModalComponent,
       {
         data: {
@@ -785,8 +774,8 @@ export class UserRecipeComponent {
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.modalService.open(
             ConfirmationModalComponent,
@@ -813,7 +802,6 @@ export class UserRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open');
     }
   }
 
@@ -861,7 +849,7 @@ export class UserRecipeComponent {
       this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -875,19 +863,18 @@ export class UserRecipeComponent {
         },
         1
       );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe(() => {
+      if (ref) {
+        ref.afterClosed().subscribe(() => {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     } else if (state === 13) {
       this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -902,21 +889,20 @@ export class UserRecipeComponent {
         },
         1
       );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe((result) => {
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
           this.onboardingModalOpen.set(false);
           if (result === 'nextClicked') {
             this.onboardingCallback();
           } else this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     } else if (state === 14) {
       this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -931,25 +917,23 @@ export class UserRecipeComponent {
         },
         1
       );
-      if (dialogRef) {
+      if (ref) {
       } else {
-        console.warn('A modal at level 1 is already open');
       }
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe((result) => {
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
           this.onboardingModalOpen.set(false);
           if (result === 'nextClicked') {
             this.onboardingCallback();
           } else this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     } else if (state === 15) {
       this.showOnboardingBadge.set(false);
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -963,12 +947,11 @@ export class UserRecipeComponent {
         },
         1
       );
-      if (dialogRef) {
+      if (ref) {
       } else {
-        console.warn('A modal at level 1 is already open');
       }
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe(() => {
+      if (ref) {
+        ref.afterClosed().subscribe(() => {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(false);
           // set onboardingState back to 0 (done)
@@ -998,7 +981,6 @@ export class UserRecipeComponent {
             });
         });
       } else {
-        console.warn('A modal at level 1 is already open');
       }
     }
   }

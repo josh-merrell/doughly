@@ -273,7 +273,6 @@ export class AddRecipeIngredientModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 3 is already open');
     }
   }
 

@@ -5,6 +5,7 @@ const { default: axios } = require('axios');
 const { uploadBackup, deleteOldBackup } = require('../../services/fileService');
 const fs = require('fs');
 const path = require('path');
+const recipeCategories = require('../../services/recipeCategoryService');
 
 module.exports = ({ db, dbPublic }) => {
   async function retrieveProfile(userID, friendStatus = 'confirmed') {
@@ -47,13 +48,8 @@ module.exports = ({ db, dbPublic }) => {
 
     // for each recipe, get the recipeCategoryName from the recipeCategoryID, then update the recipe object with recipeCategoryName
     const promises = recipes.map(async (recipe) => {
-      const { data: recipeCategory, error: errorRecipeCategory } = await db.from('recipeCategories').select('name').eq('recipeCategoryID', recipe.recipeCategoryID).single();
-      if (errorRecipeCategory) {
-        global.logger.error(`Error getting recipe category for recipeCategoryID ${recipe.recipeCategoryID}: ${errorRecipeCategory.message}`);
-        throw errorGen(`Error getting recipe category for recipeCategoryID ${recipe.recipeCategoryID}: ${errorRecipeCategory.message}`, 400);
-      }
       const recipeWithCategoryName = recipe;
-      recipeWithCategoryName.recipeCategoryName = recipeCategory.name;
+      recipeWithCategoryName.recipeCategoryName = recipeCategories[recipe.recipeCategoryID];
       return recipeWithCategoryName;
     });
     const recipesWithCategoryNames = await Promise.all(promises);
@@ -738,47 +734,18 @@ module.exports = ({ db, dbPublic }) => {
 
       const daysSinceJoin = Math.floor((new Date() - new Date(profile.joined_at)) / (1000 * 60 * 60 * 24));
 
-      const deleteSchedules = [
-        { days: 1 },
-        { days: 2 },
-        { days: 3 },
-        { days: 4 },
-        { days: 5 },
-        { days: 6 },
-        { days: 7 },
-        { days: 14 },
-        { days: 21 },
-        { days: 28 },
-        { days: 35 },
-        { days: 42 },
-        { days: 49 },
-        { days: 56 },
-        { days: 63 },
-        { days: 70 },
-        { days: 77 },
-        { days: 84 },
-        { days: 91 },
-        { days: 98 },
-        { days: 105 },
-        { days: 112 },
-        { days: 119 },
-        { days: 126 },
-        { days: 133 },
-        { days: 140 },
-        { days: 147 },
-        { days: 154 },
-        { days: 161 },
-        { days: 168 },
-        { days: 182 },
-      ];
+      // if daysSinceJoin is not divisible by 7, we need to delete the backup for the day that is 7 days before the current day
+      if (daysSinceJoin % 7 !== 0) {
+        // create dateString such as '05212024' for May 21, 2024. Include trailing 0's for single digit months and days.
+        const date = new Date();
+        const deleteDate = new Date(date.setDate(date.getDate() - 7));
+        const deleteMonth = deleteDate.getMonth() + 1 < 10 ? `0${deleteDate.getMonth() + 1}` : deleteDate.getMonth() + 1;
+        const deleteDay = deleteDate.getDate() < 10 ? `0${deleteDate.getDate()}` : deleteDate.getDate();
+        const deleteDateString = `${deleteMonth}${deleteDay}${deleteDate.getFullYear()}`;
+        const deleteFileName = `backup-bakery_${deleteDateString}.sql`;
+        await deleteOldBackup(userID, deleteFileName);
+      }
 
-      deleteSchedules.forEach(async (schedule) => {
-        const deleteDate = new Date(new Date(profile.joined_at).getTime() + schedule.days * 24 * 60 * 60 * 1000);
-        if (new Date() > deleteDate && daysSinceJoin % schedule.days !== 0) {
-          const oldFilename = `backup-bakery_${deleteDate.getMonth() + 1}${deleteDate.getDate()}${deleteDate.getFullYear()}.sql`;
-          await deleteOldBackup(userID, oldFilename);
-        }
-      });
       global.logger.info(`Successfully created daily backup for user ${userID}`);
     } catch (error) {
       global.logger.error(`Error creating daily backup for user ${userID}: ${error.message}`);

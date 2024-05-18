@@ -217,7 +217,6 @@ export class ShoppingPageComponent {
         }
       });
     } else {
-      console.log('A modal at level 1 is already open.');
     }
   }
 

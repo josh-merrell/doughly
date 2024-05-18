@@ -107,7 +107,7 @@ export class FriendsComponent {
   }
 
   onRequestsClick(): void {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       FriendRequestsModalComponent,
       {
         width: '90%',
@@ -116,9 +116,9 @@ export class FriendsComponent {
       1
     );
 
-    if (dialogRef) {
+    if (ref) {
       //upon closing, if a profile is sent back, use it to open FriendModalComponent.
-      dialogRef.afterClosed().subscribe((result) => {
+      ref.afterClosed().subscribe((result) => {
         if (result?.profile) {
           this.modalService.open(
             FriendModalComponent,
@@ -131,7 +131,6 @@ export class FriendsComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open.');
     }
   }
 
@@ -166,7 +165,7 @@ export class FriendsComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -180,8 +179,8 @@ export class FriendsComponent {
         },
         1
       );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe((result) => {
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(true);
           if (result === 'nextClicked') {
@@ -189,13 +188,12 @@ export class FriendsComponent {
           }
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     } else if (onboardingState === 7) {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -209,13 +207,12 @@ export class FriendsComponent {
         },
         1
       );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe(() => {
+      if (ref) {
+        ref.afterClosed().subscribe(() => {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     }
   }

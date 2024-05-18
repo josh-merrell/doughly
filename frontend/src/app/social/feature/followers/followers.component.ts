@@ -20,7 +20,7 @@ export class FollowersComponent {
   public searchFilter: WritableSignal<string> = signal('');
   public followers: WritableSignal<Profile[]> = signal([]);
   public following: WritableSignal<Profile[]> = signal([]);
-  public view: WritableSignal<string> = signal('followers');
+  public view: WritableSignal<string> = signal('following');
   public filteredPersons = computed(() => {
     const searchFilter = this.searchFilter();
     const persons =

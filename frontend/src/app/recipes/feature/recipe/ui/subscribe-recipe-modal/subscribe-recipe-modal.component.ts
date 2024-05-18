@@ -481,13 +481,13 @@ export class SubscribeRecipeModalComponent {
                     });
                 }
                 this.store.select(selectNewRecipeID).subscribe((recipeID) => {
+                  this.dialogRef.close('success');
                   if (recipeID) {
                     this.extraStuffService.onboardingSubscribedRecipe.set(
                       recipeID
                     );
                     this.router.navigate(['/recipe', recipeID]);
                   }
-                  this.dialogRef.close('success');
                 });
               }
               this.loading.set(false);
@@ -512,7 +512,7 @@ export class SubscribeRecipeModalComponent {
           top: '50%',
         },
       },
-      1
+      2
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe(() => {
@@ -520,7 +520,6 @@ export class SubscribeRecipeModalComponent {
         this.showOnboardingBadge.set(true);
       });
     } else {
-      console.warn('A modal at level 1 is already open.');
     }
   }
 

@@ -208,7 +208,6 @@ export class IngredientDetailsModalComponent {
         }
       });
     } else {
-      console.log('A modal at level 2 is already open.');
     }
   }
 
@@ -239,7 +238,6 @@ export class IngredientDetailsModalComponent {
         }
       });
     } else {
-      console.log('A modal at level 2 is already open.');
     }
   }
 
@@ -271,7 +269,6 @@ export class IngredientDetailsModalComponent {
         }
       });
     } else {
-      console.log('A modal at level 2 is already open.');
     }
   }
 
@@ -302,7 +299,6 @@ export class IngredientDetailsModalComponent {
         }
       });
     } else {
-      console.log('A modal at level 2 is already open.');
     }
   }
 
@@ -334,7 +330,6 @@ export class IngredientDetailsModalComponent {
         }
       });
     } else {
-      console.log('A modal at level 2 is already open.');
     }
   }
 }
