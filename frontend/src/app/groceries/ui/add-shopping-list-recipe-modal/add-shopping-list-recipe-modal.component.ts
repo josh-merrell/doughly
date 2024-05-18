@@ -303,7 +303,7 @@ export class AddShoppingListRecipeModalComponent {
                 },
               });
             } else {
-              this.dialogRef.close('success');
+              this.dialogRef.close('successOnboarding');
             }
             this.isLoading.set(false);
           });
