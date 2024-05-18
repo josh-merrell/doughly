@@ -182,7 +182,6 @@ export class ToolDetailsModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open.');
     }
   }
 
@@ -203,7 +202,6 @@ export class ToolDetailsModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open.');
     }
   }
 
@@ -224,7 +222,6 @@ export class ToolDetailsModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open.');
     
     }
   }
@@ -247,7 +244,6 @@ export class ToolDetailsModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open.');
     
     }
   }
@@ -271,7 +267,6 @@ export class ToolDetailsModalComponent {
         }
       });
     } else {
-      console.warn('A modal at level 2 is already open.');
     
     }
   }

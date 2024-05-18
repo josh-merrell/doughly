@@ -371,7 +371,7 @@ export class PublicRecipeComponent {
     const license = this.productService.licences.recipeSubscribeLimit;
     if (this.profile().permRecipeSubscribeUnlimited === false) {
       if (this.freeTierSubscribedRecipeCount()! >= license) {
-        const dialogRef = this.modalService.open(
+        const ref = this.modalService.open(
           PrompUpgradeModalComponent,
           {
             data: {
@@ -382,14 +382,13 @@ export class PublicRecipeComponent {
           },
           1
         );
-        if (dialogRef) {
-          dialogRef.afterClosed().subscribe((result) => {
+        if (ref) {
+          ref.afterClosed().subscribe((result) => {
             if (result === 'routeToUpgrade') {
               this.router.navigate(['/products']);
             }
           });
         } else {
-          console.warn('A modal at level 1 is already open.');
         }
       } else {
         allowSubscribe = true;
@@ -431,7 +430,7 @@ export class PublicRecipeComponent {
     if (onboardingState === 3) {
       this.onboardingModalOpen.set(true);
       this.reopenOnboardingModal.set(false);
-      const dialogRef = this.modalService.open(
+      const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
           data: {
@@ -445,13 +444,12 @@ export class PublicRecipeComponent {
         },
         1
       );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe(() => {
+      if (ref) {
+        ref.afterClosed().subscribe(() => {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(true);
         });
       } else {
-        console.warn('A modal at level 1 is already open.');
       }
     }
     if (onboardingState === 4) {

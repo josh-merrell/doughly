@@ -8,10 +8,10 @@ import {
 import { filter } from 'rxjs';
 import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
-import { MatDialog } from '@angular/material/dialog';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { Capacitor } from '@capacitor/core';
+import { ModalService } from 'src/app/shared/utils/modalService';
 
 
 @Component({
@@ -28,7 +28,7 @@ export class ProductsPageComponent {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private modalService: ModalService
   ) {
     effect(() => {
       const view = this.view();
@@ -67,7 +67,7 @@ export class ProductsPageComponent {
       this.setStatusBarStyleDark();
     }
     // close all modals
-    this.dialog.closeAll();
+    this.modalService.closeAll();
     this.checkAndUpdateView();
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))

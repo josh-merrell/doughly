@@ -236,7 +236,7 @@ export class UsingRecipeComponent {
   }
 
   onUseRecipe() {
-    const dialogRef = this.modalService.open(
+    const ref = this.modalService.open(
       UseRecipeModalComponent,
       {
         data: {
@@ -246,8 +246,8 @@ export class UsingRecipeComponent {
       },
       1
     );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe((result) => {
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
         if (result === 'cancel') return;
         if (result === 'success') {
           this.modalService.open(
@@ -265,7 +265,6 @@ export class UsingRecipeComponent {
         }
       });
     } else {
-      console.warn('A modal at level 1 is already open.');
     }
   }
 

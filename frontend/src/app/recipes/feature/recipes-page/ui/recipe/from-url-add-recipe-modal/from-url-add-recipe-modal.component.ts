@@ -224,7 +224,7 @@ export class FromUrlAddRecipeModalComponent {
                       this.dialogRef.close('success');
                     } else {
                       this.router.navigate(['/recipe', newRecipeID.recipeID]);
-                      this.dialog.closeAll();
+                      this.modalService.closeAll();
                     }
                   });
               }

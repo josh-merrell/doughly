@@ -15,36 +15,48 @@ export class ModalService {
 
   constructor(private dialog: MatDialog) {}
 
-  open<T>(component: ComponentType<T>, config: any, level: number = 1, allowMultipleSameLevel: boolean = false): MatDialogRef<T> | null {
+  open<T>(
+    component: ComponentType<T>,
+    config: any,
+    level: number = 1,
+    allowMultipleSameLevel: boolean = false
+  ): MatDialogRef<T> | null {
+    console.log(`TRYING TO OPEN MODAL. COMPONENT: `, component)
+    if (!component || component === null) {
+      console.error(`No component ref provided, not opening modal.`);
+      return null;
+    }
     if (this.isLevelOpen(level) && !allowMultipleSameLevel) {
       console.warn(`A modal at level ${level} is already open.`);
       return null;
     }
 
     const dialogRef = this.dialog.open(component, config);
-    this.modals.push({ ref: dialogRef, level: allowMultipleSameLevel ? 99 : level }); // push notifications or other modals we are okay having multiples of to 99, only one of each other modal type
-    console.log(`MODALS: `, this.modals)
+    this.modals.push({
+      ref: dialogRef,
+      level: allowMultipleSameLevel ? 99 : level,
+    }); // push notifications or other modals we are okay having multiples of to 99, only one of each other modal type
+    console.log(`MODALS: `, this.modals);
 
     dialogRef.afterClosed().subscribe(() => {
-      this.modals = this.modals.filter(m => m.ref !== dialogRef);
-      console.log(`MODALS: `, this.modals)
+      this.modals = this.modals.filter((m) => m.ref !== dialogRef);
+      console.log(`MODALS: `, this.modals);
     });
 
     return dialogRef;
   }
 
   isLevelOpen(level: number): boolean {
-    return this.modals.some(m => m.level === level);
+    return this.modals.some((m) => m.level === level);
   }
 
   closeByLevel(level: number): void {
-    this.modals
-      .filter(m => m.level === level)
-      .forEach(m => m.ref.close());
+    this.modals.filter((m) => m.level === level).forEach((m) => m.ref.close());
   }
 
   closeAll(): void {
-    this.modals.forEach(m => m.ref.close());
+    this.modals.forEach((m) => m.ref.close());
+    this.dialog.closeAll();
     this.modals = [];
   }
 }

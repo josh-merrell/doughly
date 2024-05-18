@@ -15,8 +15,11 @@
       choose a photo of the completed dish.
     </p>
     <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
-    <p *ngIf="isAdding" class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2">
+    <p *ngIf="isAdding && profile().onboardingState !== 12" class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2">
       You may navigate away while waiting
+    </p>
+    <p *ngIf="isAdding && profile().onboardingState === 12" class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2">
+      This should take one minute or less
     </p>
     <p
       *ngIf="statusMessage() && isAdding"
