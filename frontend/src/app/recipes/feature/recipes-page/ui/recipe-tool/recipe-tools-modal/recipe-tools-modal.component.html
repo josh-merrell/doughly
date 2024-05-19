@@ -1,16 +1,17 @@
 <div
-  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+  class="sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6 relative dark:border transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
-  <mat-spinner
-    class="my-app-custom-spinner"
-    *ngIf="isLoading"
-  ></mat-spinner>
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isLoading"></mat-spinner>
   <div
     *ngIf="!isLoading"
-    class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left"
+    class="sm:ml-dl-1 sm:mt-dl-0 sm:text-left mt-dl-1 text-center"
   >
     <div class="mb-dl-4 text-center">
-      <p class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4">Tools</p>
+      <p
+        class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-8"
+      >
+        Tools
+      </p>
     </div>
 
     <!--List of Recipe Tools-->
@@ -22,7 +23,7 @@
             (click)="onDeleteClick(tool.toolID, tool.recipeToolID)"
           >
             <div
-              class="mr-dl-3 mt-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4"
+              class="mr-dl-3 mt-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
             >
               <span *ngIf="tool.toolID > 0" class="font-dl-3"
                 >{{ tool.name }}&nbsp;&nbsp;&nbsp;</span
@@ -30,7 +31,9 @@
               <span *ngIf="tool.quantity > 0" class="font-dl-2">{{
                 tool.quantity
               }}</span>
-              <span *ngIf="tool.toAdd" class="font-dl-2 italic text-dl-grey-5"
+              <span
+                *ngIf="tool.toAdd"
+                class="font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
                 >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
               >
               <span *ngIf="!tool.toolID" class="font-dl-3"
@@ -38,7 +41,7 @@
               >
               <button
                 type="button"
-                class="ml-dl-2 rounded-dl-2 bg-dl-grey-10 text-dl-grey-3 hover:bg-dl-grey-9 focus:outline-none"
+                class="ml-dl-2 rounded-dl-2 bg-dl-grey-10 text-dl-grey-3 hover:bg-dl-grey-9 focus:outline-none dark:bg-dl-grey-2 dark:text-dl-grey-8 dark:hover:bg-dl-grey-3"
               >
                 <svg
                   class="h-6 w-6"
@@ -61,7 +64,7 @@
       </div>
       <button
         type="button"
-        class="relative mt-dl-2 flex h-8 w-8 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7"
+        class="relative mt-dl-2 flex h-8 w-8 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7 dark:bg-dl-grey-2 dark:hover:bg-dl-grey-3"
         (click)="onAddClick()"
         id="addRecipeToolButton"
       >
@@ -85,10 +88,10 @@
     </div>
 
     <!-- Cancel, Submit Buttons-->
-    <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+    <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-3">
       <button
         type="button"
-        class="shadow-s h-dl-5 w-full cursor-pointer justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+        class="shadow-s sm:ml-dl-4 h-dl-5 w-full cursor-pointer justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
         [ngClass]="{
           'bg-dl-pink-4':
             toolsToAdd.length > 0 || submitMessage === 'No tools needed',
@@ -102,7 +105,7 @@
       </button>
       <button
         type="button"
-        class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+        class="sm:mt-0 sm:w-auto mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
         (click)="onCancel()"
       >
         Cancel

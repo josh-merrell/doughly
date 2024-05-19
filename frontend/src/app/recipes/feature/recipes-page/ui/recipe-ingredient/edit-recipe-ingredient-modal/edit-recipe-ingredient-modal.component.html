@@ -1,24 +1,29 @@
 <div
-  class="relative flex h-dl-21 transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="relative flex h-dl-21 dark:border transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-normal">
-      <span class="text-dl-6 font-dl-2 text-dl-grey-5"
+      <span class="text-dl-6 font-dl-2 text-dl-grey-5 dark:text-dl-grey-6"
         >Edit
-        <span class="text-dl-6 font-dl-3 text-dl-grey-2">{{
+        <span class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">{{
           recipeIngredient().ingredient
         }}</span
-        ><span *ngIf="recipe()" class="text-dl-6 font-dl-3 text-dl-grey-5">
+        ><span
+          *ngIf="recipe()"
+          class="text-dl-6 font-dl-3 text-dl-grey-5 dark:text-dl-grey-6"
+        >
           in </span
-        ><span *ngIf="recipe()" class="text-dl-6 font-dl-3 text-dl-grey-2">{{
-          recipe().title
-        }}</span></span
+        ><span
+          *ngIf="recipe()"
+          class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+          >{{ recipe().title }}</span
+        ></span
       >
     </div>
   </div>
   <p
     *ngIf="recipeIngredient().RIneedsReview"
-    class="mb-dl-3 text-dl-5 font-dl-3 text-dl-pink-4"
+    class="mb-dl-3 text-dl-5 font-dl-3 text-dl-pink-4 dark:text-dl-pink-7"
   >
     Confirm existing or Edit details
   </p>
@@ -35,7 +40,8 @@
         <div class="mt-dl-4 flex-grow overflow-y-auto">
           <!-- Component -->
           <div id="form-component" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
               >Recipe Component (opt)</label
             >
             <mat-form-field class="w-full">
@@ -54,7 +60,10 @@
           </div>
           <!-- Preparation -->
           <div id="form-preparation" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Notes</label>
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              >Notes</label
+            >
             <mat-form-field class="w-full">
               <input
                 matInput
@@ -72,7 +81,8 @@
 
           <!-- Measurement -->
           <div id="form-measurement" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
               >Measurement</label
             >
             <mat-form-field class="w-full">
@@ -91,7 +101,8 @@
           </div>
 
           <div id="form-measurementUnit" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
               >Measurement Unit (curr:
               {{ recipeIngredient().measurementUnit }})</label
             >
@@ -105,7 +116,8 @@
           </div>
 
           <div id="form-purchaseUnitRatio" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
               >{{ pUnit }} per {{ mUnit }}</label
             >
             <mat-form-field class="w-full">
@@ -135,7 +147,9 @@
                 [diameter]="18"
                 class="my-app-custom-spinner"
               ></mat-spinner>
-              <p class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3">
+              <p
+                class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+              >
                 Getting Suggested Ratio...
               </p>
             </div>
@@ -144,7 +158,7 @@
                 purchaseUnitRatioSuggestion() ===
                 form.get('purchaseUnitRatio')?.value
               "
-              class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3"
+              class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
             >
               Suggested Ratio
             </p>
@@ -156,17 +170,17 @@
           <button
             type="button"
             *ngIf="recipeIngredient().RIneedsReview && form.pristine"
-            class="h-dl-5 w-full justify-center rounded-dl-1 border-2 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white shadow-sm"
+            class="mb-dl-3 h-dl-5 w-full justify-center rounded-dl-1 border-2 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white shadow-sm dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1"
             (click)="onConfirm()"
           >
             Confirm
           </button>
           <button
             type="button"
-            class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white"
+            class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
-              'cursor-pointer bg-dl-pink-4 hover:bg-dl-blue-5':
+              'cursor-pointer bg-dl-pink-4 hover:bg-dl-blue-5 dark:bg-dl-pink-7 hover:dark:bg-dl-blue-6':
                 form.valid && !form.pristine,
               'bg-dl-grey-7': !form.valid || form.pristine
             }"
@@ -177,7 +191,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7"
+            class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 dark:bg-dl-grey-1 dark:text-dl-grey-10"
             (click)="onCancel()"
           >
             Cancel

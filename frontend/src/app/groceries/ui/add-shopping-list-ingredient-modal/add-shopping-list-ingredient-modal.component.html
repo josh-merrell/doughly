@@ -1,6 +1,6 @@
 <div
   *ngIf="displayIngredients().length > 0 || searchFilter() !== ''"
-  class="relative flex h-dl-21 w-full flex-col items-center overflow-x-hidden px-dl-4 pb-dl-4 pt-dl-4"
+  class="relative flex h-dl-21 w-full flex-col items-center overflow-x-hidden px-dl-4 pb-dl-4 pt-dl-4 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <!-- Search, Add-->
   <div class="mx-dl-7 mb-dl-6 mt-dl-5 flex justify-between">
@@ -10,7 +10,7 @@
         width="35"
         height="35"
         viewBox="0 0 15 15"
-        class="pt-dl-1 text-dl-grey-3"
+        class="pt-dl-1 text-dl-grey-3 dark:text-dl-grey-8"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -24,7 +24,7 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-4 text-dl-grey-5 placeholder-dl-grey-4 focus:ring-transparent"
+        class="ml-dl-2 w-dl-13 rounded-dl-2 border-none pt-dl-2 text-dl-4 text-dl-grey-5 placeholder-dl-grey-4 focus:ring-transparent dark:bg-dl-grey-2 dark:text-dl-grey-6 dark:placeholder-dl-grey-7"
         [placeholder]="'Search by Ingredient Name'"
         (input)="updateSearchFilter(searchInput.value)"
       />
@@ -41,24 +41,24 @@
         class="my-dl-3 flex w-dl-14 flex-col justify-start rounded-lg border px-dl-3 py-dl-1 shadow-md transition-all duration-200 ease-in-out"
         (click)="ingredientCardClick(ingredient)"
         [ngClass]="{
-          'border-dl-teal-10 bg-dl-teal-10':
+          'border-dl-teal-10 bg-dl-teal-10 dark:bg-dl-teal-1 dark:border-dl-teal-1':
             ingredient.ingredientID === selectedIngredient().ingredientID,
-          'border-dl-grey-10 bg-white':
+          'border-dl-grey-10 bg-white dark:bg-dl-grey-2 dark:border-dl-grey-2':
             ingredient.ingredientID !== selectedIngredient().ingredientID
         }"
       >
-        <p class="text-dl-6 font-dl-3 text-dl-grey-2">
+        <p class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
           {{ ingredient.name }}
         </p>
         <p
           *ngIf="ingredient.totalStock > 0"
-          class="text-dl-5 font-dl-2 text-dl-grey-4"
+          class="text-dl-5 font-dl-2 text-dl-grey-4 dark:text-dl-grey-7"
         >
           {{ ingredient.totalStock }} {{ ingredient.purchaseUnit }}
         </p>
         <p
           *ngIf="ingredient.totalStock === 0"
-          class="text-dl-5 font-dl-2 italic text-dl-grey-4"
+          class="text-dl-5 font-dl-2 italic text-dl-grey-4 dark:text-dl-grey-7"
         >
           Out of Stock
         </p>
@@ -78,7 +78,7 @@
       *ngIf="isLoading === false"
     >
       <div id="form-measurement">
-        <label class="text-dl-4 font-dl-3 text-dl-grey-4"
+        <label class="text-dl-4 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
           >Measurement
           <ng-container *ngIf="selectedIngredient().ingredientID !== 0"
             >in {{ selectedIngredient().purchaseUnit }}s</ng-container
@@ -93,11 +93,12 @@
     <button
       id="add-button"
       type="button"
-      class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+      class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
       (click)="onSubmit()"
       [disabled]="!form.valid || form.pristine || isLoading === true"
       [ngClass]="{
-        ' bg-dl-pink-4  shadow-lg ': form.valid && !form.pristine,
+        ' bg-dl-pink-4 shadow-lg  dark:bg-dl-pink-7 ':
+          form.valid && !form.pristine,
         'bg-dl-grey-7': !form.valid || form.pristine,
         invisible: selectedIngredient().ingredientID === 0
       }"
@@ -116,7 +117,7 @@
   class="flex flex-col items-center"
   *ngIf="displayIngredients().length === 0 && searchFilter() === ''"
 >
-  <p class="p-dl-3 text-dl-7 font-dl-3 text-dl-grey-2">
+  <p class="p-dl-3 text-dl-7 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
     No Ingredients Found to Add
   </p>
 </div>

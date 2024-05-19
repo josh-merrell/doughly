@@ -1,21 +1,21 @@
 <div
-  class="max-h-dl-17 w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="max-h-dl-17 w-dl-14 dark:border transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isUpdating"></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isUpdating">
     <div class="flex w-full flex-col">
       <div class="mt-dl-2 space-x-1 whitespace-nowrap text-center">
-        <span class="text-dl-6 text-dl-grey-5">Edit</span
-        ><span class="text-dl-6 font-dl-3 text-dl-grey-2">{{
+        <span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6">Edit</span
+        ><span class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">{{
           ingredient()?.name
         }}</span
-        ><span class="text-dl-6 text-dl-grey-5">stock</span>
+        ><span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6">stock</span>
       </div>
 
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-purchasedDate">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
             >Purchased Date</label
           >
           <mat-form-field class="w-full">
@@ -40,7 +40,7 @@
         </div>
 
         <div id="form-measurement">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
             >Measurement in
             <ng-container *ngIf="ingredient() as ingredient"
               >{{ ingredient.purchaseUnit }}s</ng-container
@@ -53,13 +53,14 @@
       </div>
       <!---->
 
-      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-3">
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
-            'cursor-pointer bg-dl-pink-4': form.valid && !form.pristine,
+            'cursor-pointer bg-dl-pink-4 dark:bg-dl-pink-7':
+              form.valid && !form.pristine,
             'bg-dl-grey-7': !form.valid || form.pristine
           }"
           [disabled]="!form.valid || form.pristine"
@@ -69,7 +70,7 @@
         </button>
         <button
           type="button"
-          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
           (click)="onCancel()"
         >
           Cancel

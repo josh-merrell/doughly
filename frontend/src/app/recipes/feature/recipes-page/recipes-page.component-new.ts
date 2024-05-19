@@ -112,6 +112,7 @@ export class RecipesPageNewComponent {
 
   setView(view: string) {
     this.view.set(view);
+    console.log('View set to:', view);
   }
 
   ngOnDestroy(): void {

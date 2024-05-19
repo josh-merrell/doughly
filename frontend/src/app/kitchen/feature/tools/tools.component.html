@@ -2,7 +2,7 @@
   <!-- header -->
   <div class="mt-dl-4 flex items-center justify-between">
     <div class="ml-dl-2 flex flex-col">
-      <p class="text-dl-6 font-dl-2 text-dl-grey-4">
+      <p class="text-dl-6 font-dl-2 text-dl-grey-4 dark:text-dl-grey-7">
         {{ totalInStock$ | async }} of {{ (tools$ | async)?.length }} In Stock
       </p>
     </div>
@@ -11,7 +11,7 @@
     <button
       id="test-button"
       type="button"
-      class="block whitespace-nowrap min-w-dl-9 rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      class="block min-w-dl-9 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6 dark:bg-dl-pink-7 dark:text-dl-grey-1 hover:dark:bg-dl-pink-6"
       (click)="onAddTool()"
     >
       Add Tool
@@ -26,7 +26,7 @@
         width="35"
         height="35"
         viewBox="0 0 15 15"
-        class="pt-dl-1 text-dl-grey-3"
+        class="pt-dl-1 text-dl-grey-3 dark:text-dl-grey-8"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -40,7 +40,7 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-13 border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+        class="ml-dl-2 w-dl-13 rounded-dl-2 border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent dark:bg-dl-grey-2 dark:text-dl-grey-7 dark:placeholder-dl-grey-7"
         [placeholder]="
           !searchFilters.length ? 'Filter by Tool' : searchFilters[0].operand1
         "
@@ -61,25 +61,25 @@
         *ngFor="let tool of displayTools$ | async; let i = index"
         class="tool-card relative flex h-dl-7 flex-col justify-between rounded-dl-1 px-dl-3 py-dl-2 shadow-md"
         [ngClass]="{
-          'bg-dl-grey-8 ': tool.totalStock === 0,
-          'bg-dl-grey-10': tool.totalStock > 0
+          'bg-dl-grey-8 dark:bg-dl-grey-3': tool.totalStock === 0,
+          'bg-dl-teal-10 dark:bg-dl-teal-2': tool.totalStock > 0
         }"
         (click)="toolCardClick(tool)"
         (touchstart)="toolCardTouchStart(tool.toolID)"
         (touchend)="toolCardTouchEnd()"
       >
-        <p class="text-dl-6 font-dl-3 text-dl-grey-2">
+        <p class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
           {{ tool.name }}
         </p>
         <p
           *ngIf="tool.totalStock > 0"
-          class="text-dl-6 font-dl-2 text-dl-grey-2"
+          class="text-dl-6 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
         >
           {{ tool.totalStock }} {{ tool.purchaseUnit }}
         </p>
         <p
           *ngIf="tool.totalStock === 0"
-          class="text-dl-5 font-dl-2 italic text-dl-grey-1"
+          class="text-dl-5 font-dl-2 italic text-dl-grey-1 dark:text-dl-grey-10"
         >
           Out of Stock
         </p>

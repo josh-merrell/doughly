@@ -1,9 +1,11 @@
 <div
-  class="flex h-dl-21 w-full transform items-center flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="dark:border dark:border-dl-grey-4 flex h-dl-21 w-full transform flex-col items-center bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all  dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-nowrap">
-      <span class="text-dl-6 font-dl-2 text-dl-grey-5">Messages</span>
+      <span class="text-dl-6 font-dl-2 text-dl-grey-5 dark:text-dl-grey-8"
+        >Messages</span
+      >
     </div>
   </div>
   <mat-spinner *ngIf="isUpdating()" class="my-app-custom-spinner"></mat-spinner>
@@ -17,21 +19,25 @@
           (click)="onMessageSelect(message, i)"
         >
           <div
-            class="relative my-dl-4 flex w-full flex-col items-start rounded-dl-3 py-dl-1 pl-dl-3 shadow-md"
+            class="relative my-dl-4 flex w-full flex-col items-start dark:bg-dl-grey-2 rounded-dl-3 py-dl-1 pl-dl-3 shadow-md"
             [ngClass]="{
-              'bg-dl-pink-10': selectedMessageIndex() === i
+              'bg-dl-pink-10 dark:bg-dl-pink-1': selectedMessageIndex() === i
             }"
           >
             <div class="flex w-full justify-between">
-              <p class="px-dl-2 text-dl-5 font-dl-3 text-dl-grey-1">
+              <p
+                class="px-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+              >
                 {{ message.messageData.title }}
               </p>
-              <p class="px-dl-4 text-dl-4 font-dl-2 text-dl-grey-1">
+              <p
+                class="px-dl-4 text-dl-4 font-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
+              >
                 {{ message.displayDate }}
               </p>
             </div>
             <p
-              class="w-full pl-dl-2 pr-dl-4 text-dl-5 font-dl-2 text-dl-grey-4"
+              class="w-full pl-dl-2 pr-dl-4 text-dl-5 font-dl-2 text-dl-grey-4 dark:text-dl-grey-7"
               [ngClass]="{
                 'truncate': selectedMessageIndex() !== i,
               }"
@@ -40,7 +46,7 @@
             </p>
             <div
               *ngIf="message.messageData.status === 'notAcked'"
-              class="absolute right-2 top-6 z-20 h-dl-2.5 w-dl-2.5 rounded-full bg-dl-pink-6"
+              class="absolute right-2 top-6 z-20 h-dl-2.5 w-dl-2.5 rounded-full bg-dl-pink-6 dark:bg-dl-pink-5"
             ></div>
           </div>
           <div
@@ -49,20 +55,20 @@
           >
             <button
               (click)="onView(message, i)"
-              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+              class="shadow-s sm:ml-dl-4 inline-flex w-dl-7 items-center justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1"
             >
               View
             </button>
             <button
               (click)="onAck(message, i)"
               *ngIf="message.messageData.status === 'notAcked'"
-              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pink-3 sm:ml-dl-4"
+              class="shadow-s sm:ml-dl-4 inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pink-3 dark:border-dl-pink-7 dark:text-dl-pink-8"
             >
               Seen
             </button>
             <button
               (click)="onDelete(message, i)"
-              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pink-3 sm:ml-dl-4"
+              class="shadow-s sm:ml-dl-4 inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pink-3 dark:border-dl-pink-7 dark:text-dl-pink-8"
             >
               Delete
             </button>
@@ -74,9 +80,9 @@
       <div class="mt-dl-2">
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
           [ngClass]="{
-            'cursor-pointer bg-dl-pink-4 hover:bg-dl-pink-5':
+            'cursor-pointer bg-dl-pink-4 hover:bg-dl-pink-5 dark:bg-dl-pink-7 hover:dark:bg-dl-pink-6':
               messages() && messages().length > 0,
             'bg-dl-grey-7': !messages() || !messages().length
           }"
@@ -87,7 +93,7 @@
         </button>
         <button
           type="button"
-          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10  dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
           (click)="onCancel()"
         >
           Cancel

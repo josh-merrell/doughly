@@ -1,17 +1,17 @@
 <div
-  class="flex w-full flex-col items-center border-x-4 border-dl-yellow-5 bg-white px-dl-3 pb-dl-2"
+  class="flex w-full flex-col items-center border-x-4 border-dl-yellow-5 bg-white px-dl-3 pb-dl-2 dark:border-dl-yellow-6 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isDeleting"></mat-spinner>
   <h2
     *ngIf="isDeleting"
-    class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-grey-4"
+    class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
   >
     Processing..
   </h2>
   <div class="flex w-full flex-col items-center" *ngIf="!isDeleting">
     <div class="flex w-full pl-dl-2 pt-dl-2">
       <svg
-        class="h-6 w-6 text-dl-yellow-5"
+        class="h-6 w-6 text-dl-yellow-5 dark:text-dl-yellow-6"
         viewBox="0 0 20 20"
         fill="currentColor"
         aria-hidden="true"
@@ -22,24 +22,26 @@
           clip-rule="evenodd"
         />
       </svg>
-      <p class="leading-dl-4 ml-dl-2 text-dl-6 font-dl-3 text-dl-yellow-2">
+      <p
+        class="leading-dl-4 ml-dl-2 text-dl-6 font-dl-3 text-dl-yellow-2 dark:text-dl-yellow-9"
+      >
         Delete Recipe Tool
       </p>
     </div>
     <div class="relative flex w-dl-15 max-w-full flex-col">
       <div class="ml-dl-3 flex flex-col">
         <div *ngIf="this.tool.name !== 'dummy'" class="mt-dl-4 space-x-1">
-          <span class="mt-dl-1 text-dl-5 text-dl-grey-5"
+          <span class="mt-dl-1 text-dl-5 text-dl-grey-5 dark:text-dl-grey-6"
             >Are you sure you want to remove</span
-          ><span class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2">{{
-            this.tool.name
-          }}</span
-          ><span class="mt-dl-1 text-dl-5 text-dl-grey-5"
+          ><span
+            class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+            >{{ this.tool.name }}</span
+          ><span class="mt-dl-1 text-dl-5 text-dl-grey-5 dark:text-dl-grey-6"
             >from the recipe?</span
           >
         </div>
         <div *ngIf="this.tool.name === 'dummy'" class="mt-dl-4 space-x-1">
-          <span class="mt-dl-1 text-dl-5 text-dl-grey-5"
+          <span class="mt-dl-1 text-dl-5 text-dl-grey-5 dark:text-dl-grey-6"
             >Would you like this recipe to require tools?</span
           >
         </div>
@@ -47,14 +49,14 @@
       <div class="mt-dl-5 flex w-full flex-row-reverse justify-between px-dl-4">
         <button
           type="button"
-          class="shadow-sinline-flex ml-dl-4 w-2/5 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1"
+          class="shadow-sinline-flex ml-dl-4 w-2/5 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 dark:bg-dl-yellow-7 dark:text-dl-grey-1 hover:dark:bg-dl-yellow-6"
           (click)="onSubmit()"
         >
           Delete
         </button>
         <button
           type="button"
-          class="inline-flex w-2/5 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1"
+          class="inline-flex w-2/5 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1 dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
           (click)="onCancel()"
         >
           Cancel

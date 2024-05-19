@@ -1,8 +1,10 @@
 <div
-  class="flex h-dl-21 w-full transform flex-col items-center bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="flex h-dl-21 w-full transform flex-col items-center bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
-    <h3 class="text-dl-6 font-dl-3 text-dl-grey-2">Edit Recipe</h3>
+    <h3 class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
+      Edit Recipe
+    </h3>
   </div>
   <mat-spinner
     class="my-app-custom-spinner w-full"
@@ -20,7 +22,10 @@
         <div class="mt-dl-1 flex-grow overflow-y-auto">
           <!-- Title -->
           <div id="form-stepTitle" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Title</label>
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              >Title</label
+            >
             <mat-form-field class="text-dl-4">
               <input matInput formControlName="title" />
               <mat-error
@@ -40,7 +45,10 @@
 
           <!-- Description -->
           <div id="form-recipeCategoryID" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Category</label>
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              >Category</label
+            >
             <mat-form-field>
               <mat-select formControlName="recipeCategoryID">
                 <ng-container *ngFor="let category of categories$ | async">
@@ -62,7 +70,8 @@
               formControlName="isHeirloomRecipe"
               class="select-slider"
             ></mat-slide-toggle>
-            <span class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4"
+            <span
+              class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4 dark:text-dl-grey-7"
               >Allow friends to view and use</span
             >
           </div>
@@ -76,13 +85,17 @@
               formControlName="isPublicRecipe"
               class="select-slider"
             ></mat-slide-toggle>
-            <span class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4"
+            <span
+              class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4 dark:text-dl-grey-7"
               >Make public</span
             >
           </div>
           <div class="mt-dl-2 flex flex-col">
             <div id="form-servings" class="relative flex flex-col">
-              <label class="text-dl-5 font-dl-3 text-dl-grey-4">Servings</label>
+              <label
+                class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+                >Servings</label
+              >
               <mat-form-field class="w-full">
                 <input matInput formControlName="servings" />
                 <mat-error
@@ -103,7 +116,8 @@
               </mat-form-field>
             </div>
             <div id="form-lifespanDays" class="relative flex flex-col">
-              <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+              <label
+                class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
                 >Lifespan Days</label
               >
               <mat-form-field class="w-full">
@@ -130,7 +144,8 @@
           </div>
           <div class="mt-dl-2 flex flex-col">
             <div id="form-timePrep" class="relative flex flex-col">
-              <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+              <label
+                class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
                 >Prep time in minutes</label
               >
               <mat-form-field class="w-full">
@@ -153,7 +168,8 @@
               </mat-form-field>
             </div>
             <div id="form-timeBake" class="relative flex flex-col">
-              <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+              <label
+                class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
                 >Cook time in minutes</label
               >
               <mat-form-field class="w-full">
@@ -180,7 +196,7 @@
             <div class="relative inline-block w-full">
               <button
                 type="button"
-                class="shadow-s inline-flex w-full justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+                class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1"
                 (click)="selectImage()"
               >
                 Choose New Photo
@@ -188,6 +204,10 @@
             </div>
 
             <image-cropper
+              style="
+                --cropper-outline-color: 'red';
+                --cropper-overlay-color: 'red';
+              "
               [imageBase64]="recipeImageBase64"
               [maintainAspectRatio]="true"
               [aspectRatio]="5 / 3"
@@ -203,10 +223,10 @@
         <div class="mt-dl-4">
           <button
             type="button"
-            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+            class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
-              'cursor-pointer bg-dl-pink-4':
+              'cursor-pointer bg-dl-pink-4 dark:bg-dl-pink-7':
                 (form.valid && !form.pristine) || this.croppedImage,
               'bg-dl-grey-7':
                 !form.valid || (form.pristine && !this.croppedImage)
@@ -218,7 +238,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+            class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
             (click)="onCancel()"
           >
             Cancel

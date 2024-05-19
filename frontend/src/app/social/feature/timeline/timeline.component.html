@@ -1,80 +1,77 @@
 <div class="mb-dl-6 flex h-full w-full flex-col items-center overflow-y-auto">
-  <span
-    class="text-dl-6 font-dl-3 italic text-dl-grey-5"
+  <span class="text-dl-6 font-dl-3 italic text-dl-grey-5 dark:text-dl-grey-6"
     >Past Day</span
   >
   @for (log of pastDay(); track log.logTime; let isLast = $last) {
   <div
-    class="relative my-dl-2 py-dl-1 w-full flex items-center justify-between rounded-dl-3 bg-white shadow-md transition-all duration-200 ease-in-out"
+    class="relative my-dl-2 flex w-full items-center justify-between rounded-dl-3 bg-white py-dl-1 shadow-md transition-all duration-200 ease-in-out dark:bg-dl-grey-2"
     [ngClass]="{ 'mb-dl-6': isLast }"
   >
     <p
-      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-2"
+      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
     >
       {{ log.message }}
     </p>
     <p
-      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-grey-2"
+      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-grey-2 dark:text-dl-grey-9"
     >
       {{ log.displayLogTime }}
     </p>
   </div>
   } @empty {
   <div
-    class="relative mt-dl-2 mb-dl-6 flex h-dl-3 items-center justify-between bg-white italic  transition-all duration-200 ease-in-out"
+    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-white italic transition-all duration-200 ease-in-out dark:bg-dl-grey-1"
   >
     . . .
   </div>
   }
-  <span
-    class="text-dl-6 font-dl-3 italic text-dl-grey-5"
+  <span class="text-dl-6 font-dl-3 italic text-dl-grey-5 dark:text-dl-grey-6"
     >Past Week</span
   >
   @for (log of pastWeek(); track log.logTime; let isLast = $last) {
   <div
-    class="relative my-dl-2 py-dl-1 w-full flex items-center justify-between rounded-dl-3 bg-white shadow-md  transition-all duration-200 ease-in-out"
+    class="relative my-dl-2 flex w-full items-center justify-between rounded-dl-3 bg-white py-dl-1 shadow-md transition-all duration-200 ease-in-out dark:bg-dl-grey-2"
     [ngClass]="{ 'mb-dl-6': isLast }"
   >
     <p
-      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-2"
+      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
     >
       {{ log.message }}
     </p>
     <p
-      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-grey-2"
+      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-grey-2 dark:text-dl-grey-9"
     >
       {{ log.displayLogTime }}
     </p>
   </div>
   } @empty {
   <div
-    class="relative mt-dl-2 mb-dl-6 flex h-dl-3 items-center justify-between  bg-white italic  transition-all duration-200 ease-in-out"
+    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-white italic transition-all duration-200 ease-in-out dark:bg-dl-grey-1"
   >
     . . .
   </div>
   }
-  <span
-    class="text-dl-6 font-dl-3 italic text-dl-grey-5"
+  <span class="text-dl-6 font-dl-3 italic text-dl-grey-5 dark:text-dl-grey-6"
     >Past Month</span
   >
   @for (log of pastMonth(); track log.logTime; let isLast = $last) {
   <div
-    class="relative my-dl-2 py-dl-1 w-full flex items-center justify-between rounded-dl-3 bg-white shadow-md transition-all duration-200 ease-in-out"
+    class="relative my-dl-2 flex w-full items-center justify-between rounded-dl-3 bg-white py-dl-1 shadow-md transition-all duration-200 ease-in-out dark:bg-dl-grey-2"
   >
     <p
-      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-2"
+      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
     >
       {{ log.message }}
     </p>
     <p
-      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-grey-2"
+      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-grey-2 dark:text-dl-grey-9"
     >
       {{ log.displayLogTime }}
     </p>
   </div>
   } @empty {
   <div
-    class="relative mt-dl-2 mb-dl-6 flex h-dl-3 items-center justify-between  bg-white italic transition-all duration-200 ease-in-out"
+    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-white italic transition-all duration-200 ease-in-out dark:bg-dl-grey-1"
   >
     . . .
   </div>

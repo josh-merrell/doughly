@@ -1,4 +1,4 @@
-<div class="relative items-top flex justify-between py-dl-2">
+<div class="items-top relative flex justify-between py-dl-2">
   <!-- Image, Name, Username -->
   <div class="flex items-center">
     <div>
@@ -9,33 +9,36 @@
         alt="friend profile image"
       />
       <span
-        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
+        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
         *ngIf="!friend.imageURL && friend.nameFirst && friend.nameLast"
       >
-        <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
-          initials
-        }}</span>
+        <span
+          class="text-dl-6 font-dl-3 leading-none text-dl-grey-7 dark:text-dl-grey-4"
+          >{{ initials }}</span
+        >
       </span>
     </div>
     <div class="items-left ml-dl-4 flex flex-col justify-between">
       <!-- Name -->
-      <div class="flex text-dl-6 font-dl-3 text-dl-grey-2">
+      <div class="flex text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
         <span>{{ friend.nameFirst }}</span>
         <span class="mb-dl-2 ml-dl-1">{{ friend.nameLast }}</span>
       </div>
 
       <!-- Username -->
-      <span class="text-dl-5 font-dl-2 text-dl-grey-6">{{
+      <span class="text-dl-5 font-dl-2 text-dl-grey-6 dark:text-dl-grey-5">{{
         friend.username
       }}</span>
     </div>
   </div>
 
   <!-- Recipe Count -->
-  <div class="absolute bottom-1 pb-dl-1 right-2">
-    <span *ngIf="friend.recipes.length" class="text-dl-5 font-dl-2 text-dl-blue-6"
+  <div class="absolute bottom-1 right-2 pb-dl-1">
+    <span
+      *ngIf="friend.recipes.length"
+      class="text-dl-5 font-dl-2 text-dl-blue-6 dark:text-dl-blue-5"
       >{{ friend.recipes.length }} recipe<span
-        class="text-dl-5 font-dl-2 text-dl-blue-6"
+        class="text-dl-5 font-dl-2 text-dl-blue-6 dark:text-dl-blue-5"
         *ngIf="friend.recipes.length !== 1"
         >s</span
       ></span
