@@ -17,6 +17,7 @@ export interface Profile {
   name_last?: string;
   photo_url?: string;
   joined_at?: Date;
+  darkMode: boolean;
   onboardingState?: number;
   checkIngredientStock?: boolean;
   autoDeleteExpiredStock?: boolean;
@@ -307,6 +308,7 @@ export class AuthService {
               username: data[0].username,
               onboardingState: data[0].onboardingState,
               isPremium: false,
+              darkMode: true,
               //permissions
               permRecipeSubscribeUnlimited: false,
               permRecipeCreateUnlimited: false,
@@ -415,6 +417,7 @@ export class AuthService {
             city: data.city,
             state: data.state,
             isPremium: data.isPremium,
+            darkMode: data.darkMode,
             //permissions
             permRecipeSubscribeUnlimited: data.permRecipeSubscribeUnlimited,
             permRecipeCreateUnlimited: data.permRecipeCreateUnlimited,
@@ -505,6 +508,7 @@ export class AuthService {
             joined_at: data.joined_at,
             city: data.city,
             state: data.state,
+            darkMode: data.darkMode,
             //permissions
             isPremium: data.isPremium,
             permRecipeSubscribeUnlimited: data.permRecipeSubscribeUnlimited,
