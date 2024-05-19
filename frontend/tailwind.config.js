@@ -30,6 +30,7 @@ module.exports = {
     screens: {
       md: { max: "767px" },
     },
+    darkMode: "class",
     extend: {
       display: [
         "responseive",

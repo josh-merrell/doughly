@@ -28,6 +28,8 @@ import { filter } from 'rxjs';
 import { RedirectPathService } from './shared/utils/redirect-path.service';
 import { ProductService } from './shared/utils/productService';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
+import { Renderer2 } from '@angular/core';
+import { selectProfile } from './profile/state/profile-selectors';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -64,7 +66,8 @@ export class AppComponent {
     public pushTokenService: PushTokenService,
     private redirectPathService: RedirectPathService,
     private extraStuffService: ExtraStuffService,
-    private productService: ProductService
+    private productService: ProductService,
+    private renderer: Renderer2
   ) {
     // Listen to routing events, ensuring only NavigationEnd events are processed
     this.router.events
@@ -131,6 +134,18 @@ export class AppComponent {
           this.router.navigateByUrl(appPath);
         }
       });
+    });
+
+    // listen for dark mode changes
+    this.store.select(selectProfile).subscribe((profile) => {
+      if (profile) {
+        const darkMode = profile.darkMode;
+        if (darkMode) {
+          this.renderer.addClass(document.body, 'dark');
+        } else {
+          this.renderer.removeClass(document.body, 'dark');
+        }
+      }
     });
   }
 
