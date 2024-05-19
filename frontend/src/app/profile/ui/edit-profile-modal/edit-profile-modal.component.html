@@ -1,26 +1,26 @@
 <div
-  class="relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-lg sm:p-dl-6"
+  class="sm:my-dl-3 sm:w-full sm:max-w-lg sm:p-dl-6 relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isEditing"></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="isEditing === false">
     <div class="relative flex w-dl-13 max-w-full flex-col">
-      <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
+      <div class="sm:ml-dl-1 sm:mt-dl-0 sm:text-left mt-dl-1 text-center">
         <h3
-          class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3"
+          class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
           id="editIngredientModal"
         >
           Edit Profile
         </h3>
         <div class="mt-dl-2 space-x-1 whitespace-nowrap">
-          <span class="text-dl-5 text-dl-grey-5"
+          <span class="text-dl-5 text-dl-grey-5 dark:text-dl-grey-6"
             >Change {{ field }}</span
           >
         </div>
       </div>
-      <div class="absolute right-0 top-0 hidden pr-dl-2 pt-dl-2 sm:block">
+      <div class="sm:block absolute right-0 top-0 hidden pr-dl-2 pt-dl-2">
         <button
           type="button"
-          class="rounded-dl-2 bg-white text-dl-grey-6 hover:text-dl-grey-5 focus:outline-none"
+          class="rounded-dl-2 bg-white text-dl-grey-6 hover:text-dl-grey-5 focus:outline-none dark:bg-dl-grey-1 dark:text-dl-grey-5 dark:hover:text-dl-grey-6"
           (click)="onCancel()"
         >
           <span class="sr-only">Close</span>
@@ -44,7 +44,10 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-first-field" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4">{{ field }}</label>
+          <label
+            class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+            >{{ field }}</label
+          >
           <mat-form-field class="w-full">
             <input matInput formControlName="{{ this.data.property }}" />
             <mat-error
@@ -60,10 +63,10 @@
       <div class="mt-dl-3">
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
-            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
               form.valid && !form.pristine,
             'bg-dl-grey-7': !form.valid || form.pristine
           }"
@@ -74,7 +77,7 @@
         </button>
         <button
           type="button"
-          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
           (click)="onCancel()"
         >
           Cancel

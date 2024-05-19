@@ -1,7 +1,7 @@
-<div class="flex h-full w-full flex-col pt-dl-4">
+<div class="flex h-full w-full flex-col pt-dl-4 bg-white dark:bg-dl-grey-1">
   <div class="mb-dl-3 flex w-full flex-row-reverse pr-dl-5">
     <span
-      class="inline-flex items-center border-b-4 border-dl-blue-8 text-dl-7 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out"
+      class="inline-flex items-center border-b-4 border-dl-blue-8 text-dl-7 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out dark:border-dl-blue-3 dark:text-dl-grey-9"
       >Settings</span
     >
   </div>
@@ -13,7 +13,7 @@
   <div *ngIf="!isEditing" class="flex-grow overflow-y-auto px-dl-4">
     <form class="h-full" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="flex h-full flex-col">
-        <div class="mt-dl-3 mb-dl-2 flex-grow overflow-y-auto">
+        <div class="mb-dl-2 mt-dl-3 flex-grow overflow-y-auto">
           <!-- Check Ingredient Stock -->
           <div
             id="form-checkIngredientStock"
@@ -23,7 +23,8 @@
               formControlName="checkIngredientStock"
               class="select-slider"
             ></mat-slide-toggle>
-            <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2"
+            <span
+              class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
               >Check Kitchen inventory when adding a recipe to a shopping list
               and deduct inventory when using a recipe</span
             >
@@ -36,13 +37,16 @@
           >
             <mat-slide-toggle formControlName="autoDeleteExpiredStock">
             </mat-slide-toggle>
-            <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2"
+            <span
+              class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
               >Delete Ingredient Inventory from your kitchen when it expires,
               based on your Ingredient Lifespan setting</span
             >
           </div>
           <!-- Notifications -->
-          <h3 class="mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-3">
+          <h3
+            class="mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
+          >
             Notifications
           </h3>
           <div class="flex flex-col">
@@ -52,7 +56,7 @@
               class="relative mt-dl-2 flex flex-row items-center"
             >
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient is low in stock</span
               >
               <mat-form-field>
@@ -73,7 +77,7 @@
               class="relative mt-dl-2 flex flex-row items-center"
             >
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient has no more stock</span
               >
               <mat-form-field>
@@ -94,7 +98,7 @@
               class="relative mt-dl-2 flex flex-row items-center"
             >
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient stock is three days from expiration</span
               >
               <mat-form-field>
@@ -115,7 +119,7 @@
               class="relative mt-dl-2 flex flex-row items-center"
             >
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient stock has expired</span
               >
               <mat-form-field>
@@ -135,7 +139,7 @@
               class="relative mt-dl-2 flex flex-row items-center"
             >
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When a friend creates a recipe</span
               >
               <mat-form-field>
@@ -156,7 +160,7 @@
               class="relative mt-dl-2 flex flex-row items-center"
             >
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When someone you follow creates a recipe</span
               >
               <mat-form-field>
@@ -177,7 +181,7 @@
               class="relative mt-dl-2 flex flex-row items-center"
             >
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When you receive a friend request</span
               >
               <mat-form-field>
@@ -198,7 +202,7 @@
               class="relative mt-dl-2 flex flex-row items-center"
             >
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2"
+                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When someone follows you</span
               >
               <mat-form-field>
@@ -218,12 +222,12 @@
         <div class="w-full">
           <button
             type="button"
-            class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+            class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border px-dl-1 text-white dark:text-dl-grey-1 py-dl-1 text-dl-5 font-dl-3  shadow-lg transition-all duration-200 ease-in-out "
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
-              'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+              'cursor-pointer  bg-dl-pink-4 dark:border-dl-pink-7 hover:bg-dl-pink-5 dark:bg-dl-pink-7 hover:dark:bg-dl-pink-6':
                 form.valid && !form.pristine,
-              'bg-dl-grey-7': !form.valid || form.pristine
+              'bg-dl-grey-7 dark:bg-dl-grey-4  dark:border-dl-grey-4 ': !form.valid || form.pristine
             }"
             [disabled]="!form.valid || form.pristine"
             (click)="onSubmit()"

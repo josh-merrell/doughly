@@ -1,12 +1,25 @@
-<div class="rounded-dl-2 bg-dl-teal-10 p-dl-4 ">
+<div
+  class="rounded-dl-2 bg-dl-teal-10 p-dl-4 dark:border-dl-teal-4 dark:bg-dl-teal-1"
+>
   <div class="flex">
     <div class="flex-shrink-0">
-      <svg class="h-5 w-5 text-dl-teal-7" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+      <svg
+        class="h-5 w-5 text-dl-teal-7 dark:text-dl-teal-4"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+          clip-rule="evenodd"
+        />
       </svg>
     </div>
-    <div class="ml-dl-3 flex flex-col w-full items-center">
-      <p class="text-dl-6 font-dl-3 text-dl-teal-2">{{data.confirmationMessage}}</p>
+    <div class="ml-dl-3 flex w-full flex-col items-center">
+      <p class="text-dl-6 font-dl-3 text-dl-teal-2 dark:text-dl-teal-9">
+        {{ data.confirmationMessage }}
+      </p>
     </div>
   </div>
 </div>

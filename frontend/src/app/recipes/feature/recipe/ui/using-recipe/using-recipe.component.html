@@ -9,20 +9,26 @@
       *ngFor="let ingredient of displayIngredientsByComponent().noComponent"
       class="mt-dl-2 flex w-full justify-between"
     >
-      <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
+      <span
+        class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
         {{ ingredient.name }}
         <span
           *ngIf="ingredient.preparation"
-          class="pl-dl-3 text-dl-5 font-dl-2 italic text-dl-grey-2"
+          class="pl-dl-3 text-dl-5 font-dl-2 italic text-dl-grey-2 dark:text-dl-grey-9"
         >
           {{ ingredient.preparation }}
         </span>
       </span>
       <div class="flex justify-end">
-        <span class="ml-dl-1 mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
+        <span
+          class="ml-dl-1 mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+        >
           {{ ingredient.measurement }}
         </span>
-        <span class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2">
+        <span
+          class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
+        >
           {{
             ingredient.measurementUnit === "weightOunces"
               ? "oz"
@@ -42,7 +48,7 @@
       <div>
         <!-- Italic Label with component name -->
         <span
-          class="absolute -top-4 left-1/2 -translate-x-1/2 text-dl-6 font-dl-3 italic text-dl-grey-5"
+          class="absolute -top-4 left-1/2 -translate-x-1/2 text-dl-6 font-dl-3 italic text-dl-grey-5 dark:text-dl-grey-6"
           >for {{ component.key }}</span
         >
 
@@ -51,20 +57,26 @@
           *ngFor="let ingredient of component.value"
           class="mt-dl-2 flex w-full justify-between"
         >
-          <span class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
+          <span
+            class="min-w-dl-9 pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+          >
             {{ ingredient.name }}
             <span
               *ngIf="ingredient.preparation"
-              class="pl-dl-3 text-dl-5 font-dl-2 italic text-dl-grey-2"
+              class="pl-dl-3 text-dl-5 font-dl-2 italic text-dl-grey-2 dark:text-dl-grey-9"
             >
               {{ ingredient.preparation }}
             </span>
           </span>
           <div class="flex justify-end">
-            <span class="ml-dl-1 mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3">
+            <span
+              class="ml-dl-1 mr-dl-3 text-dl-6 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+            >
               {{ ingredient.measurement }}
             </span>
-            <span class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2">
+            <span
+              class="min-w-dl-8 text-dl-6 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
+            >
               {{
                 ingredient.measurementUnit === "weightOunces"
                   ? "oz"
@@ -94,7 +106,9 @@
     >
       <div class="mb-dl-2 flex w-full items-start">
         <!-- Step number with consistent width and padding -->
-        <div class="pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-3">
+        <div
+          class="pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
+        >
           {{ i + 1 }})
         </div>
         <!-- Title taking the remaining width -->
@@ -113,7 +127,7 @@
       </div>
       <!-- Step Description -->
       <p
-        class="my-dl-1 w-full px-dl-5 text-left text-dl-5 font-dl-2 text-dl-grey-4"
+        class="my-dl-1 w-full px-dl-5 text-left text-dl-5 font-dl-2 text-dl-grey-4 dark:text-dl-grey-7"
         style="text-indent: 20px; text-align: justify"
       >
         {{ step.description }}
@@ -132,7 +146,7 @@
 
   <button
     (click)="onUseRecipe()"
-    class="flex h-dl-5 w-full items-center justify-center bg-dl-pink-4 text-dl-6 font-dl-3 text-white"
+    class="flex h-dl-5 w-full items-center justify-center bg-dl-pink-4 text-dl-6 font-dl-3 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1"
     *ngIf="currentStepIndex() >= displaySteps().length - 1"
   >
     Mark Recipe as Completed
@@ -141,13 +155,13 @@
     <!-- Recipe Title-->
     <h1
       *ngIf="recipe()"
-      class="ml-dl-4 overflow-hidden text-dl-6 font-dl-3 text-ellipsis text-nowrap leading-dl-2 text-dl-grey-1"
+      class="ml-dl-4 overflow-hidden text-ellipsis text-nowrap text-dl-6 font-dl-3 leading-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
     >
       {{ recipe().title }}
     </h1>
 
     <!-- Buttons -->
-    <div class="flex justify-between h-full">
+    <div class="flex h-full justify-between">
       <!-- Navigation Arrows -->
       <div>
         <button

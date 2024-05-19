@@ -1,6 +1,8 @@
-<div class="rounded-dl-2 bg-dl-pink-10 p-dl-4">
+<div class="rounded-dl-2 bg-dl-pink-10 p-dl-4 dark:bg-dl-pink-1">
   <div class="flex flex-col justify-between">
-    <div class="absolute right-2 top-2 flex-shrink-0 text-dl-pink-5">
+    <div
+      class="absolute right-2 top-2 flex-shrink-0 text-dl-pink-5 dark:text-dl-pink-6"
+    >
       <svg
         class="w-13 h-9"
         viewBox="-9 14 110 75"
@@ -13,14 +15,18 @@
       </svg>
     </div>
     <div class="mb-dl-4 ml-dl-3 flex w-full flex-col items-center">
-      <p class="mb-dl-4 mr-dl-9 text-dl-7 font-dl-3 text-dl-pink-2">
+      <p
+        class="mb-dl-4 mr-dl-9 text-dl-7 font-dl-3 text-dl-pink-2 dark:text-dl-pink-9"
+      >
         {{ data.titleMessage }}
       </p>
-      <p class="text-dl-5 font-dl-3 text-dl-pink-2">{{ data.promptMessage }}</p>
+      <p class="text-dl-5 font-dl-3 text-dl-pink-2 dark:text-dl-pink-9">
+        {{ data.promptMessage }}
+      </p>
     </div>
     <button
       type="button"
-      class="whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      class="whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6 dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1 hover:dark:bg-dl-pink-6"
       (click)="onRouteToUpgrade()"
     >
       {{ data.buttonMessage }}

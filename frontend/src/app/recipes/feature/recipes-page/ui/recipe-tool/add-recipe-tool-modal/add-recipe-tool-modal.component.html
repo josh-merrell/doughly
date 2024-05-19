@@ -1,8 +1,10 @@
 <div
-  class="relative flex h-dl-17 transform flex-col overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+  class="sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6 relative flex h-dl-17 transform flex-col overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
-    <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4">
+    <h3
+      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+    >
       Add Recipe Tool
     </h3>
   </div>
@@ -19,7 +21,10 @@
         <!--FORM FIELDS-->
         <div class="mt-dl-3 flex-grow overflow-y-auto">
           <div id="form-toolName" class="relative flex flex-col">
-            <label class="text-dl-2 font-dl-3 text-dl-grey-4">Tool</label>
+            <label
+              class="text-dl-2 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              >Tool</label
+            >
             <mat-form-field>
               <mat-select formControlName="toolID">
                 <ng-container *ngFor="let tool of tools$ | async">
@@ -31,7 +36,7 @@
                   </mat-option>
                 </ng-container>
                 <mat-option
-                  class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2"
+                  class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
                   (click)="onAddNewTool()"
                 >
                   New Tool
@@ -40,7 +45,10 @@
             </mat-form-field>
           </div>
           <div id="form-quantity">
-            <label class="text-dl-2 font-dl-3 text-dl-grey-4">Quantity</label>
+            <label
+              class="text-dl-2 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              >Quantity</label
+            >
             <mat-form-field class="w-full">
               <input
                 matInput
@@ -61,10 +69,10 @@
         <div class="mt-dl-6">
           <button
             type="button"
-            class="shadow-s h-dl-5 w-full rounded-dl-1 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+            class="shadow-s sm:ml-dl-4 h-dl-5 w-full rounded-dl-1 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
-              'cursor-pointer bg-dl-pink-4':
+              'cursor-pointerdark:border-dl-pink-7 bg-dl-pink-4 dark:bg-dl-pink-7':
                 form.valid && !form.pristine,
               'bg-dl-grey-7': !form.valid || form.pristine
             }"
@@ -75,7 +83,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-3 h-dl-5 w-full rounded-dl-1 bg-white px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+            class="sm:mt-0 sm:w-auto mt-dl-3 h-dl-5 w-full rounded-dl-1 bg-white px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
             (click)="onCancel()"
           >
             Cancel

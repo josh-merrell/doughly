@@ -1,13 +1,17 @@
-<div class="border-dl-yellow-5 bg-white border-x-4 px-dl-3 pb-dl-2 w-full flex flex-col items-center">
-  <mat-spinner
-    class="my-app-custom-spinner"
+<div
+  class="flex w-full flex-col items-center border-x-4 border-dl-yellow-5 bg-white px-dl-3 pb-dl-2 dark:border-dl-yellow-6 dark:bg-dl-grey-1"
+>
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isDeleting"></mat-spinner>
+  <h2
     *ngIf="isDeleting"
-  ></mat-spinner>
-  <h2 *ngIf="isDeleting" class="mt-dl-4 leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4">Processing..</h2>
-  <div class="flex flex-col items-center w-full" *ngIf="!isDeleting">
+    class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+  >
+    Processing..
+  </h2>
+  <div class="flex w-full flex-col items-center" *ngIf="!isDeleting">
     <div class="flex w-full pl-dl-2 pt-dl-2">
       <svg
-        class="h-6 w-6 text-dl-yellow-5"
+        class="h-6 w-6 text-dl-yellow-5 dark:text-dl-yellow-6"
         viewBox="0 0 20 20"
         fill="currentColor"
         aria-hidden="true"
@@ -18,27 +22,38 @@
           clip-rule="evenodd"
         />
       </svg>
-      <p class="leading-dl-4 ml-dl-2 text-dl-6 font-dl-3 text-dl-yellow-2">
+      <p
+        class="leading-dl-4 ml-dl-2 text-dl-6 font-dl-3 text-dl-yellow-2 dark:text-dl-yellow-9"
+      >
         Delete Recipe Ingredient
       </p>
     </div>
     <div class="relative flex w-dl-15 max-w-full flex-col">
       <div class="ml-dl-3 flex flex-col">
-        <div class="space-x-1 mt-dl-4">
-          <span class="mt-dl-1 text-dl-5 text-dl-grey-5" *ngIf="!isDeleting">Are you sure you want to remove</span><span class="mt-dl-1 text-dl-5 text-dl-grey-2 font-dl-3">{{this.ingredient.name}}</span><span class="mt-dl-1 text-dl-5 text-dl-grey-5">from the recipe?</span>
+        <div class="mt-dl-4 space-x-1">
+          <span
+            class="mt-dl-1 text-dl-5 text-dl-grey-5 dark:text-dl-grey-6"
+            *ngIf="!isDeleting"
+            >Are you sure you want to remove</span
+          ><span
+            class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+            >{{ this.ingredient.name }}</span
+          ><span class="mt-dl-1 text-dl-5 text-dl-grey-5 dark:text-dl-grey-6"
+            >from the recipe?</span
+          >
         </div>
       </div>
-      <div class="mt-dl-5 px-dl-4 justify-between flex w-full flex-row-reverse">
+      <div class="mt-dl-5 flex w-full flex-row-reverse justify-between px-dl-4">
         <button
           type="button"
-          class="shadow-sinline-flex w-2/5 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 ml-dl-4"
+          class="shadow-sinline-flex ml-dl-4 w-2/5 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 dark:bg-dl-yellow-7 dark:text-dl-grey-1 hover:dark:bg-dl-yellow-6"
           (click)="onSubmit()"
         >
           Delete
         </button>
         <button
           type="button"
-          class="inline-flex w-2/5 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1"
+          class="inline-flex w-2/5 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1 dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
           (click)="onCancel()"
         >
           Cancel

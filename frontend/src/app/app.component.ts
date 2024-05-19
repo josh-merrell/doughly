@@ -142,7 +142,9 @@ export class AppComponent {
         const darkMode = profile.darkMode;
         if (darkMode) {
           this.renderer.addClass(document.body, 'dark');
+          this.renderer.removeClass(document.body, 'light');
         } else {
+          this.renderer.addClass(document.body, 'light');
           this.renderer.removeClass(document.body, 'dark');
         }
       }

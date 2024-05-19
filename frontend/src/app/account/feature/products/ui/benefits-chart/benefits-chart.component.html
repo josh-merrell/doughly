@@ -1,12 +1,12 @@
 <div class="flex w-full flex-col items-center">
   <span
     *ngIf="view === 'upgrade'"
-    class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
+    class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out "
     >{{ stringsService.productStrings.subscribeChartBenefit }}</span
   >
   <span
     *ngIf="view === 'your-premium'"
-    class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
+    class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out "
     >{{ stringsService.productStrings.subscribeYourPremium }}</span
   >
   <!-- Benefits Grid -->
@@ -15,16 +15,16 @@
       *ngFor="let feature of features; let i = index"
       class="flex h-dl-6 w-full items-center py-dl-3"
       [ngClass]="{
-            'border-b-2 border-dl-grey-10 border-opacity-50': i !== features.length - 1 && i !== 0,
+            'border-b-2 border-dl-grey-10 border-opacity-50 ': i !== features.length - 1 && i !== 0,
         }"
     >
       <span
-        class="flex-grow pl-dl-4 text-left text-dl-5 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
+        class="flex-grow pl-dl-4 text-left text-dl-5 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out "
         >{{ feature.title }}</span
       >
       <span
         *ngIf="feature.freeTier !== 'dash'"
-        class="w-1/5 text-center text-dl-5 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
+        class="w-1/5 text-center text-dl-5 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out "
         >{{ feature.freeTier }}</span
       >
 
@@ -48,7 +48,7 @@
 
       <span
         *ngIf="feature.premiumTier !== 'check'"
-        class="w-1/4 text-center text-dl-5 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out"
+        class="w-1/4 text-center text-dl-5 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out "
         >{{ feature.premiumTier }}</span
       >
       <svg
@@ -72,7 +72,7 @@
       </svg>
     </div>
     <div
-      class="absolute -right-0 h-full w-1/4 rounded-dl-3 bg-dl-grey-10 bg-opacity-10"
+      class="absolute -right-0 h-full w-1/4 rounded-dl-3 bg-dl-grey-10 bg-opacity-10 "
     ></div>
   </div>
 </div>

@@ -1,8 +1,11 @@
-<div class="max-w-dl-13 overflow-hidden rounded-dl-2 bg-dl-red-10 p-dl-4" (click)="onDismiss()">
+<div
+  class="max-w-dl-13 overflow-hidden rounded-dl-2 bg-dl-red-10 p-dl-4 dark:border-dl-red-4 dark:bg-dl-red-1"
+  (click)="onDismiss()"
+>
   <div class="flex">
     <div class="flex-shrink-0">
       <svg
-        class="h-5 w-5 text-dl-red-7"
+        class="h-5 w-5 text-dl-red-7 dark:text-dl-red-4"
         viewBox="0 0 20 20"
         fill="currentColor"
         aria-hidden="true"
@@ -14,9 +17,11 @@
         />
       </svg>
     </div>
-    <div class="pl-dl-3 flex w-full flex-col justify-between">
-      <h3 class="text-dl-6 font-dl-3 text-dl-red-3">{{ data.errorMessage }}</h3>
-      <p class="pt-dl-3 text-dl-5 font-dl-2 text-dl-red-4">
+    <div class="flex w-full flex-col justify-between pl-dl-3">
+      <h3 class="text-dl-6 font-dl-3 text-dl-red-3 dark:text-dl-red-8">
+        {{ data.errorMessage }}
+      </h3>
+      <p class="pt-dl-3 text-dl-5 font-dl-2 text-dl-red-4 dark:text-dl-red-7">
         Error Code: {{ data.statusCode }}
       </p>
     </div>

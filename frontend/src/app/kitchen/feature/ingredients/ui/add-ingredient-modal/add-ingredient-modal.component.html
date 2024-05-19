@@ -1,13 +1,13 @@
 <div
-  class="relative h-full w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="relative h-full w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="flex items-center justify-center" *ngIf="isAdding">
     <mat-spinner class="my-app-custom-spinner"></mat-spinner>
   </div>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
     <div class="relative flex w-dl-13 max-w-full flex-col">
-      <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
-        <h3 class="text-dl-6 font-dl-3 text-dl-grey-2">
+      <div class="sm:ml-dl-1 sm:mt-dl-0 sm:text-left mt-dl-1 text-center">
+        <h3 class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
           Add Ingredient to Kitchen
         </h3>
       </div>
@@ -15,7 +15,9 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-ingredientName" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Ingredient</label>
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+            >Ingredient</label
+          >
           <mat-form-field class="w-full">
             <input matInput formControlName="name" />
             <mat-error
@@ -28,14 +30,16 @@
         </div>
 
         <div id="form-ingredientBrand" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Brand</label>
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+            >Brand</label
+          >
           <mat-form-field class="w-full">
             <input matInput formControlName="brand" />
           </mat-form-field>
         </div>
 
         <div id="form-ingredientLifespanDays" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
             >Lifespan (days)</label
           >
           <mat-form-field class="w-full">
@@ -50,7 +54,7 @@
         </div>
 
         <div id="form-ingredientPurchaseUnit" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
             >Purchase Unit</label
           >
           <mat-form-field>
@@ -63,7 +67,9 @@
         </div>
 
         <div id="form-ingredientGramRatio" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4">Gram Ratio</label>
+          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+            >Gram Ratio</label
+          >
           <mat-form-field class="w-full">
             <input matInput formControlName="gramRatio" />
             <mat-error
@@ -73,22 +79,37 @@
               Must be a positive number!
             </mat-error>
           </mat-form-field>
-          <div *ngIf="gettingUnitRatio()" class="absolute flex -bottom-1 left-3">
-            <mat-spinner [diameter]="18" class="my-app-custom-spinner"></mat-spinner>
-            <p class="text-dl-4 ml-dl-3 text-dl-grey-3 font-dl-2 italic">Getting Suggested Ratio...</p>
+          <div
+            *ngIf="gettingUnitRatio()"
+            class="absolute -bottom-1 left-3 flex"
+          >
+            <mat-spinner
+              [diameter]="18"
+              class="my-app-custom-spinner"
+            ></mat-spinner>
+            <p
+              class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+            >
+              Getting Suggested Ratio...
+            </p>
           </div>
-          <p *ngIf="gramRatioSuggestion() === form.get('gramRatio')?.value" class="absolute -bottom-1 text-dl-4 ml-dl-3 text-dl-grey-3 italic font-dl-2">Suggested Ratio</p>
+          <p
+            *ngIf="gramRatioSuggestion() === form.get('gramRatio')?.value"
+            class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+          >
+            Suggested Ratio
+          </p>
         </div>
       </div>
       <!---->
 
-      <div class="mt-dl-4 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+      <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-4">
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
-            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
               form.valid && !form.pristine,
             'bg-dl-grey-7': !form.valid || form.pristine
           }"
@@ -99,7 +120,7 @@
         </button>
         <button
           type="button"
-          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+          class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10  dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2  "
           (click)="onCancel()"
         >
           Cancel

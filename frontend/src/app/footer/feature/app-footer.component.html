@@ -1,13 +1,17 @@
 <div class="relative">
-  <nav class="border-t-2 border-dl-grey-8 bg-white">
+  <nav
+    class="border-t-2 border-dl-grey-8 bg-white dark:border-dl-grey-3 dark:bg-dl-grey-1"
+  >
     <!-- Adding Recipe Banner -->
     <div
       *ngIf="
         addingRecipe() && currentLocation() !== '/recipes/created/add/vision'
       "
-      class="absolute -top-4 left-1/2 flex -translate-x-1/2 items-center rounded-full bg-dl-pink-9 px-dl-4 py-dl-2"
+      class="absolute -top-4 left-1/2 flex -translate-x-1/2 items-center rounded-full bg-dl-pink-9 px-dl-4 py-dl-2 dark:bg-dl-pink-2"
     >
-      <p class="mr-dl-2 text-dl-5 text-dl-pink-2">Adding Recipe...</p>
+      <p class="mr-dl-2 text-dl-5 text-dl-pink-2 dark:text-dl-pink-9">
+        Adding Recipe...
+      </p>
       <mat-spinner class="my-app-custom-spinner" [diameter]="18"></mat-spinner>
     </div>
     <!-- Mobile menu, show/hide based on menu state. -->
@@ -19,7 +23,7 @@
         <div class="relative px-dl-0 pb-dl-3" (click)="navigate('/products')">
           <div class="text-dl-pink-4">
             <span
-              class="absolute left-0 top-3 z-20 w-full text-center text-dl-4 font-dl-3 text-dl-grey-10"
+              class="absolute left-0 top-3 z-20 w-full text-center text-dl-4 font-dl-3 text-dl-grey-10 dark:text-dl-grey-2"
               [ngClass]="{
                 'animate-ping': iconPing()
               }"
@@ -38,14 +42,14 @@
             <!-- <button
               type="button"
               (click)="navigate('/products')"
-              class="mb-dl-4 flex h-dl-4 w-dl-4 items-center rounded-md bg-dl-pink-6 text-sm"
+              class="mb-dl-4 flex h-dl-4 w-dl-4 items-center rounded-md bg-dl-pink-6 dark:bg-dl-pink-5 text-sm"
               id="user-menu-button"
               aria-expanded="false"
               aria-haspopup="true"
             >
               <span class="sr-only">Open Products Page</span>
               <span
-                class="w-full text-center text-dl-5 font-dl-3 text-dl-grey-10"
+                class="w-full text-center text-dl-5 font-dl-3 text-dl-grey-10 dark:text-dl-grey-2"
                 >{{ profile.permAITokenCount }}</span
               >
             </button> -->
@@ -58,8 +62,10 @@
               xmlns:xlink="http://www.w3.org/1999/xlink"
               version="1.1"
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1': getURL() === 'groceries',
-                'border-transparent text-dl-grey-5 ': getURL() !== 'groceries'
+                'border-dl-blue-8 text-dl-grey-1 dark:text-dl-grey-10':
+                  getURL() === 'groceries',
+                'border-transparent text-dl-grey-5 dark:text-dl-grey-6 ':
+                  getURL() !== 'groceries'
               }"
               class="ml-dl-1 inline-flex items-center"
               height="48"
@@ -75,8 +81,10 @@
             </svg>
             <a
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1': getURL() === 'groceries',
-                'border-transparent text-dl-grey-4 ': getURL() !== 'groceries'
+                'border-dl-blue-8 text-dl-grey-1 dark:text-dl-grey-10':
+                  getURL() === 'groceries',
+                'border-transparent text-dl-grey-4 dark:text-dl-grey-7 ':
+                  getURL() !== 'groceries'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -90,8 +98,10 @@
               xmlns="http://www.w3.org/2000/svg"
               data-name="Layer 1"
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1': getURL() === 'recipes',
-                'border-transparent text-dl-grey-5 ': getURL() !== 'recipes'
+                'border-dl-blue-8 text-dl-grey-1 dark:text-dl-grey-10':
+                  getURL() === 'recipes',
+                'border-transparent text-dl-grey-5 dark:text-dl-grey-6 ':
+                  getURL() !== 'recipes'
               }"
               class="inline-flex items-center"
               viewBox="-5 0 58 70"
@@ -121,8 +131,10 @@
             </svg>
             <a
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1': getURL() === 'recipes',
-                'border-transparent text-dl-grey-4 ': getURL() !== 'recipes'
+                'border-dl-blue-8 text-dl-grey-1 dark:text-dl-grey-10':
+                  getURL() === 'recipes',
+                'border-transparent text-dl-grey-4 dark:text-dl-grey-7 ':
+                  getURL() !== 'recipes'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -147,8 +159,10 @@
             </svg>
             <a
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1': getURL() === 'social',
-                'border-transparent text-dl-grey-4 ': getURL() !== 'social'
+                'border-dl-blue-8 text-dl-grey-1 dark:text-dl-grey-10':
+                  getURL() === 'social',
+                'border-transparent text-dl-grey-4 dark:text-dl-grey-7 ':
+                  getURL() !== 'social'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -182,8 +196,10 @@
             </svg>
             <a
               [ngClass]="{
-                'border-dl-blue-8 text-dl-grey-1': getURL() === 'kitchen',
-                'border-transparent text-dl-grey-4 ': getURL() !== 'kitchen'
+                'border-dl-blue-8 text-dl-grey-1 dark:text-dl-grey-10':
+                  getURL() === 'kitchen',
+                'border-transparent text-dl-grey-4 dark:text-dl-grey-7 ':
+                  getURL() !== 'kitchen'
               }"
               class="inline-flex items-center border-t-4 px-1 text-dl-5 font-dl-3"
             >
@@ -213,19 +229,20 @@
                 alt="profile image"
               />
               <span
-                class="inline-flex h-dl-4 w-dl-4 items-center justify-center rounded-full bg-dl-grey-9"
+                class="inline-flex h-dl-4 w-dl-4 items-center justify-center rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
                 *ngIf="!profileImageLink && initials"
               >
-                <span class="text-dl-5 font-dl-3 leading-none text-dl-grey-7">{{
-                  initials
-                }}</span>
+                <span
+                  class="text-dl-5 font-dl-3 leading-none text-dl-grey-7 dark:text-dl-grey-4"
+                  >{{ initials }}</span
+                >
               </span>
               <span
                 *ngIf="!profileImageLink && !initials"
-                class="inline-block h-dl-4 w-dl-4 overflow-hidden rounded-full bg-dl-grey-9"
+                class="inline-block h-dl-4 w-dl-4 overflow-hidden rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
               >
                 <svg
-                  class="h-full w-full text-dl-grey-7"
+                  class="h-full w-full text-dl-grey-7 dark:text-dl-grey-4"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -243,7 +260,7 @@
               'scale-100 opacity-100 duration-200': isMenuOpen,
               'scale-95 opacity-0 duration-75': !isMenuOpen
             }"
-            class="absolute bottom-28 right-5 z-20 flex w-dl-8 flex-col items-center rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 ease-out focus:outline-none"
+            class="dark:border dark:border-dl-grey-4 absolute bottom-28 right-5 z-20 flex w-dl-8 flex-col items-center rounded-md bg-dl-grey-10 py-1 shadow-lg ring-1 ring-dl-grey-1 ring-opacity-5 ease-out focus:outline-none dark:bg-dl-grey-2"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="user-menu-button"
@@ -251,7 +268,7 @@
           >
             <a
               (click)="profileNavigate('/profile')"
-              class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3 text-dl-grey-3"
+              class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-0"
@@ -260,7 +277,7 @@
             </a>
             <a
               (click)="profileNavigate('/settings')"
-              class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3 text-dl-grey-3"
+              class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-1"
@@ -271,8 +288,10 @@
               (click)="onMessagesClick()"
               class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3"
               [ngClass]="{
-                'bg-dl-pink-10 text-dl-grey-3': unackedMessageLength() > 0,
-                'text-dl-grey-3': unackedMessageLength() === 0
+                'bg-dl-pink-10 text-dl-grey-3 dark:bg-dl-pink-1 dark:text-dl-grey-8':
+                  unackedMessageLength() > 0,
+                'text-dl-grey-3 dark:text-dl-grey-8':
+                  unackedMessageLength() === 0
               }"
               role="menuitem"
               tabindex="-1"
@@ -282,7 +301,7 @@
             </a>
             <a
               (click)="logout()"
-              class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3 text-dl-grey-3"
+              class="cursor-pointer px-2 py-1 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-2"
@@ -292,7 +311,7 @@
           </div>
           <div
             *ngIf="unackedMessageLength() > 0"
-            class="absolute -top-2 right-2 z-20 h-dl-2.5 w-dl-2.5 rounded-full bg-dl-pink-6"
+            class="absolute -top-2 right-2 z-20 h-dl-2.5 w-dl-2.5 rounded-full bg-dl-pink-6 dark:bg-dl-pink-5"
           ></div>
         </div>
       </div>

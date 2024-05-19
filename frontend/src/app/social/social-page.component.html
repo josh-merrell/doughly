@@ -1,13 +1,15 @@
-<div class="relative mx-auto flex h-full w-full flex-col bg-white pt-dl-4">
+<div
+  class="relative mx-auto flex h-full w-full flex-col bg-white pt-dl-4 dark:bg-dl-grey-1 dark:bg-dl-grey-1"
+>
   <!-- View Header -->
   <div class="mb-dl-3 flex w-full flex-row-reverse pr-dl-5">
     <!-- <span
       (click)="setView('timeline')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-blue-6 text-dl-6 text-dl-grey-2 font-dl-3':
+        'border-b-2 border-dl-blue-6 dark:border-dl-blue-5 text-dl-6 text-dl-grey-2 dark:text-dl-grey-9 font-dl-3':
           view() === 'timeline',
-        'text-dl-5 text-dl-grey-4 font-dl-2': view() !== 'timeline'
+        'text-dl-5 text-dl-grey-4 dark:text-dl-grey-7 font-dl-2': view() !== 'timeline'
       }"
     >
       Timeline
@@ -16,8 +18,10 @@
       (click)="setView('friends')"
       class="inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-8 text-dl-grey-2': view() === 'friends',
-        'border-transparent text-dl-grey-4': view() !== 'friends'
+        ' border-dl-blue-8 text-dl-grey-2 dark:border-dl-blue-3 dark:text-dl-grey-9':
+          view() === 'friends',
+        'border-transparent text-dl-grey-4 dark:text-dl-grey-7':
+          view() !== 'friends'
       }"
     >
       Friends
@@ -26,8 +30,10 @@
       (click)="setView('followers')"
       class="mr-dl-5 inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-8 text-dl-grey-2': view() === 'followers',
-        'border-transparent text-dl-grey-4': view() !== 'followers'
+        ' border-dl-blue-8 text-dl-grey-2 dark:border-dl-blue-3 dark:text-dl-grey-9':
+          view() === 'followers',
+        'border-transparent text-dl-grey-4 dark:text-dl-grey-7':
+          view() !== 'followers'
       }"
     >
       Followers

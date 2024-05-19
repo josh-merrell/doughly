@@ -3,27 +3,38 @@
 @use "tailwindcss/utilities";
 @use "@angular/material" as mat;
 
-// Define the primary, accent, and warning palettes
-$my-primary: mat.define-palette(mat.$grey-palette, 500);
+// Define the primary, accent, and warning palettes for light theme
+$my-primary: mat.define-palette(mat.$grey-palette, 200);
 $my-accent: mat.define-palette(mat.$blue-palette, A200, A100, A400);
 $my-warn: mat.define-palette(mat.$red-palette);
 
-// Construct the theme
-$my-theme: mat.define-light-theme(
-  (
-    color: (
-      primary: $my-primary,
-      accent: $my-accent,
-      warn: $my-warn,
-    ),
-    typography: mat.define-typography-config(),
-    density: 0,
-  )
-);
+$my-light-theme: mat.define-light-theme((
+  color: (
+    primary: $my-primary,
+    accent: $my-accent,
+    warn: $my-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
 
-// Include Material core and theme styles
+// Define the primary, accent, and warning palettes for dark theme
+$my-dark-primary: mat.define-palette(mat.$grey-palette, 200);
+$my-dark-accent: mat.define-palette(mat.$blue-palette, A200, A100, A400);
+$my-dark-warn: mat.define-palette(mat.$red-palette);
+
+$my-dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $my-dark-primary,
+    accent: $my-dark-accent,
+    warn: $my-dark-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+// Include Material core styles
 @include mat.core();
-@include mat.all-component-themes($my-theme);
 
 // Global styles
 html,
@@ -41,4 +52,14 @@ body {
 
 ion-tab-bar {
   margin-bottom: calc(7px + env(safe-area-inset-bottom));
+}
+
+// Create light theme class
+.light {
+  @include mat.all-component-themes($my-light-theme);
+}
+
+// Create dark theme class
+.dark {
+  @include mat.all-component-themes($my-dark-theme);
 }

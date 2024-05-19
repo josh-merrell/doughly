@@ -1,12 +1,29 @@
-    <div class="w-full">
-        <div class="bg-dl-grey-10 mx-dl-1 bg-opacity-15 flex flex-col items-center rounded-xl py-dl-4">
-            <div *ngFor="let point of points" class="mb-dl-5 flex flex-col justify-start max-w-dl-13">
-                <span class="mb-dl-1 text-dl-6 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out">{{point.title}}</span>
-                <span class="text-dl-5 font-dl-2 text-dl-grey-10 transition-all duration-100 ease-in-out">{{point.description}}</span>
-            </div>
-        </div>
-        <div class="mt-dl-6 flex flex-col items-center">
-            <span class="mb-dl-2 text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out">Cancel anytime</span>
-            <span class="mb-dl-2 text-dl-6 font-dl-2 text-dl-grey-10 text-center max-w-dl-14 transition-all duration-100 ease-in-out">Cancel your subscription anytime without penalties or fees</span>
-        </div>
+<div class="w-full">
+  <div
+    class="mx-dl-1 flex flex-col items-center rounded-xl bg-dl-grey-10 bg-opacity-15 py-dl-4"
+  >
+    <div
+      *ngFor="let point of points"
+      class="mb-dl-5 flex max-w-dl-13 flex-col justify-start"
+    >
+      <span
+        class="mb-dl-1 text-dl-6 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out "
+        >{{ point.title }}</span
+      >
+      <span
+        class="text-dl-5 font-dl-2 text-dl-grey-10 transition-all duration-100 ease-in-out "
+        >{{ point.description }}</span
+      >
     </div>
+  </div>
+  <div class="mt-dl-6 flex flex-col items-center">
+    <span
+      class="mb-dl-2 text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out "
+      >Cancel anytime</span
+    >
+    <span
+      class="mb-dl-2 max-w-dl-14 text-center text-dl-6 font-dl-2 text-dl-grey-10 transition-all duration-100 ease-in-out "
+      >Cancel your subscription anytime without penalties or fees</span
+    >
+  </div>
+</div>

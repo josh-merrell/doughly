@@ -1,26 +1,26 @@
 <div
   class="relative my-dl-4 flex h-dl-7 items-center justify-between rounded-dl-3 transition-all duration-200 ease-in-out"
   [ngClass]="{
-    'bg-dl-teal-10 shadow-xl': isSelected,
-    'bg-white shadow-lg': !isSelected,
+    'bg-dl-teal-10 shadow-xl dark:bg-dl-teal-2': isSelected,
+    'bg-white shadow-lg dark:bg-dl-grey-1 dark:bg-dl-grey-2': !isSelected,
     'w-dl-14': inModal,
     'w-dl-16': !inModal
   }"
 >
   <div class="flex h-full flex-col justify-between py-dl-1 pl-dl-3">
-    <p class="text-dl-6 font-dl-3 text-dl-grey-1">
+    <p class="text-dl-6 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10">
       {{ recipe.title }}
     </p>
     <div class="mt-dl-2 flex items-baseline">
       <p
         *ngIf="recipe.recipeCategoryName && fromMyRecipes === false"
-        class="text-dl-5 font-dl-2 text-dl-grey-5"
+        class="text-dl-5 font-dl-2 text-dl-grey-5 dark:text-dl-grey-6"
       >
         {{ recipe.recipeCategoryName }}
       </p>
       <p
         *ngIf="recipe.status !== 'published'"
-        class="ml-dl-4 text-dl-5 italic text-dl-yellow-4"
+        class="ml-dl-4 text-dl-5 italic text-dl-yellow-4 dark:text-dl-yellow-7"
       >
         Draft
       </p>
@@ -31,18 +31,21 @@
           !shoppingPage &&
           fromMyRecipes === true
         "
-        class="ml-dl-4 text-dl-5 italic text-dl-teal-7"
+        class="ml-dl-4 text-dl-5 italic text-dl-teal-7 dark:text-dl-teal-4"
       >
         Make now!
       </p>
       <p
         *ngIf="recipe.subscription && fromMyRecipes === true"
-        class="ml-dl-4 text-dl-5 text-dl-grey-6"
+        class="ml-dl-4 text-dl-5 text-dl-grey-6 dark:text-dl-grey-5"
       >
         Since {{ recipe.subscription.startDate }}
       </p>
     </div>
-    <p *ngIf="recipe.plannedDate" class="text-dl-5 text-dl-grey-4">
+    <p
+      *ngIf="recipe.plannedDate"
+      class="text-dl-5 text-dl-grey-4 dark:text-dl-grey-7"
+    >
       Planned: {{ recipe.plannedDate }}
     </p>
   </div>

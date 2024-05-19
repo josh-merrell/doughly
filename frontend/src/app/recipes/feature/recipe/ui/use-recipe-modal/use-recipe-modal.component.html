@@ -1,5 +1,5 @@
 <div
-  class="relative flex w-full transform flex-col items-center overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="relative flex w-full transform flex-col items-center overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
   [ngClass]="{
     'h-dl-21': confirmed,
     'h-dl-12': !confirmed
@@ -9,13 +9,13 @@
   <div class="text-center">
     <h3
       *ngIf="!isSubmitting"
-      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4"
+      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
     >
       Use Recipe
     </h3>
     <h2
       *ngIf="isSubmitting"
-      class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-grey-4"
+      class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
     >
       Processing..
     </h2>
@@ -31,7 +31,7 @@
       [(ngModel)]="confirmed"
       class="select-slider"
     ></mat-slide-toggle>
-    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
+    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4 dark:text-dl-grey-7"
       >Use this recipe and deduct ingredient inventory from kitchen</span
     >
   </div>
@@ -44,12 +44,12 @@
       [(ngModel)]="confirmed"
       class="select-slider"
     ></mat-slide-toggle>
-    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4"
+    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4 dark:text-dl-grey-7"
       >Your Kitchen Inventory will not be checked or used. You can change this
       behavior in
       <span
         (click)="onViewSettings()"
-        class="text-dl-5 font-dl-3 text-dl-blue-4"
+        class="text-dl-5 font-dl-3 text-dl-blue-4 dark:text-dl-blue-7"
       >
         Settings</span
       ></span
@@ -68,7 +68,8 @@
         <!-- FORM FIELDS -->
         <div class="mt-dl-1 flex-grow overflow-y-auto">
           <div id="form-satisfaction" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4"
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
               >Satisfaction</label
             >
             <mat-form-field>
@@ -85,7 +86,10 @@
           </div>
 
           <div id="form-difficulty" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Difficulty</label>
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              >Difficulty</label
+            >
             <mat-form-field>
               <mat-label>Difficulty</mat-label>
               <mat-select formControlName="difficulty">
@@ -100,7 +104,10 @@
           </div>
 
           <div id="form-note" class="my-dl-4">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Notes</label>
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              >Notes</label
+            >
             <mat-form-field class="w-full text-dl-4">
               <textarea
                 matInput
@@ -115,14 +122,15 @@
         <!-- Buttons -->
         <div
           *ngIf="!isSubmitting"
-          class="mt-dl-4 sm:mt-dl-4 sm:flex sm:flex-row-reverse"
+          class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-4"
         >
           <button
             type="button"
-            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+            class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
-              'cursor-pointer bg-dl-pink-4': form.valid && !form.pristine,
+              'cursor-pointer bg-dl-pink-4 dark:bg-dl-pink-7':
+                form.valid && !form.pristine,
               'bg-dl-grey-7': !form.valid || form.pristine
             }"
             [disabled]="!form.valid || form.pristine"
@@ -132,7 +140,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+            class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
             (click)="onCancel()"
           >
             Cancel
@@ -144,7 +152,7 @@
     <button
       *ngIf="!isSubmitting && !confirmed"
       type="button"
-      class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+      class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
       (click)="onCancel()"
     >
       Cancel
