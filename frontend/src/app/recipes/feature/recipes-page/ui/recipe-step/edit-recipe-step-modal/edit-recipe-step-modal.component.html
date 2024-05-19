@@ -1,5 +1,5 @@
 <div
-  class="flex h-dl-21 transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="flex h-dl-21 transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
     <span class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
@@ -73,6 +73,10 @@
             </div>
 
             <image-cropper
+              style="
+                --cropper-outline-color: 'red';
+                --cropper-overlay-color: 'red';
+              "
               [imageBase64]="recipeImageBase64"
               [maintainAspectRatio]="true"
               [aspectRatio]="4 / 5"

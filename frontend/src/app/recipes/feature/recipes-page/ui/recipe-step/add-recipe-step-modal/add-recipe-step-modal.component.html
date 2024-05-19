@@ -67,6 +67,10 @@
             </div>
 
             <image-cropper
+              style="
+                --cropper-outline-color: 'red';
+                --cropper-overlay-color: 'red';
+              "
               [imageBase64]="recipeImageBase64"
               [maintainAspectRatio]="true"
               [aspectRatio]="4 / 5"

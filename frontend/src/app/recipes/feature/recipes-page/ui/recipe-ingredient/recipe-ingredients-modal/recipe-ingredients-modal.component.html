@@ -1,5 +1,5 @@
 <div
-  class="sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6 relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="sm:my-dl-3 sm:w-full sm:max-w-dl-13 dark:border sm:p-dl-6 relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
   <div
@@ -8,7 +8,7 @@
   >
     <div class="mb-dl-4 text-center">
       <p
-        class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+        class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-8"
       >
         Ingredients
       </p>
@@ -29,7 +29,7 @@
         <ng-container *ngFor="let ingredient of displayNeedsReview$ | async">
           <div class="inline-block">
             <div
-              class="mb-dl-3 mr-dl-3 flex items-center whitespace-nowrap rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-grey-7"
+              class="mb-dl-3 mr-dl-3 flex items-center whitespace-nowrap rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-grey-9"
             >
               <div (click)="onIngredientClick(ingredient)">
                 <span class="font-dl-3"
@@ -78,7 +78,7 @@
         <ng-container *ngFor="let ingredient of displayNoReview$ | async">
           <div class="inline-block">
             <div
-              class="mr-dl-3 mt-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-7"
+              class="mr-dl-3 mt-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
             >
               <div (click)="onIngredientClick(ingredient)">
                 <span class="font-dl-3"

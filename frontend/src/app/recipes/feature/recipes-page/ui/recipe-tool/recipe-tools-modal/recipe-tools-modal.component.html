@@ -1,5 +1,5 @@
 <div
-  class="sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6 relative transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6 relative dark:border transform overflow-hidden bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isLoading"></mat-spinner>
   <div
@@ -8,7 +8,7 @@
   >
     <div class="mb-dl-4 text-center">
       <p
-        class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+        class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-8"
       >
         Tools
       </p>
@@ -23,7 +23,7 @@
             (click)="onDeleteClick(tool.toolID, tool.recipeToolID)"
           >
             <div
-              class="mr-dl-3 mt-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-7"
+              class="mr-dl-3 mt-dl-3 flex items-center whitespace-nowrap rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
             >
               <span *ngIf="tool.toolID > 0" class="font-dl-3"
                 >{{ tool.name }}&nbsp;&nbsp;&nbsp;</span

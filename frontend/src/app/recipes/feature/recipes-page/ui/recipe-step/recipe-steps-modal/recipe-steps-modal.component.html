@@ -1,5 +1,5 @@
 <div
-  class="relative max-h-dl-22 w-full transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative max-h-dl-22 w-full transform overflow-y-auto bg-white px-dl-5 dark:border pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner
     class="my-app-custom-spinner"
@@ -8,7 +8,7 @@
   <div *ngIf="!(isAdding$ | async)" class="mt-dl-1 text-center">
     <div class="mb-dl-4 text-center">
       <p
-        class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+        class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-8"
       >
         Steps
       </p>
@@ -30,7 +30,7 @@
             (click)="toggleItemMenu($event, i)"
           >
             <div
-              class="mt-dl-3 flex flex-wrap items-center justify-center rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-7"
+              class="mt-dl-3 flex flex-wrap items-center justify-center rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
               [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === i }"
             >
               <span class="font-dl-3"

@@ -1,5 +1,5 @@
 <div
-  class="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden"
+  class="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden dark:bg-dl-grey-1"
 >
   <!-- Header with Profile Photo and name-->
   <div
@@ -94,7 +94,7 @@
     <!-- Name -->
     <div
       *ngIf="profile.name_first || profile.name_last"
-      class="z-15 absolute left-1/2 flex h-dl-4 w-3/4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white dark:bg-dl-grey-1 dark:bg-dl-grey-1"
+      class="z-15 absolute left-1/2 flex h-dl-4 w-3/4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full dark:border-dl-grey-2 border-2 bg-white dark:bg-dl-grey-1"
     >
       <span
         class="ml-dl-6 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
@@ -106,7 +106,7 @@
 
   <!-- Account Details inc username, email, city, state-->
   <div
-    class="items-left mt-dl-3 flex flex-col bg-white pb-dl-3 dark:bg-dl-grey-1 dark:bg-dl-grey-1"
+    class="items-left mt-dl-3 flex flex-col bg-white pb-dl-3 dark:bg-dl-grey-1"
   >
     <span
       class="ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
@@ -120,7 +120,7 @@
         >{{ profile.email }}</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Email</span
       >
     </div>
@@ -129,7 +129,7 @@
         >Email</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Tap to add Email</span
       >
     </div>
@@ -141,7 +141,7 @@
         >{{ profile.username }}</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Username</span
       >
     </div>
@@ -150,7 +150,7 @@
         >Username</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Tap to add Username</span
       >
     </div>
@@ -159,14 +159,14 @@
     <div
       (click)="updateProfile('name_first')"
       *ngIf="profile.name_first"
-      class="ml-dl-5 mt-dl-1 flex flex-col"
+      class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
         class="w-dl-13 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2 dark:bg-dl-grey-2 dark:text-dl-grey-9"
         >{{ profile.name_first }}</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >First Name</span
       >
     </div>
@@ -179,7 +179,7 @@
         >First Name</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Tap to add First Name</span
       >
     </div>
@@ -195,7 +195,7 @@
         >{{ profile.name_last }}</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Last Name</span
       >
     </div>
@@ -209,7 +209,7 @@
         >Last Name</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Tap to add Last Name</span
       >
     </div>
@@ -225,7 +225,7 @@
         >{{ profile.city }}</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >City</span
       >
     </div>
@@ -238,7 +238,7 @@
         >City</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Tap to add City</span
       >
     </div>
@@ -254,7 +254,7 @@
         >{{ profile.state }}</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >State</span
       >
     </div>
@@ -267,14 +267,14 @@
         >State</span
       >
       <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-4"
+        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
         >Tap to add State</span
       >
     </div>
   </div>
   <!-- Links for Privacy, Help, etc -->
   <div
-    class="items-left mt-dl-3 flex flex-col bg-white pb-dl-3 dark:bg-dl-grey-1 dark:bg-dl-grey-1"
+    class="items-left mt-dl-3 flex flex-col bg-white pb-dl-3 dark:bg-dl-grey-1"
   >
     <span
       class="mb-dl-2 ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
@@ -284,21 +284,21 @@
       <!--Help-->
       <div (click)="onHelpClick()" class="mb-dl-3 ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-8"
           >Help</span
         >
       </div>
       <!--Privacy-->
       <div (click)="onPrivacyClick()" class="mb-dl-3 ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-8"
           >Privacy Policy</span
         >
       </div>
       <!--Delete Account Data-->
       <div (click)="onDeleteAccountClick()" class="ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-8"
           >Delete Account and Data</span
         >
       </div>
