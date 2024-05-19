@@ -1,12 +1,12 @@
 <div
   *ngIf="loading()"
-  class="flex h-dl-12 w-full flex-col items-center justify-center"
+  class="flex h-dl-12 w-full flex-col items-center justify-center dark:border-dl-grey-4"
 >
   <mat-spinner class="my-app-custom-spinner"></mat-spinner>
 </div>
 <div
   *ngIf="!loading()"
-  class="flex h-full w-full flex-col items-center bg-white px-dl-5 pb-dl-4 pt-dl-4 transition-all"
+  class="flex h-full w-full flex-col items-center bg-white px-dl-5 pb-dl-4 pt-dl-4 transition-all dark:bg-dl-grey-1"
   [ngClass]="{
     'blur-sm': onboardingModalOpen(),
   }"
@@ -30,20 +30,25 @@
         alt="author profile image"
       />
       <span
-        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9"
+        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
         *ngIf="!author.imageURL && author.nameFirst && author.nameLast"
       >
-        <span class="text-dl-6 font-dl-3 leading-none text-dl-grey-7">{{
-          initials
-        }}</span>
+        <span
+          class="text-dl-6 font-dl-3 leading-none text-dl-grey-7 dark:text-dl-grey-4"
+          >{{ initials }}</span
+        >
       </span>
     </div>
   </div>
 
   <!-- Header Bar -->
   <div class="mb-dl-5 flex w-full justify-between">
-    <label class="pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-4">Recipe</label>
-    <label class="mr-dl-5 text-dl-6 font-dl-3 text-dl-grey-4"
+    <label
+      class="pl-dl-5 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+      >Recipe</label
+    >
+    <label
+      class="mr-dl-5 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
       >Your Kitchen</label
     >
   </div>
@@ -53,7 +58,7 @@
     <!-- Ingredient Mappings -->
     <div
       *ngFor="let i of ingredients(); let idx = index"
-      class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9"
+      class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9 dark:border-dl-grey-3"
     >
       <!-- Recipe Ingredient-->
       <div class="flex flex-grow items-center justify-start">
@@ -62,7 +67,7 @@
           class="ml-dl-1 mr-dl-1"
         >
           <svg
-            class="rounded-full bg-dl-teal-7"
+            class="rounded-full bg-dl-teal-7 dark:bg-dl-teal-4"
             width="22"
             height="22"
             viewBox="0 0 15 15"
@@ -78,9 +83,10 @@
             ></path>
           </svg>
         </div>
-        <label class="mr-dl-3 pl-dl-1 text-dl-5 font-dl-3 text-dl-grey-6">{{
-          i.name
-        }}</label>
+        <label
+          class="mr-dl-3 pl-dl-1 text-dl-5 font-dl-3 text-dl-grey-6 dark:text-dl-grey-5"
+          >{{ i.name }}</label
+        >
       </div>
 
       <!-- Kitchen Mapping -->
@@ -91,7 +97,7 @@
             (selectionChange)="onIngredientSelectChange($event.value, i)"
           >
             <mat-option
-              class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
+              class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
               [value]="0"
             >
               Copy to Kitchen
@@ -109,7 +115,8 @@
           *ngIf="i.userIngredientID && i.userIngredientID !== 0"
           class="relative flex flex-col"
         >
-          <label class="ml-dl-4 text-dl-3 font-dl-3 text-dl-grey-4"
+          <label
+            class="ml-dl-4 text-dl-3 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
             >{{ ingredientMeasurementUnitString(i) }} per
             {{ i.measurementUnit }}</label
           >
@@ -133,7 +140,7 @@
     <!-- Tool Mappings -->
     <div
       *ngFor="let t of tools(); let idx = index"
-      class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9"
+      class="mb-dl-3 flex w-full items-center justify-between border-b-2 border-dl-grey-9 dark:border-dl-grey-3"
     >
       <!-- Recipe Tool-->
       <div class="flex flex-grow items-center justify-start">
@@ -142,7 +149,7 @@
           class="ml-dl-1 mr-dl-1"
         >
           <svg
-            class="rounded-full bg-dl-teal-7"
+            class="rounded-full bg-dl-teal-7 dark:bg-dl-teal-4"
             width="22"
             height="22"
             viewBox="0 0 15 15"
@@ -158,9 +165,10 @@
             ></path>
           </svg>
         </div>
-        <label class="mr-dl-3 pl-dl-1 text-dl-5 font-dl-3 text-dl-grey-6">{{
-          t.name
-        }}</label>
+        <label
+          class="mr-dl-3 pl-dl-1 text-dl-5 font-dl-3 text-dl-grey-6 dark:text-dl-grey-5"
+          >{{ t.name }}</label
+        >
       </div>
       <!-- Kitchen Mapping -->
       <div class="mr-dl-4 flex flex-col">
@@ -171,7 +179,7 @@
             class="w-dl-10"
           >
             <mat-option
-              class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2"
+              class="px-dl-4 py-dl-4 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
               [value]="0"
             >
               Copy to Kitchen
@@ -190,11 +198,13 @@
   <div class="flex h-dl-6 w-full items-center justify-between">
     <button
       type="button"
-      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:text-dl-grey-1"
       (click)="onSubscribeClick()"
       [ngClass]="{
-        'bg-dl-pink-4 text-white': ingredientsReady() && toolsReady(),
-        'bg-dl-grey-9 text-dl-grey-4': !ingredientsReady() || !toolsReady()
+        'bg-dl-pink-4 text-white dark:text-dl-grey-1':
+          ingredientsReady() && toolsReady(),
+        'bg-dl-grey-9 text-dl-grey-4 dark:text-dl-grey-7':
+          !ingredientsReady() || !toolsReady()
       }"
       [disabled]="!ingredientsReady() || !toolsReady()"
     >
@@ -204,10 +214,10 @@
   <div
     *ngIf="showOnboardingBadge()"
     (click)="onboardingBadgeClick()"
-    class="top-18 fixed left-8 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-blue-9"
+    class="top-18 fixed left-8 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-blue-9 dark:bg-dl-blue-2"
   >
     <svg
-      class="h-11 w-8 text-dl-blue-7"
+      class="h-11 w-8 text-dl-blue-7 dark:text-dl-blue-4"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       version="1.1"

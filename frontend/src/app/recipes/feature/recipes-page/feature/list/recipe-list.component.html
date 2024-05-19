@@ -10,8 +10,10 @@
       (click)="setListView('byCategory')"
       class="mr-dl-3 inline-flex items-center border-b-4 px-dl-1 py-dl-1 text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-8  text-dl-grey-2': listView() === 'byCategory',
-        'border-transparent text-dl-grey-4': listView() !== 'byCategory'
+        ' border-dl-blue-8 text-dl-grey-2  dark:border-dl-blue-3 dark:text-dl-grey-9':
+          listView() === 'byCategory',
+        'border-transparent text-dl-grey-4 dark:text-dl-grey-7':
+          listView() !== 'byCategory'
       }"
     >
       By Category
@@ -20,8 +22,10 @@
       (click)="setListView('all')"
       class="mr-dl-5 inline-flex items-center border-b-4 py-dl-1 text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-8 text-dl-grey-2': listView() === 'all',
-        'border-transparent text-dl-grey-4': listView() !== 'all'
+        ' border-dl-blue-8 text-dl-grey-2 dark:border-dl-blue-3 dark:text-dl-grey-9':
+          listView() === 'all',
+        'border-transparent text-dl-grey-4 dark:text-dl-grey-7':
+          listView() !== 'all'
       }"
     >
       All Recipes
@@ -36,7 +40,7 @@
         width="28"
         height="28"
         viewBox="0 0 15 15"
-        class="ml-dl-2 text-dl-grey-3"
+        class="ml-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -50,7 +54,7 @@
       <input
         #searchInput
         type="text"
-        class="flex overflow-x-hidden border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent"
+        class="dark:bg-dl-grey-2 rounded-dl-2 flex overflow-x-hidden border-none pt-dl-2 text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent dark:text-dl-grey-7 dark:placeholder-dl-grey-7"
         [placeholder]="
           !searchFilter()
             ? listView() === 'byCategory'
@@ -65,7 +69,7 @@
     <button
       id="add-button"
       type="button"
-      class="whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6"
+      class="whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6 dark:bg-dl-pink-7 dark:text-dl-grey-1 hover:dark:bg-dl-pink-6"
       (click)="onAddClick()"
       [ngClass]="{ invisible: listView() !== 'all' || type !== 'created' }"
     >
@@ -105,7 +109,7 @@
     </div>
   </div>
   <div class="flex w-full flex-col items-center">
-    <span class="text-dl-5 font-dl-2 text-dl-grey-2"
+    <span class="text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
       >{{
         listView() === "byCategory"
           ? displayCategories().length
@@ -117,10 +121,10 @@
   <div
     *ngIf="showOnboardingBadge()"
     (click)="onboardingBadgeClick()"
-    class="fixed bottom-36 left-4 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-blue-9"
+    class="fixed bottom-36 left-4 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-blue-9 dark:bg-dl-blue-2"
   >
     <svg
-      class="h-11 w-8 text-dl-blue-7"
+      class="h-11 w-8 text-dl-blue-7 dark:text-dl-blue-4"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       version="1.1"

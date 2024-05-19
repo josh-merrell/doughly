@@ -2,7 +2,9 @@
   <div class="flex h-full flex-col items-center">
     <!-- Title and Edit Icon-->
     <div class="mb-dl-6 flex w-full justify-between px-dl-5">
-      <p class="mb-dl-3 pt-dl-3 text-dl-7 font-dl-3 text-dl-grey-2">
+      <p
+        class="mb-dl-3 pt-dl-3 text-dl-7 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
         Shopping In Progress
       </p>
       <svg
@@ -24,12 +26,12 @@
       <div
         #menu
         *ngIf="menuOpen"
-        class="focus:outling-none absolute right-16 top-2 z-10 flex flex-col rounded-dl-1 bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out"
+        class="focus:outling-none absolute right-16 top-2 z-10 flex flex-col rounded-dl-1 bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out dark:bg-dl-grey-1"
       >
         <button
           (click)="onDeleteClick()"
           type="button"
-          class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10"
+          class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10 dark:text-dl-grey-8 dark:hover:bg-dl-grey-2"
         >
           Delete List
         </button>
@@ -38,10 +40,14 @@
 
     <!-- Header Row -->
     <div class="mb-dl-5 flex w-full justify-between px-dl-5">
-      <p class="mb-dl-3 ml-dl-9 mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
+      <p
+        class="mb-dl-3 ml-dl-9 mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
         Item
       </p>
-      <p class="mb-dl-3 mr-dl-5 mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-2">
+      <p
+        class="mb-dl-3 mr-dl-5 mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
         Purchased Amount
       </p>
     </div>
@@ -51,7 +57,7 @@
       class="relative mb-dl-2 flex max-h-dl-18 w-dl-16 flex-col items-center overflow-y-auto"
     >
       <div
-        class="relative mb-dl-3 flex w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2"
+        class="relative mb-dl-3 flex w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2 dark:bg-dl-grey-2"
         *ngFor="let item of displaySLIngr().items"
       >
         <div
@@ -122,25 +128,29 @@
           <!-- Box to cover Checkmark (only if item 'purchasedMeasurement' is present but not yet saved)-->
           <div
             *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
-            class="absolute left-5 top-5 z-20 h-3 w-4 bg-dl-pink-7"
+            class="absolute left-5 top-5 z-20 h-3 w-4 bg-dl-pink-7 dark:bg-dl-pink-4"
           ></div>
 
           <div class="ml-dl-4 flex flex-col">
-            <span class="text-dl-5 font-dl-3 text-dl-grey-1">
+            <span
+              class="text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+            >
               {{ item.name }}
             </span>
-            <span class="text-dl-5 font-dl-2 text-dl-grey-3">
+            <span
+              class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+            >
               {{ Math.ceil(item.needMeasurement) }} {{ item.needUnit }}
             </span>
           </div>
         </div>
         <div class="relative flex items-center justify-between">
-          <!-- <p class="mr-dl-2 text-dl-4 font-dl-2 italic text-dl-grey-4">
+          <!-- <p class="mr-dl-2 text-dl-4 font-dl-2 italic text-dl-grey-4 dark:text-dl-grey-7">
             {{ item.needUnit }}s
           </p> -->
           <p
             *ngIf="!item.valueValid"
-            class="absolute -right-22 -bottom-1 mr-dl-2 w-dl-10 text-dl-4 font-dl-3 text-dl-red-4"
+            class="-right-22 absolute -bottom-1 mr-dl-2 w-dl-10 text-dl-4 font-dl-3 text-dl-red-4 dark:text-dl-red-7"
           >
             buy more
           </p>
@@ -163,7 +173,7 @@
             class="mr-dl-3 flex w-dl-6 flex-col items-center"
             *ngIf="item.store"
           >
-            <p class="text-dl-5 font-dl-3 text-dl-grey-2">
+            <p class="text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
               {{ Math.ceil(item.purchasedMeasurement) }}
             </p>
           </div>
@@ -178,7 +188,7 @@
     <button
       type="button"
       *ngIf="isLoading() === false && displaySLIngr().itemsToSave.length"
-      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:bg-dl-pink-7 dark:text-dl-grey-1"
       (click)="onSaveClick()"
     >
       {{ saveButtonText }}

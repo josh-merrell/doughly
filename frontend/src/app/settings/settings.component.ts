@@ -66,6 +66,7 @@ export class SettingsComponent {
       this.form.patchValue({
         checkIngredientStock: newProfile.checkIngredientStock,
         autoDeleteExpiredStock: newProfile.autoDeleteExpiredStock,
+        darkMode: newProfile.darkMode,
         notifyOnLowStock: newProfile.notifyOnLowStock,
         notifyOnNoStock: newProfile.notifyOnNoStock,
         notifyUpcomingStockExpiry: newProfile.notifyUpcomingStockExpiry,
@@ -89,6 +90,7 @@ export class SettingsComponent {
     this.form = this.fb.group({
       checkIngredientStock: [false],
       autoDeleteExpiredStock: [false],
+      darkMode: [false],
       notifyOnLowStock: ['', [Validators.required]],
       notifyOnNoStock: ['', [Validators.required]],
       notifyUpcomingStockExpiry: ['', [Validators.required]],
@@ -103,8 +105,9 @@ export class SettingsComponent {
   onSubmit() {
     this.isEditing = true;
     const updateBody = {
-      checkIngredientStock: this.form.value.checkIngredientStock,
-      autoDeleteExpiredStock: this.form.value.autoDeleteExpiredStock,
+      checkIngredientStock: this.form.value.checkIngredientStock ? 'true' : 'false',
+      autoDeleteExpiredStock: this.form.value.autoDeleteExpiredStock ? 'true' : 'false',
+      darkMode: this.form.value.darkMode ? 'true' : 'false',
       notifyOnLowStock: this.form.value.notifyOnLowStock,
       notifyOnNoStock: this.form.value.notifyOnNoStock,
       notifyUpcomingStockExpiry: this.form.value.notifyUpcomingStockExpiry,

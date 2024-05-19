@@ -1,8 +1,8 @@
 <div
-  class="max-w-dl-14 sm:max-w-dl-14 relative my-dl-0 transform overflow-hidden bg-white px-dl-4 text-left transition-all sm:w-dl-12 sm:p-dl-6"
+  class="sm:max-w-dl-14 sm:w-dl-12 sm:p-dl-6 relative my-dl-0 max-w-dl-14 transform overflow-hidden bg-white px-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <h3
-    class="leading-dl-4 mb-dl-3 text-dl-4 font-dl-2 text-dl-blue-4"
+    class="leading-dl-4 mb-dl-3 text-dl-4 font-dl-2 text-dl-blue-4 dark:text-dl-blue-7"
     id="addStringFilterTitle"
   >
     {{ data.filterOption.name }}...
@@ -20,11 +20,13 @@
             name="selectedOption"
             [value]="option"
             id="{{ option }}"
-            class="mr-2 h-3 w-3 text-dl-blue-6 focus:ring-dl-blue-6"
+            class="mr-2 h-3 w-3 text-dl-blue-6 focus:ring-dl-blue-6 dark:text-dl-blue-5"
           />
-          <label class="ml-dl-2 text-dl-2 text-dl-grey-4" for="{{ option }}">{{
-            option
-          }}</label>
+          <label
+            class="ml-dl-2 text-dl-2 text-dl-grey-4 dark:text-dl-grey-7"
+            for="{{ option }}"
+            >{{ option }}</label
+          >
         </div>
         <input
           *ngIf="
@@ -33,18 +35,18 @@
           "
           formControlName="inputValue"
           type="text"
-          class="mt-dl-2 block h-dl-4 w-full rounded-dl-2 border-2 border-dl-blue-8 text-dl-2 font-dl-3 text-dl-grey-1 ring-dl-blue-6 focus:border-dl-blue-6 focus:ring-transparent"
+          class="mt-dl-2 block h-dl-4 w-full rounded-dl-2 border-2 border-dl-blue-8 text-dl-2 font-dl-3 text-dl-grey-1 ring-dl-blue-6 focus:border-dl-blue-6 focus:ring-transparent dark:border-dl-blue-3 dark:text-dl-grey-10"
         />
       </div>
     </div>
 
     <!-- Buttons -->
-    <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
+    <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-3">
       <button
         type="button"
-        class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white sm:ml-dl-4"
+        class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white dark:text-dl-grey-1"
         [ngClass]="{
-          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
             form.valid && !form.pristine,
           'bg-dl-grey-7': !form.valid || form.pristine
         }"
@@ -56,7 +58,7 @@
       <button
         type="button"
         (click)="onCancel()"
-        class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-4 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+        class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-dl-grey-4 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-7 dark:hover:bg-dl-grey-2"
       >
         Cancel
       </button>

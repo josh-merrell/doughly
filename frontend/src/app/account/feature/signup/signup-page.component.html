@@ -1,9 +1,9 @@
 <div
-  class="flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 sm:px-dl-6 lg:px-dl-8"
+  class="sm:px-dl-6 lg:px-dl-8 flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 dark:bg-dl-grey-1 dark:bg-dl-grey-1"
 >
   <div class="xm:w-full sm:mx-auto sm:max-w-md">
     <img
-      class="mt-dl-3 mx-auto h-10 w-auto"
+      class="mx-auto mt-dl-3 h-10 w-auto"
       src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
       alt="doughleap logo"
     />
@@ -23,7 +23,7 @@
     >
       <div class="relative mb-dl-5 flex flex-col">
         <div class="mt-dl-4 text-center">
-          <!-- <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3">Sign Up</h3> -->
+          <!-- <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8">Sign Up</h3> -->
         </div>
       </div>
       <!-- OAuth Sign Up -->
@@ -123,14 +123,16 @@
       <!--FORM FIELDS-->
       <div id="form-email">
         <div class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-1" for="email"
+          <label
+            class="text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+            for="email"
             >Email</label
           >
           <div class="w-dl-15">
             <input
               type="email"
               formControlName="email"
-              class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
+              class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
             />
 
             <div
@@ -138,7 +140,7 @@
                 invisible:
                   !emailErrorMessage() || !signup_form.get('email')!.touched
               }"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
             >
               {{ emailErrorMessage() || "empty" }}
             </div>
@@ -147,14 +149,16 @@
       </div>
 
       <div id="form-password">
-        <label class="text-dl-5 font-dl-3 text-dl-grey-1" for="email"
+        <label
+          class="text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+          for="email"
           >Password</label
         >
         <div class="w-dl-15">
           <input
             type="password"
             formControlName="password"
-            class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
+            class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
           />
           <div
             [ngClass]="{
@@ -162,7 +166,7 @@
                 !signup_form.get('password')!.touched ||
                 signup_form.get('password')!.valid
             }"
-            class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5"
+            class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
           >
             Minimum password length is 6 characters.
           </div>
@@ -170,20 +174,22 @@
       </div>
 
       <div id="form-username">
-        <label class="mb-dl-4 text-dl-5 font-dl-3 text-dl-grey-1" for="username"
+        <label
+          class="mb-dl-4 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+          for="username"
           >Username</label
         >
         <div class="w-dl-15">
           <input
             type="text"
             formControlName="username"
-            class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5"
+            class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
           />
           <div
             [ngClass]="{
               invisible: !usernameErrorMessage()
             }"
-            class="mt-dl-1 h-dl-6 text-dl-4 font-dl-2 text-dl-red-5"
+            class="mt-dl-1 h-dl-6 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
           >
             {{ usernameErrorMessage() }}
           </div>
@@ -199,9 +205,9 @@
           emailErrorMessage() !== ''
         "
         style="height: 40px; width: 296px"
-        class="shadow-s inline-flex items-center justify-center rounded-dl-1 text-dl-5 font-dl-2 text-white"
+        class="shadow-s inline-flex items-center justify-center rounded-dl-1 text-dl-5 font-dl-2 text-white dark:text-dl-grey-1"
         [ngClass]="{
-          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5':
+          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
             signup_form.invalid === false,
           'bg-dl-grey-7':
             signup_form.invalid === true ||
@@ -214,15 +220,15 @@
     </form>
     <p
       *ngIf="checkEmailMessage()"
-      class="mt-dl-4 text-center text-dl-5 text-dl-teal-5"
+      class="mt-dl-4 text-center text-dl-5 text-dl-teal-5 dark:text-dl-teal-6"
     >
       {{ checkEmailMessage() }}
     </p>
 
-    <p class="mt-dl-4 text-center text-dl-5 text-dl-grey-4">
+    <p class="mt-dl-4 text-center text-dl-5 text-dl-grey-4 dark:text-dl-grey-7">
       Already have an account?
       <a
-        class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-blue-5"
+        class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
         routerLink="/login"
         >Sign In</a
       >

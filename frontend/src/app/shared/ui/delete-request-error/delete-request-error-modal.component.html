@@ -1,19 +1,43 @@
-<div class="rounded-dl-2 bg-dl-red-10 p-dl-4">
+<div
+  class="rounded-dl-2 bg-dl-red-10 p-dl-4 dark:border-dl-red-4 dark:bg-dl-red-1"
+>
   <div class="flex">
     <div class="flex-shrink-0">
-      <svg class="h-5 w-5 text-dl-red-7" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+      <svg
+        class="h-5 w-5 text-dl-red-7 dark:text-dl-red-4"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+          clip-rule="evenodd"
+        />
       </svg>
     </div>
     <div class="ml-dl-3">
-      <h3 class="text-dl-2 font-dl-2 text-dl-red-2">{{ data.deleteFailureMessage }}</h3>
+      <h3 class="text-dl-2 font-dl-2 text-dl-red-2 dark:text-dl-red-9">
+        {{ data.deleteFailureMessage }}
+      </h3>
     </div>
     <div class="ml-dl-8 pl-dl-3">
       <div class="-mx-dl-1 -my-dl-1">
-        <button (click)="onDismiss()" type="button" class="inline-flex rounded-dl-2 bg-dl-red-10 p-dl-1 text-dl-red-5 hover:bg-dl-red-9 focus:outline-none focus:ring-1 focus:ring-dl-red-3 focus:ring-offset-1 focus:ring-offset-dl-red-5">
+        <button
+          (click)="onDismiss()"
+          type="button"
+          class="inline-flex rounded-dl-2 bg-dl-red-10 p-dl-1 text-dl-red-5 hover:bg-dl-red-9 focus:outline-none focus:ring-1 focus:ring-dl-red-3 focus:ring-offset-1 focus:ring-offset-dl-red-5 dark:bg-dl-red-1 dark:text-dl-red-6 hover:dark:bg-dl-red-2"
+        >
           <span class="sr-only">Dismiss</span>
-          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+          <svg
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
+            />
           </svg>
         </button>
       </div>

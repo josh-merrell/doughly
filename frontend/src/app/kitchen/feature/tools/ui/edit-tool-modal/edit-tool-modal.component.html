@@ -1,10 +1,10 @@
 <div
-  class="flex h-dl-14 w-full transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all"
+  class="flex h-dl-14 w-full dark:border transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-nowrap">
-      <span class="text-dl-6 text-dl-grey-5">Edit</span
-      ><span class="text-dl-6 font-dl-3 text-dl-grey-2">{{
+      <span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6">Edit</span
+      ><span class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">{{
         (tool$ | async)!.name
       }}</span>
     </div>
@@ -21,7 +21,10 @@
         <!--FORM FIELDS-->
         <div class="mt-dl-1 flex-grow overflow-y-auto">
           <div id="form-toolBrand" class="relative flex flex-col">
-            <label class="text-dl-5 font-dl-3 text-dl-grey-4">Brand</label>
+            <label
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              >Brand</label
+            >
             <mat-form-field class="w-full">
               <input matInput formControlName="brand" />
             </mat-form-field>
@@ -32,10 +35,11 @@
         <div class="mt-dl-2">
           <button
             type="button"
-            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white sm:ml-dl-4"
+            class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
-              'cursor-pointer bg-dl-pink-4': form.valid && !form.pristine,
+              'cursor-pointer bg-dl-pink-4 dark:bg-dl-pink-7':
+                form.valid && !form.pristine,
               'bg-dl-grey-7': !form.valid || form.pristine
             }"
             [disabled]="!form.valid || form.pristine"
@@ -45,7 +49,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 sm:mt-0 sm:w-auto"
+            class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
             (click)="onCancel()"
           >
             Cancel

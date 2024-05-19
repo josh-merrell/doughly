@@ -1,13 +1,16 @@
 <div
-  class="relative w-full transform overflow-hidden bg-white px-dl-2 pb-dl-4 pt-dl-5 text-left transition-all"
+  class="relative w-full transform overflow-hidden bg-white px-dl-2 pb-dl-4 pt-dl-5 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <!-- Joined, Image, Counts-->
   <div class="mb-dl-3 flex justify-between px-dl-2">
     <div class="flex w-dl-7 flex-col justify-normal pt-dl-5">
-      <span class="flex text-dl-5 font-dl-2 text-dl-grey-3">Joined</span>
-      <span class="flex text-dl-5 font-dl-2 text-dl-grey-3">{{
-        displayDate()
-      }}</span>
+      <span class="flex text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+        >Joined</span
+      >
+      <span
+        class="flex text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+        >{{ displayDate() }}</span
+      >
     </div>
 
     <!-- Image or Initials -->
@@ -18,32 +21,33 @@
       alt="friend profile image"
     />
     <span
-      class="inline-flex h-dl-8 w-dl-8 items-center justify-center rounded-full bg-dl-grey-9"
+      class="inline-flex h-dl-8 w-dl-8 items-center justify-center rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
       *ngIf="!friend.imageURL && friend.nameFirst && friend.nameLast"
     >
-      <span class="text-dl-5 font-dl-3 leading-none text-dl-grey-7">{{
-        initials
-      }}</span>
+      <span
+        class="text-dl-5 font-dl-3 leading-none text-dl-grey-7 dark:text-dl-grey-4"
+        >{{ initials }}</span
+      >
     </span>
 
     <!-- Counts -->
     <div class="flex w-dl-7 flex-col items-end pt-dl-5">
       <div *ngIf="friend.friendCount > 0">
-        <span class="text-dl-5 font-dl-2 text-dl-grey-3">
+        <span class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8">
           {{ friend.friendCount }} friend</span
         >
         <span
-          class="text-dl-5 font-dl-2 text-dl-grey-3"
+          class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
           *ngIf="friend.friendCount > 1"
           >s</span
         >
       </div>
       <div *ngIf="friend.followerCount > 0">
-        <span class="text-dl-5 font-dl-2 text-dl-grey-3">
+        <span class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8">
           {{ friend.followerCount }} follower</span
         >
         <span
-          class="text-dl-5 font-dl-2 text-dl-grey-3"
+          class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
           *ngIf="friend.followerCount > 1"
           >s</span
         >
@@ -53,7 +57,9 @@
 
   <!-- Name -->
   <div class="flex flex-col items-center">
-    <div class="mb-dl-5 flex text-dl-7 font-dl-3 text-dl-grey-1">
+    <div
+      class="mb-dl-5 flex text-dl-7 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+    >
       <span>{{ friend.nameFirst }}</span>
       <span class="ml-dl-2">{{ friend.nameLast }}</span>
     </div>
@@ -71,9 +77,12 @@
         <!-- Person Icon -->
         <div
           [ngClass]="{
-            'bg-dl-teal-7': friendship()?.status === 'confirmed',
-            ' bg-dl-blue-7': friendship()?.status === 'requesting',
-            ' bg-dl-pink-7': friendship()?.status === 'receivedRequest'
+            'bg-dl-teal-7 dark:bg-dl-teal-4':
+              friendship()?.status === 'confirmed',
+            ' bg-dl-blue-7 dark:bg-dl-blue-4':
+              friendship()?.status === 'requesting',
+            ' bg-dl-pink-7 dark:bg-dl-pink-4':
+              friendship()?.status === 'receivedRequest'
           }"
           class="rounded-full p-dl-1"
         >
@@ -107,7 +116,7 @@
         <!-- Bell Icon -->
         <div
           [ngClass]="{
-            'rounded-full bg-dl-teal-7': followship()
+            'rounded-full bg-dl-teal-7 dark:bg-dl-teal-4': followship()
           }"
           class="p-dl-1"
         >
@@ -139,12 +148,12 @@
         class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
-          'bg-dl-pink-4 text-white':
+          'bg-dl-pink-4 text-white dark:text-dl-grey-1':
             buttonTexts().friendButton === 'Add Friend' ||
             buttonTexts().friendButton === 'Accept Request',
-          '  bg-white text-dl-blue-4':
+          '  bg-white text-dl-pink-4  dark:bg-dl-grey-1 dark:text-dl-pink-9':
             buttonTexts().friendButton === 'Cancel Request',
-          'border-2 border-dl-pink-4 bg-white text-dl-pink-4':
+          'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7 dark:bg-dl-grey-1 dark:text-dl-pink-9':
             buttonTexts().friendButton === 'Unfriend'
         }"
       >
@@ -152,10 +161,11 @@
       </button>
       <button
         type="button"
-        class="block whitespace-nowrap rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out"
+        class="block whitespace-nowrap rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:text-dl-grey-1"
         [ngClass]="{
-          'bg-dl-pink-4 text-white': buttonTexts().followButton === 'Follow',
-          'border-2 border-dl-pink-4 bg-white text-dl-pink-4':
+          'bg-dl-pink-4 text-white dark:text-dl-grey-1':
+            buttonTexts().followButton === 'Follow',
+          'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-9':
             buttonTexts().followButton === 'Unfollow'
         }"
         (click)="onFollowButtonClick()"
@@ -175,8 +185,10 @@
       <span
         class="items-center border-b-4 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
         [ngClass]="{
-          ' border-dl-blue-7 font-dl-3 text-dl-grey-2': view === 'recipes',
-          'border-transparent font-dl-2 text-dl-grey-4': view !== 'recipes'
+          ' border-dl-blue-7 font-dl-3 text-dl-grey-2 dark:border-dl-blue-4 dark:text-dl-grey-9':
+            view === 'recipes',
+          'border-transparent font-dl-2 text-dl-grey-4 dark:text-dl-grey-7':
+            view !== 'recipes'
         }"
         (click)="view = 'recipes'"
       >
@@ -185,8 +197,10 @@
       <span
         class="items-center border-b-4 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
         [ngClass]="{
-          ' border-dl-blue-7 font-dl-3 text-dl-grey-2': view === 'timeline',
-          'border-transparent font-dl-2 text-dl-grey-4': view !== 'timeline'
+          ' border-dl-blue-7 font-dl-3 text-dl-grey-2 dark:border-dl-blue-4 dark:text-dl-grey-9':
+            view === 'timeline',
+          'border-transparent font-dl-2 text-dl-grey-4 dark:text-dl-grey-7':
+            view !== 'timeline'
         }"
         (click)="view = 'timeline'"
       >
@@ -216,7 +230,7 @@
     <!-- Subscriptions of my Recipes -->
     <div *ngIf="recipesFromMe().length">
       <span
-        class="items-center px-1 pt-1 text-dl-5 font-dl-3 text-dl-grey-2 transition-all duration-200 ease-in-out"
+        class="items-center px-1 pt-1 text-dl-5 font-dl-3 text-dl-grey-2 transition-all duration-200 ease-in-out dark:text-dl-grey-9"
         (click)="view = 'recipes'"
       >
         Subscribed from My Recipes
@@ -233,7 +247,7 @@
     </div>
     <span
       *ngIf="friend.recipes.length > 0"
-      class="absolute bottom-3 left-1/2 -translate-x-1/2 text-dl-5 font-dl-2 text-dl-grey-2"
+      class="absolute bottom-3 left-1/2 -translate-x-1/2 text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
       >{{ friend.recipes.length }} total</span
     >
   </div>

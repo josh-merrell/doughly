@@ -17,7 +17,7 @@ export interface Profile {
   timelineEvents: TimelineEvent[];
   friendshipStatus?: string;
   onboardingState: number;
-  
+
   // settings
   checkIngredientStock: boolean;
   notifyOnLowStock: string;
@@ -28,7 +28,8 @@ export interface Profile {
   notifyFolloweeCreateRecipe: string;
   notifyFriendRequest: string;
   notifyNewFollower: string;
-  
+  darkMode: boolean;
+
   // permissions
   isPremium: boolean;
   permRecipeSubscribeUnlimited: boolean;
