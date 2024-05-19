@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: ["./src/**/*.{html,ts}"],
   mode: "jit",
   purge: ["./src/**/*.{html,ts}"],
@@ -30,7 +31,6 @@ module.exports = {
     screens: {
       md: { max: "767px" },
     },
-    darkMode: "class",
     extend: {
       display: [
         "responseive",
