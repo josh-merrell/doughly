@@ -143,9 +143,11 @@ export class AppComponent {
         if (darkMode) {
           this.renderer.addClass(document.body, 'dark');
           this.renderer.removeClass(document.body, 'light');
+          this.setStatusBarStyleDark();
         } else {
           this.renderer.addClass(document.body, 'light');
           this.renderer.removeClass(document.body, 'dark');
+          this.setStatusBarStyleLight();
         }
       }
     });
@@ -153,10 +155,10 @@ export class AppComponent {
 
   async setStatusBarStyleLight() {
     await StatusBar.setStyle({ style: Style.Light });
-    await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
+  }
 
-    // for bottom nav bar
-    NavigationBar.setColor({ color: '#FFFFFF', darkButtons: true });
+  async setStatusBarStyleDark() {
+    await StatusBar.setStyle({ style: Style.Dark });
   }
 
   ngOnInit() {

@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   QueryList,
+  Renderer2,
   ViewChildren,
   WritableSignal,
   effect,
@@ -24,7 +25,6 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { filter, take } from 'rxjs';
 import { StatusBar, Style } from '@capacitor/status-bar';
-import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { Capacitor } from '@capacitor/core';
 
 import {
@@ -60,7 +60,8 @@ export class DiscoverRecipesComponent {
     private dialog: MatDialog,
     private stringsService: StringsService,
     private extraStuffService: ExtraStuffService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private renderer: Renderer2
   ) {
     effect(
       () => {
@@ -108,16 +109,14 @@ export class DiscoverRecipesComponent {
     );
   }
   async setStatusBarStyleLight() {
-    await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
     await StatusBar.setStyle({ style: Style.Light });
-
-    // for bottom nav bar
-    NavigationBar.setColor({ color: '#FFFFFF', darkButtons: true });
   }
 
+  async setStatusBarStyleDark() {
+    await StatusBar.setStyle({ style: Style.Dark });
+  }
   ngOnInit(): void {
     if (Capacitor.isNativePlatform()) {
-      // set nav and status bar styles
       this.setStatusBarStyleLight();
     }
 
@@ -129,6 +128,15 @@ export class DiscoverRecipesComponent {
     });
     this.store.select(selectProfile).subscribe((profile) => {
       this.profile.set(profile);
+      if (profile.darkMode) {
+        this.renderer.addClass(document.body, 'dark');
+        this.renderer.removeClass(document.body, 'light');
+        this.setStatusBarStyleDark();
+      } else {
+        this.renderer.removeClass(document.body, 'dark');
+        this.renderer.addClass(document.body, 'light');
+        this.setStatusBarStyleLight();
+      }
     });
   }
 
