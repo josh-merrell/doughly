@@ -50,16 +50,22 @@ body {
   margin-top: 20px; /* You might adjust this to a default value that looks good in your app */
 }
 
-ion-tab-bar {
-  margin-bottom: calc(7px + env(safe-area-inset-bottom));
-}
+// ion-tab-bar {
+//   margin-bottom: calc(7px + env(safe-area-inset-bottom));
+// }
 
 // Create light theme class
 .light {
   @include mat.all-component-themes($my-light-theme);
+  background-color:  #ffffff;
 }
 
 // Create dark theme class
 .dark {
   @include mat.all-component-themes($my-dark-theme);
+  background-color: #1F2933;
+}
+
+.product-page {
+  background-color: #127FBF !important;
 }

@@ -1,4 +1,10 @@
-import { Component, WritableSignal, effect, signal } from '@angular/core';
+import {
+  Component,
+  Renderer2,
+  WritableSignal,
+  effect,
+  signal,
+} from '@angular/core';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -12,7 +18,6 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { Capacitor } from '@capacitor/core';
 import { ModalService } from 'src/app/shared/utils/modalService';
-
 
 @Component({
   selector: 'dl-products-page',
@@ -28,7 +33,8 @@ export class ProductsPageComponent {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private renderer: Renderer2
   ) {
     effect(() => {
       const view = this.view();
@@ -55,16 +61,12 @@ export class ProductsPageComponent {
 
   async setStatusBarStyleDark() {
     await StatusBar.setStyle({ style: Style.Dark });
-    // set status bar color do 'dl-blue-5'
-    await StatusBar.setBackgroundColor({ color: '#2bb0ed' });
-
-    // set nav bar color to 'dl-blue-3'
-    NavigationBar.setColor({ color: '#127fbf', darkButtons: false });
   }
 
   ngOnInit(): void {
     if (Capacitor.isNativePlatform()) {
       this.setStatusBarStyleDark();
+      this.renderer.addClass(document.body, 'product-page');
     }
     // close all modals
     this.modalService.closeAll();
@@ -74,6 +76,10 @@ export class ProductsPageComponent {
       .subscribe(() => {
         this.checkAndUpdateView();
       });
+  }
+
+  ngOnDestroy() {
+    this.renderer.removeClass(document.body, 'product-page');
   }
 
   private checkAndUpdateView() {
