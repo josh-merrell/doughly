@@ -18,6 +18,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { Capacitor } from '@capacitor/core';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 
 @Component({
   selector: 'dl-products-page',
@@ -34,7 +35,8 @@ export class ProductsPageComponent {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: ModalService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private stylesService: StylesService
   ) {
     effect(() => {
       const view = this.view();
@@ -59,13 +61,10 @@ export class ProductsPageComponent {
     );
   }
 
-  async setStatusBarStyleDark() {
-    await StatusBar.setStyle({ style: Style.Dark });
-  }
 
   ngOnInit(): void {
     if (Capacitor.isNativePlatform()) {
-      this.setStatusBarStyleDark();
+      this.stylesService.updateStyles('#127FBF', 'dark');
       this.renderer.addClass(document.body, 'product-page');
     }
     // close all modals
@@ -79,6 +78,7 @@ export class ProductsPageComponent {
   }
 
   ngOnDestroy() {
+    this.stylesService.updateStyles();
     this.renderer.removeClass(document.body, 'product-page');
   }
 

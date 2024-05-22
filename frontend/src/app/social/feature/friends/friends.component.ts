@@ -27,6 +27,7 @@ import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 
 @Component({
   selector: 'dl-friends',
@@ -66,7 +67,9 @@ export class FriendsComponent {
     private store: Store,
     public dialog: MatDialog,
     private stringsService: StringsService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private stylesService: StylesService,
+    private authService: AuthService
   ) {
     effect(
       () => {
@@ -226,5 +229,19 @@ export class FriendsComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-9');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-9');
+    }
   }
 }

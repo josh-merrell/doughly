@@ -38,7 +38,7 @@
         <div class="mt-dl-6">
           <div id="form-first-field" class="relative flex flex-col">
             <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
+              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-8"
               >Web Recipe Address</label
             >
             <mat-form-field class="w-full">
@@ -59,7 +59,8 @@
               [ngClass]="{
                 'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
                   imagePresent,
-                'bg-dl-pink-4 text-white dark:text-dl-grey-1': !imagePresent
+                'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+                  !imagePresent
               }"
               (click)="selectImage()"
             >

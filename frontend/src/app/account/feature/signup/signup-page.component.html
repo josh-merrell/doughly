@@ -1,5 +1,5 @@
 <div
-  class="sm:px-dl-6 lg:px-dl-8 flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 dark:bg-dl-grey-1 dark:bg-dl-grey-1"
+  class="sm:px-dl-6 lg:px-dl-8 flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="xm:w-full sm:mx-auto sm:max-w-md">
     <img
@@ -27,7 +27,7 @@
         </div>
       </div>
       <!-- OAuth Sign Up -->
-      <div class="mb-dl-6 flex w-full flex-col items-center justify-between">
+      <div class="mb-dl-8 flex w-full flex-col items-center justify-between">
         <button
           (click)="signUpWithGoogle()"
           class="gsi-material-button !w-dl-15"
@@ -132,7 +132,7 @@
             <input
               type="email"
               formControlName="email"
-              class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
+              class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
             />
 
             <div
@@ -140,7 +140,7 @@
                 invisible:
                   !emailErrorMessage() || !signup_form.get('email')!.touched
               }"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
             >
               {{ emailErrorMessage() || "empty" }}
             </div>
@@ -158,7 +158,7 @@
           <input
             type="password"
             formControlName="password"
-            class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
+            class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
           />
           <div
             [ngClass]="{
@@ -166,7 +166,7 @@
                 !signup_form.get('password')!.touched ||
                 signup_form.get('password')!.valid
             }"
-            class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+            class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
           >
             Minimum password length is 6 characters.
           </div>
@@ -183,13 +183,13 @@
           <input
             type="text"
             formControlName="username"
-            class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
+            class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
           />
           <div
             [ngClass]="{
               invisible: !usernameErrorMessage()
             }"
-            class="mt-dl-1 h-dl-6 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+            class="mb-dl-6 mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
           >
             {{ usernameErrorMessage() }}
           </div>

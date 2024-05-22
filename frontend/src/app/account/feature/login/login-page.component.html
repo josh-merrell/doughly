@@ -1,6 +1,6 @@
 <script src="https://accounts.google.com/gsi/client" async></script>
 <div
-  class="sm:px-dl-6 lg:px-dl-8 flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6  dark:bg-dl-grey-1"
+  class="sm:px-dl-6 lg:px-dl-8 flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 dark:bg-dl-grey-1"
 >
   <div class="xm:w-full sm:mx-auto sm:max-w-md mt-dl-3">
     <img
@@ -30,7 +30,7 @@
         </div>
       </div>
       <!-- OAuth Sign In -->
-      <div class="mb-dl-6 flex w-full flex-col items-center justify-between">
+      <div class="mb-dl-8 flex w-full flex-col items-center justify-between">
         <button
           (click)="signInWithGoogle()"
           class="gsi-material-button !w-dl-15"
@@ -125,7 +125,7 @@
       </div>
       <!--FORM FIELDS-->
       <div id="form-email">
-        <div class="relative mb-dl-4 flex flex-col">
+        <div class="relative mb-dl-2 flex flex-col">
           <label
             class="text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
             for="email"
@@ -135,7 +135,7 @@
             <input
               type="email"
               formControlName="email"
-              class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
+              class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
             />
 
             <div
@@ -144,7 +144,7 @@
                   !login_form.get('email')!.touched ||
                   login_form.get('email')!.valid
               }"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
             >
               Please enter a valid email.
             </div>
@@ -153,7 +153,7 @@
       </div>
 
       <div id="form-password">
-        <div class="relative mb-dl-4 flex flex-col">
+        <div class="relative mb-dl-3 flex flex-col">
           <label
             class="text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
             for="password"
@@ -163,7 +163,7 @@
             <input
               type="password"
               formControlName="password"
-              class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
+              class="w-dl-15 rounded-md border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
             />
             <div
               [ngClass]="{
@@ -171,7 +171,7 @@
                   !login_form.get('password')!.touched ||
                   login_form.get('password')!.valid
               }"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
             >
               Minimum password length is 6 characters.
             </div>
@@ -185,24 +185,6 @@
         class="mx-dl-2 mb-dl-4 flex items-center justify-between"
         style="width: 296px"
       >
-        <!-- Remember Me Checkbox-->
-        <!--
-        <div class="flex items-center">
-          <input
-            id="remember-md"
-            name="remember-me"
-            type="checkbox"
-            class="h-dl-3 w-dl-3 rounded border-dl-grey-8 dark:border-dl-grey-3 text-dl-blue-6 dark:text-dl-blue-5"
-            (click)="toggleRememberMe()"
-          />
-          <label
-            for="remember me"
-            class="ml-dl-3 text-dl-5 font-dl-3 text-dl-grey-5 dark:text-dl-grey-6"
-            >Remember me</label
-          >
-        </div>
-      -->
-        <!-- Forgot Password Link-->
         <div class="leading-dl-6 text-dl-2" (click)="resetPassword()">
           <a
             class="cursor-pointer text-dl-5 font-dl-3 text-dl-blue-5 hover:text-dl-blue-5 dark:text-dl-blue-6 dark:hover:text-dl-blue-6"
@@ -228,7 +210,7 @@
         [ngClass]="{
           'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
             login_form.invalid === false,
-          'bg-dl-grey-9':
+          'bg-dl-grey-7':
             login_form.invalid ||
             login_form.get('password')!.value === '' ||
             login_form.get('email')!.value === ''
@@ -250,7 +232,7 @@
     >
       {{ successMessage() }}
     </p>
-    <p class="mt-dl-4 text-center text-dl-5 text-dl-grey-4 dark:text-dl-grey-7">
+    <p class="mt-dl-4 text-center text-dl-5 text-dl-grey-4 dark:text-dl-grey-8">
       New here?
       <a
         class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
