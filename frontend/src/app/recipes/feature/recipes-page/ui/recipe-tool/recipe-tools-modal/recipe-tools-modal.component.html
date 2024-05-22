@@ -20,17 +20,19 @@
           class="mb-dl-2 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
           (click)="onDeleteClick(tool.toolID, tool.recipeToolID)"
         >
-          <span *ngIf="tool.toolID > 0" class="font-dl-3"
-            >{{ tool.name }}&nbsp;&nbsp;&nbsp;</span
-          >
-          <span *ngIf="tool.quantity > 0" class="font-dl-2">{{
-            tool.quantity
-          }}</span>
-          <span
-            *ngIf="tool.toAdd"
-            class="font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
-            >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
-          >
+          <div class="flex-grow flex-wrap">
+            <span *ngIf="tool.toolID > 0" class="font-dl-3"
+              >{{ tool.name }}&nbsp;&nbsp;&nbsp;</span
+            >
+            <span *ngIf="tool.quantity > 0" class="font-dl-2">{{
+              tool.quantity
+            }}</span>
+            <span
+              *ngIf="tool.toAdd"
+              class="font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
+              >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
+            >
+          </div>
           <span *ngIf="!tool.toolID" class="font-dl-3"
             >Recipe needs no tools</span
           >
