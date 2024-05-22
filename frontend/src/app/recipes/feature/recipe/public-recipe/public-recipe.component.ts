@@ -479,6 +479,10 @@ export class PublicRecipeComponent {
         return darkMode
           ? this.stylesService.getHex('blue-8')
           : this.stylesService.getHex('blue-9');
+      case 3:
+        return darkMode
+          ? this.stylesService.getHex('grey-8')
+          : this.stylesService.getHex('grey-3');
       default:
         return darkMode
           ? this.stylesService.getHex('grey-4')
