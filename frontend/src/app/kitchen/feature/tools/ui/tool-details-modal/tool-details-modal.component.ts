@@ -280,12 +280,12 @@ export class ToolDetailsModalComponent {
     switch (index) {
       case 1:
         return darkMode
-          ? this.stylesService.getHex('grey-3')
-          : this.stylesService.getHex('grey-7');
+          ? this.stylesService.getHex('grey-8')
+          : this.stylesService.getHex('grey-3');
       default:
         return darkMode
-          ? this.stylesService.getHex('grey-3')
-          : this.stylesService.getHex('grey-7');
+          ? this.stylesService.getHex('grey-8')
+          : this.stylesService.getHex('grey-3');
     }
   }
 }
