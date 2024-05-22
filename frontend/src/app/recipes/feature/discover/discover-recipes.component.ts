@@ -33,6 +33,8 @@ import {
 } from 'src/app/profile/state/profile-selectors';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 @Component({
   selector: 'dl-discover-recipes',
@@ -61,7 +63,9 @@ export class DiscoverRecipesComponent {
     private stringsService: StringsService,
     private extraStuffService: ExtraStuffService,
     private modalService: ModalService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private stylesService: StylesService,
+    private authService: AuthService
   ) {
     effect(
       () => {
@@ -108,17 +112,10 @@ export class DiscoverRecipesComponent {
       { allowSignalWrites: true }
     );
   }
-  async setStatusBarStyleLight() {
-    await StatusBar.setStyle({ style: Style.Light });
-  }
-
-  async setStatusBarStyleDark() {
-    await StatusBar.setStyle({ style: Style.Dark });
-  }
   ngOnInit(): void {
-    if (Capacitor.isNativePlatform()) {
-      this.setStatusBarStyleLight();
-    }
+    // if (Capacitor.isNativePlatform()) {
+    //   this.setStatusBarStyleLight();
+    // }
 
     this.store.select(selectRecipeCategories).subscribe((categories) => {
       this.categories.set(categories);
@@ -131,11 +128,11 @@ export class DiscoverRecipesComponent {
       if (profile.darkMode) {
         this.renderer.addClass(document.body, 'dark');
         this.renderer.removeClass(document.body, 'light');
-        this.setStatusBarStyleDark();
+        this.stylesService.updateStyles('#1F2933', 'dark');
       } else {
         this.renderer.removeClass(document.body, 'dark');
         this.renderer.addClass(document.body, 'light');
-        this.setStatusBarStyleLight();
+        this.stylesService.updateStyles('#FFFFFF', 'light');
       }
     });
   }
@@ -279,5 +276,19 @@ export class DiscoverRecipesComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-8');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-8');
+    }
   }
 }

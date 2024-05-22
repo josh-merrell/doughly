@@ -38,6 +38,8 @@ import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -139,7 +141,9 @@ export class RecipeListComponent {
     private location: Location,
     private stringsService: StringsService,
     private productService: ProductService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private authService: AuthService,
+    private stylesService: StylesService
   ) {
     effect(
       () => {
@@ -498,5 +502,19 @@ export class RecipeListComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-9');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-9');
+    }
   }
 }

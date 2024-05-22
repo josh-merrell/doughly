@@ -325,4 +325,16 @@ export class OnboardingMessageModalComponent {
       state: [this.data.state || '', [isState()]],
     });
   }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode ? '#B3ECFF' : '#0B69A3';
+      case 2:
+        return darkMode ? '#40C3F7' : '#2BB0ED';
+      default:
+        return darkMode ? '#B3ECFF' : '#0B69A3';
+    }
+  }
 }

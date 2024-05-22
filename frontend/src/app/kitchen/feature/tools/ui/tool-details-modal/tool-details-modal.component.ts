@@ -39,6 +39,8 @@ import { selectRecipeIDsByToolID } from 'src/app/recipes/state/recipe-tool/recip
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 @Component({
   selector: 'dl-tool-details-modal',
@@ -67,7 +69,9 @@ export class ToolDetailsModalComponent {
     private recipeService: RecipeService,
     private router: Router,
     public dialog: MatDialog,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private authService: AuthService,
+    private stylesService: StylesService
   ) {
     effect(() => {
       const profile = this.profile();
@@ -268,6 +272,20 @@ export class ToolDetailsModalComponent {
       });
     } else {
     
+    }
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('grey-3')
+          : this.stylesService.getHex('grey-7');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('grey-3')
+          : this.stylesService.getHex('grey-7');
     }
   }
 }

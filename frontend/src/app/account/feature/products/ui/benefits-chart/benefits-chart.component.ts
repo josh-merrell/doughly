@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, WritableSignal, signal } from '@angular/core';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { StringsService } from 'src/app/shared/utils/strings';
 
@@ -14,7 +15,8 @@ export class BenefitsChartComponent {
 
   constructor(
     public stringsService: StringsService,
-    public productService: ProductService
+    public productService: ProductService,
+    private authService: AuthService
   ) {}
 
   features = [
@@ -44,4 +46,16 @@ export class BenefitsChartComponent {
       premiumTier: 'check',
     },
   ];
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode ? '#CBD2D9' : '#3E4C59';
+      case 2:
+        return darkMode ? '#F5F7FA' : '#1F2933';
+      default:
+        return darkMode ? '#CBD2D9' : '#3E4C59';
+    }
+  }
 }

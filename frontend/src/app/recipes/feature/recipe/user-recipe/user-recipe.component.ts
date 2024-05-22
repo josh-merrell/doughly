@@ -70,6 +70,8 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { filter, take } from 'rxjs';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -161,7 +163,9 @@ export class UserRecipeComponent {
     private profileService: ProfileService,
     private fractionService: FractionService,
     private stringsService: StringsService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private authService: AuthService,
+    private stylesService: StylesService
   ) {
     effect(
       () => {
@@ -994,5 +998,27 @@ export class UserRecipeComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile()!.onboardingState);
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('pink-4')
+          : this.stylesService.getHex('pink-7');
+      case 2:
+        return darkMode
+          ? this.stylesService.getHex('grey-4')
+          : this.stylesService.getHex('grey-7');
+      case 3:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-9');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-9');
+    }
   }
 }

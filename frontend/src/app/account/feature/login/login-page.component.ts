@@ -155,6 +155,9 @@ export class LoginPageComponent {
   });
 
   async resetPassword() {
+    if (!this.showPasswordReset()) {
+      return;
+    }
     this.isLoading.set(true);
     this.loginFailureMessage.set('');
     this.successMessage.set('');

@@ -207,4 +207,18 @@ export class AppFooterComponent {
     } else {
     }
   }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode ? '#E4E7EB' : '#323F4B';
+      case 2:
+        return darkMode ? '#F5F7FA' : '#1F2933';
+      case 3:
+        return darkMode ? '#9AA5B1' : '#52606D';
+      default:
+        return darkMode ? '#CBD2D9' : '#3E4C59';
+    }
+  }
 }

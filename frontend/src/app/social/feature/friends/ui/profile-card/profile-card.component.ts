@@ -13,6 +13,8 @@ import { Store } from '@ngrx/store';
 import { selectFriendshipByFriendID } from 'src/app/social/state/friendship-selectors';
 import { selectFollowshipByFollowingID } from 'src/app/social/state/followship-selectors';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 
 @Component({
   selector: 'dl-profile-card',
@@ -30,7 +32,12 @@ export class ProfileCardComponent {
   public followship: WritableSignal<Friendship | null> = signal(null);
   public initials: string = '';
 
-  constructor(private store: Store, private pushTokenService: PushTokenService) {}
+  constructor(
+    private store: Store,
+    private pushTokenService: PushTokenService,
+    private authService: AuthService,
+    private stylesService: StylesService
+  ) {}
 
   ngOnInit(): void {
     this.initials = this.profile.nameFirst[0] + this.profile.nameLast[0];
@@ -77,5 +84,19 @@ export class ProfileCardComponent {
         console.error('Error getting push tokens for user: ', error);
       }
     );
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('pink-6')
+          : this.stylesService.getHex('pink-4');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('pink-6')
+          : this.stylesService.getHex('pink-4');
+    }
   }
 }
