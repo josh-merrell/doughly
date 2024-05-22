@@ -160,6 +160,12 @@ export class FriendModalComponent {
             updatedButtonTexts.friendButton = 'Add Friend';
           }
           this.buttonTexts.set(updatedButtonTexts);
+          console.log('Friendship:', friendship.status);
+        } else {
+          this.buttonTexts.set({
+            ...this.buttonTexts(),
+            friendButton: 'Add Friend',
+          });
         }
       });
 

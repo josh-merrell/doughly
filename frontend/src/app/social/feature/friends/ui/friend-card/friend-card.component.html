@@ -13,7 +13,7 @@
         *ngIf="!friend.imageURL && friend.nameFirst && friend.nameLast"
       >
         <span
-          class="text-dl-6 font-dl-3 leading-none text-dl-grey-7 dark:text-dl-grey-4"
+          class="text-dl-6 font-dl-3 leading-none text-dl-grey-7 dark:text-dl-grey-9"
           >{{ initials }}</span
         >
       </span>
@@ -36,9 +36,9 @@
   <div class="absolute bottom-1 right-2 pb-dl-1">
     <span
       *ngIf="friend.recipes.length"
-      class="text-dl-5 font-dl-2 text-dl-blue-6 dark:text-dl-blue-5"
+      class="text-dl-5 font-dl-2 text-dl-blue-6 dark:text-dl-blue-7"
       >{{ friend.recipes.length }} recipe<span
-        class="text-dl-5 font-dl-2 text-dl-blue-6 dark:text-dl-blue-5"
+        class="text-dl-5 font-dl-2 text-dl-blue-6 dark:text-dl-blue-7"
         *ngIf="friend.recipes.length !== 1"
         >s</span
       ></span
