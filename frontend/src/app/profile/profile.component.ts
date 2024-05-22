@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { DeleteProfileModalComponent } from './ui/delete-profile-modal/delete-profile-modal.component';
 import { Browser } from '@capacitor/browser';
 import { ModalService } from '../shared/utils/modalService';
+import { StylesService } from '../shared/utils/stylesService';
 
 @Component({
   selector: 'dl-profile',
@@ -52,7 +53,8 @@ export class ProfileComponent {
     private dialog: MatDialog,
     private photoService: PhotoService,
     private router: Router,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private stylesService: StylesService
   ) {
     effect(() => {
       const profile = this.authService.profile();
@@ -191,6 +193,20 @@ export class ProfileComponent {
         }
       });
     } else {
+    }
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('grey-9')
+          : this.stylesService.getHex('grey-3');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('grey-4')
+          : this.stylesService.getHex('grey-6');
     }
   }
 }

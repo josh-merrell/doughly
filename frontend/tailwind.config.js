@@ -41,6 +41,12 @@ module.exports = {
         "focus-within",
         "!important",
       ],
+      spacing: {
+        '20%' : '20%',
+        '50%' : '50%',
+        '55%' : '55%',
+        '60%' : '60%',
+      },
       height: {
         "dl-0": "0rem",
         "dl-1": "0.09375",
@@ -109,6 +115,7 @@ module.exports = {
         "dl-7": "5.15625rem",
         "dl-8": "6.5625rem",
         "dl-9": "7.96875rem",
+        "dl-9.5": "8.75rem",
         "dl-10": "9.375rem",
         "dl-11": "11.25rem",
         "dl-12": "13.125rem",

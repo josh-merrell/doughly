@@ -44,6 +44,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 interface displayIngredientsByComponent {
   noComponent: any[];
   components: { [componentName: string]: any[] };
@@ -207,7 +208,8 @@ export class PublicRecipeComponent {
     private authService: AuthService,
     private stringsService: StringsService,
     private productService: ProductService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private stylesService: StylesService
   ) {
     // handle onboarding
     effect(
@@ -447,7 +449,11 @@ export class PublicRecipeComponent {
       if (ref) {
         ref.afterClosed().subscribe(() => {
           this.onboardingModalOpen.set(false);
-          this.showOnboardingBadge.set(true);
+          if (this.profile().onboardingState === 3) {
+            this.showOnboardingBadge.set(true);
+          } else {
+            this.showOnboardingBadge.set(false);
+          }
         });
       } else {
       }
@@ -460,5 +466,23 @@ export class PublicRecipeComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('grey-4')
+          : this.stylesService.getHex('grey-6');
+      case 2:
+        return darkMode
+          ? this.stylesService.getHex('blue-8')
+          : this.stylesService.getHex('blue-9');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('grey-4')
+          : this.stylesService.getHex('grey-6');
+    }
   }
 }

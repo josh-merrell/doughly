@@ -49,6 +49,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 @Component({
   selector: 'dl-draft-page',
@@ -160,7 +161,8 @@ export class DraftPageComponent {
     private recipeService: RecipeService,
     public router: Router,
     private stringsService: StringsService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private authService: AuthService
   ) {
     effect(
       () => {
@@ -757,5 +759,15 @@ export class DraftPageComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode ? '#B3ECFF' : '#0B569A3';
+      default:
+        return darkMode ? '#B3ECFF' : '#0B569A3';
+    }
   }
 }

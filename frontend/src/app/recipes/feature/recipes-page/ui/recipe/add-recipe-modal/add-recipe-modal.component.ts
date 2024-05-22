@@ -26,6 +26,8 @@ import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/
 import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { StylesService } from 'src/app/shared/utils/stylesService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 @Component({
   selector: 'dl-add-recipe-modal',
   standalone: true,
@@ -51,7 +53,9 @@ export class AddRecipeModalComponent {
     private store: Store,
     private stringsService: StringsService,
     private productService: ProductService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private stylesService: StylesService,
+    private authService: AuthService
   ) {
     this.recipeCategories = this.data.recipeCategories;
 
@@ -95,7 +99,7 @@ export class AddRecipeModalComponent {
   }
 
   private checkUrlAndAct(fullUrl: string) {
-    console.log('fullUrl', fullUrl)
+    console.log('fullUrl', fullUrl);
     if (fullUrl.includes('/vision')) {
       this.onVisionAddClick();
     }
@@ -127,7 +131,7 @@ export class AddRecipeModalComponent {
   }
 
   onVisionAddClick(): void {
-    console.log('onVisionAddClick')
+    console.log('onVisionAddClick');
     // first ensure user has at least one AI credit
     if (this.profile().permAITokenCount < 1) {
       const dialogRef = this.modalService.open(
@@ -181,7 +185,7 @@ export class AddRecipeModalComponent {
           }
         });
       } else {
-     }
+      }
     }
   }
 
@@ -213,9 +217,13 @@ export class AddRecipeModalComponent {
       // update url to include '/from-url' if it's not already there
       this.location.go('/recipes/created/add/from-url');
 
-      const dialogRef = this.modalService.open(FromUrlAddRecipeModalComponent, {
-        width: '90%',
-      }, 2);
+      const dialogRef = this.modalService.open(
+        FromUrlAddRecipeModalComponent,
+        {
+          width: '90%',
+        },
+        2
+      );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
           // remove '/from-url' from the url
@@ -343,5 +351,19 @@ export class AddRecipeModalComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-9');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('blue-2')
+          : this.stylesService.getHex('blue-9');
+    }
   }
 }

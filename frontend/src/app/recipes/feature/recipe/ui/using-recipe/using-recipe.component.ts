@@ -29,6 +29,8 @@ import { UnitService } from 'src/app/shared/utils/unitService';
 import { UseRecipeModalComponent } from '../use-recipe-modal/use-recipe-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 interface displayIngredientsByComponent {
   noComponent: any[];
@@ -62,7 +64,9 @@ export class UsingRecipeComponent {
     private route: ActivatedRoute,
     private unitService: UnitService,
     private fractionService: FractionService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private authService: AuthService,
+    private stylesService: StylesService
   ) {
     effect(
       () => {
@@ -270,5 +274,19 @@ export class UsingRecipeComponent {
 
   onExitClick() {
     this.router.navigate(['/recipe/' + this.recipeID()]);
+  }
+
+  getFillColor(index: number): string {
+    const darkMode = this.authService.profile()?.darkMode;
+    switch (index) {
+      case 1:
+        return darkMode
+          ? this.stylesService.getHex('grey-8')
+          : this.stylesService.getHex('grey-3');
+      default:
+        return darkMode
+          ? this.stylesService.getHex('grey-2')
+          : this.stylesService.getHex('grey-9');
+    }
   }
 }

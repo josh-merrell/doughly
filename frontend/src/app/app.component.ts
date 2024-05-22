@@ -30,6 +30,7 @@ import { ProductService } from './shared/utils/productService';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { Renderer2 } from '@angular/core';
 import { selectProfile } from './profile/state/profile-selectors';
+import { StylesService } from './shared/utils/stylesService';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -67,7 +68,8 @@ export class AppComponent {
     private redirectPathService: RedirectPathService,
     private extraStuffService: ExtraStuffService,
     private productService: ProductService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private stylesService: StylesService
   ) {
     // Listen to routing events, ensuring only NavigationEnd events are processed
     this.router.events
@@ -143,28 +145,22 @@ export class AppComponent {
         if (darkMode) {
           this.renderer.addClass(document.body, 'dark');
           this.renderer.removeClass(document.body, 'light');
-          this.setStatusBarStyleDark();
+          this.stylesService.updateStyles('#1F2933', 'dark');
         } else {
           this.renderer.addClass(document.body, 'light');
           this.renderer.removeClass(document.body, 'dark');
-          this.setStatusBarStyleLight();
+          this.stylesService.updateStyles('#FFFFFF', 'light');
         }
       }
     });
   }
 
-  async setStatusBarStyleLight() {
-    await StatusBar.setStyle({ style: Style.Light });
-  }
-
-  async setStatusBarStyleDark() {
-    await StatusBar.setStyle({ style: Style.Dark });
-  }
-
   ngOnInit() {
-    if (Capacitor.isNativePlatform()) {
-      this.setStatusBarStyleLight();
-    }
+    // set initial styling to dark mode:
+    this.renderer.addClass(document.body, 'dark');
+    this.renderer.removeClass(document.body, 'light');
+    this.stylesService.updateStyles('#1F2933', 'dark');
+
     // register for push notifications on mobile
     if (Capacitor.isNativePlatform()) {
       PushNotifications.requestPermissions().then((result) => {
