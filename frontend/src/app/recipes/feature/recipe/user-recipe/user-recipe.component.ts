@@ -1015,6 +1015,10 @@ export class UserRecipeComponent {
         return darkMode
           ? this.stylesService.getHex('blue-2')
           : this.stylesService.getHex('blue-9');
+      case 4:
+        return darkMode
+          ? this.stylesService.getHex('grey-8')
+          : this.stylesService.getHex('grey-2');
       default:
         return darkMode
           ? this.stylesService.getHex('blue-2')

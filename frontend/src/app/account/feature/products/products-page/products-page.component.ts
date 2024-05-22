@@ -29,6 +29,7 @@ import { StylesService } from 'src/app/shared/utils/stylesService';
 export class ProductsPageComponent {
   public profile: object | any = {};
   public view: WritableSignal<string> = signal('upgrade');
+  private previousUrl: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -61,7 +62,6 @@ export class ProductsPageComponent {
     );
   }
 
-
   ngOnInit(): void {
     if (Capacitor.isNativePlatform()) {
       this.stylesService.updateStyles('#127FBF', 'dark');
@@ -70,10 +70,19 @@ export class ProductsPageComponent {
     // close all modals
     this.modalService.closeAll();
     this.checkAndUpdateView();
+    
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
         this.checkAndUpdateView();
+  
+        // Check if previous path was '/products/your-premium' and current path is '/products'
+        if (this.previousUrl === '/products/your-premium' && event.url === '/products') {
+          this.router.navigate(['/recipes/discover']);
+        }
+  
+        // Update previous URL
+        this.previousUrl = event.url;
       });
   }
 

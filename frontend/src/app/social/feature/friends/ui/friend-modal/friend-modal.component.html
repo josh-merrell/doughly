@@ -25,7 +25,7 @@
       *ngIf="!friend.imageURL && friend.nameFirst && friend.nameLast"
     >
       <span
-        class="text-dl-5 font-dl-3 leading-none text-dl-grey-7 dark:text-dl-grey-4"
+        class="text-dl-7 font-dl-3 leading-none text-dl-grey-7 dark:text-dl-grey-9"
         >{{ initials }}</span
       >
     </span>
@@ -148,7 +148,7 @@
         class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
-          'bg-dl-pink-4 text-white dark:text-dl-grey-1':
+          'bg-dl-pink-4 dark:bg-dl-pink-7 dark:border-dl-pink-7 text-white dark:text-dl-grey-1':
             buttonTexts().friendButton === 'Add Friend' ||
             buttonTexts().friendButton === 'Accept Request',
           '  bg-white text-dl-pink-4  dark:bg-dl-grey-1 dark:text-dl-pink-9':
@@ -163,7 +163,7 @@
         type="button"
         class="block whitespace-nowrap rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:text-dl-grey-1"
         [ngClass]="{
-          'bg-dl-pink-4 text-white dark:text-dl-grey-1':
+          'bg-dl-pink-4 dark:bg-dl-pink-7 dark:border-dl-pink-7 text-white dark:text-dl-grey-1':
             buttonTexts().followButton === 'Follow',
           'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-9':
             buttonTexts().followButton === 'Unfollow'

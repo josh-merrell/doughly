@@ -1,5 +1,5 @@
 <div
-  class="flex w-full flex-col items-center border-x-4 border-dl-yellow-5 bg-white px-dl-3 pb-dl-2 dark:border-dl-yellow-6 dark:bg-dl-grey-1"
+  class="flex w-full flex-col items-center border-x-4 dark:border border-dl-yellow-5 bg-white px-dl-3 pb-dl-2 dark:border-dl-yellow-6 dark:bg-dl-grey-1"
   [ngClass]="{ 'border-l-4 border-r-4': !isDeleting }"
 >
   <div
@@ -38,12 +38,12 @@
     </div>
     <div class="relative flex w-dl-15 max-w-full flex-col">
       <div class="mt-dl-4 space-x-1">
-        <span class="mt-dl-2 text-dl-4 text-dl-grey-5 dark:text-dl-grey-6"
+        <span class="mt-dl-2 text-dl-4 text-dl-grey-5 dark:text-dl-grey-8"
           >Are you sure you want to delete</span
         ><span
           class="mt-dl-1 text-dl-4 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
           >{{ this.data.itemName }}</span
-        ><span class="mt-dl-1 text-dl-4 text-dl-grey-5 dark:text-dl-grey-6"
+        ><span class="mt-dl-1 text-dl-4 text-dl-grey-5 dark:text-dl-grey-8"
           >and all associated inventory entries?</span
         >
       </div>
