@@ -50,6 +50,7 @@ import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 
 @Component({
   selector: 'dl-draft-page',
@@ -162,7 +163,8 @@ export class DraftPageComponent {
     public router: Router,
     private stringsService: StringsService,
     private modalService: ModalService,
-    private authService: AuthService
+    private authService: AuthService,
+    private stylesService: StylesService
   ) {
     effect(
       () => {
@@ -766,6 +768,10 @@ export class DraftPageComponent {
     switch (index) {
       case 1:
         return darkMode ? '#B3ECFF' : '#0B569A3';
+      case 2:
+        return darkMode
+          ? this.stylesService.getHex('pink-4')
+          : this.stylesService.getHex('pink-7');
       default:
         return darkMode ? '#B3ECFF' : '#0B569A3';
     }
