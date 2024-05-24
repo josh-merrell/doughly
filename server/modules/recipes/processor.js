@@ -421,13 +421,15 @@ module.exports = ({ db }) => {
       }
       const { data: recipes, error } = await q;
 
-      for (let r in recipes) {
-        r.photoURL = await replaceFilePath(r.photoURL);
-      }
 
       if (error) {
         global.logger.error(`Error getting recipes: ${error.message}`);
         throw errorGen(`Error getting recipes: ${error.message}`, 400);
+      }
+      if (recipes) {
+        for (let r of recipes) {
+          r.photoURL = await replaceFilePath(r.photoURL);
+        }
       }
       global.logger.info(`Got ${recipes.length} recipes`);
       return recipes;
@@ -441,12 +443,14 @@ module.exports = ({ db }) => {
     try {
       // const { userID, authorization } = options;
       const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false);
-      for (let dr in discoverRecipes) {
-        dr.photoURL = await replaceFilePath(dr.photoURL);
-      }
       if (error) {
         global.logger.error(`Error getting discoverRecipes: ${error.message}`);
         throw errorGen(`Error getting discoverRecipes: ${error.message}`, 400);
+      }
+      if (discoverRecipes) {
+        for (let dr of discoverRecipes) {
+          dr.photoURL = await replaceFilePath(dr.photoURL);
+        }
       }
       global.logger.info(`Got ${discoverRecipes.length} discoverRecipes`);
       return discoverRecipes;
@@ -457,21 +461,33 @@ module.exports = ({ db }) => {
   }
 
   async function getByID(options) {
-    try {
-      const { recipeID } = options;
-      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
-      recipe[0].photoURL = await replaceFilePath(recipe[0].photoURL);
-      if (error) {
-        global.logger.error(`Error getting recipe: ${recipeID}: ${error.message}`);
-        throw errorGen(`Error getting recipe: ${recipeID}: ${error.message}`, 400);
-      }
-      global.logger.info(`Got recipe`);
-      return recipe;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+  try {
+    const { recipeID } = options;
+    const { data: recipes, error } = await db
+      .from('recipes')
+      .select()
+      .eq('recipeID', recipeID)
+      .eq('deleted', false);
+
+    if (error) {
+      global.logger.error(`Error getting recipe: ${recipeID}: ${error.message}`);
+      throw errorGen(`Error getting recipe: ${recipeID}: ${error.message}`, 400);
     }
+
+    if (!recipes || recipes.length === 0) {
+      global.logger.info(`Recipe not found: ${recipeID}`);
+      return null; // or throw an error if recipe not found is considered an error
+    }
+
+    recipes[0].photoURL = await replaceFilePath(recipes[0].photoURL);
+    
+    global.logger.info(`Got recipe: ${recipeID}`);
+    return recipes[0];
+  } catch (error) {
+    global.logger.error(`Unhandled Error: ${error.message}`);
+    throw errorGen(`Unhandled Error: ${error.message}`, 400);
   }
+}
 
   async function getRecipeIngredients(options) {
     try {
@@ -516,10 +532,12 @@ module.exports = ({ db }) => {
         throw errorGen(`Error getting recipeSteps for recipeID: ${recipeID}: ${error.message}`, 400);
       }
 
-      for (let rs in recipeSteps) {
-        rs.photoURL  = await replaceFilePath(rs.photoURL);
-      }
       global.logger.info(`Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`);
+      if (recipeSteps) {
+        for (let rs in recipeSteps) {
+          rs.photoURL  = await replaceFilePath(rs.photoURL);
+        }
+      }
       return recipeSteps;
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
@@ -560,7 +578,7 @@ module.exports = ({ db }) => {
           authorID: sourceRecipe[0].userID,
           authorName: `${profile.nameFirst} ${profile.nameLast}`,
           authorUsername: profile.username,
-          authorPhotoURL: await replaceFilPath(profile.imageURL),
+          authorPhotoURL: await replaceFilePath(profile.imageURL),
         });
       }
       global.logger.info(`Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`);
