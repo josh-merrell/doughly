@@ -53,7 +53,13 @@ async function deleteOldBackup(userID, filename) {
   }
 }
 
+const filePaths = {
+  s3URL: 'https://s3.us-west-2.amazonaws.com/dl.images',
+  cdnURL: 'https://d1fksulu953xbh.cloudfront.net',
+}
+
 module.exports = {
   uploadBackup,
   deleteOldBackup,
+  filePaths
 };
