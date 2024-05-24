@@ -4,6 +4,7 @@
 // const { createRecipeLog } = require('../../../services/dbLogger');
 // const { updater } = require('../../../db');
 const { errorGen } = require('../../../middleware/errorHandling');
+const { replaceFilePath } = require('../../../services/fileService.js');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -14,6 +15,11 @@ module.exports = ({ db }) => {
     if (error) {
       global.logger.error(`Error getting recipeCategories: ${error.message}`);
       throw errorGen('Error getting recipeCategories', 400);
+    }
+    if (recipeCategories) {
+      for (let rc of recipeCategories) {
+        rc.photoURL = await replaceFilePath(rc.photoURL);
+      }
     }
     global.logger.info(`Got ${recipeCategories.length} recipeCategories`);
     return recipeCategories;
