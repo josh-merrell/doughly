@@ -17,6 +17,7 @@ import 'hammerjs';
 
 // Services
 import { authInterceptor } from './app/shared/utils/authInterceptor';
+import { imageInterceptor } from './app/shared/utils/imageInterceptor';
 
 // NgRX Items
 import { IngredientStockEffects } from './app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-effects';
@@ -102,7 +103,7 @@ bootstrapApplication(AppComponent, {
       ShoppingListIngredientEffects,
       MessageEffects,
     ]),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, imageInterceptor])),
     provideStoreDevtools({
       maxAge: 25, // Retains last 25 states
       logOnly: false, // Restrict extension to log-only mode

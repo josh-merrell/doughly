@@ -6,6 +6,7 @@ const { uploadBackup, deleteOldBackup } = require('../../services/fileService');
 const fs = require('fs');
 const path = require('path');
 const recipeCategories = require('../../services/recipeCategoryService');
+const { replaceFilePath } = require('../../services/fileService.js');
 
 module.exports = ({ db, dbPublic }) => {
   async function retrieveProfile(userID, friendStatus = 'confirmed') {
@@ -49,6 +50,7 @@ module.exports = ({ db, dbPublic }) => {
     // for each recipe, get the recipeCategoryName from the recipeCategoryID, then update the recipe object with recipeCategoryName
     const promises = recipes.map(async (recipe) => {
       const recipeWithCategoryName = recipe;
+      recipeWithCategoryName.photoURL = await replaceFilePath(recipeWithCategoryName.photoURL);
       recipeWithCategoryName.recipeCategoryName = recipeCategories[recipe.recipeCategoryID];
       return recipeWithCategoryName;
     });
@@ -76,7 +78,7 @@ module.exports = ({ db, dbPublic }) => {
       nameLast: profile.name_last,
       username: profile.username,
       email: profile.email,
-      imageURL: profile.photo_url,
+      imageURL: await replaceFilePath(profile.photo_url),
       joinDate: profile.joined_at,
       city: profile.city,
       state: profile.state,

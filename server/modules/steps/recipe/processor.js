@@ -4,6 +4,7 @@ const axios = require('axios');
 const { createRecipeLog } = require('../../../services/dbLogger');
 const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 const { errorGen } = require('../../../middleware/errorHandling');
+const { replaceFilePath } = require('../../../services/fileService.js');
 
 module.exports = ({ db }) => {
   const sequenceShifter = async (userID, authorization, recipeStepID, newSeq) => {
@@ -35,6 +36,11 @@ module.exports = ({ db }) => {
       global.logger.error(`Error getting recipeSteps: ${error.message}`);
       throw errorGen('Error getting recipeSteps', 400);
     }
+    if (recipeSteps) {
+      for (let rs of recipeSteps) {
+        rs.photoURL = await replaceFilePath(rs.photoURL);
+      }
+    }
     global.logger.info(`Got ${recipeSteps.length} recipeSteps`);
     return recipeSteps;
   }
@@ -44,6 +50,9 @@ module.exports = ({ db }) => {
     if (error) {
       global.logger.error(`Error getting recipeStep by ID: ${options.recipeStepID}:${error.message}`);
       throw errorGen(`Error getting recipeStep by ID: ${options.recipeStepID}`, 400);
+    }
+    if (data) {
+      data.photoURL = await replaceFilePath(data.photoURL);
     }
     global.logger.info(`Got recipeStep ${options.recipeStepID}`);
     return data;
@@ -164,7 +173,7 @@ module.exports = ({ db }) => {
       recipeID: newRecipeStep.recipeID,
       stepID: newRecipeStep.stepID,
       sequence: newRecipeStep.sequence,
-      photoURL: newRecipeStep.photoURL,
+      photoURL: await replaceFilePath(newRecipeStep.photoURL),
     };
   }
 
