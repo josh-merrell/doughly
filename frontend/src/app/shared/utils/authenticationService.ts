@@ -114,18 +114,14 @@ export class AuthService {
               .match({ user_id: user.id })
               .single()
               .then((res) => {
-                if (res.data) {
-                  res.data.photo_url = res.data.photo_url.replace(this.S3_URL, this.CDN_URL)
+                if (res.data && res.data.photo_url) {
+                  res.data.photo_url = res.data.photo_url.replace(this.S3_URL, this.CDN_URL);
                 }
                 // Update our profile with the current value
                 this.profile.set(this.isProfile(res.data) ? res.data : null);
 
                 // If there is an unsaved pushToken, update the profile with it
                 if (this.pushTokenService.unsavedPushToken()) {
-                  // console.log(
-                  //   'save pushToken: ' +
-                  //     this.pushTokenService.unsavedPushToken()
-                  // );
                   this.pushTokenService.savePushToken(
                     this.pushTokenService.unsavedPushToken()!
                   );
@@ -143,7 +139,7 @@ export class AuthService {
                       filter: 'user_id=eq.' + user.id,
                     },
                     (payload: any) => {
-                      if (payload.new) {
+                      if (payload.new && payload.new.photo_url) {
                         payload.new.photo_url  = payload.new.photo_url.replace(this.S3_URL, this.CDN_URL);
                       }
                       // Update the profile with the newest value
@@ -153,10 +149,6 @@ export class AuthService {
 
                       // If there is an unsaved pushToken, update the profile with it
                       if (this.pushTokenService.unsavedPushToken()) {
-                        // console.log(
-                        //   'save pushToken: ' +
-                        //     this.pushTokenService.unsavedPushToken()
-                        // );
                         this.pushTokenService.savePushToken(
                           this.pushTokenService.unsavedPushToken()!
                         );
@@ -180,7 +172,6 @@ export class AuthService {
   }
 
   private handleAuthStateChange(event: string, session: Session | null) {
-    // console.log('onAuthStateChange: ', JSON.stringify(event));
     if (event === 'PASSWORD_RECOVERY') {
       this.router.navigate(['/reset-password']);
     }
@@ -224,7 +215,7 @@ export class AuthService {
         .match({ user_id: user.id })
         .single()
         .then((res) => {
-          if (res.data) {
+          if (res.data && res.data.photo_url) {
             res.data.photo_url = res.data.photo_url.replace(this.S3_URL, this.CDN_URL); 
           }
           this.profile.set(this.isProfile(res.data) ? res.data : null);
@@ -240,7 +231,9 @@ export class AuthService {
       .single()
       .then((res) => {
         if (res.data && this.isProfile(res.data)) {
-          res.data.photo_url = res.data.photo_url.replace(this.S3_URL, this.CDN_URL);
+          if (res.data.photo_url) {
+            res.data.photo_url = res.data.photo_url.replace(this.S3_URL, this.CDN_URL);
+          }
           this.profile.set(res.data);
           this.profileRealtime = this.supabase
             .channel('public:profiles')
@@ -253,7 +246,7 @@ export class AuthService {
                 filter: 'user_id=eq.' + user_id,
               },
               (payload: any) => {
-                if (payload.new) {
+                if (payload.new && payload.new.photo_url) {
                   payload.new.photo_url = payload.new.photo_url.replace(this.S3_URL, this.CDN_URL);
                 }
                 this.profile.set(
@@ -346,7 +339,7 @@ export class AuthService {
           filter: 'user_id=eq.' + user_id,
         },
         (payload: any) => {
-          if (payload.new) {
+          if (payload.new && payload.new.photo_url) {
             payload.new.photo_url = payload.new.photo_url.replace(this.S3_URL, this.CDN_URL);
           }
           this.profile.set(this.isProfile(payload.new) ? payload.new : null);
@@ -430,7 +423,7 @@ export class AuthService {
             username: data.username,
             name_first: data.name_first,
             name_last: data.name_last,
-            photo_url: data.photo_url.replace(this.S3_URL, this.CDN_URL),
+            photo_url: data.photo_url?.replace(this.S3_URL, this.CDN_URL),
             joined_at: data.joined_at,
             city: data.city,
             state: data.state,
@@ -522,7 +515,7 @@ export class AuthService {
             username: data.username,
             name_first: data.name_first,
             name_last: data.name_last,
-            photo_url: data.photo_url.replace(this.S3_URL, this.CDN_URL),
+            photo_url: data.photo_url?.replace(this.S3_URL, this.CDN_URL),
             joined_at: data.joined_at,
             city: data.city,
             state: data.state,
@@ -542,28 +535,6 @@ export class AuthService {
     );
   }
 
-  // async signInWithGoogle(token: string): Promise<void> {
-  //   try {
-  //     // Set _$profile back to undefined. This will mean that $profile will wait to emit a value
-  //     this.profile.set(undefined);
-
-  //     // Use the token to sign in with Supabase
-  //     const { data, error } = await this.supabase.auth.signInWithIdToken({
-  //       provider: 'google',
-  //       token: token,
-  //     });
-
-  //     if (error) throw error;
-
-  //     // Check if the user is successfully returned
-  //     if (data && data.user) {
-  //       this.user.set(data.user);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error during Google sign-in:', error);
-  //     throw error;
-  //   }
-  // }
   async signInWithGoogle(): Promise<void> {
     try {
       const redirectTo = 'https://doughly.co';
