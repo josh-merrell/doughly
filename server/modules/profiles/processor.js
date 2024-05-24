@@ -78,7 +78,7 @@ module.exports = ({ db, dbPublic }) => {
       nameLast: profile.name_last,
       username: profile.username,
       email: profile.email,
-      imageURL: profile.photo_url,
+      imageURL: await replaceFilePath(profile.photo_url),
       joinDate: profile.joined_at,
       city: profile.city,
       state: profile.state,
@@ -105,8 +105,6 @@ module.exports = ({ db, dbPublic }) => {
       permAITokenCount: profile.permAITokenCount,
       permAITokenLastRefreshDate: profile.permAITokenLastRefreshDate,
     };
-
-    result.imageURL = await replaceFilePath(result.imageURL)
     return result;
   }
 
