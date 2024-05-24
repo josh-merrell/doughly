@@ -43,7 +43,7 @@ export interface Profile {
   providedIn: 'root',
 })
 export class AuthService {
-  public supabase!: SupabaseClient;
+  public supabase!: SupabaseClient; //testing
   private user: WritableSignal<User | null> = signal(null);
   private user_id: WritableSignal<string | null | undefined> =
     signal(undefined);
