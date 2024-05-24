@@ -43,6 +43,8 @@ export interface Profile {
   providedIn: 'root',
 })
 export class AuthService {
+  const S3_URL = 'https://s3.us-west-2.amazonaws.com/dl.images';
+  const CDN_URL = 'https://d1fksulu953xbh.cloudfront.net';
   public supabase!: SupabaseClient;
   private user: WritableSignal<User | null> = signal(null);
   private user_id: WritableSignal<string | null | undefined> =
@@ -112,6 +114,9 @@ export class AuthService {
               .match({ user_id: user.id })
               .single()
               .then((res) => {
+                if (res.data) {
+                  res.data.photoURL = res.data.photoURL.replace(this.S3_URL, this.CDN_URL)
+                }
                 // Update our profile with the current value
                 this.profile.set(this.isProfile(res.data) ? res.data : null);
 
@@ -138,6 +143,9 @@ export class AuthService {
                       filter: 'user_id=eq.' + user.id,
                     },
                     (payload: any) => {
+                      if (payload.new) {
+                        payload.new.photoURL  = payload.new.photoURL.replace(this.S3_URL, this.CDN_URL);
+                      }
                       // Update the profile with the newest value
                       this.profile.set(
                         this.isProfile(payload.new) ? payload.new : null
@@ -216,6 +224,9 @@ export class AuthService {
         .match({ user_id: user.id })
         .single()
         .then((res) => {
+          if (res.data) {
+            res.data.photoURL = res.data.photoURL.replace(this.S3_URL, this.CDN_URL); 
+          }
           this.profile.set(this.isProfile(res.data) ? res.data : null);
         });
     }
@@ -229,6 +240,7 @@ export class AuthService {
       .single()
       .then((res) => {
         if (res.data && this.isProfile(res.data)) {
+          res.data.photoURL = res.data.photoURL.replace(this.S3_URL, this.CDN_URL);
           this.profile.set(res.data);
           this.profileRealtime = this.supabase
             .channel('public:profiles')
@@ -241,6 +253,9 @@ export class AuthService {
                 filter: 'user_id=eq.' + user_id,
               },
               (payload: any) => {
+                if (payload.new) {
+                  payload.new.photoURL = payload.new.replace(this.S3_URL, this.CDN_URL);
+                }
                 this.profile.set(
                   this.isProfile(payload.new) ? payload.new : null
                 );
@@ -331,6 +346,9 @@ export class AuthService {
           filter: 'user_id=eq.' + user_id,
         },
         (payload: any) => {
+          if (payload.new) (
+            payload.new = payload.new.replace(this.S3_URL, this.CDN_URL);
+          }
           this.profile.set(this.isProfile(payload.new) ? payload.new : null);
         }
       )
@@ -412,7 +430,7 @@ export class AuthService {
             username: data.username,
             name_first: data.name_first,
             name_last: data.name_last,
-            photo_url: data.photo_url,
+            photo_url: data.photo_url.replace(this.S3_URL, this.CDN_URL),
             joined_at: data.joined_at,
             city: data.city,
             state: data.state,
@@ -504,7 +522,7 @@ export class AuthService {
             username: data.username,
             name_first: data.name_first,
             name_last: data.name_last,
-            photo_url: data.photo_url,
+            photo_url: data.photo_url.replace(this.S3_URL, this.CDN_URL),
             joined_at: data.joined_at,
             city: data.city,
             state: data.state,
