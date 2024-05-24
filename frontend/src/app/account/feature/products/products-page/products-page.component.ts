@@ -4,7 +4,7 @@ import {
   WritableSignal,
   effect,
   signal,
-} from '@angular/core';
+} from '@angular/core'; //testing
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -70,17 +70,24 @@ export class ProductsPageComponent {
     // close all modals
     this.modalService.closeAll();
     this.checkAndUpdateView();
-    
+
     this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        )
+      )
       .subscribe((event: NavigationEnd) => {
         this.checkAndUpdateView();
-  
+
         // Check if previous path was '/products/your-premium' and current path is '/products'
-        if (this.previousUrl === '/products/your-premium' && event.url === '/products') {
+        if (
+          this.previousUrl === '/products/your-premium' &&
+          event.url === '/products'
+        ) {
           this.router.navigate(['/recipes/discover']);
         }
-  
+
         // Update previous URL
         this.previousUrl = event.url;
       });
