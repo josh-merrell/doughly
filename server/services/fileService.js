@@ -53,6 +53,14 @@ async function deleteOldBackup(userID, filename) {
   }
 }
 
+async function replaceFilePath(path) {
+  if (!path) {
+    return '';
+  }
+
+  return path.replace(S3_URL, CDN_URL);
+}
+
 const filePaths = {
   s3URL: 'https://s3.us-west-2.amazonaws.com/dl.images',
   cdnURL: 'https://d1fksulu953xbh.cloudfront.net',
@@ -61,5 +69,6 @@ const filePaths = {
 module.exports = {
   uploadBackup,
   deleteOldBackup,
-  filePaths
+  filePaths,
+  replaceFilePath
 };
