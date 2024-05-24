@@ -12,7 +12,7 @@ import {
   RouterModule,
 } from '@angular/router';
 import { filter } from 'rxjs';
-import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component';
+import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component'; //test
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
