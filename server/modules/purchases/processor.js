@@ -61,7 +61,7 @@ module.exports = ({ db, dbDefault }) => {
         if (!profile.permAITokenLastRefreshDate) {
           newRefreshDate = today;
         } else {
-          new Date(profile.permAITokenLastRefreshDate);
+          newRefreshDate = new Date(profile.permAITokenLastRefreshDate);
           newRefreshDate.setMonth(newRefreshDate.getMonth() + monthsPassed);
         }
         tokenUpdate.newDate = newRefreshDate.toISOString();
