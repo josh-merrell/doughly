@@ -43,8 +43,8 @@ export interface Profile {
   providedIn: 'root',
 })
 export class AuthService {
-  const S3_URL = 'https://s3.us-west-2.amazonaws.com/dl.images';
-  const CDN_URL = 'https://d1fksulu953xbh.cloudfront.net';
+  private S3_URL = 'https://s3.us-west-2.amazonaws.com/dl.images';
+  private CDN_URL = 'https://d1fksulu953xbh.cloudfront.net';
   public supabase!: SupabaseClient;
   private user: WritableSignal<User | null> = signal(null);
   private user_id: WritableSignal<string | null | undefined> =
@@ -115,7 +115,7 @@ export class AuthService {
               .single()
               .then((res) => {
                 if (res.data) {
-                  res.data.photoURL = res.data.photoURL.replace(this.S3_URL, this.CDN_URL)
+                  res.data.photo_url = res.data.photo_url.replace(this.S3_URL, this.CDN_URL)
                 }
                 // Update our profile with the current value
                 this.profile.set(this.isProfile(res.data) ? res.data : null);
@@ -144,7 +144,7 @@ export class AuthService {
                     },
                     (payload: any) => {
                       if (payload.new) {
-                        payload.new.photoURL  = payload.new.photoURL.replace(this.S3_URL, this.CDN_URL);
+                        payload.new.photo_url  = payload.new.photo_url.replace(this.S3_URL, this.CDN_URL);
                       }
                       // Update the profile with the newest value
                       this.profile.set(
@@ -225,7 +225,7 @@ export class AuthService {
         .single()
         .then((res) => {
           if (res.data) {
-            res.data.photoURL = res.data.photoURL.replace(this.S3_URL, this.CDN_URL); 
+            res.data.photo_url = res.data.photo_url.replace(this.S3_URL, this.CDN_URL); 
           }
           this.profile.set(this.isProfile(res.data) ? res.data : null);
         });
@@ -240,7 +240,7 @@ export class AuthService {
       .single()
       .then((res) => {
         if (res.data && this.isProfile(res.data)) {
-          res.data.photoURL = res.data.photoURL.replace(this.S3_URL, this.CDN_URL);
+          res.data.photo_url = res.data.photo_url.replace(this.S3_URL, this.CDN_URL);
           this.profile.set(res.data);
           this.profileRealtime = this.supabase
             .channel('public:profiles')
@@ -254,7 +254,7 @@ export class AuthService {
               },
               (payload: any) => {
                 if (payload.new) {
-                  payload.new.photoURL = payload.new.replace(this.S3_URL, this.CDN_URL);
+                  payload.new.photo_url = payload.new.photo_url.replace(this.S3_URL, this.CDN_URL);
                 }
                 this.profile.set(
                   this.isProfile(payload.new) ? payload.new : null
@@ -347,7 +347,7 @@ export class AuthService {
         },
         (payload: any) => {
           if (payload.new) {
-            payload.new = payload.new.replace(this.S3_URL, this.CDN_URL);
+            payload.new.photo_url = payload.new.photo_url.replace(this.S3_URL, this.CDN_URL);
           }
           this.profile.set(this.isProfile(payload.new) ? payload.new : null);
         }
