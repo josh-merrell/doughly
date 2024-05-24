@@ -10,6 +10,7 @@ const { visionRequest, recipeFromTextRequest, matchRecipeItemRequest, matchRecip
 const { getUnitRatio } = require('../../services/unitRatioStoreService');
 const { getHtml, extractFromHtml } = require('../../services/scraper');
 const { sendSSEMessage } = require('../../server.js');
+const { replaceFilePath } = require('../../services/fileService.js');
 // const path = require('path');
 // const fs = require('fs');
 
@@ -420,6 +421,10 @@ module.exports = ({ db }) => {
       }
       const { data: recipes, error } = await q;
 
+      for (let r in recipes) {
+        r.photoURL = await replaceFilePath(r.photoURL);
+      }
+
       if (error) {
         global.logger.error(`Error getting recipes: ${error.message}`);
         throw errorGen(`Error getting recipes: ${error.message}`, 400);
@@ -436,6 +441,9 @@ module.exports = ({ db }) => {
     try {
       // const { userID, authorization } = options;
       const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false);
+      for (let dr in discoverRecipes) {
+        dr.photoURL = await replaceFilePath(dr.photoURL);
+      }
       if (error) {
         global.logger.error(`Error getting discoverRecipes: ${error.message}`);
         throw errorGen(`Error getting discoverRecipes: ${error.message}`, 400);
@@ -452,6 +460,7 @@ module.exports = ({ db }) => {
     try {
       const { recipeID } = options;
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
+      recipe[0].photoURL = await replaceFilePath(recipe[0].photoURL);
       if (error) {
         global.logger.error(`Error getting recipe: ${recipeID}: ${error.message}`);
         throw errorGen(`Error getting recipe: ${recipeID}: ${error.message}`, 400);
@@ -501,9 +510,14 @@ module.exports = ({ db }) => {
       const { recipeID } = options;
       const { data: recipeSteps, error } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('deleted', false);
 
+      
       if (error) {
         global.logger.error(`Error getting recipeSteps for recipeID: ${recipeID}: ${error.message}`);
         throw errorGen(`Error getting recipeSteps for recipeID: ${recipeID}: ${error.message}`, 400);
+      }
+
+      for (let rs in recipeSteps) {
+        rs.photoURL  = await replaceFilePath(rs.photoURL);
       }
       global.logger.info(`Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`);
       return recipeSteps;
@@ -546,7 +560,7 @@ module.exports = ({ db }) => {
           authorID: sourceRecipe[0].userID,
           authorName: `${profile.nameFirst} ${profile.nameLast}`,
           authorUsername: profile.username,
-          authorPhotoURL: profile.imageURL,
+          authorPhotoURL: await replaceFilPath(profile.imageURL),
         });
       }
       global.logger.info(`Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`);
@@ -634,7 +648,7 @@ module.exports = ({ db }) => {
         status: recipe.status,
         timePrep: recipe.timePrep,
         timeBake: recipe.timeBake,
-        photoURL: recipe.photoURL,
+        photoURL: await replaceFilePath(recipe.photoURL),
         type: recipe.type,
         version: 1,
       };
