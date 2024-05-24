@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; //testing
 
 async function getClients(req, res) {
   const db = req.client.db;
