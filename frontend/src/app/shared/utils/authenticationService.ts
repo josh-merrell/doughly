@@ -346,7 +346,7 @@ export class AuthService {
           filter: 'user_id=eq.' + user_id,
         },
         (payload: any) => {
-          if (payload.new) (
+          if (payload.new) {
             payload.new = payload.new.replace(this.S3_URL, this.CDN_URL);
           }
           this.profile.set(this.isProfile(payload.new) ? payload.new : null);
