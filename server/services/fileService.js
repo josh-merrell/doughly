@@ -58,7 +58,7 @@ async function replaceFilePath(path) {
     return '';
   }
 
-  return path.replace(S3_URL, CDN_URL);
+  return path.replace(filePaths.s3URL, filePaths.cdnURL);
 }
 
 const filePaths = {
