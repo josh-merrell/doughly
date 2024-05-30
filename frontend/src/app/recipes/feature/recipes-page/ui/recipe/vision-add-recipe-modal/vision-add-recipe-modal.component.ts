@@ -167,15 +167,15 @@ export class VisionAddRecipeModalComponent {
           )
           .toPromise();
 
-        const uploadResponse = await this.photoUploadService.uploadFileToS3(
+        const uploadResponseUrl = await this.photoUploadService.uploadFileToS3(
           url,
           imageToUpload
         );
 
         if (variableName === 'selectedFile')
-          this.photoURL = uploadResponse.url.split('?')[0];
+          this.photoURL = uploadResponseUrl;
         else {
-          this.sourceImageURL = uploadResponse.url.split('?')[0];
+          this.sourceImageURL = uploadResponseUrl;
         }
       } catch (error) {
         console.log('An error occurred:', error);

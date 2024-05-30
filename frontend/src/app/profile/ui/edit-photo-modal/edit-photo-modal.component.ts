@@ -146,12 +146,12 @@ export class EditPhotoModalComponent {
           )
           .toPromise();
 
-        const uploadResponse = await this.photoService.uploadFileToS3(
+        const uploadResponseUrl = await this.photoService.uploadFileToS3(
           url,
           this.croppedImage
         );
 
-        this.newPhotoURL = uploadResponse.url.split('?')[0];
+        this.newPhotoURL = uploadResponseUrl;
         //set 'photo_url' to newPhotoURL in profile state via profile Service
         this.authService.updateField('photo_url', this.newPhotoURL).subscribe({
           next: (result) => {
