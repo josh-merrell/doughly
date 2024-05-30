@@ -21,8 +21,16 @@ export class PhotoService {
     return this.http.post<{ url: string }>(`${this.API_URL}/presigned`, body);
   }
 
-  uploadFileToS3(url: string, file: File | Blob): Promise<Response> {
-    return fetch(url, { method: 'PUT', body: file });
+  uploadFileToS3(url: string, file: File | Blob): Promise<string> {
+    return fetch(url, { method: 'PUT', body: file })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to upload file');
+        }
+        // Replace 'dl.images' with 'dl.images-compressed' in the URL
+        const correctedUrl = url.replace('dl.images', 'dl.images-compressed').split('?')[0];
+        return correctedUrl;
+      });
   }
 
   deleteFileFromS3(

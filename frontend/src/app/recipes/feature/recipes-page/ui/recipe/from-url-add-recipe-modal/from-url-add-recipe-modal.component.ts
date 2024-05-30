@@ -120,12 +120,12 @@ export class FromUrlAddRecipeModalComponent {
           )
           .toPromise();
 
-        const uploadResponse = await this.photoUploadService.uploadFileToS3(
+        const uploadResponseUrl = await this.photoUploadService.uploadFileToS3(
           url,
           this.croppedImage
         );
 
-        this.photoURL = uploadResponse.url.split('?')[0];
+        this.photoURL = uploadResponseUrl;
       } catch (error) {
         console.log('An error occurred:', error);
       }
