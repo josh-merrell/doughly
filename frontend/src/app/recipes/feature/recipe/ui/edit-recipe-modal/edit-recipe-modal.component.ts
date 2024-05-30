@@ -254,12 +254,12 @@ export class EditRecipeModalComponent {
           )
           .toPromise();
 
-        const uploadResponse = await this.photoService.uploadFileToS3(
+        const uploadResponseUrl = await this.photoService.uploadFileToS3(
           url,
           this.croppedImage
         );
 
-        this.newPhotoURL = uploadResponse.url.split('?')[0];
+        this.newPhotoURL = uploadResponseUrl;
         this.isUploadingPhoto = false;
       } catch (error) {
         console.log('Error Uploading new image:', error);
