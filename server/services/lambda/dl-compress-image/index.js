@@ -43,9 +43,28 @@ exports.handler = async (event) => {
     await s3.putObject(uploadParams).promise();
     console.log(`Uploaded compressed image to ${TARGET_BUCKET_PATH}/${destinationKey}`);
 
+    // Prepend "DONE" to the last portion of the original file name in the source bucket
+    const lastSlashIndex = sourceKey.lastIndexOf('/');
+    const doneKey = lastSlashIndex === -1 ? `DONE_${sourceKey}` : `${sourceKey.substring(0, lastSlashIndex + 1)}DONE_${sourceKey.substring(lastSlashIndex + 1)}`;
+
+    const copyParams = {
+      Bucket: bucket,
+      CopySource: `${bucket}/${sourceKey}`,
+      Key: doneKey,
+    };
+    await s3.copyObject(copyParams).promise();
+    console.log(`Copied ${sourceKey} to ${doneKey} in ${bucket}`);
+
+    const deleteParams = {
+      Bucket: bucket,
+      Key: sourceKey,
+    };
+    await s3.deleteObject(deleteParams).promise();
+    console.log(`Deleted original file ${sourceKey} from ${bucket}`);
+
     return {
       statusCode: 200,
-      body: `Processed and uploaded ${sourceKey} to ${destinationKey}`,
+      body: `Processed and uploaded ${sourceKey} to ${destinationKey} and renamed original to ${doneKey}`,
     };
   } catch (error) {
     console.error(`Error processing file ${sourceKey}:`, error);
