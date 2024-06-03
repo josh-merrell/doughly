@@ -21,7 +21,6 @@ import {
 import { Store } from '@ngrx/store';
 import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
-import { MatDialog } from '@angular/material/dialog';
 import { AddRecipeModalComponent } from '../../ui/recipe/add-recipe-modal/add-recipe-modal.component';
 import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
 import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
@@ -29,17 +28,16 @@ import { RecipeIngredientError } from 'src/app/recipes/state/recipe-ingredient/r
 import { RecipeIngredientsModalComponent } from '../../ui/recipe-ingredient/recipe-ingredients-modal/recipe-ingredients-modal.component';
 import { RecipeToolsModalComponent } from '../../ui/recipe-tool/recipe-tools-modal/recipe-tools-modal.component';
 import { RecipeStepsModalComponent } from '../../ui/recipe-step/recipe-steps-modal/recipe-steps-modal.component';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
-import { filter, map, takeUntil } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { AuthService } from 'src/app/shared/utils/authenticationService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -136,14 +134,11 @@ export class RecipeListComponent {
   constructor(
     private router: Router,
     private store: Store,
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
     private location: Location,
     private stringsService: StringsService,
     private productService: ProductService,
     private modalService: ModalService,
-    private authService: AuthService,
-    private stylesService: StylesService
+    public extraStuffService: ExtraStuffService
   ) {
     effect(
       () => {
@@ -504,17 +499,4 @@ export class RecipeListComponent {
     this.onboardingHandler(this.profile().onboardingState);
   }
 
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-    }
-  }
 }

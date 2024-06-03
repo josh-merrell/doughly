@@ -2,8 +2,8 @@ import { ComponentType } from '@angular/cdk/portal';
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { StylesService } from './stylesService';
-import { Store } from '@ngrx/store';
 import { AuthService } from './authenticationService';
+import { ExtraStuffService } from './extraStuffService';
 
 interface ModalInstance {
   ref: MatDialogRef<any>;
@@ -19,7 +19,8 @@ export class ModalService {
   constructor(
     private dialog: MatDialog,
     private stylesService: StylesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private extraStuffService: ExtraStuffService
   ) {}
 
   open<T>(
@@ -63,7 +64,8 @@ export class ModalService {
     this.modals.filter((m) => m.level === level).forEach((m) => m.ref.close());
   }
 
-  setModalStyles(): void {
+  async setModalStyles(): Promise<void> {
+    console.log(`SETTING MODAL STYLES`)
     // determine highest level with a modal currently open
     let highestLevel = 0;
     this.modals.forEach((m) => {
@@ -72,32 +74,38 @@ export class ModalService {
       }
     });
     const darkMode = this.authService.profile()?.darkMode;
+    // also get current system pref using a service using DarkMode
+    const systemDarkMode = this.extraStuffService.systemDarkMode();
+
+    const useDarkMode =
+      darkMode === 'Enabled' ||
+      (darkMode === 'System Default' && systemDarkMode);
     // set color based on highest level
     switch (highestLevel) {
       case 1:
       case 99:
-        if (darkMode === true) {
+        if (useDarkMode === true) {
           this.stylesService.updateStyles('#141B23', 'dark');
         } else {
           this.stylesService.updateStyles('#ACACAC', 'light');
         }
         break;
       case 2:
-        if (darkMode === true) {
+        if (useDarkMode === true) {
           this.stylesService.updateStyles('#0D1114', 'dark');
         } else {
           this.stylesService.updateStyles('#6E6E6E', 'dark');
         }
         break;
       case 3:
-        if (darkMode === true) {
+        if (useDarkMode === true) {
           this.stylesService.updateStyles('#080A0C', 'dark');
         } else {
           this.stylesService.updateStyles('#3F3F3F', 'dark');
         }
         break;
       case 0:
-        if (darkMode === true) {
+        if (useDarkMode === true) {
           this.stylesService.updateStyles('#1F2933', 'dark');
         } else {
           this.stylesService.updateStyles('#FFFFFF', 'light');

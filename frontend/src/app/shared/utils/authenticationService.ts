@@ -17,7 +17,7 @@ export interface Profile {
   name_last?: string;
   photo_url?: string;
   joined_at?: Date;
-  darkMode: boolean;
+  darkMode: string;
   onboardingState?: number;
   checkIngredientStock?: boolean;
   autoDeleteExpiredStock?: boolean;
@@ -308,7 +308,7 @@ export class AuthService {
               username: data[0].username,
               onboardingState: data[0].onboardingState,
               isPremium: false,
-              darkMode: true,
+              darkMode: 'System Default',
               //permissions
               permRecipeSubscribeUnlimited: false,
               permRecipeCreateUnlimited: false,

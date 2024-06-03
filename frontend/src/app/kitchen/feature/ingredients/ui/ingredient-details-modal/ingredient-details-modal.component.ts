@@ -38,8 +38,7 @@ import { DeleteIngredientStockModalComponent } from '../../../Inventory/feature/
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { AuthService } from 'src/app/shared/utils/authenticationService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-ingredient-details-modal',
@@ -68,8 +67,7 @@ export class IngredientDetailsModalComponent {
     private router: Router,
     public dialog: MatDialog,
     private modalService: ModalService,
-    private authService: AuthService,
-    private stylesService: StylesService
+    public extraStuffService: ExtraStuffService
   ) {
     effect(
       () => {
@@ -337,17 +335,4 @@ export class IngredientDetailsModalComponent {
     }
   }
 
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('grey-8')
-          : this.stylesService.getHex('grey-3');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('grey-8')
-          : this.stylesService.getHex('grey-3');
-    }
-  }
 }

@@ -8,12 +8,9 @@ import {
   QueryList,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import Fraction from 'fraction.js';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
-import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { selectRecipeIngredientsByRecipeID } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-selectors';
 import { RecipeIngredient } from 'src/app/recipes/state/recipe-ingredient/recipe-ingredient-state';
 import { selectRecipeStepsByID } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
@@ -24,10 +21,8 @@ import { UnitService } from 'src/app/shared/utils/unitService';
 import { UseRecipeModalComponent } from '../use-recipe-modal/use-recipe-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
-import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
-
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 interface displayIngredientsByComponent {
   noComponent: any[];
@@ -37,8 +32,7 @@ interface displayIngredientsByComponent {
 @Component({
   selector: 'dl-using-recipe',
   standalone: true,
-  imports: [CommonModule, ImageFromCDN
-  ],
+  imports: [CommonModule, ImageFromCDN],
   templateUrl: './using-recipe.component.html',
 })
 export class UsingRecipeComponent {
@@ -55,16 +49,13 @@ export class UsingRecipeComponent {
   currentStepIndex: WritableSignal<number> = signal(0);
 
   constructor(
-    private dialog: MatDialog,
     private store: Store,
     private router: Router,
-    private recipeService: RecipeService,
     private route: ActivatedRoute,
     private unitService: UnitService,
     private fractionService: FractionService,
     private modalService: ModalService,
-    private authService: AuthService,
-    private stylesService: StylesService
+    public extraStuffService: ExtraStuffService
   ) {
     effect(
       () => {
@@ -272,19 +263,5 @@ export class UsingRecipeComponent {
 
   onExitClick() {
     this.router.navigate(['/recipe/' + this.recipeID()]);
-  }
-
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('grey-8')
-          : this.stylesService.getHex('grey-3');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('grey-2')
-          : this.stylesService.getHex('grey-9');
-    }
   }
 }

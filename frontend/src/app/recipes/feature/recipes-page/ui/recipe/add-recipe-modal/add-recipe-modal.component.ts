@@ -26,8 +26,7 @@ import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/
 import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
-import { StylesService } from 'src/app/shared/utils/stylesService';
-import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 @Component({
   selector: 'dl-add-recipe-modal',
   standalone: true,
@@ -54,8 +53,7 @@ export class AddRecipeModalComponent {
     private stringsService: StringsService,
     private productService: ProductService,
     private modalService: ModalService,
-    private stylesService: StylesService,
-    private authService: AuthService
+    public extraStuffService: ExtraStuffService
   ) {
     this.recipeCategories = this.data.recipeCategories;
 
@@ -353,17 +351,4 @@ export class AddRecipeModalComponent {
     this.onboardingHandler(this.profile().onboardingState);
   }
 
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-    }
-  }
 }

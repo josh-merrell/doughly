@@ -16,6 +16,8 @@ import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { Observable, from } from 'rxjs';
 
 @Component({
   selector: 'dl-profile-card',
@@ -37,7 +39,8 @@ export class ProfileCardComponent {
     private store: Store,
     private pushTokenService: PushTokenService,
     private authService: AuthService,
-    private stylesService: StylesService
+    private stylesService: StylesService,
+    public extraStuffService: ExtraStuffService
   ) {}
 
   ngOnInit(): void {
@@ -89,23 +92,45 @@ export class ProfileCardComponent {
 
   getFillColor(index: number): string {
     const darkMode = this.authService.profile()?.darkMode;
+    const systemDarkMode = this.extraStuffService.systemDarkMode();
+
+    const useDarkMode =
+      darkMode === 'Enabled' ||
+      (darkMode === 'System Default' && systemDarkMode);
+
     switch (index) {
       case 1:
-        return darkMode
+        return useDarkMode
           ? this.stylesService.getHex('pink-7')
           : this.stylesService.getHex('pink-4');
       case 2:
-        return darkMode
+        return useDarkMode
           ? this.stylesService.getHex('grey-10')
           : this.stylesService.getHex('grey-1');
       case 3:
-        return darkMode
+        return useDarkMode
           ? this.stylesService.getHex('grey-7')
           : this.stylesService.getHex('grey-4');
       default:
-        return darkMode
+        return useDarkMode
           ? this.stylesService.getHex('pink-7')
           : this.stylesService.getHex('pink-4');
     }
+  }
+
+  getFillColorObservable(index: number): Observable<string> {
+    return from(this.getFillColor(index));
+  }
+
+  getFillColorAsync(): Observable<string> {
+    const status = this.friendship()?.status;
+    if (
+      status === 'confirmed' ||
+      status === 'requesting' ||
+      status === 'receivedRequest'
+    ) {
+      return this.getFillColorObservable(2);
+    }
+    return this.getFillColorObservable(3);
   }
 }

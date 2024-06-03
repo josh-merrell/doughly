@@ -38,8 +38,6 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { selectUpdating } from 'src/app/profile/state/profile-selectors';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
-import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
 @Component({
@@ -90,10 +88,8 @@ export class SubscribeRecipeModalComponent {
     private unitService: UnitService,
     private sortingService: SortingService,
     private strings: StringsService,
-    private extraStuffService: ExtraStuffService,
+    public extraStuffService: ExtraStuffService,
     private modalService: ModalService,
-    private stylesService: StylesService,
-    private authService: AuthService
   ) {
     effect(
       () => {
@@ -537,21 +533,4 @@ export class SubscribeRecipeModalComponent {
     this.onboardingHandler(4);
   }
 
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('grey-1')
-          : this.stylesService.getHex('grey-10');
-      case 2:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('grey-1')
-          : this.stylesService.getHex('grey-10');
-    }
-  }
 }

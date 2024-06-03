@@ -47,7 +47,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { RecipeShoppingList } from '../../../state/recipe/recipe-state';
 import { RecipeShoppingListModalComponent } from './../ui/recipe-shopping-list-modal/recipe-shopping-list-modal.component';
-import { UseRecipeModalComponent } from './../ui/use-recipe-modal/use-recipe-modal.component';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { ProfileService } from 'src/app/profile/data/profile.service';
 import { Profile } from 'src/app/profile/state/profile-state';
@@ -56,7 +55,6 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import JSConfetti from 'js-confetti';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { setReviewRecipe } from 'src/app/kitchen/state/kitchen-actions';
-import { selectReviewRecipeID } from 'src/app/kitchen/state/kitchen-selectors';
 import {
   selectError,
   selectProfile,
@@ -70,9 +68,8 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { filter, take } from 'rxjs';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { AuthService } from 'src/app/shared/utils/authenticationService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -166,8 +163,7 @@ export class UserRecipeComponent {
     private fractionService: FractionService,
     private stringsService: StringsService,
     private modalService: ModalService,
-    private authService: AuthService,
-    private stylesService: StylesService
+    public extraStuffService: ExtraStuffService
   ) {
     effect(
       () => {
@@ -1000,31 +996,5 @@ export class UserRecipeComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile()!.onboardingState);
-  }
-
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('pink-4')
-          : this.stylesService.getHex('pink-7');
-      case 2:
-        return darkMode
-          ? this.stylesService.getHex('grey-4')
-          : this.stylesService.getHex('grey-7');
-      case 3:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-      case 4:
-        return darkMode
-          ? this.stylesService.getHex('grey-8')
-          : this.stylesService.getHex('grey-2');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-    }
   }
 }

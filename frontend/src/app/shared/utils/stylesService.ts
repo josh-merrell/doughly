@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
+import { ExtraStuffService } from './extraStuffService';
 
 interface ModalInstance {
   ref: MatDialogRef<any>;
@@ -69,7 +70,7 @@ export class StylesService {
     'yellow-10': '#FFFBEA',
   };
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private extraStuffService: ExtraStuffService) {
     effect(() => {
       const profile = this.profile();
       if (profile) {
@@ -100,18 +101,19 @@ export class StylesService {
       if (!this.profile()) {
         return;
       }
-      switch (this.profile['darkMode']) {
-        case 'true':
-          this.setColor('#1F2933', 'dark');
-          this.setStatusBarStyle(Style.Dark);
-          break;
-        case 'false':
-          this.setColor('#FFFFFF', 'light');
-          this.setStatusBarStyle(Style.Light);
-          break;
-        default:
-          break;
-      }
+    }
+
+    switch (this.profile['darkMode']) {
+      case 'Enabled' || 'System Default' && this.extraStuffService.systemDarkMode():
+        this.setColor('#1F2933', 'dark');
+        this.setStatusBarStyle(Style.Dark);
+        break;
+      case 'Disabled' || 'System Default' && !this.extraStuffService.systemDarkMode():
+        this.setColor('#FFFFFF', 'light');
+        this.setStatusBarStyle(Style.Light);
+        break;
+      default:
+        break;
     }
   }
 
