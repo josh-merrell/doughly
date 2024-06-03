@@ -142,7 +142,7 @@
       <!-- Step photo -->
       <img
         *ngIf="step.photoURL"
-        [src]="step.photoURL"
+        [src]="step.photoURL | imageFromCDN"
         class="mt-dl-2 w-4/5 object-cover"
       />
     </div>
@@ -184,7 +184,7 @@
             viewBox="0 -15 100 125"
           >
             <path
-              [attr.fill]="getFillColor(1)"
+              [attr.fill]="this.extraStuffService.getFillColor(10)"
               d="M49,49.9l26.6-26.6c4.2-4.2,4.2-11,0-15.2c-4.2-4.2-11-4.2-15.3,0L23.1,45.3c-2.5,2.5-2.5,6.6,0,9.2l37.3,37.2  c4.2,4.2,11,4.2,15.3,0c4.2-4.2,4.2-11,0-15.2L49,49.9z"
             />
           </svg>
@@ -205,7 +205,7 @@
             viewBox="0 -15 100 125"
           >
             <path
-              [attr.fill]="getFillColor(1)"
+              [attr.fill]="this.extraStuffService.getFillColor(10)"
               d="M51,49.9L24.4,23.4c-4.2-4.2-4.2-11,0-15.2c4.2-4.2,11-4.2,15.3,0l37.3,37.2c2.5,2.5,2.5,6.6,0,9.2L39.6,91.7  c-4.2,4.2-11,4.2-15.3,0c-4.2-4.2-4.2-11,0-15.2L51,49.9z"
             />
           </svg>
@@ -223,7 +223,7 @@
           viewBox="0 -5 100 125"
         >
           <path
-            [attr.fill]="getFillColor(1)"
+            [attr.fill]="this.extraStuffService.getFillColor(10)"
             d="M65.1,49.9l26.6-26.6c4.2-4.2,4.2-11,0-15.2h0c-4.2-4.2-11-4.2-15.2,0L49.9,34.7L23.4,8.2c-4.2-4.2-11-4.2-15.2,0v0  c-4.2,4.2-4.2,11,0,15.2l26.6,26.6L8.2,76.5c-4.2,4.2-4.2,11,0,15.2c4.2,4.2,11,4.2,15.2,0l26.6-26.6l26.6,26.6  c4.2,4.2,11,4.2,15.2,0c4.2-4.2,4.2-11,0-15.2L65.1,49.9z"
           />
         </svg>

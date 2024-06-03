@@ -10,4 +10,5 @@ export const environment = {
   BACKEND: 'https://82c1-216-9-30-139.ngrok-free.app:3000', //point to the host machine from the android emulator
   GLASSFY_ApiKey: 'c9c03d0d8f914ba1813b10c4d027aec6',
   GLASSFY_REST_API_Key: 'beb92739d1324e7c86c4431506664e2c',
+  COMPRESSED_IMAGE_CDN: 'd1fksulu953xbh.cloudfront.net',
 };

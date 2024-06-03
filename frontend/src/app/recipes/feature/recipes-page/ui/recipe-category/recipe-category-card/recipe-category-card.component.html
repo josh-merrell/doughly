@@ -18,7 +18,7 @@
     </div>
     <img
       *ngIf="category.photoURL"
-      [src]="category.photoURL"
+      [src]="category.photoURL | imageFromCDN"
       alt="Category Photo"
       class="h-full w-1/3 flex-grow-0 rounded-r-lg object-cover"
     />

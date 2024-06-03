@@ -25,11 +25,13 @@ import {
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+
 
 @Component({
   selector: 'dl-request-card',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatProgressSpinnerModule, ImageFromCDN],
   templateUrl: './request-card.component.html',
 })
 export class RequestCardComponent {

@@ -1,28 +1,17 @@
-import {
-  Component,
-  Inject,
-  WritableSignal,
-  effect,
-  signal,
-} from '@angular/core';
+import { Component, WritableSignal, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { AuthService } from '../shared/utils/authenticationService';
 import { Store } from '@ngrx/store';
-import { MatDialog } from '@angular/material/dialog';
 import { ProfileActions } from '../profile/state/profile-actions';
 import {
   selectError as selectErrorProfile,
@@ -32,7 +21,7 @@ import {
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from '../shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/confirmation-modal.component';
-import { notificationMethods } from '../shared/utils/types';
+import { notificationMethods, darkModeOptions } from '../shared/utils/types';
 import { ModalService } from '../shared/utils/modalService';
 
 @Component({
@@ -53,11 +42,10 @@ export class SettingsComponent {
   form!: FormGroup;
   private profile: WritableSignal<any> = signal({});
   notificationMethods: string[] = Object.values(notificationMethods);
+  darkModeOptions: string[] = Object.values(darkModeOptions);
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
     private store: Store,
-    private dialog: MatDialog,
     private modalService: ModalService
   ) {
     effect(() => {
@@ -90,7 +78,7 @@ export class SettingsComponent {
     this.form = this.fb.group({
       checkIngredientStock: [false],
       autoDeleteExpiredStock: [false],
-      darkMode: [false],
+      darkMode: ['', [Validators.required]],
       notifyOnLowStock: ['', [Validators.required]],
       notifyOnNoStock: ['', [Validators.required]],
       notifyUpcomingStockExpiry: ['', [Validators.required]],
@@ -105,9 +93,13 @@ export class SettingsComponent {
   onSubmit() {
     this.isEditing = true;
     const updateBody = {
-      checkIngredientStock: this.form.value.checkIngredientStock ? 'true' : 'false',
-      autoDeleteExpiredStock: this.form.value.autoDeleteExpiredStock ? 'true' : 'false',
-      darkMode: this.form.value.darkMode ? 'true' : 'false',
+      checkIngredientStock: this.form.value.checkIngredientStock
+        ? 'true'
+        : 'false',
+      autoDeleteExpiredStock: this.form.value.autoDeleteExpiredStock
+        ? 'true'
+        : 'false',
+      darkMode: this.form.value.darkMode,
       notifyOnLowStock: this.form.value.notifyOnLowStock,
       notifyOnNoStock: this.form.value.notifyOnNoStock,
       notifyUpcomingStockExpiry: this.form.value.notifyUpcomingStockExpiry,

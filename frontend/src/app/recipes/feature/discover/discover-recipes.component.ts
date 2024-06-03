@@ -1,9 +1,6 @@
 import {
   Component,
-  ElementRef,
-  QueryList,
   Renderer2,
-  ViewChildren,
   WritableSignal,
   effect,
   signal,
@@ -19,13 +16,10 @@ import { Recipe } from '../../state/recipe/recipe-state';
 import { selectDiscoverRecipes } from '../../state/recipe/recipe-selectors';
 import { selectRecipeByID } from '../../state/recipe/recipe-selectors';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
-import { MatDialog } from '@angular/material/dialog';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { filter, take } from 'rxjs';
-import { StatusBar, Style } from '@capacitor/status-bar';
-import { Capacitor } from '@capacitor/core';
 
 import {
   selectError,
@@ -35,6 +29,7 @@ import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { DarkMode } from '@aparajita/capacitor-dark-mode';
 
 @Component({
   selector: 'dl-discover-recipes',
@@ -58,10 +53,8 @@ export class DiscoverRecipesComponent {
   constructor(
     private store: Store,
     private router: Router,
-    private el: ElementRef,
-    private dialog: MatDialog,
     private stringsService: StringsService,
-    private extraStuffService: ExtraStuffService,
+    public extraStuffService: ExtraStuffService,
     private modalService: ModalService,
     private renderer: Renderer2,
     private stylesService: StylesService,
@@ -113,6 +106,23 @@ export class DiscoverRecipesComponent {
     );
   }
   ngOnInit(): void {
+    DarkMode.init().catch((err) => console.error(err));
+    DarkMode.addAppearanceListener((darkMode: any) => {
+      console.log('(DISCOVER) System appearance changed to: ', darkMode.dark);
+      this.extraStuffService.systemDarkMode.set(darkMode.dark);
+      if (this.authService.profile()!.darkMode !== 'System Default') {
+        return;
+      }
+      if (darkMode.dark) {
+        this.renderer.addClass(document.body, 'dark');
+        this.renderer.removeClass(document.body, 'light');
+        this.stylesService.updateStyles('#1F2933', 'dark');
+      } else {
+        this.renderer.addClass(document.body, 'light');
+        this.renderer.removeClass(document.body, 'dark');
+        this.stylesService.updateStyles('#FFFFFF', 'light');
+      }
+    });
     // if (Capacitor.isNativePlatform()) {
     //   this.setStatusBarStyleLight();
     // }
@@ -124,15 +134,40 @@ export class DiscoverRecipesComponent {
       this.discoverRecipes.set(recipes);
     });
     this.store.select(selectProfile).subscribe((profile) => {
+      console.log(`DISCOVER COMPONENT NEW PROFILE: ${profile.darkMode}`);
       this.profile.set(profile);
-      if (profile.darkMode) {
+      const darkMode = profile.darkMode;
+      if (darkMode === 'Enabled') {
         this.renderer.addClass(document.body, 'dark');
         this.renderer.removeClass(document.body, 'light');
         this.stylesService.updateStyles('#1F2933', 'dark');
-      } else {
-        this.renderer.removeClass(document.body, 'dark');
+      } else if (darkMode === 'Disabled') {
         this.renderer.addClass(document.body, 'light');
+        this.renderer.removeClass(document.body, 'dark');
         this.stylesService.updateStyles('#FFFFFF', 'light');
+      } else {
+        // default is 'System Default'
+        let darkModePreference: string;
+        // get system dark mode preference
+        DarkMode.isDarkMode().then((isDarkMode) => {
+          console.log(
+            `Current system dark mode preference: ${JSON.stringify(isDarkMode)}`
+          );
+          this.extraStuffService.systemDarkMode.set(isDarkMode.dark);
+          darkModePreference = isDarkMode.dark ? 'Enabled' : 'Disabled';
+          if (this.authService.profile()!.darkMode !== 'System Default') {
+            return;
+          }
+          if (darkModePreference === 'Enabled') {
+            this.renderer.addClass(document.body, 'dark');
+            this.renderer.removeClass(document.body, 'light');
+            this.stylesService.updateStyles('#1F2933', 'dark');
+          } else {
+            this.renderer.addClass(document.body, 'light');
+            this.renderer.removeClass(document.body, 'dark');
+            this.stylesService.updateStyles('#FFFFFF', 'light');
+          }
+        });
       }
     });
   }
@@ -276,19 +311,5 @@ export class DiscoverRecipesComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
-  }
-
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-8');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-8');
-    }
   }
 }

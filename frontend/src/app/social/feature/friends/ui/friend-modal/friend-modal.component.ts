@@ -8,6 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Friendship } from 'src/app/social/state/friendship-state';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
 import { Store } from '@ngrx/store';
 import {
@@ -51,6 +52,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatProgressSpinnerModule,
     RecipeCardComponent,
     TimelineComponent,
+    ImageFromCDN
   ],
   templateUrl: './friend-modal.component.html',
 })
