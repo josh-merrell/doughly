@@ -108,7 +108,6 @@ export class DiscoverRecipesComponent {
   ngOnInit(): void {
     DarkMode.init().catch((err) => console.error(err));
     DarkMode.addAppearanceListener((darkMode: any) => {
-      console.log('(DISCOVER) System appearance changed to: ', darkMode.dark);
       this.extraStuffService.systemDarkMode.set(darkMode.dark);
       if (this.authService.profile()!.darkMode !== 'System Default') {
         return;
@@ -134,7 +133,6 @@ export class DiscoverRecipesComponent {
       this.discoverRecipes.set(recipes);
     });
     this.store.select(selectProfile).subscribe((profile) => {
-      console.log(`DISCOVER COMPONENT NEW PROFILE: ${profile.darkMode}`);
       this.profile.set(profile);
       const darkMode = profile.darkMode;
       if (darkMode === 'Enabled') {
@@ -150,9 +148,6 @@ export class DiscoverRecipesComponent {
         let darkModePreference: string;
         // get system dark mode preference
         DarkMode.isDarkMode().then((isDarkMode) => {
-          console.log(
-            `Current system dark mode preference: ${JSON.stringify(isDarkMode)}`
-          );
           this.extraStuffService.systemDarkMode.set(isDarkMode.dark);
           darkModePreference = isDarkMode.dark ? 'Enabled' : 'Disabled';
           if (this.authService.profile()!.darkMode !== 'System Default') {

@@ -26,9 +26,6 @@ export class ExtraStuffService {
     const useDarkMode =
       darkMode === 'Enabled' ||
       (darkMode === 'System Default' && this.systemDarkMode());
-    console.log(
-      `USE DARK MODE: ${useDarkMode}, SYSTEM: ${this.systemDarkMode()}`
-    );
     switch (index) {
       case 1:
         return useDarkMode ? '#E4E7EB' : '#323F4B';

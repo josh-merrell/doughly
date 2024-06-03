@@ -70,7 +70,10 @@ export class StylesService {
     'yellow-10': '#FFFBEA',
   };
 
-  constructor(private store: Store, private extraStuffService: ExtraStuffService) {
+  constructor(
+    private store: Store,
+    private extraStuffService: ExtraStuffService
+  ) {
     effect(() => {
       const profile = this.profile();
       if (profile) {
@@ -104,11 +107,13 @@ export class StylesService {
     }
 
     switch (this.profile['darkMode']) {
-      case 'Enabled' || 'System Default' && this.extraStuffService.systemDarkMode():
+      case 'Enabled' ||
+        ('System Default' && this.extraStuffService.systemDarkMode()):
         this.setColor('#1F2933', 'dark');
         this.setStatusBarStyle(Style.Dark);
         break;
-      case 'Disabled' || 'System Default' && !this.extraStuffService.systemDarkMode():
+      case 'Disabled' ||
+        ('System Default' && !this.extraStuffService.systemDarkMode()):
         this.setColor('#FFFFFF', 'light');
         this.setStatusBarStyle(Style.Light);
         break;
