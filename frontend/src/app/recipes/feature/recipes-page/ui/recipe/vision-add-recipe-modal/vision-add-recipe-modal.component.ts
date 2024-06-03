@@ -27,12 +27,17 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
   standalone: true,
-  imports: [CommonModule, ImageCropperModule, MatProgressSpinnerModule],
+  imports: [
+    CommonModule,
+    ImageCropperModule,
+    MatProgressSpinnerModule,
+    ImageFromCDN,
+  ],
   templateUrl: './vision-add-recipe-modal.component.html',
 })
 export class VisionAddRecipeModalComponent {
@@ -71,10 +76,9 @@ export class VisionAddRecipeModalComponent {
     private ngZone: NgZone,
     private router: Router,
     private stringsService: StringsService,
-    private extraStuffService: ExtraStuffService,
+    public extraStuffService: ExtraStuffService,
     private authService: AuthService,
     private modalService: ModalService,
-    private stylesService: StylesService
   ) {
     effect(
       () => {
@@ -172,8 +176,7 @@ export class VisionAddRecipeModalComponent {
           imageToUpload
         );
 
-        if (variableName === 'selectedFile')
-          this.photoURL = uploadResponseUrl;
+        if (variableName === 'selectedFile') this.photoURL = uploadResponseUrl;
         else {
           this.sourceImageURL = uploadResponseUrl;
         }
@@ -371,19 +374,5 @@ export class VisionAddRecipeModalComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
-  }
-
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-    }
   }
 }

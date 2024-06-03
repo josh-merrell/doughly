@@ -1,6 +1,5 @@
 import {
   Component,
-  Signal,
   WritableSignal,
   computed,
   effect,
@@ -10,7 +9,6 @@ import { CommonModule } from '@angular/common';
 import { Friendship } from '../../state/friendship-state';
 import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
-import { SocialService } from '../../data/social.service';
 import { selectFriendships } from '../../state/friendship-selectors';
 import {
   selectFriendRequests,
@@ -20,14 +18,12 @@ import {
 import { FriendCardComponent } from './ui/friend-card/friend-card.component';
 import { FriendModalComponent } from './ui/friend-modal/friend-modal.component';
 import { Profile } from 'src/app/profile/state/profile-state';
-import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { FriendRequestsModalComponent } from './ui/friend-requests-modal/friend-requests-modal.component';
 import { AddFriendModalComponent } from './ui/add-friend-modal/add-friend-modal.component';
-import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-friends',
@@ -68,8 +64,7 @@ export class FriendsComponent {
     public dialog: MatDialog,
     private stringsService: StringsService,
     private modalService: ModalService,
-    private stylesService: StylesService,
-    private authService: AuthService
+    public extraStuffService: ExtraStuffService
   ) {
     effect(
       () => {
@@ -231,17 +226,4 @@ export class FriendsComponent {
     this.onboardingHandler(this.profile().onboardingState);
   }
 
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('blue-2')
-          : this.stylesService.getHex('blue-9');
-    }
-  }
 }

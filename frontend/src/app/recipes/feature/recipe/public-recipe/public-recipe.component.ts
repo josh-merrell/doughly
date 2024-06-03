@@ -18,7 +18,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { ProfileService } from 'src/app/profile/data/profile.service';
-import { RecipeCategoryActions } from 'src/app/recipes/state/recipe-category/recipe-category-actions';
 import { RecipeIngredientService } from 'src/app/recipes/data/recipe-ingredients.service';
 import { IngredientService } from 'src/app/kitchen/feature/ingredients/data/ingredient.service';
 import { ToolService } from 'src/app/kitchen/feature/tools/data/tool.service';
@@ -27,15 +26,11 @@ import { RecipeStepService } from 'src/app/recipes/data/recipe-step.service';
 import { StepService } from 'src/app/recipes/data/step.service';
 import { FriendModalComponent } from 'src/app/social/feature/friends/ui/friend-modal/friend-modal.component';
 import { SubscribeRecipeModalComponent } from '../ui/subscribe-recipe-modal/subscribe-recipe-modal.component';
-import { AddRequestConfirmationModalComponent } from 'src/app/shared/ui/add-request-confirmation/add-request-confirmation-modal.component';
-import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-error/add-request-error-modal.component';
 import {
   selectRecipeSubscriptions,
   selectRecipes,
   selectSubscriptionBySourceRecipeID,
 } from 'src/app/recipes/state/recipe/recipe-selectors';
-import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
-import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { FractionService } from 'src/app/shared/utils/fractionService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
@@ -44,7 +39,9 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+
 interface displayIngredientsByComponent {
   noComponent: any[];
   components: { [componentName: string]: any[] };
@@ -59,6 +56,7 @@ interface displayIngredientsByComponent {
     MatNativeDateModule,
     MatProgressSpinnerModule,
     SubscribeRecipeModalComponent,
+    ImageFromCDN,
   ],
   templateUrl: './public-recipe.component.html',
 })
@@ -209,7 +207,7 @@ export class PublicRecipeComponent {
     private stringsService: StringsService,
     private productService: ProductService,
     private modalService: ModalService,
-    private stylesService: StylesService
+    public extraStuffService: ExtraStuffService
   ) {
     // handle onboarding
     effect(
@@ -468,25 +466,4 @@ export class PublicRecipeComponent {
     this.onboardingHandler(this.profile().onboardingState);
   }
 
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode
-          ? this.stylesService.getHex('grey-4')
-          : this.stylesService.getHex('grey-6');
-      case 2:
-        return darkMode
-          ? this.stylesService.getHex('blue-8')
-          : this.stylesService.getHex('blue-9');
-      case 3:
-        return darkMode
-          ? this.stylesService.getHex('grey-8')
-          : this.stylesService.getHex('grey-3');
-      default:
-        return darkMode
-          ? this.stylesService.getHex('grey-4')
-          : this.stylesService.getHex('grey-6');
-    }
-  }
 }

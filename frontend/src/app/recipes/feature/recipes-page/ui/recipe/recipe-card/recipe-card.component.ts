@@ -8,21 +8,20 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  Recipe,
   RecipeShoppingList,
 } from 'src/app/recipes/state/recipe/recipe-state';
-import { Store, select } from '@ngrx/store';
-import { RecipeCategoryActions } from 'src/app/recipes/state/recipe-category/recipe-category-actions';
+import { Store } from '@ngrx/store';
 import { RecipeCategoryService } from 'src/app/recipes/data/recipe-category.service';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+
 
 @Component({
   selector: 'dl-recipe-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImageFromCDN],
   templateUrl: './recipe-card.component.html',
 })
 export class RecipeCardComponent implements OnInit {

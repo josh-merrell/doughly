@@ -32,8 +32,8 @@ export class ProductService {
   private readonly API_URL = `${environment.BACKEND}/purchases`;
   public offerings: WritableSignal<GlassfyOffering[]> = signal([]);
   public licences = {
-    recipeSubscribeLimit: 3,
-    recipeCreateLimit: 3,
+    recipeSubscribeLimit: 5,
+    recipeCreateLimit: 5,
     premiumMonthlyAICredits: 12,
     extraAITokenPurchaseCount: 10,
     maxAICredits: 30,

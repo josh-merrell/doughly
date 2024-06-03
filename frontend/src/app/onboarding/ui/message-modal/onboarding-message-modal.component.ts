@@ -37,6 +37,7 @@ import { HttpClient } from '@angular/common/http';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { Router } from '@angular/router';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-message-modal',
@@ -79,7 +80,8 @@ export class OnboardingMessageModalComponent {
     private http: HttpClient,
     public dialog: MatDialog,
     private router: Router,
-    private modalService: ModalService
+    private modalService: ModalService,
+    public extraStuffService: ExtraStuffService
   ) {}
 
   ngOnInit(): void {
@@ -326,15 +328,4 @@ export class OnboardingMessageModalComponent {
     });
   }
 
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode ? '#B3ECFF' : '#0B69A3';
-      case 2:
-        return darkMode ? '#40C3F7' : '#2BB0ED';
-      default:
-        return darkMode ? '#B3ECFF' : '#0B69A3';
-    }
-  }
 }

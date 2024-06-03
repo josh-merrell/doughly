@@ -1,12 +1,13 @@
 import { Input, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Friendship } from 'src/app/social/state/friendship-state';
 import { Profile } from 'src/app/profile/state/profile-state';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+
 
 @Component({
   selector: 'dl-friend-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImageFromCDN],
   templateUrl: './friend-card.component.html',
 })
 export class FriendCardComponent {

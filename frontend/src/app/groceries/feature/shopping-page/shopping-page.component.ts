@@ -5,7 +5,6 @@ import {
   ViewChild,
   WritableSignal,
   computed,
-  effect,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -25,14 +24,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
-import { MatDialog } from '@angular/material/dialog';
 import { PurchaseIngredientsModalComponent } from './ui/purchase-ingredients-modal/purchase-ingredients-modal.component';
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
-import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-shopping-page',
@@ -104,11 +102,9 @@ export class ShoppingPageComponent {
     private store: Store,
     private renderer: Renderer2,
     private route: ActivatedRoute,
-    private dialog: MatDialog,
     private router: Router,
     private modalService: ModalService,
-    private authService: AuthService,
-    private stylesService: StylesService
+    public extraStuffService: ExtraStuffService
   ) {}
 
   ngOnInit(): void {
@@ -292,19 +288,5 @@ export class ShoppingPageComponent {
             this.isDeleting.set(false);
           });
       });
-  }
-
-  getFillColor(index: number): string {
-    const darkMode = this.authService.profile()?.darkMode;
-    switch (index) {
-      case 1:
-        return darkMode ? '#27AB83' : '#3EBD93';
-      case 2:
-        return darkMode ? '#CBD2D9' : '#3E4C59';
-      case 3:
-        return darkMode ? '#BC0A6F' : '#F364A2';
-      default:
-        return darkMode ? '#27AB83' : '#3EBD93';
-    }
   }
 }

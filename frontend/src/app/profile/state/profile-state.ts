@@ -28,7 +28,7 @@ export interface Profile {
   notifyFolloweeCreateRecipe: string;
   notifyFriendRequest: string;
   notifyNewFollower: string;
-  darkMode: boolean;
+  darkMode: string;
 
   // permissions
   isPremium: boolean;
