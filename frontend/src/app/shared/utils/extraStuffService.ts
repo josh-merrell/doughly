@@ -1,6 +1,5 @@
-import { Injectable, WritableSignal, effect, signal } from '@angular/core';
+import { Injectable, WritableSignal, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DarkMode } from '@aparajita/capacitor-dark-mode';
 import { AuthService } from './authenticationService';
 import { StylesService } from './stylesService';
 
