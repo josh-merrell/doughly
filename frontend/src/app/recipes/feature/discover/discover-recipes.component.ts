@@ -106,7 +106,7 @@ export class DiscoverRecipesComponent {
     );
   }
   ngOnInit(): void {
-    DarkMode.init().catch((err) => console.error(err));
+    // DarkMode.init().catch((err) => console.error(err));
     DarkMode.addAppearanceListener((darkMode: any) => {
       this.extraStuffService.systemDarkMode.set(darkMode.dark);
       if (this.authService.profile()!.darkMode !== 'System Default') {
