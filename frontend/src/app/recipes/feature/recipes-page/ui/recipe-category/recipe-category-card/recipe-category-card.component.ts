@@ -1,12 +1,13 @@
-import { Component, ElementRef, Input, Renderer2, ViewChild, WritableSignal, signal } from '@angular/core';
+import { Component, Input, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RecipeCategory } from 'src/app/recipes/state/recipe-category/recipe-category-state';
 import { MatDialog } from '@angular/material/dialog';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
 @Component({
   selector: 'dl-recipe-category-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImageFromCDN],
   templateUrl: './recipe-category-card.component.html',
 })
 export class RecipeCategoryCardComponent {

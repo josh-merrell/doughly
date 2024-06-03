@@ -1,13 +1,8 @@
 import {
   Component,
   ElementRef,
-  Renderer2,
-  Signal,
-  ViewChild,
   ViewChildren,
-  AfterViewInit,
   WritableSignal,
-  computed,
   effect,
   signal,
   QueryList,
@@ -31,6 +26,8 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+
 
 interface displayIngredientsByComponent {
   noComponent: any[];
@@ -40,7 +37,8 @@ interface displayIngredientsByComponent {
 @Component({
   selector: 'dl-using-recipe',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImageFromCDN
+  ],
   templateUrl: './using-recipe.component.html',
 })
 export class UsingRecipeComponent {

@@ -45,6 +45,8 @@ import { ProductService } from 'src/app/shared/utils/productService';
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+
 interface displayIngredientsByComponent {
   noComponent: any[];
   components: { [componentName: string]: any[] };
@@ -59,6 +61,7 @@ interface displayIngredientsByComponent {
     MatNativeDateModule,
     MatProgressSpinnerModule,
     SubscribeRecipeModalComponent,
+    ImageFromCDN
   ],
   templateUrl: './public-recipe.component.html',
 })

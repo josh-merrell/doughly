@@ -17,7 +17,7 @@
     <div *ngIf="recipe.photoURL">
       <img
         class="h-dl-6 w-dl-6 rounded-full"
-        [src]="recipe.photoURL"
+        [src]="recipe.photoURL | imageFromCDN"
         alt="recipe image"
       />
     </div>
@@ -26,7 +26,7 @@
       <img
         *ngIf="author.imageURL"
         class="h-dl-6 w-dl-6 rounded-full"
-        [src]="author.imageURL"
+        [src]="author.imageURL | imageFromCDN"
         alt="author profile image"
       />
       <span

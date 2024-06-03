@@ -28,11 +28,12 @@ import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
   standalone: true,
-  imports: [CommonModule, ImageCropperModule, MatProgressSpinnerModule],
+  imports: [CommonModule, ImageCropperModule, MatProgressSpinnerModule, ImageFromCDN],
   templateUrl: './vision-add-recipe-modal.component.html',
 })
 export class VisionAddRecipeModalComponent {

@@ -19,7 +19,7 @@
         *ngIf="profileImageLink"
         (click)="toggleExpand()"
         class="h-dl-7 w-dl-7 rounded-full"
-        [src]="profileImageLink"
+        [src]="profileImageLink | imageFromCDN"
         alt="profile image"
       />
       <span
@@ -87,7 +87,7 @@
     <img
       *ngIf="profileImageLink"
       class="w-full object-cover"
-      [src]="profileImageLink"
+      [src]="profileImageLink | imageFromCDN"
       alt="profile image"
       (click)="toggleExpand()"
     />

@@ -313,7 +313,7 @@ export class AuthService {
               permRecipeSubscribeUnlimited: false,
               permRecipeCreateUnlimited: false,
               permDataBackupDaily6MonthRetention: false,
-              permAITokenCount: 2,
+              permAITokenCount: 7,
               permAITokenLastRefreshDate: null,
             });
           }

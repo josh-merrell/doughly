@@ -40,6 +40,7 @@ import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
 @Component({
   selector: 'dl-subscribe-recipe-modal',
@@ -51,6 +52,7 @@ import { AuthService } from 'src/app/shared/utils/authenticationService';
     FormsModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    ImageFromCDN,
   ],
   templateUrl: './subscribe-recipe-modal.component.html',
 })

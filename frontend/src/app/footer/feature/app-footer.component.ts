@@ -27,15 +27,14 @@ import {
 } from '../../recipes/state/recipe/recipe-selectors';
 import { selectMessages } from '../state/message-selectors';
 import {
-  ActionPerformed,
-  PushNotificationSchema,
   PushNotifications,
-  Token,
 } from '@capacitor/push-notifications';
 import { MatDialog } from '@angular/material/dialog';
 import { MessagesModalComponent } from '../ui/messages-modal/messages-modal.component';
 import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+
 
 @Component({
   selector: 'app-footer',
@@ -45,6 +44,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     RouterOutlet,
     RouterLinkWithHref,
     MatProgressSpinnerModule,
+    ImageFromCDN,
   ],
   templateUrl: './app-footer.component.html',
 })

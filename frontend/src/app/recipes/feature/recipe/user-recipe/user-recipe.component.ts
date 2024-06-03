@@ -72,6 +72,7 @@ import { filter, take } from 'rxjs';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -90,6 +91,7 @@ interface displayIngredientsByComponent {
     MatDatepickerModule,
     MatNativeDateModule,
     ProfileCardComponent,
+    ImageFromCDN,
   ],
   templateUrl: './user-recipe.component.html',
 })

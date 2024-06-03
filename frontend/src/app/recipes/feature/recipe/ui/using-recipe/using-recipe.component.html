@@ -142,7 +142,7 @@
       <!-- Step photo -->
       <img
         *ngIf="step.photoURL"
-        [src]="step.photoURL"
+        [src]="step.photoURL | imageFromCDN"
         class="mt-dl-2 w-4/5 object-cover"
       />
     </div>

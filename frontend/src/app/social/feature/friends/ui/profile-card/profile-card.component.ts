@@ -15,11 +15,13 @@ import { selectFollowshipByFollowingID } from 'src/app/social/state/followship-s
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+
 
 @Component({
   selector: 'dl-profile-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImageFromCDN],
   templateUrl: './profile-card.component.html',
 })
 export class ProfileCardComponent {

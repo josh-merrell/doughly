@@ -65,8 +65,8 @@
             }}
           </button>
           <img
-            *ngIf="sourceImagePresent"
-            [src]="sourceImageSelectedFileUrl"
+            *ngIf="sourceImagePresent && sourceImageSelectedFileUrl"
+            [src]="sourceImageSelectedFileUrl | imageFromCDN"
             class="mb-dl-4 max-w-dl-14"
             alt="Selected recipe source image"
           />

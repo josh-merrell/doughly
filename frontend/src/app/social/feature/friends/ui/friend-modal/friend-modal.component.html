@@ -17,7 +17,7 @@
     <img
       *ngIf="friend.imageURL"
       class="h-dl-8 w-dl-8 rounded-full"
-      [src]="friend.imageURL"
+      [src]="friend.imageURL | imageFromCDN"
       alt="friend profile image"
     />
     <span

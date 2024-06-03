@@ -225,7 +225,7 @@
               <img
                 *ngIf="profileImageLink"
                 class="h-dl-5 w-dl-5 rounded-full focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2"
-                [src]="profileImageLink"
+                [src]="profileImageLink | imageFromCDN"
                 alt="profile image"
               />
               <span

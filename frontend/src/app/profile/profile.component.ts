@@ -1,9 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  WritableSignal,
-  effect,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../shared/utils/authenticationService';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,11 +13,12 @@ import { DeleteProfileModalComponent } from './ui/delete-profile-modal/delete-pr
 import { Browser } from '@capacitor/browser';
 import { ModalService } from '../shared/utils/modalService';
 import { StylesService } from '../shared/utils/stylesService';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
 @Component({
   selector: 'dl-profile',
   standalone: true,
-  imports: [CommonModule, ImageCropperModule],
+  imports: [CommonModule, ImageCropperModule, ImageFromCDN],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent {

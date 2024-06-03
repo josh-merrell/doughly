@@ -8,7 +8,7 @@
   >
     <img
       *ngIf="recipe().photoURL"
-      [src]="recipe().photoURL"
+      [src]="recipe().photoURL | imageFromCDN"
       alt="Recipe Image"
       class="w-full object-cover"
     />
@@ -27,7 +27,7 @@
             *ngIf="author().imageURL"
             (click)="onFriendClick(author())"
             class="h-dl-5 w-dl-5 rounded-full"
-            [src]="author().imageURL"
+            [src]="author().imageURL | imageFromCDN"
             alt="author profile image"
           />
           <span
@@ -350,7 +350,7 @@
         <!-- Step photo -->
         <img
           *ngIf="step.photoURL"
-          [src]="step.photoURL"
+          [src]="step.photoURL | imageFromCDN"
           class="mt-dl-2 w-4/5 object-cover"
         />
       </div>
