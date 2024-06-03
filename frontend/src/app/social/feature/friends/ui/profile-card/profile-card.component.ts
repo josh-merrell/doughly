@@ -17,7 +17,6 @@ import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 
-
 @Component({
   selector: 'dl-profile-card',
   standalone: true,
@@ -93,11 +92,19 @@ export class ProfileCardComponent {
     switch (index) {
       case 1:
         return darkMode
-          ? this.stylesService.getHex('pink-6')
+          ? this.stylesService.getHex('pink-7')
           : this.stylesService.getHex('pink-4');
+      case 2:
+        return darkMode
+          ? this.stylesService.getHex('grey-10')
+          : this.stylesService.getHex('grey-1');
+      case 3:
+        return darkMode
+          ? this.stylesService.getHex('grey-7')
+          : this.stylesService.getHex('grey-4');
       default:
         return darkMode
-          ? this.stylesService.getHex('pink-6')
+          ? this.stylesService.getHex('pink-7')
           : this.stylesService.getHex('pink-4');
     }
   }
