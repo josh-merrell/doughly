@@ -154,7 +154,7 @@ export class AppComponent {
       });
     });
 
-    // listen for dark mode changes in app
+    // listen for dark mode changes in app!
     this.store.select(selectProfile).subscribe((profile) => {
       if (profile) {
         console.log(`APP COMPONENT NEW PROFILE: ${profile.darkMode}`);
