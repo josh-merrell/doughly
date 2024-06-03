@@ -121,3 +121,5 @@ export const worldCategories: string[] = [
 ];
 
 export const notificationMethods: string[] = ['Enabled', 'None'];
+
+export const darkModeOptions: string[] = ['Enabled', 'Disabled', 'System Default'];

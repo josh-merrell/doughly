@@ -14,20 +14,19 @@ import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ExtraStuffService } from './shared/utils/extraStuffService';
 import { GlassfyOffering } from 'capacitor-plugin-glassfy';
-import { StatusBar, Style } from '@capacitor/status-bar';
 import {
   ActionPerformed,
   PushNotificationSchema,
   PushNotifications,
   Token,
 } from '@capacitor/push-notifications';
+import { DarkMode } from '@aparajita/capacitor-dark-mode';
 
 import { AuthService } from './shared/utils/authenticationService';
 import { PushTokenService } from './shared/utils/pushTokenService';
 import { filter } from 'rxjs';
 import { RedirectPathService } from './shared/utils/redirect-path.service';
 import { ProductService } from './shared/utils/productService';
-import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { Renderer2 } from '@angular/core';
 import { selectProfile } from './profile/state/profile-selectors';
 import { StylesService } from './shared/utils/stylesService';
@@ -116,6 +115,19 @@ export class AppComponent {
   }
 
   initializeApp() {
+    DarkMode.init().catch((err) => console.error(err));
+    DarkMode.addAppearanceListener((darkMode: any) => {
+      console.log('System appearance changed to: ', darkMode);
+      if (darkMode) {
+        this.renderer.addClass(document.body, 'dark');
+        this.renderer.removeClass(document.body, 'light');
+        this.stylesService.updateStyles('#1F2933', 'dark');
+      } else {
+        this.renderer.addClass(document.body, 'light');
+        this.renderer.removeClass(document.body, 'dark');
+        this.stylesService.updateStyles('#FFFFFF', 'light');
+      }
+    });
     App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
       if (
         event.url.includes('access_token') &&
@@ -138,18 +150,35 @@ export class AppComponent {
       });
     });
 
-    // listen for dark mode changes
+    // listen for dark mode changes in app
     this.store.select(selectProfile).subscribe((profile) => {
       if (profile) {
         const darkMode = profile.darkMode;
-        if (darkMode) {
+        if (darkMode === 'Enabled') {
           this.renderer.addClass(document.body, 'dark');
           this.renderer.removeClass(document.body, 'light');
           this.stylesService.updateStyles('#1F2933', 'dark');
-        } else {
+        } else if (darkMode === 'Disabled') {
           this.renderer.addClass(document.body, 'light');
           this.renderer.removeClass(document.body, 'dark');
           this.stylesService.updateStyles('#FFFFFF', 'light');
+        } else {
+          // default is 'System Default'
+          let darkModePreference: string;
+          // get system dark mode preference
+          DarkMode.isDarkMode().then((isDarkMode) => {
+            console.log(`Current system dark mode preference: ${JSON.stringify(isDarkMode)}`);
+            darkModePreference = isDarkMode.dark ? 'Enabled' : 'Disabled';
+            if (darkModePreference === 'Enabled') {
+              this.renderer.addClass(document.body, 'dark');
+              this.renderer.removeClass(document.body, 'light');
+              this.stylesService.updateStyles('#1F2933', 'dark');
+            } else {
+              this.renderer.addClass(document.body, 'light');
+              this.renderer.removeClass(document.body, 'dark');
+              this.stylesService.updateStyles('#FFFFFF', 'light');
+            }
+          });
         }
       }
     });
