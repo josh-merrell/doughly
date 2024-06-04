@@ -1,21 +1,21 @@
 <div class="relative flex flex-col">
   <label
-    class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-5 dark:text-dl-grey-8"
+    class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-6 dark:text-dl-grey-8"
     >{{ label }}</label
   >
-  <div class="w-full flex flex-col items-center">
+  <div class="flex w-full flex-col items-center">
     <input
       type="text"
       [placeholder]="placeholder"
       [value]="value"
       (input)="onInput($event)"
-      class="w-full rounded-md border-0 bg-dl-grey-10 px-dl-4 py-dl-2 text-dl-5 text-dl-grey-1 outline-none ring-2 ring-inset ring-dl-grey-8 transition-all duration-200 ease-in-out placeholder:text-dl-grey-5 focus:bg-white focus:shadow-md focus:shadow-dl-blue-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9 dark:ring-dl-grey-1 dark:focus:bg-dl-grey-3"
+      class="w-full rounded-md border-0 bg-dl-grey-10 px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset ring-dl-grey-8 transition-all duration-200 ease-in-out placeholder:text-dl-grey-5 focus:bg-white focus:shadow-md focus:shadow-dl-blue-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9 dark:ring-dl-grey-1 dark:focus:bg-dl-grey-3"
     />
     <div
       [ngClass]="{
         invisible: !hasError
       }"
-      class="mt-dl-1 mb-dl-1 text-dl-5 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
+      class="my-dl-1 text-dl-5 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
     >
       <ng-container>
         <div>{{ errorMessage || "NA" }}</div>

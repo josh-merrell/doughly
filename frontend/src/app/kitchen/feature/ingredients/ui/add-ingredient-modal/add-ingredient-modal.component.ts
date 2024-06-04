@@ -13,6 +13,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
 import {
   Observable,
   Subscription,
@@ -62,7 +63,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
-    TextInputComponent
+    TextInputComponent,
+    SelectInputComponent
   ],
   templateUrl: './add-ingredient-modal.component.html',
 })
