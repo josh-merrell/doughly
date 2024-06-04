@@ -115,9 +115,8 @@ export class AppComponent {
   }
 
   initializeApp() {
-    DarkMode.init().catch((err) => console.error(err));
+    // DarkMode.init().catch((err) => console.error(err));
     DarkMode.addAppearanceListener((darkMode: any) => {
-      console.log('System appearance changed to: ', darkMode.dark);
       this.extraStuffService.systemDarkMode.set(darkMode.dark);
       if (this.authService.profile()!.darkMode !== 'System Default') {
         return;
@@ -157,7 +156,6 @@ export class AppComponent {
     // listen for dark mode changes in app!
     this.store.select(selectProfile).subscribe((profile) => {
       if (profile) {
-        console.log(`APP COMPONENT NEW PROFILE: ${profile.darkMode}`);
         const darkMode = profile.darkMode;
         if (darkMode === 'Enabled') {
           this.renderer.addClass(document.body, 'dark');
@@ -172,11 +170,6 @@ export class AppComponent {
           let darkModePreference: string;
           // get system dark mode preference
           DarkMode.isDarkMode().then((isDarkMode) => {
-            console.log(
-              `Current system dark mode preference: ${JSON.stringify(
-                isDarkMode
-              )}`
-            );
             this.extraStuffService.systemDarkMode.set(isDarkMode.dark);
             darkModePreference = isDarkMode.dark ? 'Enabled' : 'Disabled';
             if (this.authService.profile()!.darkMode !== 'System Default') {

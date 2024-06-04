@@ -1,6 +1,5 @@
-import { ComponentType } from '@angular/cdk/portal';
-import { Injectable, WritableSignal, effect, signal } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Injectable, Injector, WritableSignal, effect, signal } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { StatusBar, Style } from '@capacitor/status-bar';
@@ -17,6 +16,7 @@ interface ModalInstance {
 })
 export class StylesService {
   private profile: WritableSignal<any> = signal(null);
+  private extraStuffService!: ExtraStuffService;
   private colorClasses = {
     'grey-1': '#1F2933',
     'grey-2': '#323F4B',
@@ -70,7 +70,10 @@ export class StylesService {
     'yellow-10': '#FFFBEA',
   };
 
-  constructor(private store: Store, private extraStuffService: ExtraStuffService) {
+  constructor(
+    private store: Store,
+    private injector: Injector,
+  ) {
     effect(() => {
       const profile = this.profile();
       if (profile) {
@@ -80,6 +83,7 @@ export class StylesService {
   }
 
   ngOnInit(): void {
+    this.extraStuffService = this.injector.get(ExtraStuffService);
     this.store.select(selectProfile).subscribe((profile) => {
       this.profile.set(profile);
     });
@@ -104,11 +108,13 @@ export class StylesService {
     }
 
     switch (this.profile['darkMode']) {
-      case 'Enabled' || 'System Default' && this.extraStuffService.systemDarkMode():
+      case 'Enabled' ||
+        ('System Default' && this.extraStuffService.systemDarkMode()):
         this.setColor('#1F2933', 'dark');
         this.setStatusBarStyle(Style.Dark);
         break;
-      case 'Disabled' || 'System Default' && !this.extraStuffService.systemDarkMode():
+      case 'Disabled' ||
+        ('System Default' && !this.extraStuffService.systemDarkMode()):
         this.setColor('#FFFFFF', 'light');
         this.setStatusBarStyle(Style.Light);
         break;

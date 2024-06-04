@@ -1,5 +1,5 @@
 <div
-  class="relative dark:border h-full w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative h-full max-h-dl-21 w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="flex items-center justify-center" *ngIf="isAdding">
     <mat-spinner class="my-app-custom-spinner"></mat-spinner>
@@ -15,70 +15,52 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-ingredientName" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Ingredient</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="name" />
-            <mat-error
-              class="text-dl-5"
-              *ngIf="form.get('name')?.hasError('duplicateString')"
-            >
-              Cannot reuse an existing ingredient name
-            </mat-error>
-          </mat-form-field>
+          <dl-text-input
+            label="Ingredient"
+            formControlName="name"
+            [hasError]="form.get('name')?.hasError('duplicateString') || false"
+            errorMessage="Ingredient name already in use"
+          ></dl-text-input>
         </div>
 
         <div id="form-ingredientBrand" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Brand</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="brand" />
-          </mat-form-field>
-        </div>
-
-        <div id="form-ingredientLifespanDays" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Lifespan (days)</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="lifespanDays" />
-            <mat-error
-              class="text-dl-5"
-              *ngIf="form.get('lifespanDays')?.hasError('notPositiveInteger')"
-            >
-              Must be a positive whole number
-            </mat-error>
-          </mat-form-field>
+          <dl-text-input label="Brand" formControlName="brand"></dl-text-input>
         </div>
 
         <div id="form-ingredientPurchaseUnit" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Purchase Unit</label
-          >
-          <mat-form-field>
-            <mat-select formControlName="purchaseUnit">
-              <mat-option *ngFor="let unit of purchaseUnits" [value]="unit">
-                {{ unit }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <dl-select-input
+            label="Purchase Unit"
+            formControlName="purchaseUnit"
+            [options]="purchaseUnits"
+            [hasError]="
+              (form.get('purchaseUnit')?.invalid &&
+                !form.get('purchaseUnit')?.pristine) ||
+              false
+            "
+            errorMessage="Select a purchase unit"
+          ></dl-select-input>
+        </div>
+
+        <div id="form-ingredientLifespanDays" class="relative flex flex-col">
+          <dl-text-input
+            label="Lifespan (days)"
+            formControlName="lifespanDays"
+            [hasError]="
+              form.get('lifespanDays')?.hasError('notPositiveInteger') || false
+            "
+            errorMessage="Must be a positive whole number"
+          ></dl-text-input>
         </div>
 
         <div id="form-ingredientGramRatio" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Gram Ratio</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="gramRatio" />
-            <mat-error
-              class="text-dl-5"
-              *ngIf="form.get('gramRatio')?.hasError('notPositiveFloat')"
-            >
-              Must be a positive number!
-            </mat-error>
-          </mat-form-field>
+          <dl-text-input
+            label="Gram Ratio"
+            formControlName="gramRatio"
+            [hasError]="
+              form.get('gramRatio')?.hasError('notPositiveFloat') || false
+            "
+            errorMessage="Must be a positive number"
+          ></dl-text-input>
           <div
             *ngIf="gettingUnitRatio()"
             class="absolute -bottom-1 left-3 flex"
@@ -120,7 +102,7 @@
         </button>
         <button
           type="button"
-          class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10  dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2  "
+          class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
           (click)="onCancel()"
         >
           Cancel

@@ -1,0 +1,57 @@
+<div class="flex flex-col">
+  <label
+    class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-6 dark:text-dl-grey-8"
+    >{{ label }}</label
+  >
+  <div class="relative flex w-full flex-col items-center">
+    <div
+      (click)="toggleDropdown()"
+      class="relative min-h-dl-5 w-full cursor-pointer rounded-md border-0  px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset  focus:ring-2 focus:ring-inset focus:ring-dl-blue-5  dark:text-dl-grey-9 "
+      [ngClass]="{
+        'rounded-b-none bg-white dark:bg-dl-grey-3 shadow-md shadow-dl-blue-5/20 ring-dl-blue-5  ':
+          isOpen(),
+        'rounded-b-md bg-dl-grey-10 dark:bg-dl-grey-2 ring-dl-grey-8 dark:ring-dl-grey-1': !isOpen()
+      }"
+    >
+      <svg
+        *ngIf="!value"
+        style="pointer-events: none"
+        class="absolute right-5 top-1/2 z-30 -translate-y-1/2 rotate-90 transform"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        version="1.1"
+        height="15"
+        width="15"
+        viewBox="0 -15 100 125"
+      >
+        <path
+          [attr.fill]="this.extraStuffService.getFillColor(10)"
+          d="M51,49.9L24.4,23.4c-4.2-4.2-4.2-11,0-15.2c4.2-4.2,11-4.2,15.3,0l37.3,37.2c2.5,2.5,2.5,6.6,0,9.2L39.6,91.7  c-4.2,4.2-11,4.2-15.3,0c-4.2-4.2-4.2-11,0-15.2L51,49.9z"
+        />
+      </svg>
+      {{ value }}
+    </div>
+    <div
+      *ngIf="isOpen()"
+      class="absolute top-9 z-10 max-h-dl-12 w-full overflow-y-auto rounded-b-md border-2 border-t-0 border-dl-blue-5 bg-white shadow-lg dark:bg-dl-grey-2"
+    >
+      <div
+        *ngFor="let option of sortedOptions"
+        (click)="selectOption(option)"
+        class="hover:dark:text-dl-grey- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-grey-4 hover:bg-dl-blue-9 hover:text-dl-grey-3 dark:text-dl-grey-8 dark:hover:bg-dl-blue-2 dark:hover:text-dl-grey-9"
+      >
+        {{ option }}
+      </div>
+    </div>
+    <div
+      [ngClass]="{
+        invisible: !hasError
+      }"
+      class="my-dl-1 text-dl-5 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
+    >
+      <ng-container>
+        <div>{{ errorMessage || "NA" }}</div>
+      </ng-container>
+    </div>
+  </div>
+</div>
