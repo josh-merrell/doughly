@@ -23,6 +23,7 @@ import { ErrorModalComponent } from '../shared/ui/error-modal/error-modal.compon
 import { ConfirmationModalComponent } from '../shared/ui/confirmation-modal/confirmation-modal.component';
 import { notificationMethods, darkModeOptions } from '../shared/utils/types';
 import { ModalService } from '../shared/utils/modalService';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
 
 @Component({
   selector: 'dl-settings',
@@ -34,6 +35,7 @@ import { ModalService } from '../shared/utils/modalService';
     MatFormFieldModule,
     MatSlideToggleModule,
     MatSelectModule,
+    SelectInputComponent
   ],
   templateUrl: './settings.component.html',
 })

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,11 +11,16 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { Observable, Subscription, filter, map, take } from 'rxjs';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
@@ -31,6 +36,7 @@ import { IngredientStockActions } from '../../state/ingredient-stock-actions';
 import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-add-ingredient-stock-modal',
@@ -44,6 +50,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
+    TextInputComponent,
   ],
   templateUrl: './add-ingredient-stock-modal.component.html',
 })
@@ -52,8 +59,9 @@ export class AddIngredientStockModalComponent {
   form!: FormGroup;
 
   ingredients$!: Observable<Ingredient[]>;
-  ingredient$!: Observable<Ingredient>;
   employees$!: Observable<any>;
+  public measurementLabel: WritableSignal<string> = signal('Measurement');
+  public ingredient: WritableSignal<Ingredient | null> = signal(null);
 
   private ingredientIDSubscription!: Subscription;
   private addingSubscription!: Subscription;
@@ -65,7 +73,8 @@ export class AddIngredientStockModalComponent {
     private store: Store,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private unitService: UnitService
   ) {}
 
   setForm() {
@@ -82,24 +91,15 @@ export class AddIngredientStockModalComponent {
     if (this.data.ingredientID) {
       this.form.get('ingredientID')!.setValue(this.data.ingredientID);
       this.form.get('measurement')!.enable();
-      this.ingredient$ = this.store.pipe(
-        select(selectIngredientByID(this.data.ingredientID))
-      );
-    }
-
-    //handle changes made to 'ingredientID' field
-    this.ingredientIDSubscription = this.form
-      .get('ingredientID')!
-      .valueChanges.subscribe((ingredientID) => {
-        if (ingredientID) {
-          this.form.get('measurement')!.enable();
-          this.ingredient$ = this.store.pipe(
-            select(selectIngredientByID(ingredientID))
+      this.store
+        .select(selectIngredientByID(this.data.ingredientID))
+        .subscribe((ingredient) => {
+          this.ingredient.set(ingredient);
+          this.measurementLabel.set(
+            `Measurement in ${this.unitService.plural(ingredient.purchaseUnit)}`
           );
-        } else {
-          this.form.get('measurement')!.disable();
-        }
-      });
+        });
+    }
   }
 
   ngOnDestroy(): void {
@@ -150,13 +150,18 @@ export class AddIngredientStockModalComponent {
             console.error(
               `Ingredient Stock add failed: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.modalService.open(ErrorModalComponent, {
-              maxWidth: '380px',
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
+            this.modalService.open(
+              ErrorModalComponent,
+              {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
               },
-            }, 2, true);
+              2,
+              true
+            );
           } else {
             this.dialogRef.close('success');
           }

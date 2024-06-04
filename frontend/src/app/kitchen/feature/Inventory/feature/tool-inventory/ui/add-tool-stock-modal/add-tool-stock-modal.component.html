@@ -1,42 +1,24 @@
 <div
-  class="relative max-h-dl-21 w-dl-14 transform dark:border overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative max-h-dl-21 w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
     <div class="flex w-full flex-col">
-      <div class="mt-dl-2 space-x-1 whitespace-nowrap text-center">
+      <div class="mt-dl-2 space-x-1 whitespace-normal text-center">
         <span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6"> Add</span
         ><span class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">{{
-          (tool$ | async)!.name
+          tool().name
         }}</span
         ><span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6">Stock</span>
       </div>
 
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
-        <div id="form-toolID" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Tool</label
-          >
-          <mat-form-field>
-            <mat-select formControlName="toolID">
-              <mat-option
-                *ngFor="let tool of tools$ | async"
-                [value]="tool.toolID"
-              >
-                {{ tool.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
         <div id="form-quantity">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Quantity</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="quantity" />
-          </mat-form-field>
+          <dl-text-input
+            label="Quantity"
+            formControlName="quantity"
+          ></dl-text-input>
         </div>
       </div>
       <!---->

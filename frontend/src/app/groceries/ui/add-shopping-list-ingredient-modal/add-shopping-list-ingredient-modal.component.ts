@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
@@ -32,6 +33,7 @@ import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { selectError as selectErrorShoppingListIngredient } from '../../state/shopping-list-ingredient-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-add-shopping-list-ingredient-modal',
@@ -42,6 +44,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatInputModule,
     ReactiveFormsModule,
     MatFormFieldModule,
+    TextInputComponent
   ],
   templateUrl: './add-shopping-list-ingredient-modal.component.html',
 })
@@ -49,6 +52,7 @@ export class AddShoppingListIngredientModalComponent {
   form!: FormGroup;
   public selectedIngredient: WritableSignal<any> = signal({ ingredientID: 0 });
   public isLoading: boolean = false;
+  public measurementLabel: WritableSignal<string> = signal('Measurement');
 
   public shoppingListIngredients: WritableSignal<any> = signal([]);
   public ingredients: WritableSignal<any> = signal([]);
@@ -88,7 +92,8 @@ export class AddShoppingListIngredientModalComponent {
     private fb: FormBuilder,
     private ingredientService: IngredientService,
     public dialog: MatDialog,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private unitService: UnitService
   ) {}
 
   setForm() {
@@ -119,6 +124,7 @@ export class AddShoppingListIngredientModalComponent {
       this.selectedIngredient.set({ ingredientID: 0 });
     } else {
       this.selectedIngredient.set(ingredient);
+      this.measurementLabel.set(`Measurement in ${this.unitService.plural(ingredient.purchaseUnit)}`)
     }
   }
 

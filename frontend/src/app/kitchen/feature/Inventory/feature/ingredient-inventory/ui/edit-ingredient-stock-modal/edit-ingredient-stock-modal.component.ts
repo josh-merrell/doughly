@@ -11,17 +11,14 @@ import {
   MAT_DIALOG_DATA,
   MatDialog,
 } from '@angular/material/dialog';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectIngredientStockByID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { Store, select } from '@ngrx/store';
 import {
-  Observable,
   Subscription,
-  combineLatest,
   filter,
-  map,
-  of,
-  switchMap,
   take,
 } from 'rxjs';
 import { IngredientStock } from '../../state/ingredient-stock-state';
@@ -49,6 +46,7 @@ import { MatInputModule } from '@angular/material/input';
 import { positiveFloatValidator } from 'src/app/shared/utils/formValidator';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-edit-ingredient-stock-modal',
@@ -62,6 +60,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
+    TextInputComponent
   ],
   templateUrl: './edit-ingredient-stock-modal.component.html',
 })
@@ -76,6 +75,7 @@ export class EditIngredientStockModalComponent {
   originalIngredientStock!: any;
 
   private updatingSubscription!: Subscription;
+  public measurementLabel: WritableSignal<string> = signal('Measurement');
 
   constructor(
     public dialogRef: MatDialogRef<EditIngredientStockModalComponent>,
@@ -83,7 +83,8 @@ export class EditIngredientStockModalComponent {
     private store: Store,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private unitService: UnitService
   ) {
     this.setForm();
     effect(
@@ -94,6 +95,7 @@ export class EditIngredientStockModalComponent {
             .select(selectIngredientByID(ingredientStock.ingredientID))
             .subscribe((ingredient) => {
               this.ingredient.set(ingredient);
+              this.measurementLabel.set(`Measurement in ${this.unitService.plural(ingredient?.purchaseUnit)}`)
             });
         }
       },

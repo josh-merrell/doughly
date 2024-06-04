@@ -9,6 +9,8 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { Observable, Subscription, filter, take } from 'rxjs';
 import { Tool } from '../../state/tool-state';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -38,6 +40,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
+    TextInputComponent
   ],
   templateUrl: './edit-tool-modal.component.html',
 })
@@ -118,13 +121,18 @@ export class EditToolModalComponent {
               console.error(
                 `Tool update failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.modalService.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              }, 2, true);
+                2,
+                true
+              );
             } else {
               this.dialogRef.close('success');
             }

@@ -14,6 +14,9 @@ import {
 } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
+
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -51,6 +54,8 @@ import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     ImageFromCDN,
+    TextInputComponent,
+    SelectInputComponent,
   ],
   templateUrl: './subscribe-recipe-modal.component.html',
 })

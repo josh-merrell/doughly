@@ -1,12 +1,7 @@
-import {
-  Component,
-  Inject,
-  WritableSignal,
-  computed,
-  signal,
-} from '@angular/core';
+import { Component } from '@angular/core';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
   FormBuilder,
   FormGroup,
@@ -24,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
     MatInputModule,
     ReactiveFormsModule,
     MatFormFieldModule,
+    TextInputComponent,
   ],
   templateUrl: './purchase-ingredients-modal.component.html',
 })
@@ -32,7 +28,7 @@ export class PurchaseIngredientsModalComponent {
 
   constructor(
     public dialogRef: MatDialogRef<PurchaseIngredientsModalComponent>,
-    private fb: FormBuilder,
+    private fb: FormBuilder
   ) {}
 
   setForm() {
@@ -46,7 +42,7 @@ export class PurchaseIngredientsModalComponent {
   }
 
   onCancel(): void {
-    this.dialogRef.close({ status: 'cancel'});
+    this.dialogRef.close({ status: 'cancel' });
   }
 
   onConfirm(): void {
