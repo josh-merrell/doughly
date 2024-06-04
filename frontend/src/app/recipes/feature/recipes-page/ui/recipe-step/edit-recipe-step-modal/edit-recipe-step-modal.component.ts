@@ -23,7 +23,7 @@ import {
   selectRecipeStepByID,
   selectRecipeStepsByID,
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
-import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step-actions';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 
 @Component({
   selector: 'dl-edit-recipe-step-modal',
@@ -36,6 +36,7 @@ import { RecipeStepActions } from 'src/app/recipes/state/recipe-step/recipe-step
     MatSelectModule,
     MatInputModule,
     ImageCropperModule,
+    TextInputComponent
   ],
   templateUrl: './edit-recipe-step-modal.component.html',
 })

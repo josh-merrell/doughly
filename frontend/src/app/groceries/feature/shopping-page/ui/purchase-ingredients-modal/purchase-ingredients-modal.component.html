@@ -21,7 +21,7 @@
       <div class="sm:block absolute right-0 top-0 hidden pr-dl-2 pt-dl-2">
         <button
           type="button"
-          class="rounded-dl-2 bg-white text-dl-grey-6 hover:text-dl-grey-5 focus:outline-none  dark:bg-dl-grey-1 dark:text-dl-grey-5 dark:hover:text-dl-grey-6"
+          class="rounded-dl-2 bg-white text-dl-grey-6 hover:text-dl-grey-5 focus:outline-none dark:bg-dl-grey-1 dark:text-dl-grey-5 dark:hover:text-dl-grey-6"
           (click)="onCancel()"
         >
           <span class="sr-only">Close</span>
@@ -45,12 +45,7 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-store">
-          <label class="text-dl-2 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Store</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="store" />
-          </mat-form-field>
+          <dl-text-input label="Store" formControlName="store"></dl-text-input>
         </div>
       </div>
       <!---->

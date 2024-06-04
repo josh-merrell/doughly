@@ -1,5 +1,5 @@
 <div
-  class="relative h-dl-17 dark:border w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative h-dl-17 w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
@@ -13,27 +13,19 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-toolName" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Tool</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="name" />
-            <mat-error
-              class="text-dl-3"
-              *ngIf="form.get('name')?.hasError('duplicateString')"
-            >
-              Cannot reuse an existing tool name
-            </mat-error>
-          </mat-form-field>
+          <dl-text-input
+            label="Tool"
+            formControlName="name"
+            [hasError]="form.get('name')?.hasError('duplicateString') || false"
+            errorMessage="Tool name already in use"
+          ></dl-text-input>
         </div>
 
         <div id="form-ingredientBrand" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Brand</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="brand" />
-          </mat-form-field>
+          <dl-text-input
+            label="Brand"
+            formControlName="brand"
+          ></dl-text-input>
         </div>
       </div>
       <!---->

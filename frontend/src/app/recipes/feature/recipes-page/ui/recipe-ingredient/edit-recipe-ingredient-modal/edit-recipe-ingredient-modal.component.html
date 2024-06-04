@@ -1,5 +1,5 @@
 <div
-  class="relative flex h-dl-21 dark:border transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex h-dl-21 transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-normal">
@@ -40,105 +40,61 @@
         <div class="mt-dl-4 flex-grow overflow-y-auto">
           <!-- Component -->
           <div id="form-component" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Recipe Component (opt)</label
-            >
-            <mat-form-field class="w-full">
-              <input
-                matInput
-                formControlName="component"
-                placeholder="ex: filling"
-              />
-              <mat-error
-                class="text-dl-5"
-                *ngIf="form.get('component')?.hasError('moreThan20Chars')"
-              >
-                Must be less than 20 characters
-              </mat-error>
-            </mat-form-field>
+            <dl-text-input
+              label="Component"
+              placeholder="ex: filling"
+              formControlName="component"
+              [hasError]="
+                form.get('component')?.hasError('moreThan20Chars') || false
+              "
+              errorMessage="Must be less than 20 characters"
+            ></dl-text-input>
           </div>
           <!-- Preparation -->
           <div id="form-preparation" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Notes</label
-            >
-            <mat-form-field class="w-full">
-              <input
-                matInput
-                formControlName="preparation"
-                placeholder="ex: peeled and diced"
-              />
-              <mat-error
-                class="text-dl-5"
-                *ngIf="form.get('preparation')?.hasError('moreThan40Chars')"
-              >
-                Must be less than 40 characters
-              </mat-error>
-            </mat-form-field>
+            <dl-text-input
+              label="Notes"
+              formControlName="preparation"
+              placeholder="ex: peeled and diced"
+              [hasError]="
+                form.get('preparation')?.hasError('moreThan40Chars') || false
+              "
+              errorMessage="Must be less than 40 characters"
+            ></dl-text-input>
           </div>
 
           <!-- Measurement -->
           <div id="form-measurement" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Measurement</label
-            >
-            <mat-form-field class="w-full">
-              <input
-                matInput
-                formControlName="measurement"
-                placeholder="ex: 2.5"
-              />
-              <mat-error
-                class="text-dl-5"
-                *ngIf="form.get('measurement')?.hasError('notPositiveFloat')"
-              >
-                Must be a positive number, ex "1.45"
-              </mat-error>
-            </mat-form-field>
+            <dl-text-input
+              label="Measurement"
+              formControlName="measurement"
+              placeholder="ex: 2.5"
+              [hasError]="
+                form.get('measurement')?.hasError('notPositiveFloat') || false
+              "
+              errorMessage="Must be a positive number"
+            ></dl-text-input>
           </div>
 
           <div id="form-measurementUnit" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Measurement Unit (curr:
-              {{ recipeIngredient().measurementUnit }})</label
-            >
-            <mat-form-field>
-              <mat-select formControlName="measurementUnit">
-                <mat-option *ngFor="let unit of unitOptions" [value]="unit">
-                  {{ unit }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <dl-select-input
+              label="Unit (curr:
+              {{ recipeIngredient().measurementUnit }})"
+              formControlName="measurementUnit"
+              [options]="unitOptions"
+            ></dl-select-input>
           </div>
 
           <div id="form-purchaseUnitRatio" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >{{ pUnit }} per {{ mUnit }}</label
-            >
-            <mat-form-field class="w-full">
-              <input
-                matInput
-                formControlName="purchaseUnitRatio"
-                [placeholder]="
-                  mUnit && pUnit
-                    ? 'How many ' + pUnit + ' per ' + mUnit + '? ex: 1.45'
-                    : 'Add other fields first'
-                "
-              />
-              <mat-error
-                class="text-dl-5"
-                *ngIf="
-                  form.get('purchaseUnitRatio')?.hasError('notPositiveFloat')
-                "
-              >
-                Must be a positive number, ex "1.45"
-              </mat-error>
-            </mat-form-field>
+            <dl-text-input
+              label="{{ purLabel() }}"
+              formControlName="purchaseUnitRatio"
+              [hasError]="
+                form.get('purchaseUnitRatio')?.hasError('notPositiveFloat') ||
+                false
+              "
+              errorMessage="Must be a positive number"
+            ></dl-text-input>
             <div
               *ngIf="gettingUnitRatio()"
               class="absolute -bottom-1 left-3 flex"

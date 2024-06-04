@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, WritableSignal, signal } from '@angular/core';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import {
-  MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
 import { NgZone } from '@angular/core';
@@ -42,6 +42,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
+    TextInputComponent
   ],
   templateUrl: './from-url-add-recipe-modal.component.html',
 })

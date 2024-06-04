@@ -7,7 +7,6 @@ import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
@@ -18,15 +17,12 @@ import {
   Observable,
   Subject,
   Subscription,
-  first,
   forkJoin,
-  map,
   switchMap,
   takeUntil,
 } from 'rxjs';
 import {
   MAT_DIALOG_DATA,
-  MatDialog,
   MatDialogRef,
 } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -34,7 +30,6 @@ import {
   selectAdding,
   selectLoading,
   selectStepByID,
-  selectSteps,
 } from 'src/app/recipes/state/step/step-selectors';
 import {
   selectAddingRecipeStep,
@@ -43,6 +38,8 @@ import {
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
 import { PhotoService } from 'src/app/shared/utils/photoService';
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
 
 @Component({
   selector: 'dl-add-recipe-step-modal',
@@ -55,6 +52,8 @@ import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
     MatSelectModule,
     MatInputModule,
     ImageCropperModule,
+    TextInputComponent,
+    SelectInputComponent,
   ],
   templateUrl: './add-recipe-step-modal.component.html',
 })

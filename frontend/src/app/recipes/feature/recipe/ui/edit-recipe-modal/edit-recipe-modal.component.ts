@@ -14,15 +14,14 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
+
 import {
   Observable,
   Subject,
   Subscription,
-  catchError,
   filter,
-  from,
-  mergeMap,
-  of,
   take,
   takeUntil,
 } from 'rxjs';
@@ -47,10 +46,7 @@ import {
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import {
-  selectFollowers,
-  selectFriends,
   selectProfile,
-  selectFriendByUserID,
 } from 'src/app/profile/state/profile-selectors';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { ModalService } from 'src/app/shared/utils/modalService';
@@ -67,6 +63,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatInputModule,
     ImageCropperModule,
     MatSlideToggleModule,
+    TextInputComponent,
+    SelectInputComponent
   ],
   templateUrl: './edit-recipe-modal.component.html',
 })
@@ -74,12 +72,10 @@ export class EditRecipeModalComponent {
   public isSubmitting: boolean = false;
   form!: FormGroup;
   isUploadingPhoto: boolean = false;
-  private recipe$: Observable<any> = new Observable();
   private recipes: any[] = [];
   private unsubscribe$ = new Subject<void>();
   private updatingSubscription!: Subscription;
-  categories$!: Observable<any[]>;
-  categories: any[] = [];
+  public categories: WritableSignal<any> = signal([]);
 
   //photo upload
   public recipeImageBase64: any = '';
@@ -126,12 +122,9 @@ export class EditRecipeModalComponent {
       });
 
     this.photoURL = this.data.photoURL;
-    this.categories$ = this.store.select(selectRecipeCategories);
-    this.categories$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((categories) => {
-        this.categories = categories;
-      });
+    this.store.select(selectRecipeCategories).subscribe((categories) => {
+      this.categories.set(categories);
+    });
   }
 
   setForm() {

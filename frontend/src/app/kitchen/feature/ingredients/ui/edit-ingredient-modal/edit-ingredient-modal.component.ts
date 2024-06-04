@@ -5,6 +5,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
 import {
@@ -39,7 +40,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { PurchaseUnit } from 'src/app/shared/utils/types';
-import { positiveFloatValidator, positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
+
+import {
+  positiveFloatValidator,
+  positiveIntegerValidator,
+} from 'src/app/shared/utils/formValidator';
 import { IngredientActions } from '../../state/ingredient-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { UnitService } from 'src/app/shared/utils/unitService';
@@ -57,6 +63,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
+    TextInputComponent,
+    SelectInputComponent,
   ],
   templateUrl: './edit-ingredient-modal.component.html',
 })
@@ -73,7 +81,8 @@ export class EditIngredientModalComponent {
   public pUnit: WritableSignal<string> = signal('');
   public gramRatioSuggestion: WritableSignal<number> = signal(0);
   public gettingUnitRatio: WritableSignal<boolean> = signal(false);
-
+  public gramRatioLabel: WritableSignal<string> = signal('Gram Ratio');
+  // pUnit() ? pUnit() : "Gram Ratio"
   constructor(
     public dialogRef: MatDialogRef<EditIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -124,7 +133,7 @@ export class EditIngredientModalComponent {
   }
 
   nameValidator(): ValidatorFn {
-    return (control: AbstractControl): {[key: string]: any} | null => {
+    return (control: AbstractControl): { [key: string]: any } | null => {
       const name = control.value;
       if (!name) {
         return null;
@@ -135,7 +144,7 @@ export class EditIngredientModalComponent {
       }
 
       // Check if the name is already taken by another ingredient
-      if (this.ingredients.find(ingredient => ingredient.name === name)) {
+      if (this.ingredients.find((ingredient) => ingredient.name === name)) {
         return { nameTaken: true };
       }
       return null;
@@ -233,13 +242,18 @@ export class EditIngredientModalComponent {
             console.error(
               `Ingredient update failed: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.modalService.open(ErrorModalComponent, {
-              maxWidth: '380px',
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
+            this.modalService.open(
+              ErrorModalComponent,
+              {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
               },
-            }, 2, true);
+              2,
+              true
+            );
           } else {
             this.dialogRef.close('success');
           }

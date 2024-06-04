@@ -21,45 +21,19 @@
         <!--FORM FIELDS-->
         <div class="mt-dl-1 flex-grow overflow-y-auto">
           <div id="form-stepTitle" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Title</label
-            >
-            <mat-form-field class="text-dl-4">
-              <input matInput formControlName="title" />
-              <mat-error
-                class="text-dl-3"
-                *ngIf="form.get('title')?.hasError('titleExists')"
-              >
-                This title already exists.
-              </mat-error>
-              <mat-error
-                class="text-dl-3"
-                *ngIf="form.get('title')?.hasError('required')"
-              >
-                Title is required.
-              </mat-error>
-            </mat-form-field>
+            <dl-text-input
+              label="Title"
+              formControlName="title"
+              [hasError]="form.get('title')?.hasError('titleExists') || false"
+              errorMessage="This title already exists"
+            ></dl-text-input>
           </div>
           <div id="form-description" class="my-dl-4">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Description</label
-            >
-            <mat-form-field class="w-full text-dl-4">
-              <textarea
-                matInput
-                formControlName="description"
-                rows="6"
-                class="border-0 focus:ring-0"
-              ></textarea>
-              <mat-error
-                class="text-dl-3"
-                *ngIf="form.get('title')?.hasError('required')"
-              >
-                Title is required.
-              </mat-error>
-            </mat-form-field>
+            <dl-text-input
+              label="Description"
+              formControlName="description"
+              [isTextArea]="true"
+            ></dl-text-input>
           </div>
           <div id="form-photo-recipe-step" class="mt-dl-1">
             <div class="relative inline-block w-full">

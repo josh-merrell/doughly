@@ -46,20 +46,18 @@
           <!-- Dark Mode-->
           <div
             id="form-darkMode"
-            class="relative mt-dl-2 flex flex-row items-center"
+            class="relative mt-dl-2 flex flex-row items-start"
           >
             <span
-              class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+              class="py-dl-4 pl-dl-2 pr-dl-4 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
               >Dark Mode</span
             >
-            <mat-select formControlName="darkMode">
-              <mat-option
-                *ngFor="let option of darkModeOptions"
-                [value]="option"
-              >
-                {{ option }}
-              </mat-option>
-            </mat-select>
+            <dl-select-input
+              class="flex-grow"
+              formControlName="darkMode"
+              [options]="darkModeOptions"
+              [noLabel]="true"
+            ></dl-select-input>
           </div>
 
           <!-- Notifications -->
@@ -72,168 +70,136 @@
             <!-- Notify on Low Ingredient Stock -->
             <div
               id="form-notifyOnLowStock"
-              class="relative mt-dl-2 flex flex-row items-center"
+              class="relative mt-dl-2 flex flex-row items-start"
             >
               <span
                 class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient is low in stock</span
               >
-              <mat-form-field>
-                <mat-select formControlName="notifyOnLowStock">
-                  <mat-option
-                    *ngFor="let method of notificationMethods"
-                    [value]="method"
-                  >
-                    {{ method }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <dl-select-input
+                class="flex-grow"
+                formControlName="notifyOnLowStock"
+                [options]="notificationMethods"
+                [noLabel]="true"
+              ></dl-select-input>
             </div>
 
             <!-- Notify on No Stock -->
             <div
               id="form-notifyOnNoStock"
-              class="relative mt-dl-2 flex flex-row items-center"
+              class="relative mt-dl-2 flex flex-row items-start"
             >
               <span
                 class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient has no more stock</span
               >
-              <mat-form-field>
-                <mat-select formControlName="notifyOnNoStock">
-                  <mat-option
-                    *ngFor="let method of notificationMethods"
-                    [value]="method"
-                  >
-                    {{ method }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <dl-select-input
+                class="flex-grow"
+                formControlName="notifyOnNoStock"
+                [options]="notificationMethods"
+                [noLabel]="true"
+              ></dl-select-input>
             </div>
 
             <!-- Notify on Upcoming Expiration -->
             <div
               id="form-notifyUpcomingStockExpiry"
-              class="relative mt-dl-2 flex flex-row items-center"
+              class="relative mt-dl-2 flex flex-row items-start"
             >
               <span
                 class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient stock is three days from expiration</span
               >
-              <mat-form-field>
-                <mat-select formControlName="notifyUpcomingStockExpiry">
-                  <mat-option
-                    *ngFor="let method of notificationMethods"
-                    [value]="method"
-                  >
-                    {{ method }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <dl-select-input
+                class="flex-grow"
+                formControlName="notifyUpcomingStockExpiry"
+                [options]="notificationMethods"
+                [noLabel]="true"
+              ></dl-select-input>
             </div>
 
             <!-- Notify on Expired Stock -->
             <div
               id="form-notifyExpiredStock"
-              class="relative mt-dl-2 flex flex-row items-center"
+              class="relative mt-dl-2 flex flex-row items-start"
             >
               <span
                 class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient stock has expired</span
               >
-              <mat-form-field>
-                <mat-select formControlName="notifyExpiredStock">
-                  <mat-option
-                    *ngFor="let method of notificationMethods"
-                    [value]="method"
-                  >
-                    {{ method }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <dl-select-input
+                class="flex-grow"
+                formControlName="notifyExpiredStock"
+                [options]="notificationMethods"
+                [noLabel]="true"
+              ></dl-select-input>
             </div>
             <!-- Notify Friend Created Recipe -->
             <div
               id="form-notifyFriendCreatedRecipe"
-              class="relative mt-dl-2 flex flex-row items-center"
+              class="relative mt-dl-2 flex flex-row items-start"
             >
               <span
                 class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When a friend creates a recipe</span
               >
-              <mat-form-field>
-                <mat-select formControlName="notifyFriendCreateRecipe">
-                  <mat-option
-                    *ngFor="let method of notificationMethods"
-                    [value]="method"
-                  >
-                    {{ method }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <dl-select-input
+                class="flex-grow"
+                formControlName="notifyFriendCreateRecipe"
+                [options]="notificationMethods"
+                [noLabel]="true"
+              ></dl-select-input>
             </div>
 
             <!-- Notify Followee Created Recipe -->
             <div
               id="form-notifyFolloweeCreatedRecipe"
-              class="relative mt-dl-2 flex flex-row items-center"
+              class="relative mt-dl-2 flex flex-row items-start"
             >
               <span
                 class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When someone you follow creates a recipe</span
               >
-              <mat-form-field>
-                <mat-select formControlName="notifyFolloweeCreateRecipe">
-                  <mat-option
-                    *ngFor="let method of notificationMethods"
-                    [value]="method"
-                  >
-                    {{ method }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <dl-select-input
+                class="flex-grow"
+                formControlName="notifyFolloweeCreateRecipe"
+                [options]="notificationMethods"
+                [noLabel]="true"
+              ></dl-select-input>
             </div>
 
             <!-- Notify on New Friend Reqest -->
             <div
               id="form-notifyFriendRequest"
-              class="relative mt-dl-2 flex flex-row items-center"
+              class="relative mt-dl-2 flex flex-row items-start"
             >
               <span
                 class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When you receive a friend request</span
               >
-              <mat-form-field>
-                <mat-select formControlName="notifyFriendRequest">
-                  <mat-option
-                    *ngFor="let method of notificationMethods"
-                    [value]="method"
-                  >
-                    {{ method }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <dl-select-input
+                class="flex-grow"
+                formControlName="notifyFriendRequest"
+                [options]="notificationMethods"
+                [noLabel]="true"
+              ></dl-select-input>
             </div>
 
             <!-- Notify on New Follower -->
             <div
               id="form-notifyNewFollower"
-              class="relative mt-dl-2 flex flex-row items-center"
+              class="relative mt-dl-2 flex flex-row items-start"
             >
               <span
                 class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When someone follows you</span
               >
-              <mat-form-field>
-                <mat-select formControlName="notifyNewFollower">
-                  <mat-option
-                    *ngFor="let method of notificationMethods"
-                    [value]="method"
-                  >
-                    {{ method }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <dl-select-input
+                class="flex-grow"
+                formControlName="notifyNewFollower"
+                [options]="notificationMethods"
+                [noLabel]="true"
+              ></dl-select-input>
             </div>
           </div>
         </div>

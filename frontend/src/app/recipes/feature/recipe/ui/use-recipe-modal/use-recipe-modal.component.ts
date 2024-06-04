@@ -12,6 +12,8 @@ import {
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
+
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -29,6 +31,8 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { Router } from '@angular/router';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+
 
 
 @Component({
@@ -43,6 +47,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatFormFieldModule,
     MatInputModule,
     MatSlideToggleModule,
+    SelectInputComponent,
+    TextInputComponent
   ],
   templateUrl: './use-recipe-modal.component.html',
 })
@@ -51,6 +57,7 @@ export class UseRecipeModalComponent {
   public confirmed: boolean = false;
   public isSubmitting: boolean = false;
   public userProfile: WritableSignal<any> = signal(null);
+  public satisfactionOptions = [1,2,3,4,5,6,7,8,9,10];
 
   constructor(
     private fb: FormBuilder,

@@ -44,23 +44,15 @@
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
         <div id="form-first-field" class="relative flex flex-col">
-          <label
-            class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >{{ field }}</label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="{{ this.data.property }}" />
-            <mat-error
-              *ngIf="form.get(this.data.property)?.errors?.['notState']"
-            >
-              Use two letter code, ex: TX
-            </mat-error>
-          </mat-form-field>
+          <dl-text-input
+            [label]="field"
+            [formControlName]="data.property"
+            [hasError]="form.get(data.property)?.hasError('notState') || false"
+            errorMessage="Use two letter code, ex: TX"
+          ></dl-text-input>
         </div>
       </div>
       <!---->
-
-    
 
       <div class="mt-dl-3">
         <button
