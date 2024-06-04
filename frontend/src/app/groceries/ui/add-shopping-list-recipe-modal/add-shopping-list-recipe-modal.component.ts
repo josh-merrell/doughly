@@ -273,6 +273,9 @@ export class AddShoppingListRecipeModalComponent {
       this.selectedRecipeID.set(recipe.recipeID);
     }
   }
+  onCancel() {
+    this.dialogRef.close();
+  }
   onAddClick(): void {
     this.isLoading.set(true);
     this.store.dispatch(
@@ -297,13 +300,18 @@ export class AddShoppingListRecipeModalComponent {
               console.error(
                 `Shopping list recipe add failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.modalService.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              }, 2, true);
+                2,
+                true
+              );
             } else {
               this.dialogRef.close('successOnboarding');
             }

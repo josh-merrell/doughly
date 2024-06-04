@@ -44,7 +44,7 @@ import { UnitService } from 'src/app/shared/utils/unitService';
     MatInputModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    TextInputComponent
+    TextInputComponent,
   ],
   templateUrl: './add-shopping-list-ingredient-modal.component.html',
 })
@@ -124,7 +124,9 @@ export class AddShoppingListIngredientModalComponent {
       this.selectedIngredient.set({ ingredientID: 0 });
     } else {
       this.selectedIngredient.set(ingredient);
-      this.measurementLabel.set(`Measurement in ${this.unitService.plural(ingredient.purchaseUnit)}`)
+      this.measurementLabel.set(
+        `Measurement in ${this.unitService.plural(ingredient.purchaseUnit)}`
+      );
     }
   }
 
@@ -156,19 +158,28 @@ export class AddShoppingListIngredientModalComponent {
               console.error(
                 `Shopping List Ingredient add failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.modalService.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              }, 1, true);
+                1,
+                true
+              );
             } else {
               this.dialogRef.close('success');
             }
             this.isLoading = false;
           });
       });
+  }
+
+  onCancel() {
+    this.dialogRef.close();
   }
 
   updateSearchFilter(searchFilter: string): void {

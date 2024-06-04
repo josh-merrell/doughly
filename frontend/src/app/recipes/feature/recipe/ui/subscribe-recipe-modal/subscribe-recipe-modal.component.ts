@@ -533,6 +533,10 @@ export class SubscribeRecipeModalComponent {
     }
   }
 
+  onCancel() {
+    this.dialogRef.close();
+  }
+
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(4);
