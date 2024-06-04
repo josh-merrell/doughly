@@ -1,6 +1,5 @@
-import { Injectable, WritableSignal, effect, signal } from '@angular/core';
+import { Injectable, WritableSignal, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DarkMode } from '@aparajita/capacitor-dark-mode';
 import { AuthService } from './authenticationService';
 import { StylesService } from './stylesService';
 
@@ -26,9 +25,6 @@ export class ExtraStuffService {
     const useDarkMode =
       darkMode === 'Enabled' ||
       (darkMode === 'System Default' && this.systemDarkMode());
-    console.log(
-      `USE DARK MODE: ${useDarkMode}, SYSTEM: ${this.systemDarkMode()}`
-    );
     switch (index) {
       case 1:
         return useDarkMode ? '#E4E7EB' : '#323F4B';
