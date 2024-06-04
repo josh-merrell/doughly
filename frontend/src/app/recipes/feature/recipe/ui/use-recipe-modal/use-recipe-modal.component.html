@@ -1,5 +1,5 @@
 <div
-  class="relative flex w-full transform flex-col items-center overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex w-full transform flex-col items-center overflow-y-auto bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
   [ngClass]="{
     'h-dl-21': confirmed,
     'h-dl-12': !confirmed
@@ -68,54 +68,23 @@
         <!-- FORM FIELDS -->
         <div class="mt-dl-1 flex-grow overflow-y-auto">
           <div id="form-satisfaction" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-9"
-              >Satisfaction</label
-            >
-            <mat-form-field>
-              <mat-label>Satisfaction</mat-label>
-              <mat-select formControlName="satisfaction">
-                <mat-option
-                  *ngFor="let number of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]"
-                  [value]="number"
-                >
-                  {{ number }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <dl-select-input
+              label="Satisfaction"
+              formControlName="satisfaction"
+              [options]="satisfactionOptions"
+            ></dl-select-input>
           </div>
 
           <div id="form-difficulty" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-9"
-              >Difficulty</label
-            >
-            <mat-form-field>
-              <mat-label>Difficulty</mat-label>
-              <mat-select formControlName="difficulty">
-                <mat-option
-                  *ngFor="let number of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-                  [value]="number"
-                >
-                  {{ number }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <dl-select-input
+              label="Difficulty"
+              formControlName="difficulty"
+              [options]="satisfactionOptions"
+            ></dl-select-input>
           </div>
 
           <div id="form-note" class="my-dl-4">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-9"
-              >Notes</label
-            >
-            <mat-form-field class="w-full text-dl-4">
-              <textarea
-                matInput
-                formControlName="note"
-                rows="6"
-                class="border-0 focus:ring-0"
-              ></textarea>
-            </mat-form-field>
+            <dl-text-input [isTextArea]=true label="Notes" formControlName="note"></dl-text-input>
           </div>
         </div>
 

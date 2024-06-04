@@ -137,23 +137,25 @@
             >
               {{ item.name }}
             </span>
-            <span
-              class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
-            >
-              {{ Math.ceil(item.needMeasurement) }} {{ item.needUnit }}
-            </span>
+            <div class="flex items-center">
+              <span
+                class="text-dl-5 mr-dl-2 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+              >
+                {{ Math.ceil(item.needMeasurement) }} {{ item.needUnit }}
+              </span>
+              <p
+                *ngIf="!item.valueValid"
+                class="mr-dl-2 text-dl-4 font-dl-3 text-dl-red-4 dark:text-dl-red-7"
+              >
+                buy more
+              </p>
+            </div>
           </div>
         </div>
         <div class="relative flex items-center justify-between">
           <!-- <p class="mr-dl-2 text-dl-4 font-dl-2 italic text-dl-grey-4 dark:text-dl-grey-7">
             {{ item.needUnit }}s
           </p> -->
-          <p
-            *ngIf="!item.valueValid"
-            class="-right-22 absolute -bottom-1 mr-dl-2 w-dl-10 text-dl-4 font-dl-3 text-dl-red-4 dark:text-dl-red-7"
-          >
-            buy more
-          </p>
           <input
             class="rounded-dl-1 border-0"
             *ngIf="!item.store"

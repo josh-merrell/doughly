@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -27,6 +27,8 @@ import { AddRequestErrorModalComponent } from 'src/app/shared/ui/add-request-err
 import { AddToolModalComponent } from 'src/app/kitchen/feature/tools/ui/add-tool-modal/add-tool-modal.component';
 import { positiveIntegerValidator } from 'src/app/shared/utils/formValidator';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
 
 @Component({
   selector: 'dl-add-recipe-tool-modal',
@@ -39,11 +41,13 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatSelectModule,
     MatInputModule,
     AddToolModalComponent,
+    TextInputComponent,
+    SelectInputComponent
   ],
   templateUrl: './add-recipe-tool-modal.component.html',
 })
 export class AddRecipeToolModalComponent {
-  tools$!: Observable<any[]>;
+  tools: WritableSignal<any[]> = signal([]);
   form!: FormGroup;
   isAdding$: Observable<boolean>;
   isLoading$: Observable<boolean>;
@@ -57,10 +61,15 @@ export class AddRecipeToolModalComponent {
     public dialog: MatDialog,
     private modalService: ModalService
   ) {
-    this.tools$ = this.store.select(selectTools);
     this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
     this.setForm();
+  }
+
+  ngOnInit(): void {
+    this.store.select(selectTools).subscribe((tools) => {
+      this.tools.set(tools);
+    });
   }
 
   isToolExcluded(toolID: any): boolean {

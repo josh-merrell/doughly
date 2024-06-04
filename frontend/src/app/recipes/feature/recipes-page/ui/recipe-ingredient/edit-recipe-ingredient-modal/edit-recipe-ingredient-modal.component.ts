@@ -13,6 +13,8 @@ import {
 } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
 import {
   combineLatest,
   debounceTime,
@@ -58,6 +60,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    TextInputComponent,
+    SelectInputComponent,
   ],
   templateUrl: './edit-recipe-ingredient-modal.component.html',
 })
@@ -67,6 +71,8 @@ export class EditRecipeIngredientModalComponent {
   unitOptions: PurchaseUnit[] = Object.values(PurchaseUnit);
   public mUnit!: string;
   public pUnit!: string;
+  public purLabel: WritableSignal<string> = signal('Purchase Unit Ratio');
+
   public recipeIngredient!: WritableSignal<any>;
   public recipe!: WritableSignal<Recipe>;
   public purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
@@ -92,6 +98,7 @@ export class EditRecipeIngredientModalComponent {
     this.pUnit = this.unitService.plural(
       this.data.recipeIngredient.purchaseUnit
     );
+    this.purLabel.set(`${this.pUnit} per ${this.mUnit}`)
     this.recipeIngredient = signal(this.data.recipeIngredient);
     this.setForm();
     this.store
@@ -123,6 +130,7 @@ export class EditRecipeIngredientModalComponent {
     // Update mUnit whenever measurementUnit value changes
     this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
       this.mUnit = this.unitService.singular(value);
+      this.purLabel.set(`${this.pUnit} per ${this.mUnit}`)
     });
   }
 
@@ -228,13 +236,18 @@ export class EditRecipeIngredientModalComponent {
             console.error(
               `Recipe Ingredient Upddate failed: ${error.message}, CODE: ${error.statusCode}`
             );
-            this.modalService.open(ErrorModalComponent, {
-              maxWidth: '380px',
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
+            this.modalService.open(
+              ErrorModalComponent,
+              {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
               },
-            }, 3, true);
+              3,
+              true
+            );
           } else {
             this.dialogRef.close('success');
           }

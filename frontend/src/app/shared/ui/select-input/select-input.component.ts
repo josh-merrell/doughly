@@ -4,9 +4,11 @@ import {
   ElementRef,
   Input,
   Renderer2,
-  WritableSignal,
   forwardRef,
   signal,
+  WritableSignal,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -39,10 +41,15 @@ import { ExtraStuffService } from '../../utils/extraStuffService';
 export class SelectInputComponent implements ControlValueAccessor, Validator {
   @Input() label: string = '';
   @Input() formControlName: string = '';
-  @Input() options: string[] = [];
+  @Input() options: any[] = []; // Allow any type to handle objects
   @Input() hasError: boolean = false;
   @Input() errorMessage: string = '';
-  public sortedOptions: string[] = [];
+  @Input() optionDisplayProperty: string = '';
+  @Input() optionValueProperty: string = '';
+  @Input() additionalOptionName: string = '';
+  @Input() noLabel: boolean = false;
+  @Output() newOptionSelected: EventEmitter<void> = new EventEmitter<void>();
+  public sortedOptions: any[] = [];
 
   constructor(
     public extraStuffService: ExtraStuffService,
@@ -51,7 +58,21 @@ export class SelectInputComponent implements ControlValueAccessor, Validator {
   ) {}
 
   ngOnInit(): void {
-    this.sortedOptions = this.options.sort();
+    if (this.optionDisplayProperty) {
+      this.sortedOptions = this.options
+        .map((option) => ({
+          display: option[this.optionDisplayProperty],
+          value: option[this.optionValueProperty],
+        }))
+        .sort((a, b) => a.display.localeCompare(b.display));
+    } else {
+      this.sortedOptions = this.options
+        .map((option) => ({
+          display: option,
+          value: option,
+        }))
+        .sort();
+    }
   }
 
   private clickListener!: () => void;
@@ -74,17 +95,17 @@ export class SelectInputComponent implements ControlValueAccessor, Validator {
     }
   }
 
-  value: string = '';
+  value: any = '';
   onTouched: () => void = () => {};
-  onChange: (value: string) => void = () => {};
+  onChange: (value: any) => void = () => {};
 
   isOpen: WritableSignal<boolean> = signal(false);
 
-  writeValue(value: string): void {
+  writeValue(value: any): void {
     this.value = value;
   }
 
-  registerOnChange(fn: (value: string) => void): void {
+  registerOnChange(fn: (value: any) => void): void {
     this.onChange = fn;
   }
 
@@ -104,10 +125,21 @@ export class SelectInputComponent implements ControlValueAccessor, Validator {
     this.isOpen.set(!this.isOpen());
   }
 
-  selectOption(option: string): void {
-    this.value = option;
-    this.onChange(this.value);
-    this.onTouched();
+  selectOption(option: any): void {
+    if (option.value === 'new') {
+      this.newOptionSelected.emit();
+    } else {
+      this.value = option.value;
+      this.onChange(this.value);
+      this.onTouched();
+    }
     this.isOpen.set(false);
+  }
+
+  getDisplayText(): string {
+    const selectedOption = this.sortedOptions.find(
+      (option) => option.value === this.value
+    );
+    return selectedOption ? selectedOption.display : '';
   }
 }

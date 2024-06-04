@@ -41,9 +41,9 @@
         class="my-dl-3 flex w-dl-14 flex-col justify-start rounded-lg border px-dl-3 py-dl-1 shadow-md transition-all duration-200 ease-in-out"
         (click)="ingredientCardClick(ingredient)"
         [ngClass]="{
-          'border-dl-teal-10 bg-dl-teal-10 dark:bg-dl-teal-1 dark:border-dl-teal-1':
+          'border-dl-teal-10 bg-dl-teal-10 dark:border-dl-teal-1 dark:bg-dl-teal-1':
             ingredient.ingredientID === selectedIngredient().ingredientID,
-          'border-dl-grey-10 bg-white dark:bg-dl-grey-2 dark:border-dl-grey-2':
+          'border-dl-grey-10 bg-white dark:border-dl-grey-2 dark:bg-dl-grey-2':
             ingredient.ingredientID !== selectedIngredient().ingredientID
         }"
       >
@@ -78,15 +78,10 @@
       *ngIf="isLoading === false"
     >
       <div id="form-measurement">
-        <label class="text-dl-4 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-          >Measurement
-          <ng-container *ngIf="selectedIngredient().ingredientID !== 0"
-            >in {{ selectedIngredient().purchaseUnit }}s</ng-container
-          ></label
-        >
-        <mat-form-field class="w-full">
-          <input matInput formControlName="measurement" />
-        </mat-form-field>
+        <dl-text-input
+          label={{measurementLabel()}}
+          formControlName="measurement"
+        ></dl-text-input>
       </div>
     </form>
     <!-- Add Button -->

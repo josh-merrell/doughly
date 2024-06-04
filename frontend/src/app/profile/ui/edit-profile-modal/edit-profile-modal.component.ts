@@ -12,6 +12,8 @@ import { selectError as selectErrorProfile, selectUpdating as selectUpdatingProf
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+
 
 @Component({
   selector: 'dl-edit-profile-modal',
@@ -21,6 +23,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatProgressSpinnerModule,
     MatInputModule,
     ReactiveFormsModule,
+    TextInputComponent
   ],
   templateUrl: './edit-profile-modal.component.html',
 })

@@ -22,42 +22,23 @@
         <div class="mt-dl-1 flex-grow overflow-y-auto">
           <!-- Title -->
           <div id="form-stepTitle" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Title</label
-            >
-            <mat-form-field class="text-dl-4">
-              <input matInput formControlName="title" />
-              <mat-error
-                class="text-dl-3"
-                *ngIf="form.get('title')?.hasError('titleExists')"
-              >
-                This title is already in use
-              </mat-error>
-              <mat-error
-                class="text-dl-3"
-                *ngIf="form.get('title')?.hasError('required')"
-              >
-                Title is required
-              </mat-error>
-            </mat-form-field>
+            <dl-text-input
+              label="Title"
+              formControlName="title"
+              [hasError]="form.get('title')?.hasError('required') || false"
+              errorMessage="Title is required"
+            ></dl-text-input>
           </div>
 
-          <!-- Description -->
+          <!-- Category -->
           <div id="form-recipeCategoryID" class="relative flex flex-col">
-            <label
-              class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Category</label
-            >
-            <mat-form-field>
-              <mat-select formControlName="recipeCategoryID">
-                <ng-container *ngFor="let category of categories$ | async">
-                  <mat-option [value]="category.recipeCategoryID">
-                    {{ category.name }}
-                  </mat-option>
-                </ng-container>
-              </mat-select>
-            </mat-form-field>
+            <dl-select-input
+              label="Category"
+              formControlName="recipeCategoryID"
+              [options]="categories()"
+              optionDisplayProperty="name"
+              optionValueProperty="recipeCategoryID"
+            ></dl-select-input>
           </div>
 
           <!-- Heirloom Recipe -->
@@ -71,7 +52,7 @@
               class="select-slider"
             ></mat-slide-toggle>
             <span
-              class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4 dark:text-dl-grey-7"
+              class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-3 dark:text-dl-grey-8"
               >Allow friends to view and use</span
             >
           </div>
@@ -86,110 +67,54 @@
               class="select-slider"
             ></mat-slide-toggle>
             <span
-              class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-4 dark:text-dl-grey-7"
+              class="px-dl-3 py-dl-3 text-dl-5 text-dl-grey-3 dark:text-dl-grey-8"
               >Make public</span
             >
           </div>
           <div class="mt-dl-2 flex flex-col">
             <div id="form-servings" class="relative flex flex-col">
-              <label
-                class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-                >Servings</label
-              >
-              <mat-form-field class="w-full">
-                <input matInput formControlName="servings" />
-                <mat-error
-                  class="text-dl-3"
-                  *ngIf="form.get('servings')?.hasError('notPositiveInteger')"
-                >
-                  Must be a positive integer
-                </mat-error>
-                <mat-error
-                  class="text-dl-3"
-                  *ngIf="
-                    form.get('servings')?.hasError('notTwoByteInteger') &&
-                    !form.get('servings')?.hasError('notPositiveInteger')
-                  "
-                >
-                  Must be less than 32768
-                </mat-error>
-              </mat-form-field>
+              <dl-text-input
+                label="Servings"
+                formControlName="servings"
+                [hasError]="
+                  form.get('servings')?.hasError('notPositiveInteger') || false
+                "
+                errorMessage="Must be a positive integer"
+              ></dl-text-input>
             </div>
+
             <div id="form-lifespanDays" class="relative flex flex-col">
-              <label
-                class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-                >Lifespan Days</label
-              >
-              <mat-form-field class="w-full">
-                <input matInput formControlName="lifespanDays" />
-                <mat-error
-                  class="text-dl-3"
-                  *ngIf="
-                    form.get('lifespanDays')?.hasError('notPositiveInteger')
-                  "
-                >
-                  Must be a positive integer
-                </mat-error>
-                <mat-error
-                  class="text-dl-3"
-                  *ngIf="
-                    form.get('lifespanDays')?.hasError('notTwoByteInteger') &&
-                    !form.get('lifespanDays')?.hasError('notPositiveInteger')
-                  "
-                >
-                  Must be less than 32768
-                </mat-error>
-              </mat-form-field>
+              <dl-text-input
+                label="Lifespan Days"
+                formControlName="lifespanDays"
+                [hasError]="
+                  form.get('lifespanDays')?.hasError('notPositiveInteger') ||
+                  false
+                "
+                errorMessage="Must be a positive integer"
+              ></dl-text-input>
             </div>
           </div>
           <div class="mt-dl-2 flex flex-col">
             <div id="form-timePrep" class="relative flex flex-col">
-              <label
-                class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-                >Prep time in minutes</label
-              >
-              <mat-form-field class="w-full">
-                <input matInput formControlName="timePrep" />
-                <mat-error
-                  class="text-dl-3"
-                  *ngIf="form.get('timePrep')?.hasError('notPositiveInteger')"
-                >
-                  Must be a positive integer
-                </mat-error>
-                <mat-error
-                  class="text-dl-3"
-                  *ngIf="
-                    form.get('timePrep')?.hasError('notTwoByteInteger') &&
-                    !form.get('timePrep')?.hasError('notPositiveInteger')
-                  "
-                >
-                  Must be less than 32768
-                </mat-error>
-              </mat-form-field>
+              <dl-text-input
+                label="Prep time in minutes"
+                formControlName="timePrep"
+                [hasError]="
+                  form.get('timePrep')?.hasError('notPositiveInteger') || false
+                "
+                errorMessage="Must be a positive integer"
+              ></dl-text-input>
             </div>
             <div id="form-timeBake" class="relative flex flex-col">
-              <label
-                class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-                >Cook time in minutes</label
-              >
-              <mat-form-field class="w-full">
-                <input matInput formControlName="timeBake" />
-                <mat-error
-                  class="text-dl-3"
-                  *ngIf="form.get('timeBake')?.hasError('notPositiveInteger')"
-                >
-                  Must be a positive integer
-                </mat-error>
-                <mat-error
-                  class="text-dl-3"
-                  *ngIf="
-                    form.get('timeBake')?.hasError('notTwoByteInteger') &&
-                    !form.get('timeBake')?.hasError('notPositiveInteger')
-                  "
-                >
-                  Must be less than 32768
-                </mat-error>
-              </mat-form-field>
+              <dl-text-input
+                label="Cook time in minutes"
+                formControlName="timeBake"
+                [hasError]="
+                  form.get('timeBake')?.hasError('notPositiveInteger') || false
+                "
+                errorMessage="Must be a positive integer"
+              ></dl-text-input>
             </div>
           </div>
           <div id="form-photo-recipe" class="mt-dl-1">

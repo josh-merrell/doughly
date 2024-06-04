@@ -45,6 +45,8 @@ import {
 } from 'src/app/shared/utils/formValidator';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -57,6 +59,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatSelectModule,
     MatInputModule,
     AddIngredientModalComponent,
+    TextInputComponent,
+    SelectInputComponent,
   ],
   templateUrl: './add-recipe-ingredient-modal.component.html',
 })
@@ -69,8 +73,9 @@ export class AddRecipeIngredientModalComponent {
   private addingSubscription!: Subscription;
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
 
-  public mUnit: string = 'measurement unit';
-  public pUnit: string = 'purchase units';
+  public purLabel: WritableSignal<string> = signal('Purchase Unit Ratio');
+  public mUnit: string = 'Measurement Unit';
+  public pUnit: string = 'Purchase Unit';
 
   //used for getting ingredient details to update pUnit when ingredientID form value changes
   private subscriptions: Subscription[] = [];
@@ -134,6 +139,7 @@ export class AddRecipeIngredientModalComponent {
     // Update mUnit whenever measurementUnit value changes
     this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
       this.mUnit = value;
+      this.purLabel.set(`${this.pUnit} per ${this.mUnit}`)
     });
 
     this.form.get('ingredientID')?.valueChanges.subscribe((ingredientID) => {
@@ -175,6 +181,7 @@ export class AddRecipeIngredientModalComponent {
                   value += 's';
                 }
                 this.pUnit = value;
+                this.purLabel.set(`${this.pUnit} per ${this.mUnit}`);
               }
             });
         }

@@ -1,113 +1,125 @@
 <div
-  class="relative h-full max-h-dl-21 w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="flex h-dl-21 w-dl-14 transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
-  <div class="flex items-center justify-center" *ngIf="isAdding">
-    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+  <div class="mb-dl-3 text-center">
+    <div class="mt-dl-2 space-x-1 whitespace-nowrap">
+      <span class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        >Add Ingredient to Kitchen</span
+      >
+    </div>
   </div>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
-    <div class="relative flex w-dl-13 max-w-full flex-col">
-      <div class="sm:ml-dl-1 sm:mt-dl-0 sm:text-left mt-dl-1 text-center">
-        <h3 class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
-          Add Ingredient to Kitchen
-        </h3>
-      </div>
+  <mat-spinner *ngIf="isAdding" class="my-app-custom-spinner"></mat-spinner>
+  <div class="w-full flex-grow overflow-y-auto">
+    <form
+      class="h-full"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      *ngIf="!isAdding"
+    >
+      <div class="flex h-full w-full flex-col">
+        <!--FORM FIELDS-->
+        <div class="mt-dl-1 flex-grow overflow-y-auto">
+          <div id="form-ingredientName" class="relative flex flex-col">
+            <dl-text-input
+              label="Ingredient"
+              formControlName="name"
+              [hasError]="
+                form.get('name')?.hasError('duplicateString') || false
+              "
+              errorMessage="Ingredient name already in use"
+            ></dl-text-input>
+          </div>
 
-      <!--FORM FIELDS-->
-      <div class="mt-dl-6">
-        <div id="form-ingredientName" class="relative flex flex-col">
-          <dl-text-input
-            label="Ingredient"
-            formControlName="name"
-            [hasError]="form.get('name')?.hasError('duplicateString') || false"
-            errorMessage="Ingredient name already in use"
-          ></dl-text-input>
-        </div>
+          <div id="form-ingredientPurchaseUnit" class="relative flex flex-col">
+            <dl-select-input
+              label="Purchase Unit"
+              formControlName="purchaseUnit"
+              [options]="purchaseUnits"
+              [hasError]="
+                (form.get('purchaseUnit')?.invalid &&
+                  !form.get('purchaseUnit')?.pristine) ||
+                false
+              "
+              errorMessage="Select a purchase unit"
+            ></dl-select-input>
+          </div>
 
-        <div id="form-ingredientBrand" class="relative flex flex-col">
-          <dl-text-input label="Brand" formControlName="brand"></dl-text-input>
-        </div>
+          <div id="form-ingredientBrand" class="relative flex flex-col">
+            <dl-text-input
+              label="Brand"
+              formControlName="brand"
+            ></dl-text-input>
+          </div>
 
-        <div id="form-ingredientPurchaseUnit" class="relative flex flex-col">
-          <dl-select-input
-            label="Purchase Unit"
-            formControlName="purchaseUnit"
-            [options]="purchaseUnits"
-            [hasError]="
-              (form.get('purchaseUnit')?.invalid &&
-                !form.get('purchaseUnit')?.pristine) ||
-              false
-            "
-            errorMessage="Select a purchase unit"
-          ></dl-select-input>
-        </div>
+          <div id="form-ingredientLifespanDays" class="relative flex flex-col">
+            <dl-text-input
+              label="Lifespan (days)"
+              formControlName="lifespanDays"
+              [hasError]="
+                form.get('lifespanDays')?.hasError('notPositiveInteger') ||
+                false
+              "
+              errorMessage="Must be a positive whole number"
+            ></dl-text-input>
+          </div>
 
-        <div id="form-ingredientLifespanDays" class="relative flex flex-col">
-          <dl-text-input
-            label="Lifespan (days)"
-            formControlName="lifespanDays"
-            [hasError]="
-              form.get('lifespanDays')?.hasError('notPositiveInteger') || false
-            "
-            errorMessage="Must be a positive whole number"
-          ></dl-text-input>
-        </div>
-
-        <div id="form-ingredientGramRatio" class="relative flex flex-col">
-          <dl-text-input
-            label="Gram Ratio"
-            formControlName="gramRatio"
-            [hasError]="
-              form.get('gramRatio')?.hasError('notPositiveFloat') || false
-            "
-            errorMessage="Must be a positive number"
-          ></dl-text-input>
-          <div
-            *ngIf="gettingUnitRatio()"
-            class="absolute -bottom-1 left-3 flex"
-          >
-            <mat-spinner
-              [diameter]="18"
-              class="my-app-custom-spinner"
-            ></mat-spinner>
-            <p
-              class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+          <div id="form-ingredientGramRatio" class="relative flex flex-col">
+            <dl-text-input
+              label="Gram Ratio"
+              formControlName="gramRatio"
+              [hasError]="
+                form.get('gramRatio')?.hasError('notPositiveFloat') || false
+              "
+              errorMessage="Must be a positive number"
+            ></dl-text-input>
+            <div
+              *ngIf="gettingUnitRatio()"
+              class="absolute -bottom-1 left-3 flex"
             >
-              Getting Suggested Ratio...
+              <mat-spinner
+                [diameter]="18"
+                class="my-app-custom-spinner"
+              ></mat-spinner>
+              <p
+                class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+              >
+                Getting Suggested Ratio...
+              </p>
+            </div>
+            <p
+              *ngIf="gramRatioSuggestion() === form.get('gramRatio')?.value"
+              class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+            >
+              Suggested Ratio
             </p>
           </div>
-          <p
-            *ngIf="gramRatioSuggestion() === form.get('gramRatio')?.value"
-            class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+        </div>
+        <!---->
+
+        <div class="mt-dl-2">
+          <button
+            type="button"
+            class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
+            [class.cursor-pointer]="form.valid && !form.pristine"
+            [ngClass]="{
+              'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
+                form.valid && !form.pristine,
+              'bg-dl-grey-7': !form.valid || form.pristine
+            }"
+            [disabled]="!form.valid || form.pristine"
+            (click)="onSubmit()"
           >
-            Suggested Ratio
-          </p>
+            Submit
+          </button>
+          <button
+            type="button"
+            class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
+            (click)="onCancel()"
+          >
+            Cancel
+          </button>
         </div>
       </div>
-      <!---->
-
-      <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-4">
-        <button
-          type="button"
-          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
-          [class.cursor-pointer]="form.valid && !form.pristine"
-          [ngClass]="{
-            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
-              form.valid && !form.pristine,
-            'bg-dl-grey-7': !form.valid || form.pristine
-          }"
-          [disabled]="!form.valid || form.pristine"
-          (click)="onSubmit()"
-        >
-          Submit
-        </button>
-        <button
-          type="button"
-          class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
-          (click)="onCancel()"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

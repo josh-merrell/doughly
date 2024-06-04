@@ -21,47 +21,23 @@
         <!--FORM FIELDS-->
         <div class="mt-dl-3 flex-grow overflow-y-auto">
           <div id="form-toolName" class="relative flex flex-col">
-            <label
-              class="text-dl-2 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Tool</label
-            >
-            <mat-form-field>
-              <mat-select formControlName="toolID">
-                <ng-container *ngFor="let tool of tools$ | async">
-                  <mat-option
-                    *ngIf="!isToolExcluded(tool.toolID)"
-                    [value]="tool.toolID"
-                  >
-                    {{ tool.name }}
-                  </mat-option>
-                </ng-container>
-                <mat-option
-                  class="bg-dl-grey-10 px-dl-4 py-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
-                  (click)="onAddNewTool()"
-                >
-                  New Tool
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <dl-select-input
+              label="Tool"
+              formControlName="toolID"
+              [options]="tools()"
+              optionDisplayProperty="name"
+              optionValueProperty="toolID"
+              additionalOptionName="New Tool"
+              (newOptionSelected)="onAddNewTool()"
+            ></dl-select-input>
           </div>
           <div id="form-quantity">
-            <label
-              class="text-dl-2 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-              >Quantity</label
-            >
-            <mat-form-field class="w-full">
-              <input
-                matInput
-                formControlName="quantity"
-                [disabled]="!form.get('toolID')?.value"
-              />
-              <mat-error
-                class="text-dl-3"
-                *ngIf="form.get('quantity')?.hasError('notPositiveInteger')"
-              >
-                Must be a positive integer
-              </mat-error>
-            </mat-form-field>
+            <dl-text-input
+              label="Quantity"
+              formControlName="quantity"
+              [hasError]="form.get('quantity')?.hasError('notPositiveInteger') || false"
+              errorMessage="Must be a positive integer"
+            ></dl-text-input>
           </div>
         </div>
         <!---->

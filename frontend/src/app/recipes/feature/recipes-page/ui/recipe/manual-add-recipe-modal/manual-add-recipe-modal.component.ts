@@ -42,7 +42,8 @@ import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { Profile } from 'src/app/profile/state/profile-state';
 import { ModalService } from 'src/app/shared/utils/modalService';
-
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
 @Component({
   selector: 'dl-manual-add-recipe-modal',
   standalone: true,
@@ -55,13 +56,15 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatInputModule,
     ImageCropperModule,
     MatSlideToggleModule,
+    TextInputComponent,
+    SelectInputComponent,
   ],
   templateUrl: './manual-add-recipe-modal.component.html',
 })
 export class ManualAddRecipeModalComponent {
   isAdding: boolean = false;
   recipes!: Recipe[];
-  categories$!: Observable<any[]>;
+  public categories: WritableSignal<any[]> = signal([]);
   form!: FormGroup;
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
@@ -95,7 +98,9 @@ export class ManualAddRecipeModalComponent {
       this.recipes = recipes;
       this.setForm();
     });
-    this.categories$ = this.store.select(selectRecipeCategories);
+    this.store.select(selectRecipeCategories).subscribe((recipeCategories) => {
+      this.categories.set(recipeCategories);
+    });
     this.recipeCategories = this.data.recipeCategories;
   }
 

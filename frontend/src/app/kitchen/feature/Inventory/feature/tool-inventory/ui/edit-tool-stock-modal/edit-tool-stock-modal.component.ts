@@ -1,14 +1,18 @@
-import { Component, Inject } from '@angular/core';
+import {
+  Component,
+  Inject,
+  WritableSignal,
+  effect,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  Observable,
   Subscription,
-  combineLatest,
   filter,
-  of,
-  switchMap,
   take,
 } from 'rxjs';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+
 import { ToolStock } from '../../../tool-inventory/state/tool-stock-state';
 import {
   FormBuilder,
@@ -28,7 +32,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import {
   selectError,
   selectToolStockByID,
@@ -52,14 +56,15 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
+    TextInputComponent
   ],
   templateUrl: './edit-tool-stock-modal.component.html',
 })
 export class EditToolStockModalComponent {
-  toolStock$!: Observable<ToolStock>;
   form!: FormGroup;
   submittingChanges: boolean = false;
-  tool$!: Observable<Tool>;
+  public tool: WritableSignal<Tool | null> = signal(null);
+  public toolStock: WritableSignal<ToolStock | null> = signal(null);
   originalToolStock!: any;
 
   isUpdating: boolean = false;
@@ -73,7 +78,27 @@ export class EditToolStockModalComponent {
     private fb: FormBuilder,
     public dialog: MatDialog,
     private modalService: ModalService
-  ) {}
+  ) {
+    effect(
+      () => {
+        const toolStock = this.toolStock();
+        this.store
+          .select(selectToolByID(toolStock!.toolID))
+          .subscribe((tool) => {
+            this.tool.set(tool);
+          });
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(() => {
+      const toolStock = this.toolStock();
+      this.originalToolStock = toolStock;
+      this.form.patchValue({
+        quantity: toolStock?.quantity,
+      });
+    })
+  }
 
   setForm() {
     this.form = this.fb.group({
@@ -82,32 +107,14 @@ export class EditToolStockModalComponent {
   }
 
   ngOnInit(): void {
+    console.log(`DATA: `, this.data);
+    this.store
+      .select(selectToolStockByID(this.data.itemID))
+      .subscribe((toolStock) => {
+        this.toolStock.set(toolStock);
+        console.log('tool: ', toolStock);
+      });
     this.setForm();
-    this.toolStock$ = this.store.pipe(
-      select(selectToolStockByID(this.data.itemID))
-    );
-
-    this.toolStock$.subscribe((toolStock) => {
-      this.originalToolStock = toolStock;
-      this.form.patchValue({
-        quantity: toolStock.quantity,
-      });
-    });
-
-    this.toolStock$
-      .pipe(
-        switchMap((toolStock) => {
-          this.tool$ = this.store.pipe(
-            select(selectToolByID(toolStock.toolID))
-          );
-          return combineLatest([of(toolStock), this.tool$]);
-        })
-      )
-      .subscribe(([toolStock, tool]) => {
-        this.form.patchValue({
-          quantity: toolStock.quantity,
-        });
-      });
   }
 
   onSubmit(): void {
@@ -149,13 +156,18 @@ export class EditToolStockModalComponent {
               console.error(
                 `Tool stock update failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.modalService.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              }, 2, true);
+                2,
+                true
+              );
             } else {
               this.dialogRef.close('success');
             }

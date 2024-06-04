@@ -27,6 +27,8 @@ export class TextInputComponent implements ControlValueAccessor, Validator {
   @Input() formControlName: string = '';
   @Input() hasError: boolean = false;
   @Input() errorMessage: string = '';
+  @Input() isTextArea: boolean = false;
+  @Input() noLabel: boolean = false;
 
   value: string = '';
   onTouched: () => void = () => {};

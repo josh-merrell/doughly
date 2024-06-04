@@ -1,5 +1,5 @@
 <div
-  class="relative max-h-dl-21 w-dl-14 dark:border transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative max-h-dl-21 w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
@@ -7,29 +7,13 @@
       <div class="mt-dl-2 space-x-1 whitespace-nowrap text-center">
         <span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6"> Add</span
         ><span class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">{{
-          (ingredient$ | async)!.name
+          ingredient()?.name
         }}</span
         ><span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6">Stock</span>
       </div>
 
       <!--FORM FIELDS-->
       <div class="mt-dl-6">
-        <div id="form-ingredientID" class="relative flex flex-col">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Ingredient</label
-          >
-          <mat-form-field>
-            <mat-select formControlName="ingredientID">
-              <mat-option
-                *ngFor="let ingredient of ingredients$ | async"
-                [value]="ingredient.ingredientID"
-              >
-                {{ ingredient.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
         <div id="form-purchasedDate">
           <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
             >Purchased Date</label
@@ -56,15 +40,10 @@
         </div>
 
         <div id="form-measurement">
-          <label class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-7"
-            >Measurement
-            <ng-container *ngIf="ingredient$ | async as ingredient"
-              >in {{ ingredient?.purchaseUnit }}s</ng-container
-            ></label
-          >
-          <mat-form-field class="w-full">
-            <input matInput formControlName="measurement" />
-          </mat-form-field>
+          <dl-text-input
+            label={{measurementLabel()}}
+            formControlName="measurement"
+          ></dl-text-input>
         </div>
       </div>
       <!---->

@@ -12,6 +12,7 @@ import { Tool } from '../../state/tool-state';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { selectAdding, selectError, selectLoading, selectTools } from '../../state/tool-selectors';
+import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { nonDuplicateString } from 'src/app/shared/utils/formValidator';
 import { ToolActions } from '../../state/tool-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
@@ -29,6 +30,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
+    TextInputComponent
   ],
   templateUrl: './add-tool-modal.component.html',
 })
