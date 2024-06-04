@@ -6,11 +6,11 @@
   <div class="relative flex w-full flex-col items-center">
     <div
       (click)="toggleDropdown()"
-      class="relative min-h-dl-5 w-full cursor-pointer rounded-md border-0 bg-dl-grey-10 px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset focus:bg-white focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9 dark:focus:bg-dl-grey-3"
+      class="relative min-h-dl-5 w-full cursor-pointer rounded-md border-0  px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset  focus:ring-2 focus:ring-inset focus:ring-dl-blue-5  dark:text-dl-grey-9 "
       [ngClass]="{
-        'rounded-b-none shadow-md shadow-dl-blue-5/20 ring-dl-blue-5  ':
+        'rounded-b-none bg-white dark:bg-dl-grey-3 shadow-md shadow-dl-blue-5/20 ring-dl-blue-5  ':
           isOpen(),
-        'rounded-b-md ring-dl-grey-8 dark:ring-dl-grey-1': !isOpen()
+        'rounded-b-md bg-dl-grey-10 dark:bg-dl-grey-2 ring-dl-grey-8 dark:ring-dl-grey-1': !isOpen()
       }"
     >
       <svg
