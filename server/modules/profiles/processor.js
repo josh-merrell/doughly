@@ -326,7 +326,7 @@ module.exports = ({ db, dbPublic }) => {
     global.logger.info(`Populating initial account data for userID ${userID}`);
     try {
       // Prevent concurrent execution by using a lock (example using a simple flag in the database)
-      const { data: lockData, error: lockError } = await dbPublic.from('profiles').select('isPopulating').eq('user_id', userID).single();
+      const { data: lockData, error: lockError } = await dbPublic.from('profiles').select('isPopulating,dataLoadStatus').eq('user_id', userID).single();
 
       if (lockError) {
         global.logger.error(`Error checking lock status for userID ${userID}: ${lockError.message}`);
@@ -334,6 +334,12 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       if (lockData.isPopulating) {
+        // if dataLoadStatus is 'done', remove lock and return 'success'
+        if (lockData.dataLoadStatus === 'done') {
+          await dbPublic.from('profiles').update({ isPopulating: false }).eq('user_id', userID);
+          global.logger.info(`PopulateAccount is already running for userID ${userID}, but data is already loaded`);
+          return 'success';
+        }
         global.logger.info(`PopulateAccount is already running for userID ${userID}`);
         return;
       }

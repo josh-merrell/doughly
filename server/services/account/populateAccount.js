@@ -62,7 +62,7 @@ const initialData = {
         timePrep: 30,
         timeBake: 720,
         type: 'private',
-        photoURL: 'https://s3.us-west-2.amazonaws.com/dl.images/recipe/a525810e-5531-4f97-95a4-39a082f7416b/tiramisu.jpg',
+        photoURL: 'https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/tiramisu.jpg',
         ingredients: [
           {
             ingredientID: 0,
@@ -252,7 +252,7 @@ const initialData = {
             title: 'Dip Half of the Ladyfingers',
             description: `You will form 2 layers each of dipped ladyfingers and mascarpone cream. Let's begin with the 1st layer of ladyfingers. Whisk the espresso and Grand Marnier together in a shallow bowl. One at a time, quickly dip each side of the ladyfinger into the espresso mixture. You don't want to over-saturate the ladyfinger with liquid because then the ladyfingers will taste soggy. Just a quick dip on each side. Arrange the dipped ladyfingers in the baking pan to make one solid layer. If needed, cut some ladyfingers to fill in any empty spaces. Reserve remaining espresso mixture and ladyfingers for another layer.`,
             sequence: 2,
-            photoURL: 'https://s3.us-west-2.amazonaws.com/dl.images/recipeStep/a525810e-5531-4f97-95a4-39a082f7416b/recipeStepImage_1715745786064',
+            photoURL: 'https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipeStep/a525810e-5531-4f97-95a4-39a082f7416b/recipeStepImage_1715745786064',
           },
           {
             stepID: 0,
@@ -273,7 +273,7 @@ const initialData = {
             title: 'Whip the Heavy Cream',
             description: `With a handheld or stand mixer fitted with a whisk attachment, beat the heavy cream and vanilla extract together on medium-high speed until medium peaks form, about 3-4 minutes. Medium peaks are between soft/loose peaks and stiff peaks and are the perfect consistency for the tiramisu cream. Fold the whipped cream into the mascarpone mixture.`,
             sequence: 5,
-            photoURL: 'https://s3.us-west-2.amazonaws.com/dl.images/recipeStep/a525810e-5531-4f97-95a4-39a082f7416b/recipeStepImage_1715745801988',
+            photoURL: 'https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipeStep/a525810e-5531-4f97-95a4-39a082f7416b/recipeStepImage_1715745801988',
           },
           {
             stepID: 0,
@@ -287,7 +287,7 @@ const initialData = {
             title: 'Spread Half of the Mascarpone Cream',
             description: `Spread half of the mascarpone cream evenly over bottom layer of ladyfingers. An offset spatula helps spread it neatly and evenly.`,
             sequence: 7,
-            photoURL: 'https://s3.us-west-2.amazonaws.com/dl.images/recipeStep/a525810e-5531-4f97-95a4-39a082f7416b/recipeStepImage_1715745851056',
+            photoURL: 'https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipeStep/a525810e-5531-4f97-95a4-39a082f7416b/recipeStepImage_1715745851056',
           },
           {
             stepID: 0,
@@ -316,8 +316,8 @@ const initialData = {
   },
   messages: {
     sequence: 6,
-    data: [{ title: 'Welcome to Doughly', message: 'We are excited for you to create and share the important recipes in your life with your friends and family. Happy cooking!', type: 'welcomeToDoughly',}],
-  }
+    data: [{ title: 'Welcome to Doughly', message: 'We are excited for you to create and share the important recipes in your life with your friends and family. Happy cooking!', type: 'welcomeToDoughly' }],
+  },
 };
 
 module.exports = {
