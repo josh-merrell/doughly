@@ -358,7 +358,7 @@ module.exports = ({ db, dbPublic }) => {
       let currentSequence = initData[currentStatus].sequence;
 
       // Attempt all remaining data loading steps
-      for (let i = currentSequence; i < 6; i++) {
+      for (let i = currentSequence; i < 7; i++) {
         global.logger.info(`Starting data load for userID ${userID}. Current step: ${currentSequence}`);
         // Call helper function for this step
         let stepFunction;
@@ -382,6 +382,10 @@ module.exports = ({ db, dbPublic }) => {
           case 5:
             currentStatus = 'recipes';
             stepFunction = populateRecipes;
+            break;
+          case 6:
+            currentStatus = 'messages';
+            stepFunction = populateMessages;
             break;
           default:
             break;
@@ -634,7 +638,35 @@ module.exports = ({ db, dbPublic }) => {
     }
 
     // assuming we're here, we've successfully created all recipes. Update 'dataLoadStatus'
-    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'recipeSubscriptions' }).eq('user_id', userID);
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'messages' }).eq('user_id', userID);
+    if (errorUpdateDataLoadStatus) {
+      global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
+      throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+    }
+
+    return 'success';
+  }
+
+  async function populateMessages(userID, array) {
+    global.logger.info(`Populating messages for userID ${userID}`);
+    // remove any existing messages for userID, we'll start from scratch
+    const { error: errorDeleteMessages } = await db.from('messages').delete().eq('userID', userID);
+    if (errorDeleteMessages) {
+      global.logger.error(`Error deleting messages for userID ${userID}: ${errorDeleteMessages.message}`);
+      throw errorGen(`Error deleting messages for userID ${userID}: ${errorDeleteMessages.message}`, 400);
+    }
+
+    // currently just adding a default welcome message using dedicated /messages endpoint
+    await axios.post(
+      `${process.env.NODE_HOST}:${process.env.PORT}/messages/welcome`,
+      {
+        userID: options.userID,
+      },
+      { headers: { authorization } },
+    );
+
+    // assuming we're here, we've successfully created all messages. Update 'dataLoadStatus'
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'done' }).eq('user_id', userID);
     if (errorUpdateDataLoadStatus) {
       global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
       throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);

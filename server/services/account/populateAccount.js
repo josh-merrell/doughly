@@ -314,6 +314,10 @@ const initialData = {
       },
     ],
   },
+  messages: {
+    sequence: 6,
+    data: [{ title: 'Welcome to Doughly', message: 'We are excited for you to create and share the important recipes in your life with your friends and family. Happy cooking!', type: 'welcomeToDoughly',}],
+  }
 };
 
 module.exports = {
