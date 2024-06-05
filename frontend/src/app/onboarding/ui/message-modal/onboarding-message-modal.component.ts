@@ -59,7 +59,7 @@ export class OnboardingMessageModalComponent {
 
   form!: FormGroup;
   public currentStep: WritableSignal<number> = signal(1);
-  public totalSteps = 15;
+  public totalSteps = 7;
   public showNextButton = false;
   constructor(
     @Inject(MAT_DIALOG_DATA)

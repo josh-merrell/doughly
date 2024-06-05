@@ -51,9 +51,10 @@ export class VisionAddRecipeModalComponent {
   public sourceImagePresent: boolean = false;
 
   // Onboarding
-  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
-  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
-  private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
+  // ** OLD ONBOARDING **
+  // public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  // public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  // private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
 
   // recipe photo upload
   public recipeImageBase64: any = '';
@@ -80,16 +81,17 @@ export class VisionAddRecipeModalComponent {
     private authService: AuthService,
     private modalService: ModalService,
   ) {
-    effect(
-      () => {
-        const profile = this.profile();
-        if (!profile || profile.onboardingState === 0) return;
-        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
-          this.onboardingHandler(profile.onboardingState);
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    // ** OLD ONBOARDING **
+    // effect(
+    //   () => {
+    //     const profile = this.profile();
+    //     if (!profile || profile.onboardingState === 0) return;
+    //     if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+    //       this.onboardingHandler(profile.onboardingState);
+    //     }
+    //   },
+    //   { allowSignalWrites: true }
+    // );
   }
 
   // for recipe source image
@@ -114,9 +116,10 @@ export class VisionAddRecipeModalComponent {
 
   ngOnInit() {
     this.store.select(selectProfile).subscribe((profile) => {
-      if (profile && profile.onboardingState !== 0) {
-        this.showOnboardingBadge.set(true);
-      }
+      // ** OLD ONBOARDING **
+      // if (profile && profile.onboardingState !== 0) {
+      //   this.showOnboardingBadge.set(true);
+      // }
       this.profile.set(profile);
     });
   }
@@ -214,9 +217,10 @@ export class VisionAddRecipeModalComponent {
 
     try {
       // if Onboarding is active, don't allow user to close modal
-      if (this.profile().onboardingState === 12) {
-        this.dialogRef.disableClose = true;
-      }
+      // ** OLD ONBOARDING **
+      // if (this.profile().onboardingState === 12) {
+      //   this.dialogRef.disableClose = true;
+      // }
       // Start listening for SSE messages relating to the recipe vision progress
       this.recipeProgressService.startListening().subscribe({
         next: (message) => {
@@ -286,39 +290,40 @@ export class VisionAddRecipeModalComponent {
                     if (!newRecipeID) {
                       this.dialogRef.close('success');
                     } else {
-                      //advance onboarding
-                      this.extraStuffService.onboardingVisionRecipe.set(
-                        newRecipeID.recipeID
-                      );
-                      if (this.profile().onboardingState === 12) {
-                        this.store.dispatch(
-                          ProfileActions.updateProfileProperty({
-                            property: 'onboardingState',
-                            value: 13,
-                          })
-                        );
-                        this.store
-                          .select(selectUpdating)
-                          .pipe(
-                            filter((updating) => !updating),
-                            take(1)
-                          )
-                          .subscribe(() => {
-                            this.store
-                              .select(selectError)
-                              .pipe(take(1))
-                              .subscribe((error) => {
-                                if (error) {
-                                  console.error(
-                                    `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-                                  );
-                                }
-                              });
-                          });
-                      }
-                      //navigate to recipe page
-                      this.router.navigate(['/recipe', newRecipeID.recipeID]);
-                      this.modalService.closeAll();
+                      // ** OLD ONBOARDING **
+                      // //advance onboarding
+                      // this.extraStuffService.onboardingVisionRecipe.set(
+                      //   newRecipeID.recipeID
+                      // );
+                      // if (this.profile().onboardingState === 12) {
+                      //   this.store.dispatch(
+                      //     ProfileActions.updateProfileProperty({
+                      //       property: 'onboardingState',
+                      //       value: 13,
+                      //     })
+                      //   );
+                      //   this.store
+                      //     .select(selectUpdating)
+                      //     .pipe(
+                      //       filter((updating) => !updating),
+                      //       take(1)
+                      //     )
+                      //     .subscribe(() => {
+                      //       this.store
+                      //         .select(selectError)
+                      //         .pipe(take(1))
+                      //         .subscribe((error) => {
+                      //           if (error) {
+                      //             console.error(
+                      //               `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+                      //             );
+                      //           }
+                      //         });
+                      //     });
+                      // }
+                      // //navigate to recipe page
+                      // this.router.navigate(['/recipe', newRecipeID.recipeID]);
+                      // this.modalService.closeAll();
                     }
                   });
               }
@@ -342,37 +347,38 @@ export class VisionAddRecipeModalComponent {
   }
 
   onboardingHandler(onboardingState: number): void {
-    if (onboardingState === 12) {
-      if (this.onboardingModalOpen()) return;
-      this.onboardingModalOpen.set(true);
-      this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
-      const dialogRef = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message: this.stringsService.onboardingStrings.recipeCreateImage,
-            currentStep: 12,
-            showNextButton: false,
-          },
-          position: {
-            top: '30%',
-          },
-        },
-        3
-      );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe(() => {
-          this.onboardingModalOpen.set(false);
-          this.showOnboardingBadge.set(true);
-        });
-      } else {
-      }
-    }
+    // ** OLD ONBOARDING **
+    // if (onboardingState === 12) {
+    //   if (this.onboardingModalOpen()) return;
+    //   this.onboardingModalOpen.set(true);
+    //   this.showOnboardingBadge.set(false);
+    //   this.reopenOnboardingModal.set(false);
+    //   const dialogRef = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.recipeCreateImage,
+    //         currentStep: 12,
+    //         showNextButton: false,
+    //       },
+    //       position: {
+    //         top: '30%',
+    //       },
+    //     },
+    //     3
+    //   );
+    //   if (dialogRef) {
+    //     dialogRef.afterClosed().subscribe(() => {
+    //       this.onboardingModalOpen.set(false);
+    //       this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // }
   }
 
-  onboardingBadgeClick() {
-    this.showOnboardingBadge.set(false);
-    this.onboardingHandler(this.profile().onboardingState);
-  }
+  // onboardingBadgeClick() {
+  //   this.showOnboardingBadge.set(false);
+  //   this.onboardingHandler(this.profile().onboardingState);
+  // }
 }

@@ -326,7 +326,7 @@ module.exports = ({ db, dbPublic }) => {
     global.logger.info(`Populating initial account data for userID ${userID}`);
     try {
       // Prevent concurrent execution by using a lock (example using a simple flag in the database)
-      const { data: lockData, error: lockError } = await dbPublic.from('profiles').select('isPopulating').eq('user_id', userID).single();
+      const { data: lockData, error: lockError } = await dbPublic.from('profiles').select('isPopulating,dataLoadStatus').eq('user_id', userID).single();
 
       if (lockError) {
         global.logger.error(`Error checking lock status for userID ${userID}: ${lockError.message}`);
@@ -334,6 +334,12 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       if (lockData.isPopulating) {
+        // if dataLoadStatus is 'done', remove lock and return 'success'
+        if (lockData.dataLoadStatus === 'done') {
+          await dbPublic.from('profiles').update({ isPopulating: false }).eq('user_id', userID);
+          global.logger.info(`PopulateAccount is already running for userID ${userID}, but data is already loaded`);
+          return 'success';
+        }
         global.logger.info(`PopulateAccount is already running for userID ${userID}`);
         return;
       }
@@ -358,7 +364,7 @@ module.exports = ({ db, dbPublic }) => {
       let currentSequence = initData[currentStatus].sequence;
 
       // Attempt all remaining data loading steps
-      for (let i = currentSequence; i < 6; i++) {
+      for (let i = currentSequence; i < 7; i++) {
         global.logger.info(`Starting data load for userID ${userID}. Current step: ${currentSequence}`);
         // Call helper function for this step
         let stepFunction;
@@ -382,6 +388,10 @@ module.exports = ({ db, dbPublic }) => {
           case 5:
             currentStatus = 'recipes';
             stepFunction = populateRecipes;
+            break;
+          case 6:
+            currentStatus = 'messages';
+            stepFunction = populateMessages;
             break;
           default:
             break;
@@ -634,7 +644,35 @@ module.exports = ({ db, dbPublic }) => {
     }
 
     // assuming we're here, we've successfully created all recipes. Update 'dataLoadStatus'
-    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'recipeSubscriptions' }).eq('user_id', userID);
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'messages' }).eq('user_id', userID);
+    if (errorUpdateDataLoadStatus) {
+      global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
+      throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+    }
+
+    return 'success';
+  }
+
+  async function populateMessages(userID, array) {
+    global.logger.info(`Populating messages for userID ${userID}`);
+    // remove any existing messages for userID, we'll start from scratch
+    const { error: errorDeleteMessages } = await db.from('messages').delete().eq('userID', userID);
+    if (errorDeleteMessages) {
+      global.logger.error(`Error deleting messages for userID ${userID}: ${errorDeleteMessages.message}`);
+      throw errorGen(`Error deleting messages for userID ${userID}: ${errorDeleteMessages.message}`, 400);
+    }
+
+    // currently just adding a default welcome message using dedicated /messages endpoint
+    await axios.post(
+      `${process.env.NODE_HOST}:${process.env.PORT}/messages/welcome`,
+      {
+        userID,
+      },
+      { headers: { authorization: 'override' } },
+    );
+
+    // assuming we're here, we've successfully created all messages. Update 'dataLoadStatus'
+    const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'done' }).eq('user_id', userID);
     if (errorUpdateDataLoadStatus) {
       global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
       throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);

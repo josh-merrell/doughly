@@ -74,9 +74,10 @@ export class PublicRecipeComponent {
     signal(null);
 
   // Onboarding
-  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
-  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
-  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+  // ** OLD ONBOARDING **
+  // public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  // public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  // private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
 
   enhancedIngredients = computed(() => {
     const recipeIngredients = this.recipeIngredients();
@@ -210,16 +211,17 @@ export class PublicRecipeComponent {
     public extraStuffService: ExtraStuffService
   ) {
     // handle onboarding
-    effect(
-      () => {
-        const profile = this.profile();
-        if (!profile || profile.onboardingState === 0) return;
-        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
-          this.onboardingHandler(profile.onboardingState);
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    // ** OLD ONBOARDING **
+    // effect(
+    //   () => {
+    //     const profile = this.profile();
+    //     if (!profile || profile.onboardingState === 0) return;
+    //     if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+    //       this.onboardingHandler(profile.onboardingState);
+    //     }
+    //   },
+    //   { allowSignalWrites: true }
+    // );
 
     // if user is the author, redirect to the recipe page
     effect(() => {
@@ -414,7 +416,8 @@ export class PublicRecipeComponent {
               tools: this.tools(),
               steps: this.steps(),
               author: this.author(),
-              onboarding: this.profile().onboardingState === (3 || 4),
+              // ** OLD ONBOARDING **
+              // onboarding: this.profile().onboardingState === (3 || 4),
             },
             width: '90%',
             maxWidth: '640px',
@@ -427,43 +430,44 @@ export class PublicRecipeComponent {
   }
 
   onboardingHandler(onboardingState: number) {
-    if (onboardingState === 3) {
-      this.onboardingModalOpen.set(true);
-      this.reopenOnboardingModal.set(false);
-      const ref = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message: this.stringsService.onboardingStrings.publicRecipePage,
-            currentStep: 3,
-            showNextButton: false,
-          },
-          position: {
-            top: '40%',
-          },
-        },
-        1
-      );
-      if (ref) {
-        ref.afterClosed().subscribe(() => {
-          this.onboardingModalOpen.set(false);
-          if (this.profile().onboardingState === 3) {
-            this.showOnboardingBadge.set(true);
-          } else {
-            this.showOnboardingBadge.set(false);
-          }
-        });
-      } else {
-      }
-    }
-    if (onboardingState === 4) {
-      this.onSubscribeClick();
-    }
+    // ** OLD ONBOARDING **
+    // if (onboardingState === 3) {
+    //   this.onboardingModalOpen.set(true);
+    //   this.reopenOnboardingModal.set(false);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.publicRecipePage,
+    //         currentStep: 3,
+    //         showNextButton: false,
+    //       },
+    //       position: {
+    //         top: '40%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe(() => {
+    //       this.onboardingModalOpen.set(false);
+    //       if (this.profile().onboardingState === 3) {
+    //         this.showOnboardingBadge.set(true);
+    //       } else {
+    //         this.showOnboardingBadge.set(false);
+    //       }
+    //     });
+    //   } else {
+    //   }
+    // }
+    // if (onboardingState === 4) {
+    //   this.onSubscribeClick();
+    // }
   }
 
-  onboardingBadgeClick() {
-    this.showOnboardingBadge.set(false);
-    this.onboardingHandler(this.profile().onboardingState);
-  }
+  // onboardingBadgeClick() {
+  //   this.showOnboardingBadge.set(false);
+  //   this.onboardingHandler(this.profile().onboardingState);
+  // }
 
 }

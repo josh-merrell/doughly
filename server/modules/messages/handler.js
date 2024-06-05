@@ -74,9 +74,27 @@ async function deleteMessage(req, res) {
   }
 }
 
+async function welcome(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { authorization } = req.headers;
+  try {
+    const returner = await p.addWelcomeMessage({
+      userID: req.userID,
+      authorization,
+    });
+    return res.json(returner);
+  } catch (e) {
+    global.logger.error(`'messages' 'welcome': ${e.message}`);
+    return res.status(e.code || 500).json({ error: e.message });
+  }
+}
+
 module.exports = {
   getMessages,
   acknowledgeMessage,
   deleteMessage,
   addMessage,
+  welcome
 };
