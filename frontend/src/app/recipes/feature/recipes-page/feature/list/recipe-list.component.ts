@@ -296,7 +296,7 @@ export class RecipeListComponent {
     if (allowCreate) {
       // update url to include '/add' if it's not already there
       this.location.go('/recipes/created/add');
-
+      console.log('OPEN ADD RECIPE MODAL')
       const ref = this.modalService.open(
         AddRecipeModalComponent,
         {
@@ -469,6 +469,7 @@ export class RecipeListComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
+      console.log('OPEN ONBOARDING MODAL');
       const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
@@ -488,12 +489,37 @@ export class RecipeListComponent {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(true);
           if (result === 'nextClicked') {
-            this.onboardingCallback();
+            this.router.navigate(['/tempRoute']);
           }
         });
       }
     } else if (onboardingState === 5) {
-      this.router.navigate(['/recipes/created/add']);
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
+      this.onboardingModalOpen.set(true);
+      const ref = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.recipeCreateOverview,
+            currentStep: 5,
+            showNextButton: true,
+          },
+          position: {
+            bottom: '10%',
+          },
+        },
+        2
+      );
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
+          this.onboardingModalOpen.set(false);
+          if (result === 'nextClicked') {
+            this.modalService.closeAll();
+            this.router.navigate(['/tempRoute']);
+          } else this.showOnboardingBadge.set(false);
+        });
+      }
     } else {
       this.router.navigate(['/tempRoute']);
     }
@@ -527,6 +553,7 @@ export class RecipeListComponent {
 
   onboardingCallback() {
     setTimeout(() => {
+      console.log(`ONBOARDING STATE: ${this.profile().onboardingState}`);
       this.onboardingHandler(this.profile().onboardingState);
     }, 1000);
   }

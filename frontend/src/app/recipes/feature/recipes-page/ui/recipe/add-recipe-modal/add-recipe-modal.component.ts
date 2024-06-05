@@ -61,9 +61,9 @@ export class AddRecipeModalComponent {
       () => {
         const profile = this.profile();
         if (!profile || profile.onboardingState === 0) return;
-        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
-          this.onboardingHandler(profile.onboardingState);
-        }
+        // if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+        //   this.onboardingHandler(profile.onboardingState);
+        // }
       },
       { allowSignalWrites: true }
     );
@@ -248,36 +248,7 @@ export class AddRecipeModalComponent {
   }
 
   onboardingHandler(onboardingState: number): void {
-    if (onboardingState === 5) {
-      this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
-      this.onboardingModalOpen.set(true);
-      const dialogRef = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message: this.stringsService.onboardingStrings.recipeCreateOverview,
-            currentStep: 5,
-            showNextButton: true,
-          },
-          position: {
-            bottom: '10%',
-          },
-        },
-        2
-      );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe((result) => {
-          this.onboardingModalOpen.set(false);
-          if (result === 'nextClicked') {
-            this.onboardingCallback();
-          } else this.showOnboardingBadge.set(true);
-        });
-      }
-    } else {
-      this.dialogRef.close();
-      this.router.navigate(['/tempRoute']);
-    }
+
     // ** OLD ONBOARDING STEPS **
     // if (onboardingState === 9) {
     //   this.showOnboardingBadge.set(false);

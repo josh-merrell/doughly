@@ -24,7 +24,7 @@ export class StringsService {
     recipeCreateImageButton: `For now though, let's create a Recipe using an image.`,
     recipeCreateImage: `Choose a photo or screenshot of a recipe you'd like to add, handwritten is fine! Add a display image if you have one. AI will extract the details, map them to your existing kitchen items, and create any new ones you need. Give it a try when ready!`,
     recipeCreateImageSuccess: `Amazing! While not always perfect, this tool gets the bulk of the work done for you. Review and confirm any draft Ingredients in order to use this recipe.`,
-    recipeCreateOverview: `Aside from manual entry, you may also import recipes from URLs or images. Stop dealing with ad-covered websites and let AI will do the work for you!`,
+    recipeCreateOverview: `Aside from manual entry, you may also import recipes from URLs or images. Stop dealing with ad-covered websites and let AI do the work for you!`,
     recipeCreateCreditUsage: `Using AI to create recipes requires credits. We start you off with a few. To add more, upgrade to a Subscription plan.`,
     onboardingComplete: `We hope you're excited to build your collection for your loved ones to enjoy for years to come. Best wishes from Doughly.`,
   };

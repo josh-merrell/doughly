@@ -246,6 +246,7 @@ export class DiscoverRecipesComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
+      this.modalService.closeAll();
       const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
@@ -273,6 +274,7 @@ export class DiscoverRecipesComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(false);
+      this.modalService.closeAll();
       const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
