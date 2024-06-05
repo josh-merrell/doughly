@@ -17,8 +17,7 @@ export class ExtraStuffService {
     private http: HttpClient,
     private authService: AuthService,
     private stylesService: StylesService
-  ) {
-  }
+  ) {}
 
   public getFillColor(index: number): string {
     const darkMode = this.authService.profile()?.darkMode;
@@ -35,7 +34,9 @@ export class ExtraStuffService {
       case 4:
         return useDarkMode ? '#CBD2D9' : '#3E4C59';
       case 5:
-        return useDarkMode ? '#B3ECFF' : '#0B569A3';
+        return useDarkMode
+          ? this.stylesService.getHex('blue-9')
+          : this.stylesService.getHex('blue-2');
       case 6:
         return useDarkMode
           ? this.stylesService.getHex('pink-4')
@@ -53,7 +54,9 @@ export class ExtraStuffService {
           ? this.stylesService.getHex('grey-8')
           : this.stylesService.getHex('grey-3');
       case 11:
-        return useDarkMode ? '#40C3F7' : '#2BB0ED';
+        return useDarkMode
+          ? this.stylesService.getHex('blue-6')
+          : this.stylesService.getHex('blue-5');
       case 12:
         return useDarkMode
           ? this.stylesService.getHex('grey-2')

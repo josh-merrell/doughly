@@ -9,7 +9,10 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { selectShoppingListRecipes } from '../../state/shopping-list-recipe-selectors';
+import {
+  selectError,
+  selectShoppingListRecipes,
+} from '../../state/shopping-list-recipe-selectors';
 import { RecipeCardComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/recipe-card/recipe-card.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -21,6 +24,7 @@ import {
   selectShoppingLists,
   selectError as selectErrorShoppingList,
   selectUpdating as selectUpdatingShoppingList,
+  selectUpdating,
 } from '../../state/shopping-list-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { RecipeService } from 'src/app/recipes/data/recipe.service';
@@ -152,7 +156,7 @@ export class DraftPageComponent {
   // Onboarding
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
   public onboardingModalOpen: WritableSignal<boolean> = signal(false);
-  private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
 
   constructor(
     public dialog: MatDialog,
@@ -726,7 +730,7 @@ export class DraftPageComponent {
   }
 
   onboardingHandler(onboardingState: number) {
-    if (onboardingState === 7) {
+    if (onboardingState === 6) {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
@@ -735,25 +739,62 @@ export class DraftPageComponent {
         {
           data: {
             message: this.stringsService.onboardingStrings.shoppingPageOverview,
-            currentStep: 7,
-            showNextButton: false,
+            currentStep: 6,
+            showNextButton: true,
           },
           position: {
-            bottom: '50%',
+            top: '50%',
           },
         },
         1
       );
       if (ref) {
-        ref.afterClosed().subscribe(() => {
+        ref.afterClosed().subscribe((result) => {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(true);
+          if (result === 'nextClicked') {
+            this.onboardingCallback();
+          }
         });
-      } else {
       }
-    } else if (onboardingState === 8) {
-      this.router.navigate(['/recipes/created']);
+    } else {
+      this.router.navigate(['/tempRoute']);
     }
+    // ** OLD ONBOARDING **
+    // if (onboardingState === 7) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.shoppingPageOverview,
+    //         currentStep: 7,
+    //         showNextButton: false,
+    //       },
+    //       position: {
+    //         bottom: '50%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe(() => {
+    //       this.onboardingModalOpen.set(false);
+    //       this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // } else if (onboardingState === 8) {
+    //   this.router.navigate(['/recipes/created']);
+    // }
+  }
+
+  onboardingCallback() {
+    setTimeout(() => {
+      this.onboardingHandler(this.profile().onboardingState);
+    }, 1000);
   }
 
   onboardingBadgeClick() {

@@ -18,6 +18,16 @@ export class StylesService {
   private profile: WritableSignal<any> = signal(null);
   private extraStuffService!: ExtraStuffService;
   private colorClasses = {
+    'blue-1': '#035388',
+    'blue-2': '#0B69A3',
+    'blue-3': '#127FBF',
+    'blue-4': '#1992D4',
+    'blue-5': '#2BB0ED',
+    'blue-6': '#40C3F7',
+    'blue-7': '#5ED0FA',
+    'blue-8': '#81DEFD',
+    'blue-9': '#B3ECFF',
+    'blue-10': '#E3F8FF',
     'grey-1': '#1F2933',
     'grey-2': '#323F4B',
     'grey-3': '#3E4C59',

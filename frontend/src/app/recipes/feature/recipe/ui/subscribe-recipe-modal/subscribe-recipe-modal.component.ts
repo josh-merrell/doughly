@@ -78,10 +78,11 @@ export class SubscribeRecipeModalComponent {
   public userTools: WritableSignal<any[]> = signal([]);
 
   // Onboarding
-  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
-  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
-  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
-  private onboarding: boolean = false;
+  // ** OLD ONBOARDING **
+  // public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  // public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  // private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+  // private onboarding: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<SubscribeRecipeModalComponent>,
@@ -163,7 +164,8 @@ export class SubscribeRecipeModalComponent {
       this.dialogRef.close('error');
     }
     console.log('this.data', this.data);
-    this.onboarding = this.data.onboarding;
+    // ** OLD ONBOARDING **
+    // this.onboarding = this.data.onboarding;
     this.initials =
       this.author.nameFirst && this.author.nameLast
         ? this.author.nameFirst[0] + this.author.nameLast[0]
@@ -215,10 +217,11 @@ export class SubscribeRecipeModalComponent {
     // Get unit ratio suggestions for any ingredient that has a userIngredientID and no userPurchaseUnitRatio
     this.getUnitRatios();
 
+    // ** OLD ONBOARDING **
     // initialize onboarding
-    if (this.onboarding) {
-      this.onboardingHandler(4);
-    }
+    // if (this.onboarding) {
+    //   this.onboardingHandler(4);
+    // }
   }
 
   getIngredientPlaceholder(sourceIngredient: any): string {
@@ -460,42 +463,43 @@ export class SubscribeRecipeModalComponent {
                   true
                 );
               } else {
-                // advance onboarding if it is active
-                if (this.onboarding) {
-                  this.store.dispatch(
-                    ProfileActions.updateProfileProperty({
-                      property: 'onboardingState',
-                      value: 5,
-                    })
-                  );
-                  this.store
-                    .select(selectUpdating)
-                    .pipe(
-                      filter((updating) => !updating),
-                      take(1)
-                    )
-                    .subscribe(() => {
-                      this.store
-                        .select(selectError)
-                        .pipe(take(1))
-                        .subscribe((error) => {
-                          if (error) {
-                            console.error(
-                              `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-                            );
-                          }
-                        });
-                    });
-                }
-                this.store.select(selectNewRecipeID).subscribe((recipeID) => {
-                  this.dialogRef.close('success');
-                  if (recipeID) {
-                    this.extraStuffService.onboardingSubscribedRecipe.set(
-                      recipeID
-                    );
-                    this.router.navigate(['/recipe', recipeID]);
-                  }
-                });
+                // ** OLD ONBOARDING **
+              //   // advance onboarding if it is active
+              //   if (this.onboarding) {
+              //     this.store.dispatch(
+              //       ProfileActions.updateProfileProperty({
+              //         property: 'onboardingState',
+              //         value: 5,
+              //       })
+              //     );
+              //     this.store
+              //       .select(selectUpdating)
+              //       .pipe(
+              //         filter((updating) => !updating),
+              //         take(1)
+              //       )
+              //       .subscribe(() => {
+              //         this.store
+              //           .select(selectError)
+              //           .pipe(take(1))
+              //           .subscribe((error) => {
+              //             if (error) {
+              //               console.error(
+              //                 `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+              //               );
+              //             }
+              //           });
+              //       });
+              //   }
+              //   this.store.select(selectNewRecipeID).subscribe((recipeID) => {
+              //     this.dialogRef.close('success');
+              //     if (recipeID) {
+              //       this.extraStuffService.onboardingSubscribedRecipe.set(
+              //         recipeID
+              //       );
+              //       this.router.navigate(['/recipe', recipeID]);
+              //     }
+              //   });
               }
               this.loading.set(false);
             });
@@ -504,42 +508,43 @@ export class SubscribeRecipeModalComponent {
   }
 
   onboardingHandler(state: number) {
-    if (state !== 4) {
-      this.showOnboardingBadge.set(false);
-      return;
-    }
-    this.onboardingModalOpen.set(true);
-    this.reopenOnboardingModal.set(false);
-    const dialogRef = this.modalService.open(
-      OnboardingMessageModalComponent,
-      {
-        data: {
-          message: this.strings.onboardingStrings.subscribeRecipeModal,
-          currentStep: 4,
-          showNextButton: false,
-        },
-        position: {
-          top: '50%',
-        },
-      },
-      2
-    );
-    if (dialogRef) {
-      dialogRef.afterClosed().subscribe(() => {
-        this.onboardingModalOpen.set(false);
-        this.showOnboardingBadge.set(true);
-      });
-    } else {
-    }
+    // ** OLD ONBOARDING **
+    // if (state !== 4) {
+    //   this.showOnboardingBadge.set(false);
+    //   return;
+    // }
+    // this.onboardingModalOpen.set(true);
+    // this.reopenOnboardingModal.set(false);
+    // const dialogRef = this.modalService.open(
+    //   OnboardingMessageModalComponent,
+    //   {
+    //     data: {
+    //       message: this.strings.onboardingStrings.subscribeRecipeModal,
+    //       currentStep: 4,
+    //       showNextButton: false,
+    //     },
+    //     position: {
+    //       top: '50%',
+    //     },
+    //   },
+    //   2
+    // );
+    // if (dialogRef) {
+    //   dialogRef.afterClosed().subscribe(() => {
+    //     this.onboardingModalOpen.set(false);
+    //     this.showOnboardingBadge.set(true);
+    //   });
+    // } else {
+    // }
   }
 
   onCancel() {
     this.dialogRef.close();
   }
 
-  onboardingBadgeClick() {
-    this.showOnboardingBadge.set(false);
-    this.onboardingHandler(4);
-  }
+  // onboardingBadgeClick() {
+  //   this.showOnboardingBadge.set(false);
+  //   this.onboardingHandler(4);
+  // }
 
 }

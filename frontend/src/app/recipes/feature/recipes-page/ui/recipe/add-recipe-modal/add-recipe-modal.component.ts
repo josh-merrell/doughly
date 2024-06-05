@@ -40,7 +40,7 @@ export class AddRecipeModalComponent {
   // Onboarding
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
   public onboardingModalOpen: WritableSignal<boolean> = signal(false);
-  private reopenOnboardingModal: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeModalComponent>,
@@ -62,9 +62,6 @@ export class AddRecipeModalComponent {
         const profile = this.profile();
         if (!profile || profile.onboardingState === 0) return;
         if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
-          console.log('onboardingModalOpen', this.onboardingModalOpen());
-          console.log('reopenOnboardingModal', this.reopenOnboardingModal());
-          console.log(`EFFECT CALLING HANDLER`);
           this.onboardingHandler(profile.onboardingState);
         }
       },
@@ -251,7 +248,7 @@ export class AddRecipeModalComponent {
   }
 
   onboardingHandler(onboardingState: number): void {
-    if (onboardingState === 9) {
+    if (onboardingState === 5) {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
@@ -259,8 +256,8 @@ export class AddRecipeModalComponent {
         OnboardingMessageModalComponent,
         {
           data: {
-            message: this.stringsService.onboardingStrings.recipeCreateManual,
-            currentStep: 9,
+            message: this.stringsService.onboardingStrings.recipeCreateOverview,
+            currentStep: 5,
             showNextButton: true,
           },
           position: {
@@ -271,73 +268,104 @@ export class AddRecipeModalComponent {
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
-          this.showOnboardingBadge.set(false);
-          this.onboardingModalOpen.set(false);
-          this.reopenOnboardingModal.set(false);
-          if (result === 'nextClicked') {
-            this.onboardingCallback();
-          } else this.showOnboardingBadge.set(true);
-        });
-      } else {
-      }
-    } else if (onboardingState === 10) {
-      this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
-      this.onboardingModalOpen.set(true);
-      const dialogRef = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message: this.stringsService.onboardingStrings.recipeCreateURL,
-            currentStep: 10,
-            showNextButton: true,
-          },
-          position: {
-            bottom: '30%',
-          },
-        },
-        2
-      );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe((result) => {
           this.onboardingModalOpen.set(false);
           if (result === 'nextClicked') {
             this.onboardingCallback();
           } else this.showOnboardingBadge.set(true);
         });
-      } else {
       }
-    } else if (onboardingState === 11) {
-      this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
-      this.onboardingModalOpen.set(true);
-      const dialogRef = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message:
-              this.stringsService.onboardingStrings.recipeCreateImageButton,
-            currentStep: 11,
-            showNextButton: true,
-          },
-          position: {
-            bottom: '70%',
-          },
-        },
-        2
-      );
-      if (dialogRef) {
-        dialogRef.afterClosed().subscribe((result) => {
-          this.onboardingModalOpen.set(false);
-          if (result === 'nextClicked') {
-            this.router.navigate(['tempRoute']);
-          } else this.showOnboardingBadge.set(true);
-        });
-      } else {
-      }
-    } else if (onboardingState === 12) {
-      this.onVisionAddClick();
+    } else {
+      this.dialogRef.close();
+      this.router.navigate(['/tempRoute']);
     }
+    // ** OLD ONBOARDING STEPS **
+    // if (onboardingState === 9) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const dialogRef = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.recipeCreateManual,
+    //         currentStep: 9,
+    //         showNextButton: true,
+    //       },
+    //       position: {
+    //         bottom: '10%',
+    //       },
+    //     },
+    //     2
+    //   );
+    //   if (dialogRef) {
+    //     dialogRef.afterClosed().subscribe((result) => {
+    //       this.showOnboardingBadge.set(false);
+    //       this.onboardingModalOpen.set(false);
+    //       this.reopenOnboardingModal.set(false);
+    //       if (result === 'nextClicked') {
+    //         this.onboardingCallback();
+    //       } else this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // } else if (onboardingState === 10) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const dialogRef = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.recipeCreateURL,
+    //         currentStep: 10,
+    //         showNextButton: true,
+    //       },
+    //       position: {
+    //         bottom: '30%',
+    //       },
+    //     },
+    //     2
+    //   );
+    //   if (dialogRef) {
+    //     dialogRef.afterClosed().subscribe((result) => {
+    //       this.onboardingModalOpen.set(false);
+    //       if (result === 'nextClicked') {
+    //         this.onboardingCallback();
+    //       } else this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // } else if (onboardingState === 11) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const dialogRef = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message:
+    //           this.stringsService.onboardingStrings.recipeCreateImageButton,
+    //         currentStep: 11,
+    //         showNextButton: true,
+    //       },
+    //       position: {
+    //         bottom: '70%',
+    //       },
+    //     },
+    //     2
+    //   );
+    //   if (dialogRef) {
+    //     dialogRef.afterClosed().subscribe((result) => {
+    //       this.onboardingModalOpen.set(false);
+    //       if (result === 'nextClicked') {
+    //         this.router.navigate(['tempRoute']);
+    //       } else this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // } else if (onboardingState === 12) {
+    //   this.onVisionAddClick();
+    // }
   }
 
   onboardingCallback() {
@@ -350,5 +378,4 @@ export class AddRecipeModalComponent {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
   }
-
 }

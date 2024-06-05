@@ -43,177 +43,199 @@ export class TempRouteComponent {
         this.router.navigate(['/onboarding']);
         break;
       case 1:
+        this.router.navigate(['/kitchen/ingredients']);
+        break;
       case 2:
-        this.router.navigate(['/recipes/discover']);
+        this.router.navigate(['/social/friends']);
         break;
       case 3:
+        this.router.navigate(['/recipes/discover']);
+        break;
       case 4:
-        if (this.extraStuffService.onboardingPublicRecipe()) {
-          this.router.navigate([
-            '/recipe/public/' + this.extraStuffService.onboardingPublicRecipe(),
-          ]);
-        } else {
-          // set onboardingState back to 2 to have user select a recipe for routing again
-          this.isLoading.set(true);
-          console.log('onboardingPublicRecipe not set');
-          this.store.dispatch(
-            ProfileActions.updateProfileProperty({
-              property: 'onboardingState',
-              value: 2,
-            })
-          );
-          this.store
-            .select(selectUpdating)
-            .pipe(
-              filter((updating) => !updating),
-              take(1)
-            )
-            .subscribe(() => {
-              this.store
-                .select(selectError)
-                .pipe(take(1))
-                .subscribe((error) => {
-                  if (error) {
-                    console.error(
-                      `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-                    );
-                  } else {
-                    this.isLoading.set(false);
-                    this.router.navigate(['/recipes/discover']);
-                  }
-                });
-            });
-        }
-        break;
-      case 5:
-        if (path === '/social') {
-          // advance onboardingState to 6
-          this.isLoading.set(true);
-          this.store.dispatch(
-            ProfileActions.updateProfileProperty({
-              property: 'onboardingState',
-              value: 6,
-            })
-          );
-          this.store
-            .select(selectUpdating)
-            .pipe(
-              filter((updating) => !updating),
-              take(1)
-            )
-            .subscribe(() => {
-              this.store
-                .select(selectError)
-                .pipe(take(1))
-                .subscribe((error) => {
-                  if (error) {
-                    console.error(
-                      `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-                    );
-                  } else {
-                    this.isLoading.set(false);
-                    this.router.navigate(['/social']);
-                  }
-                });
-            });
-        } else if (this.extraStuffService.onboardingSubscribedRecipe()) {
-          console.log('onboardingSubscribedRecipe set, routing to it');
-          this.router.navigate([
-            '/recipe/' + this.extraStuffService.onboardingSubscribedRecipe(),
-          ]);
-        } else {
-          // set onboardingState back to 2 to have user select a recipe for routing again
-          this.isLoading.set(true);
-          console.log('onboardingSubscribedRecipe not set');
-          this.store.dispatch(
-            ProfileActions.updateProfileProperty({
-              property: 'onboardingState',
-              value: 2,
-            })
-          );
-          this.store
-            .select(selectUpdating)
-            .pipe(
-              filter((updating) => !updating),
-              take(1)
-            )
-            .subscribe(() => {
-              this.store
-                .select(selectError)
-                .pipe(take(1))
-                .subscribe((error) => {
-                  if (error) {
-                    console.error(
-                      `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-                    );
-                  } else {
-                    this.isLoading.set(false);
-                    this.router.navigate(['/recipes/discover'], {
-                      onSameUrlNavigation: 'reload',
-                    });
-                  }
-                });
-            });
-        }
-        break;
-      case 6:
-        this.router.navigate(['/social']);
-        break;
-      case 7:
-        this.router.navigate(['/groceries']);
-        break;
-      case 8:
         this.router.navigate(['/recipes/created']);
         break;
-      case 9:
-      case 10:
-      case 11:
+      case 5:
         this.router.navigate(['/recipes/created/add']);
         break;
-      case 12:
-        this.router.navigate(['/recipes/created/add/vision']);
+      case 6:
+        this.router.navigate(['/groceries']);
         break;
-      case 13:
-      case 14:
-      case 15:
-        if (this.extraStuffService.onboardingVisionRecipe()) {
-          this.router.navigate([
-            '/recipe/' + this.extraStuffService.onboardingVisionRecipe(),
-          ]);
-        } else {
-          // set onboardingState back to 12
-          this.isLoading.set(true);
-          this.store.dispatch(
-            ProfileActions.updateProfileProperty({
-              property: 'onboardingState',
-              value: 12,
-            })
-          );
-          this.store
-            .select(selectUpdating)
-            .pipe(
-              filter((updating) => !updating),
-              take(1)
-            )
-            .subscribe(() => {
-              this.store
-                .select(selectError)
-                .pipe(take(1))
-                .subscribe((error) => {
-                  if (error) {
-                    console.error(
-                      `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-                    );
-                  } else {
-                    this.isLoading.set(false);
-                    this.router.navigate(['/recipes/created/add/vision'], {
-                      onSameUrlNavigation: 'reload',
-                    });
-                  }
-                });
-            });
-        }
+      case 7:
+        this.router.navigate(['/recipes/discover']);
         break;
+      // ** OLD ONBOARDING STEPS **
+      // case 1:
+      // case 2:
+      //   this.router.navigate(['/recipes/discover']);
+      //   break;
+      // case 3:
+      // case 4:
+      //   if (this.extraStuffService.onboardingPublicRecipe()) {
+      //     this.router.navigate([
+      //       '/recipe/public/' + this.extraStuffService.onboardingPublicRecipe(),
+      //     ]);
+      //   } else {
+      //     // set onboardingState back to 2 to have user select a recipe for routing again
+      //     this.isLoading.set(true);
+      //     console.log('onboardingPublicRecipe not set');
+      //     this.store.dispatch(
+      //       ProfileActions.updateProfileProperty({
+      //         property: 'onboardingState',
+      //         value: 2,
+      //       })
+      //     );
+      //     this.store
+      //       .select(selectUpdating)
+      //       .pipe(
+      //         filter((updating) => !updating),
+      //         take(1)
+      //       )
+      //       .subscribe(() => {
+      //         this.store
+      //           .select(selectError)
+      //           .pipe(take(1))
+      //           .subscribe((error) => {
+      //             if (error) {
+      //               console.error(
+      //                 `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+      //               );
+      //             } else {
+      //               this.isLoading.set(false);
+      //               this.router.navigate(['/recipes/discover']);
+      //             }
+      //           });
+      //       });
+      //   }
+      //   break;
+      // case 5:
+      //   if (path === '/social') {
+      //     // advance onboardingState to 6
+      //     this.isLoading.set(true);
+      //     this.store.dispatch(
+      //       ProfileActions.updateProfileProperty({
+      //         property: 'onboardingState',
+      //         value: 6,
+      //       })
+      //     );
+      //     this.store
+      //       .select(selectUpdating)
+      //       .pipe(
+      //         filter((updating) => !updating),
+      //         take(1)
+      //       )
+      //       .subscribe(() => {
+      //         this.store
+      //           .select(selectError)
+      //           .pipe(take(1))
+      //           .subscribe((error) => {
+      //             if (error) {
+      //               console.error(
+      //                 `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+      //               );
+      //             } else {
+      //               this.isLoading.set(false);
+      //               this.router.navigate(['/social']);
+      //             }
+      //           });
+      //       });
+      //   } else if (this.extraStuffService.onboardingSubscribedRecipe()) {
+      //     console.log('onboardingSubscribedRecipe set, routing to it');
+      //     this.router.navigate([
+      //       '/recipe/' + this.extraStuffService.onboardingSubscribedRecipe(),
+      //     ]);
+      //   } else {
+      //     // set onboardingState back to 2 to have user select a recipe for routing again
+      //     this.isLoading.set(true);
+      //     console.log('onboardingSubscribedRecipe not set');
+      //     this.store.dispatch(
+      //       ProfileActions.updateProfileProperty({
+      //         property: 'onboardingState',
+      //         value: 2,
+      //       })
+      //     );
+      //     this.store
+      //       .select(selectUpdating)
+      //       .pipe(
+      //         filter((updating) => !updating),
+      //         take(1)
+      //       )
+      //       .subscribe(() => {
+      //         this.store
+      //           .select(selectError)
+      //           .pipe(take(1))
+      //           .subscribe((error) => {
+      //             if (error) {
+      //               console.error(
+      //                 `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+      //               );
+      //             } else {
+      //               this.isLoading.set(false);
+      //               this.router.navigate(['/recipes/discover'], {
+      //                 onSameUrlNavigation: 'reload',
+      //               });
+      //             }
+      //           });
+      //       });
+      //   }
+      //   break;
+      // case 6:
+      //   this.router.navigate(['/social']);
+      //   break;
+      // case 7:
+      //   this.router.navigate(['/groceries']);
+      //   break;
+      // case 8:
+      //   this.router.navigate(['/recipes/created']);
+      //   break;
+      // case 9:
+      // case 10:
+      // case 11:
+      //   this.router.navigate(['/recipes/created/add']);
+      //   break;
+      // case 12:
+      //   this.router.navigate(['/recipes/created/add/vision']);
+      //   break;
+      // case 13:
+      // case 14:
+      // case 15:
+      //   if (this.extraStuffService.onboardingVisionRecipe()) {
+      //     this.router.navigate([
+      //       '/recipe/' + this.extraStuffService.onboardingVisionRecipe(),
+      //     ]);
+      //   } else {
+      //     // set onboardingState back to 12
+      //     this.isLoading.set(true);
+      //     this.store.dispatch(
+      //       ProfileActions.updateProfileProperty({
+      //         property: 'onboardingState',
+      //         value: 12,
+      //       })
+      //     );
+      //     this.store
+      //       .select(selectUpdating)
+      //       .pipe(
+      //         filter((updating) => !updating),
+      //         take(1)
+      //       )
+      //       .subscribe(() => {
+      //         this.store
+      //           .select(selectError)
+      //           .pipe(take(1))
+      //           .subscribe((error) => {
+      //             if (error) {
+      //               console.error(
+      //                 `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+      //               );
+      //             } else {
+      //               this.isLoading.set(false);
+      //               this.router.navigate(['/recipes/created/add/vision'], {
+      //                 onSameUrlNavigation: 'reload',
+      //               });
+      //             }
+      //           });
+      //       });
+      //   }
+      //   break;
       default: // onboardingState 0 (done)
         if (path) {
           this.router.navigate([path], { onSameUrlNavigation: 'reload' });

@@ -22,6 +22,10 @@ import { Router } from '@angular/router';
 import { removeReviewRecipe } from '../../state/kitchen-actions';
 import { selectReviewRecipeID } from '../../state/kitchen-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
+import { StringsService } from 'src/app/shared/utils/strings';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 @Component({
   selector: 'dl-ingredients',
   standalone: true,
@@ -52,13 +56,22 @@ export class IngredientsComponent {
   showIngredientDownArrow: boolean = false;
   modalActiveForIngredientID: number | null = null;
 
+  private profile: WritableSignal<any> = signal(null);
+
+  // Onboarding
+  public showOnboardingBadge: WritableSignal<boolean> = signal(false);
+  public onboardingModalOpen: WritableSignal<boolean> = signal(false);
+  private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+
   constructor(
     private dialog: MatDialog,
     private sortingService: SortingService,
     private filterService: FilterService,
     private store: Store,
     private router: Router,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private stringsService: StringsService,
+    public extraStuffService: ExtraStuffService
   ) {
     effect(
       () => {
@@ -140,9 +153,23 @@ export class IngredientsComponent {
       },
       { allowSignalWrites: true }
     );
+
+    effect(
+      () => {
+        const profile = this.profile();
+        if (!profile || profile.onboardingState === 0) return;
+        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+          this.onboardingHandler(profile.onboardingState);
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit(): void {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.store.select(selectIngredients).subscribe((ingredients) => {
       this.ingredients.set(ingredients);
     });
@@ -310,5 +337,40 @@ export class IngredientsComponent {
   }
   ingredientCardTouchEnd() {
     this.modalActiveForIngredientID = null;
+  }
+
+  onboardingHandler(onboardingState: number): void {
+    if (onboardingState === 1) {
+      this.showOnboardingBadge.set(false);
+      this.onboardingModalOpen.set(true);
+      this.reopenOnboardingModal.set(false);
+      const ref = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.kitchenPageOverview,
+            currentStep: 1,
+            showNextButton: true,
+          },
+          position: {
+            top: '30%',
+          },
+        },
+        1
+      );
+      if (ref) {
+        ref.afterClosed().subscribe(() => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+        });
+      }
+    } else {
+      this.router.navigate(['/tempRoute']);
+    }
+  }
+
+  onboardingBadgeClick() {
+    this.showOnboardingBadge.set(false);
+    this.onboardingHandler(this.profile().onboardingState);
   }
 }

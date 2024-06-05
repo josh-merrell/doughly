@@ -242,34 +242,8 @@ export class DiscoverRecipesComponent {
 
   onboardingHandler(onboardingState: number) {
     if (!onboardingState) return;
-    if (onboardingState === 1) {
-      this.reopenOnboardingModal.set(false);
-      this.onboardingModalOpen.set(true);
-      const ref = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message: this.stringsService.onboardingStrings.welcomeToDoughly,
-            currentStep: 1,
-            showNextButton: true,
-          },
-          position: {
-            top: '50%',
-          },
-        },
-        1
-      );
-      if (ref) {
-        ref.afterClosed().subscribe((result) => {
-          this.showOnboardingBadge.set(true);
-          this.onboardingModalOpen.set(false);
-          if (result === 'nextClicked') {
-            this.onboardingCallback();
-          }
-        });
-      } else {
-      }
-    } else if (onboardingState === 2) {
+    if (onboardingState === 3) {
+      this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
       const ref = this.modalService.open(
@@ -277,24 +251,133 @@ export class DiscoverRecipesComponent {
         {
           data: {
             message: this.stringsService.onboardingStrings.discoverPageOverview,
-            currentStep: 2,
-            showNextButton: false,
+            currentStep: 3,
+            showNextButton: true,
           },
           position: {
-            top: '20%',
+            top: '30%',
           },
         },
-        1,
-        true
+        1
       );
       if (ref) {
-        ref.afterClosed().subscribe(() => {
+        ref.afterClosed().subscribe((result) => {
           this.onboardingModalOpen.set(false);
           this.showOnboardingBadge.set(true);
+          if (result === 'nextClicked') {
+            this.onboardingCallback();
+          }
         });
-      } else {
       }
-    } else this.router.navigate(['/tempRoute']);
+    } else if (onboardingState === 7) {
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
+      this.onboardingModalOpen.set(false);
+      const ref = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.onboardingComplete,
+            currentStep: 7,
+            showNextButton: true,
+          },
+          position: {
+            top: '30%',
+          },
+        },
+        1
+      );
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(false);
+          // set onboardingState back to 0 (done)
+          if (result === 'nextClicked')
+            this.store.dispatch(
+              ProfileActions.updateProfileProperty({
+                property: 'onboardingState',
+                value: 0,
+              })
+            );
+          this.store
+            .select(selectUpdating)
+            .pipe(
+              filter((updating) => !updating),
+              take(1)
+            )
+            .subscribe(() => {
+              this.store
+                .select(selectError)
+                .pipe(take(1))
+                .subscribe((error) => {
+                  if (error) {
+                    console.error(
+                      `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+                    );
+                  } else {
+                    this.showOnboardingBadge.set(false);
+                  }
+                });
+            });
+        });
+      }
+    } else {
+      this.router.navigate(['/tempRoute']);
+    }
+    // ** OLD ONBOARDING STEPS **
+    // if (onboardingState === 1) {
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.welcomeToDoughly,
+    //         currentStep: 1,
+    //         showNextButton: true,
+    //       },
+    //       position: {
+    //         top: '50%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe((result) => {
+    //       this.showOnboardingBadge.set(true);
+    //       this.onboardingModalOpen.set(false);
+    //       if (result === 'nextClicked') {
+    //         this.onboardingCallback();
+    //       }
+    //     });
+    //   } else {
+    //   }
+    // } else if (onboardingState === 2) {
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.discoverPageOverview,
+    //         currentStep: 2,
+    //         showNextButton: false,
+    //       },
+    //       position: {
+    //         top: '20%',
+    //       },
+    //     },
+    //     1,
+    //     true
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe(() => {
+    //       this.onboardingModalOpen.set(false);
+    //       this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // } else this.router.navigate(['/tempRoute']);
   }
 
   onboardingCallback() {

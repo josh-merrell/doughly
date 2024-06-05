@@ -660,9 +660,9 @@ module.exports = ({ db, dbPublic }) => {
     await axios.post(
       `${process.env.NODE_HOST}:${process.env.PORT}/messages/welcome`,
       {
-        userID: options.userID,
+        userID,
       },
-      { headers: { authorization } },
+      { headers: { authorization: 'override' } },
     );
 
     // assuming we're here, we've successfully created all messages. Update 'dataLoadStatus'

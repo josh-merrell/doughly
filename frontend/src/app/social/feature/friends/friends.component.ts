@@ -24,6 +24,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'dl-friends',
@@ -64,7 +65,8 @@ export class FriendsComponent {
     public dialog: MatDialog,
     private stringsService: StringsService,
     private modalService: ModalService,
-    public extraStuffService: ExtraStuffService
+    public extraStuffService: ExtraStuffService,
+    private router: Router
   ) {
     effect(
       () => {
@@ -159,7 +161,7 @@ export class FriendsComponent {
   }
 
   onboardingHandler(onboardingState: number): void {
-    if (onboardingState === 6) {
+    if (onboardingState === 2) {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
@@ -168,11 +170,11 @@ export class FriendsComponent {
         {
           data: {
             message: this.stringsService.onboardingStrings.socialPageOverview,
-            currentStep: 6,
+            currentStep: 2,
             showNextButton: true,
           },
           position: {
-            bottom: '70%',
+            top: '30%',
           },
         },
         1
@@ -187,32 +189,64 @@ export class FriendsComponent {
         });
       } else {
       }
-    } else if (onboardingState === 7) {
-      this.showOnboardingBadge.set(false);
-      this.reopenOnboardingModal.set(false);
-      this.onboardingModalOpen.set(true);
-      const ref = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message: this.stringsService.onboardingStrings.shoppingPageOverview,
-            currentStep: 7,
-            showNextButton: false,
-          },
-          position: {
-            bottom: '40%',
-          },
-        },
-        1
-      );
-      if (ref) {
-        ref.afterClosed().subscribe(() => {
-          this.onboardingModalOpen.set(false);
-          this.showOnboardingBadge.set(true);
-        });
-      } else {
-      }
+    } else {
+      this.router.navigate(['/tempRoute']);
     }
+    // ** OLD ONBOARDING STEPS **
+    // if (onboardingState === 6) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.socialPageOverview,
+    //         currentStep: 6,
+    //         showNextButton: true,
+    //       },
+    //       position: {
+    //         bottom: '70%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe((result) => {
+    //       this.onboardingModalOpen.set(false);
+    //       this.showOnboardingBadge.set(true);
+    //       if (result === 'nextClicked') {
+    //         this.onboardingCallback();
+    //       }
+    //     });
+    //   } else {
+    //   }
+    // } else if (onboardingState === 7) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.shoppingPageOverview,
+    //         currentStep: 7,
+    //         showNextButton: false,
+    //       },
+    //       position: {
+    //         bottom: '40%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe(() => {
+    //       this.onboardingModalOpen.set(false);
+    //       this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // }
   }
 
   onboardingCallback() {
@@ -225,5 +259,4 @@ export class FriendsComponent {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
   }
-
 }
