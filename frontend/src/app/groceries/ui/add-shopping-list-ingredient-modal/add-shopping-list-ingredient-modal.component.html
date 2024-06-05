@@ -79,28 +79,39 @@
     >
       <div id="form-measurement">
         <dl-text-input
-          label={{measurementLabel()}}
+          label="{{ measurementLabel() }}"
           formControlName="measurement"
         ></dl-text-input>
       </div>
     </form>
-    <!-- Add Button -->
-    <button
-      id="add-button"
-      type="button"
-      class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
-      (click)="onSubmit()"
-      [disabled]="!form.valid || form.pristine || isLoading === true"
-      [ngClass]="{
-        ' bg-dl-pink-4 shadow-lg  dark:bg-dl-pink-7 ':
-          form.valid && !form.pristine,
-        'bg-dl-grey-7': !form.valid || form.pristine,
-        invisible: selectedIngredient().ingredientID === 0
-      }"
-    >
-      Add to Shopping List
-    </button>
+    <div class="w-full">
+      <!-- Add Button -->
+      <button
+        *ngIf="selectedIngredient().ingredientID !== 0"
+        id="add-button"
+        type="button"
+        class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
+        (click)="onSubmit()"
+        [disabled]="!form.valid || form.pristine || isLoading === true"
+        [ngClass]="{
+          ' bg-dl-pink-4 text-white dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1':
+            form.valid && !form.pristine,
+          'bg-dl-grey-9 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-7':
+            !form.valid || form.pristine,
+          invisible: selectedIngredient().ingredientID === 0
+        }"
+      >
+        Add to Shopping List
+      </button>
+    </div>
   </div>
+  <button
+    type="button"
+    class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 dark:bg-dl-grey-1 dark:text-dl-grey-10"
+    (click)="onCancel()"
+  >
+    Cancel
+  </button>
   <div
     *ngIf="isLoading === true"
     class="flex h-full w-full items-center justify-center"

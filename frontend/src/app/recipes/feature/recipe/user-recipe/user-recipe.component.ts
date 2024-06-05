@@ -278,16 +278,17 @@ export class UserRecipeComponent {
       this.recipeService.loadUses(this.recipeID(), this.logsAfterDate());
     });
 
-    effect(
-      () => {
-        const profile = this.profile();
-        if (!profile || profile.onboardingState === 0) return;
-        if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
-          this.onboardingHandler(profile.onboardingState);
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    // ** OLD ONBOARDING **
+    // effect(
+    //   () => {
+    //     const profile = this.profile();
+    //     if (!profile || profile.onboardingState === 0) return;
+    //     if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
+    //       this.onboardingHandler(profile.onboardingState);
+    //     }
+    //   },
+    //   { allowSignalWrites: true }
+    // );
   }
 
   ngOnInit(): void {
@@ -847,144 +848,145 @@ export class UserRecipeComponent {
   //***************************************************
 
   onboardingHandler(state: number) {
-    if (state === 5) {
-      this.showOnboardingBadge.set(false);
-      this.onboardingModalOpen.set(true);
-      this.reopenOnboardingModal.set(false);
-      const ref = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message: this.stringsService.onboardingStrings.subscribeRecipePage,
-            currentStep: 5,
-            showNextButton: false,
-          },
-          position: {
-            top: '10%',
-          },
-        },
-        1
-      );
-      if (ref) {
-        ref.afterClosed().subscribe(() => {
-          this.onboardingModalOpen.set(false);
-          this.showOnboardingBadge.set(true);
-        });
-      } else {
-      }
-    } else if (state === 13) {
-      this.showOnboardingBadge.set(false);
-      this.onboardingModalOpen.set(true);
-      this.reopenOnboardingModal.set(false);
-      const ref = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message:
-              this.stringsService.onboardingStrings.recipeCreateImageSuccess,
-            currentStep: 13,
-            showNextButton: true,
-          },
-          position: {
-            bottom: '70%',
-          },
-        },
-        1
-      );
-      if (ref) {
-        ref.afterClosed().subscribe((result) => {
-          this.onboardingModalOpen.set(false);
-          if (result === 'nextClicked') {
-            this.onboardingCallback();
-          } else this.showOnboardingBadge.set(true);
-        });
-      } else {
-      }
-    } else if (state === 14) {
-      this.showOnboardingBadge.set(false);
-      this.onboardingModalOpen.set(true);
-      this.reopenOnboardingModal.set(false);
-      const ref = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message:
-              this.stringsService.onboardingStrings.recipeCreateCreditUsage,
-            currentStep: 14,
-            showNextButton: true,
-          },
-          position: {
-            bottom: '20%',
-          },
-        },
-        1
-      );
-      if (ref) {
-      } else {
-      }
-      if (ref) {
-        ref.afterClosed().subscribe((result) => {
-          this.onboardingModalOpen.set(false);
-          if (result === 'nextClicked') {
-            this.onboardingCallback();
-          } else this.showOnboardingBadge.set(true);
-        });
-      } else {
-      }
-    } else if (state === 15) {
-      this.showOnboardingBadge.set(false);
-      this.onboardingModalOpen.set(true);
-      this.reopenOnboardingModal.set(false);
-      const ref = this.modalService.open(
-        OnboardingMessageModalComponent,
-        {
-          data: {
-            message: this.stringsService.onboardingStrings.onboardingComplete,
-            currentStep: 15,
-            showNextButton: false,
-          },
-          position: {
-            bottom: '50%',
-          },
-        },
-        1
-      );
-      if (ref) {
-      } else {
-      }
-      if (ref) {
-        ref.afterClosed().subscribe(() => {
-          this.onboardingModalOpen.set(false);
-          this.showOnboardingBadge.set(false);
-          // set onboardingState back to 0 (done)
-          this.store.dispatch(
-            ProfileActions.updateProfileProperty({
-              property: 'onboardingState',
-              value: 0,
-            })
-          );
-          this.store
-            .select(selectUpdating)
-            .pipe(
-              filter((updating) => !updating),
-              take(1)
-            )
-            .subscribe(() => {
-              this.store
-                .select(selectError)
-                .pipe(take(1))
-                .subscribe((error) => {
-                  if (error) {
-                    console.error(
-                      `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-                    );
-                  }
-                });
-            });
-        });
-      } else {
-      }
-    }
+    // ** OLD ONBOARDING STEPS **
+    // if (state === 5) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   this.reopenOnboardingModal.set(false);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.subscribeRecipePage,
+    //         currentStep: 5,
+    //         showNextButton: false,
+    //       },
+    //       position: {
+    //         top: '10%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe(() => {
+    //       this.onboardingModalOpen.set(false);
+    //       this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // } else if (state === 13) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   this.reopenOnboardingModal.set(false);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message:
+    //           this.stringsService.onboardingStrings.recipeCreateImageSuccess,
+    //         currentStep: 13,
+    //         showNextButton: true,
+    //       },
+    //       position: {
+    //         bottom: '70%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe((result) => {
+    //       this.onboardingModalOpen.set(false);
+    //       if (result === 'nextClicked') {
+    //         this.onboardingCallback();
+    //       } else this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // } else if (state === 14) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   this.reopenOnboardingModal.set(false);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message:
+    //           this.stringsService.onboardingStrings.recipeCreateCreditUsage,
+    //         currentStep: 14,
+    //         showNextButton: true,
+    //       },
+    //       position: {
+    //         bottom: '20%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //   } else {
+    //   }
+    //   if (ref) {
+    //     ref.afterClosed().subscribe((result) => {
+    //       this.onboardingModalOpen.set(false);
+    //       if (result === 'nextClicked') {
+    //         this.onboardingCallback();
+    //       } else this.showOnboardingBadge.set(true);
+    //     });
+    //   } else {
+    //   }
+    // } else if (state === 15) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   this.reopenOnboardingModal.set(false);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.onboardingComplete,
+    //         currentStep: 15,
+    //         showNextButton: false,
+    //       },
+    //       position: {
+    //         bottom: '50%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //   } else {
+    //   }
+    //   if (ref) {
+    //     ref.afterClosed().subscribe(() => {
+    //       this.onboardingModalOpen.set(false);
+    //       this.showOnboardingBadge.set(false);
+    //       // set onboardingState back to 0 (done)
+    //       this.store.dispatch(
+    //         ProfileActions.updateProfileProperty({
+    //           property: 'onboardingState',
+    //           value: 0,
+    //         })
+    //       );
+    //       this.store
+    //         .select(selectUpdating)
+    //         .pipe(
+    //           filter((updating) => !updating),
+    //           take(1)
+    //         )
+    //         .subscribe(() => {
+    //           this.store
+    //             .select(selectError)
+    //             .pipe(take(1))
+    //             .subscribe((error) => {
+    //               if (error) {
+    //                 console.error(
+    //                   `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
+    //                 );
+    //               }
+    //             });
+    //         });
+    //     });
+    //   } else {
+    //   }
+    // }
   }
 
   onboardingCallback() {

@@ -583,6 +583,33 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
+  async function addWelcomeMessage(options) {
+    const { userID } = options;
+    if (!userID) {
+      throw errorGen('userID is required', 400);
+    }
+    try {
+      // add a message to 'messages' table
+      const newMessageID = await generateIDFunction(75);
+      const { error: addMessageError } = await db.from('messages').insert({
+        messageID: Number(newMessageID),
+        createdTime: new Date().toISOString(),
+        userID: userID,
+        type: 'welcomeToDoughly',
+        title: 'Welcome to Doughly',
+        message: `We are excited for you to create and share the important recipes in your life with your friends and family. Happy cooking!`,
+        status: 'notAcked',
+      });
+      if (addMessageError) {
+        global.logger.error(`Error adding message: ${addMessageError.message}`);
+        throw errorGen('Error adding message', 500);
+      }
+    } catch (e) {
+      global.logger.error(`'messages' 'addWelcomeMessage': ${e.message}`);
+      throw errorGen('Error adding welcome message', 500);
+    }
+  }
+
   return {
     get: {
       all: getAllMessages,
@@ -591,6 +618,7 @@ module.exports = ({ db, dbPublic }) => {
     delete: deleteMessage,
     addFolloweePublicRecipeCreatedMessages,
     addFriendHeirloomRecipeCreatedMessages,
+    addWelcomeMessage,
     add,
   };
 };

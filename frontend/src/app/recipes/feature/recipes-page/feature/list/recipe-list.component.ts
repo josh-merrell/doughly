@@ -33,11 +33,15 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 import { filter, map } from 'rxjs';
 import { StringsService } from 'src/app/shared/utils/strings';
-import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import {
+  selectProfile,
+  selectUpdating,
+} from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { ProfileActions } from 'src/app/profile/state/profile-actions';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -292,7 +296,7 @@ export class RecipeListComponent {
     if (allowCreate) {
       // update url to include '/add' if it's not already there
       this.location.go('/recipes/created/add');
-
+      console.log('OPEN ADD RECIPE MODAL')
       const ref = this.modalService.open(
         AddRecipeModalComponent,
         {
@@ -461,7 +465,35 @@ export class RecipeListComponent {
   // ***************************************************
 
   onboardingHandler(onboardingState: number): void {
-    if (onboardingState === 8) {
+    if (onboardingState === 4) {
+      this.showOnboardingBadge.set(false);
+      this.reopenOnboardingModal.set(false);
+      this.onboardingModalOpen.set(true);
+      console.log('OPEN ONBOARDING MODAL');
+      const ref = this.modalService.open(
+        OnboardingMessageModalComponent,
+        {
+          data: {
+            message: this.stringsService.onboardingStrings.recipesCreatedPage,
+            currentStep: 4,
+            showNextButton: true,
+          },
+          position: {
+            top: '30%',
+          },
+        },
+        1
+      );
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
+          this.onboardingModalOpen.set(false);
+          this.showOnboardingBadge.set(true);
+          if (result === 'nextClicked') {
+            this.router.navigate(['/tempRoute']);
+          }
+        });
+      }
+    } else if (onboardingState === 5) {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
@@ -469,27 +501,59 @@ export class RecipeListComponent {
         OnboardingMessageModalComponent,
         {
           data: {
-            message: this.stringsService.onboardingStrings.recipesCreatedPage,
-            currentStep: 8,
+            message: this.stringsService.onboardingStrings.recipeCreateOverview,
+            currentStep: 5,
             showNextButton: true,
           },
           position: {
-            bottom: '30%',
+            bottom: '10%',
           },
         },
-        1
+        2
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
-          this.router.navigate(['/tempRoute']);
+          this.onboardingModalOpen.set(false);
+          if (result === 'nextClicked') {
+            this.modalService.closeAll();
+            this.router.navigate(['/tempRoute']);
+          } else this.showOnboardingBadge.set(false);
         });
-      } else {
       }
+    } else {
+      this.router.navigate(['/tempRoute']);
     }
+    // ** OLD ONBOARDING STEPS **
+    // if (onboardingState === 8) {
+    //   this.showOnboardingBadge.set(false);
+    //   this.reopenOnboardingModal.set(false);
+    //   this.onboardingModalOpen.set(true);
+    //   const ref = this.modalService.open(
+    //     OnboardingMessageModalComponent,
+    //     {
+    //       data: {
+    //         message: this.stringsService.onboardingStrings.recipesCreatedPage,
+    //         currentStep: 8,
+    //         showNextButton: true,
+    //       },
+    //       position: {
+    //         bottom: '30%',
+    //       },
+    //     },
+    //     1
+    //   );
+    //   if (ref) {
+    //     ref.afterClosed().subscribe((result) => {
+    //       this.router.navigate(['/tempRoute']);
+    //     });
+    //   } else {
+    //   }
+    // }
   }
 
   onboardingCallback() {
     setTimeout(() => {
+      console.log(`ONBOARDING STATE: ${this.profile().onboardingState}`);
       this.onboardingHandler(this.profile().onboardingState);
     }, 1000);
   }
@@ -498,5 +562,4 @@ export class RecipeListComponent {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
   }
-
 }

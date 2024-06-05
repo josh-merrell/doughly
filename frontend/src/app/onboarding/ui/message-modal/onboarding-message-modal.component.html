@@ -7,10 +7,10 @@
   ></mat-spinner>
 
   <!-- Icon and Message -->
-  <div class="mb-dl-3 mr-dl-7 flex" *ngIf="!isEditing()">
+  <div class="mb-dl-3 mr-dl-4 flex" *ngIf="!isEditing()">
     <div class="flex-shrink-0">
       <svg
-        class="h-11 w-8 text-dl-blue-7 dark:text-dl-blue-4"
+        class="h-11 w-8"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         version="1.1"
@@ -57,7 +57,7 @@
     </div>
   </div>
 
-  <!-- Optional Input Form -->
+  <!-- Step 0.5 Input Form -->
   <form
     *ngIf="currentStep() === 0.5 && !isEditing()"
     class="flex h-full flex-col items-center"
@@ -258,7 +258,7 @@
     *ngIf="!isEditing() && currentStep() !== 0.5 && !submitFailureMessage()"
   >
     <!-- spacer div-->
-    <div class="flex flex-grow"></div>
+    <div class="w-dl-5"></div>
     <div class="flex" *ngIf="currentStep() !== 0.5">
       <ng-container *ngFor="let item of arrayFromCurrentStep()">
         <div

@@ -44,7 +44,6 @@ export class ModalService {
       ref: dialogRef,
       level: allowMultipleSameLevel ? 99 : level,
     }); // push notifications or other modals we are okay having multiples of to 99, only one of each other modal type
-    console.log(`MODALS: `, this.modals);
     this.setModalStyles();
 
     dialogRef.afterClosed().subscribe(() => {
@@ -62,10 +61,11 @@ export class ModalService {
 
   closeByLevel(level: number): void {
     this.modals.filter((m) => m.level === level).forEach((m) => m.ref.close());
+    this.modals = this.modals.filter((m) => m.level !== level);
   }
 
   async setModalStyles(): Promise<void> {
-    console.log(`SETTING MODAL STYLES`)
+    console.log(`SETTING MODAL STYLES`);
     // determine highest level with a modal currently open
     let highestLevel = 0;
     this.modals.forEach((m) => {
