@@ -1,4 +1,6 @@
 PODS:
+  - AparajitaCapacitorDarkMode (5.0.1):
+    - Capacitor
   - AppAuth (1.7.4):
     - AppAuth/Core (= 1.7.4)
     - AppAuth/ExternalUserAgent (= 1.7.4)
@@ -118,6 +120,7 @@ PODS:
   - PromisesObjC (2.4.0)
 
 DEPENDENCIES:
+  - "AparajitaCapacitorDarkMode (from `../../node_modules/@aparajita/capacitor-dark-mode`)"
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorBrowser (from `../../node_modules/@capacitor/browser`)"
@@ -157,6 +160,8 @@ SPEC REPOS:
     - PromisesObjC
 
 EXTERNAL SOURCES:
+  AparajitaCapacitorDarkMode:
+    :path: "../../node_modules/@aparajita/capacitor-dark-mode"
   Capacitor:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
@@ -187,6 +192,7 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@hugotomazi/capacitor-navigation-bar"
 
 SPEC CHECKSUMS:
+  AparajitaCapacitorDarkMode: 01c1c60c0b330fe1113f68ee09c5857776edd24c
   AppAuth: 182c5b88630569df5acb672720534756c29b3358
   Capacitor: 7d42085cb786b2d3ea9ac8a17ebd7e3305be7b72
   CapacitorApp: 024e1b1bea5f883d79f6330d309bc441c88ad04a
@@ -221,6 +227,6 @@ SPEC CHECKSUMS:
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
-PODFILE CHECKSUM: b11f33030b63b84bf23496f85502e47bc459c3dc
+PODFILE CHECKSUM: ceefe06f34465a701bc89c5344e87711436b1e28
 
 COCOAPODS: 1.15.2

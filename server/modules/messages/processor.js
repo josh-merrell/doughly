@@ -27,6 +27,7 @@ module.exports = ({ db, dbPublic }) => {
       getNewFriendRequestMessages({ userID, lastMessageSyncTime }),
       getfolloweePublicRecipeCreatedMessages({ userID, lastMessageSyncTime }),
       getFriendHeirloomRecipeCreatedMessages({ userID, lastMessageSyncTime }),
+      getWelcomeMessage({ userID, lastMessageSyncTime }),
     ];
 
     // Wait for all promises to settle
@@ -451,6 +452,41 @@ module.exports = ({ db, dbPublic }) => {
     } catch (e) {
       global.logger.error(`'messages' 'getFriendHeirloomRecipeCreatedMessages': ${e.message}`);
       throw errorGen('Error getting friendHeirloomRecipeCreated messages', 500);
+    }
+  }
+
+  async function getWelcomeMessage(options) {
+    const { userID } = options;
+    if (!userID) {
+      throw errorGen('userID is required', 400);
+    }
+
+    try {
+      // get any entries from 'messages' table where 'userID' is the userID and 'type' is 'welcomeToDoughly' and 'status' is not 'deleted'
+      const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'welcomeToDoughly').neq('status', 'deleted');
+      if (error) {
+        global.logger.error(`Error getting messageRows: ${error.message}`);
+        throw errorGen('Error getting messageRows', 500);
+      }
+      const messages = [];
+      for (let message of messageRows) {
+        messages.push({
+          type: 'welcomeToDoughly',
+          messageData: {
+            title: message.title,
+            message: message.message,
+            status: message.status,
+            data: {
+              messageID: message.messageID,
+            },
+          },
+          date: message.createdTime,
+        });
+      }
+      return messages;
+    } catch (e) {
+      global.logger.error(`'messages' 'getWelcomeMessage': ${e.message}`);
+      throw errorGen('Error getting welcome messages', 500);
     }
   }
 

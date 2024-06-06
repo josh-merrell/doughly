@@ -261,4 +261,8 @@ export class SelectFreeTierRecipesModalComponent {
 
     return true;
   }
+
+  onCancel() {
+    this.dialogRef.close();
+  }
 }
