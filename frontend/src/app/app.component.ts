@@ -131,6 +131,15 @@ export class AppComponent {
         this.stylesService.updateStyles('#FFFFFF', 'light');
       }
     });
+    // Listen for hardware back button press
+    App.addListener('backButton', () => {
+      console.log('BACK BUTTON PRESSED');
+      // this.router.navigate(['/tempRoute']);
+      this.zone.run(() => {
+        console.log('BACK BUTTON PRESSED');
+        this.router.navigate(['/recipes/discover']);
+      });
+    });
     App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
       if (
         event.url.includes('access_token') &&

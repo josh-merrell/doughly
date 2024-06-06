@@ -291,7 +291,7 @@ module.exports = ({ db }) => {
       global.logger.error(`Error validating recipeTool ID: ${recipeToolID}: ${recipeToolError}`);
       throw errorGen(`Error validating recipeTool ID: ${recipeToolID}`, 400);
     }
-    if (!recipeTool.length) {
+    if (recipeTool.length === 0) {
       global.logger.error(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot delete recipeTool`);
       throw errorGen(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot delete recipeTool`, 400);
     }
@@ -312,7 +312,8 @@ module.exports = ({ db }) => {
     //add a 'deleted' log entry
     const logID1 = createRecipeLog(userID, authorization, 'deleteRecipeTool', Number(recipeToolID), Number(recipeTool[0].recipeID), null, null, `deleted recipeTool with ID: ${recipeToolID}`);
     //increment recipe version and add a 'updatedRecipeVersion' log entry
-    const newVersion = await incrementVersion('recipes', 'recipeID', recipeTool[0].recipeID, recipe.version);
+    const recipeVersion = await getRecipeVersion(recipeTool[0].recipeID);
+    const newVersion = await incrementVersion('recipes', 'recipeID', recipeTool[0].recipeID, recipeVersion);
     createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeTool[0].recipeID), Number(logID1), String(recipe.version), String(newVersion), `updated version of recipe ID: ${recipeTool[0].recipeID} from ${recipe.version} to ${newVersion}`);
 
     //if existing recipe has no more recipeTools, set recipe status to 'noTools'
