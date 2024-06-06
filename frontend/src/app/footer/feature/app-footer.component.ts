@@ -206,4 +206,13 @@ export class AppFooterComponent {
     } else {
     }
   }
+
+  navigateToProducts() {
+    // if user profile 'permRecipeCreateUnlimited' is true, navigate to 'your-premium' page, else navigate to 'upgrade' page
+    if (this.profile.permRecipeCreateUnlimited) {
+      this.router.navigate(['/products/your-premium']);
+    } else {
+      this.router.navigate(['/products/upgrade']);
+    }
+  }
 }

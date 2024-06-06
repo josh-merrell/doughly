@@ -115,7 +115,7 @@ const updater = async (userID, authorization, IDfield, ID, table, updateFields) 
 
 const getRecipeVersion = async (recipeID) => {
   const { data: recipe, error: recipeError } = await supabase.from('recipes').select('version').single().match({ recipeID });
-  if (recipeError) {
+  if (recipeError || !recipe) {
     global.logger.info(`Error getting recipe version for recipeID:${recipeID} in db.js getRecipeVersion. **${recipeError.message}**`);
     return { error: recipeError.message };
   }

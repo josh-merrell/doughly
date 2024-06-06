@@ -310,8 +310,13 @@ module.exports = ({ db }) => {
     //update version of associated recipe and log the change
     //get recipe version
     const version = await getRecipeVersion(recipeStep[0].recipeID);
-    const newVersion = await incrementVersion('recipes', 'recipeID', recipeStep[0].recipeID, version);
-    createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeStep[0].recipeID), Number(logID1), String(version), String(newVersion), `updated version of recipe ID:${recipeStep[0].recipeID} from ${version} to ${newVersion}`);
+    if (!version) {
+      global.logger.error(`Error getting recipe version for recipeID:${recipeStep[0].recipeID} after deleting recipeStep`);
+      throw errorGen(`Error getting recipe version for recipeID:${recipeStep[0].recipeID} after deleting recipeStep`, 400);
+    } else {
+      const newVersion = await incrementVersion('recipes', 'recipeID', recipeStep[0].recipeID, version);
+      createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeStep[0].recipeID), Number(logID1), String(version), String(newVersion), `updated version of recipe ID:${recipeStep[0].recipeID} from ${version} to ${newVersion}`);
+    }
 
     //delete step associated with recipeStep
     const { error: deleteStepError } = await db.from('steps').update({ deleted: true }).eq('stepID', recipeStep[0].stepID);
