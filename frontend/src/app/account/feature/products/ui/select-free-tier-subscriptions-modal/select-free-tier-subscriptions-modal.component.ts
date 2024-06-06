@@ -252,6 +252,10 @@ export class SelectFreeTierSubscriptionsModalComponent {
     }
   }
 
+  onCancel() {
+    this.dialogRef.close();
+  }
+
   arraysEqual(a: number[], b: number[]): boolean {
     if (a.length !== b.length) {
       return false;
