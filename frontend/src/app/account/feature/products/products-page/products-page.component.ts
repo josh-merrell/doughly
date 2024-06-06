@@ -12,10 +12,8 @@ import {
   RouterModule,
 } from '@angular/router';
 import { filter } from 'rxjs';
-import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component'; //test
+import { UpgradePageComponent } from '../ui/upgrade-page/upgrade-page.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
-import { StatusBar, Style } from '@capacitor/status-bar';
-import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { Capacitor } from '@capacitor/core';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
