@@ -321,9 +321,10 @@ export class VisionAddRecipeModalComponent {
                       //         });
                       //     });
                       // }
-                      // //navigate to recipe page
-                      // this.router.navigate(['/recipe', newRecipeID.recipeID]);
-                      // this.modalService.closeAll();
+                      
+                      //navigate to recipe page
+                      this.router.navigate(['/recipe', newRecipeID.recipeID]);
+                      this.modalService.closeAll();
                     }
                   });
               }
