@@ -27,8 +27,8 @@ const visionRequest = async (recipeImageURL, userID, authorization, messageType)
     messages: [requestMessages[messageType].message],
     temperature: 0.3,
     user: userID,
-    model: 'gpt-4-vision-preview',
-    max_tokens: 2000,
+    model: 'gpt-4o',
+    max_tokens: 4000,
   };
   body.messages[0].content[1].image_url.url = recipeImageURL;
 
@@ -62,7 +62,7 @@ const recipeFromTextRequest = async (recipeText, userID, authorization) => {
     messages: [requestMessages['generateRecipeFromText'].message],
     temperature: 0.1,
     user: userID,
-    model: 'gpt-3.5-turbo-16k',
+    model: 'gpt-4o',
     max_tokens: 4000,
     response_format: {
       type: requestMessages['generateRecipeFromText'].response_format,
@@ -237,8 +237,8 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
     messages: [requestMessages[type].message],
     temperature: 0.2,
     user: userID,
-    model: 'gpt-4-0125-preview',
-    max_tokens: 1500,
+    model: 'gpt-4o',
+    max_tokens: 3000,
     response_format: {
       type: requestMessages[type].response_format,
     },
