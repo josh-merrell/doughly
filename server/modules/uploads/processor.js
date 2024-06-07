@@ -12,11 +12,22 @@ module.exports = ({ db, dbDefault }) => {
     const key = `${type}/${userID}/${fileName}`;
     const contentType = fileType;
 
-    const command = new PutObjectCommand({
-      Bucket: process.env.AWS_IMAGE_BUCKET_NAME,
-      Key: key,
-      ContentType: contentType,
-    });
+    let command;
+    // temp images (such as for used in vision recipe import) are stored in a different bucket to avoid cloudfront caching
+    console.log(`IN GET SIGNED URL. TYPE: ${type}, KEY: ${key}, fileName: ${fileName}, `);
+    if (type === 'temp') {
+      command = new PutObjectCommand({
+        Bucket: process.env.AWS_TEMP_IMAGE_BUCKET_NAME,
+        Key: key,
+        ContentType: contentType,
+      });
+    } else {
+      command = new PutObjectCommand({
+        Bucket: process.env.AWS_IMAGE_BUCKET_NAME,
+        Key: key,
+        ContentType: contentType,
+      });
+    }
 
     const url = await getSignedUrl(s3Client, command, {
       expiresIn: 3600,
