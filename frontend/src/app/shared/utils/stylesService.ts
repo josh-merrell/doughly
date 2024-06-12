@@ -1,8 +1,16 @@
-import { Injectable, Injector, WritableSignal, effect, signal } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  WritableSignal,
+  effect,
+  signal,
+} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
+
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { ExtraStuffService } from './extraStuffService';
 
@@ -80,10 +88,7 @@ export class StylesService {
     'yellow-10': '#FFFBEA',
   };
 
-  constructor(
-    private store: Store,
-    private injector: Injector,
-  ) {
+  constructor(private store: Store, private injector: Injector) {
     effect(() => {
       const profile = this.profile();
       if (profile) {
@@ -100,15 +105,17 @@ export class StylesService {
   }
 
   public updateStyles(color: string = '', style: string = ''): void {
-    console.log('UPDATING STYLES. COLOR: ', color, ' STYLE: ', style);
     // updates UI styles of nav/status bars for android and ios
     // updates color of nav/status bars for android (ios is handled with css)
+
     if (color) {
       this.setColor(color, style);
-      if (style) {
-        this.setStatusBarStyle(style === 'dark' ? Style.Dark : Style.Light);
-      } else {
-        this.setStatusBarStyle(Style.Light);
+      if (Capacitor.isNativePlatform()) {
+        if (style) {
+          this.setStatusBarStyle(style === 'dark' ? Style.Dark : Style.Light);
+        } else {
+          this.setStatusBarStyle(Style.Light);
+        }
       }
       return;
     } else {
@@ -121,12 +128,16 @@ export class StylesService {
       case 'Enabled' ||
         ('System Default' && this.extraStuffService.systemDarkMode()):
         this.setColor('#1F2933', 'dark');
-        this.setStatusBarStyle(Style.Dark);
+        if (Capacitor.isNativePlatform()) {
+          this.setStatusBarStyle(Style.Dark);
+        }
         break;
       case 'Disabled' ||
         ('System Default' && !this.extraStuffService.systemDarkMode()):
         this.setColor('#FFFFFF', 'light');
-        this.setStatusBarStyle(Style.Light);
+        if (Capacitor.isNativePlatform()) {
+          this.setStatusBarStyle(Style.Light);
+        }
         break;
       default:
         break;
@@ -138,15 +149,19 @@ export class StylesService {
       color: color,
       darkButtons: navBarButtonStyle !== 'dark',
     });
-    StatusBar.setBackgroundColor({
-      color: color,
-    });
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.setBackgroundColor({
+        color: color,
+      });
+    }
   }
 
   setStatusBarStyle(style: Style): void {
-    StatusBar.setStyle({
-      style: style,
-    });
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.setStyle({
+        style: style,
+      });
+    }
   }
 
   getHex(className: string): string {
