@@ -3,7 +3,7 @@
 >
   <!-- Joined, Image, Counts-->
   <div class="mb-dl-3 flex justify-between px-dl-2">
-    <div class="flex w-dl-7 flex-col justify-normal pt-dl-5">
+    <div class="flex w-dl-7 flex-col justify-normal pt-dl-7">
       <span class="flex text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
         >Joined</span
       >
@@ -31,7 +31,7 @@
     </span>
 
     <!-- Counts -->
-    <div class="flex w-dl-7 flex-col items-end pt-dl-5">
+    <div class="flex w-dl-7 flex-col items-end pt-dl-7">
       <div *ngIf="friend.friendCount > 0">
         <span class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8">
           {{ friend.friendCount }} friend</span
@@ -148,7 +148,7 @@
         class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
-          'bg-dl-pink-4 dark:bg-dl-pink-7 dark:border-dl-pink-7 text-white dark:text-dl-grey-1':
+          'bg-dl-pink-4 text-white dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1':
             buttonTexts().friendButton === 'Add Friend' ||
             buttonTexts().friendButton === 'Accept Request',
           '  bg-white text-dl-pink-4  dark:bg-dl-grey-1 dark:text-dl-pink-9':
@@ -163,7 +163,7 @@
         type="button"
         class="block whitespace-nowrap rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:text-dl-grey-1"
         [ngClass]="{
-          'bg-dl-pink-4 dark:bg-dl-pink-7 dark:border-dl-pink-7 text-white dark:text-dl-grey-1':
+          'bg-dl-pink-4 text-white dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1':
             buttonTexts().followButton === 'Follow',
           'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-9':
             buttonTexts().followButton === 'Unfollow'
@@ -255,4 +255,17 @@
   <div *ngIf="view === 'timeline'" class="mb-dl-5 h-dl-14 overflow-y-auto">
     <dl-timeline [logs]="logs"> </dl-timeline>
   </div>
+  <!-- Exit Button -->
+  <button
+    class="absolute right-3 top-3 rounded-full bg-dl-grey-9 p-dl-2 dark:bg-dl-grey-2"
+    (click)="onExitClick()"
+    type="button"
+  >
+    <svg version="1.1" height="23" width="23" viewBox="-1 -10 100 125">
+      <path
+        [attr.fill]="this.extraStuffService.getFillColor(13)"
+        d="M65.1,49.9l26.6-26.6c4.2-4.2,4.2-11,0-15.2h0c-4.2-4.2-11-4.2-15.2,0L49.9,34.7L23.4,8.2c-4.2-4.2-11-4.2-15.2,0v0  c-4.2,4.2-4.2,11,0,15.2l26.6,26.6L8.2,76.5c-4.2,4.2-4.2,11,0,15.2c4.2,4.2,11,4.2,15.2,0l26.6-26.6l26.6,26.6  c4.2,4.2,11,4.2,15.2,0c4.2-4.2,4.2-11,0-15.2L65.1,49.9z"
+      />
+    </svg>
+  </button>
 </div>

@@ -62,4 +62,17 @@
       Steps.
     </p>
   </div>
+  <!-- Exit Button -->
+  <button
+    class="absolute right-3 top-3 rounded-full bg-dl-grey-9 p-dl-2 dark:bg-dl-grey-2"
+    (click)="onExitClick()"
+    type="button"
+  >
+    <svg version="1.1" height="23" width="23" viewBox="-1 -10 100 125">
+      <path
+        [attr.fill]="this.extraStuffService.getFillColor(13)"
+        d="M65.1,49.9l26.6-26.6c4.2-4.2,4.2-11,0-15.2h0c-4.2-4.2-11-4.2-15.2,0L49.9,34.7L23.4,8.2c-4.2-4.2-11-4.2-15.2,0v0  c-4.2,4.2-4.2,11,0,15.2l26.6,26.6L8.2,76.5c-4.2,4.2-4.2,11,0,15.2c4.2,4.2,11,4.2,15.2,0l26.6-26.6l26.6,26.6  c4.2,4.2,11,4.2,15.2,0c4.2-4.2,4.2-11,0-15.2L65.1,49.9z"
+      />
+    </svg>
+  </button>
 </div>
