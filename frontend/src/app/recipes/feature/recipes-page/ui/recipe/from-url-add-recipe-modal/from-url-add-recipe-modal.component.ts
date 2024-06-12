@@ -199,6 +199,7 @@ export class FromUrlAddRecipeModalComponent {
             .pipe(take(1))
             .subscribe((error) => {
               if (error) {
+                this.recipeProgressService.stopListening();
                 console.error('Error when adding recipe via URL:', error);
                 // remove the recipe photo if it was uploaded
                 this.removeFiles(true);
