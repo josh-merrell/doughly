@@ -31,6 +31,7 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-shopping-page',
@@ -104,7 +105,8 @@ export class ShoppingPageComponent {
     private route: ActivatedRoute,
     private router: Router,
     private modalService: ModalService,
-    public extraStuffService: ExtraStuffService
+    public extraStuffService: ExtraStuffService,
+    public unitService: UnitService
   ) {}
 
   ngOnInit(): void {

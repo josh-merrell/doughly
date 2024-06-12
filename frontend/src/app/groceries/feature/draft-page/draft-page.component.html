@@ -51,7 +51,7 @@
     <!-- recipes/ingredients columns-->
     <div class="flex w-full flex-grow flex-col items-center overflow-y-auto">
       <!-- ShoppingListRecipes -->
-      <p class="mb-dl-1 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
+      <p class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
         Planned Recipes
       </p>
       <div
@@ -105,7 +105,7 @@
         >
           Planned Recipe Items
         </p>
-        <div class="min-h-dl-12 flex flex-wrap overflow-y-auto rounded-dl-3">
+        <div class="min-h-dl-2 flex flex-wrap overflow-y-auto rounded-dl-3">
           @for (item of displaySLRecipeIngr(); track item.ingredientName) {
           <div
             class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-white px-dl-1 dark:bg-dl-grey-1"
@@ -117,7 +117,7 @@
               <span
                 class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
               >
-                {{ Math.ceil(item.quantity) }} {{ item.unit }}
+                {{ Math.ceil(item.quantity) }} {{ Math.ceil(item.quantity) <= 1 ? unitService.singular(item.unit) : unitService.plural(item.unit) }}
               </span>
             </span>
           </div>
@@ -155,7 +155,7 @@
               <span
                 class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
               >
-                {{ Math.ceil(item.needMeasurement) }} {{ item.needUnit }}
+                {{ Math.ceil(item.needMeasurement) }} {{ Math.ceil(item.needMeasurement) <= 1 ? unitService.singular(item.needUnit) : unitService.plural(item.needUnit) }}
               </span>
             </span>
           </div>

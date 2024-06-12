@@ -29,6 +29,7 @@ export interface Profile {
   notifyFolloweeCreateRecipe?: string;
   notifyFriendRequest?: string;
   notifyNewFollower?: string;
+  lastPermRefreshDate?: string | null;
 
   //permissions
   isPremium: boolean;
@@ -418,6 +419,7 @@ export class AuthService {
             state: data.state,
             isPremium: data.isPremium,
             darkMode: data.darkMode,
+            lastPermRefreshDate: data.lastPermRefreshDate,
             //permissions
             permRecipeSubscribeUnlimited: data.permRecipeSubscribeUnlimited,
             permRecipeCreateUnlimited: data.permRecipeCreateUnlimited,
@@ -509,6 +511,7 @@ export class AuthService {
             city: data.city,
             state: data.state,
             darkMode: data.darkMode,
+            lastPermRefreshDate: data.lastPermRefreshDate,
             //permissions
             isPremium: data.isPremium,
             permRecipeSubscribeUnlimited: data.permRecipeSubscribeUnlimited,

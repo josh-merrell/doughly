@@ -1,19 +1,19 @@
-<div class="flex flex-col items-center">
+<div class="flex h-full flex-col items-center">
   <div class="flex h-full flex-col items-center">
     <!-- Title and Edit Icon-->
     <div class="mb-dl-6 flex w-full justify-between px-dl-5">
       <p
-        class="mb-dl-3 pt-dl-3 text-dl-7 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 w-full pt-dl-3 text-dl-7 text-center font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
       >
         Shopping In Progress
       </p>
       <svg
+        *ngIf="false"
         class="invisible mt-dl-4"
         width="50"
         height="50"
         viewBox="0 0 15 15"
         fill="none"
-        xmlns="http://www.w3.org/2000/svg"
         (click)="toggleMenu($event)"
       >
         <path
@@ -41,12 +41,12 @@
     <!-- Header Row -->
     <div class="mb-dl-5 flex w-full justify-between px-dl-5">
       <p
-        class="mb-dl-3 ml-dl-9 mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="pl-dl-7 mb-dl-3 mt-dl-5 text-center text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
       >
         Item
       </p>
       <p
-        class="mb-dl-3 mr-dl-5 mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 text-center mt-dl-5 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
       >
         Purchased Amount
       </p>
@@ -54,10 +54,10 @@
     <!-- List -->
     <div
       *ngIf="!isLoading()"
-      class="relative mb-dl-2 flex max-h-dl-18 w-dl-16 flex-col items-center overflow-y-auto"
+      class="relative mb-dl-2 flex flex-grow w-dl-16 flex-col items-center overflow-y-auto"
     >
       <div
-        class="relative mb-dl-3 flex w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2 dark:bg-dl-grey-2"
+        class="relative mb-dl-3 flex min-h-dl-6 w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2 dark:bg-dl-grey-2"
         *ngFor="let item of displaySLIngr().items"
       >
         <div
@@ -104,11 +104,6 @@
           <!-- Pink Checkbox (only if item 'purchasedMeasurement' is present but not yet saved)-->
           <svg
             *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
-            xmlns:x="http://ns.adobe.com/Extensibility/1.0/"
-            xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/"
-            xmlns:graph="http://ns.adobe.com/Graphs/1.0/"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
             version="1.1"
             height="22"
             width="22"
@@ -128,7 +123,7 @@
           <!-- Box to cover Checkmark (only if item 'purchasedMeasurement' is present but not yet saved)-->
           <div
             *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
-            class="absolute left-5 top-5 z-20 h-3 w-4 bg-dl-pink-7 dark:bg-dl-pink-4"
+            class="absolute left-5 top-6 z-20 h-3 w-4 bg-dl-pink-7 dark:bg-dl-pink-4"
           ></div>
 
           <div class="ml-dl-4 flex flex-col">
@@ -139,9 +134,9 @@
             </span>
             <div class="flex items-center">
               <span
-                class="text-dl-5 mr-dl-2 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+                class="mr-dl-2 text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
               >
-                {{ Math.ceil(item.needMeasurement) }} {{ item.needUnit }}
+              min. {{ Math.ceil(item.needMeasurement) }} {{ Math.ceil(item.needMeasurement) <= 1 ? unitService.singular(item.needUnit) : unitService.plural(item.needUnit) }}
               </span>
               <p
                 *ngIf="!item.valueValid"
@@ -153,11 +148,8 @@
           </div>
         </div>
         <div class="relative flex items-center justify-between">
-          <!-- <p class="mr-dl-2 text-dl-4 font-dl-2 italic text-dl-grey-4 dark:text-dl-grey-7">
-            {{ item.needUnit }}s
-          </p> -->
           <input
-            class="rounded-dl-1 border-0"
+            class="w-full rounded-md border-0 bg-dl-grey-10 px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset ring-dl-grey-8 transition-all duration-200 ease-in-out placeholder:text-dl-grey-2 placeholder:dark:text-dl-grey-9 focus:bg-white focus:shadow-md focus:shadow-dl-blue-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-3 dark:text-dl-grey-9 dark:ring-dl-grey-1 dark:focus:bg-dl-grey-4"
             *ngIf="!item.store"
             type="number"
             [min]="item.needMeasurement"
@@ -190,7 +182,7 @@
     <button
       type="button"
       *ngIf="isLoading() === false && displaySLIngr().itemsToSave.length"
-      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:bg-dl-pink-7 dark:text-dl-grey-1"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 dark:border dark:border-dl-pink-7 bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:bg-dl-pink-7 dark:text-dl-grey-1"
       (click)="onSaveClick()"
     >
       {{ saveButtonText }}

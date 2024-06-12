@@ -17,6 +17,7 @@ export interface Profile {
   timelineEvents: TimelineEvent[];
   friendshipStatus?: string;
   onboardingState: number;
+  lastPermRefreshDate?: string | null
 
   // settings
   checkIngredientStock: boolean;

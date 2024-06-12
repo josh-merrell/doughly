@@ -1,5 +1,5 @@
 <div
-  class="flex flex-col items-center px-dl-5 pb-dl-3 pt-dl-4 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex flex-col items-center px-dl-5 pb-dl-3 pt-dl-4 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <h3
     class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
@@ -100,4 +100,17 @@
       </button>
     </div>
   </div>
+  <!-- Exit Button -->
+  <button
+    class="absolute right-3 top-2 rounded-full bg-dl-grey-9 p-dl-2 dark:bg-dl-grey-2"
+    (click)="onExitClick()"
+    type="button"
+  >
+    <svg version="1.1" height="23" width="23" viewBox="-1 -10 100 125">
+      <path
+        [attr.fill]="this.extraStuffService.getFillColor(13)"
+        d="M65.1,49.9l26.6-26.6c4.2-4.2,4.2-11,0-15.2h0c-4.2-4.2-11-4.2-15.2,0L49.9,34.7L23.4,8.2c-4.2-4.2-11-4.2-15.2,0v0  c-4.2,4.2-4.2,11,0,15.2l26.6,26.6L8.2,76.5c-4.2,4.2-4.2,11,0,15.2c4.2,4.2,11,4.2,15.2,0l26.6-26.6l26.6,26.6  c4.2,4.2,11,4.2,15.2,0c4.2-4.2,4.2-11,0-15.2L65.1,49.9z"
+      />
+    </svg>
+  </button>
 </div>

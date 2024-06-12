@@ -783,7 +783,7 @@ module.exports = ({ db }) => {
       }
 
       // match ingredients with user Ingredients
-      sendSSEMessage(userID, { message: `Matching recipe Ingredients with User Ingredients` });
+      sendSSEMessage(userID, { message: `Mapping Recipe Ingredients with your Kitchen Ingredients..` });
       let matchedIngredientsResponse = await matchIngredients(recipeJSON.ingredients, authorization, userID, userIngredients);
       let matchedIngredients = matchedIngredientsResponse.matchedTwiceIngredients;
 
@@ -859,11 +859,11 @@ module.exports = ({ db }) => {
       // ***************************************************************************
 
       // match tools with user tools
-      sendSSEMessage(userID, { message: `Matching recipe Tools with User Tools` });
+      sendSSEMessage(userID, { message: `Mapping Recipe Tools with your Kitchen Tools..` });
       const matchedTools = await matchTools(recipeJSON.tools, authorization, userID);
 
       // match category
-      sendSSEMessage(userID, { message: `Finding Appropriate Category for new Recipe` });
+      sendSSEMessage(userID, { message: `Finding Appropriate Category for Recipe` });
       const matchedCategoryID = await matchCategory(recipeJSON.category, authorization, userID);
 
       // prepare constructRecipe body
@@ -887,7 +887,7 @@ module.exports = ({ db }) => {
       // console.log(`CONSTRUCT BODY: ${JSON.stringify(constructBody)}`)
 
       // call constructRecipe with body
-      sendSSEMessage(userID, { message: `Details ready, building new Recipe` });
+      sendSSEMessage(userID, { message: `Details ready! Building new Recipe...` });
       const { data: recipeID, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
       if (constructError) {
         global.logger.error(`Error constructing recipe from image details: ${constructError.message}`);
@@ -925,21 +925,20 @@ module.exports = ({ db }) => {
       let elapsedTime = 0;
       const timer = setInterval(() => {
         elapsedTime += 1;
-        sendSSEMessage(userID, { message: `Getting recipe details from image. This should take less than a minute. Elapsed Time: ${elapsedTime}` });
+        sendSSEMessage(userID, { message: `Getting recipe details from image. Expected Time: 25 seconds. Elapsed: ${elapsedTime}` });
       }, 1000); // Send progress update every second
       global.logger.info(`Calling visionRequest`);
       const visionStartTime = new Date();
       const { response, error } = await visionRequest(recipeSourceImageURL, userID, authorization, 'generateRecipeFromImage');
+      clearInterval(timer);
       if (error) {
         global.logger.error(`Error creating recipe from vision: ${error.message}`);
         throw errorGen(`Error creating recipe from vision: ${error.message}`, 400);
       }
-      clearInterval(timer);
       const recipeJSON = JSON.parse(response);
       // Stop timer and calculate duration
       const visionEndTime = new Date();
       const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
-      sendSSEMessage(userID, { message: `Got recipe details from image in ${visionDuration / 1000} seconds` });
       global.logger.info(`*TIME* recipe visionRequest: ${visionDuration / 1000} seconds`);
 
       const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
@@ -984,35 +983,32 @@ module.exports = ({ db }) => {
   async function createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL) {
     global.logger.info(`Creating recipe from URL: ${recipeURL}`);
     try {
-      // call openaiHandler to build recipe json
-      let elapsedTime = 0;
-      const timer = setInterval(() => {
-        elapsedTime += 1;
-        sendSSEMessage(userID, { message: `Getting recipe details from web page. This should be quick. Elapsed Time: ${elapsedTime}` });
-      }, 1000); // Send progress update every second
-      global.logger.info(`Calling urlRequest`);
-
-      // start timer
-      const visionStartTime = new Date();
-
       // call 'getHtml' to get recipe details from URL
+      sendSSEMessage(userID, { message: `Opening provided web page...` });
       const { html, error } = await getHtml(recipeURL, userID, authorization, 'generateRecipeFromURL');
       if (error) {
         global.logger.error(`Error getting Source Recipe details. Can't create recipe: ${error.message}`);
         throw errorGen(`Error getting Source Recipe details. Can't create recipe: ${error.message}`, 400);
       }
-      clearInterval(timer);
 
       const htmlText = await extractFromHtml(html);
       if (!htmlText) {
         global.logger.error(`Error extracting recipe details from URL: ${recipeURL}`);
         throw errorGen(`Error extracting recipe details from URL: ${recipeURL}`, 400);
       }
-
       global.logger.info(`HTML TEXT: ${htmlText}`);
+
       // call openaiHandler to build recipe json
+      let elapsedTime = 0;
+      const timer = setInterval(() => {
+        elapsedTime += 1;
+        sendSSEMessage(userID, { message: `Getting recipe details from web page. Expected Time: 25 seconds. Elapsed: ${elapsedTime}` });
+      }, 1000); // Send progress update every second
+      global.logger.info(`Calling urlRequest`);
+      const visionStartTime = new Date();
       const result = await recipeFromTextRequest(htmlText, userID, authorization);
-      // const recipeJSON = result.response;
+      clearInterval(timer);
+
       const recipeJSON = JSON.parse(result.response);
 
       const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);

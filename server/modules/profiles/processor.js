@@ -96,6 +96,7 @@ module.exports = ({ db, dbPublic }) => {
       notifyFriendRequest: profile.notifyFriendRequest,
       notifyNewFollower: profile.notifyNewFollower,
       darkMode: profile.darkMode,
+      lastPermRefreshDate: profile.lastPermRefreshDate,
       // permissions
       permRecipeSubscribeUnlimited: profile.permRecipeSubscribeUnlimited,
       permRecipeCreateUnlimited: profile.permRecipeCreateUnlimited,
