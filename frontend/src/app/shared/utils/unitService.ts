@@ -11,13 +11,13 @@ export class UnitService {
 
   singular(value: string) {
     if (value[value.length - 1] === 's') {
-      if (
-        value === 'leaves' ||
-        value === 'loaves'
-      ) {
+      if (value === 'leaves' || value === 'loaves') {
         return value.slice(0, -3) + 'f';
-      }
-      else if (
+      } else if (value === 'weightOunces') {
+        return 'oz';
+      } else if (value === 'fluidOunces') {
+        return 'fl oz';
+      } else if (
         value === 'boxes' ||
         value === 'bunches' ||
         value === 'pinches' ||
@@ -27,18 +27,23 @@ export class UnitService {
       } else {
         return value.slice(0, -1);
       }
+    } else if (value === 'weightOunce') {
+      return 'oz';
+    } else if (value === 'fluidOunce') {
+      return 'fl oz';
     }
     return value;
   }
 
   plural(value: string) {
     if (value[value.length - 1] !== 's') {
-      if (
-        value === 'leaf' || value === 'loaf'
-      ) {
+      if (value === 'leaf' || value === 'loaf') {
         return value.slice(0, -1) + 'ves';
-      }
-      else if (
+      } else if (value === 'weightOunce') {
+        return 'oz';
+      } else if (value === 'fluidOunce') {
+        return 'fl oz';
+      } else if (
         value === 'box' ||
         value === 'bunch' ||
         value === 'pinch' ||
@@ -48,6 +53,10 @@ export class UnitService {
       } else {
         return value + 's';
       }
+    } else if (value === 'weightOunce') {
+      return 'oz';
+    } else if (value === 'fluidOunce') {
+      return 'fl oz';
     }
     return value;
   }
@@ -62,8 +71,13 @@ export class UnitService {
     );
   }
 
-  addUnitRatio(material: string, unitA: string, unitB: string, ratio: number): Observable<any> {
-    console.log()
+  addUnitRatio(
+    material: string,
+    unitA: string,
+    unitB: string,
+    ratio: number
+  ): Observable<any> {
+    console.log();
     return this.http.post(`${environment.BACKEND}/unitRatios/`, {
       material,
       unitA,
