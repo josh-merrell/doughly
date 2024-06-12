@@ -1,0 +1,227 @@
+<div
+  class="relative flex max-h-dl-20 w-full transform flex-col overflow-hidden overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+>
+  <div class="flex h-full w-full flex-grow flex-col overflow-y-auto">
+    <!-- Overflow Scroll -->
+    <div class="flex-grow overflow-y-auto">
+      <!-- Requirements -->
+      <p class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
+        Source Image Must Include
+      </p>
+      <ul
+        class="ml-dl-2 px-dl-4 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-8"
+      >
+        <li>- Ingredient Names</li>
+        <li>- Ingredient Measurements</li>
+        <li>- All Instructions</li>
+      </ul>
+
+      <!-- Optional -->
+      <p
+        class="mt-dl-6 px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
+        For Best Results, Include
+      </p>
+      <ul
+        class="ml-dl-2 px-dl-4 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-8"
+      >
+        <li>- Recipe Title</li>
+        <li>- Time Requirements</li>
+        <li>- Servings Count</li>
+        <li>- Tools</li>
+      </ul>
+
+      <!-- Context -->
+      <p
+        class="mt-dl-6 px-dl-4 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
+        The provided Source Image may be a digital screenshot or a photo of a
+        hand-written or printed recipe. All details must be included in a single
+        image.
+      </p>
+
+      <!-- Good Example -->
+      <img
+        src="https://s3.us-west-2.amazonaws.com/dl.images-compressed/system/cheesy-herb-and-garlic-bread.jpg"
+        alt="Good Source Image Example"
+        class="mt-dl-4 h-full w-full rounded-md border-4 border-dl-teal-4 dark:border-dl-teal-7"
+      />
+      <div class="mt-dl-2 flex items-center">
+        <!-- Checkmark - Ingredients -->
+        <div class="flex items-center">
+          <svg height="22" width="22" viewBox="-949 951 110 105">
+            <switch>
+              <g i:extraneous="self">
+                <g>
+                  <path
+                    [attr.fill]="this.extraStuffService.getFillColor(7)"
+                    d="M-873.7,953.5h-50.5c-12.3,0-22.2,10-22.2,22.2v50.5c0,12.3,10,22.2,22.2,22.2h50.5c12.3,0,22.2-10,22.2-22.2v-50.5     C-851.5,963.5-861.5,953.5-873.7,953.5z M-874.1,995.8l-24.5,24.5c-1.5,1.5-3.5,2.3-5.5,2.3s-4.1-0.8-5.5-2.3l-14.1-14.1     c-3.1-3.1-3.1-8,0-11.1c3.1-3.1,8-3.1,11.1,0l8.6,8.6l19-19c3.1-3.1,8-3.1,11.1,0C-871.1,987.8-871.1,992.8-874.1,995.8z"
+                  />
+                </g>
+              </g>
+            </switch>
+          </svg>
+          <p
+            class="px-dl-5 pl-dl-1 text-dl-4 font-dl-3 text-dl-teal-2 dark:text-dl-teal-8"
+          >
+            Ingredients
+          </p>
+        </div>
+        <!-- Checkmark - Intructions -->
+        <div class="flex items-center pl-dl-5">
+          <svg height="22" width="22" viewBox="-949 951 110 105">
+            <switch>
+              <g i:extraneous="self">
+                <g>
+                  <path
+                    [attr.fill]="this.extraStuffService.getFillColor(7)"
+                    d="M-873.7,953.5h-50.5c-12.3,0-22.2,10-22.2,22.2v50.5c0,12.3,10,22.2,22.2,22.2h50.5c12.3,0,22.2-10,22.2-22.2v-50.5     C-851.5,963.5-861.5,953.5-873.7,953.5z M-874.1,995.8l-24.5,24.5c-1.5,1.5-3.5,2.3-5.5,2.3s-4.1-0.8-5.5-2.3l-14.1-14.1     c-3.1-3.1-3.1-8,0-11.1c3.1-3.1,8-3.1,11.1,0l8.6,8.6l19-19c3.1-3.1,8-3.1,11.1,0C-871.1,987.8-871.1,992.8-874.1,995.8z"
+                  />
+                </g>
+              </g>
+            </switch>
+          </svg>
+          <p
+            class="pl-dl-1 text-dl-4 font-dl-3 text-dl-teal-2 dark:text-dl-teal-8"
+          >
+            Instructions
+          </p>
+        </div>
+      </div>
+
+      <!-- Bad Example 1 -->
+      <img
+        src="https://s3.us-west-2.amazonaws.com/dl.images-compressed/system/bad-example-1.png"
+        alt="Bad Source Image Example 1"
+        class="mt-dl-6 h-full w-full rounded-md border-4 border-dl-red-4 dark:border-dl-red-7"
+      />
+      <div class="mt-dl-2 flex items-center">
+        <!-- Checkmark - Ingredients -->
+        <div class="flex items-center">
+          <svg height="22" width="22" viewBox="-949 951 110 105">
+            <switch>
+              <g i:extraneous="self">
+                <g>
+                  <path
+                    [attr.fill]="this.extraStuffService.getFillColor(7)"
+                    d="M-873.7,953.5h-50.5c-12.3,0-22.2,10-22.2,22.2v50.5c0,12.3,10,22.2,22.2,22.2h50.5c12.3,0,22.2-10,22.2-22.2v-50.5     C-851.5,963.5-861.5,953.5-873.7,953.5z M-874.1,995.8l-24.5,24.5c-1.5,1.5-3.5,2.3-5.5,2.3s-4.1-0.8-5.5-2.3l-14.1-14.1     c-3.1-3.1-3.1-8,0-11.1c3.1-3.1,8-3.1,11.1,0l8.6,8.6l19-19c3.1-3.1,8-3.1,11.1,0C-871.1,987.8-871.1,992.8-874.1,995.8z"
+                  />
+                </g>
+              </g>
+            </switch>
+          </svg>
+          <p
+            class="pl-dl-1 text-dl-4 font-dl-3 text-dl-teal-2 dark:text-dl-teal-8"
+          >
+            Ingredients
+          </p>
+        </div>
+        <!-- Cross - Instructions -->
+        <div class="flex items-center pl-dl-5">
+          <svg height="22" width="22" viewBox="0 0 100 100">
+            <switch>
+              <g i:extraneous="self">
+                <g>
+                  <path
+                    [attr.fill]="this.extraStuffService.getFillColor(20)"
+                    d="m81.41 12.762h-62.82c-4.7383 0-8.5898 3.8516-8.5898 8.5898v57.301c0 4.7383 3.8516 8.5898 8.5898 8.5898h62.82c4.7383 0 8.5898-3.8516 8.5898-8.5898v-57.301c0-4.7422-3.8516-8.5898-8.5898-8.5898zm-10.922 50.348c2.0391 2.0391 2.0391 5.3398 0 7.3711-1.0117 1.0195-2.3516 1.5312-3.6914 1.5312-1.3281 0-2.6719-0.51172-3.6914-1.5312l-13.105-13.109-13.109 13.117c-1.0195 1.0195-2.3516 1.5312-3.6914 1.5312-1.3398 0-2.6797-0.51172-3.6914-1.5312-2.0391-2.0312-2.0391-5.3281 0-7.3711l13.121-13.117-13.117-13.109c-2.0391-2.0391-2.0391-5.3398 0-7.3711 2.0312-2.0391 5.3281-2.0391 7.3711 0l13.117 13.109 13.109-13.109c2.0391-2.0391 5.3398-2.0391 7.3711 0 2.0391 2.0312 2.0391 5.3281 0 7.3711l-13.109 13.109z"
+                  />
+                </g>
+              </g>
+            </switch>
+          </svg>
+          <p
+            class="pl-dl-1 text-dl-4 font-dl-3 text-dl-red-2 dark:text-dl-red-8"
+          >
+            Instructions
+          </p>
+        </div>
+      </div>
+
+      <!-- Bad Example 2 -->
+      <img
+        src="https://s3.us-west-2.amazonaws.com/dl.images-compressed/system/bad-example-2.jpg"
+        alt="Bad Source Image Example 1"
+        class="mt-dl-6 h-full w-full rounded-md border-4 border-dl-red-4 dark:border-dl-red-7"
+      />
+      <div class="mt-dl-2 flex flex-wrap items-center">
+        <!-- Checkmark - Ingredients -->
+        <div class="flex items-center">
+          <svg height="22" width="22" viewBox="-949 951 110 105">
+            <switch>
+              <g i:extraneous="self">
+                <g>
+                  <path
+                    [attr.fill]="this.extraStuffService.getFillColor(7)"
+                    d="M-873.7,953.5h-50.5c-12.3,0-22.2,10-22.2,22.2v50.5c0,12.3,10,22.2,22.2,22.2h50.5c12.3,0,22.2-10,22.2-22.2v-50.5     C-851.5,963.5-861.5,953.5-873.7,953.5z M-874.1,995.8l-24.5,24.5c-1.5,1.5-3.5,2.3-5.5,2.3s-4.1-0.8-5.5-2.3l-14.1-14.1     c-3.1-3.1-3.1-8,0-11.1c3.1-3.1,8-3.1,11.1,0l8.6,8.6l19-19c3.1-3.1,8-3.1,11.1,0C-871.1,987.8-871.1,992.8-874.1,995.8z"
+                  />
+                </g>
+              </g>
+            </switch>
+          </svg>
+          <p
+            class="pl-dl-1 text-dl-4 font-dl-3 text-dl-teal-2 dark:text-dl-teal-8"
+          >
+            Ingredients
+          </p>
+        </div>
+        <!-- Checkmark - Instructions -->
+        <div class="flex items-center pl-dl-5">
+          <svg height="22" width="22" viewBox="-949 951 110 105">
+            <switch>
+              <g i:extraneous="self">
+                <g>
+                  <path
+                    [attr.fill]="this.extraStuffService.getFillColor(7)"
+                    d="M-873.7,953.5h-50.5c-12.3,0-22.2,10-22.2,22.2v50.5c0,12.3,10,22.2,22.2,22.2h50.5c12.3,0,22.2-10,22.2-22.2v-50.5     C-851.5,963.5-861.5,953.5-873.7,953.5z M-874.1,995.8l-24.5,24.5c-1.5,1.5-3.5,2.3-5.5,2.3s-4.1-0.8-5.5-2.3l-14.1-14.1     c-3.1-3.1-3.1-8,0-11.1c3.1-3.1,8-3.1,11.1,0l8.6,8.6l19-19c3.1-3.1,8-3.1,11.1,0C-871.1,987.8-871.1,992.8-874.1,995.8z"
+                  />
+                </g>
+              </g>
+            </switch>
+          </svg>
+          <p
+            class="pl-dl-1 text-dl-4 font-dl-3 text-dl-teal-2 dark:text-dl-teal-8"
+          >
+            Instructions
+          </p>
+        </div>
+        <!-- Cross - Ingredients -->
+        <div class="flex items-center">
+          <svg height="22" width="22" viewBox="0 0 100 100">
+            <switch>
+              <g i:extraneous="self">
+                <g>
+                  <path
+                    [attr.fill]="this.extraStuffService.getFillColor(20)"
+                    d="m81.41 12.762h-62.82c-4.7383 0-8.5898 3.8516-8.5898 8.5898v57.301c0 4.7383 3.8516 8.5898 8.5898 8.5898h62.82c4.7383 0 8.5898-3.8516 8.5898-8.5898v-57.301c0-4.7422-3.8516-8.5898-8.5898-8.5898zm-10.922 50.348c2.0391 2.0391 2.0391 5.3398 0 7.3711-1.0117 1.0195-2.3516 1.5312-3.6914 1.5312-1.3281 0-2.6719-0.51172-3.6914-1.5312l-13.105-13.109-13.109 13.117c-1.0195 1.0195-2.3516 1.5312-3.6914 1.5312-1.3398 0-2.6797-0.51172-3.6914-1.5312-2.0391-2.0312-2.0391-5.3281 0-7.3711l13.121-13.117-13.117-13.109c-2.0391-2.0391-2.0391-5.3398 0-7.3711 2.0312-2.0391 5.3281-2.0391 7.3711 0l13.117 13.109 13.109-13.109c2.0391-2.0391 5.3398-2.0391 7.3711 0 2.0391 2.0312 2.0391 5.3281 0 7.3711l-13.109 13.109z"
+                  />
+                </g>
+              </g>
+            </switch>
+          </svg>
+          <p
+            class="pl-dl-1 text-dl-4 font-dl-3 text-dl-red-2 dark:text-dl-red-8"
+          >
+            Legible English
+          </p>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <p
+        class="mt-dl-6 px-dl-4 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
+        The import process may miss some details. Review and edit results as
+        needed. An AI credit is deducted from your account only if the import is
+        successful.
+      </p>
+    </div>
+  </div>
+  <button
+    type="button"
+    class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
+    (click)="onCancel()"
+  >
+    Close
+  </button>
+</div>

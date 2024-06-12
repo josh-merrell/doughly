@@ -650,14 +650,14 @@ module.exports = ({ db }) => {
       if (recipeJSON.error) {
         if (recipeJSON.error === 10) {
           global.logger.error(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image.`);
-          throw errorGen(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image.`, 400);
+          throw errorGen(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image.`, 560);
         }
         global.logger.error(`Could not analyze the provided image: ${recipeJSON.error}. Please try again later`);
-        throw errorGen(`Could not analyze the provided image: ${recipeJSON.error}. Please try again later`, 400);
+        throw errorGen(`Could not analyze the provided image: ${recipeJSON.error}. Please try again later`, 560);
       }
       if (!recipeJSON.title) {
         global.logger.error(`no recipe title found in image`);
-        throw errorGen(`no recipe title found in image`, 400);
+        throw errorGen(`no recipe title found in image`, 560);
       }
       // save recipeJSON to file
       // const sanitizedTitle = recipeJSON.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -670,7 +670,7 @@ module.exports = ({ db }) => {
 
       if (!recipeJSON.category) {
         global.logger.error(`no recipe category found in image`);
-        throw errorGen(`no recipe category found in image`, 400);
+        throw errorGen(`no recipe category found in image`, 560);
       }
 
       sendSSEMessage(userID, { message: `General Recipe details look good, checking ingredient details...` });
@@ -680,7 +680,7 @@ module.exports = ({ db }) => {
       // validate returned ingredients
       if (recipeJSON.ingredients.length < 1) {
         global.logger.error(`no ingredients found in image`);
-        throw errorGen(`no ingredients found in image`, 400);
+        throw errorGen(`no ingredients found in image`, 560);
       }
       const units = process.env.MEASUREMENT_UNITS.split(',');
 

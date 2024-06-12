@@ -9,6 +9,7 @@ import { PhotoService } from 'src/app/shared/utils/photoService';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { RecipeProgressService } from 'src/app/recipes/data/recipeVisionProgress.service';
 import { Observable, filter, take } from 'rxjs';
+import { VisionAddExampleModalComponent } from 'src/app/recipes/feature/recipes-page/ui/recipe/vision-add-example-modal/vision-add-example-modal.component';
 import {
   selectAdding,
   selectError,
@@ -79,7 +80,7 @@ export class VisionAddRecipeModalComponent {
     private stringsService: StringsService,
     public extraStuffService: ExtraStuffService,
     private authService: AuthService,
-    private modalService: ModalService,
+    private modalService: ModalService
   ) {
     // ** OLD ONBOARDING **
     // effect(
@@ -263,17 +264,27 @@ export class VisionAddRecipeModalComponent {
                 // remove the image and photo, and stop listening for SSE messages
                 this.removeFiles(true);
                 this.recipeProgressService.stopListening();
+                this.modalService.open(
+                  VisionAddExampleModalComponent,
+                  {
+                    width: '90%',
+                    data: {},
+                  },
+                  3,
+                  true
+                );
+
                 // show the error modal
                 this.modalService.open(
                   ErrorModalComponent,
                   {
                     maxWidth: '380px',
                     data: {
-                      errorMessage: `We couldn't add a recipe using that image. Make sure the image clearly shows all details of a recipe and try again.`,
+                      errorMessage: `We couldn't add a recipe using that image. Make sure the image clearly shows all needed details and try again.`,
                       statusCode: error.statusCode,
                     },
                   },
-                  3,
+                  4,
                   true
                 );
               } else {
@@ -321,7 +332,7 @@ export class VisionAddRecipeModalComponent {
                       //         });
                       //     });
                       // }
-                      
+
                       //navigate to recipe page
                       this.router.navigate(['/recipe', newRecipeID.recipeID]);
                       this.modalService.closeAll();
@@ -382,4 +393,16 @@ export class VisionAddRecipeModalComponent {
   //   this.showOnboardingBadge.set(false);
   //   this.onboardingHandler(this.profile().onboardingState);
   // }
+
+  onClickHelp() {
+    this.modalService.open(
+      VisionAddExampleModalComponent,
+      {
+        width: '90%',
+        data: {},
+      },
+      3,
+      true
+    );
+  }
 }

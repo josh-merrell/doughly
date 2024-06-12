@@ -2,12 +2,39 @@
   class="relative max-h-dl-21 w-full transform overflow-hidden overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-7 flex w-full flex-col items-center">
-    <!-- Title -->
-    <h3
-      class="leading-dl-4 mb-dl-4 text-dl-7 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
-    >
-      Recipe Vision
-    </h3>
+    <!-- Title, Help -->
+    <div class="relative w-full flex flex-col items-center">
+      <!-- Title -->
+      <h3
+        class="leading-dl-4 mb-dl-4 text-dl-7 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
+        Recipe Vision
+      </h3>
+
+      <!-- Help -->
+      <svg
+        class="absolute right-2 top-1"
+        viewBox="0 0 36 45"
+        height="36px"
+        width="36px"
+        (click)="onClickHelp()"
+      >
+        <path
+          [attr.fill]="this.extraStuffService.getFillColor(5)"
+          d="M32.74643,11.79066a16.00049,16.00049,0,1,0-8.5377,20.95552A16.01936,16.01936,0,0,0,32.74643,11.79066ZM23.202,30.3551a13.40561,13.40561,0,1,1,7.15339-17.55767A13.42294,13.42294,0,0,1,23.202,30.3551Z"
+        />
+        <path
+          [attr.fill]="this.extraStuffService.getFillColor(5)"
+          d="M17.55577,8.32059A5.58325,5.58325,0,0,0,13.08949,10.528a1.29746,1.29746,0,0,0,2.06084,1.57688,3.027,3.027,0,1,1,2.40544,4.86451,1.29712,1.29712,0,0,0-1.29732,1.29732v2.59463a1.29732,1.29732,0,0,0,2.59463,0v-1.4485A5.622,5.622,0,0,0,17.55577,8.32059Z"
+        />
+        <circle
+          [attr.fill]="this.extraStuffService.getFillColor(5)"
+          cx="17.55582"
+          cy="25.08439"
+          r="1.29732"
+        />
+      </svg>
+    </div>
     <p
       *ngIf="!isAdding"
       class="px-dl-4 text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
