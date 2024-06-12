@@ -54,6 +54,7 @@ import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-draft-page',
@@ -166,7 +167,8 @@ export class DraftPageComponent {
     public router: Router,
     private stringsService: StringsService,
     private modalService: ModalService,
-    public extraStuffService: ExtraStuffService
+    public extraStuffService: ExtraStuffService,
+    public unitService: UnitService
   ) {
     effect(
       () => {
@@ -801,4 +803,5 @@ export class DraftPageComponent {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
   }
+
 }

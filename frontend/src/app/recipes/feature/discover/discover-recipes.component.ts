@@ -30,6 +30,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
 import { StylesService } from 'src/app/shared/utils/stylesService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { DarkMode } from '@aparajita/capacitor-dark-mode';
+import { ProductService } from 'src/app/shared/utils/productService';
 
 @Component({
   selector: 'dl-discover-recipes',
@@ -58,7 +59,8 @@ export class DiscoverRecipesComponent {
     private modalService: ModalService,
     private renderer: Renderer2,
     private stylesService: StylesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private productService: ProductService
   ) {
     effect(
       () => {
@@ -134,6 +136,7 @@ export class DiscoverRecipesComponent {
     });
     this.store.select(selectProfile).subscribe((profile) => {
       this.profile.set(profile);
+      this.checkProfilePerms(profile);
       const darkMode = profile.darkMode;
       if (darkMode === 'Enabled') {
         this.renderer.addClass(document.body, 'dark');
@@ -391,5 +394,25 @@ export class DiscoverRecipesComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
+  }
+
+  async checkProfilePerms(profile: any) {
+    console.log(`CHECKING PROFILE PERMS: `, profile.lastPermRefreshDate);
+    if (!profile || !profile.lastPermRefreshDate) return;
+    // check if it's been more than 1 day since the last permission refresh
+    const lastRefreshDate = new Date(profile.lastPermRefreshDate);
+    const currentDate = new Date();
+    const timeDiff = currentDate.getTime() - lastRefreshDate.getTime();
+    const daysDiff = timeDiff / (1000 * 3600 * 24);
+    if (daysDiff >= 1) {
+      await this.productService.updatePermissions();
+      // update lastPermRefreshDate
+      this.store.dispatch(
+        ProfileActions.updateProfileProperty({
+          property: 'lastPermRefreshDate',
+          value: new Date().toISOString(),
+        })
+      );
+    }
   }
 }

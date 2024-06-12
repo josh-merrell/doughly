@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, WritableSignal, effect, signal } from '@angular/core';
+import { Component, WritableSignal, signal } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Store } from '@ngrx/store';
@@ -21,10 +21,7 @@ import { Router } from '@angular/router';
 import { StringsService } from 'src/app/shared/utils/strings';
 import {
   selectProfile,
-  selectUpdating,
 } from 'src/app/profile/state/profile-selectors';
-import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
-import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
@@ -43,7 +40,7 @@ import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 })
 export class VisionAddRecipeModalComponent {
   isAdding: boolean = false;
-  statusMessage: WritableSignal<string> = signal('');
+  statusMessage: WritableSignal<string> = signal('Uploading Source Image');
 
   // source image upload
   sourceImageURL!: string;
@@ -210,7 +207,7 @@ export class VisionAddRecipeModalComponent {
 
   async onSubmit() {
     this.isAdding = true;
-    this.statusMessage.set('Loading Image');
+    this.statusMessage.set('Uploading Source Image');
     //first upload the recipe source image to temp
     await this.uploadCroppedImage('sourceImageSelectedFile');
     //if recipe photo present, upload it also

@@ -26,10 +26,11 @@ import {
   selectDeleting as selectDeletingFollowship,
   selectError as selectErrorFollowship,
 } from 'src/app/social/state/followship-selectors';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-add-friend-modal',
@@ -52,7 +53,9 @@ export class AddFriendModalComponent {
     private store: Store,
     public dialog: MatDialog,
     private pushTokenService: PushTokenService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private dialogRef: MatDialogRef<AddFriendModalComponent>,
+    public extraStuffService: ExtraStuffService
   ) {
     this.store.select(selectSearchResultsProfile).subscribe((searchResults) => {
       this.searchResults.set(searchResults);
@@ -479,5 +482,9 @@ export class AddFriendModalComponent {
       default:
         return null;
     }
+  }
+
+  onExitClick() {
+    this.dialogRef.close();
   }
 }

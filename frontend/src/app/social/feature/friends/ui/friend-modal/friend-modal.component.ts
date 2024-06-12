@@ -43,6 +43,7 @@ import { Log } from 'src/app/shared/state/shared-state';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-friend-modal',
@@ -52,7 +53,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatProgressSpinnerModule,
     RecipeCardComponent,
     TimelineComponent,
-    ImageFromCDN
+    ImageFromCDN,
   ],
   templateUrl: './friend-modal.component.html',
 })
@@ -83,7 +84,8 @@ export class FriendModalComponent {
     public dialog: MatDialog,
     private logService: LogService,
     private pushTokenService: PushTokenService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    public extraStuffService: ExtraStuffService
   ) {
     this.buttonTexts.set({ friendButton: '', followButton: '' });
 
@@ -515,5 +517,9 @@ export class FriendModalComponent {
       default:
         return null;
     }
+  }
+
+  onExitClick() {
+    this.dialogRef.close();
   }
 }

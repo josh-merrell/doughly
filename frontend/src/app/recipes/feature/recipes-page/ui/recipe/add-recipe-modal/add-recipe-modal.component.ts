@@ -248,7 +248,6 @@ export class AddRecipeModalComponent {
   }
 
   onboardingHandler(onboardingState: number): void {
-
     // ** OLD ONBOARDING STEPS **
     // if (onboardingState === 9) {
     //   this.showOnboardingBadge.set(false);
@@ -348,5 +347,9 @@ export class AddRecipeModalComponent {
   onboardingBadgeClick() {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
+  }
+
+  onExitClick() {
+    this.dialogRef.close();
   }
 }

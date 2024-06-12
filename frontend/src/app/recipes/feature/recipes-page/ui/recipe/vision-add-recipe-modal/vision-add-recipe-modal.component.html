@@ -3,9 +3,10 @@
 >
   <div class="mb-dl-7 flex w-full flex-col items-center">
     <!-- Title, Help -->
-    <div class="relative w-full flex flex-col items-center">
+    <div class="relative flex w-full flex-col items-center">
       <!-- Title -->
       <h3
+        *ngIf="!isAdding"
         class="leading-dl-4 mb-dl-4 text-dl-7 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
       >
         Recipe Vision
@@ -13,6 +14,7 @@
 
       <!-- Help -->
       <svg
+        *ngIf="!isAdding"
         class="absolute right-2 top-1"
         viewBox="0 0 36 45"
         height="36px"
@@ -40,16 +42,16 @@
       class="px-dl-4 text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
     >
       Choose a Recipe Source Image that shows the recipe you want to add. It
-      should clearly show all details, ingredients, and steps. Optionally,
-      choose a photo of the completed dish.
+      should clearly show all details, ingredients, and instructions.
+      Optionally, choose a photo of the completed dish.
     </p>
     <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
-    <p
+    <!-- <p
       *ngIf="isAdding && profile().onboardingState !== 12"
       class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
     >
       You may navigate away while waiting
-    </p>
+    </p> -->
     <p
       *ngIf="isAdding && profile().onboardingState === 12"
       class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
@@ -58,7 +60,7 @@
     </p>
     <p
       *ngIf="statusMessage() && isAdding"
-      class="px-dl-4 text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+      class="px-dl-4 text-dl-6 font-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
     >
       {{ statusMessage() }}
     </p>
