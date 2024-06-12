@@ -29,7 +29,6 @@ export class ModalService {
     level: number = 1,
     allowMultipleSameLevel: boolean = false
   ): MatDialogRef<T> | null {
-    console.log(`TRYING TO OPEN MODAL. COMPONENT: `, component);
     if (!component || component === null) {
       console.error(`No component ref provided, not opening modal.`);
       return null;
@@ -48,7 +47,6 @@ export class ModalService {
 
     dialogRef.afterClosed().subscribe(() => {
       this.modals = this.modals.filter((m) => m.ref !== dialogRef);
-      console.log(`MODALS: `, this.modals);
       this.setModalStyles();
     });
 
@@ -65,7 +63,6 @@ export class ModalService {
   }
 
   async setModalStyles(): Promise<void> {
-    console.log(`SETTING MODAL STYLES`);
     // determine highest level with a modal currently open
     let highestLevel = 0;
     this.modals.forEach((m) => {
