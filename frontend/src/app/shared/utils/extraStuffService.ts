@@ -89,6 +89,10 @@ export class ExtraStuffService {
         return useDarkMode
           ? this.stylesService.getHex('grey-7')
           : this.stylesService.getHex('grey-4');
+      case 20:
+        return useDarkMode
+          ? this.stylesService.getHex('red-8')
+          : this.stylesService.getHex('red-4');
       default:
         return useDarkMode ? '#CBD2D9' : '#3E4C59';
     }
