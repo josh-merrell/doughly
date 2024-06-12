@@ -59,9 +59,9 @@ module.exports = ({ db, dbDefault }) => {
         // set 'permAITokenLastRefreshDate' to be 'monthsPassed' months from previous 'permAITokenLastRefreshDate'
         let newRefreshDate;
         if (!profile.permAITokenLastRefreshDate) {
-          newRefreshDate = today;
+          newRefreshDate = new Date(today);
         } else {
-          new Date(profile.permAITokenLastRefreshDate);
+          newRefreshDate = new Date(profile.permAITokenLastRefreshDate);
           newRefreshDate.setMonth(newRefreshDate.getMonth() + monthsPassed);
         }
         tokenUpdate.newDate = newRefreshDate.toISOString();
