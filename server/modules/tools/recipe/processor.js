@@ -1,6 +1,6 @@
 ('use strict');
 
-const { updater, incrementVersion } = require('../../../db');
+const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 const { createRecipeLog } = require('../../../services/dbLogger');
 const { errorGen } = require('../../../middleware/errorHandling');
 
