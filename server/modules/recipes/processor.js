@@ -13,7 +13,7 @@ const { sendSSEMessage } = require('../../server.js');
 // const path = require('path');
 // const fs = require('fs');
 
-module.exports = ({ db }) => {
+module.exports = ({ db, dbPublic }) => {
   async function constructRecipe(options) {
     try {
       //start timer
@@ -1388,128 +1388,24 @@ module.exports = ({ db }) => {
         }
       }
 
-      //get list of related recipeComponents
-      try {
-        const { data: relatedRecipeComponents, error: componentError } = await db.from('recipeComponents').select().eq('recipeID', options.recipeID).eq('deleted', false);
-        if (componentError) {
-          global.logger.error(`Error getting related recipeComponents for recipe to delete: ${options.recipeID} : ${componentError.message}`);
-          throw errorGen(`Error getting related recipeComponents for recipe to delete: ${options.recipeID} : ${componentError.message}`, 400);
-        }
-
-        //delete any associated recipeComponent entries;
-        for (let i = 0; i < relatedRecipeComponents.length; i++) {
-          const { data: recipeComponentDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipeComponents/${relatedRecipeComponents[i].recipeComponentID}`, {
-            headers: {
-              authorization: options.authorization,
-            },
-          });
-          if (recipeComponentDeleteResult.error) {
-            global.logger.error(`Error deleting recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} prior to deleting recipe ID: ${options.recipeID} : ${recipeComponentDeleteResult.error}`);
-            throw errorGen(`Error deleting recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} prior to deleting recipe ID: ${options.recipeID} : ${recipeComponentDeleteResult.error}`, 400);
-          }
-
-          //add a 'deleted' log entry
-          createRecipeLog(options.userID, options.authorization, 'deleteRecipeComponent', Number(relatedRecipeComponents[i].recipeComponentID), Number(relatedRecipeComponents[i].recipeID), null, null, `deleted recipeComponent ID: ${relatedRecipeComponents[i].recipeComponentID}`);
-        }
-      } catch (error) {
-        global.logger.error(`Error deleting related recipeComponents: ${error.message}`);
-        throw errorGen(`Error deleting related recipeComponents: ${error.message}`, 400);
+      // attempt to delete the recipe and all component data
+      const { data, error2 } = await dbPublic.rpc('recipe_delete', { recipe: Number(options.recipeID) });
+      if (error2) {
+        global.logger.error(`Error deleting recipe: ${error2.message}`);
+        throw errorGen(`Error deleting recipe: ${error2.message}`, 400);
       }
-
-      //get list of related recipeSteps
-      try {
-        const { data: relatedRecipeSteps, error: stepError } = await db.from('recipeSteps').select().eq('recipeID', options.recipeID).eq('deleted', false);
-        if (stepError) {
-          global.logger.error(`Error getting related recipeSteps for recipe to delete: ${options.recipeID} : ${stepError.message}`);
-          throw errorGen(`Error getting related recipeSteps for recipe to delete: ${options.recipeID} : ${stepError.message}`, 400);
-        }
-
-        //delete any associated recipeSteps entries;
-        for (let i = 0; i < relatedRecipeSteps.length; i++) {
-          const { data: recipeStepDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/steps/recipe/${relatedRecipeSteps[i].recipeStepID}`, {
-            headers: {
-              authorization: options.authorization,
-            },
-          });
-          if (recipeStepDeleteResult.error) {
-            global.logger.error(`Error deleting recipeStepID: ${relatedRecipeSteps[i].recipeStepID} prior to deleting recipe ID: ${options.recipeID} : ${recipeStepDeleteResult.error}`);
-            throw errorGen(`Error deleting recipeStepID: ${relatedRecipeSteps[i].recipeStepID} prior to deleting recipe ID: ${options.recipeID} : ${recipeStepDeleteResult.error}`, 400);
-          }
-
-          //add a 'deleted' log entry
-          createRecipeLog(options.userID, options.authorization, 'deleteRecipeStep', Number(relatedRecipeSteps[i].recipeStepID), Number(relatedRecipeSteps[i].recipeID), null, null, `deleted recipeStep ID: ${relatedRecipeSteps[i].recipeStepID}`);
-        }
-      } catch (error) {
-        global.logger.error(`Error deleting related recipeSteps: ${error.message}`);
-        throw errorGen(`Error deleting related recipeSteps: ${error.message}`, 400);
-      }
-
-      //get list of related recipeTools
-      try {
-        const { data: relatedRecipeTools, error: toolError } = await db.from('recipeTools').select().eq('recipeID', options.recipeID).eq('deleted', false);
-        if (toolError) {
-          global.logger.error(`Error getting related recipeTools for recipe to delete: ${options.recipeID} : ${toolError.message}`);
-          throw errorGen(`Error getting related recipeTools for recipe to delete: ${options.recipeID} : ${toolError.message}`, 400);
-        }
-
-        //delete any associated recipeTools entries;
-        for (let i = 0; i < relatedRecipeTools.length; i++) {
-          const { data: recipeToolDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/tools/recipe/${relatedRecipeTools[i].recipeToolID}`, {
-            headers: {
-              authorization: options.authorization,
-            },
-          });
-          if (recipeToolDeleteResult.error) {
-            global.logger.error(`Error deleting recipeToolID: ${relatedRecipeTools[i].recipeToolID} prior to deleting recipe ID: ${options.recipeID} : ${recipeToolDeleteResult.error}`);
-            throw errorGen(`Error deleting recipeToolID: ${relatedRecipeTools[i].recipeToolID} prior to deleting recipe ID: ${options.recipeID} : ${recipeToolDeleteResult.error}`, 400);
-          }
-
-          //add a 'deleted' log entry
-          createRecipeLog(options.userID, options.authorization, 'deleteRecipeTool', Number(relatedRecipeTools[i].recipeToolID), Number(relatedRecipeTools[i].recipeID), null, null, `deleted recipeTool ID: ${relatedRecipeTools[i].recipeToolID}`);
-        }
-      } catch (error) {
-        global.logger.error(`Error deleting related recipeTools: ${error.message}`);
-        throw errorGen(`Error deleting related recipeTools: ${error.message}`, 400);
-      }
-
-      //get list of related recipeIngredients
-      try {
-        const { data: relatedRecipeIngredients, error: ingredientError } = await db.from('recipeIngredients').select().eq('recipeID', options.recipeID).eq('deleted', false);
-        if (ingredientError) {
-          global.logger.error(`Error getting related recipeIngredients for recipe to delete: ${options.recipeID} : ${ingredientError.message}`);
-          throw errorGen(`Error getting related recipeIngredients for recipe to delete: ${options.recipeID} : ${ingredientError.message}`, 400);
-        }
-
-        //delete any associated recipeIngredients entries;
-        for (let i = 0; i < relatedRecipeIngredients.length; i++) {
-          const { data: recipeIngredientDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/recipe/${relatedRecipeIngredients[i].recipeIngredientID}`, {
-            headers: {
-              authorization: options.authorization,
-            },
-          });
-          if (recipeIngredientDeleteResult.error) {
-            global.logger.error(`Error deleting recipeIngredientID: ${relatedRecipeIngredients[i].recipeIngredientID} prior to deleting recipe ID: ${options.recipeID} : ${recipeIngredientDeleteResult.error}`);
-            throw errorGen(`Error deleting recipeIngredientID: ${relatedRecipeIngredients[i].recipeIngredientID} prior to deleting recipe ID: ${options.recipeID} : ${recipeIngredientDeleteResult.error}`, 400);
-          }
-
-          //add a 'deleted' log entry
-          createRecipeLog(options.userID, options.authorization, 'deleteRecipeIngredient', Number(relatedRecipeIngredients[i].recipeIngredientID), Number(relatedRecipeIngredients[i].recipeID), null, null, `deleted recipeIngredient ID: ${relatedRecipeIngredients[i].recipeIngredientID}`);
-        }
-      } catch (error) {
-        global.logger.error(`Error deleting related recipeIngredients: ${error.message}`);
-        throw errorGen(`Error deleting related recipeIngredients: ${error.message}`, 400);
-      }
-
-      //delete recipe
-      const { error: deleteError } = await db.from('recipes').update({ deleted: true }).eq('recipeID', options.recipeID);
-
-      if (deleteError) {
-        global.logger.error(`Error deleting recipe: ${deleteError.message}`);
-        throw errorGen(`Error deleting recipe: ${deleteError.message}`, 400);
+      if (data === 'NONE') {
+        global.logger.error(`Recipe with provided ID (${options.recipeID}) does not exist, cannot delete`);
+        throw errorGen(`Recipe with provided ID (${options.recipeID}) does not exist, cannot delete`, 400);
+      } else if (!data) {
+        global.logger.error(`Error deleting recipe`);
+        throw errorGen(`Error deleting recipe`, 400);
       }
 
       //add a 'deleted' log entry
       createRecipeLog(options.userID, options.authorization, 'deleteRecipe', Number(options.recipeID), null, null, null, `deleted recipe: ${recipe[0].title}, ID: ${options.recipeID}`);
+      global.logger.info(`Deleted recipe ID: ${options.recipeID}`);
+      return { success: true };
     } catch (error) {
       global.logger.error(`Unhandled Error: ${error.message}`);
       throw errorGen(`Unhandled Error: ${error.message}`, 400);

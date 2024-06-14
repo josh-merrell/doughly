@@ -70,7 +70,8 @@ async function updateIngredient(req, res) {
 
 async function deleteIngredient(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { ingredientID } = req.params;
   const { authorization } = req.headers;
   try {
