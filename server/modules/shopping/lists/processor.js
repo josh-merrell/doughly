@@ -169,7 +169,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.error(`Shopping List with ID ${shoppingListID} does not exist, cannot delete`);
       throw errorGen(`Shopping List with ID ${shoppingListID} does not exist, cannot delete`, 400);
     } else if (!data) {
-      global.logger.error(`Error deleting shoppingList children: ${data}`);
+      global.logger.error(`Error deleting shoppingList children for list ID: ${shoppingListID}`);
       throw errorGen('Error deleting shoppingList children', 400);
     }
 
