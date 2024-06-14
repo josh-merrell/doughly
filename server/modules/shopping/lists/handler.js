@@ -67,7 +67,8 @@ async function updateShoppingList(req, res) {
 
 async function deleteShoppingList(req, res) {
   const db = req.client.db;
-  const p = require('./processor')({ db });
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
   const { shoppingListID } = req.params;
   const { authorization } = req.headers;
   try {

@@ -240,6 +240,9 @@ export class ShoppingPageComponent {
   }
 
   onDeleteItemClick(shoppingListIngredientID: number) {
+    if (this.isDeleting()) {
+      return;
+    }
     this.isDeleting.set(true);
     this.store.dispatch(
       ShoppingListIngredientActions.deleteShoppingListIngredient({
