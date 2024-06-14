@@ -5,7 +5,7 @@ const { createKitchenLog, createRecipeLog } = require('../../services/dbLogger')
 const { updater } = require('../../db');
 const { errorGen } = require('../../middleware/errorHandling');
 
-module.exports = ({ db }) => {
+module.exports = ({ db, dbPublic }) => {
   async function getAll(options) {
     const { userID, ingredientIDs, name } = options;
 
@@ -157,79 +157,25 @@ module.exports = ({ db }) => {
 
   async function deleteIngredient(options) {
     const { userID, authorization, ingredientID } = options;
-    //verify that the provided ingredientID exists, return error if not
-    const { data: existingIngredient, error } = await db.from('ingredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
+
+    // attempt to delete the ingredient
+    const id = Number(ingredientID);
+    const { data, error } = await dbPublic.rpc('ingredient_delete', { ingredient: id });
+    global.logger.info(`ingredient_delete result: ${JSON.stringify(data)}`);
     if (error) {
-      global.logger.error(`Error validating provided ingredientID: ${error.message}`);
-      throw errorGen(`Error validating provided ingredientID`, 400);
+      global.logger.error(`Error deleting ingredient: ${error.message}`);
+      throw errorGen(`Error deleting ingredient`, 400);
     }
-    if (existingIngredient.length === 0) {
+    if (data === 'NONE') {
       global.logger.error(`Ingredient ID does not exist, cannot delete ingredient`);
       throw errorGen(`Ingredient ID does not exist, cannot delete ingredient`, 400);
-    }
-
-    //get list of related stock entries
-    try {
-      const { data: relatedStockEntries, error: stockError } = await db.from('ingredientStocks').select().eq('ingredientID', ingredientID).eq('deleted', false);
-      if (stockError) {
-        global.logger.error(`Error getting related stock entries prior to deleting ingredient ID: ${ingredientID} : ${stockError.message}`);
-        throw errorGen(`Error getting related stock entries prior to deleting ingredient ID: ${ingredientID}`, 400);
-      }
-
-      //delete any associated ingredient stock entries;
-      for (let i = 0; i < relatedStockEntries.length; i++) {
-        const { data: ingredientStockDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks/${relatedStockEntries[i].ingredientStockID}`, {
-          headers: {
-            authorization: options.authorization,
-          },
-        });
-        if (ingredientStockDeleteResult.error) {
-          global.logger.error(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID} : ${ingredientStockDeleteResult.error}`);
-          throw errorGen(`Error deleting ingredientStockID: ${relatedStockEntries[i].ingredientStockID} prior to deleting ingredient ID: ${ingredientID}`, 400);
-        }
-      }
-    } catch (error) {
-      global.logger.error(`Error deleting related stock entries: ${error.message}`);
-      throw errorGen(`Error deleting related stock entries`, 400);
-    }
-
-    //get list of related recipeIngredients
-    try {
-      const { data: recipeIngredients, error: recipeError } = await db.from('recipeIngredients').select().eq('ingredientID', ingredientID).eq('deleted', false);
-      if (recipeError) {
-        global.logger.error(`Error getting related recipeIngredients prior to deleting ingredient ID: ${ingredientID} : ${recipeError.message}`);
-        throw errorGen(`Error getting related recipeIngredients prior to deleting ingredient ID: ${ingredientID}`, 400);
-      }
-
-      //delete any associated recipeIngredients;
-      for (let i = 0; i < recipeIngredients.length; i++) {
-        const { data: recipeIngredientDeleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/recipe/${recipeIngredients[i].recipeIngredientID}`, {
-          headers: {
-            authorization: options.authorization,
-          },
-        });
-        if (recipeIngredientDeleteResult.error) {
-          global.logger.error(`Error deleting recipeIngredientID: ${recipeIngredients[i].recipeIngredientID} prior to deleting ingredient ID: ${ingredientID} : ${recipeIngredientDeleteResult.error}`);
-          throw errorGen(`Error deleting recipeIngredientID: ${recipeIngredients[i].recipeIngredientID} prior to deleting ingredient ID: ${ingredientID}`, 400);
-        }
-
-        //add a 'deleted' log entry
-        createRecipeLog(userID, authorization, 'recipeIngredientDeleted', Number(recipeIngredients[i].recipeIngredientID), Number(recipeIngredients[i].recipeID), null, null, `Removed ${existingIngredient[0].name} from recipe`);
-      }
-    } catch (error) {
-      global.logger.error(`Error deleting related recipeIngredients: ${error.message}`);
-      throw errorGen(`Error deleting related recipeIngredients`, 400);
-    }
-
-    //delete the ingredient;
-    const { error: deleteError } = await db.from('ingredients').update({ deleted: true }).eq('ingredientID', ingredientID).single();
-    if (deleteError) {
-      global.logger.error(`Error deleting ingredient: ${deleteError.message}`);
+    } else if (!data) {
+      global.logger.error(`Error deleting ingredient`);
       throw errorGen(`Error deleting ingredient`, 400);
     }
 
     //add a 'deleted' log entry
-    createKitchenLog(userID, authorization, 'ingredientDeleted', Number(ingredientID), null, null, null, `Deleted ${existingIngredient[0].name} from kitchen`);
+    createKitchenLog(userID, authorization, 'ingredientDeleted', Number(ingredientID), null, null, null, `Deleted ${data} from kitchen`);
 
     global.logger.info(`Deleted ingredient ID: ${ingredientID}`);
     return { success: true };
