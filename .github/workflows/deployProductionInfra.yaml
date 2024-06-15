@@ -133,6 +133,13 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+      
+      - name: Ensure Correct Permissions on Loki Directory
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${LOKI_EC2_HOST} << EOF
+            sudo mkdir -p /home/ubuntu/loki
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/loki
+          EOF
 
       - name: Sync Loki Config and Restart Loki Container
         run: |
