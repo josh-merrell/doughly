@@ -59,6 +59,40 @@ jobs:
             # Export path to Google Service Account Credentials
             export GOOGLE_APPLICATION_CREDENTIALS="~/dl/services/google/doughly-ee4c38c0be84.json"
 
+            # Install Grafana Agent (Grafana Alloy)
+            wget https://github.com/grafana/agent/releases/latest/download/agent-linux-amd64.zip
+            unzip agent-linux-amd64.zip
+            sudo mv agent-linux-amd64 /usr/local/bin/grafana-agent
+            sudo chmod +x /usr/local/bin/grafana-agent
+
+            # Create configuration directory for Grafana Agent
+            sudo mkdir -p /etc/grafana-agent
+
+            # Move the existing configuration file to the correct location
+            sudo mv ~/grafana-agent.yaml /etc/grafana-agent/grafana-agent.yaml
+
+            # Create Grafana Agent systemd service
+            sudo tee /etc/systemd/system/grafana-agent.service > /dev/null <<EOT
+            [Unit]
+            Description=Grafana Agent
+            After=network.target
+
+            [Service]
+            ExecStart=/usr/local/bin/grafana-agent --config.file=/etc/grafana-agent/grafana-agent.yaml
+            Restart=always
+            User=root
+
+            [Install]
+            WantedBy=multi-user.target
+            EOT
+
+            # Reload systemd to apply the new service
+            sudo systemctl daemon-reload
+
+            # Enable and start Grafana Agent service
+            sudo systemctl enable grafana-agent
+            sudo systemctl start grafana-agent
+            
             # Start the server using PM2
             pm2 start ../ecosystem.config.js
 
