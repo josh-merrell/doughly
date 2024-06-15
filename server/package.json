@@ -36,6 +36,7 @@
     "openai": "^4.28.0",
     "path": "^0.12.7",
     "playwright": "^1.42.1",
-    "winston": "^3.9.0"
+    "winston": "^3.13.0",
+    "winston-loki": "^6.1.2"
   }
 }

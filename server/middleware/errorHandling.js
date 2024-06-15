@@ -28,12 +28,30 @@ module.exports.routeNotFoundHandler = (req, res, next) => {
   }
   next(ErrRouteNotFound());
 };
+class AppError extends Error {
+  name;
+  code;
+  isOperational;
+  severity;
 
-//generic erorr handler, just pass it a string and a code. All normal error should be handled by this
-module.exports.errorGen = (m, c) => {
-  if (!m || !c) return new Error('errorGen requires a message and a code');
-  const e = new Error(m);
-  e.code = c;
+  constructor(name, message, code, isOperational) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = name;
+    this.code = code;
+    this.isOperational = isOperational;
+    this.timestamp = new Date();
+    this.severity = severity;
+
+    Error.captureStackTrace(this);
+  }
+}
+
+module.exports.AppError = AppError;
+
+module.exports.errorGen = (m, c, n, o, s) => {
+  if (!m || !c) return new AppError('errorName', 'errorGen requires a message and a code', 500, true, 2);
+  const e = new AppError(n || 'errorName', m, c, o || true, s || 3);
   return e;
 };
 
@@ -43,63 +61,73 @@ module.exports.errorCatcher = (fn) => (req, res, next) => {
   fn(req, res, next).catch(next);
 };
 
-module.exports.getErrorHandler = () => {
-  if (NODE_ENV === 'production' || NODE_ENV === 'staging') {
-    return prodErrorHandler;
-  }
-  return devErrorHandler;
-};
+class ErrorHandler {
+  async handleError(error, req, res) {
+    // await logError(error);
+    // await addMonitoringMetric(error);
+    // crashIfNeededOrSendResponse(error, res);
 
-//eslint-disable-next-line no-unused-vars
-const devErrorHandler = (err, req, res, _next) => {
-  let status = err.code || 500;
-  if (isNaN(status)) {
-    global.logger.info(`In errorHandler, error code: ${err.code}, error object: ${JSON.stringify(err)}`);
-    status = 400;
-  }
-  delete err.code;
+    global.logger.error(error.stack);
 
-  if (err.message !== ErrSystemUnavailable().message) {
-    global.logger.info(`Error: ${err.message}`);
+    // Extract properties from the error object
+    const statusCode = error.code || 500;
+    const errorMessage = error.message || 'Something went wrong!';
+    const errorName = error.name || 'Error';
+    const isOperational = error.isOperational || false;
+    const timestamp = error.timestamp || new Date();
+    const severity = error.severity || 3;
+
+    if (res) {
+      // Send response with all relevant error properties
+      res.status(statusCode).json({
+        error: {
+          name: errorName,
+          message: errorMessage,
+          code: statusCode,
+          isOperational: isOperational,
+          timestamp: timestamp,
+          severity: severity,
+        },
+      });
+    } else {
+      // Handle 'uncaughtException' errors
+      global.logger.error(`Unhandled Exception: ${errorMessage}`);
+    }
   }
 
-  if (err.stack) {
-    res.status(status).send(`<h1>${err.message}</h1><h2>${err.code}</h2><pre>${err.stack}</pre>`).end();
-  } else {
-    //else return the json
-    res
-      .status(status)
-      .json({
-        message: err.message,
-        raw: err,
-        stack: err.stack || Error.captureStackTrace(err),
-      })
-      .end();
-  }
-};
+  logError(error) {
+    severityLevels = {
+      0: 'error', // Emergency
+      1: 'error', // Alert
+      2: 'error', // Critical
+      3: 'warn', // Error
+      4: 'warn', // Warning
+      5: 'info', // Notice
+      6: 'info', // Informational
+      7: 'debug', // Debug
+    };
 
-//eslint-disable-next-line no-unused-vars
-const prodErrorHandler = (err, req, res, _next) => {
-  let code = err.code || 500;
-  if (isNaN(code)) {
-    code = 400;
-  }
-  delete err.code;
+    const level = severityLevels[error.severity] || 'error';
 
-  //prevent sql error from leaking data
-  if (err.sqlErr === true) {
-    err = ErrSystemUnavailable();
+    global.logger.log({
+      level: level,
+      message: error.message,
+      name: error.name,
+      code: error.code,
+      stack: error.stack,
+      timestamp: error.timestamp,
+      isOperational: error.isOperational,
+      severity: error.severity,
+    });
   }
-  //catch validation errors and return the messages from Joi so the users can see them and fix their input
-  if (err.validationError) {
-    res
-      .status(code)
-      .json({
-        message: err.message,
-        raw: err,
-      })
-      .end();
-  } else {
-    res.status(code).json({ message: err.message });
+
+  async isTrustedError(error) {
+    // Check if the error is trusted AppError instance
+    if (error instanceof AppError) {
+      return error.isOperational;
+    }
+    return false;
   }
-};
+}
+
+module.exports.ErrorHandler = ErrorHandler;

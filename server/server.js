@@ -4,22 +4,25 @@ const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
 const cors = require('cors');
+const { ErrorHandler } = require('./middleware/errorHandling');
 require('dotenv').config();
 
 const logger = winston.createLogger({
-  level: 'info',
+  level: 'debug',
   format: winston.format.combine(
     winston.format.timestamp({
       format: 'YYYY-MM-DDTHH:mm:ss',
     }),
     winston.format.json(),
     winston.format.printf((info) => {
-      // If you want to exclude the 'service' attribute
       delete info.service;
       return `${info.timestamp} [${info.level}]: ${info.message}`;
     }),
   ),
-  transports: [new winston.transports.Console({ format: winston.format.simple() }), new winston.transports.File({ filename: 'logger.log', level: 'info' })],
+  transports: [
+    new winston.transports.Console({ format: winston.format.simple() }),
+    new winston.transports.File({ filename: 'logger.log', level: 'info' })
+  ],
 });
 
 const { supabase, supabaseDefault } = require('./db');
@@ -60,6 +63,7 @@ const purchasesRouter = require('./modules/purchases/router');
 
 // UTIL ROUTERS
 const unitRatioRouter = require('./modules/utility/unitRatios/router');
+const { error } = require('console');
 
 app.use(express.json());
 
@@ -132,4 +136,23 @@ app.listen(port, () => {
   global.logger.info(`Server is running at http://localhost:${port}`);
 });
 
-module.exports.sendSSEMessage = sendSSEMessage;
+const errHandler = new ErrorHandler();
+
+// Global error-handling middleware
+app.use((err, req, res, next) => {
+  errHandler.handleError(err, req, res);
+});
+
+process.on('uncaughtException', (err) => {
+  errHandler.handleError(err);
+  if (!errHandler.isTrustedError(err)) process.exit(1);
+});
+
+module.exports = {
+  sendSSEMessage,
+  app,
+  logger,
+  activeConnections,
+  supabase,
+  supabaseDefault,
+};
