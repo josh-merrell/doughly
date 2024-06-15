@@ -6,20 +6,15 @@ async function getFriendships(req, res) {
   const p = require('./processor')({ db, dbPublic });
   const { cursor, limit } = req.query;
   const { friendIDs, name, sourceUserID } = req.query;
-  try {
-    const returner = await p.get.all({
-      userID: req.userID,
-      sourceUserID,
-      cursor,
-      limit,
-      friendIDs,
-      name,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'friendships' 'getFriendships': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.get.all({
+    userID: req.userID,
+    sourceUserID,
+    cursor,
+    limit,
+    friendIDs,
+    name,
+  });
+  return res.json(returner);
 }
 
 async function getFriendshipByID(req, res) {
@@ -27,16 +22,11 @@ async function getFriendshipByID(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { friendID } = req.params;
-  try {
-    const returner = await p.get.by.ID({
-      userID: req.userID,
-      friendID,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'friendships' 'getFriendshipByID': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.get.by.ID({
+    userID: req.userID,
+    friendID,
+  });
+  return res.json(returner);
 }
 
 async function createFriendship(req, res) {
@@ -46,19 +36,14 @@ async function createFriendship(req, res) {
   const { friend, status } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
-  try {
-    const returner = await p.create({
-      customID,
-      authorization,
-      userID: req.userID,
-      friend,
-      status,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'friendships' 'createFriendship': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.create({
+    customID,
+    authorization,
+    userID: req.userID,
+    friend,
+    status,
+  });
+  return res.json(returner);
 }
 
 async function updateFriendship(req, res) {
@@ -68,18 +53,13 @@ async function updateFriendship(req, res) {
   const { friendshipID } = req.params;
   const { status } = req.body;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.update({
-      userID: req.userID,
-      authorization,
-      friendshipID,
-      status,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'friendships' 'updateFriendship': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.update({
+    userID: req.userID,
+    authorization,
+    friendshipID,
+    status,
+  });
+  return res.json(returner);
 }
 
 async function deleteFriendship(req, res) {
@@ -88,17 +68,12 @@ async function deleteFriendship(req, res) {
   const p = require('./processor')({ db, dbPublic });
   const { friendshipID } = req.params;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.delete({
-      userID: req.userID,
-      authorization,
-      friendshipID,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'friendships' 'deleteFriendship': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.delete({
+    userID: req.userID,
+    authorization,
+    friendshipID,
+  });
+  return res.json(returner);
 }
 
 module.exports = {
