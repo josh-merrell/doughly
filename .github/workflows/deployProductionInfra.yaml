@@ -58,40 +58,6 @@ jobs:
 
             # Export path to Google Service Account Credentials
             export GOOGLE_APPLICATION_CREDENTIALS="~/dl/services/google/doughly-ee4c38c0be84.json"
-
-            # Install Grafana Agent (Grafana Alloy)
-            wget https://github.com/grafana/agent/releases/latest/download/agent-linux-amd64.zip
-            unzip agent-linux-amd64.zip
-            sudo mv agent-linux-amd64 /usr/local/bin/grafana-agent
-            sudo chmod +x /usr/local/bin/grafana-agent
-
-            # Create configuration directory for Grafana Agent
-            sudo mkdir -p /etc/grafana-agent
-
-            # Move the existing configuration file to the correct location
-            sudo mv ~/grafana-agent.yaml /etc/grafana-agent/grafana-agent.yaml
-
-            # Create Grafana Agent systemd service
-            sudo tee /etc/systemd/system/grafana-agent.service > /dev/null <<EOT
-            [Unit]
-            Description=Grafana Agent
-            After=network.target
-
-            [Service]
-            ExecStart=/usr/local/bin/grafana-agent --config.file=/etc/grafana-agent/grafana-agent.yaml
-            Restart=always
-            User=root
-
-            [Install]
-            WantedBy=multi-user.target
-            EOT
-
-            # Reload systemd to apply the new service
-            sudo systemctl daemon-reload
-
-            # Enable and start Grafana Agent service
-            sudo systemctl enable grafana-agent
-            sudo systemctl start grafana-agent
             
             # Start the server using PM2
             pm2 start ../ecosystem.config.js
@@ -100,6 +66,90 @@ jobs:
             pm2 save
 
             # Exit SSH session
+          EOF
+      - name: Start Grafana Alloy Service
+        env:
+          API_EC2_HOST: ${{ secrets.API_EC2_HOST }}
+          SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
+        run: |
+          # Install SSH Client (if not present)
+          sudo apt-get update
+          sudo apt-get install -y openssh-client
+
+          # Setup SSH Key
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # SSH into the EC2 instance and run commands
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
+            # update gpg
+            sudo apt install gpg
+
+            # Import the GPG key and add the Grafana package repository.
+            sudo mkdir -p /etc/apt/keyrings/
+            wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+            echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+
+            # Updata the Repos
+            sudo apt-get update
+
+            # Install Alloy
+            sudo apt-get install alloy
+
+            # Start the service
+            sudo systemctl start alloy
+
+            # Configure to start on boot
+            sudo systemctl enable alloy.service
+
+            # Copy Config file from /home/ubuntu to /etc/alloy
+            sudo cp /home/ubuntu/config.alloy /etc/alloy/config.alloy
+
+            # Restart Alloy Service
+            sudo systemctl restart alloy
+          EOF
+
+  deploy-loki-change:
+    name: Deploy Loki Change
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-back-loki-change')
+    runs-on: ubuntu-latest
+    env:
+      LOKI_EC2_HOST: ${{ secrets.LOKI_EC2_HOST }}
+      SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Install SSH Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-client
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Sync Loki Config and Restart Loki Container
+        run: |
+          # Sync the loki-config.yaml file to the EC2 instance
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts" ./loki/loki-config.yaml ubuntu@${LOKI_EC2_HOST}:/home/ubuntu/loki/loki-config.yaml
+
+          # SSH into the EC2 instance and restart the Loki container
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${LOKI_EC2_HOST} << EOF
+            # Stop and remove the existing Loki container if running
+            sudo docker stop loki || true
+            sudo docker rm loki || true
+
+            # Run the Loki Docker container with the updated configuration
+            sudo docker run --name loki --restart unless-stopped -d -v /home/ubuntu/loki:/mnt/config -p 3100:3100 grafana/loki:3.0.0 -config.file=/mnt/config/loki-config.yaml
+
+            # Verify the Loki container is running
+            sudo docker ps
           EOF
 
   deploy-frontend-to-s3:
