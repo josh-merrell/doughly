@@ -2,26 +2,16 @@ async function getRecipeIngredients(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeIngredientIDs, recipeID, ingredientID } = req.query;
-  try {
-    const returner = await p.get.all({ userID: req.userID, recipeIngredientIDs, recipeID, ingredientID });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'ingredients' 'getRecipeIngredients': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.get.all({ userID: req.userID, recipeIngredientIDs, recipeID, ingredientID });
+  return res.json(returner);
 }
 
 async function getRecipeIngredientByID(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { recipeIngredientID } = req.params;
-  try {
-    const returner = await p.get.byID({ userID: req.userID, recipeIngredientID });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'ingredients' 'getRecipeIngredientByID': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.get.byID({ userID: req.userID, recipeIngredientID });
+  return res.json(returner);
 }
 
 async function createRecipeIngredient(req, res) {
@@ -36,25 +26,20 @@ async function createRecipeIngredient(req, res) {
     userID = req.userID;
   }
   const { customID } = req;
-  try {
-    const returner = await p.create({
-      customID,
-      authorization,
-      userID,
-      recipeID,
-      ingredientID,
-      measurementUnit,
-      measurement,
-      purchaseUnitRatio,
-      preparation,
-      component,
-      RIneedsReview,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'ingredients' 'createRecipeIngredient': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.create({
+    customID,
+    authorization,
+    userID,
+    recipeID,
+    ingredientID,
+    measurementUnit,
+    measurement,
+    purchaseUnitRatio,
+    preparation,
+    component,
+    RIneedsReview,
+  });
+  return res.json(returner);
 }
 
 async function updateRecipeIngredient(req, res) {
@@ -63,23 +48,18 @@ async function updateRecipeIngredient(req, res) {
   const { recipeIngredientID } = req.params;
   const { measurementUnit, measurement, purchaseUnitRatio, preparation, component, RIneedsReview } = req.body;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.update({
-      userID: req.userID,
-      authorization,
-      recipeIngredientID,
-      measurementUnit,
-      measurement,
-      purchaseUnitRatio,
-      preparation,
-      component,
-      RIneedsReview,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'ingredients' 'updateRecipeIngredient': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.update({
+    userID: req.userID,
+    authorization,
+    recipeIngredientID,
+    measurementUnit,
+    measurement,
+    purchaseUnitRatio,
+    preparation,
+    component,
+    RIneedsReview,
+  });
+  return res.json(returner);
 }
 
 async function deleteRecipeIngredient(req, res) {
@@ -87,13 +67,8 @@ async function deleteRecipeIngredient(req, res) {
   const p = require('./processor')({ db });
   const { recipeIngredientID } = req.params;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.delete({ userID: req.userID, recipeIngredientID, authorization });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'ingredients' 'deleteRecipeIngredient': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.delete({ userID: req.userID, recipeIngredientID, authorization });
+  return res.json(returner);
 }
 
 async function getPurEst(req, res) {
@@ -101,13 +76,8 @@ async function getPurEst(req, res) {
   const p = require('./processor')({ db });
   const { ingredientName, measurementUnit, purchaseUnit } = req.body;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.get.purEst({ userID: req.userID, authorization, ingredientName, measurementUnit, purchaseUnit });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'ingredients' 'getPurEst': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.get.purEst({ userID: req.userID, authorization, ingredientName, measurementUnit, purchaseUnit });
+  return res.json(returner);
 }
 
 module.exports = {
