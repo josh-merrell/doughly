@@ -137,7 +137,7 @@ jobs:
       - name: Sync Loki Config and Restart Loki Container
         run: |
           # Sync the loki-config.yaml file to the EC2 instance
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts" ./loki/loki-config.yaml ubuntu@${LOKI_EC2_HOST}:/home/ubuntu/loki/loki-config.yaml
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./loki/loki-config.yaml ubuntu@${LOKI_EC2_HOST}:/home/ubuntu/loki/loki-config.yaml
 
           # SSH into the EC2 instance and restart the Loki container
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${LOKI_EC2_HOST} << EOF
