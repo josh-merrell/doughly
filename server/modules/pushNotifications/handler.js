@@ -5,16 +5,11 @@ async function getUserPushTokens(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { authorization } = req.headers;
-  try {
-    const returner = await p.get.userTokens({
-      userID: req.userID,
-      authorization,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'pushNotifications' 'getUserPushTokens': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.get.userTokens({
+    userID: req.userID,
+    authorization,
+  });
+  return res.json(returner);
 }
 
 async function getOtherUserPushTokens(req, res) {
@@ -23,16 +18,11 @@ async function getOtherUserPushTokens(req, res) {
   const p = require('./processor')({ db, dbPublic });
   const { userID } = req.params;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.get.otherUser({
-      userID,
-      authorization,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'pushNotifications' 'getUserPushToken': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.get.otherUser({
+    userID,
+    authorization,
+  });
+  return res.json(returner);
 }
 
 async function addPushToken(req, res) {
@@ -41,17 +31,12 @@ async function addPushToken(req, res) {
   const p = require('./processor')({ db, dbPublic });
   const { token } = req.body;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.add.token({
-      userID: req.userID,
-      token,
-      authorization,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'pushNotifications' 'addPushToken': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.add.token({
+    userID: req.userID,
+    token,
+    authorization,
+  });
+  return res.json(returner);
 }
 
 async function removePushToken(req, res) {
@@ -60,17 +45,12 @@ async function removePushToken(req, res) {
   const p = require('./processor')({ db, dbPublic });
   const { token } = req.params;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.remove.token({
-      userID: req.userID,
-      token,
-      authorization,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'pushNotifications' 'removePushToken': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.remove.token({
+    userID: req.userID,
+    token,
+    authorization,
+  });
+  return res.json(returner);
 }
 
 async function removeUserPushTokens(req, res) {
@@ -78,16 +58,11 @@ async function removeUserPushTokens(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { authorization } = req.headers;
-  try {
-    const returner = await p.remove.userTokens({
-      userID: req.userID,
-      authorization,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'pushNotifications' 'removeUserPushTokens': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.remove.userTokens({
+    userID: req.userID,
+    authorization,
+  });
+  return res.json(returner);
 }
 
 async function sendNotification(req, res) {
@@ -96,19 +71,14 @@ async function sendNotification(req, res) {
   const p = require('./processor')({ db, dbPublic });
   const { destTokens, type, data } = req.body;
   const { authorization } = req.headers;
-  try {
-    const returner = await p.send.notification({
-      userID: req.userID,
-      authorization,
-      destTokens,
-      type,
-      data,
-    });
-    return res.json(returner);
-  } catch (e) {
-    global.logger.error(`'pushNotifications' 'sendNotification': ${e.message}`);
-    return res.status(e.code || 500).json({ error: e.message });
-  }
+  const returner = await p.send.notification({
+    userID: req.userID,
+    authorization,
+    destTokens,
+    type,
+    data,
+  });
+  return res.json(returner);
 }
 
 module.exports = {

@@ -63,11 +63,9 @@ module.exports.errorCatcher = (fn) => (req, res, next) => {
 
 class ErrorHandler {
   async handleError(error, req, res) {
-    // await logError(error);
+    await logError(error);
     // await addMonitoringMetric(error);
     // crashIfNeededOrSendResponse(error, res);
-
-    global.logger.error(error.stack);
 
     // Extract properties from the error object
     const statusCode = error.code || 500;
@@ -109,7 +107,7 @@ class ErrorHandler {
 
     const level = severityLevels[error.severity] || 'error';
 
-    global.logger.log({
+    global.logger.error({
       level: level,
       message: error.message,
       name: error.name,
