@@ -23,18 +23,17 @@ module.exports = ({ db, dbPublic }) => {
       // get recipe data
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
-        global.logger.error(`Error getting recipe: ${recipeID}: ${error.message}. Returning fallback content.`);
+        global.logger.info({ message: `Error getting recipe: ${recipeID}: ${error.message}. Returning fallback content.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
         return fallbackContent;
       }
       if (recipe.length === 0) {
-        global.logger.error(`Recipe not found: ${recipeID}`);
-        throw errorGen(`Recipe not found: ${recipeID}`, 404);
+        throw errorGen(`Recipe not found: ${recipeID}`, 515, 'cannotComplete', true, 3);
       }
       const recipeData = recipe[0];
 
       const { data: author, error: authorError } = await dbPublic.from('profiles').select().eq('user_id', recipeData.userID).single();
       if (authorError) {
-        global.logger.error(`Error getting author: ${recipeData.userID}: ${error.message}. Returning recipe content without author name.`);
+        global.logger.info({ message: `Error getting author: ${recipeData.userID}: ${error.message}. Returning recipe content without author name.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
       }
       let description = 'Check out my recipe, then make and share your own!';
       if (author.name_first) {
@@ -65,7 +64,6 @@ module.exports = ({ db, dbPublic }) => {
           </body>
       </html>`;
 
-      global.logger.info(htmlContent);
       return htmlContent;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in linkPreviews recipePreview', err.code || 520, err.name || 'unhandledError_linkPreviews-recipePreview', err.isOperational || false, err.severity || 2);

@@ -89,7 +89,6 @@ export class EditRecipeIngredientModalComponent {
   ) {
     effect(() => {
       const recipeIngredient = this.recipeIngredient();
-      console.log(`RI: `, recipeIngredient);
     });
   }
 

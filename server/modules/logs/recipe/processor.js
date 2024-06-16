@@ -26,10 +26,9 @@ module.exports = ({ db }) => {
       const { data: logs, error } = await q;
 
       if (error) {
-        global.logger.error(`Error getting logs: ${error.message}`);
-        throw errorGen('Error getting logs', 400);
+        throw errorGen(`Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got ${logs.length} recipe logs`);
+      global.logger.info({ message: `Got ${logs.length} recipe logs`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return logs;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeLogs getAll', err.code || 520, err.name || 'unhandledError_recipeLogs-getAll', err.isOperational || false, err.severity || 2);
@@ -43,10 +42,9 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('recipeLogs').select().eq('recipeLogID', logID);
 
       if (error) {
-        global.logger.error(`Error getting log: ${error.message}`);
-        throw errorGen(`Error getting log: ${error.message}`, 400);
+        throw errorGen(`Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got log`);
+      global.logger.info({ message: `Got log with ID: ${log[0].logID}`, level: 5, timestamp: new Date().toISOString(), userID: log[0].userID });
       return log;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeLogs getByID', err.code || 520, err.name || 'unhandledError_recipeLogs-getByID', err.isOperational || false, err.severity || 2);
@@ -62,8 +60,7 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('recipeLogs').insert({ recipeLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
       if (error) {
-        global.logger.error(`Error creating recipeLog: ${error.message}`);
-        throw errorGen(`Error creating recipeLog: ${error.message}`, 400);
+        throw errorGen(`Error creating recipeLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       return {
         recipeLogID: log.recipeLogID,
