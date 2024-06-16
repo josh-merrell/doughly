@@ -29,7 +29,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${recipeIngredients.length} recipeIngredients`);
       return recipeIngredients;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeIngredients getAll', 520, 'unhandledError_recipeIngredients-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeIngredients getAll', err.code || 520, err.name || 'unhandledError_recipeIngredients-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -45,7 +45,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got recipeIngredient`);
       return recipeIngredient;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeIngredients getRecipeIngredientByID', 520, 'unhandledError_recipeIngredients-getRecipeIngredientByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeIngredients getRecipeIngredientByID', err.code || 520, err.name || 'unhandledError_recipeIngredients-getRecipeIngredientByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -135,7 +135,7 @@ module.exports = ({ db }) => {
         RIneedsReview,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeIngredients create', 520, 'unhandledError_recipeIngredients-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeIngredients create', err.code || 520, err.name || 'unhandledError_recipeIngredients-create', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -181,7 +181,7 @@ module.exports = ({ db }) => {
       const updatedRecipeIngredient = await updater(userID, authorization, 'recipeIngredientID', recipeIngredientID, 'recipeIngredients', updateFields);
       return updatedRecipeIngredient;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeIngredients update', 520, 'unhandledError_recipeIngredients-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeIngredients update', err.code || 520, err.name || 'unhandledError_recipeIngredients-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -235,7 +235,7 @@ module.exports = ({ db }) => {
       }
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeIngredients deleteRecipeIngredient', 520, 'unhandledError_recipeIngredients-deleteReciepIngredient', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeIngredients deleteRecipeIngredient', err.code || 520, err.name || 'unhandledError_recipeIngredients-deleteReciepIngredient', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -254,7 +254,7 @@ module.exports = ({ db }) => {
       }
       return Number(parsedData.unitRatio);
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeIngredients_getPurEst', 520, 'unhandledError_recipeIngredients-getPurEst', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeIngredients getPurEst', err.code || 520, err.name || 'unhandledError_recipeIngredients-getPurEst', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 

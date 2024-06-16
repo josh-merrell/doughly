@@ -31,7 +31,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${logs.length} shopping logs`);
       return logs;
     } catch (err) {
-      throw errorGen('Unhandled Error in shoppingLogs getAll', 520, 'unhandledError_shoppingLogs-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in shoppingLogs getAll', err.code || 520, err.name || 'unhandledError_shoppingLogs-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got log`);
       return log;
     } catch (err) {
-      throw errorGen('Unhandled Error in shoppingLogs getShoppingListByID', 520, 'unhandledError_shoppingLogs-getShoppingListByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in shoppingLogs getShoppingListByID', err.code || 520, err.name || 'unhandledError_shoppingLogs-getShoppingListByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -68,7 +68,7 @@ module.exports = ({ db }) => {
         shoppingLogID: log.shoppingLogID,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in shoppingLogs create', 520, 'unhandledError_shoppingLogs-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in shoppingLogs create', err.code || 520, err.name || 'unhandledError_shoppingLogs-create', err.isOperational || false, err.severity || 2);
     }
   }
 

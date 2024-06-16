@@ -29,7 +29,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${tools.length} tools`);
       return tools;
     } catch (err) {
-      throw errorGen('Unhandled Error in tools getAll', 520, 'unhandledError_tools-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in tools getAll', err.code || 520, err.name || 'unhandledError_tools-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -46,7 +46,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got tool`);
       return tool;
     } catch (err) {
-      throw errorGen('Unhandled Error in tools getByID', 520, 'unhandledError_tools-getByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in tools getByID', err.code || 520, err.name || 'unhandledError_tools-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -82,7 +82,7 @@ module.exports = ({ db }) => {
         brand: tool.brand,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in tools create', 520, 'unhandledError_tools-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in tools create', err.code || 520, err.name || 'unhandledError_tools-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -126,7 +126,7 @@ module.exports = ({ db }) => {
         brand: updatedTool.brand,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in tools update', 520, 'unhandledError_tools-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in tools update', err.code || 520, err.name || 'unhandledError_tools-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -202,7 +202,7 @@ module.exports = ({ db }) => {
       createKitchenLog(userID, authorization, 'deleteTool', Number(toolID), null, null, null, `Deleted Tool: ${existingTool[0].name}`);
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in tools deleteTool', 520, 'unhandledError_tools-deleteTool', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in tools deleteTool', err.code || 520, err.name || 'unhandledError_tools-deleteTool', err.isOperational || false, err.severity || 2);
     }
   }
 

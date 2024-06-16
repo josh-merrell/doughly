@@ -14,7 +14,7 @@ module.exports = () => {
       const returner = await getUnitRatio(material, unitA, unitB, authorization, userID);
       return returner;
     } catch (err) {
-      throw errorGen('Unhandled Error in unitRatios getUnitRatioProcessor', 520, 'unhandledError_unitRatios-getUnitRatioProcessor', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in unitRatios getUnitRatioProcessor', err.code || 520, err.name || 'unhandledError_unitRatios-getUnitRatioProcessor', err.isOperational || false, err.severity || 2);
     }
   }
   async function checkForRatioProcessor(options) {
@@ -27,7 +27,7 @@ module.exports = () => {
       const returner = await checkForRatioProcessor(material, unitA, unitB);
       return returner;
     } catch (err) {
-      throw errorGen('Unhandled Error in unitRatios', 520, 'unhandledError_unitRatios-checkForRatioProcessor', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in unitRatios checkForRatioProcessor', err.code || 520, err.name || 'unhandledError_unitRatios-checkForRatioProcessor', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -36,7 +36,7 @@ module.exports = () => {
       const returner = await getDraftUnitRatios();
       return returner;
     } catch (err) {
-      throw errorGen('Unhandled Error in unitRatios getAllDraftRatiosProcessor', 520, 'unhandledError_unitRatios-getAllDraftRatiosProcessor', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in unitRatios getAllDraftRatiosProcessor', err.code || 520, err.name || 'unhandledError_unitRatios-getAllDraftRatiosProcessor', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -55,7 +55,7 @@ module.exports = () => {
       const returner = await addUnitRatio(material, unitA, unitB, ratio);
       return returner;
     } catch (err) {
-      throw errorGen('Unhandled Error in unitRatios addUnitRatioProcessor', 520, 'unhandledError_unitRatios-addUnitRatioProcessor', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in unitRatios addUnitRatioProcessor', err.code || 520, err.name || 'unhandledError_unitRatios-addUnitRatioProcessor', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -85,7 +85,7 @@ module.exports = () => {
       const deleteResults = deletes.length ? await batchDeleteUnitRatios(deletes) : { currentStatus: 'success', data: null };
       return { approveResults, deleteResults };
     } catch (err) {
-      throw errorGen('Unhandled Error in unitRatios batchUpdateRatiosProcessor', 520, 'unhandledError_unitRatios-batchUpdateRatiosProcessor', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in unitRatios batchUpdateRatiosProcessor', err.code || 520, err.name || 'unhandledError_unitRatios-batchUpdateRatiosProcessor', err.isOperational || false, err.severity || 2);
     }
   }
 

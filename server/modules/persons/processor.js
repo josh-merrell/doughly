@@ -46,7 +46,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${persons.length} persons`);
       return persons;
     } catch (err) {
-      throw errorGen('Unhandled Error in persons getAll', 520, 'unhandledError_persons-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in persons getAll', err.code || 520, err.name || 'unhandledError_persons-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -94,7 +94,7 @@ module.exports = ({ db }) => {
         return data;
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in persons create', 520, 'unhandledError_persons-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in persons create', err.code || 520, err.name || 'unhandledError_persons-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -123,7 +123,7 @@ module.exports = ({ db }) => {
       const updatedPerson = await updater(options.userID, options.authorization, 'personID', options.personID, 'persons', updateFields);
       return updatedPerson;
     } catch (err) {
-      throw errorGen('Unhandled Error in persons update', 520, 'unhandledError_persons-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in persons update', err.code || 520, err.name || 'unhandledError_persons-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -151,7 +151,7 @@ module.exports = ({ db }) => {
       createUserLog(options.userID, options.authorization, 'deletePerson', Number(options.personID), null, null, null, `deleted Person, ${personExists.nameFirst} ${personExists.nameLast}, ${personExists.email}`);
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in persons deletePerson', 520, 'unhandledError_persons-deletePerson', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in persons deletePerson', err.code || 520, err.name || 'unhandledError_persons-deletePerson', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -164,7 +164,7 @@ module.exports = ({ db }) => {
       }
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in persons getPersonByID', 520, 'unhandledError_persons-getPersonByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in persons getPersonByID', err.code || 520, err.name || 'unhandledError_persons-getPersonByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -177,7 +177,7 @@ module.exports = ({ db }) => {
       }
       return data.length > 0;
     } catch (err) {
-      throw errorGen('Unhandled Error in persons existsByPersonID', 520, 'unhandledError_persons-existsByPersonID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in persons existsByPersonID', err.code || 520, err.name || 'unhandledError_persons-existsByPersonID', err.isOperational || false, err.severity || 2);
     }
   }
 

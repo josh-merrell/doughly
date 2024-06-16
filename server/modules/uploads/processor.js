@@ -35,7 +35,7 @@ module.exports = ({ db, dbDefault }) => {
 
       return url;
     } catch (err) {
-      throw errorGen('Unhandled Error in uploads createSignedURL', 520, 'unhandledError_uploads-createSignedURL', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in uploads createSignedURL', err.code || 520, err.name || 'unhandledError_uploads-createSignedURL', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -58,7 +58,7 @@ module.exports = ({ db, dbDefault }) => {
       fs.unlinkSync(filepath);
       return { message: 'Successfully uploaded file' };
     } catch (err) {
-      throw errorGen('Unhandled Error in uploads uploadBackup', 520, 'unhandledError_uploads-uploadBackup', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in uploads uploadBackup', err.code || 520, err.name || 'unhandledError_uploads-uploadBackup', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -74,7 +74,7 @@ module.exports = ({ db, dbDefault }) => {
       global.logger.info(`Successfully deleted old backup file: backups/${userID}/${filename}`);
       return { message: 'Successfully deleted old backup file' };
     } catch (err) {
-      throw errorGen('Unhandled Error in uploads deleteOldBackup', 520, 'unhandledError_uploads-deleteOldBackup', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in uploads deleteOldBackup', err.code || 520, err.name || 'unhandledError_uploads-deleteOldBackup', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -140,7 +140,7 @@ module.exports = ({ db, dbDefault }) => {
       }
       return { message: 'Successfully deleted file', data };
     } catch (err) {
-      throw errorGen('Unhandled Error in uploads remove', 520, 'unhandledError_uploads-remove', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in uploads remove', err.code || 520, err.name || 'unhandledError_uploads-remove', err.isOperational || false, err.severity || 2);
     }
   }
 

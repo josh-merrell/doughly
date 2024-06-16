@@ -55,7 +55,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getAllMessages', 520, 'unhandledError_messages-getAllMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getAllMessages', err.code || 520, err.name || 'unhandledError_messages-getAllMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -97,7 +97,7 @@ module.exports = ({ db, dbPublic }) => {
         result: 'success',
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in messages acknowledgeMessage', 520, 'unhandledError_messages-acknowledgeMessage', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages acknowledgeMessage', err.code || 520, err.name || 'unhandledError_messages-acknowledgeMessage', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -139,7 +139,7 @@ module.exports = ({ db, dbPublic }) => {
         result: 'success',
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in messages deleteMessage', 520, 'unhandledError_messages-deleteMessage', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages deleteMessage', err.code || 520, err.name || 'unhandledError_messages-deleteMessage', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -189,7 +189,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getIngredientStockExpiredMessages', 520, 'unhandledError_messages-getIngredientStockExpiredMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getIngredientStockExpiredMessages', err.code || 520, err.name || 'unhandledError_messages-getIngredientStockExpiredMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -230,7 +230,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getIngredientOutOfStockMessages', 520, 'unhandledError_messages-getIngredientOutOfStockMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getIngredientOutOfStockMessages', err.code || 520, err.name || 'unhandledError_messages-getIngredientOutOfStockMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -278,7 +278,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getNewFollowerMessages', 520, 'unhandledError_messages-getNewFollowerMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getNewFollowerMessages', err.code || 520, err.name || 'unhandledError_messages-getNewFollowerMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -326,7 +326,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getNewFriendMessages', 520, 'unhandledError_messages-getNewFriendMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getNewFriendMessages', err.code || 520, err.name || 'unhandledError_messages-getNewFriendMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -373,7 +373,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getNewFriendRequestMessages', 520, 'unhandledError_messages-getNewFriendRequestMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getNewFriendRequestMessages', err.code || 520, err.name || 'unhandledError_messages-getNewFriendRequestMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -414,7 +414,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getFolloweePublicRecipeCreatedMessages', 520, 'unhandledError_messages-getFolloweePublicRecipeCreatedMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getFolloweePublicRecipeCreatedMessages', err.code || 520, err.name || 'unhandledError_messages-getFolloweePublicRecipeCreatedMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -455,7 +455,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getFriendHeirloomCreatedMessages', 520, 'unhandledError_messages-getFriendHeirloomCreatedMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getFriendHeirloomRecipeCreatedMessages', err.code || 520, err.name || 'unhandledError_messages-getFriendHeirloomRecipeCreatedMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -490,7 +490,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       return messages;
     } catch (err) {
-      throw errorGen('Unhandled Error in messages getWelcomeMessage', 520, 'unhandledError_messages-getWelcomeMessage', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages getWelcomeMessage', err.code || 520, err.name || 'unhandledError_messages-getWelcomeMessage', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -510,7 +510,7 @@ module.exports = ({ db, dbPublic }) => {
           break;
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in messages add', 520, 'unhandledError_messages-add', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages add', err.code || 520, err.name || 'unhandledError_messages-add', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -567,7 +567,7 @@ module.exports = ({ db, dbPublic }) => {
         }
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in messages addFolloweePublicRecipeCreatedMessages', 520, 'unhandledError_messages-addFolloweePublicRecipeCreatedMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages addFolloweePublicRecipeCreatedMessages', err.code || 520, err.name || 'unhandledError_messages-addFolloweePublicRecipeCreatedMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -619,7 +619,7 @@ module.exports = ({ db, dbPublic }) => {
         }
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in messages addFriendHeirloomRecipeCreatedMessages', 520, 'unhandledError_messages-addFriendHeirloomRecipeCreatedMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages addFriendHeirloomRecipeCreatedMessages', err.code || 520, err.name || 'unhandledError_messages-addFriendHeirloomRecipeCreatedMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -646,7 +646,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen('Error adding message', 500);
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in messages addWelcomeMessage', 520, 'unhandledError_messages-addWelcomeMessage', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in messages addWelcomeMessage', err.code || 520, err.name || 'unhandledError_messages-addWelcomeMessage', err.isOperational || false, err.severity || 2);
     }
   }
 

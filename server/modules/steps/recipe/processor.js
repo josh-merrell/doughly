@@ -14,7 +14,7 @@ module.exports = ({ db }) => {
         throw errorGen(`Error shifting sequence of recipeStep ID: ${recipeStepID} while updating recipeStep`, 400);
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeSteps sequenceShifter', 520, 'unhandledError_recipeSteps-sequenceShifter', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeSteps sequenceShifter', err.code || 520, err.name || 'unhandledError_recipeSteps-sequenceShifter', err.isOperational || false, err.severity || 2);
     }
   };
 
@@ -43,7 +43,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${recipeSteps.length} recipeSteps`);
       return recipeSteps;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeSteps getAll', 520, 'unhandledError_recipeSteps-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeSteps getAll', err.code || 520, err.name || 'unhandledError_recipeSteps-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -57,7 +57,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got recipeStep ${options.recipeStepID}`);
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeSteps getStepByID', 520, 'unhandledError_recipeSteps-getStepByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeSteps getStepByID', err.code || 520, err.name || 'unhandledError_recipeSteps-getStepByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -176,7 +176,7 @@ module.exports = ({ db }) => {
         photoURL: newRecipeStep.photoURL,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeSteps create', 520, 'unhandledError_recipeSteps-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeSteps create', err.code || 520, err.name || 'unhandledError_recipeSteps-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -197,7 +197,7 @@ module.exports = ({ db }) => {
       //add 'recipePublished' log entry
       createRecipeLog(userID, authorization, 'updatedRecipeStatus', Number(recipeID), null, null, 'published', `updated recipe status to published`);
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeSteps publish', 520, 'unhandledError_recipeSteps-publish', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeSteps publish', err.code || 520, err.name || 'unhandledError_recipeSteps-publish', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -245,7 +245,7 @@ module.exports = ({ db }) => {
       const updatedRecipeStep = await updater(options.userID, authorization, 'recipeStepID', recipeStepID, 'recipeSteps', updateFields);
       return updatedRecipeStep;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeSteps update', 520, 'unhandledError_recipeSteps-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeSteps update', err.code || 520, err.name || 'unhandledError_recipeSteps-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -337,7 +337,7 @@ module.exports = ({ db }) => {
       }
       global.logger.info(`Decremented sequence of all recipeSteps with sequence greater than deleted recipeStep ID ${recipeStepID}`);
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeSteps deleteStep', 520, 'unhandledError_recipeSteps-deleteStep', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeSteps deleteStep', err.code || 520, err.name || 'unhandledError_recipeSteps-deleteStep', err.isOperational || false, err.severity || 2);
     }
   }
 

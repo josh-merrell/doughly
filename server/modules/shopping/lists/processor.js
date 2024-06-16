@@ -18,7 +18,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info('Got shoppingList');
       return shoppingList;
     } catch (err) {
-      throw errorGen('Unhandled Error in shoppingLists getShoppingListByID', 520, 'unhandledError_shoppingLists-getShoppingListByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists getShoppingListByID', err.code || 520, err.name || 'unhandledError_shoppingLists-getShoppingListByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -69,7 +69,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${returnData.length} shopping lists`);
       return returnData;
     } catch (err) {
-      throw errorGen('Unhandled Error in shoppingLists getShoppingLists', 520, 'unhandledError_shoppingLists-getShoppingLists', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists getShoppingLists', err.code || 520, err.name || 'unhandledError_shoppingLists-getShoppingLists', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -104,7 +104,7 @@ module.exports = ({ db, dbPublic }) => {
       createShoppingLog(userID, authorization, 'createShoppingList', shoppingList.shoppingListID, null, null, null, `createdShoppingList: ${shoppingList.shoppingListID}`);
       return { shoppingListID: shoppingList.shoppingListID };
     } catch (err) {
-      throw errorGen('Unhandled Error in shoppingLists', 520, 'unhandledError_shoppingLists-createShoppingLists', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists createShoppingList', err.code || 520, err.name || 'unhandledError_shoppingLists-createShoppingList', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -166,7 +166,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       return updatedShoppingList;
     } catch (err) {
-      throw errorGen('Unhandled Error in shoppingLists updateShoppingList', 520, 'unhandledError_shoppingLists-updateShoppingList', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists updateShoppingList', err.code || 520, err.name || 'unhandledError_shoppingLists-updateShoppingList', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -193,7 +193,7 @@ module.exports = ({ db, dbPublic }) => {
       //we don't actually delete the list, we just remove the child recipes and standalone ingredients
       return { shoppingListID: shoppingListID };
     } catch (err) {
-      throw errorGen('Unhandled Error in shoppingLists deleteShoppingList', 520, 'unhandledError_shoppingLists-deleteShoppingList', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists deleteShoppingList', err.code || 520, err.name || 'unhandledError_shoppingLists-deleteShoppingList', err.isOperational || false, err.severity || 2);
     }
   }
 

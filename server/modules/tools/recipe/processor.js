@@ -30,7 +30,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${recipeTools.length} recipeTools`);
       return recipeTools;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeTools getAll', 520, 'unhandledError_recipeTools-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeTools getAll', err.code || 520, err.name || 'unhandledError_recipeTools-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -47,7 +47,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got recipeTool ${recipeToolID}`);
       return recipeTool;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeTools getByID', 520, 'unhandledError_recipeTools-getByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeTools getByID', err.code || 520, err.name || 'unhandledError_recipeTools-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -234,7 +234,7 @@ module.exports = ({ db }) => {
         quantity: newRecipeTool.quantity,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeTools create', 520, 'unhandledError_recipeTools-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeTools create', err.code || 520, err.name || 'unhandledError_recipeTools-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -269,7 +269,7 @@ module.exports = ({ db }) => {
       const updatedRecipeTool = await updater(options.userID, authorization, 'recipeToolID', recipeToolID, 'recipeTools', updateFields);
       return updatedRecipeTool;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeTools update', 520, 'unhandledError_recipeTools-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeTools update', err.code || 520, err.name || 'unhandledError_recipeTools-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -329,7 +329,7 @@ module.exports = ({ db }) => {
 
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeTools deleteRecipeTool', 520, 'unhandledError_recipeTools-deleteRecipeTool', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeTools deleteRecipeTool', err.code || 520, err.name || 'unhandledError_recipeTools-deleteRecipeTool', err.isOperational || false, err.severity || 2);
     }
   }
 

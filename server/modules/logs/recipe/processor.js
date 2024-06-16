@@ -32,7 +32,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${logs.length} recipe logs`);
       return logs;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeLogs getAll', 520, 'unhandledError_recipeLogs-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeLogs getAll', err.code || 520, err.name || 'unhandledError_recipeLogs-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -49,7 +49,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got log`);
       return log;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeLogs getByID', 520, 'unhandledError_recipeLogs-getByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeLogs getByID', err.code || 520, err.name || 'unhandledError_recipeLogs-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -69,7 +69,7 @@ module.exports = ({ db }) => {
         recipeLogID: log.recipeLogID,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeLogs create', 520, 'unhandledError_recipeLogs-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeLogs create', err.code || 520, err.name || 'unhandledError_recipeLogs-create', err.isOperational || false, err.severity || 2);
     }
   }
 

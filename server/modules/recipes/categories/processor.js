@@ -15,7 +15,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${recipeCategories.length} recipeCategories`);
       return recipeCategories;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeCategories', 520, 'unhandledError_recipeCategories-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeCategories getAll', err.code || 520, err.name || 'unhandledError_recipeCategories-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 

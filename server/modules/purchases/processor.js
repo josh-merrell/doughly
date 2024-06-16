@@ -16,7 +16,7 @@ module.exports = ({ db, dbDefault }) => {
 
       return 'success';
     } catch (err) {
-      throw errorGen('Unhandled Error in purchases unhideRecipes', 520, 'unhandledError_purchases-unhideRecipes', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in purchases unhideRecipes', err.code || 520, err.name || 'unhandledError_purchases-unhideRecipes', err.isOperational || false, err.severity || 2);
     }
   };
 
@@ -73,7 +73,7 @@ module.exports = ({ db, dbDefault }) => {
       }
       return tokenUpdate;
     } catch (err) {
-      throw errorGen('Unhandled Error in purchases calculateAITokenUpdate', 520, 'unhandledError_purchases-calculateAITokenUpdate', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in purchases calculateAITokenUpdate', err.code || 520, err.name || 'unhandledError_purchases-calculateAITokenUpdate', err.isOperational || false, err.severity || 2);
     }
   };
 
@@ -138,7 +138,7 @@ module.exports = ({ db, dbDefault }) => {
         }
         return updatedProfile;
       } catch (err) {
-        throw errorGen('Unhandled Error in purchases processNewPurchase', 520, 'unhandledError_purchases-processNewPurchase', false, 2); //message, code, name, operational, severity
+        throw errorGen(err.message || 'Unhandled Error in purchases processNewPurchase', err.code || 520, err.name || 'unhandledError_purchases-processNewPurchase', err.isOperational || false, err.severity || 2);
       }
     },
 
@@ -187,7 +187,7 @@ module.exports = ({ db, dbDefault }) => {
         }
         return updatedProfile;
       } catch (err) {
-        throw errorGen('Unhandled Error in purchases updatePermissions', 520, 'unhandledError_purchases-updatePermissions', false, 2); //message, code, name, operational, severity
+        throw errorGen(err.message || 'Unhandled Error in purchases updatePermissions', err.code || 520, err.name || 'unhandledError_purchases-updatePermissions', err.isOperational || false, err.severity || 2);
       }
     },
   };

@@ -107,7 +107,7 @@ module.exports = ({ db, dbPublic }) => {
       };
       return result;
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles retrieveProfile', 520, 'unhandledError_profiles-retrieveProfile', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles retrieveProfile', err.code || 520, err.name || 'unhandledError_profiles-retrieveProfile', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -142,7 +142,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Successfully retrieved ${validFriendProfiles.length} friends with status: ${friendStatus} for userID ${userID}`);
       return validFriendProfiles;
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles getFriends', 520, 'unhandledError_profiles-getFriends', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles getFriends', err.code || 520, err.name || 'unhandledError_profiles-getFriends', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -166,7 +166,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Successfully retrieved friend for userID ${userID} and friendUserID ${friendUserID}`);
       return friendProfile;
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles getFriend', 520, 'unhandledError_profiles-getFriend', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles getFriend', err.code || 520, err.name || 'unhandledError_profiles-getFriend', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -195,7 +195,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Successfully retrieved ${validfollowerProfiles.length} followers for userID ${userID}`);
       return validfollowerProfiles;
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles getFollowers', 520, 'unhandledError_profiles-getFollowers', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles getFollowers', err.code || 520, err.name || 'unhandledError_profiles-getFollowers', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -219,7 +219,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Successfully retrieved follower for userID ${userID} and followerUserID ${followerUserID}`);
       return followerProfile;
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles getFollower', 520, 'unhandledError_profiles-getFollower', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles getFollower', err.code || 520, err.name || 'unhandledError_profiles-getFollower', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -248,7 +248,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Successfully retrieved ${validFollowingProfiles.length} following for userID ${userID}`);
       return validFollowingProfiles;
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles getFollowing', 520, 'unhandledError_profiles-getFollowing', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles getFollowing', err.code || 520, err.name || 'unhandledError_profiles-getFollowing', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -284,7 +284,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Successfully retrieved ${validProfiles.length} profiles for searchQuery ${searchQuery}`);
       return validProfiles;
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles searchProfiles', 520, 'unhandledError_profiles-searchProfiles', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles searchProfiles', err.code || 520, err.name || 'unhandledError_profiles-searchProfiles', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -314,7 +314,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Successfully deleted profile for userID ${userID}`);
       return true;
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles deleteProfile', 520, 'unhandledError_profiles-deleteProfile', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles deleteProfile', err.code || 520, err.name || 'unhandledError_profiles-deleteProfile', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -420,7 +420,7 @@ module.exports = ({ db, dbPublic }) => {
     } catch (error) {
       // Ensure lock is released in case of an error
       await dbPublic.from('profiles').update({ isPopulating: false }).eq('user_id', userID);
-      throw errorGen('Unhandled Error in profiles populateAccount', 520, 'unhandledError_profiles-populateAccount', false, 2); //message, code, name, operational, severity
+      throw errorGen(error.message || 'Unhandled Error in profiles populateAccount', error.code || 520, error.name || 'unhandledError_profiles-populateAccount', error.isOperational || false, error.severity || 2);
     }
   }
 
@@ -472,7 +472,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return 'success';
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles populateFriendships', 520, 'unhandledError_profiles-populateFriendships', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles populateFriendships', err.code || 520, err.name || 'unhandledError_profiles-populateFriendships', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -524,7 +524,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return 'success';
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles populateFollowships', 520, 'unhandledError_profiles-populateFollowships', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles populateFollowships', err.code || 520, err.name || 'unhandledError_profiles-populateFollowships', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -574,7 +574,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return 'success';
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles populateIngredients', 520, 'unhandledError_profiles-populateIngredients', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles populateIngredients', err.code || 520, err.name || 'unhandledError_profiles-populateIngredients', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -620,7 +620,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return 'success';
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles populateTools', 520, 'unhandledError_profiles-populateTools', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles populateTools', err.code || 520, err.name || 'unhandledError_profiles-populateTools', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -666,7 +666,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return 'success';
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles populateRecipes', 520, 'unhandledError_profiles-populateRecipes', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles populateRecipes', err.code || 520, err.name || 'unhandledError_profiles-populateRecipes', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -698,7 +698,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return 'success';
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles populateMessages', 520, 'unhandledError_profiles-populateMessages', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles populateMessages', err.code || 520, err.name || 'unhandledError_profiles-populateMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -768,7 +768,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return { filePath };
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles createUserBackupFile', 520, 'unhandledError_profiles-createUserBackupFile', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles createUserBackupFile', err.code || 520, err.name || 'unhandledError_profiles-createUserBackupFile', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -807,7 +807,7 @@ module.exports = ({ db, dbPublic }) => {
 
       global.logger.info(`Successfully created daily backup for user ${userID}`);
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles createDailyBackup', 520, 'unhandledError_profiles-createDailyBackup', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles createDailyBackup', err.code || 520, err.name || 'unhandledError_profiles-createDailyBackup', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -829,7 +829,7 @@ module.exports = ({ db, dbPublic }) => {
 
       global.logger.info(`Successfully created daily backups for all ${userIDs.length} users`);
     } catch (err) {
-      throw errorGen('Unhandled Error in profiles dailyBackupAllUsers', 520, 'unhandledError_profiles-dailyBackupAllUsers', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in profiles dailyBackupAllUsers', err.code || 520, err.name || 'unhandledError_profiles-dailyBackupAllUsers', err.isOperational || false, err.severity || 2);
     }
   }
 

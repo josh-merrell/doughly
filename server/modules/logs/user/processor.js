@@ -31,7 +31,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${logs.length} user logs`);
       return logs;
     } catch (err) {
-      throw errorGen('Unhandled Error in userLogs getAll', 520, 'unhandledError_userLogs-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in userLogs getAll', err.code || 520, err.name || 'unhandledError_userLogs-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got log`);
       return log;
     } catch (err) {
-      throw errorGen('Unhandled Error in userLogs getByID', 520, 'unhandledError_userLogs-getByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in userLogs getByID', err.code || 520, err.name || 'unhandledError_userLogs-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -68,7 +68,7 @@ module.exports = ({ db }) => {
         userLogID: log.userLogID,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in userLogs create', 520, 'unhandledError_userLogs-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in userLogs create', err.code || 520, err.name || 'unhandledError_userLogs-create', err.isOperational || false, err.severity || 2);
     }
   }
 

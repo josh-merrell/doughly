@@ -28,7 +28,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${steps.length} steps`);
       return steps;
     } catch (err) {
-      throw errorGen('Unhandled Error in steps getAll', 520, 'unhandledError_steps-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in steps getAll', err.code || 520, err.name || 'unhandledError_steps-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
       }
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in steps getStepByID', 520, 'unhandledError_steps-getStepByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in steps getStepByID', err.code || 520, err.name || 'unhandledError_steps-getStepByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -83,7 +83,7 @@ module.exports = ({ db }) => {
         version: 1,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in steps create', 520, 'unhandledError_steps-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in steps create', err.code || 520, err.name || 'unhandledError_steps-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -116,7 +116,7 @@ module.exports = ({ db }) => {
       const updatedStep = await updater(options.userID, authorization, 'stepID', options.stepID, 'steps', updateFields);
       return updatedStep;
     } catch (err) {
-      throw errorGen('Unhandled Error in steps update', 520, 'unhandledError_steps-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in steps update', err.code || 520, err.name || 'unhandledError_steps-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -164,7 +164,7 @@ module.exports = ({ db }) => {
       createRecipeLog(userID, authorization, 'deleteStep', Number(stepID), null, null, null, `deleted step: ${step[0].title}`);
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in steps deleteStep', 520, 'unhandledError_steps-deleteStep', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in steps deleteStep', err.code || 520, err.name || 'unhandledError_steps-deleteStep', err.isOperational || false, err.severity || 2);
     }
   }
 

@@ -23,7 +23,7 @@ module.exports = ({ db }) => {
       global.logger.info('Got shoppingListIngredient');
       return shoppingListIngredient;
     } catch (err) {
-      throw errorGen('Unhandled Error in listIngredients getShoppingListIngredientByID', 520, 'unhandledError_listIngredients-getShoppingListIngredientByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listIngredients getShoppingListIngredientByID', err.code || 520, err.name || 'unhandledError_listIngredients-getShoppingListIngredientByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -43,7 +43,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${shoppingListIngredients.length} ingredients for shoppingList ${shoppingListID}`);
       return shoppingListIngredients;
     } catch (err) {
-      throw errorGen('Unhandled Error in listIngredients getIngredientsByShoppingList', 520, 'unhandledError_listIngredients-getIngredientsByShoppingList', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listIngredients getIngredientsByShoppingList', err.code || 520, err.name || 'unhandledError_listIngredients-getIngredientsByShoppingList', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -100,7 +100,7 @@ module.exports = ({ db }) => {
 
       return { shoppingListIngredientID: shoppingListIngredient.shoppingListIngredientID };
     } catch (err) {
-      throw errorGen('Unhandled Error in listIngredients createShoppingListIngredient', 520, 'unhandledError_listIngredients-createShoppingListIngredient', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listIngredients createShoppingListIngredient', err.code || 520, err.name || 'unhandledError_listIngredients-createShoppingListIngredient', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -140,7 +140,7 @@ module.exports = ({ db }) => {
 
       //add a 'updatedIngredientInShoppingList' log entry
     } catch (err) {
-      throw errorGen('Unhandled Error in listIngredients updateShoppingListIngredient', 520, 'unhandledError_listIngredients-updateShoppingListIngredient', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listIngredients updateShoppingListIngredient', err.code || 520, err.name || 'unhandledError_listIngredients-updateShoppingListIngredient', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -249,7 +249,7 @@ module.exports = ({ db }) => {
       //add a 'deleted' log entry
       await createShoppingLog(userID, authorization, 'deleteIngredientFromShoppingList', Number(shoppingListIngredientID), Number(shoppingListIngredient[0].shoppingListID), null, null, `deletedIngredientFromShoppingList: ${shoppingListIngredientID}`);
     } catch (err) {
-      throw errorGen('Unhandled Error in listIngredients deleteShoppingListIngredient', 520, 'unhandledError_listIngredients-deleteShoppingListIngredient', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listIngredients deleteShoppingListIngredient', err.code || 520, err.name || 'unhandledError_listIngredients-deleteShoppingListIngredient', err.isOperational || false, err.severity || 2);
     }
   }
 

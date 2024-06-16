@@ -30,7 +30,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${ingredientStocks.length} ingredientStocks`);
       return ingredientStocks;
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks getAll', 520, 'unhandledError_ingredientStocks-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks getAll', err.code || 520, err.name || 'unhandledError_ingredientStocks-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -46,7 +46,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       return ingredientStock[0];
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks getIngredientStockByID', 520, 'unhandledError_ingredientStocks-getIngredientStockByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks getIngredientStockByID', err.code || 520, err.name || 'unhandledError_ingredientStocks-getIngredientStockByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -91,7 +91,7 @@ module.exports = ({ db, dbPublic }) => {
         purchasedDate: newIngredientStock.purchasedDate,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks create', 520, 'unhandledError_ingredientStocks-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks create', err.code || 520, err.name || 'unhandledError_ingredientStocks-create', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -127,7 +127,7 @@ module.exports = ({ db, dbPublic }) => {
       const updatedIngredientStock = await updater(userID, authorization, 'ingredientStockID', ingredientStockID, 'ingredientStocks', updateFields);
       return updatedIngredientStock;
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks update', 520, 'unhandledError_ingredientStocks-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks update', err.code || 520, err.name || 'unhandledError_ingredientStocks-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -166,7 +166,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks deleteIngredientStock', 520, 'unhandledError_ingredientStocks-deleteIngredientStock', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks deleteIngredientStock', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteIngredientStock', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -192,7 +192,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info('Deleted all expired ingredientStocks');
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks deleteAllExpired', 520, 'unhandledError_ingredientStocks-deleteAllExpired', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks deleteAllExpired', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteAllExpired', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -323,7 +323,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks deleteExpiredStockForUser', 520, 'unhandledError_ingredientStocks-deleteExpiredStockForUser', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks deleteExpiredStockForUser', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteExpiredStockForUser', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -349,7 +349,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info('Notified all users of upcoming expirations');
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks notifyOnUpcomingExpiration', 520, 'unhandledError_ingredientStocks-notifyOnUpcomingExpiration', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks notifyOnUpcomingExpiration', err.code || 520, err.name || 'unhandledError_ingredientStocks-notifyOnUpcomingExpiration', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -430,7 +430,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks notifyUserOfUpcomingExpiration', 520, 'unhandledError_ingredientStocks-notifyUserOfUpcomingExpiration', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks notifyUserOfUpcomingExpiration', err.code || 520, err.name || 'unhandledError_ingredientStocks-notifyUserOfUpcomingExpiration', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -559,7 +559,7 @@ module.exports = ({ db, dbPublic }) => {
         }
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredientStocks checkForLowStock', 520, 'unhandledError_ingredientStocks-checkForLowStock', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredientStocks checkForLowStock', err.code || 520, err.name || 'unhandledError_ingredientStocks-checkForLowStock', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 

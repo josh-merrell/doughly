@@ -58,7 +58,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${result.length} friendships`);
       return result;
     } catch (err) {
-      throw errorGen('Unhandled Error in friendships getAll', 520, 'unhandledError_friendships-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in friendships getAll', err.code || 520, err.name || 'unhandledError_friendships-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -74,7 +74,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got friendship ${options.friendshipID}`);
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in friendships getFriendshipByID', 520, 'unhandledError_friendships-getFriendshipByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in friendships getFriendshipByID', err.code || 520, err.name || 'unhandledError_friendships-getFriendshipByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -234,7 +234,7 @@ module.exports = ({ db, dbPublic }) => {
         version: friendship.version,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in friendships create', 520, 'unhandledError_friendships-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in friendships create', err.code || 520, err.name || 'unhandledError_friendships-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -256,7 +256,7 @@ module.exports = ({ db, dbPublic }) => {
         await db.from('friendships').update({ appMessageStatusNewFriend: 'notAcked', appMessageDateNewFriend: new Date() }).eq('friendshipID', friendshipID);
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in friendships notifyNewFriend', 520, 'unhandledError_friendships-notifyNewFriend', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in friendships notifyNewFriend', err.code || 520, err.name || 'unhandledError_friendships-notifyNewFriend', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -326,7 +326,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return updatedFriendship;
     } catch (err) {
-      throw errorGen('Unhandled Error in friendships update', 520, 'unhandledError_friendships-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in friendships update', err.code || 520, err.name || 'unhandledError_friendships-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -382,7 +382,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in friendships deleteFriendship', 520, 'unhandledError_friendships-deleteFriendship', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in friendships deleteFriendship', err.code || 520, err.name || 'unhandledError_friendships-deleteFriendship', err.isOperational || false, err.severity || 2);
     }
   }
 

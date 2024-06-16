@@ -16,7 +16,7 @@ module.exports = ({ db }) => {
       global.logger.info('Got shoppingListRecipe');
       return shoppingListRecipe;
     } catch (err) {
-      throw errorGen('Unhandled Error in listRecipes getShoppingListRecipeByID', 520, 'unhandledError_listRecipes-getShoppingListRecipeByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listRecipes getShoppingListRecipeByID', err.code || 520, err.name || 'unhandledError_listRecipes-getShoppingListRecipeByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -32,7 +32,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${shoppingListRecipes.length} recipes for shoppingList ${shoppingListID}`);
       return shoppingListRecipes;
     } catch (err) {
-      throw errorGen('Unhandled Error in listRecipes getRecipesByShoppingList', 520, 'unhandledError_listRecipes-getRecipesByShoppingList', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listRecipes getRecipesByShoppingList', err.code || 520, err.name || 'unhandledError_listRecipes-getRecipesByShoppingList', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${shoppingListRecipes.length} shoppingListRecipes`);
       return shoppingListRecipes;
     } catch (err) {
-      throw errorGen('Unhandled Error in listRecipes getAllShoppingListRecipes', 520, 'unhandledError_listRecipes-getAllShoppingListRecipes', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listRecipes getAllShoppingListRecipes', err.code || 520, err.name || 'unhandledError_listRecipes-getAllShoppingListRecipes', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -126,7 +126,7 @@ module.exports = ({ db }) => {
       };
       return result;
     } catch (err) {
-      throw errorGen('Unhandled Error in listRecipes createShoppingListRecipe', 520, 'unhandledError_listRecipes-createShoppingListRecipe', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listRecipes createShoppingListRecipe', err.code || 520, err.name || 'unhandledError_listRecipes-createShoppingListRecipe', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -155,7 +155,7 @@ module.exports = ({ db }) => {
       await createShoppingLog(userID, authorization, 'deleteRecipeFromShoppingList', Number(shoppingListRecipeID), Number(shoppingListRecipe.shoppingListID), null, null, `deleted Recipe from ShoppingList: ${shoppingListRecipeID}`);
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in listRecipes deleteShoppingListRecipe', 520, 'unhandledError_listRecipes-deleteShoppingListRecipe', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in listRecipes deleteShoppingListRecipe', err.code || 520, err.name || 'unhandledError_listRecipes-deleteShoppingListRecipe', err.isOperational || false, err.severity || 2);
     }
   }
 

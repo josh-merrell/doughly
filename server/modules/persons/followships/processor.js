@@ -43,7 +43,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${result.length} followships`);
       return result;
     } catch (err) {
-      throw errorGen('Unhandled Error in followships getAll', 520, 'unhandledError_followships-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in followships getAll', err.code || 520, err.name || 'unhandledError_followships-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -66,7 +66,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${followships.length} follower followships`);
       return followships;
     } catch (err) {
-      throw errorGen('Unhandled Error in followships getAllFollowers', 520, 'unhandledError_followships-getAllFollowers', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in followships getAllFollowers', err.code || 520, err.name || 'unhandledError_followships-getAllFollowers', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -81,7 +81,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got followship ${options.followshipID}`);
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in followships getFollowshipByID', 520, 'unhandledError_followships-getFollowshipByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in followships getFollowshipByID', err.code || 520, err.name || 'unhandledError_followships-getFollowshipByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -139,7 +139,7 @@ module.exports = ({ db, dbPublic }) => {
         following: followship.following,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in followships create', 520, 'unhandledError_followships-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in followships create', err.code || 520, err.name || 'unhandledError_followships-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -166,7 +166,7 @@ module.exports = ({ db, dbPublic }) => {
       createUserLog(options.userID, options.authorization, 'deletedFollowship', Number(options.followshipID), null, null, null, 'No longer followng ' + followship.following);
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in followships deleteFollowship', 520, 'unhandledError_followships-deleteFollowship', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in followships deleteFollowship', err.code || 520, err.name || 'unhandledError_followships-deleteFollowship', err.isOperational || false, err.severity || 2);
     }
   }
 

@@ -29,7 +29,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${toolStocks.length} toolStocks`);
       return toolStocks;
     } catch (err) {
-      throw errorGen('Unhandled Error in toolStocks getAll', 520, 'unhandledError_toolStocks-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in toolStocks getAll', err.code || 520, err.name || 'unhandledError_toolStocks-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -46,7 +46,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got toolStock ID: ${toolStockID}`);
       return toolStock;
     } catch (err) {
-      throw errorGen('Unhandled Error in toolStocks getByID', 520, 'unhandledError_toolStocks-getByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in toolStocks getByID', err.code || 520, err.name || 'unhandledError_toolStocks-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -83,7 +83,7 @@ module.exports = ({ db }) => {
         quantity: quantity,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in toolStocks create', 520, 'unhandledError_toolStocks-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in toolStocks create', err.code || 520, err.name || 'unhandledError_toolStocks-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -118,7 +118,7 @@ module.exports = ({ db }) => {
       const updatedToolStock = await updater(userID, authorization, 'toolStockID', toolStockID, 'toolStocks', updateFields);
       return updatedToolStock;
     } catch (err) {
-      throw errorGen('Unhandled Error in toolStocks update', 520, 'unhandledError_toolStocks-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in toolStocks update', err.code || 520, err.name || 'unhandledError_toolStocks-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -160,7 +160,7 @@ module.exports = ({ db }) => {
       createKitchenLog(userID, authorization, 'deleteToolStock', Number(toolStockID), Number(existingToolStock[0].toolID), null, null, `Deleted ${existingToolStock[0].quantity} ${existingTool[0].name}`);
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in toolStocks deleteToolStock', 520, 'unhandledError_toolStocks-deleteToolStock', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in toolStocks deleteToolStock', err.code || 520, err.name || 'unhandledError_toolStocks-deleteToolStock', err.isOperational || false, err.severity || 2);
     }
   }
 

@@ -26,7 +26,8 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${ingredients.length} ingredients`);
       return ingredients;
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredients getAll', 520, 'unhandledError_ingredients-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredients getAll', err.code || 520, err.name || 'unhandledError_ingredients-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+
     }
   }
 
@@ -43,7 +44,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ingredient`);
       return ingredient;
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredients getIngredientByID', 520, 'unhandledError_ingredients-getIngredientByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredients getIngredientByID', err.code || 520, err.name || 'unhandledError_ingredients-getIngredientByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -100,7 +101,7 @@ module.exports = ({ db, dbPublic }) => {
         needsReview: ingredient.needsReview,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredients create', 520, 'unhandledError_ingredients-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredients create', err.code || 520, err.name || 'unhandledError_ingredients-create', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -164,7 +165,7 @@ module.exports = ({ db, dbPublic }) => {
         needsReview: updatedIngredient.needsReview,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredients update', 520, 'unhandledError_ingredients-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredients update', err.code || 520, err.name || 'unhandledError_ingredients-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -194,7 +195,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Deleted ingredient ID: ${ingredientID}`);
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in ingredients deleteIngredient', 520, 'unhandledError_ingredients-deleteIngredient', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in ingredients deleteIngredient', err.code || 520, err.name || 'unhandledError_ingredients-deleteIngredient', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 

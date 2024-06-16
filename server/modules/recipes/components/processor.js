@@ -27,7 +27,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got recipeComponents`);
       return recipeComponents;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeComponents getAll', 520, 'unhandledError_recipeComponents-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeComponents getAll', err.code || 520, err.name || 'unhandledError_recipeComponents-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -80,7 +80,7 @@ module.exports = ({ db }) => {
       createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion), `updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeComponents create', 520, 'unhandledError_recipeComponents-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeComponents create', err.code || 520, err.name || 'unhandledError_recipeComponents-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -109,7 +109,7 @@ module.exports = ({ db }) => {
       const updatedRecipeComponent = await updater(options.userID, options.authorization, 'recipeComponentID', options.recipeComponentID, 'recipeComponents', updateFields);
       return updatedRecipeComponent;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeComponents update', 520, 'unhandledError_recipeComponents-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeComponents update', err.code || 520, err.name || 'unhandledError_recipeComponents-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -143,7 +143,7 @@ module.exports = ({ db }) => {
 
       return data;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipeComponents deleteRecipeComponent', 520, 'unhandledError_recipeComponents-deleteRecipeComponent', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipeComponents deleteRecipeComponent', err.code || 520, err.name || 'unhandledError_recipeComponents-deleteRecipeComponent', err.isOperational || false, err.severity || 2);
     }
   }
 

@@ -31,7 +31,7 @@ module.exports = ({ db }) => {
         global.logger.info(`Added push token: ${token} for user ${userID}`);
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in pushNotifications addToken', 520, 'unhandledError_pushNotifications-addToken', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in pushNotifications addToken', err.code || 520, err.name || 'unhandledError_pushNotifications-addToken', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -56,7 +56,7 @@ module.exports = ({ db }) => {
       }
       global.logger.info(`Deleted push token: ${token} for user ${userID}`);
     } catch (err) {
-      throw errorGen('Unhandled Error in pushNotifications removeToken', 520, 'unhandledError_pushNotifications-removeToken', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in pushNotifications removeToken', err.code || 520, err.name || 'unhandledError_pushNotifications-removeToken', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -80,7 +80,7 @@ module.exports = ({ db }) => {
       }
       global.logger.info(`Deleted ${tokens.length} (all) push tokens for user ${userID}`);
     } catch (err) {
-      throw errorGen('Unhandled Error in pushNotifications removeUserToken', 520, 'unhandledError_pushNotifications-removeUserToken', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in pushNotifications removeUserTokens', err.code || 520, err.name || 'unhandledError_pushNotifications-removeUserTokens', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -101,7 +101,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${tokens.length} push tokens for user ${userID}`);
       return tokens;
     } catch (err) {
-      throw errorGen('Unhandled Error in pushNotifications userToken', 520, 'unhandledError_pushNotifications-userToken', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in pushNotifications userToken', err.code || 520, err.name || 'unhandledError_pushNotifications-userToken', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -122,7 +122,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${tokens.length} push tokens for other user: ${userID}`);
       return tokens;
     } catch (err) {
-      throw errorGen('Unhandled Error in pushNotifications getOtherUserPushToken', 520, 'unhandledError_pushNotifications-getOtherUserPushToken', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in pushNotifications getOtherUserPushToken', err.code || 520, err.name || 'unhandledError_pushNotifications-getOtherUserPushToken', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -141,7 +141,7 @@ module.exports = ({ db }) => {
       }
       global.logger.info(`Updated 'lastUsedTime' for push token: ${token} for user ${userID}`);
     } catch (err) {
-      throw errorGen('Unhandled Error in pushNotifications update', 520, 'unhandledError_pushNotifications-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in pushNotifications update', err.code || 520, err.name || 'unhandledError_pushNotifications-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -158,7 +158,7 @@ module.exports = ({ db }) => {
       // send the notification
       sendTokenNotifications(destTokens, type, data);
     } catch (err) {
-      throw errorGen('Unhandled Error in pushNotifications sendNotification', 520, 'unhandledError_pushNotifications-sendNotification', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in pushNotifications sendNotification', err.code || 520, err.name || 'unhandledError_pushNotifications-sendNotification', err.isOperational || false, err.severity || 2);
     }
   }
 

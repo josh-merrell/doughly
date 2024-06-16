@@ -31,7 +31,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got ${logs.length} kitchen logs`);
       return logs;
     } catch (err) {
-      throw errorGen('Unhandled Error in kitchenLogs getAll', 520, 'unhandledError_kitchenLogs-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in kitchenLogs getAll', err.code || 520, err.name || 'unhandledError_kitchenLogs-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
       global.logger.info(`Got log`);
       return log;
     } catch (err) {
-      throw errorGen('Unhandled Error in kitchenLogs getByID', 520, 'unhandledError_kitchenLogs-getByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in kitchenLogs getByID', err.code || 520, err.name || 'unhandledError_kitchenLogs-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -67,7 +67,7 @@ module.exports = ({ db }) => {
         kitchenLogID: log.kitchenLogID,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in kitchenLogs create', 520, 'unhandledError_kitchenLogs-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in kitchenLogs create', err.code || 520, err.name || 'unhandledError_kitchenLogs-create', err.isOperational || false, err.severity || 2);
     }
   }
 

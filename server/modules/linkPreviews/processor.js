@@ -68,7 +68,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(htmlContent);
       return htmlContent;
     } catch (err) {
-      throw errorGen('Unhandled Error in linkPreviews recipePreview', 520, 'unhandledError_linkPreviews-recipePreview', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in linkPreviews recipePreview', err.code || 520, err.name || 'unhandledError_linkPreviews-recipePreview', err.isOperational || false, err.severity || 2);
     }
   }
 

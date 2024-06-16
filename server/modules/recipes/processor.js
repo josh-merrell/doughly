@@ -161,7 +161,7 @@ module.exports = ({ db, dbPublic }) => {
           deleteItem(createdItems[i], authorization);
         }
       }
-      throw errorGen('Unhandled Error in recipes constructRecipe', 520, 'unhandledError_recipe-constructRecipe', false, 2); //message, code, name, operational, severity
+      throw errorGen(error.message || 'Unhandled Error in recipes constructRecipe', error.code || 520, error.name || 'unhandledError_recipe-constructRecipe', error.isOperational || false, error.severity || 2);
     }
   }
 
@@ -196,7 +196,7 @@ module.exports = ({ db, dbPublic }) => {
       // return ingredientID
       return ingredientID;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getIngredientID', 520, 'unhandledError_recipes-getIngredientID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getIngredientID', err.code || 520, err.name || 'unhandledError_recipes-getIngredientID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -239,7 +239,7 @@ module.exports = ({ db, dbPublic }) => {
       );
       return { recipeIngredientID: data.recipeIngredientID, ingredientID: ingredient.ingredientID };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes constructRecipeIngredient', 520, 'unhandledError_recipes-constructRecipeIngredient', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes constructRecipeIngredient', err.code || 520, err.name || 'unhandledError_recipes-constructRecipeIngredient', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -306,7 +306,7 @@ module.exports = ({ db, dbPublic }) => {
       );
       return { recipeToolID: data.recipeToolID, toolID: toolID };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes constructRecipeTool', 520, 'unhandledError_recipes-constructRecipeTool', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes constructRecipeTool', err.code || 520, err.name || 'unhandledError_recipes-constructRecipeTool', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -352,7 +352,7 @@ module.exports = ({ db, dbPublic }) => {
           },
         });
       }
-      throw errorGen('Unhandled Error in recipes constructRecipeStep', 520, 'unhandledError_recipes-constructRecipeStep', false, 2); //message, code, name, operational, severity
+      throw errorGen(error.message || 'Unhandled Error in recipes constructRecipeStep', error.code || 520, error.name || 'unhandledError_recipes-constructRecipeStep', error.isOperational || false, error.severity || 2);
     }
   }
 
@@ -390,7 +390,7 @@ module.exports = ({ db, dbPublic }) => {
         });
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes deleteItem', 520, 'unhandledError_recipes-deleteItem', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes deleteItem', err.code || 520, err.name || 'unhandledError_recipes-deleteItem', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -417,7 +417,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${recipes.length} recipes`);
       return recipes;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getAll', 520, 'unhandledError_recipes-getAll', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getAll', err.code || 520, err.name || 'unhandledError_recipes-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -432,7 +432,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${discoverRecipes.length} discoverRecipes`);
       return discoverRecipes;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getDiscover', 520, 'unhandledError_recipes-getDiscover', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getDiscover', err.code || 520, err.name || 'unhandledError_recipes-getDiscover', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -448,7 +448,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got recipe`);
       return recipe;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getByID', 520, 'unhandledError_recipes-getByID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getByID', err.code || 520, err.name || 'unhandledError_recipes-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -464,7 +464,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${recipeIngredients.length} recipeIngredients for recipeID: ${recipeID}`);
       return recipeIngredients;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getRecipeIngredients', 520, 'unhandledError_recipes-getRecipeIngredients', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeIngredients', err.code || 520, err.name || 'unhandledError_recipes-getRecipeIngredients', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -480,7 +480,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${recipeTools.length} recipeTools for recipeID: ${recipeID}`);
       return recipeTools;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getRecipeTools', 520, 'unhandledError_recipes-getRecipeTools', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeTools', err.code || 520, err.name || 'unhandledError_recipes-getRecipeTools', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -497,7 +497,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`);
       return recipeSteps;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getRecipeSteps', 520, 'unhandledError_recipes-getRecipeSteps', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSteps', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSteps', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -541,7 +541,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`);
       return enhancedSubscriptions;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getRecipeSubscriptions', 520, 'unhandledError_recipes-getRecipeSubscriptions', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSubscriptions', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptions', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -557,7 +557,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Found ${subscriptions.length} recipeSubscriptions for recipeID: ${recipeID}`);
       return subscriptions;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes getRecipeSubscriptionsByRecipeID', 520, 'unhandledError_recipes-getRecipeSubscriptionsByRecipeID', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSubscriptionsByRecipeID', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptionsByRecipeID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -628,7 +628,7 @@ module.exports = ({ db, dbPublic }) => {
         version: 1,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes create', 520, 'unhandledError_recipes-create', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes create', err.code || 520, err.name || 'unhandledError_recipes-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -966,7 +966,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Created recipe from URL: ${recipeURL}`);
       return recipeID;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes createFromURL', 520, 'unhandledError_recipes-createFromURL', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes createFromURL', err.code || 520, err.name || 'unhandledError_recipes-createFromURL', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -1010,7 +1010,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return recipeID;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes createFromURLAttempt', 520, 'unhandledError_recipes-createFromURLAttempt', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes createFromURLAttempt', err.code || 520, err.name || 'unhandledError_recipes-createFromURLAttempt', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -1108,7 +1108,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return { matchedTwiceIngredients, vertexaiCost };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes matchIngredients', 520, 'unhandledError_recipes-matchIngredients', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes matchIngredients', err.code || 520, err.name || 'unhandledError_recipes-matchIngredients', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1169,7 +1169,7 @@ module.exports = ({ db, dbPublic }) => {
         component: recipeIngredient.component,
       };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes matchIngredientByName', 520, 'unhandledError_recipes-matchIngredientByName', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes matchIngredientByName', err.code || 520, err.name || 'unhandledError_recipes-matchIngredientByName', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1216,7 +1216,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return matchedTools;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes matchTools', 520, 'unhandledError_recipes-matchTools', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes matchTools', err.code || 520, err.name || 'unhandledError_recipes-matchTools', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1231,7 +1231,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`NO MATCH FOUND FOR ${recipeTool.name}`);
       return { toolID: 0, name: recipeTool.name, quantity: recipeTool.quantity };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes secondaryToolsMatch', 520, 'unhandledError_recipes-secondaryToolsMatch', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes secondaryToolsMatch', err.code || 520, err.name || 'unhandledError_recipes-secondaryToolsMatch', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1257,7 +1257,7 @@ module.exports = ({ db, dbPublic }) => {
         return 2023112900000005;
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes matchCategory', 520, 'unhandledError_recipes-matchCategory', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes matchCategory', err.code || 520, err.name || 'unhandledError_recipes-matchCategory', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1357,7 +1357,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       return updatedRecipe;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes update', 520, 'unhandledError_recipes-update', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes update', err.code || 520, err.name || 'unhandledError_recipes-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1400,7 +1400,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`Deleted recipe ID: ${options.recipeID}`);
       return { success: true };
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes deleteRecipe', 520, 'unhandledError_recipes-deleteRecipe', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes deleteRecipe', err.code || 520, err.name || 'unhandledError_recipes-deleteRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1462,7 +1462,7 @@ module.exports = ({ db, dbPublic }) => {
       //return the log entry
       return log;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes useRecipes', 520, 'unhandledError_recipes-useRecipes', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes useRecipe', err.code || 520, err.name || 'unhandledError_recipes-useRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1529,7 +1529,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       return subscription.subscriptionID;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes subscribeRecipe', 520, 'unhandledError_recipes-subscribeRecipe', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes subscribeRecipe', err.code || 520, err.name || 'unhandledError_recipes-subscribeRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1566,7 +1566,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error deleting recipe: ${deleteResult.error}`, 400);
       }
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes deleteRecipeSubscription', 520, 'unhandledError_recipes-deleteRecipeSubscription', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes deleteRecipeSubscription', err.code || 520, err.name || 'unhandledError_recipes-deleteRecipeSubscription', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1590,7 +1590,7 @@ module.exports = ({ db, dbPublic }) => {
 
       global.logger.info(`Updated 'freeTier' recipe selections: ${recipeIDs}`);
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes archiveCreatedRecipes', 520, 'unhandledError_recipes-archiveCreatedRecipes', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes archiveCreatedRecipes', err.code || 520, err.name || 'unhandledError_recipes-archiveCreatedRecipes', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1614,7 +1614,7 @@ module.exports = ({ db, dbPublic }) => {
 
       global.logger.info(`Updated 'freeTier' subscription selections: ${subscriptionIDs}`);
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes archiveSubscriptions', 520, 'unhandledError_recipes-archiveSubscriptions', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes archiveSubscriptions', err.code || 520, err.name || 'unhandledError_recipes-archiveSubscriptions', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
