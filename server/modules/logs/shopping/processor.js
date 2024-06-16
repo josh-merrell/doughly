@@ -25,10 +25,10 @@ module.exports = ({ db }) => {
       const { data: logs, error } = await q;
 
       if (error) {
-        global.logger.error(`Error getting logs: ${error.message}`);
-        throw errorGen('Error getting logs', 400);
+        throw errorGen(`Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got ${logs.length} shopping logs`);
+      // global.logger.info(`Got ${logs.length} shopping logs`);
+      global.logger.info({message:`Got ${logs.length} shopping logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return logs;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLogs getAll', err.code || 520, err.name || 'unhandledError_shoppingLogs-getAll', err.isOperational || false, err.severity || 2);
@@ -42,10 +42,9 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('shoppingLogs').select().eq('shoppingLogID', logID);
 
       if (error) {
-        global.logger.error(`Error getting log: ${error.message}`);
-        throw errorGen(`Error getting log: ${error.message}`, 400);
+        throw errorGen(`Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got log`);
+      global.logger.info({message:`Got log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
       return log;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLogs getShoppingListByID', err.code || 520, err.name || 'unhandledError_shoppingLogs-getShoppingListByID', err.isOperational || false, err.severity || 2);
@@ -61,8 +60,7 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('shoppingLogs').insert({ shoppingLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
       if (error) {
-        global.logger.error(`Error creating shoppingLog: ${error.message}`);
-        throw errorGen(`Error creating shoppingLog: ${error.message}`, 400);
+        throw errorGen(`Error creating shoppingLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       return {
         shoppingLogID: log.shoppingLogID,

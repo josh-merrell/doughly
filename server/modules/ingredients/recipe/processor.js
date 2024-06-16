@@ -4,6 +4,7 @@ const { createRecipeLog } = require('../../../services/dbLogger');
 const { updater, incrementVersion, getRecipeVersion } = require('../../../db');
 const { errorGen } = require('../../../middleware/errorHandling');
 const { getUnitRatio } = require('../../../services/aiHandlers');
+const { log, info } = require('console');
 
 module.exports = ({ db }) => {
   async function getAll(options) {
@@ -23,10 +24,9 @@ module.exports = ({ db }) => {
       const { data: recipeIngredients, error } = await q;
 
       if (error) {
-        global.logger.error(`Error getting recipeIngredients: ${error.message}`);
-        throw errorGen(`Error getting recipeIngredients`, 400);
+        throw errorGen(`Error getting recipeIngredients`, 511, `failSupabaseSelect`, true, 3);
       }
-      global.logger.info(`Got ${recipeIngredients.length} recipeIngredients`);
+      global.logger.info({message:`Got ${recipeIngredients.length} recipeIngredients`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return recipeIngredients;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeIngredients getAll', err.code || 520, err.name || 'unhandledError_recipeIngredients-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -34,15 +34,14 @@ module.exports = ({ db }) => {
   }
 
   async function getRecipeIngredientByID(options) {
-    const { recipeIngredientID } = options;
+    const { userID, recipeIngredientID } = options;
     try {
       const { data: recipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID).eq('deleted', false);
 
       if (error) {
-        global.logger.error(`Error getting recipeIngredient ID: ${recipeIngredientID}: ${error.message}`);
-        throw errorGen(`Error getting recipeIngredient ID: ${recipeIngredientID}`, 400);
+        throw errorGen(`Error getting recipeIngredient ID: ${recipeIngredientID}`, 511, `failSupabaseSelect`, true, 3);
       }
-      global.logger.info(`Got recipeIngredient`);
+      global.logger.info({message:`Got recipeIngredient`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return recipeIngredient;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeIngredients getRecipeIngredientByID', err.code || 520, err.name || 'unhandledError_recipeIngredients-getRecipeIngredientByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -53,67 +52,60 @@ module.exports = ({ db }) => {
     const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation, component, RIneedsReview = false } = options;
 
     try {
-      global.logger.info(`CREATING RECIPE INGREDIENT, PREPARATION: ${preparation}`);
+      global.logger.info({message:`CREATING RECIPE INGREDIENT, PREPARATION: ${preparation}`, level:7, timestamp: new Date().toISOString(), 'userID': userID});
 
       //verify that 'customID' exists on the request
       if (!customID) {
-        global.logger.error(`Error creating recipeIngredient: customID is missing`);
-        throw errorGen(`Error creating recipeIngredient: customID is missing`, 400);
+        throw errorGen(`Error creating recipeIngredient: customID is missing`, 510, `dataValidationErr`, false, 3);
       }
 
       //verify that the provided recipeID exists, return error if not
       const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID).eq('deleted', false);
       if (error) {
-        global.logger.error(`Error validating provided recipeID: ${error.message}`);
-        throw errorGen(`Error validating provided recipeID`, 400);
+        throw errorGen(`Error validating provided recipeID`, 510, `dataValidationErr`, false, 3);
       }
       if (existingRecipe.length === 0) {
-        global.logger.error(`RecipeID does not exist, cannot create recipeIngredient`);
-        throw errorGen(`RecipeID does not exist, cannot create recipeIngredient`, 400);
+        // throw errorGen(`RecipeID does not exist, cannot create recipeIngredient`, 400);
+        throw errorGen(`RecipeID does not exist, cannot create recipeIngredient`, 515, `cannotComplete`, true, 3);
       }
 
       //verify that the provided ingredientID exists, return error if not
       const { data: existingIngredient, error2 } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
       if (error2) {
-        global.logger.error(`Error validating provided ingredientID: ${error2.message}`);
-        throw errorGen(`Error validating provided ingredientID`, 400);
+        // throw errorGen(`Error validating provided ingredientID`, 400);
+        throw errorGen(``, 515, 'cannotComplete', true, 3);
       }
       if (existingIngredient.length === 0) {
-        global.logger.error(`IngredientID ${ingredientID} does not exist, cannot create recipeIngredient`);
-        throw errorGen(`IngredientID ${ingredientID} does not exist, cannot create recipeIngredient`, 400);
+        throw errorGen(`IngredientID ${ingredientID} does not exist, cannot create recipeIngredient`, 510, 'dataValidationErr', false, 3);
       }
 
       //verify that the provided measurement is a positive number, return error if not
       if (!measurement || measurement <= 0) {
-        global.logger.error(`positive measurement number is required`);
-        throw errorGen(`positive measurement number is required`, 400);
+        throw errorGen(`positive measurement number is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //verify that the provided purchaseUnitRatio is a positive number, return error if not
       if (!purchaseUnitRatio || purchaseUnitRatio <= 0) {
-        global.logger.error(`positive purchaseUnitRatio number is required, got ${purchaseUnitRatio}`);
-        throw errorGen(`positive purchaseUnitRatio number is required`, 400);
+        throw errorGen(`positive purchaseUnitRatio number is required, got ${purchaseUnitRatio}`, 510, 'dataValidationErr', false, 3);
       }
 
       //create the recipeIngredient
       const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, version: 1, preparation, component, RIneedsReview }).select().single();
 
       if (error3) {
-        global.logger.error(`Error creating recipeIngredient: ${error3.message}`);
-        throw errorGen(`Error creating recipeIngredient`, 400);
+        throw errorGen(`Error creating recipeIngredient: ${error3.message}`, 512, 'failSupabaseInsert', true, 3);
       }
 
       //if status of existingRecipe is 'noIngredients', update status to 'noTools'
       if (existingRecipe[0].status === 'noIngredients' && recipeIngredient.recipeIngredientID) {
         const { error4 } = await db.from('recipes').update({ status: 'noTools' }).eq('recipeID', recipeID);
         if (error4) {
-          global.logger.error(`Error updating recipe status: ${error4.message}`);
+          global.logger.info({message:`Error updating recipe status: ${error4.message}, rolling back`, level:3, timestamp: new Date().toISOString(), 'userID': userID});
           const { error5 } = await db.from('recipeIngredients').delete().eq('recipeIngredientID', recipeIngredient.recipeIngredientID);
           if (error5) {
-            global.logger.error(`Error rolling back recipeIngredient: ${error5.message}`);
-            throw errorGen(`Error rolling back recipeIngredient`, 400);
+            throw errorGen(`Error rolling back recipeIngredient: ${error5.message}`, 514, 'failSupabaseDelete', true, 3);
           }
-          throw errorGen(`Error updating recipe status`, 400);
+          throw errorGen(`Error updating recipe status`, 513, 'failSupabaseUpdate', true, 3);
         }
       }
 
@@ -146,24 +138,20 @@ module.exports = ({ db }) => {
       //verify that the provided recipeIngredientID exists, return error if not
       const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().filter('userID', 'eq', userID).filter('recipeIngredientID', 'eq', recipeIngredientID);
       if (error) {
-        global.logger.error(`Error validating provided recipeIngredientID: ${error.message}`);
-        throw errorGen(`Error validating provided recipeIngredientID`, 400);
+        throw errorGen(`Error validating provided recipeIngredientID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingRecipeIngredient.length === 0) {
-        global.logger.error(`RecipeIngredientID does not exist, cannot update recipeIngredient`);
-        throw errorGen(`RecipeIngredientID does not exist, cannot update recipeIngredient`, 400);
+        throw errorGen(`RecipeIngredientID does not exist, cannot update recipeIngredient`, 515, 'cannotComplete', true, 3);
       }
 
       //if provided, verify that the provided measurement is a positive number, return error if not
       if (measurement && measurement <= 0) {
-        global.logger.error(`positive measurement number is required`);
-        throw errorGen(`positive measurement number is required`, 400);
+        throw errorGen(`positive measurement number is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //if provided, verify that the provided purchaseUnitRatio is a positive number, return error if not
       if (purchaseUnitRatio && purchaseUnitRatio <= 0) {
-        global.logger.error(`positive purchaseUnitRatio number is required`);
-        throw errorGen(`positive purchaseUnitRatio number is required`, 400);
+        throw errorGen(`positive purchaseUnitRatio number is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //update the recipeIngredient
@@ -192,20 +180,17 @@ module.exports = ({ db }) => {
       //verify that the provided recipeIngredientID exists, return error if not
       const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID).eq('deleted', false);
       if (error) {
-        global.logger.error(`Error validating provided recipeIngredientID: ${error.message}`);
-        throw errorGen(`Error validating provided recipeIngredientID`, 400);
+        throw errorGen(`Error validating provided recipeIngredientID`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingRecipeIngredient.length === 0) {
-        global.logger.error(`RecipeIngredientID does not exist, cannot delete recipeIngredient`);
-        throw errorGen(`RecipeIngredientID does not exist, cannot delete recipeIngredient`, 400);
+        throw errorGen(`RecipeIngredientID does not exist, cannot delete recipeIngredient`, 515, 'cannotComplete', true, 3);
       }
 
       //delete the recipeIngredient
       const { error2 } = await db.from('recipeIngredients').update({ deleted: true }).eq('recipeIngredientID', recipeIngredientID);
 
       if (error2) {
-        global.logger.error(`Error deleting recipeIngredient ID: ${recipeIngredientID}: ${error2.message}`);
-        throw errorGen(`Error deleting recipeIngredient ID: ${recipeIngredientID}`, 400);
+        throw errorGen(`Error deleting recipeIngredient ID: ${recipeIngredientID}`, 512, 'failSupabaseDelete', true, 3);
       }
 
       //add a 'deleted' log entry
@@ -219,16 +204,14 @@ module.exports = ({ db }) => {
       //if existingRecipe has no more recipeIngredients, update status to 'noIngredients'
       const { data: recipeIngredients, error: recipeIngredientsError } = await db.from('recipeIngredients').select().eq('recipeID', existingRecipeIngredient[0].recipeID).eq('deleted', false);
       if (recipeIngredientsError) {
-        global.logger.error(`Error getting remaining recipeIngredients for recipe: ${recipeIngredientsError}`);
-        throw errorGen(`Error getting remaining recipeIngredients for recipe`, 400);
+        throw errorGen(`Error getting remaining recipeIngredients for recipe`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipeIngredients.length) {
         //get current recipe status
         const { data: existingRecipe } = await db.from('recipes').select().eq('recipeID', existingRecipeIngredient[0].recipeID).single();
         const { error: updateError } = await db.from('recipes').update({ status: 'noIngredients' }).eq('recipeID', existingRecipeIngredient[0].recipeID);
         if (updateError) {
-          global.logger.error(`Error updating recipe status: ${updateError}`);
-          throw errorGen(`Error updating recipe status`, 400);
+          throw errorGen(`Error updating recipe status`, 513, 'failSupabaseUpdate', true, 3);
         }
         //log the change
         createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(existingRecipeIngredient[0].recipeID), Number(logID1), `${existingRecipe.status}`, 'noIngredients', `Updated Status of Recipe: ${existingRecipe.title} to 'noIngredients'`);
@@ -243,13 +226,13 @@ module.exports = ({ db }) => {
     const { userID, authorization, ingredientName, measurementUnit, purchaseUnit } = options;
 
     try {
-      global.logger.info(`GETTING PURCHASE UNIT RATIO ESTIMATE FOR ${ingredientName} ${measurementUnit} and ${purchaseUnit}`);
+      global.logger.info({message:`GETTING PURCHASE UNIT RATIO ESTIMATE FOR ${ingredientName} ${measurementUnit} and ${purchaseUnit}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
 
       const data = await getUnitRatio(userID, authorization, ingredientName, measurementUnit, purchaseUnit);
       const parsedData = JSON.parse(data.response);
-      global.logger.info(`PURCHASE UNIT RATIO EST RESULT: ${JSON.stringify(parsedData)}`);
+      global.logger.info({message:`PURCHASE UNIT RATIO EST RESULT: ${JSON.stringify(parsedData)}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       if (!parsedData.unitRatio) {
-        global.logger.error(`Error getting unitRatioEstimate from openAI for ${ingredientName} ${measurementUnit} and ${purchaseUnit}. Defaulting to 1`);
+        global.logger.warn({message:`Error getting unitRatioEstimate from openAI for ${ingredientName} ${measurementUnit} and ${purchaseUnit}. Defaulting to 1`, level:4, timestamp: new Date().toISOString(), 'userID': userID});
         return 1;
       }
       return Number(parsedData.unitRatio);

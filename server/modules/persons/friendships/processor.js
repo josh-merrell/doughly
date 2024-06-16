@@ -28,8 +28,7 @@ module.exports = ({ db, dbPublic }) => {
         friendship.match = true;
       }
       if (error) {
-        global.logger.error(`Error getting friendships: ${error.message}`);
-        throw errorGen('Error getting friendships', 400);
+        throw errorGen(`Error getting friendships: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // if 'name' is provided, need to get the 'profile' object for every friend.friend and keep it in data only if their first or last name includes 'name'
@@ -37,8 +36,7 @@ module.exports = ({ db, dbPublic }) => {
         for (let i = 0; i < friendships.length; i++) {
           const { data: profile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', friendships[i].friend).single();
           if (profileError) {
-            global.logger.error(`Error getting profile user_id ${friendships[i].friend}: ${profileError.message}`);
-            throw errorGen(`Error getting profile user_id ${friendships[i].friend}`, 400);
+            throw errorGen(`Error getting profile user_id ${friendships[i].friend}: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
           }
           if (!profile.name_first.includes(name) && !profile.name_last.includes(name)) {
             friendships[i].match = false;
@@ -49,13 +47,7 @@ module.exports = ({ db, dbPublic }) => {
       // return only matching friendships
       const result = friendships.filter((friendship) => friendship.match);
 
-      // //enhance the return objects with profile info for each friend
-      // const enhancePromises = [];
-      // for (let i = 0; i < result.length; i++) {
-      //   enhancePromises.push(enhanceFriendship(result[i]));
-      // }
-      // const enhancedFriendships = await Promise.all(enhancePromises);
-      global.logger.info(`Got ${result.length} friendships`);
+      global.logger.info({ message: `Got ${result.length} friendships`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return result;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in friendships getAll', err.code || 520, err.name || 'unhandledError_friendships-getAll', err.isOperational || false, err.severity || 2);
@@ -67,11 +59,10 @@ module.exports = ({ db, dbPublic }) => {
       const { data, error } = await db.from('friendships').select().eq('friendshipID', options.friendshipID).single();
 
       if (error) {
-        global.logger.error(`Error getting friendship ${options.friendshipID}: ${error.message}`);
-        throw errorGen(`Error getting friendship ${options.friendshipID}`, 400);
+        throw errorGen(`Error getting friendship ${options.friendshipID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
-      global.logger.info(`Got friendship ${options.friendshipID}`);
+      global.logger.info({ message: `Got friendship ${options.friendshipID}`, level: 6, timestamp: new Date().toISOString(), userID: data.userID });
       return data;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in friendships getFriendshipByID', err.code || 520, err.name || 'unhandledError_friendships-getFriendshipByID', err.isOperational || false, err.severity || 2);
@@ -87,30 +78,26 @@ module.exports = ({ db, dbPublic }) => {
       // ensure profile exists for friend
       const { data: profile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', friend).single();
       if (profileError) {
-        global.logger.error(`Error getting profile user_id ${friend}: ${profileError.message}`);
-        throw errorGen(`Error getting profile user_id ${friend}`, 400);
+        throw errorGen(`Error getting profile user_id ${friend}: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!profile) {
-        global.logger.error(`Profile for ${friend} does not exist, cannot create friendship`);
-        throw errorGen(`Profile for ${friend} does not exist, cannot create friendship`, 400);
+        throw errorGen(`Profile for ${friend} does not exist, cannot create friendship`, 515, 'cannotComplete', false, 3);
       }
 
       // ensure friendship does not already exist
       const { data: existingFriendship, error: friendshipError } = await db.from('friendships').select().eq('userID', userID).eq('friend', friend);
       if (friendshipError) {
-        global.logger.error(`Error checking for existing friendship}: ${friendshipError.message}`);
-        throw errorGen(`Error checking for existing friendship`, 400);
+        throw errorGen(`Error checking for existing friendship}: ${friendshipError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingFriendship.length && existingFriendship[0].deleted === false) {
-        global.logger.error(`Friendship ${existingFriendship.friendshipID} already exists`);
+        global.logger.info({ message: `Friendship ${existingFriendship.friendshipID} already exists, trying to undelete`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
       } else if (existingFriendship.length && existingFriendship[0].deleted === true) {
         // reset status of existing friendship to 'requesting', undelete and return
         const { data, error } = await db.from('friendships').update({ deleted: false, status }).eq('friendshipID', existingFriendship[0].friendshipID).select('*').single();
         if (error) {
-          global.logger.error(`Error resetting friendship ${existingFriendship[0].friendshipID}: ${error.message}`);
-          throw errorGen(`Error resetting friendship ${existingFriendship[0].friendshipID}`, 400);
+          throw errorGen(`Error resetting friendship ${existingFriendship[0].friendshipID}: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
-        global.logger.info(`Reset friendship ${existingFriendship[0].friendshipID}`);
+        global.logger.info({ message: `Reset friendship ${existingFriendship[0].friendshipID}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
         createUserLog(userID, authorization, 'requestedFriendship', existingFriendship[0].friendshipID, null, null, null, 'requested friendship with: ' + profile.name_first + ' ' + profile.name_last);
         if (status === 'receivedRequest') {
           // add app message 'newFriendRequest' for row
@@ -134,8 +121,7 @@ module.exports = ({ db, dbPublic }) => {
             },
           );
           if (inverseFriendshipError) {
-            global.logger.error(`Error creating inverse friendship: ${inverseFriendshipError.message}`);
-            throw errorGen(`Error creating inverse friendship`, 400);
+            throw errorGen(`Error creating inverse friendship: ${inverseFriendshipError.message}`, 515, 'cannotComplete', false, 3);
           }
         }
         return {
@@ -155,10 +141,9 @@ module.exports = ({ db, dbPublic }) => {
         .single();
 
       if (error) {
-        global.logger.error(`Error creating friendship: ${error.message}`);
-        throw errorGen('Error creating friendship', 400);
+        throw errorGen(`Error creating friendship: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
-      global.logger.info(`Created friendship ${friendship.friendshipID}`);
+      global.logger.info({ message: `eated friendship ${friendship.friendshipID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       if (status === 'requesting') {
         createUserLog(userID, authorization, 'requestedFriendship', friendship.friendshipID, null, null, null, 'requested friendship with: ' + profile.name_first + ' ' + profile.name_last);
       } else if (status === 'receivedRequest') {
@@ -186,14 +171,13 @@ module.exports = ({ db, dbPublic }) => {
           },
         );
         if (error) {
-          global.logger.error(`Error creating inverse friendship: ${error.message}`);
+          global.logger.info({ message: `Error creating inverse friendship: ${error.message}, rolling back`, level: 3, timestamp: new Date().toISOString(), userID: userID });
           //rollback friendship creation
           const { error } = await db.from('friendships').delete().eq('friendshipID', friendship.friendshipID);
           if (error) {
-            global.logger.error(`Error rolling back friendship creation: ${error.message}`);
-            throw errorGen(`Error rolling back friendship creation`, 400);
+            throw errorGen(`Error rolling back friendship creation: ${error.message}`, 514, 'failSupabaseDelete', true, 2);
           }
-          throw errorGen(`Error creating inverse friendship`, 400);
+          throw errorGen(`Error creating inverse friendship: ${error.message}, rolled back`, 515, 'cannotComplete', false, 3);
         }
         return inverseFriendship;
       }
@@ -215,14 +199,13 @@ module.exports = ({ db, dbPublic }) => {
           },
         );
         if (error) {
-          global.logger.error(`Error creating inverse friendship: ${error.message}`);
+          global.logger.info({ message: `Error creating inverse friendship: ${error.message}, rolling back`, level: 3, timestamp: new Date().toISOString(), userID: userID });
           //rollback friendship creation
           const { error } = await db.from('friendships').delete().eq('friendshipID', friendship.friendshipID);
           if (error) {
-            global.logger.error(`Error rolling back friendship creation: ${error.message}`);
-            throw errorGen(`Error rolling back friendship creation`, 400);
+            throw errorGen(`Error rolling back friendship creation: ${error.message}`, 514, 'failSupabaseDelete', true, 2);
           }
-          throw errorGen(`Error creating inverse friendship`, 400);
+          throw errorGen(`Error rolling back friendship creation: ${error.message}, rolled back`, 515, 'cannotComplete', false, 3);
         }
         return inverseFriendship;
       }
@@ -243,12 +226,10 @@ module.exports = ({ db, dbPublic }) => {
       // get friendship
       const { data: friendship, error: friendshipError } = await db.from('friendships').select().eq('friendshipID', friendshipID).single();
       if (friendshipError) {
-        global.logger.error(`Error getting friendship ${friendshipID}: ${friendshipError.message}`);
-        throw errorGen(`Error getting friendship ${friendshipID}`, 400);
+        throw errorGen(`Error getting friendship ${friendshipID}: ${friendshipError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!friendship) {
-        global.logger.error(`Friendship ${friendshipID} does not exist`);
-        throw errorGen(`Friendship ${friendshipID} does not exist`, 400);
+        throw errorGen(`Friendship ${friendshipID} does not exist, cannot notifyNewFriend`, 515, 'cannotComplete', false, 3);
       }
 
       // add app message 'newFriend' for row
@@ -271,12 +252,10 @@ module.exports = ({ db, dbPublic }) => {
       // ensure friendship exists
       const { data: friendship, error: friendshipError } = await db.from('friendships').select().eq('friendshipID', friendshipID).single();
       if (friendshipError) {
-        global.logger.error(`Error getting friendship ${friendshipID}: ${friendshipError.message}`);
-        throw errorGen(`Error getting friendship ${friendshipID}`, 400);
+        throw errorGen(`Error getting friendship ${friendshipID}: ${friendshipError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!friendship) {
-        global.logger.error(`Friendship ${friendshipID} does not exist`);
-        throw errorGen(`Friendship ${friendshipID} does not exist`, 400);
+        throw errorGen(`Friendship ${friendshipID} does not exist, cannot update`, 515, 'cannotComplete', false, 3);
       }
 
       let updatedFriendship;
@@ -284,8 +263,7 @@ module.exports = ({ db, dbPublic }) => {
       try {
         updatedFriendship = await updater(userID, authorization, 'friendshipID', friendshipID, 'friendships', { status });
       } catch (error) {
-        global.logger.error(`Error updating friendship ${friendshipID}: ${error.message}`);
-        throw errorGen(`Error updating friendship ${friendshipID}`, 400);
+        throw errorGen(`Error updating friendship ${friendshipID}: ${error.message}`, 515, 'cannotComplete', false, 3);
       }
 
       if (status === 'confirmed') {
@@ -295,12 +273,10 @@ module.exports = ({ db, dbPublic }) => {
       // get inverse friendship
       const { data: inverseFriendship, error: inverseFriendshipError } = await db.from('friendships').select().eq('friend', userID).eq('userID', friendship.friend).single();
       if (inverseFriendshipError) {
-        global.logger.error(`Error getting inverse friendship for user ${userID}: ${inverseFriendshipError.message}`);
-        throw errorGen(`Error getting inverse friendship for user ${userID}`, 400);
+        throw errorGen(`Error getting inverse friendship for user ${userID}: ${inverseFriendshipError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!inverseFriendship) {
-        global.logger.error(`Inverse friendship for user ${userID} does not exist`);
-        throw errorGen(`Inverse friendship for user ${userID} does not exist`, 400);
+        throw errorGen(`Inverse friendship for user ${userID} does not exist, cannot update`, 515, 'cannotComplete', false, 3);
       }
 
       // update inverse friendship status if necessary
@@ -319,8 +295,7 @@ module.exports = ({ db, dbPublic }) => {
           },
         );
         if (error) {
-          global.logger.error(`Error updating inverse friendship ${inverseFriendship.friendshipID}: ${error.message}`);
-          throw errorGen(`Error updating inverse friendship ${inverseFriendship.friendshipID}`, 400);
+          throw errorGen(error.message || 'Unhandled Error in friendships update', error.code || 520, error.name || 'unhandledError_friendships-update', error.isOperational || false, error.severity || 2);
         }
       }
 
@@ -335,19 +310,16 @@ module.exports = ({ db, dbPublic }) => {
       // ensure friendship exists
       const { data: friendship, error: friendshipError } = await db.from('friendships').select().eq('friendshipID', options.friendshipID).single();
       if (friendshipError) {
-        global.logger.error(`Error getting friendship ${options.friendshipID}: ${friendshipError.message}`);
-        throw errorGen(`Error getting friendship ${options.friendshipID}`, 400);
+        throw errorGen(`Error getting friendship ${options.friendshipID}: ${friendshipError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!friendship) {
-        global.logger.error(`Friendship ${options.friendshipID} does not exist`);
-        throw errorGen(`Friendship ${options.friendshipID} does not exist`, 400);
+        throw errorGen(`Friendship ${options.friendshipID} does not exist, cannot delete`, 515, 'cannotComplete', false, 3);
       }
 
       // delete friendship
       const { data, error } = await db.from('friendships').update({ deleted: true }).eq('friendshipID', options.friendshipID);
       if (error) {
-        global.logger.error(`Error deleting friendship ${options.friendshipID}: ${error.message}`);
-        throw errorGen(`Error deleting friendship ${options.friendshipID}`, 400);
+        throw errorGen(`Error deleting friendship ${options.friendshipID}: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       //add a 'deleted' log entry
@@ -356,12 +328,10 @@ module.exports = ({ db, dbPublic }) => {
       //get inverse friendship
       const { data: inverseFriendship, error: inverseFriendshipError } = await db.from('friendships').select().eq('friend', options.userID).eq('userID', friendship.friend);
       if (inverseFriendshipError) {
-        global.logger.error(`Error getting inverse friendship for user ${options.userID}: ${inverseFriendshipError.message}`);
-        throw errorGen(`Error getting inverse friendship for user ${options.userID}`, 400);
+        throw errorGen(`Error getting inverse friendship for user ${options.userID}: ${inverseFriendshipError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!inverseFriendship.length) {
-        global.logger.error(`Inverse friendship for user ${options.userID} does not exist`);
-        throw errorGen(`Inverse friendship for user ${options.userID} does not exist`, 400);
+        throw errorGen(`Inverse friendship for user ${options.userID} does not exist, cannot createUserLog`, 515, 'cannotComplete', false, 3);
       }
 
       // delete inverse friendship if 'deleted' is false
@@ -376,8 +346,7 @@ module.exports = ({ db, dbPublic }) => {
           },
         });
         if (error) {
-          global.logger.info(`Error deleting inverse friendship ${inverseFriendship[0].friendshipID}: ${error.message}`);
-          return { error: error.message };
+          throw errorGen(error.message || `Error deleting inverse friendship ${inverseFriendship[0].friendshipID}: ${error.message}`, error.code || 520, error.name || 'unhandledError_friendships-deleteFriendship', error.isOperational || false, error.severity || 2);
         }
       }
       return data;
