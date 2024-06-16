@@ -8,7 +8,7 @@ module.exports = ({ db }) => {
     try {
       const { token, userID } = options;
       if (!token) {
-        throw errorGen('Token is required', 400);
+        throw errorGen(`Token is required to add token`, 510, 'dataValidationErr', false, 3);
       }
 
       // check for existing entry for this token
@@ -18,17 +18,16 @@ module.exports = ({ db }) => {
         // we should just update the 'createTime' field
         const { error } = await db.from('pushTokens').update({ createTime: createTime }).eq('pushToken', token);
         if (error) {
-          global.logger.error(`Error updating 'createTime' for existing token: ${error.message}`);
+          throw errorGen(`Error updating 'createTime' for existing token: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
-        global.logger.info(`Updated 'createTime' of existing push token: ${token} for user ${userID}`);
+        global.logger.info({ message: `Updated 'createTime' of existing push token: ${token} for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       } else {
         // insert new token
         const { error } = await db.from('pushTokens').insert({ pushToken: token, userID, createTime });
         if (error) {
-          global.logger.error(`Error inserting new token: ${error.message}`);
-          throw errorGen('Error inserting new token', 500);
+          throw errorGen(`Error inserting new token: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
         }
-        global.logger.info(`Added push token: ${token} for user ${userID}`);
+        global.logger.info({ message: `Added push token: ${token} for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       }
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in pushNotifications addToken', err.code || 520, err.name || 'unhandledError_pushNotifications-addToken', err.isOperational || false, err.severity || 2);
@@ -40,7 +39,7 @@ module.exports = ({ db }) => {
 
     try {
       if (!token) {
-        throw errorGen('Token is required', 400);
+        throw errorGen(`Token is required to remove token`, 510, 'dataValidationErr', false, 3);
       }
 
       // first check if token exists
@@ -51,10 +50,9 @@ module.exports = ({ db }) => {
 
       const { error } = await db.from('pushTokens').delete().eq('pushToken', token);
       if (error) {
-        global.logger.error(`Error deleting token: ${error.message}`);
-        throw errorGen('Error deleting token', 500);
+        throw errorGen(`Error deleting token: ${error.message}`, 514, 'failSupabaseDelete', true, 3);
       }
-      global.logger.info(`Deleted push token: ${token} for user ${userID}`);
+      global.logger.info({ message: `Deleted push token: ${token} for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in pushNotifications removeToken', err.code || 520, err.name || 'unhandledError_pushNotifications-removeToken', err.isOperational || false, err.severity || 2);
     }
@@ -65,7 +63,7 @@ module.exports = ({ db }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required to removeUserTokens`, 510, 'dataValidationErr', false, 3);
       }
 
       // first get count of tokens for this user
@@ -75,10 +73,9 @@ module.exports = ({ db }) => {
       }
       const { error } = await db.from('pushTokens').delete().eq('userID', userID);
       if (error) {
-        global.logger.error(`Error deleting user tokens: ${error.message}`);
-        throw errorGen('Error deleting user tokens', 500);
+        throw errorGen(`Error deleting user tokens: ${error.message}`, 514, 'failSupabaseDelete', true, 3);
       }
-      global.logger.info(`Deleted ${tokens.length} (all) push tokens for user ${userID}`);
+      global.logger.info({ message: `Deleted ${tokens.length} (all) push tokens for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in pushNotifications removeUserTokens', err.code || 520, err.name || 'unhandledError_pushNotifications-removeUserTokens', err.isOperational || false, err.severity || 2);
     }
@@ -89,16 +86,15 @@ module.exports = ({ db }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required to get user tokens`, 510, 'dataValidationErr', false, 3);
       }
 
       const { data: tokens, error } = await db.from('pushTokens').select().eq('userID', userID);
       if (error) {
-        global.logger.error(`Error getting user tokens: ${error.message}`);
-        throw errorGen('Error getting user tokens', 500);
+        throw errorGen(`Error getting user tokens: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
-      global.logger.info(`Got ${tokens.length} push tokens for user ${userID}`);
+      global.logger.info({ message: `Got ${tokens.length} push tokens for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return tokens;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in pushNotifications userToken', err.code || 520, err.name || 'unhandledError_pushNotifications-userToken', err.isOperational || false, err.severity || 2);
@@ -110,16 +106,15 @@ module.exports = ({ db }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required to get user tokens`, 510, 'dataValidationErr', false, 3);
       }
 
       const { data: tokens, error } = await db.from('pushTokens').select().eq('userID', userID);
       if (error) {
-        global.logger.error(`Error getting user tokens: ${error.message}`);
-        throw errorGen('Error getting user tokens', 500);
+        throw errorGen(`Error getting user tokens: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
-      global.logger.info(`Got ${tokens.length} push tokens for other user: ${userID}`);
+      global.logger.info({ message: `Got ${tokens.length} push tokens for other user: ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return tokens;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in pushNotifications getOtherUserPushToken', err.code || 520, err.name || 'unhandledError_pushNotifications-getOtherUserPushToken', err.isOperational || false, err.severity || 2);
@@ -131,15 +126,14 @@ module.exports = ({ db }) => {
 
     try {
       if (!token) {
-        throw errorGen('Token is required', 400);
+        throw errorGen(`Token is required to update token`, 510, 'dataValidationErr', false, 3);
       }
       const lastUsedTime = new Date().toISOString();
       const { error } = await db.from('pushTokens').update({ lastUsedTime }).eq('pushToken', token).eq('userID', userID);
       if (error) {
-        global.logger.error(`Error updating 'lastUsedTime' for token: ${error.message}`);
-        throw errorGen('Error updating token', 500);
+        throw errorGen(`Error updating 'lastUsedTime' for token: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
-      global.logger.info(`Updated 'lastUsedTime' for push token: ${token} for user ${userID}`);
+      global.logger.info({ message: `Updated 'lastUsedTime' for push token: ${token} for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in pushNotifications update', err.code || 520, err.name || 'unhandledError_pushNotifications-update', err.isOperational || false, err.severity || 2);
     }
@@ -149,12 +143,10 @@ module.exports = ({ db }) => {
     const { destTokens, type, data } = options;
 
     try {
-      global.logger.info(`in sendNotification: destTokens: ${destTokens}, type: ${type}, data: ${data}`);
+      global.logger.info({ message: `in sendNotification: destTokens: ${destTokens}, type: ${type}, data: ${JSON.stringify(data)}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
       if (!destTokens || !type || !data) {
-        throw errorGen('destTokens, type, and data are required', 400);
+        throw errorGen(`destTokens, type, and data are required to sendNotification`, 510, 'dataValidationErr', false, 3);
       }
-      global.logger.info(`in sendNotification: destTokens: ${JSON.stringify(destTokens)}, type: ${type}, data: ${JSON.stringify(data)}`);
-
       // send the notification
       sendTokenNotifications(destTokens, type, data);
     } catch (err) {

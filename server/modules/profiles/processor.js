@@ -13,25 +13,22 @@ module.exports = ({ db, dbPublic }) => {
       // get all columns from dbPublic.profiles where userID = userID
       const { data: profile, error } = await dbPublic.from('profiles').select('*').eq('user_id', userID).single();
       if (error) {
-        global.logger.error(`Error getting profile for userID ${userID}: ${error.message}`);
-        throw errorGen(`Error getting profile for userID ${userID}: ${error.message}`, 400);
+        throw errorGen(`Error getting profile for userID ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!profile) {
-        global.logger.error(`No profile found for userID ${userID}`);
+        throw errorGen(`No profile found for userID ${userID}`, 515, 'cannotComplete', false, 3);
       }
 
       // get count of rows from db.friendships where userID = userID, deleted = false and status = 'confirmed'
       const { data: friendshipIDs, error: errorFriendCount } = await db.from('friendships').select('friendshipID').eq('userID', userID).eq('deleted', false).eq('status', friendStatus);
       if (errorFriendCount) {
-        global.logger.error(`Error getting friend count for userID ${userID}: ${errorFriendCount.message}`);
-        throw errorGen(`Error getting friend count for userID ${userID}: ${errorFriendCount.message}`, 400);
+        throw errorGen(`Error getting friend count for userID ${userID}: ${errorFriendCount.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // get count of rows from db.followships where following = userID and deleted = false
       const { data: followerIDs, error: errorFollowerCount } = await db.from('followships').select('followshipID').eq('following', userID).eq('deleted', false);
       if (errorFollowerCount) {
-        global.logger.error(`Error getting follower count for userID ${userID}: ${errorFollowerCount.message}`);
-        throw errorGen(`Error getting follower count for userID ${userID}: ${errorFollowerCount.message}`, 400);
+        throw errorGen(`Error getting follower count for userID ${userID}: ${errorFollowerCount.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // get public recipes for this user. If the friendStatus is confirmed, get any recipes not equal to private
@@ -43,8 +40,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       const { data: recipes, error: errorRecipes } = await q;
       if (errorRecipes) {
-        global.logger.error(`Error getting recipes for userID ${userID}: ${errorRecipes.message}`);
-        throw errorGen(`Error getting recipes for userID ${userID}: ${errorRecipes.message}`, 400);
+        throw errorGen(`Error getting recipes for userID ${userID}: ${errorRecipes.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // for each recipe, get the recipeCategoryName from the recipeCategoryID, then update the recipe object with recipeCategoryName
@@ -60,8 +56,7 @@ module.exports = ({ db, dbPublic }) => {
         if (recipe.type === 'subscription') {
           const { data: recipeSubscription, error: errorRecipeSubscription } = await db.from('recipeSubscriptions').select('sourceRecipeID, subscriptionID, startDate').eq('userID', userID).eq('newRecipeID', recipe.recipeID).eq('deleted', false).single();
           if (errorRecipeSubscription) {
-            global.logger.error(`Error getting recipe subscription for newRecipeID ${recipe.recipeID}: ${errorRecipeSubscription.message}`);
-            throw errorGen(`Error getting recipe subscription for newRecipeID ${recipe.recipeID}: ${errorRecipeSubscription.message}`, 400);
+            throw errorGen(`Error getting recipe subscription for newRecipeID ${recipe.recipeID}: ${errorRecipeSubscription.message}`, 511, 'failSupabaseSelect', true, 3);
           }
           const recipeWithSubscription = recipe;
           recipeWithSubscription.subscription = recipeSubscription;
@@ -123,12 +118,10 @@ module.exports = ({ db, dbPublic }) => {
       //get friendshipIDs of userID where deleted = false and status as requested
       const { data: friendshipIDs, error } = await db.from('friendships').select('friend').eq('userID', userID).eq('deleted', false).eq('status', friendStatus);
       if (error) {
-        global.logger.error(`Error getting friendshipIDs for userID ${userID}: ${error.message}`);
-        throw errorGen(`Error getting friendshipIDs for userID ${userID}: ${error.message}`, 400);
+        throw errorGen(`Error getting friendshipIDs for userID ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!friendshipIDs) {
-        global.logger.error(`User with userID ${userID} has no friends`);
-        throw errorGen(`User with userID ${userID} has no friends`, 400);
+        throw errorGen(`User with userID ${userID} has no friends`, 515, 'cannotComplete', false, 4);
       }
 
       // Map over friendshipIDs and return a promise for each friend's profile
@@ -139,7 +132,7 @@ module.exports = ({ db, dbPublic }) => {
       const friendProfiles = await Promise.all(promises);
       const validFriendProfiles = friendProfiles.filter((profile) => profile !== null);
 
-      global.logger.info(`Successfully retrieved ${validFriendProfiles.length} friends with status: ${friendStatus} for userID ${userID}`);
+      global.logger.info({ message: `Successfully retrieved ${validFriendProfiles.length} friends with status: ${friendStatus} for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return validFriendProfiles;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFriends', err.code || 520, err.name || 'unhandledError_profiles-getFriends', err.isOperational || false, err.severity || 2);
@@ -153,17 +146,15 @@ module.exports = ({ db, dbPublic }) => {
       //get friendshipID of userID and friendUserID where deleted = false and status as 'confirmed'
       const { data: friendshipID, error } = await db.from('friendships').select('friendshipID').eq('userID', userID).eq('friend', friendUserID).eq('deleted', false).eq('status', 'confirmed').single();
       if (error) {
-        global.logger.error(`Error getting friendshipID for userID ${userID} and friendUserID ${friendUserID}: ${error.message}`);
-        throw errorGen(`Error getting friendshipID for userID ${userID} and friendUserID ${friendUserID}: ${error.message}`, 400);
+        throw errorGen(`Error getting friendshipID for userID ${userID} and friendUserID ${friendUserID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!friendshipID) {
-        global.logger.error(`No friendship found for userID ${userID} and friendUserID ${friendUserID}`);
-        throw errorGen(`No friendship found for userID ${userID} and friendUserID ${friendUserID}`, 400);
+        throw errorGen(`No friendship found for userID ${userID} and friendUserID ${friendUserID}`, 515, 'cannotComplete', false, 4);
       }
 
       //get friend's profile
       const friendProfile = await retrieveProfile(friendUserID);
-      global.logger.info(`Successfully retrieved friend for userID ${userID} and friendUserID ${friendUserID}`);
+      global.logger.info({ message: `Successfully retrieved friend for userID ${userID} and friendUserID ${friendUserID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return friendProfile;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFriend', err.code || 520, err.name || 'unhandledError_profiles-getFriend', err.isOperational || false, err.severity || 2);
@@ -177,12 +168,10 @@ module.exports = ({ db, dbPublic }) => {
       //get followshipIDs of userID where deleted = false
       const { data: followshipIDs, error } = await db.from('followships').select('userID').eq('following', userID).eq('deleted', false);
       if (error) {
-        global.logger.error(`Error getting followshipIDs for userID ${userID}: ${error.message}`);
-        throw errorGen(`Error getting followshipIDs for userID ${userID}: ${error.message}`, 400);
+        throw errorGen(`Error getting followshipIDs for userID ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!followshipIDs) {
-        global.logger.error(`No followers found for userID ${userID}`);
-        throw errorGen(`No followers found for userID ${userID}`, 400);
+        throw errorGen(`No followers found for userID ${userID}`, 515, 'cannotComplete', false, 3);
       }
 
       const promises = followshipIDs.map(async (followship) => {
@@ -192,7 +181,7 @@ module.exports = ({ db, dbPublic }) => {
       const followerProfiles = await Promise.all(promises);
       const validfollowerProfiles = followerProfiles.filter((profile) => profile !== null);
 
-      global.logger.info(`Successfully retrieved ${validfollowerProfiles.length} followers for userID ${userID}`);
+      global.logger.info({ message: `Successfully retrieved ${validfollowerProfiles.length} followers for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return validfollowerProfiles;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFollowers', err.code || 520, err.name || 'unhandledError_profiles-getFollowers', err.isOperational || false, err.severity || 2);
@@ -206,17 +195,15 @@ module.exports = ({ db, dbPublic }) => {
       //get followshipID of userID and followerUserID where deleted = false
       const { data: followshipID, error } = await db.from('followships').select('followshipID').eq('following', userID).eq('userID', followerUserID).eq('deleted', false).single();
       if (error) {
-        global.logger.error(`Error getting followshipID for userID ${userID} and followerUserID ${followerUserID}: ${error.message}`);
-        throw errorGen(`Error getting followshipID for userID ${userID} and followerUserID ${followerUserID}: ${error.message}`, 400);
+        throw errorGen(`Error getting followshipID for userID ${userID} and followerUserID ${followerUserID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!followshipID) {
-        global.logger.error(`No followship found for userID ${userID} and followerUserID ${followerUserID}`);
-        throw errorGen(`No followship found for userID ${userID} and followerUserID ${followerUserID}`, 400);
+        throw errorGen(`No followship found for userID ${userID} and followerUserID ${followerUserID}`, 515, 'cannotComplete', false, 3);
       }
 
       //get follower's profile
       const followerProfile = await retrieveProfile(followerUserID);
-      global.logger.info(`Successfully retrieved follower for userID ${userID} and followerUserID ${followerUserID}`);
+      global.logger.info({ message: `Successfully retrieved follower for userID ${userID} and followerUserID ${followerUserID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return followerProfile;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFollower', err.code || 520, err.name || 'unhandledError_profiles-getFollower', err.isOperational || false, err.severity || 2);
@@ -230,12 +217,10 @@ module.exports = ({ db, dbPublic }) => {
       //get followshipIDs where userID = userID and deleted = false
       const { data: followships, error } = await db.from('followships').select('following').eq('userID', userID).eq('deleted', false);
       if (error) {
-        global.logger.error(`Error getting followshipIDs for userID ${userID}: ${error.message}`);
-        throw errorGen(`Error getting followshipIDs for userID ${userID}: ${error.message}`, 400);
+        throw errorGen(`Error getting followshipIDs for userID ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!followships) {
-        global.logger.error(`No followships found for userID ${userID}`);
-        throw errorGen(`No followships found for userID ${userID}`, 400);
+        throw errorGen(`No followships found for userID ${userID}`, 515, 'cannotComplete', false, 3);
       }
 
       const promises = followships.map(async (followship) => {
@@ -245,7 +230,7 @@ module.exports = ({ db, dbPublic }) => {
       const followingProfiles = await Promise.all(promises);
       const validFollowingProfiles = followingProfiles.filter((profile) => profile !== null);
 
-      global.logger.info(`Successfully retrieved ${validFollowingProfiles.length} following for userID ${userID}`);
+      global.logger.info({ message: `Successfully retrieved ${validFollowingProfiles.length} following for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return validFollowingProfiles;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFollowing', err.code || 520, err.name || 'unhandledError_profiles-getFollowing', err.isOperational || false, err.severity || 2);
@@ -269,8 +254,7 @@ module.exports = ({ db, dbPublic }) => {
       // get all userID's from dbPublic.profiles where name_first or name_last or username contains searchQuery
       const { data: profileIDs, error } = await dbPublic.from('profiles').select('user_id').textSearch(`first_last_username`, `${q}`);
       if (error) {
-        global.logger.error(`Error getting profileIDs for searchQuery ${searchQuery}: ${error.message}`);
-        throw errorGen(`Error getting profileIDs for searchQuery ${searchQuery}: ${error.message}`, 400);
+        throw errorGen(`Error getting profileIDs for searchQuery ${searchQuery}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // Map over profileIDs and return a promise for each profile
@@ -281,7 +265,7 @@ module.exports = ({ db, dbPublic }) => {
       const profiles = await Promise.all(promises);
       const validProfiles = profiles.filter((profile) => profile !== null);
 
-      global.logger.info(`Successfully retrieved ${validProfiles.length} profiles for searchQuery ${searchQuery}`);
+      global.logger.info({ message: `Successfully retrieved ${validProfiles.length} profiles for searchQuery ${searchQuery}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return validProfiles;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles searchProfiles', err.code || 520, err.name || 'unhandledError_profiles-searchProfiles', err.isOperational || false, err.severity || 2);
@@ -291,27 +275,22 @@ module.exports = ({ db, dbPublic }) => {
   async function deleteProfile(options) {
     try {
       // call the 'permanent_profile_delete' function in supabase. A return number 1 indicates the user was found and deleted. A return number 0 indicates the user was not found.
-      global.logger.info(`Deleting profile for userID ${options.userID}`);
       const { userID } = options;
       const { data, error } = await dbPublic.rpc('permanent_profile_delete', { userid: userID });
-      global.logger.info(`data: ${data}`);
       if (error) {
-        global.logger.error(`Error deleting profile for userID ${userID}: ${error.message}`);
-        throw errorGen(`Error deleting profile for userID ${userID}: ${error.message}`, 400);
+        throw errorGen(`Error deleting profile for userID ${userID}: ${error.message}`, 514, 'failSupabaseDelete', true, 3);
       }
       if (data === 0) {
-        global.logger.error(`No profile found for userID ${userID}`);
-        throw errorGen(`No profile found for userID ${userID}`, 400);
+        throw errorGen(`No profile found for userID ${userID}`, 515, 'cannotComplete', false, 3);
       }
 
       // now that profile and data is deleted, call supabase method 'auth.admin.deleteUser'
       const { error: errorDeleteUser } = await dbPublic.auth.admin.deleteUser(userID);
       if (errorDeleteUser) {
-        global.logger.error(`Error deleting user for userID ${userID}: ${errorDeleteUser.message}`);
-        throw errorGen(`Error deleting user for userID ${userID}: ${errorDeleteUser.message}`, 400);
+        throw errorGen(`Error deleting user for userID ${userID}: ${errorDeleteUser.message}`, 515, 'cannotComplete', false, 3);
       }
 
-      global.logger.info(`Successfully deleted profile for userID ${userID}`);
+      global.logger.info({ message: `Successfully deleted profile for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return true;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles deleteProfile', err.code || 520, err.name || 'unhandledError_profiles-deleteProfile', err.isOperational || false, err.severity || 2);
@@ -322,23 +301,22 @@ module.exports = ({ db, dbPublic }) => {
     const { userID } = options;
 
     try {
-      global.logger.info(`Populating initial account data for userID ${userID}`);
+      global.logger.info({ message: `Populating initial account data for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // Prevent concurrent execution by using a lock (example using a simple flag in the database)
       const { data: lockData, error: lockError } = await dbPublic.from('profiles').select('isPopulating,dataLoadStatus').eq('user_id', userID).single();
 
       if (lockError) {
-        global.logger.error(`Error checking lock status for userID ${userID}: ${lockError.message}`);
-        throw errorGen(`Error checking lock status for userID ${userID}: ${lockError.message}`, 400);
+        throw errorGen(`Error checking lock status for userID ${userID}: ${lockError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       if (lockData.isPopulating) {
         // if dataLoadStatus is 'done', remove lock and return 'success'
         if (lockData.dataLoadStatus === 'done') {
           await dbPublic.from('profiles').update({ isPopulating: false }).eq('user_id', userID);
-          global.logger.info(`PopulateAccount is already running for userID ${userID}, but data is already loaded`);
+          global.logger.info({ message: `PopulateAccount is already running for userID ${userID}, but data is already loaded`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           return 'success';
         }
-        global.logger.info(`PopulateAccount is already running for userID ${userID}`);
+        global.logger.info({ message: `PopulateAccount is already running for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         return;
       }
 
@@ -348,11 +326,10 @@ module.exports = ({ db, dbPublic }) => {
       // Check 'dataLoadStatus'
       const { data, error } = await dbPublic.from('profiles').select('dataLoadStatus').eq('user_id', userID).single();
       if (error) {
-        global.logger.error(`Error getting dataLoadStatus for userID ${userID}: ${error.message}`);
-        throw errorGen(`Error getting dataLoadStatus for userID ${userID}: ${error.message}`, 400);
+        throw errorGen(`Error getting dataLoadStatus for userID ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (data.dataLoadStatus === 'done') {
-        global.logger.info(`Data already loaded for userID ${userID}`);
+        global.logger.info({ message: `Data already loaded for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         return 'success';
       }
 
@@ -363,7 +340,7 @@ module.exports = ({ db, dbPublic }) => {
 
       // Attempt all remaining data loading steps
       for (let i = currentSequence; i < 7; i++) {
-        global.logger.info(`Starting data load for userID ${userID}. Current step: ${currentSequence}`);
+        global.logger.info({ message: `Starting data load for userID ${userID}. Current step: ${currentSequence}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         // Call helper function for this step
         let stepFunction;
         switch (i) {
@@ -396,16 +373,14 @@ module.exports = ({ db, dbPublic }) => {
         }
 
         if (!stepFunction) {
-          global.logger.error(`No function found for step ${i}`);
-          throw errorGen(`No function found for step ${i}`, 400);
+          throw errorGen(`No function found for step ${i}`, 515, 'cannotComplete', false, 3);
         }
 
         const nextStep = await stepFunction(userID, initData[currentStatus].data);
         if (nextStep === 'success') {
           currentSequence = i + 1;
         } else {
-          global.logger.error(`Error in step ${i}: ${nextStep}`);
-          throw errorGen(`Error in step ${i}: ${nextStep}`, 400);
+          throw errorGen(`Error in step ${i}: ${nextStep}`, 515, 'cannotComplete', false, 3);
         }
       }
 
@@ -413,8 +388,7 @@ module.exports = ({ db, dbPublic }) => {
       const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'done', isPopulating: false }).eq('user_id', userID);
 
       if (errorUpdateDataLoadStatus) {
-        global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
-        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
       return 'success';
     } catch (error) {
@@ -426,18 +400,16 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateFriendships(userID, array) {
     try {
-      global.logger.info(`Populating friendships for userID ${userID}`);
+      global.logger.info({ message: `Populating friendships`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing friendships for userID, we'll start from scratch
       const { error: errorDeleteFriendships } = await db.from('friendships').delete().eq('userID', userID);
       if (errorDeleteFriendships) {
-        global.logger.error(`Error deleting friendships for userID ${userID}: ${errorDeleteFriendships.message}`);
-        throw errorGen(`Error deleting friendships for userID ${userID}: ${errorDeleteFriendships.message}`, 400);
+        throw errorGen(`Error deleting friendships for userID ${userID}: ${errorDeleteFriendships.message}`, 514, 'failSupabaseDelete', true, 3);
       }
       // also delete any friendships where friend = userID
       const { error: errorDeleteFriendships2 } = await db.from('friendships').delete().eq('friend', userID);
       if (errorDeleteFriendships2) {
-        global.logger.error(`Error deleting friendships for friend ${userID}: ${errorDeleteFriendships2.message}`);
-        throw errorGen(`Error deleting friendships for friend ${userID}: ${errorDeleteFriendships2.message}`, 400);
+        throw errorGen(`Error deleting friendships for friend ${userID}: ${errorDeleteFriendships2.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       // create initial friendships (inverse will be handled by the endpoint)
@@ -458,16 +430,20 @@ module.exports = ({ db, dbPublic }) => {
           },
         );
         if (errorCreateFriendship) {
-          global.logger.error(`Error creating friendship for userID ${userID} and friend ${f.friend}: ${errorCreateFriendship.message}`);
-          throw errorGen(`Error creating friendship for userID ${userID} and friend ${f.friend}: ${errorCreateFriendship.message}`, 400);
+          throw errorGen(
+            errorCreateFriendship.message || 'Unhandled Error in profiles populateFriendships',
+            errorCreateFriendship.code || 520,
+            errorCreateFriendship.name || 'unhandledError_profiles-populateFriendships',
+            errorCreateFriendship.isOperational || false,
+            errorCreateFriendship.severity || 2,
+          );
         }
       }
 
       // assuming we're here, we've successfully created all friendships. Update 'dataLoadStatus'
       const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'followships' }).eq('user_id', userID);
       if (errorUpdateDataLoadStatus) {
-        global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
-        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return 'success';
@@ -478,19 +454,17 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateFollowships(userID, array) {
     try {
-      global.logger.info(`Populating followships for userID ${userID}`);
+      global.logger.info({ message: `Populating followships for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing followships for userID, we'll start from scratch
       const { error: errorDeleteFollowships } = await db.from('followships').delete().eq('userID', userID);
       if (errorDeleteFollowships) {
-        global.logger.error(`Error deleting followships for userID ${userID}: ${errorDeleteFollowships.message}`);
-        throw errorGen(`Error deleting followships for userID ${userID}: ${errorDeleteFollowships.message}`, 400);
+        throw errorGen(`Error deleting followships for userID ${userID}: ${errorDeleteFollowships.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       // also delete any followships where following = userID
       const { error: errorDeleteFollowships2 } = await db.from('followships').delete().eq('following', userID);
       if (errorDeleteFollowships2) {
-        global.logger.error(`Error deleting followships for following ${userID}: ${errorDeleteFollowships2.message}`);
-        throw errorGen(`Error deleting followships for following ${userID}: ${errorDeleteFollowships2.message}`, 400);
+        throw errorGen(`Error deleting followships for following ${userID}: ${errorDeleteFollowships2.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       // create initial followships
@@ -510,16 +484,20 @@ module.exports = ({ db, dbPublic }) => {
           },
         );
         if (errorCreateFollowship) {
-          global.logger.error(`Error creating followship for userID ${userID} and following ${f.following}: ${errorCreateFollowship.message}`);
-          throw errorGen(`Error creating followship for userID ${userID} and following ${f.following}: ${errorCreateFollowship.message}`, 400);
+          throw errorGen(
+            errorCreateFollowship.message || 'Unhandled Error in profiles populateFollowships',
+            errorCreateFollowship.code || 520,
+            errorCreateFollowship.name || 'unhandledError_profiles-populateFollowships',
+            errorCreateFollowship.isOperational || false,
+            errorCreateFollowship.severity || 2,
+          );
         }
       }
 
       // assuming we're here, we've successfully created all followships. Update 'dataLoadStatus'
       const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'ingredients' }).eq('user_id', userID);
       if (errorUpdateDataLoadStatus) {
-        global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
-        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return 'success';
@@ -530,12 +508,11 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateIngredients(userID, array) {
     try {
-      global.logger.info(`Populating ingredients for userID ${userID}`);
+      global.logger.info({ message: `Populating ingredients for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing ingredients for userID, we'll start from scratch
       const { error: errorDeleteIngredients } = await db.from('ingredients').delete().eq('userID', userID);
       if (errorDeleteIngredients) {
-        global.logger.error(`Error deleting ingredients for userID ${userID}: ${errorDeleteIngredients.message}`);
-        throw errorGen(`Error deleting ingredients for userID ${userID}: ${errorDeleteIngredients.message}`, 400);
+        throw errorGen(`Error deleting ingredients for userID ${userID}: ${errorDeleteIngredients.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       // create initial ingredients
@@ -560,16 +537,20 @@ module.exports = ({ db, dbPublic }) => {
           },
         );
         if (errorCreateIngredient) {
-          global.logger.error(`Error creating ingredient for userID ${userID}: ${errorCreateIngredient.message}`);
-          throw errorGen(`Error creating ingredient for userID ${userID}: ${errorCreateIngredient.message}`, 400);
+          throw errorGen(
+            errorCreateIngredient.message || 'Unhandled Error in profiles populateIngredients',
+            errorCreateIngredient.code || 520,
+            errorCreateIngredient.name || 'unhandledError_profiles-populateIngredients',
+            errorCreateIngredient.isOperational || false,
+            errorCreateIngredient.severity || 2,
+          );
         }
       }
 
       // assuming we're here, we've successfully created all ingredients. Update 'dataLoadStatus'
       const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'tools' }).eq('user_id', userID);
       if (errorUpdateDataLoadStatus) {
-        global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
-        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return 'success';
@@ -580,12 +561,11 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateTools(userID, array) {
     try {
-      global.logger.info(`Populating tools for userID ${userID}`);
+      global.logger.info({ message: `Populating tools for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing tools for userID, we'll start from scratch
       const { error: errorDeleteTools } = await db.from('tools').delete().eq('userID', userID);
       if (errorDeleteTools) {
-        global.logger.error(`Error deleting tools for userID ${userID}: ${errorDeleteTools.message}`);
-        throw errorGen(`Error deleting tools for userID ${userID}: ${errorDeleteTools.message}`, 400);
+        throw errorGen(`Error deleting tools for userID ${userID}: ${errorDeleteTools.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       // create initial tools
@@ -606,16 +586,14 @@ module.exports = ({ db, dbPublic }) => {
           },
         );
         if (errorCreateTool) {
-          global.logger.error(`Error creating tool for userID ${userID}: ${errorCreateTool.message}`);
-          throw errorGen(`Error creating tool for userID ${userID}: ${errorCreateTool.message}`, 400);
+          throw errorGen(errorCreateTool.message || 'Unhandled Error in profiles populateTools', errorCreateTool.code || 520, errorCreateTool.name || 'unhandledError_profiles-populateTools', errorCreateTool.isOperational || false, errorCreateTool.severity || 2);
         }
       }
 
       // assuming we're here, we've successfully created all tools. Update 'dataLoadStatus'
       const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'recipes' }).eq('user_id', userID);
       if (errorUpdateDataLoadStatus) {
-        global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
-        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return 'success';
@@ -626,13 +604,11 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateRecipes(userID, array) {
     try {
-      global.logger.info(`Populating recipes for userID ${userID}`);
-      //11
+      global.logger.info({ message: `Populating recipes for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing recipes for userID, we'll start from scratch
       const { error: errorDeleteRecipes } = await db.from('recipes').delete().eq('userID', userID);
       if (errorDeleteRecipes) {
-        global.logger.error(`Error deleting recipes for userID ${userID}: ${errorDeleteRecipes.message}`);
-        throw errorGen(`Error deleting recipes for userID ${userID}: ${errorDeleteRecipes.message}`, 400);
+        throw errorGen(`Error deleting recipes for userID ${userID}: ${errorDeleteRecipes.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       for (let i = 0; i < array.length; i++) {
@@ -646,22 +622,19 @@ module.exports = ({ db, dbPublic }) => {
           },
         });
         if (errorCreateRecipe) {
-          global.logger.error(`Error creating recipe for userID ${userID}: ${errorCreateRecipe.message}`);
-          throw errorGen(`Error creating recipe for userID ${userID}: ${errorCreateRecipe.message}`, 400);
+          throw errorGen(errorCreateRecipe.message || 'Unhandled Error in profiles populateRecipes', errorCreateRecipe.code || 520, errorCreateRecipe.name || 'unhandledError_profiles-populateRecipes', errorCreateRecipe.isOperational || false, errorCreateRecipe.severity || 2);
         }
       }
       // update 'freeTier' to true for all userID's recipes
       const { error: errorUpdateFreeTier } = await db.from('recipes').update({ freeTier: true }).eq('userID', userID);
       if (errorUpdateFreeTier) {
-        global.logger.error(`Error updating freeTier for userID ${userID}: ${errorUpdateFreeTier.message}`);
-        throw errorGen(`Error updating freeTier for userID ${userID}: ${errorUpdateFreeTier.message}`, 400);
+        throw errorGen(`Error updating freeTier for userID ${userID}: ${errorUpdateFreeTier.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       // assuming we're here, we've successfully created all recipes. Update 'dataLoadStatus'
       const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'messages' }).eq('user_id', userID);
       if (errorUpdateDataLoadStatus) {
-        global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
-        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return 'success';
@@ -672,12 +645,11 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateMessages(userID, array) {
     try {
-      global.logger.info(`Populating messages for userID ${userID}`);
+      global.logger.info({ message: `Populating messages for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing messages for userID, we'll start from scratch
       const { error: errorDeleteMessages } = await db.from('messages').delete().eq('userID', userID);
       if (errorDeleteMessages) {
-        global.logger.error(`Error deleting messages for userID ${userID}: ${errorDeleteMessages.message}`);
-        throw errorGen(`Error deleting messages for userID ${userID}: ${errorDeleteMessages.message}`, 400);
+        throw errorGen(`Error deleting messages for userID ${userID}: ${errorDeleteMessages.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       // currently just adding a default welcome message using dedicated /messages endpoint
@@ -692,8 +664,7 @@ module.exports = ({ db, dbPublic }) => {
       // assuming we're here, we've successfully created all messages. Update 'dataLoadStatus'
       const { error: errorUpdateDataLoadStatus } = await dbPublic.from('profiles').update({ dataLoadStatus: 'done' }).eq('user_id', userID);
       if (errorUpdateDataLoadStatus) {
-        global.logger.error(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`);
-        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 400);
+        throw errorGen(`Error updating dataLoadStatus for userID ${userID}: ${errorUpdateDataLoadStatus.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return 'success';
@@ -705,7 +676,7 @@ module.exports = ({ db, dbPublic }) => {
   async function createUserBackupFile(userID) {
     try {
       // for the given user, create a new sql backup file with all 'bakery' schema table rows. Add these rows in the order they should be loaded into the db.
-      global.logger.info(`Creating backup file for userID ${userID}`);
+      global.logger.info({ message: `Creating backup file for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       const tables = [
         'pushTokens',
         'friendships',
@@ -736,8 +707,7 @@ module.exports = ({ db, dbPublic }) => {
       for (const table of tables) {
         const { data, error } = await db.from(table).select('*').eq('userID', userID);
         if (error) {
-          global.logger.error(`Error getting data for table ${table} and userID ${userID}: ${error.message}`);
-          throw errorGen(`Error getting data for table ${table} and userID ${userID}: ${error.message}`, 400);
+          throw errorGen(`Error getting data for table ${table} and userID ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
         }
 
         if (data.length) {
@@ -757,14 +727,12 @@ module.exports = ({ db, dbPublic }) => {
       const dirPath = path.join(__dirname, '../../temp');
       const filePath = path.join(dirPath, `backup-bakery_${datestring}.sql`);
 
-      // const tempFilePath = path.join(__dirname, filePath);
-
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath);
       }
 
       fs.writeFileSync(filePath, backupScript);
-      global.logger.info(`Successfully created backup file for userID ${userID} on ${datestring}`);
+      global.logger.info({ message: `Successfully created backup file for userID ${userID} on ${datestring}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       return { filePath };
     } catch (err) {
@@ -780,15 +748,13 @@ module.exports = ({ db, dbPublic }) => {
 
       const uploadResponse = await uploadBackup('daily', userID, filePath);
       if (uploadResponse.error) {
-        global.logger.error(`Error uploading daily backup for user ${userID}: ${uploadResponse.error.message}`);
-        throw errorGen(`Error uploading daily backup for user ${userID}: ${uploadResponse.error.message}`, 400);
+        throw errorGen(uploadResponse.error.message || 'Unhandled Error in profiles createDailyBackup', uploadResponse.error.code || 520, uploadResponse.error.name || 'unhandledError_profiles-createDailyBackup', uploadResponse.error.isOperational || false, uploadResponse.error.severity || 2);
       }
-      global.logger.info(`Successfully uploaded daily backup for user ${userID}, filename: ${filePath}`);
+      global.logger.info({ message: `Successfully uploaded daily backup for user ${userID}, filename: ${filePath}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       const { data: profile, errorProfile } = await dbPublic.from('profiles').select('joined_at').eq('user_id', userID).single();
       if (errorProfile) {
-        global.logger.error(`Error getting joined_at date for user ${userID}: ${errorProfile.message}`);
-        throw errorGen(`Error getting joined_at date for user ${userID}: ${errorProfile.message}`, 400);
+        throw errorGen(`Error getting joined_at date for user ${userID}: ${errorProfile.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       const daysSinceJoin = Math.floor((new Date() - new Date(profile.joined_at)) / (1000 * 60 * 60 * 24));
@@ -805,7 +771,7 @@ module.exports = ({ db, dbPublic }) => {
         await deleteOldBackup(userID, deleteFileName);
       }
 
-      global.logger.info(`Successfully created daily backup for user ${userID}`);
+      global.logger.info({ message: `Successfully created daily backup for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles createDailyBackup', err.code || 520, err.name || 'unhandledError_profiles-createDailyBackup', err.isOperational || false, err.severity || 2);
     }
@@ -816,8 +782,7 @@ module.exports = ({ db, dbPublic }) => {
       // get all userIDs
       const { data: userIDs, error } = await dbPublic.from('profiles').select('user_id');
       if (error) {
-        global.logger.error(`Error getting userIDs for daily backup: ${error.message}`);
-        throw errorGen(`Error getting userIDs for daily backup: ${error.message}`, 400);
+        throw errorGen(`Error getting userIDs for daily backup: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // for each userID, create a daily backup. avoid doing this for username 'Doughly' (it has 300 recipes, we have a separate master backup for it)
@@ -827,7 +792,7 @@ module.exports = ({ db, dbPublic }) => {
         }
       }
 
-      global.logger.info(`Successfully created daily backups for all ${userIDs.length} users`);
+      global.logger.info({ message: `Successfully created daily backups for all ${userIDs.length} users`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles dailyBackupAllUsers', err.code || 520, err.name || 'unhandledError_profiles-dailyBackupAllUsers', err.isOperational || false, err.severity || 2);
     }

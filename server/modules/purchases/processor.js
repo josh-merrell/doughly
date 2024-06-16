@@ -27,7 +27,7 @@ module.exports = ({ db, dbDefault }) => {
         newCount: 0,
         newDate: null,
       };
-      global.logger.info(`CALCULATING AI TOKEN UPDATE FOR USER: ${userID}`);
+      global.logger.info({ message: `CALCULATING AI TOKEN UPDATE FOR USER: ${userID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       // check for 'permAITokenLastRefreshData' value
       const { data: profile, error: error } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
       if (error) {
@@ -42,7 +42,7 @@ module.exports = ({ db, dbDefault }) => {
 
       // if profile.permAITokenLastRefreshDate is not set or is at least a month old (same day of month), set 'addAITokens' to true
       if (!profile.permAITokenLastRefreshDate) {
-        global.logger.info('No permAITokenLastRefreshDate found');
+        global.logger.info({ message: `No permAITokenLastRefreshDate found`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         monthsPassed = 1;
         addAITokens = true;
       } else {
@@ -50,7 +50,7 @@ module.exports = ({ db, dbDefault }) => {
         const lastRefreshDate = new Date(profile.permAITokenLastRefreshDate);
         monthsPassed = (today.getFullYear() - lastRefreshDate.getFullYear()) * 12 + today.getMonth() - lastRefreshDate.getMonth();
         if (monthsPassed >= 1) {
-          global.logger.info(`More than a month since last refresh: ${monthsPassed}`);
+          global.logger.info({ message: `More than a month since last refresh: ${monthsPassed}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           addAITokens = true;
         }
       }
@@ -58,7 +58,7 @@ module.exports = ({ db, dbDefault }) => {
       // determine new 'permAITokenCount' value. Choose smaller of either productConstants.maxAICredits or current 'permAITokenCount' + productConstants.monthlyAICredits * monthsPassed
       if (addAITokens) {
         tokenUpdate.needsUpdate = true;
-        global.logger.info(`PERMAITOKENCOUNT: ${profile.permAITokenCount}. CONST: ${productConstants.subscription.monthlyAICredits}. MONTHS PASSED: ${monthsPassed}`);
+        global.logger.info({ message: `PERMAITOKENCOUNT: ${profile.permAITokenCount}. CONST: ${productConstants.subscription.monthlyAICredits}. MONTHS PASSED: ${monthsPassed}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         tokenUpdate.newCount = Math.min(productConstants.subscription.maxAICredits, profile.permAITokenCount + productConstants.subscription.monthlyAICredits * monthsPassed);
         // set 'permAITokenLastRefreshDate' to be 'monthsPassed' months from previous 'permAITokenLastRefreshDate'
         let newRefreshDate;
@@ -69,7 +69,7 @@ module.exports = ({ db, dbDefault }) => {
           newRefreshDate.setMonth(newRefreshDate.getMonth() + monthsPassed);
         }
         tokenUpdate.newDate = newRefreshDate.toISOString();
-        global.logger.info(`New permAITokenCount: ${tokenUpdate.newCount}, New permAITokenLastRefreshDate: ${tokenUpdate.newDate}`);
+        global.logger.info({ message: `New permAITokenCount: ${tokenUpdate.newCount}, New permAITokenLastRefreshDate: ${tokenUpdate.newDate}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       }
       return tokenUpdate;
     } catch (err) {
@@ -82,20 +82,20 @@ module.exports = ({ db, dbDefault }) => {
       const { userID, transaction, sku } = options;
 
       try {
-        global.logger.info(`PROCESSING NEW PURCHASE. SKU: ${JSON.stringify(sku)}`);
+        global.logger.info({ message: `PROCESSING NEW PURCHASE. SKU: ${JSON.stringify(sku)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         // get current profile
         const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
         if (error1) {
-          throw errorGen(`Error getting profile: ${error1.message}`, 400);
+          throw errorGen(`Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         if (!profile) {
-          throw errorGen('Profile not found', 400);
+          throw errorGen(`Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
         }
         if (!transaction || !sku) {
-          throw errorGen('Missing transaction or sku', 400);
+          throw errorGen(`Missing transaction or sku, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
         }
         if (!transaction.permissions) {
-          throw errorGen('Missing transaction productId', 400);
+          throw errorGen(`Missing transaction productId, cannot process purchase`, 515, 'cannotComplete', false, 3);
         }
 
         const newProfile = {};
@@ -117,7 +117,7 @@ module.exports = ({ db, dbDefault }) => {
             newProfile['permDataBackupDaily6MonthRetention'] = true;
             break;
           default:
-            global.logger.error(`Invalid purchase sku.skuId: ${sku.skuId}`);
+            global.logger.info({ message: `Invalid purchase sku.skuId: ${sku.skuId}, cannot process purchase`, level: 3, timestamp: new Date().toISOString(), userID: userID });
             break;
         }
 
@@ -131,10 +131,10 @@ module.exports = ({ db, dbDefault }) => {
           newProfile['permAITokenCount'] = Math.min(productConstants.subscription.maxAICredits, profile.permAITokenCount + addTokens);
         }
 
-        global.logger.info(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);
+        global.logger.info({ message: `UPDATING PROFILE PERMS after purchase: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
-          throw errorGen(`Error updating profile: ${error.message}`, 400);
+          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         return updatedProfile;
       } catch (err) {
@@ -147,10 +147,10 @@ module.exports = ({ db, dbDefault }) => {
 
       try {
         if (!permissions) {
-          throw errorGen('Missing transaction productId', 400);
+          throw errorGen(`Missing transaction productId`, 510, 'dataValidationErr', false, 3);
         }
 
-        global.logger.info(`PERMISSIONS TO UPDATE PROFILE: ${JSON.stringify(permissions.all)}`);
+        global.logger.info({ message: `PERMISSIONS TO UPDATE PROFILE: ${JSON.stringify(permissions.all)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         const newProfile = {};
         for (const permission of permissions.all) {
           let tokenUpdate;
@@ -174,16 +174,16 @@ module.exports = ({ db, dbDefault }) => {
             case 'recipe-credits-10':
               break;
             default:
-              global.logger.error(`Unhandled permissionId: ${permission.permissionId}`);
+              global.logger.info({ message: `Unhandled permissionId: ${permission.permissionId}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
               break;
           }
         }
 
         // update profile with new permissions
-        global.logger.info(`UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`);
+        global.logger.info({ message: `UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
-          throw errorGen(`Error updating profile: ${error.message}`, 400);
+          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         return updatedProfile;
       } catch (err) {
