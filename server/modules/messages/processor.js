@@ -332,11 +332,11 @@ module.exports = ({ db, dbPublic }) => {
 
   async function getNewFriendRequestMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
       const { data: friendRequests, error } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).in('appMessageStatusNewFriendRequest', ['notAcked', 'acked']);
       if (error) {
         global.logger.error(`Error getting friendRequests: ${error.message}`);
@@ -372,20 +372,20 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getNewFriendRequestMessages': ${e.message}`);
-      throw errorGen('Error getting newFriendRequest messages', 500);
+    } catch (err) {
+      throw errorGen('Unhandled Error in messages getNewFriendRequestMessages', 520, 'unhandledError_messages-getNewFriendRequestMessages', false, 2); //message, code, name, operational, severity
     }
   }
 
   // get messages for 'followeePublicRecipeCreated' events
   async function getfolloweePublicRecipeCreatedMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       // get any entries from 'messages' table where 'userID' is the follower and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'followeePublicRecipeCreated').neq('status', 'deleted');
       if (error) {
@@ -413,20 +413,20 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getFolloweePublicRecipeCreatedMessages': ${e.message}`);
-      throw errorGen('Error getting followeePublicRecipeCreated messages', 500);
+    } catch (err) {
+      throw errorGen('Unhandled Error in messages getFolloweePublicRecipeCreatedMessages', 520, 'unhandledError_messages-getFolloweePublicRecipeCreatedMessages', false, 2); //message, code, name, operational, severity
     }
   }
 
   // get messages for 'friendHeirloomRecipeCreated' events
   async function getFriendHeirloomRecipeCreatedMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       // get any entries from 'messages' table where 'userID' is the userID and 'type' is 'friendHeirloomRecipeCreated' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'friendHeirloomRecipeCreated').neq('status', 'deleted');
       if (error) {
@@ -454,19 +454,19 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getFriendHeirloomRecipeCreatedMessages': ${e.message}`);
-      throw errorGen('Error getting friendHeirloomRecipeCreated messages', 500);
+    } catch (err) {
+      throw errorGen('Unhandled Error in messages getFriendHeirloomCreatedMessages', 520, 'unhandledError_messages-getFriendHeirloomCreatedMessages', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getWelcomeMessage(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       // get any entries from 'messages' table where 'userID' is the userID and 'type' is 'welcomeToDoughly' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'welcomeToDoughly').neq('status', 'deleted');
       if (error) {
@@ -489,18 +489,18 @@ module.exports = ({ db, dbPublic }) => {
         });
       }
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getWelcomeMessage': ${e.message}`);
-      throw errorGen('Error getting welcome messages', 500);
+    } catch (err) {
+      throw errorGen('Unhandled Error in messages getWelcomeMessage', 520, 'unhandledError_messages-getWelcomeMessage', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function add(options) {
     const { userID, message } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
+
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
       switch (message.type) {
         case 'addFolloweePublicRecipeCreatedMessages':
           await addFolloweePublicRecipeCreatedMessages({ userID, recipeID: message.recipeID, recipeTitle: message.recipeTitle });
@@ -509,9 +509,8 @@ module.exports = ({ db, dbPublic }) => {
           await addFriendHeirloomRecipeCreatedMessages({ userID, recipeID: message.recipeID, recipeTitle: message.recipeTitle });
           break;
       }
-    } catch (e) {
-      global.logger.error(`'messages' 'add': ${e.message}`);
-      throw errorGen('Error adding message', 500);
+    } catch (err) {
+      throw errorGen('Unhandled Error in messages add', 520, 'unhandledError_messages-add', false, 2); //message, code, name, operational, severity
     }
   }
 
@@ -521,16 +520,17 @@ module.exports = ({ db, dbPublic }) => {
 
   async function addFolloweePublicRecipeCreatedMessages(options) {
     const { userID, recipeID, recipeTitle } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
-    // get profile of the user (recipe author)
-    const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
-    if (profileError) {
-      global.logger.error(`Error getting profile: ${profileError.message}`);
-      throw errorGen('Error getting profile', 500);
-    }
+
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+      // get profile of the user (recipe author)
+      const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
+      if (profileError) {
+        global.logger.error(`Error getting profile: ${profileError.message}`);
+        throw errorGen('Error getting profile', 500);
+      }
       // get all followers of the user
       const { data: followships, error: followshipsError } = await db.from('followships').select().eq('following', userID).eq('deleted', false);
       if (followshipsError) {
@@ -566,25 +566,24 @@ module.exports = ({ db, dbPublic }) => {
           throw errorGen('Error adding message', 500);
         }
       }
-    } catch (e) {
-      global.logger.error(`'messages' 'addFolloweePublicRecipeCreatedMessages': ${e.message}`);
-      throw errorGen('Error adding followeePublicRecipeCreated messages', 500);
+    } catch (err) {
+      throw errorGen('Unhandled Error in messages addFolloweePublicRecipeCreatedMessages', 520, 'unhandledError_messages-addFolloweePublicRecipeCreatedMessages', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function addFriendHeirloomRecipeCreatedMessages(options) {
     const { userID, recipeID, recipeTitle } = options;
 
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
-    // get profile of the user (recipe author)
-    const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
-    if (profileError) {
-      global.logger.error(`Error getting profile: ${profileError.message}`);
-      throw errorGen('Error getting profile', 500);
-    }
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+      // get profile of the user (recipe author)
+      const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
+      if (profileError) {
+        global.logger.error(`Error getting profile: ${profileError.message}`);
+        throw errorGen('Error getting profile', 500);
+      }
       // get all friends of the user
       const { data: friendships, error: friendshipsError } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).eq('status', 'confirmed');
       if (friendshipsError) {
@@ -619,18 +618,18 @@ module.exports = ({ db, dbPublic }) => {
           throw errorGen('Error adding message', 500);
         }
       }
-    } catch (e) {
-      global.logger.error(`'messages' 'addFriendHeirloomRecipeCreatedMessages': ${e.message}`);
-      throw errorGen('Error adding friendHeirloomRecipeCreated messages', 500);
+    } catch (err) {
+      throw errorGen('Unhandled Error in messages addFriendHeirloomRecipeCreatedMessages', 520, 'unhandledError_messages-addFriendHeirloomRecipeCreatedMessages', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function addWelcomeMessage(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
+
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
       // add a message to 'messages' table
       const newMessageID = await generateIDFunction(75);
       const { error: addMessageError } = await db.from('messages').insert({
@@ -646,9 +645,8 @@ module.exports = ({ db, dbPublic }) => {
         global.logger.error(`Error adding message: ${addMessageError.message}`);
         throw errorGen('Error adding message', 500);
       }
-    } catch (e) {
-      global.logger.error(`'messages' 'addWelcomeMessage': ${e.message}`);
-      throw errorGen('Error adding welcome message', 500);
+    } catch (err) {
+      throw errorGen('Unhandled Error in messages addWelcomeMessage', 520, 'unhandledError_messages-addWelcomeMessage', false, 2); //message, code, name, operational, severity
     }
   }
 

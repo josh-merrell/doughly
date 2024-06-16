@@ -5,99 +5,98 @@ const { errorGen } = require('../../middleware/errorHandling');
 ('use strict');
 
 module.exports = ({ db, dbDefault }) => {
-  async function create(options) {
+  async function createSignedURL(options) {
     const { userID, type, fileName, fileType } = options;
 
-    const s3Client = new S3Client({ region: 'us-west-2' });
-    const key = `${type}/${userID}/${fileName}`;
-    const contentType = fileType;
+    try {
+      const s3Client = new S3Client({ region: 'us-west-2' });
+      const key = `${type}/${userID}/${fileName}`;
+      const contentType = fileType;
 
-    let command;
-    // temp images (such as for used in vision recipe import) are stored in a different bucket to avoid cloudfront caching
-    console.log(`IN GET SIGNED URL. TYPE: ${type}, KEY: ${key}, fileName: ${fileName}, `);
-    if (type === 'temp') {
-      command = new PutObjectCommand({
-        Bucket: process.env.AWS_TEMP_IMAGE_BUCKET_NAME,
-        Key: key,
-        ContentType: contentType,
+      let command;
+      // temp images (such as for used in vision recipe import) are stored in a different bucket to avoid cloudfront caching
+      console.log(`IN GET SIGNED URL. TYPE: ${type}, KEY: ${key}, fileName: ${fileName}, `);
+      if (type === 'temp') {
+        command = new PutObjectCommand({
+          Bucket: process.env.AWS_TEMP_IMAGE_BUCKET_NAME,
+          Key: key,
+          ContentType: contentType,
+        });
+      } else {
+        command = new PutObjectCommand({
+          Bucket: process.env.AWS_IMAGE_BUCKET_NAME,
+          Key: key,
+          ContentType: contentType,
+        });
+      }
+
+      const url = await getSignedUrl(s3Client, command, {
+        expiresIn: 3600,
       });
-    } else {
-      command = new PutObjectCommand({
-        Bucket: process.env.AWS_IMAGE_BUCKET_NAME,
-        Key: key,
-        ContentType: contentType,
-      });
+
+      return url;
+    } catch (err) {
+      throw errorGen('Unhandled Error in uploads createSignedURL', 520, 'unhandledError_uploads-createSignedURL', false, 2); //message, code, name, operational, severity
     }
-
-    const url = await getSignedUrl(s3Client, command, {
-      expiresIn: 3600,
-    });
-
-    return url;
   }
 
   async function uploadBackup(filepath, filename) {
-    // read the file from the path
-    const fs = require('fs');
-    const path = require('path');
-    const file = fs.readFileSync(path.join(__dirname, filepath, filename));
-
-    // take the file and path as args. Upload the file to the path
-    const s3Client = new S3Client({ region: 'us-west-2' });
-
-    const command = new PutObjectCommand({
-      Bucket: process.env.AWS_BACKUP_BUCKET_NAME,
-      Key: filepath,
-      Body: file,
-    });
-
     try {
+      // read the file from the path
+      const fs = require('fs');
+      const path = require('path');
+      const file = fs.readFileSync(path.join(__dirname, filepath, filename));
+
+      // take the file and path as args. Upload the file to the path
+      const s3Client = new S3Client({ region: 'us-west-2' });
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.AWS_BACKUP_BUCKET_NAME,
+        Key: filepath,
+        Body: file,
+      });
       await s3Client.send(command);
       fs.unlinkSync(filepath);
       return { message: 'Successfully uploaded file' };
     } catch (err) {
-      global.logger.error(`Error uploading file to S3. Path:${path}, Error:`, err);
-      throw errorGen(`Error uploading file to S3. Path:${path}`, 400);
+      throw errorGen('Unhandled Error in uploads uploadBackup', 520, 'unhandledError_uploads-uploadBackup', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function deleteOldBackup(userID, filename) {
-    const s3Client = new S3Client({ region: 'us-west-2' });
-
-    const command = new DeleteObjectCommand({
-      Bucket: process.env.AWS_BACKUP_BUCKET_NAME,
-      Key: `${type}/${userID}/${filename}`,
-    });
-
     try {
+      const s3Client = new S3Client({ region: 'us-west-2' });
+
+      const command = new DeleteObjectCommand({
+        Bucket: process.env.AWS_BACKUP_BUCKET_NAME,
+        Key: `${type}/${userID}/${filename}`,
+      });
       await s3Client.send(command);
       global.logger.info(`Successfully deleted old backup file: backups/${userID}/${filename}`);
       return { message: 'Successfully deleted old backup file' };
     } catch (err) {
-      console.error(`Error deleting old backup file from S3. Path: backups/${userID}/${filename}, Error:`, err);
-      throw new Error(`Error deleting old backup file from S3. Path: backups/${userID}/${filename}`);
+      throw errorGen('Unhandled Error in uploads deleteOldBackup', 520, 'unhandledError_uploads-deleteOldBackup', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function remove(options) {
     const { userID, photoURL, type, id } = options;
 
-    const urlParts = photoURL.split('/');
-    const fileName = urlParts[urlParts.length - 1];
-    const key = `${type}/${userID}/${fileName}`;
-
-    const decodedKey = decodeURIComponent(key);
-
-    const s3Client = new S3Client({ region: 'us-west-2' });
-
-    const deleteParams = {
-      Bucket: process.env.AWS_IMAGE_BUCKET_NAME,
-      Key: decodedKey,
-    };
-
-    const deleteCommand = new DeleteObjectCommand(deleteParams);
-
     try {
+      const urlParts = photoURL.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const key = `${type}/${userID}/${fileName}`;
+
+      const decodedKey = decodeURIComponent(key);
+
+      const s3Client = new S3Client({ region: 'us-west-2' });
+
+      const deleteParams = {
+        Bucket: process.env.AWS_IMAGE_BUCKET_NAME,
+        Key: decodedKey,
+      };
+
+      const deleteCommand = new DeleteObjectCommand(deleteParams);
       // remove file from S3
       await s3Client.send(deleteCommand);
 
@@ -142,13 +141,12 @@ module.exports = ({ db, dbDefault }) => {
       }
       return { message: 'Successfully deleted file', data };
     } catch (err) {
-      global.logger.error(`Error deleting file from S3. Key:${decodedKey}, Error:`, err);
-      throw errorGen(`Error deleting file from S3. Key:${decodedKey}`, 400);
+      throw errorGen('Unhandled Error in uploads remove', 520, 'unhandledError_uploads-remove', false, 2); //message, code, name, operational, severity
     }
   }
 
   return {
-    create,
+    create: createSignedURL,
     remove,
     uploadBackup,
     deleteOldBackup,

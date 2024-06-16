@@ -15,201 +15,199 @@ const { sendSSEMessage } = require('../../server.js');
 
 module.exports = ({ db, dbPublic }) => {
   async function constructRecipe(options) {
+    const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps } = options;
+
     try {
       //start timer
       const constructStartTime = new Date();
-      const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps } = options;
-
       let recipeID;
       const createdItems = [];
-      try {
-        //first create the recipe, save as {'recipeID': recipeID} to createdItems
-        const { data: recipe, error } = await axios.post(
-          `${process.env.NODE_HOST}:${process.env.PORT}/recipes`,
+      //first create the recipe, save as {'recipeID': recipeID} to createdItems
+      const { data: recipe, error } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/recipes`,
+        {
+          authorization,
+          userID,
+          title,
+          servings,
+          lifespanDays,
+          type,
+          timePrep,
+          timeBake,
+          photoURL,
+          IDtype: 11,
+          recipeCategoryID,
+        },
+        { headers: { authorization } },
+      );
+      if (error) {
+        throw error;
+      }
+      recipeID = recipe.recipeID;
+
+      const uniqueNameIngredients = {};
+      ingredients.map((i) => {
+        if (!uniqueNameIngredients[i.name]) {
+          uniqueNameIngredients[i.name] = { ingredients: [i], ingredientID: 0 };
+        } else {
+          uniqueNameIngredients[i.name]['ingredients'].push(i);
+        }
+      });
+      global.logger.info(`UNIQUE NAME INGREDIENTS: ${JSON.stringify(uniqueNameIngredients)}`);
+      const ingredientIDPromises = [];
+      for (const [name, value] of Object.entries(uniqueNameIngredients)) {
+        // first get 'ingredientID' for each group of ingredients with the same name using 'getIngredientID' endpoint
+        ingredientIDPromises.push(
+          getIngredientID(name, value.ingredients, userID, authorization).then((ingredientID) => {
+            value.ingredientID = ingredientID;
+          }),
+        );
+      }
+      await Promise.allSettled(ingredientIDPromises);
+      global.logger.info(`UNIQUE NAME INGREDIENTS AFTER GETTING INGREDIENTID: ${JSON.stringify(uniqueNameIngredients)}`);
+      // then create recipeIngredients for each ingredient group
+      const ingredientPromises = [];
+      for (const [, value] of Object.entries(uniqueNameIngredients)) {
+        for (let i = 0; i < value.ingredients.length; i++) {
+          value.ingredients[i].ingredientID = value.ingredientID;
+          ingredientPromises.push(constructRecipeIngredient(value.ingredients[i], authorization, userID, recipe.recipeID));
+        }
+      }
+
+      const ingredientResults = await Promise.allSettled(ingredientPromises);
+      for (const result of ingredientResults) {
+        if (result.status === 'fulfilled') {
+          createdItems.push({ ingredientID: result.value.ingredientID });
+        } else {
+          global.logger.error(`'constructRecipe' Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason}`);
+          throw errorGen(`'constructRecipe' Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason}`, 400);
+        }
+      }
+
+      if (!tools.length) {
+        // dummy recipeTool case
+        await constructRecipeTool({ quantity: -1 }, authorization, userID, recipe.recipeID);
+      } else {
+        const toolPromises = tools.map((t) => constructRecipeTool(t, authorization, userID, recipe.recipeID));
+        const toolResults = await Promise.allSettled(toolPromises);
+        for (const result of toolResults) {
+          if (result.status === 'fulfilled') {
+            createdItems.push({ toolID: result.value.toolID });
+          } else {
+            // throw new Error(`Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`);
+            global.logger.error(`'constructRecipe' Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`);
+            throw errorGen(`'constructRecipe' Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`, 400);
+          }
+        }
+      }
+
+      const stepPromises = steps.map((s) => constructRecipeStep(s, authorization, userID, recipe.recipeID));
+      const stepResults = await Promise.allSettled(stepPromises);
+      for (const result of stepResults) {
+        if (result.status === 'fulfilled') {
+          createdItems.push({ stepID: result.value.stepID });
+        } else {
+          // throw new Error(`Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`);
+          global.logger.error(`'constructRecipe' Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`);
+          throw errorGen(`'constructRecipe' Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`, 400);
+        }
+      }
+
+      // if this is a subscription, create a recipeSubscription and sync the version of new recipe to match source recipe
+      if (type === 'subscription') {
+        //make axios call to add recipeSubscription
+        const { data: subscriptionID, error: subscriptionError } = await axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe`,
           {
             authorization,
             userID,
-            title,
-            servings,
-            lifespanDays,
-            type,
-            timePrep,
-            timeBake,
-            photoURL,
-            IDtype: 11,
-            recipeCategoryID,
+            IDtype: 25,
+            sourceRecipeID: sourceRecipeID,
+            newRecipeID: recipe.recipeID,
           },
           { headers: { authorization } },
         );
-        if (error) {
-          throw error;
+        if (subscriptionError) {
+          // throw subscriptionError;
+          global.logger.error(`'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`);
+          throw errorGen(`'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`, 400);
         }
-        recipeID = recipe.recipeID;
+        createdItems.push({ subscriptionID: subscriptionID });
 
-        const uniqueNameIngredients = {};
-        ingredients.map((i) => {
-          if (!uniqueNameIngredients[i.name]) {
-            uniqueNameIngredients[i.name] = { ingredients: [i], ingredientID: 0 };
-          } else {
-            uniqueNameIngredients[i.name]['ingredients'].push(i);
-          }
-        });
-        global.logger.info(`UNIQUE NAME INGREDIENTS: ${JSON.stringify(uniqueNameIngredients)}`);
-        const ingredientIDPromises = [];
-        for (const [name, value] of Object.entries(uniqueNameIngredients)) {
-          // first get 'ingredientID' for each group of ingredients with the same name using 'getIngredientID' endpoint
-          ingredientIDPromises.push(
-            getIngredientID(name, value.ingredients, userID, authorization).then((ingredientID) => {
-              value.ingredientID = ingredientID;
-            }),
-          );
+        //get current version of source recipe and update newRecipe version to match
+        const { data: sourceRecipe, error: sourceRecipeError } = await db.from('recipes').select('version').eq('recipeID', sourceRecipeID).eq('deleted', false).single();
+        if (sourceRecipeError) {
+          global.logger.error(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`);
+          throw errorGen(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`, 400);
         }
-        await Promise.allSettled(ingredientIDPromises);
-        global.logger.info(`UNIQUE NAME INGREDIENTS AFTER GETTING INGREDIENTID: ${JSON.stringify(uniqueNameIngredients)}`);
-        // then create recipeIngredients for each ingredient group
-        const ingredientPromises = [];
-        for (const [, value] of Object.entries(uniqueNameIngredients)) {
-          for (let i = 0; i < value.ingredients.length; i++) {
-            value.ingredients[i].ingredientID = value.ingredientID;
-            ingredientPromises.push(constructRecipeIngredient(value.ingredients[i], authorization, userID, recipe.recipeID));
-          }
+        const { error: updateError } = await db.from('recipes').update({ version: sourceRecipe.version }).eq('recipeID', recipe.recipeID);
+        if (updateError) {
+          global.logger.error(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`);
+          throw errorGen(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`, 400);
         }
-
-        const ingredientResults = await Promise.allSettled(ingredientPromises);
-        for (const result of ingredientResults) {
-          if (result.status === 'fulfilled') {
-            createdItems.push({ ingredientID: result.value.ingredientID });
-          } else {
-            global.logger.error(`'constructRecipe' Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason}`);
-            throw errorGen(`'constructRecipe' Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason}`, 400);
-          }
-        }
-
-        if (!tools.length) {
-          // dummy recipeTool case
-          await constructRecipeTool({ quantity: -1 }, authorization, userID, recipe.recipeID);
-        } else {
-          const toolPromises = tools.map((t) => constructRecipeTool(t, authorization, userID, recipe.recipeID));
-          const toolResults = await Promise.allSettled(toolPromises);
-          for (const result of toolResults) {
-            if (result.status === 'fulfilled') {
-              createdItems.push({ toolID: result.value.toolID });
-            } else {
-              // throw new Error(`Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`);
-              global.logger.error(`'constructRecipe' Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`);
-              throw errorGen(`'constructRecipe' Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`, 400);
-            }
-          }
-        }
-
-        const stepPromises = steps.map((s) => constructRecipeStep(s, authorization, userID, recipe.recipeID));
-        const stepResults = await Promise.allSettled(stepPromises);
-        for (const result of stepResults) {
-          if (result.status === 'fulfilled') {
-            createdItems.push({ stepID: result.value.stepID });
-          } else {
-            // throw new Error(`Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`);
-            global.logger.error(`'constructRecipe' Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`);
-            throw errorGen(`'constructRecipe' Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`, 400);
-          }
-        }
-
-        // if this is a subscription, create a recipeSubscription and sync the version of new recipe to match source recipe
-        if (type === 'subscription') {
-          //make axios call to add recipeSubscription
-          const { data: subscriptionID, error: subscriptionError } = await axios.post(
-            `${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe`,
-            {
-              authorization,
-              userID,
-              IDtype: 25,
-              sourceRecipeID: sourceRecipeID,
-              newRecipeID: recipe.recipeID,
-            },
-            { headers: { authorization } },
-          );
-          if (subscriptionError) {
-            // throw subscriptionError;
-            global.logger.error(`'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`);
-            throw errorGen(`'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`, 400);
-          }
-          createdItems.push({ subscriptionID: subscriptionID });
-
-          //get current version of source recipe and update newRecipe version to match
-          const { data: sourceRecipe, error: sourceRecipeError } = await db.from('recipes').select('version').eq('recipeID', sourceRecipeID).eq('deleted', false).single();
-          if (sourceRecipeError) {
-            global.logger.error(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`);
-            throw errorGen(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`, 400);
-          }
-          const { error: updateError } = await db.from('recipes').update({ version: sourceRecipe.version }).eq('recipeID', recipe.recipeID);
-          if (updateError) {
-            global.logger.error(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`);
-            throw errorGen(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`, 400);
-          }
-        }
-
-        // Stop timer and calculate duration
-        const constructEndTime = new Date();
-        const constructDuration = constructEndTime - constructStartTime;
-        global.logger.info(`Successfully constructed recipe ${recipe.recipeID}`);
-        global.logger.info(`*TIME* constructRecipe: ${constructDuration / 1000} seconds`);
-        return { recipeID: recipe.recipeID };
-      } catch (error) {
-        //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
-        if (recipeID) {
-          await deleteItem({ recipeID: recipeID }, authorization);
-          for (let i in createdItems) {
-            deleteItem(createdItems[i], authorization);
-          }
-        }
-        global.logger.error(`'constructRecipe' Failed to construct Recipe. ${error.message}`);
-        throw errorGen(`'constructRecipe' Failed to construct Recipe. ${error.message}`, 400);
       }
+
+      // Stop timer and calculate duration
+      const constructEndTime = new Date();
+      const constructDuration = constructEndTime - constructStartTime;
+      global.logger.info(`Successfully constructed recipe ${recipe.recipeID}`);
+      global.logger.info(`*TIME* constructRecipe: ${constructDuration / 1000} seconds`);
+      return { recipeID: recipe.recipeID };
     } catch (error) {
-      global.logger.error(`'constructRecipe' Unhandled Error: ${error.message}`);
-      throw errorGen(`'constructRecipe' Unhandled Error: ${error.message}`, 400);
+      //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
+      if (recipeID) {
+        await deleteItem({ recipeID: recipeID }, authorization);
+        for (let i in createdItems) {
+          deleteItem(createdItems[i], authorization);
+        }
+      }
+      throw errorGen('Unhandled Error in recipes constructRecipe', 520, 'unhandledError_recipe-constructRecipe', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getIngredientID(ingredientName, ingredientGroup, userID, authorization) {
-    let ingredientID = 0;
-    // look through ingredientGroup for any with a non-zero ingredientID. If found, return that ingredientID
-    for (let i = 0; i < ingredientGroup.length; i++) {
-      if (ingredientGroup[i].ingredientID !== 0) {
-        return ingredientGroup[i].ingredientID;
+    try {
+      let ingredientID = 0;
+      // look through ingredientGroup for any with a non-zero ingredientID. If found, return that ingredientID
+      for (let i = 0; i < ingredientGroup.length; i++) {
+        if (ingredientGroup[i].ingredientID !== 0) {
+          return ingredientGroup[i].ingredientID;
+        }
       }
+      // if none found, need to create a new ingredient
+      const body = {
+        authorization,
+        userID,
+        IDtype: 12,
+        name: ingredientName,
+        lifespanDays: Math.round(Number(ingredientGroup[0].lifespanDays)),
+        purchaseUnit: ingredientGroup[0].purchaseUnit,
+        gramRatio: Number(ingredientGroup[0].gramRatio),
+      };
+      if (ingredientGroup[0].brand) {
+        body.brand = ingredientGroup[0].brand;
+      }
+      if (ingredientGroup[0].needsReview) {
+        body.needsReview = ingredientGroup[0].needsReview;
+      }
+      const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
+      ingredientID = Number(data.ingredientID);
+      global.logger.info(`CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`);
+      // return ingredientID
+      return ingredientID;
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getIngredientID', 520, 'unhandledError_recipes-getIngredientID', false, 2); //message, code, name, operational, severity
     }
-    // if none found, need to create a new ingredient
-    const body = {
-      authorization,
-      userID,
-      IDtype: 12,
-      name: ingredientName,
-      lifespanDays: Math.round(Number(ingredientGroup[0].lifespanDays)),
-      purchaseUnit: ingredientGroup[0].purchaseUnit,
-      gramRatio: Number(ingredientGroup[0].gramRatio),
-    };
-    if (ingredientGroup[0].brand) {
-      body.brand = ingredientGroup[0].brand;
-    }
-    if (ingredientGroup[0].needsReview) {
-      body.needsReview = ingredientGroup[0].needsReview;
-    }
-    const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
-    ingredientID = Number(data.ingredientID);
-    global.logger.info(`CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`);
-    // return ingredientID
-    return ingredientID;
   }
 
   async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
-    global.logger.info(`CONSTRUCT RI: ${JSON.stringify(ingredient)}`);
-    if (!ingredient.ingredientID || ingredient.ingredientID === 0) {
-      global.logger.error(`'constructRecipeIngredient' ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`);
-      throw errorGen(`'constructRecipeIngredient' ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`, 400);
-    }
-    // Then, create the recipeIngredient
     try {
+      global.logger.info(`CONSTRUCT RI: ${JSON.stringify(ingredient)}`);
+      if (!ingredient.ingredientID || ingredient.ingredientID === 0) {
+        global.logger.error(`'constructRecipeIngredient' ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`);
+        throw errorGen(`'constructRecipeIngredient' ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`, 400);
+      }
+      // Then, create the recipeIngredient
       global.logger.info(
         `CALLING RI CREATE WITH BODY: ${JSON.stringify({
           recipeID,
@@ -240,16 +238,15 @@ module.exports = ({ db, dbPublic }) => {
         { headers: { authorization } },
       );
       return { recipeIngredientID: data.recipeIngredientID, ingredientID: ingredient.ingredientID };
-    } catch (error) {
-      global.logger.error(`'constructRecipeIngredient' Failed when creating recipeIngredient. Failure: ${error.message}`);
-      throw errorGen(`'constructRecipeIngredient' Failed when creating recipeIngredient. Failure: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes constructRecipeIngredient', 520, 'unhandledError_recipes-constructRecipeIngredient', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function constructRecipeTool(tool, authorization, userID, recipeID) {
-    global.logger.info(`CONSTRUCT RT: ${tool}`);
-    let toolID;
     try {
+      global.logger.info(`CONSTRUCT RT: ${tool}`);
+      let toolID;
       if (tool.quantity === -1) {
         // create dummy recipeTool
         const { data } = await axios.post(
@@ -287,12 +284,7 @@ module.exports = ({ db, dbPublic }) => {
         toolID = Number(tool.toolID);
         global.logger.info(`TOOLID IS: ${toolID}`);
       }
-    } catch (error) {
-      global.logger.error(`'constructRecipeTool' Failed when creating new tool. Failure: ${error.message}`);
-      throw errorGen(`'constructRecipeTool' Failed when creating new tool. Failure: ${error.message}`, 400);
-    }
-    // Then, create the recipeTool
-    try {
+      // Then, create the recipeTool
       global.logger.info(
         `CALLING RT CREATE WITH BODY: ${JSON.stringify({
           recipeID,
@@ -313,15 +305,14 @@ module.exports = ({ db, dbPublic }) => {
         { headers: { authorization } },
       );
       return { recipeToolID: data.recipeToolID, toolID: toolID };
-    } catch (error) {
-      global.logger.error(`'constructRecipeTool' Failed when creating recipeTool. Failure: ${error.message}`);
-      throw errorGen(`'constructRecipeTool' Failed when creating recipeTool. Failure: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes constructRecipeTool', 520, 'unhandledError_recipes-constructRecipeTool', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function constructRecipeStep(step, authorization, userID, recipeID) {
-    let stepID;
     try {
+      let stepID;
       if (step.stepID === 0) {
         // if stepID is not provided, create a new step
         const { data } = await axios.post(
@@ -339,12 +330,7 @@ module.exports = ({ db, dbPublic }) => {
       } else {
         stepID = step.stepID;
       }
-    } catch (error) {
-      global.logger.error(`'constructRecipeStep' Failed when creating new step. Failure: ${error.message}`);
-      throw errorGen(`'constructRecipeStep' Failed when creating new step. Failure: ${error.message}`, 400);
-    }
-    // Then, create the recipeStep
-    try {
+      // Then, create the recipeStep
       const body = {
         authorization,
         userID,
@@ -366,48 +352,52 @@ module.exports = ({ db, dbPublic }) => {
           },
         });
       }
-      global.logger.error(`'constructRecipeStep' Failed when creating recipeStep. Failure: ${error.message}`);
-      throw errorGen(`'constructRecipeStep' Failed when creating recipeStep. Failure: ${error.message}`, 400);
+      throw errorGen('Unhandled Error in recipes constructRecipeStep', 520, 'unhandledError_recipes-constructRecipeStep', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function deleteItem(item, authorization) {
-    if (item.recipeID) {
-      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${item.recipeID}`, {
-        headers: {
-          authorization,
-        },
-      });
-    } else if (item.subscriptionID) {
-      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe/${item.subscriptionID}`, {
-        headers: {
-          authorization,
-        },
-      });
-    } else if (item.ingredientID) {
-      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/${item.ingredientID}`, {
-        headers: {
-          authorization,
-        },
-      });
-    } else if (item.toolID) {
-      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/tools/${item.toolID}`, {
-        headers: {
-          authorization,
-        },
-      });
-    } else if (item.stepID) {
-      await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/steps/${item.stepID}`, {
-        headers: {
-          authorization,
-        },
-      });
+    try {
+      if (item.recipeID) {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${item.recipeID}`, {
+          headers: {
+            authorization,
+          },
+        });
+      } else if (item.subscriptionID) {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/subscribe/${item.subscriptionID}`, {
+          headers: {
+            authorization,
+          },
+        });
+      } else if (item.ingredientID) {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients/${item.ingredientID}`, {
+          headers: {
+            authorization,
+          },
+        });
+      } else if (item.toolID) {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/tools/${item.toolID}`, {
+          headers: {
+            authorization,
+          },
+        });
+      } else if (item.stepID) {
+        await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/steps/${item.stepID}`, {
+          headers: {
+            authorization,
+          },
+        });
+      }
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes deleteItem', 520, 'unhandledError_recipes-deleteItem', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getAll(options) {
+    const { userID, recipeIDs, title, recipeCategoryID } = options;
+
     try {
-      const { userID, recipeIDs, title, recipeCategoryID } = options;
       let q = db.from('recipes').select().filter('userID', 'eq', userID).eq('deleted', false).order('recipeID', { ascending: true });
       if (recipeIDs) {
         q = q.in('recipeID', recipeIDs);
@@ -426,9 +416,8 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Got ${recipes.length} recipes`);
       return recipes;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getAll', 520, 'unhandledError_recipes-getAll', false, 2); //message, code, name, operational, severity
     }
   }
 
@@ -442,15 +431,15 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Got ${discoverRecipes.length} discoverRecipes`);
       return discoverRecipes;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getDiscover', 520, 'unhandledError_recipes-getDiscover', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getByID(options) {
+    const { recipeID } = options;
+
     try {
-      const { recipeID } = options;
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
         global.logger.error(`Error getting recipe: ${recipeID}: ${error.message}`);
@@ -458,15 +447,15 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Got recipe`);
       return recipe;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getByID', 520, 'unhandledError_recipes-getByID', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getRecipeIngredients(options) {
+    const { recipeID } = options;
+
     try {
-      const { recipeID } = options;
       const { data: recipeIngredients, error } = await db.from('recipeIngredients').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
         global.logger.error(`Error getting recipeIngredients for recipeID: ${recipeID}: ${error.message}`);
@@ -474,15 +463,15 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Got ${recipeIngredients.length} recipeIngredients for recipeID: ${recipeID}`);
       return recipeIngredients;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getRecipeIngredients', 520, 'unhandledError_recipes-getRecipeIngredients', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getRecipeTools(options) {
+    const { recipeID } = options;
+
     try {
-      const { recipeID } = options;
       const { data: recipeTools, error } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
         global.logger.error(`Error getting recipeTools for recipeID: ${recipeID}: ${error.message}`);
@@ -490,15 +479,15 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Got ${recipeTools.length} recipeTools for recipeID: ${recipeID}`);
       return recipeTools;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getRecipeTools', 520, 'unhandledError_recipes-getRecipeTools', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getRecipeSteps(options) {
+    const { recipeID } = options;
+
     try {
-      const { recipeID } = options;
       const { data: recipeSteps, error } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('deleted', false);
 
       if (error) {
@@ -507,15 +496,15 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`);
       return recipeSteps;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getRecipeSteps', 520, 'unhandledError_recipes-getRecipeSteps', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getRecipeSubscriptions(options) {
+    const { userID, authorization } = options;
+
     try {
-      const { userID, authorization } = options;
       const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('userID', userID).eq('deleted', false);
       if (error) {
         global.logger.error(`Error getting recipeSubscriptions for userID: ${userID}: ${error.message}`);
@@ -551,15 +540,15 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`);
       return enhancedSubscriptions;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getRecipeSubscriptions', 520, 'unhandledError_recipes-getRecipeSubscriptions', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function getRecipeSubscriptionsByRecipeID(options) {
+    const { recipeID } = options;
+
     try {
-      const { recipeID } = options;
       const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('sourceRecipeID', recipeID).eq('deleted', false);
       if (error) {
         global.logger.error(`Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`);
@@ -567,15 +556,15 @@ module.exports = ({ db, dbPublic }) => {
       }
       global.logger.info(`Found ${subscriptions.length} recipeSubscriptions for recipeID: ${recipeID}`);
       return subscriptions;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes getRecipeSubscriptionsByRecipeID', 520, 'unhandledError_recipes-getRecipeSubscriptionsByRecipeID', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function create(options) {
+    const { customID, authorization, userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = options;
+
     try {
-      const { customID, authorization, userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = options;
       const status = 'noIngredients';
 
       if (!title) {
@@ -638,9 +627,8 @@ module.exports = ({ db, dbPublic }) => {
         type: recipe.type,
         version: 1,
       };
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes create', 520, 'unhandledError_recipes-create', false, 2); //message, code, name, operational, severity
     }
   }
 
@@ -902,9 +890,8 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`vertexAI Cost (all unit conversion): ${vertexaiUnitConversionCost}`);
       sendSSEMessage(userID, { message: `done` });
       return recipeID;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes processRecipeJSON', 520, 'unhandledError_recipes-processRecipeJSON', false, 2); //message, code, name, operational, severity
     }
   }
 
@@ -918,9 +905,9 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function createVision(options) {
-    try {
-      const { userID, recipeSourceImageURL, recipePhotoURL, authorization } = options;
+    const { userID, recipeSourceImageURL, recipePhotoURL, authorization } = options;
 
+    try {
       // call openaiHandler to build recipe json
       let elapsedTime = 0;
       const timer = setInterval(() => {
@@ -948,41 +935,44 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`);
 
       return recipeID;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes createVision', 520, 'unhandledError_recipes-createVision', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function createFromURL(options) {
     const { userID, recipeURL, recipePhotoURL, authorization } = options;
 
-    // max attempts to create recipe from URL
-    const maxAttempts = 3;
+    try {
+      // max attempts to create recipe from URL
+      const maxAttempts = 3;
 
-    // attempt to create recipe from URL
-    let recipeID;
-    let attempt = 1;
-    while (attempt <= maxAttempts) {
-      try {
-        global.logger.info(`Attempt ${attempt} to create recipe from URL: ${recipeURL}`);
-        recipeID = await createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL);
-        break;
-      } catch (error) {
-        global.logger.error(`Error creating recipe from URL: ${error.message}`);
-        if (attempt === maxAttempts) {
-          throw errorGen(`Error creating recipe from URL: ${error.message}`, 400);
+      // attempt to create recipe from URL
+      let recipeID;
+      let attempt = 1;
+      while (attempt <= maxAttempts) {
+        try {
+          global.logger.info(`Attempt ${attempt} to create recipe from URL: ${recipeURL}`);
+          recipeID = await createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL);
+          break;
+        } catch (error) {
+          global.logger.error(`Error creating recipe from URL: ${error.message}`);
+          if (attempt === maxAttempts) {
+            throw errorGen(`Reached Max retries for creating recipe from URL: ${error.message}`, 500);
+          }
+          attempt++;
         }
-        attempt++;
       }
+      global.logger.info(`Created recipe from URL: ${recipeURL}`);
+      return recipeID;
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes createFromURL', 520, 'unhandledError_recipes-createFromURL', false, 2); //message, code, name, operational, severity
     }
-    global.logger.info(`Created recipe from URL: ${recipeURL}`);
-    return recipeID;
   }
 
   async function createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL) {
-    global.logger.info(`Creating recipe from URL: ${recipeURL}`);
     try {
+      global.logger.info(`Creating recipe from URL: ${recipeURL}`);
       // call 'getHtml' to get recipe details from URL
       sendSSEMessage(userID, { message: `Opening provided web page...` });
       const { html, error } = await getHtml(recipeURL, userID, authorization, 'generateRecipeFromURL');
@@ -1019,116 +1009,119 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info(`*TIME* URL recipe and construct total: ${totalDuration / 1000} seconds`);
 
       return recipeID;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes createFromURLAttempt', 520, 'unhandledError_recipes-createFromURLAttempt', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function matchIngredients(ingredients, authorization, userID, userIngredients) {
-    const userIngredientsInfo = userIngredients.map((i) => {
-      return { name: i.name, ingredientID: i.ingredientID, purchaseUnit: i.purchaseUnit, needsReview: true };
-    });
-    const matchedIngredients = [];
+    try {
+      const userIngredientsInfo = userIngredients.map((i) => {
+        return { name: i.name, ingredientID: i.ingredientID, purchaseUnit: i.purchaseUnit, needsReview: true };
+      });
+      const matchedIngredients = [];
 
-    // First, search for exact name match
-    for (let i = 0; i < ingredients.length; i++) {
-      const primaryMatchResult = await matchIngredientByName(userID, authorization, ingredients[i], userIngredientsInfo);
-      matchedIngredients.push(primaryMatchResult);
-    }
-    global.logger.info(`MATCHED INGREDIENTS AFTER PRIMARY METHOD: ${JSON.stringify(matchedIngredients)}`);
+      // First, search for exact name match
+      for (let i = 0; i < ingredients.length; i++) {
+        const primaryMatchResult = await matchIngredientByName(userID, authorization, ingredients[i], userIngredientsInfo);
+        matchedIngredients.push(primaryMatchResult);
+      }
+      global.logger.info(`MATCHED INGREDIENTS AFTER PRIMARY METHOD: ${JSON.stringify(matchedIngredients)}`);
 
-    const matchedTwiceIngredients = [];
-    // Fallback to try using AI to find matches
-    const promises = [];
-    const userIngredientNames = userIngredients.map((i) => i.name);
-    for (let i = 0; i < matchedIngredients.length; i++) {
-      // if the matchedIngredient has an ingredientID of 0, we need to try asking AI to match it with an existing userIngredient. Make a promise of each call to the 'matchRecipeItemRequest' function and add to promises array. If the ingredientID is not 0, we already found a match and can skip this item.
-      if (matchedIngredients[i].ingredientID === 0) {
-        global.logger.info(`MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`);
-        promises.push(
-          matchRecipeIngredientRequest(userID, authorization, matchedIngredients[i].name, userIngredientNames)
-            .then((data) => {
-              const ingredientJSON = data.response;
-              if (ingredientJSON.error) {
-                global.logger.error(`Error matching ingredient with AI: ${ingredientJSON.error}`);
-                return { ...matchedIngredients[i], invalid: true, cost: data.cost };
-              }
-              global.logger.info(`AI MATCHED INGREDIENT: ${JSON.stringify(ingredientJSON)}`);
-              if (ingredientJSON.foundMatch) {
-                const ingredientID = userIngredients.find((i) => i.name === ingredientJSON.ingredientName);
-                if (!ingredientID) {
+      const matchedTwiceIngredients = [];
+      // Fallback to try using AI to find matches
+      const promises = [];
+      const userIngredientNames = userIngredients.map((i) => i.name);
+      for (let i = 0; i < matchedIngredients.length; i++) {
+        // if the matchedIngredient has an ingredientID of 0, we need to try asking AI to match it with an existing userIngredient. Make a promise of each call to the 'matchRecipeItemRequest' function and add to promises array. If the ingredientID is not 0, we already found a match and can skip this item.
+        if (matchedIngredients[i].ingredientID === 0) {
+          global.logger.info(`MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`);
+          promises.push(
+            matchRecipeIngredientRequest(userID, authorization, matchedIngredients[i].name, userIngredientNames)
+              .then((data) => {
+                const ingredientJSON = data.response;
+                if (ingredientJSON.error) {
                   global.logger.error(`Error matching ingredient with AI: ${ingredientJSON.error}`);
                   return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                 }
-                return {
-                  ...matchedIngredients[i],
-                  ingredientID: Number(ingredientID.ingredientID),
-                  purchaseUnit: ingredientJSON.purchaseUnit,
-                  cost: data.cost,
-                  needsReview: false,
-                };
-              } else {
-                const validUnits = process.env.MEASUREMENT_UNITS.split(',');
-                if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
-                  global.logger.error(`AI provided Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`);
-                  return { ...matchedIngredients[i], invalid: true, cost: data.cost };
+                global.logger.info(`AI MATCHED INGREDIENT: ${JSON.stringify(ingredientJSON)}`);
+                if (ingredientJSON.foundMatch) {
+                  const ingredientID = userIngredients.find((i) => i.name === ingredientJSON.ingredientName);
+                  if (!ingredientID) {
+                    global.logger.error(`Error matching ingredient with AI: ${ingredientJSON.error}`);
+                    return { ...matchedIngredients[i], invalid: true, cost: data.cost };
+                  }
+                  return {
+                    ...matchedIngredients[i],
+                    ingredientID: Number(ingredientID.ingredientID),
+                    purchaseUnit: ingredientJSON.purchaseUnit,
+                    cost: data.cost,
+                    needsReview: false,
+                  };
+                } else {
+                  const validUnits = process.env.MEASUREMENT_UNITS.split(',');
+                  if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
+                    global.logger.error(`AI provided Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`);
+                    return { ...matchedIngredients[i], invalid: true, cost: data.cost };
+                  }
+                  if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
+                    global.logger.error(`AI provided Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
+                    return { ...matchedIngredients[i], invalid: true, cost: data.cost };
+                  }
+                  return {
+                    ...matchedIngredients[i],
+                    ingredientID: 0,
+                    lifespanDays: ingredientJSON.lifespanDays,
+                    purchaseUnit: ingredientJSON.purchaseUnit,
+                    needsReview: true,
+                    cost: data.cost,
+                  };
                 }
-                if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
-                  global.logger.error(`AI provided Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.purchaseUnit}, removing from recipe.`);
-                  return { ...matchedIngredients[i], invalid: true, cost: data.cost };
-                }
-                return {
-                  ...matchedIngredients[i],
-                  ingredientID: 0,
-                  lifespanDays: ingredientJSON.lifespanDays,
-                  purchaseUnit: ingredientJSON.purchaseUnit,
-                  needsReview: true,
-                  cost: data.cost,
-                };
-              }
-              // add character count to vertexaiCharacters
-            })
-            .catch((error) => {
-              global.logger.error(`Error matching ingredient with AI: ${error.message}`);
-              return { ...matchedIngredients[i], invalid: true };
-            }),
-        );
-      } else {
-        // stuff that was already matched via exact name match
-        matchedTwiceIngredients.push(matchedIngredients[i]);
+                // add character count to vertexaiCharacters
+              })
+              .catch((error) => {
+                global.logger.error(`Error matching ingredient with AI: ${error.message}`);
+                return { ...matchedIngredients[i], invalid: true };
+              }),
+          );
+        } else {
+          // stuff that was already matched via exact name match
+          matchedTwiceIngredients.push(matchedIngredients[i]);
+        }
       }
-    }
 
-    const results = await Promise.allSettled(promises);
-    // calculate vertexaiCost
-    let vertexaiCost = 0;
-    // Filter successful and valid responses and add to matchedTwiceIngredients
-    for (let i = 0; i < results.length; i++) {
-      vertexaiCost += results[i].value?.cost || 0;
-      if (results[i].status === 'fulfilled' && results[i].invalid) {
-        global.logger.error(`Invalid ingredient: ${JSON.stringify(results[i])}`);
-        //don't add invalid ingredients to the matchedTwiceIngredients array
+      const results = await Promise.allSettled(promises);
+      // calculate vertexaiCost
+      let vertexaiCost = 0;
+      // Filter successful and valid responses and add to matchedTwiceIngredients
+      for (let i = 0; i < results.length; i++) {
+        vertexaiCost += results[i].value?.cost || 0;
+        if (results[i].status === 'fulfilled' && results[i].invalid) {
+          global.logger.error(`Invalid ingredient: ${JSON.stringify(results[i])}`);
+          //don't add invalid ingredients to the matchedTwiceIngredients array
+        }
+        if (results[i].status === 'fulfilled' && results[i].value && !results[i].value.invalid) {
+          global.logger.info(`PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`);
+          matchedTwiceIngredients.push(results[i].value);
+        }
       }
-      if (results[i].status === 'fulfilled' && results[i].value && !results[i].value.invalid) {
-        global.logger.info(`PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`);
-        matchedTwiceIngredients.push(results[i].value);
-      }
-    }
 
-    return { matchedTwiceIngredients, vertexaiCost };
+      return { matchedTwiceIngredients, vertexaiCost };
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes matchIngredients', 520, 'unhandledError_recipes-matchIngredients', false, 2); //message, code, name, operational, severity
+    }
   }
 
   async function matchIngredientByName(userID, authorization, recipeIngredient, userIngredientNames) {
-    // search for exact name match (case-insensitive) among existing user ingredients for provided recipe ingredient. If one is found, return resulting recipeIngredient with ingredientID and retrieved purchasedUnitRatio, also including the 'needsReview' value provided by getPurchaseUnitRatio. If no match is found, return recipeIngredient with ingredientID of 0.
-    global.logger.info(`IN PRIMARY INGREDIENT NAME MATCH. RI: ${JSON.stringify(recipeIngredient)}`);
+    try {
+      // search for exact name match (case-insensitive) among existing user ingredients for provided recipe ingredient. If one is found, return resulting recipeIngredient with ingredientID and retrieved purchasedUnitRatio, also including the 'needsReview' value provided by getPurchaseUnitRatio. If no match is found, return recipeIngredient with ingredientID of 0.
+      global.logger.info(`IN PRIMARY INGREDIENT NAME MATCH. RI: ${JSON.stringify(recipeIngredient)}`);
 
-    const userIngredientMatch = userIngredientNames.find((i) => i.name.toLowerCase() === recipeIngredient.name.toLowerCase());
+      const userIngredientMatch = userIngredientNames.find((i) => i.name.toLowerCase() === recipeIngredient.name.toLowerCase());
 
-    if (userIngredientMatch) {
-      global.logger.info(`FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`);
+      if (userIngredientMatch) {
+        global.logger.info(`FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`);
 
-      try {
         global.logger.info(`GETTING PUR FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`);
         let purchaseUnitRatio;
         let needsReview;
@@ -1160,106 +1153,118 @@ module.exports = ({ db, dbPublic }) => {
         }
 
         return result;
-      } catch (error) {
-        global.logger.error(`Error getting unitRatioEstimate from openAI: ${error.message}`);
-        throw errorGen(`Error in secondaryIngredientMatch: ${error.message}`, 400);
       }
-    }
 
-    global.logger.info(`NO MATCH FOUND FOR ${recipeIngredient.name}`);
-    return {
-      name: recipeIngredient.name,
-      measurement: recipeIngredient.measurement,
-      measurementUnit: recipeIngredient.measurementUnit,
-      ingredientID: 0,
-      lifespanDays: recipeIngredient.lifespanDays,
-      purchaseUnit: recipeIngredient.purchaseUnit,
-      gramRatio: recipeIngredient.gramRatio,
-      purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
-      preparation: recipeIngredient.preparation,
-      component: recipeIngredient.component,
-    };
+      global.logger.info(`NO MATCH FOUND FOR ${recipeIngredient.name}`);
+      return {
+        name: recipeIngredient.name,
+        measurement: recipeIngredient.measurement,
+        measurementUnit: recipeIngredient.measurementUnit,
+        ingredientID: 0,
+        lifespanDays: recipeIngredient.lifespanDays,
+        purchaseUnit: recipeIngredient.purchaseUnit,
+        gramRatio: recipeIngredient.gramRatio,
+        purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
+        preparation: recipeIngredient.preparation,
+        component: recipeIngredient.component,
+      };
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes matchIngredientByName', 520, 'unhandledError_recipes-matchIngredientByName', false, 2); //message, code, name, operational, severity
+    }
   }
 
   async function matchTools(tools, authorization, userID) {
-    // get user tools from supabase
-    const { data: userTools, error: userToolsError } = await db.from('tools').select('name, toolID').eq('userID', userID).eq('deleted', false);
-    if (userToolsError) {
-      global.logger.error(`Error getting userTools: ${userToolsError.message}`);
-      throw errorGen(`Error getting userTools: ${userToolsError.message}`, 400);
-    }
-    const matchedTools = [];
-
-    // First, try using AI to find matches
-    const promises = tools.map((tool) => {
-      if (tool.quantity === -1) {
-        // Return a resolved promise for dummy tools
-        return Promise.resolve({ quantity: -1 });
+    try {
+      // get user tools from supabase
+      const { data: userTools, error: userToolsError } = await db.from('tools').select('name, toolID').eq('userID', userID).eq('deleted', false);
+      if (userToolsError) {
+        global.logger.error(`Error getting userTools: ${userToolsError.message}`);
+        throw errorGen(`Error getting userTools: ${userToolsError.message}`, 400);
       }
-      return matchRecipeItemRequest(userID, authorization, 'findMatchingTool', tool.name, userTools)
-        .then((data) => {
-          const toolJSON = JSON.parse(data.response);
-          return toolJSON.toolID ? { toolID: Number(toolJSON.toolID), name: tool.name, quantity: tool.quantity } : { toolID: 0, quantity: tool.quantity, name: tool.name };
-        })
-        .catch((error) => {
-          global.logger.error(`Error matching tool: ${error.message}`);
-          return null;
-        });
-    });
-    const results = await Promise.allSettled(promises);
+      const matchedTools = [];
 
-    // Filter successful responses and add to matchedTools
-    for (let i = 0; i < results.length; i++) {
-      if (results[i].status === 'fulfilled' && results[i].value) {
-        if (results[i].value.toolID !== 0) {
-          matchedTools.push(results[i].value);
-        } else {
-          // fallback match attempt looking for exact string match on name
-          const secondaryMatchResult = await secondaryToolsMatch(results[i].value, userTools);
-          matchedTools.push(secondaryMatchResult);
+      // First, try using AI to find matches
+      const promises = tools.map((tool) => {
+        if (tool.quantity === -1) {
+          // Return a resolved promise for dummy tools
+          return Promise.resolve({ quantity: -1 });
+        }
+        return matchRecipeItemRequest(userID, authorization, 'findMatchingTool', tool.name, userTools)
+          .then((data) => {
+            const toolJSON = JSON.parse(data.response);
+            return toolJSON.toolID ? { toolID: Number(toolJSON.toolID), name: tool.name, quantity: tool.quantity } : { toolID: 0, quantity: tool.quantity, name: tool.name };
+          })
+          .catch((error) => {
+            global.logger.error(`Error matching tool: ${error.message}`);
+            return null;
+          });
+      });
+      const results = await Promise.allSettled(promises);
+
+      // Filter successful responses and add to matchedTools
+      for (let i = 0; i < results.length; i++) {
+        if (results[i].status === 'fulfilled' && results[i].value) {
+          if (results[i].value.toolID !== 0) {
+            matchedTools.push(results[i].value);
+          } else {
+            // fallback match attempt looking for exact string match on name
+            const secondaryMatchResult = await secondaryToolsMatch(results[i].value, userTools);
+            matchedTools.push(secondaryMatchResult);
+          }
         }
       }
-    }
 
-    return matchedTools;
+      return matchedTools;
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes matchTools', 520, 'unhandledError_recipes-matchTools', false, 2); //message, code, name, operational, severity
+    }
   }
 
   async function secondaryToolsMatch(recipeTool, userTools) {
-    global.logger.info(`IN SECONDARY TOOLS MATCH. RT: ${JSON.stringify(recipeTool)}`);
-    const userToolMatch = userTools.find((t) => t.name.toLowerCase() === recipeTool.name.toLowerCase());
-    if (userToolMatch) {
-      global.logger.info(`FOUND MATCH FOR ${recipeTool.name} in ${JSON.stringify(userToolMatch)}`);
-      return { toolID: Number(userToolMatch.toolID), name: recipeTool.name, quantity: recipeTool.quantity };
+    try {
+      global.logger.info(`IN SECONDARY TOOLS MATCH. RT: ${JSON.stringify(recipeTool)}`);
+      const userToolMatch = userTools.find((t) => t.name.toLowerCase() === recipeTool.name.toLowerCase());
+      if (userToolMatch) {
+        global.logger.info(`FOUND MATCH FOR ${recipeTool.name} in ${JSON.stringify(userToolMatch)}`);
+        return { toolID: Number(userToolMatch.toolID), name: recipeTool.name, quantity: recipeTool.quantity };
+      }
+      global.logger.info(`NO MATCH FOUND FOR ${recipeTool.name}`);
+      return { toolID: 0, name: recipeTool.name, quantity: recipeTool.quantity };
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes secondaryToolsMatch', 520, 'unhandledError_recipes-secondaryToolsMatch', false, 2); //message, code, name, operational, severity
     }
-    global.logger.info(`NO MATCH FOUND FOR ${recipeTool.name}`);
-    return { toolID: 0, name: recipeTool.name, quantity: recipeTool.quantity };
   }
 
   async function matchCategory(recipeCategory, authorization, userID) {
-    // get categories from supabase
-    const { data: categories, error: categoriesError } = await db.from('recipeCategories').select('recipeCategoryID, name');
-    if (categoriesError) {
-      global.logger.error(`Error getting categories: ${categoriesError.message}`);
-      throw errorGen(`Error getting categories: ${categoriesError.message}`, 400);
-    }
-    const { response, error } = await matchRecipeItemRequest(userID, authorization, 'findMatchingCategory', recipeCategory, categories);
-    if (error) {
-      global.logger.error(`Error matching category: ${error.message}`);
-      throw errorGen(`Error matching category: ${error.message}`, 400);
-    }
-    const categoryJSON = JSON.parse(response);
+    try {
+      // get categories from supabase
+      const { data: categories, error: categoriesError } = await db.from('recipeCategories').select('recipeCategoryID, name');
+      if (categoriesError) {
+        global.logger.error(`Error getting categories: ${categoriesError.message}`);
+        throw errorGen(`Error getting categories: ${categoriesError.message}`, 400);
+      }
+      const { response, error } = await matchRecipeItemRequest(userID, authorization, 'findMatchingCategory', recipeCategory, categories);
+      if (error) {
+        global.logger.error(`Error matching category: ${error.message}`);
+        throw errorGen(`Error matching category: ${error.message}`, 400);
+      }
+      const categoryJSON = JSON.parse(response);
 
-    if (categoryJSON.recipeCategoryID) {
-      return categoryJSON.recipeCategoryID;
-    } else {
-      // return recipeCategoryID for 'Other'
-      return 2023112900000005;
+      if (categoryJSON.recipeCategoryID) {
+        return categoryJSON.recipeCategoryID;
+      } else {
+        // return recipeCategoryID for 'Other'
+        return 2023112900000005;
+      }
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes matchCategory', 520, 'unhandledError_recipes-matchCategory', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function update(options) {
+    const { recipeID, authorization, recipeCategoryID, timePrep, timeBake } = options;
+
     try {
-      const { recipeID, authorization, recipeCategoryID, timePrep, timeBake } = options;
       //verify that the provided recipeID exists, return error if not
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
 
@@ -1316,50 +1321,43 @@ module.exports = ({ db, dbPublic }) => {
           updateFields[key] = options[key];
         }
       }
-
-      try {
-        const updatedRecipe = await updater(options.userID, authorization, 'recipeID', recipeID, 'recipes', updateFields);
-        // if type was updated to 'public', call 'addFolloweePublicRecipeCreatedMessages'
-        if (updateFields.type === 'public') {
-          // messageProcessor.addFolloweePublicRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
-          axios.post(
-            `${process.env.NODE_HOST}:${process.env.PORT}/messages`,
-            {
-              userID: options.userID,
-              message: {
-                type: 'addFolloweePublicRecipeCreatedMessages',
-                recipeID: options.recipeID,
-                recipeTitle: recipe[0].title,
-              },
+      const updatedRecipe = await updater(options.userID, authorization, 'recipeID', recipeID, 'recipes', updateFields);
+      // if type was updated to 'public', call 'addFolloweePublicRecipeCreatedMessages'
+      if (updateFields.type === 'public') {
+        // messageProcessor.addFolloweePublicRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
+        axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/messages`,
+          {
+            userID: options.userID,
+            message: {
+              type: 'addFolloweePublicRecipeCreatedMessages',
+              recipeID: options.recipeID,
+              recipeTitle: recipe[0].title,
             },
-            { headers: { authorization } },
-          );
-        }
-
-        // if type was updated to 'heirloom', call 'addFriendHeirloomRecipeCreatedMessages'
-        if (updateFields.type === 'heirloom') {
-          // messageProcessor.addFriendHeirloomRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
-          axios.post(
-            `${process.env.NODE_HOST}:${process.env.PORT}/messages`,
-            {
-              userID: options.userID,
-              message: {
-                type: 'addFriendHeirloomRecipeCreatedMessages',
-                recipeID: options.recipeID,
-                recipeTitle: recipe[0].title,
-              },
-            },
-            { headers: { authorization } },
-          );
-        }
-        return updatedRecipe;
-      } catch (error) {
-        global.logger.error(`Error calling updater: ${error.message}`);
-        throw errorGen(`Error calling updater: ${error.message}`, 400);
+          },
+          { headers: { authorization } },
+        );
       }
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+
+      // if type was updated to 'heirloom', call 'addFriendHeirloomRecipeCreatedMessages'
+      if (updateFields.type === 'heirloom') {
+        // messageProcessor.addFriendHeirloomRecipeCreatedMessages({ userID: options.userID, recipeID: options.recipeID, recipeTitle: recipe.title });
+        axios.post(
+          `${process.env.NODE_HOST}:${process.env.PORT}/messages`,
+          {
+            userID: options.userID,
+            message: {
+              type: 'addFriendHeirloomRecipeCreatedMessages',
+              recipeID: options.recipeID,
+              recipeTitle: recipe[0].title,
+            },
+          },
+          { headers: { authorization } },
+        );
+      }
+      return updatedRecipe;
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes update', 520, 'unhandledError_recipes-update', false, 2); //message, code, name, operational, severity
     }
   }
 
@@ -1378,14 +1376,9 @@ module.exports = ({ db, dbPublic }) => {
 
       //if recipe has photoURL, delete photo from s3
       if (recipe[0].photoURL) {
-        try {
-          const url = `${process.env.NODE_HOST}:${process.env.PORT}/uploads/image?userID=${encodeURIComponent(options.userID)}&photoURL=${encodeURIComponent(recipe[0].photoURL)}&type=recipe&id=${options.recipeID}`;
-          await axios.delete(url, { headers: { authorization: options.authorization } });
-          global.logger.info(`Deleted photo for recipeID ${options.recipeID}`);
-        } catch (error) {
-          global.logger.error(`Error deleting recipe photo: ${error.message}`);
-          throw errorGen(`Error deleting recipe photo: ${error.message}`, 400);
-        }
+        const url = `${process.env.NODE_HOST}:${process.env.PORT}/uploads/image?userID=${encodeURIComponent(options.userID)}&photoURL=${encodeURIComponent(recipe[0].photoURL)}&type=recipe&id=${options.recipeID}`;
+        await axios.delete(url, { headers: { authorization: options.authorization } });
+        global.logger.info(`Deleted photo for recipeID ${options.recipeID}`);
       }
 
       // attempt to delete the recipe and all component data
@@ -1406,77 +1399,50 @@ module.exports = ({ db, dbPublic }) => {
       createRecipeLog(options.userID, options.authorization, 'deleteRecipe', Number(options.recipeID), null, null, null, `deleted recipe: ${recipe[0].title}, ID: ${options.recipeID}`);
       global.logger.info(`Deleted recipe ID: ${options.recipeID}`);
       return { success: true };
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes deleteRecipe', 520, 'unhandledError_recipes-deleteRecipe', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function useRecipe(options) {
     const { recipeID, authorization, satisfaction, difficulty, note, checkIngredientStock } = options;
-    //ensure provided satisfaction is valid number one through ten
-    if (!satisfaction || satisfaction < 1 || satisfaction > 10) {
-      global.logger.error(`Satisfaction should be integer between 1 and 10`);
-      throw errorGen(`Satisfaction should be integer between 1 and 10`, 400);
-    }
-
-    //ensure provided difficulty is valid number one through ten
-    if (!difficulty || difficulty < 1 || difficulty > 10) {
-      global.logger.error(`Difficulty should be integer between 1 and 10`);
-      throw errorGen(`Difficulty should be integer between 1 and 10`, 400);
-    }
-
-    //ensure provided recipeID exists
-    const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
-    if (error) {
-      global.logger.error(`Error getting recipe details: ${error.message}`);
-      throw errorGen(`Error getting recipe details while using recipe: ${error.message}`, 400);
-    }
-    if (!recipe.length) {
-      global.logger.error(`Recipe with provided ID ${recipeID} does not exist`);
-      throw errorGen(`Recipe with provided ID ${recipeID} does not exist`, 400);
-    }
-
-    if (checkIngredientStock) {
-      //make call to supply service to check whether there is sufficient stock to make this recipe
-      const { data: supplyCheckResult, error: supplyCheckError } = await supplyCheckRecipe(options.userID, authorization, recipeID);
-      if (supplyCheckError) {
-        global.logger.error(`Error checking supply for recipeID: ${recipeID} : ${supplyCheckError}`);
-        throw errorGen(`Error checking supply for recipeID: ${recipeID}: ${supplyCheckError}`, 400);
-      }
-      if (supplyCheckResult.status === 'insufficient') {
-        global.logger.error(`Insufficient stock to use recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`);
-        throw errorGen(`Insufficient stock to make recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`, 400);
-      }
-    }
 
     try {
-      //get list of related recipeComponents and use each
-      // try {
-      //   const { data: relatedRecipeComponents, error: componentError } = await db.from('recipeComponents').select().eq('recipeID', recipeID).eq('deleted', false);
-      //   if (componentError) {
-      //     global.logger.error(`Error getting related recipeComponents for recipe to use: ${recipeID} : ${componentError.message}`);
-      //     throw errorGen(`Error getting related recipeComponents to use recipe: ${recipeID} : ${componentError.message}`, 400);
-      //   }
+      //ensure provided satisfaction is valid number one through ten
+      if (!satisfaction || satisfaction < 1 || satisfaction > 10) {
+        global.logger.error(`Satisfaction should be integer between 1 and 10`);
+        throw errorGen(`Satisfaction should be integer between 1 and 10`, 400);
+      }
 
-      //   //use any associated recipeComponent entries;
-      //   for (let i = 0; i < relatedRecipeComponents.length; i++) {
-      //     const { data: recipeComponentUseResult } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/use/${relatedRecipeComponents[i].recipeComponentID}`, {
-      //       authorization,
-      //       userID: options.userID,
-      //     });
-      //     if (recipeComponentUseResult.error) {
-      //       global.logger.error(`Error using recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} while using recipe ID: ${recipeID} : ${recipeComponentUseResult.error}`);
-      //       throw errorGen(`Error using recipeComponentID: ${relatedRecipeComponents[i].recipeComponentID} while using recipe ID: ${recipeID} : ${recipeComponentUseResult.error}`, 400);
-      //     }
+      //ensure provided difficulty is valid number one through ten
+      if (!difficulty || difficulty < 1 || difficulty > 10) {
+        global.logger.error(`Difficulty should be integer between 1 and 10`);
+        throw errorGen(`Difficulty should be integer between 1 and 10`, 400);
+      }
 
-      //     //add a 'used' log entry
-      //     createRecipeLog(options.userID, authorization, 'useRecipeComponent', Number(relatedRecipeComponents[i].recipeComponentID), Number(relatedRecipeComponents[i].recipeID), null, null, `used recipeComponent: ${relatedRecipeComponents[i].title}`);
-      //   }
-      // } catch (error) {
-      //   global.logger.error(`Error using related recipeComponents: ${error.message}`);
-      //   throw errorGen(`Error using related recipeComponents: ${error.message}`, 400);
-      // }
+      //ensure provided recipeID exists
+      const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
+      if (error) {
+        global.logger.error(`Error getting recipe details: ${error.message}`);
+        throw errorGen(`Error getting recipe details while using recipe: ${error.message}`, 400);
+      }
+      if (!recipe.length) {
+        global.logger.error(`Recipe with provided ID ${recipeID} does not exist`);
+        throw errorGen(`Recipe with provided ID ${recipeID} does not exist`, 400);
+      }
+
+      if (checkIngredientStock) {
+        //make call to supply service to check whether there is sufficient stock to make this recipe
+        const { data: supplyCheckResult, error: supplyCheckError } = await supplyCheckRecipe(options.userID, authorization, recipeID);
+        if (supplyCheckError) {
+          global.logger.error(`Error checking supply for recipeID: ${recipeID} : ${supplyCheckError}`);
+          throw errorGen(`Error checking supply for recipeID: ${recipeID}: ${supplyCheckError}`, 400);
+        }
+        if (supplyCheckResult.status === 'insufficient') {
+          global.logger.error(`Insufficient stock to use recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`);
+          throw errorGen(`Insufficient stock to make recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`, 400);
+        }
+      }
 
       if (checkIngredientStock) {
         //use stock of each recipeIngredient
@@ -1495,16 +1461,15 @@ module.exports = ({ db, dbPublic }) => {
       }
       //return the log entry
       return log;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes useRecipes', 520, 'unhandledError_recipes-useRecipes', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function subscribeRecipe(options) {
-    try {
-      const { customID, sourceRecipeID, newRecipeID, userID } = options;
+    const { customID, sourceRecipeID, newRecipeID, userID } = options;
 
+    try {
       //ensure provided sourceRecipeID exists and is not deleted
       const { data: sourceRecipe, error } = await db.from('recipes').select().eq('recipeID', sourceRecipeID).eq('deleted', false);
       if (error) {
@@ -1546,17 +1511,12 @@ module.exports = ({ db, dbPublic }) => {
       const startDate = new Date();
       //if exists but deleted is true, undelete it and update startDate
       if (existingSubscription.length && existingSubscription[0].deleted) {
-        try {
-          const { data: updatedSubscription, error: undeleteError } = await db.from('recipeSubscriptions').update({ deleted: false, startDate }).eq('recipeSubscriptionID', existingSubscription[0].recipeSubscriptionID).single();
-          if (undeleteError) {
-            global.logger.error(`Error undeleting existing subscription: ${undeleteError.message}`);
-            throw errorGen(`Error undeleting existing subscription: ${undeleteError.message}`, 400);
-          }
-          return updatedSubscription.subscriptionID;
-        } catch (error) {
-          global.logger.error(`Error undeleting existing subscription: ${error.message}`);
-          throw errorGen(`Error undeleting existing subscription: ${error.message}`, 400);
+        const { data: updatedSubscription, error: undeleteError } = await db.from('recipeSubscriptions').update({ deleted: false, startDate }).eq('recipeSubscriptionID', existingSubscription[0].recipeSubscriptionID).single();
+        if (undeleteError) {
+          global.logger.error(`Error undeleting existing subscription: ${undeleteError.message}`);
+          throw errorGen(`Error undeleting existing subscription: ${undeleteError.message}`, 400);
         }
+        return updatedSubscription.subscriptionID;
       } else if (existingSubscription.length) {
         global.logger.error(`Error subscribing to recipe. sourceRecipeID: ${sourceRecipeID} is already subscribed to newRecipeID: ${newRecipeID}`);
         throw errorGen(`Error subscribing to recipe. sourceRecipeID: ${sourceRecipeID} is already subscribed to newRecipeID: ${newRecipeID}`, 400);
@@ -1565,20 +1525,18 @@ module.exports = ({ db, dbPublic }) => {
       //create subscription
       const { data: subscription, error: subscriptionError } = await db.from('recipeSubscriptions').insert({ userID, subscriptionID: customID, sourceRecipeID, newRecipeID, startDate }).select().single();
       if (subscriptionError) {
-        global.logger.error(`Error creating subscription: ${subscriptionError.message}`);
         throw errorGen(`Error creating subscription: ${subscriptionError.message}`, 400);
       }
       return subscription.subscriptionID;
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes subscribeRecipe', 520, 'unhandledError_recipes-subscribeRecipe', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function deleteRecipeSubscription(options) {
-    try {
-      const { subscriptionID, authorization, userID } = options;
+    const { subscriptionID, authorization, userID } = options;
 
+    try {
       //ensure provided subscriptionID exists and is not deleted
       const { data: subscription, error } = await db.from('recipeSubscriptions').select().eq('subscriptionID', subscriptionID).eq('deleted', false);
       if (error) {
@@ -1602,26 +1560,20 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       //make axios call to delete recipe
-      try {
-        const { data: deleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${subscription[0].newRecipeID}`, { headers: { authorization } });
-        if (deleteResult.error) {
-          global.logger.error(`Error deleting recipe: ${deleteResult.error}`);
-          throw errorGen(`Error deleting recipe: ${deleteResult.error}`, 400);
-        }
-      } catch (error) {
-        global.logger.error(`Error deleting recipe: ${error.message}`);
-        throw errorGen(`Error deleting recipe: ${error.message}`, 400);
+      const { data: deleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${subscription[0].newRecipeID}`, { headers: { authorization } });
+      if (deleteResult.error) {
+        global.logger.error(`Error deleting recipe: ${deleteResult.error}`);
+        throw errorGen(`Error deleting recipe: ${deleteResult.error}`, 400);
       }
-    } catch (error) {
-      global.logger.error(`Unhandled Error: ${error.message}`);
-      throw errorGen(`Unhandled Error: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in recipes deleteRecipeSubscription', 520, 'unhandledError_recipes-deleteRecipeSubscription', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function archiveCreatedRecipes(options) {
-    try {
-      const { userID, recipeIDs } = options;
+    const { userID, recipeIDs } = options;
 
+    try {
       // update all user recipes 'freeTier' property to false
       const { error } = await db.from('recipes').update({ freeTier: false }).neq('type', 'subscription').eq('userID', userID);
       if (error) {
@@ -1638,15 +1590,14 @@ module.exports = ({ db, dbPublic }) => {
 
       global.logger.info(`Updated 'freeTier' recipe selections: ${recipeIDs}`);
     } catch (err) {
-      global.logger.error(`Error archiving created recipes: ${err.message}`);
-      throw errorGen(`Error archiving created recipes: ${err.message}`, 400);
+      throw errorGen('Unhandled Error in recipes archiveCreatedRecipes', 520, 'unhandledError_recipes-archiveCreatedRecipes', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function archiveSubscriptions(options) {
-    try {
-      const { userID, subscriptionIDs } = options;
+    const { userID, subscriptionIDs } = options;
 
+    try {
       // update all user subscriptions 'freeTier' property to false
       const { error } = await db.from('recipes').update({ freeTier: false }).eq('type', 'subscription').eq('userID', userID);
       if (error) {
@@ -1663,8 +1614,7 @@ module.exports = ({ db, dbPublic }) => {
 
       global.logger.info(`Updated 'freeTier' subscription selections: ${subscriptionIDs}`);
     } catch (err) {
-      global.logger.error(`Error archiving subscriptions: ${err.message}`);
-      throw errorGen(`Error archiving subscriptions: ${err.message}`, 400);
+      throw errorGen('Unhandled Error in recipes archiveSubscriptions', 520, 'unhandledError_recipes-archiveSubscriptions', false, 2); //message, code, name, operational, severity
     }
   }
 
