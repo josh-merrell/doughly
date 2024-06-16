@@ -30,10 +30,9 @@ module.exports = ({ db }) => {
       const { data: logs, error } = await q;
 
       if (error) {
-        global.logger.error(`Error getting recipeFeedback logs: ${error.message}`);
-        throw errorGen('Error getting recipeFeedback logs', 400);
+        throw errorGen(`Error getting recipeFeedback logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got ${logs.length} recipeFeedback logs`);
+      global.logger.info({message:`Got ${logs.length} recipeFeedback logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return logs;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeFeedbackLogs getAll', err.code || 520, err.name || 'unhandledError_recipeFeedbackLogs-getAll', err.isOperational || false, err.severity || 2);
@@ -47,10 +46,9 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('recipeFeedbacks').select().eq('recipeFeedbackID', logID);
 
       if (error) {
-        global.logger.error(`Error getting recipeFeedback log: ${error.message}`);
-        throw errorGen(`Error getting recipeFeedback log: ${error.message}`, 400);
+        throw errorGen(`Error getting recipeFeedback log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got recipeFeedback log`);
+      global.logger.info({message:`Got recipeFeedback log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
       return log;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeFeedbackLogs getByID', err.code || 520, err.name || 'unhandledError_recipeFeedbackLogs-getByID', err.isOperational || false, err.severity || 2);
@@ -66,8 +64,7 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('recipeFeedbacks').insert({ recipeFeedbackID: customID, userID, logTime, recipeID, satisfaction, difficulty, note, message }).select('*').single();
 
       if (error) {
-        global.logger.error(`Error creating recipeFeedback log: ${error.message}`);
-        throw errorGen(`Error creating recipeFeedback log: ${error.message}`, 400);
+        throw errorGen(`Error creating recipeFeedback log: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       return {
         recipeFeedbackID: log.recipeFeedbackID,

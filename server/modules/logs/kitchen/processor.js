@@ -25,10 +25,9 @@ module.exports = ({ db }) => {
       const { data: logs, error } = await q;
 
       if (error) {
-        global.logger.error(`Error getting logs: ${error.message}`);
-        throw errorGen('Error getting logs', 400);
+        throw errorGen(`Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got ${logs.length} kitchen logs`);
+      global.logger.info({message:`Got ${logs.length} kitchen logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return logs;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in kitchenLogs getAll', err.code || 520, err.name || 'unhandledError_kitchenLogs-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -42,10 +41,9 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('kitchenLogs').select().eq('kitchenLogID', logID);
 
       if (error) {
-        global.logger.error(`Error getting log: ${error.message}`);
-        throw errorGen(`Error getting log: ${error.message}`, 400);
+        throw errorGen(`Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got log`);
+      global.logger.info({message:`Got log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
       return log;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in kitchenLogs getByID', err.code || 520, err.name || 'unhandledError_kitchenLogs-getByID', err.isOperational || false, err.severity || 2);
@@ -60,8 +58,7 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('kitchenLogs').insert({ kitchenLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
       if (error) {
-        global.logger.error(`Error creating kitchenLog: ${error.message}`);
-        throw errorGen(`Error creating kitchenLog: ${error.message}`, 400);
+        throw errorGen(`Error creating kitchenLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       return {
         kitchenLogID: log.kitchenLogID,

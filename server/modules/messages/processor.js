@@ -7,16 +7,14 @@ module.exports = ({ db, dbPublic }) => {
     const { userID } = options;
 
     try {
-      global.logger.info(`Getting all messages for user ${options.userID}`);
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required', 400`, 510, 'dataValidationErr', false, 3);
       }
 
       // get 'lastMessageSyncTime' from profile
       const { data: profile, error: profileError } = await dbPublic.from('profiles').select('lastMessageSyncTime').eq('user_id', userID).single();
       if (profileError) {
-        global.logger.error(`Error getting profile: ${profileError.message}`);
-        throw errorGen('Error getting profile', 500);
+        throw errorGen(`Error getting profile: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const lastMessageSyncTime = profile.lastMessageSyncTime;
 
@@ -40,17 +38,14 @@ module.exports = ({ db, dbPublic }) => {
         if (result.status === 'fulfilled') {
           messages.push(...result.value);
         } else {
-          // Log or handle the error as needed
-          global.logger.error(`Error in fetching messages: ${result.reason}`);
-          throw errorGen('Error in fetching messages', 500);
+          throw errorGen(result.reason.message || 'Unhandled Error in messages getAllMessages', result.reason.code || 520, result.reason.name || 'unhandledError_messages-getAllMessages', result.reason.isOperational || false, result.reason.severity || 2);
         }
       }
 
       // update 'lastMessageSyncTime' in profile (timestampz)
       const { error: updateError } = await dbPublic.from('profiles').update({ lastMessageSyncTime: new Date().toISOString() }).eq('user_id', userID);
       if (updateError) {
-        global.logger.error(`Error updating lastMessageSyncTime: ${updateError.message}`);
-        throw errorGen('Error updating lastMessageSyncTime', 500);
+        throw errorGen(`Error updating lastMessageSyncTime: ${updateError.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return messages;
@@ -64,10 +59,8 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
-      global.logger.info(`Acknowledging message ${message.type} for user ${userID}`);
-
       switch (message.type) {
         case 'ingredientStockExpired':
           await db.from('ingredientStocks').update({ appMessageStatus: 'acked' }).eq('userID', userID).eq('ingredientStockID', message.messageData.data.ingredientStockID);
@@ -91,7 +84,7 @@ module.exports = ({ db, dbPublic }) => {
           await db.from('messages').update({ status: 'acked' }).eq('messageID', message.messageData.data.messageID);
           break;
         default:
-          throw errorGen('Invalid message type', 400);
+          throw errorGen(`Invalid message type`, 510, 'dataValidationErr', false, 3);
       }
       return {
         result: 'success',
@@ -106,10 +99,8 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
-
-      global.logger.info(`Deleting message ${message.type} for user ${userID}`);
       switch (message.type) {
         case 'ingredientStockExpired':
           await db.from('ingredientStocks').update({ appMessageStatus: null, appMessageDate: null }).eq('userID', userID).eq('ingredientStockID', message.messageData.data.ingredientStockID);
@@ -133,7 +124,7 @@ module.exports = ({ db, dbPublic }) => {
           await db.from('messages').update({ status: 'deleted' }).eq('messageID', message.messageData.data.messageID);
           break;
         default:
-          throw errorGen('Invalid message type', 400);
+          throw errorGen(`Invalid message type`, 510, 'dataValidationErr', false, 3);
       }
       return {
         result: 'success',
@@ -148,25 +139,23 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
 
       const { data: ingredientStocks, error } = await db.from('ingredientStocks').select().eq('userID', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
       if (error) {
-        global.logger.error(`Error getting ingredientStocks: ${error.message}`);
-        throw errorGen('Error getting ingredientStocks', 500);
+        throw errorGen(`Error getting ingredientStocks: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       const messages = [];
       for (let ingredientStock of ingredientStocks) {
         if (!ingredientStock.appMessageDate) {
-          global.logger.info(`IngredientStockExpired message missing date`);
+          global.logger.info({ message: `IngredientStockExpired message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID });
           continue;
         }
         const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientStock.ingredientID).single();
         if (ingredientError) {
-          global.logger.error(`Error getting ingredient: ${ingredientError.message}`);
-          throw errorGen('Error getting ingredient', 500);
+          throw errorGen(`Error getting ingredient: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         const measurement = Math.round((ingredientStock.grams / ingredient.gramRatio) * 100) / 100;
         messages.push({
@@ -203,14 +192,13 @@ module.exports = ({ db, dbPublic }) => {
 
       const { data: ingredients, error } = await db.from('ingredients').select().eq('userID', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
       if (error) {
-        global.logger.error(`Error getting ingredients: ${error.message}`);
-        throw errorGen('Error getting ingredients', 500);
+        throw errorGen(`Error getting ingredients: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       const messages = [];
       for (let ingredient of ingredients) {
         if (!ingredient.appMessageDate) {
-          global.logger.info(`IngredientOutOfStock message missing date`);
+          global.logger.info({ message: `IngredientOutOfStock message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID });
           continue;
         }
         messages.push({
@@ -244,20 +232,18 @@ module.exports = ({ db, dbPublic }) => {
 
       const { data: followships, error } = await db.from('followships').select().eq('following', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
       if (error) {
-        global.logger.error(`Error getting followships: ${error.message}`);
-        throw errorGen('Error getting followships', 500);
+        throw errorGen(`Error getting followships: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       const messages = [];
       for (let followship of followships) {
         if (!followship.appMessageDate) {
-          global.logger.info(`NewFollower message missing date`);
+          global.logger.info({ message: `NewFollower message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID });
           continue;
         }
         const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', followship.userID).single();
         if (userError) {
-          global.logger.error(`Error getting follower profile: ${userError.message}`);
-          throw errorGen('Error getting follower profile', 500);
+          throw errorGen(`Error getting follower profile: ${userError.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         messages.push({
           type: 'newFollower',
@@ -292,20 +278,18 @@ module.exports = ({ db, dbPublic }) => {
 
       const { data: friendships, error } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).in('appMessageStatusNewFriend', ['notAcked', 'acked']);
       if (error) {
-        global.logger.error(`Error getting friendships: ${error.message}`);
-        throw errorGen('Error getting friendships', 500);
+        throw errorGen(`Error getting friendships: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       const messages = [];
       for (let friendship of friendships) {
         if (!friendship.appMessageDateNewFriend) {
-          global.logger.info(`NewFriend message missing date`);
+          global.logger.info({ message: `NewFriend message missing date`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           continue;
         }
         const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', friendship.friend).single();
         if (userError) {
-          global.logger.error(`Error getting friend profile: ${userError.message}`);
-          throw errorGen('Error getting friend profile', 500);
+          throw errorGen(`Error getting friend profile: ${userError.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         messages.push({
           type: 'newFriend',
@@ -335,24 +319,22 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
       const { data: friendRequests, error } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).in('appMessageStatusNewFriendRequest', ['notAcked', 'acked']);
       if (error) {
-        global.logger.error(`Error getting friendRequests: ${error.message}`);
-        throw errorGen('Error getting friendRequests', 500);
+        throw errorGen(`Error getting friendRequests: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       const messages = [];
       for (let friendRequest of friendRequests) {
         if (!friendRequest.appMessageDateNewFriendRequest) {
-          global.logger.info(`NewFriendRequest message missing date`);
+          global.logger.info({ message: `NewFriendRequest message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID });
           continue;
         }
         const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', friendRequest.friend).single();
         if (userError) {
-          global.logger.error(`Error getting friendRequest profile: ${userError.message}`);
-          throw errorGen('Error getting friendRequest profile', 500);
+          throw errorGen(`Error getting friendRequest profile: ${userError.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         messages.push({
           type: 'newFriendRequest',
@@ -389,8 +371,7 @@ module.exports = ({ db, dbPublic }) => {
       // get any entries from 'messages' table where 'userID' is the follower and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'followeePublicRecipeCreated').neq('status', 'deleted');
       if (error) {
-        global.logger.error(`Error getting messageRows: ${error.message}`);
-        throw errorGen('Error getting messageRows', 500);
+        throw errorGen(`Error getting messageRows: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       const messages = [];
@@ -424,14 +405,13 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
 
       // get any entries from 'messages' table where 'userID' is the userID and 'type' is 'friendHeirloomRecipeCreated' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'friendHeirloomRecipeCreated').neq('status', 'deleted');
       if (error) {
-        global.logger.error(`Error getting messageRows: ${error.message}`);
-        throw errorGen('Error getting messageRows', 500);
+        throw errorGen(`Error getting messageRows: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       const messages = [];
@@ -470,8 +450,7 @@ module.exports = ({ db, dbPublic }) => {
       // get any entries from 'messages' table where 'userID' is the userID and 'type' is 'welcomeToDoughly' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'welcomeToDoughly').neq('status', 'deleted');
       if (error) {
-        global.logger.error(`Error getting messageRows: ${error.message}`);
-        throw errorGen('Error getting messageRows', 500);
+        throw errorGen(`Error getting messageRows: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const messages = [];
       for (let message of messageRows) {
@@ -528,14 +507,12 @@ module.exports = ({ db, dbPublic }) => {
       // get profile of the user (recipe author)
       const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
       if (profileError) {
-        global.logger.error(`Error getting profile: ${profileError.message}`);
-        throw errorGen('Error getting profile', 500);
+        throw errorGen(`Error getting profile: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       // get all followers of the user
       const { data: followships, error: followshipsError } = await db.from('followships').select().eq('following', userID).eq('deleted', false);
       if (followshipsError) {
-        global.logger.error(`Error getting followships: ${followshipsError.message}`);
-        throw errorGen('Error getting followships', 500);
+        throw errorGen(`Error getting followships: ${followshipsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // for each follower, add a message to 'messages' table
@@ -543,8 +520,7 @@ module.exports = ({ db, dbPublic }) => {
         // update status of existing messages with this recipeID and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
         const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', followship.userID).in('type', ['friendHeirloomRecipeCreated', 'followeePublicRecipeCreated']).eq('dataNum1', Number(recipeID)).neq('status', 'deleted');
         if (updateMessagesError) {
-          global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
-          throw errorGen('Error updating messages', 500);
+          throw errorGen(`Error updating messages: ${updateMessagesError.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
 
         // add a message to 'messages' table
@@ -562,8 +538,7 @@ module.exports = ({ db, dbPublic }) => {
           status: 'notAcked',
         });
         if (addMessageError) {
-          global.logger.error(`Error adding message: ${addMessageError.message}`);
-          throw errorGen('Error adding message', 500);
+          throw errorGen(`Error adding message: ${addMessageError.message}`, 512, 'failSupabaseInsert', true, 3);
         }
       }
     } catch (err) {
@@ -581,14 +556,12 @@ module.exports = ({ db, dbPublic }) => {
       // get profile of the user (recipe author)
       const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
       if (profileError) {
-        global.logger.error(`Error getting profile: ${profileError.message}`);
-        throw errorGen('Error getting profile', 500);
+        throw errorGen(`Error getting profile: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       // get all friends of the user
       const { data: friendships, error: friendshipsError } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).eq('status', 'confirmed');
       if (friendshipsError) {
-        global.logger.error(`Error getting friendships: ${friendshipsError.message}`);
-        throw errorGen('Error getting friendships', 500);
+        throw errorGen(`Error getting friendships: ${friendshipsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // for each friend, add a message to 'messages' table
@@ -596,8 +569,7 @@ module.exports = ({ db, dbPublic }) => {
         // update status of existing messages with this recipeID and 'type' is 'friendHeirloomRecipeCreated' and 'status' is not 'deleted'
         const { error: updateMessagesError } = await db.from('messages').update({ status: 'deleted' }).eq('userID', friendship.friend).in('type', ['friendHeirloomRecipeCreated', 'followeePublicRecipeCreated']).eq('dataNum1', Number(recipeID)).neq('status', 'deleted');
         if (updateMessagesError) {
-          global.logger.error(`Error updating messages: ${updateMessagesError.message}`);
-          throw errorGen('Error updating messages', 500);
+          throw errorGen(`Error updating messages: ${updateMessagesError.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         // add a message to 'messages' table
         const newMessageID = await generateIDFunction(75);
@@ -614,8 +586,7 @@ module.exports = ({ db, dbPublic }) => {
           status: 'notAcked',
         });
         if (addMessageError) {
-          global.logger.error(`Error adding message: ${addMessageError.message}`);
-          throw errorGen('Error adding message', 500);
+          throw errorGen(`Error adding message: ${addMessageError.message}`, 512, 'failSupabaseInsert', true, 3);
         }
       }
     } catch (err) {
@@ -642,8 +613,7 @@ module.exports = ({ db, dbPublic }) => {
         status: 'notAcked',
       });
       if (addMessageError) {
-        global.logger.error(`Error adding message: ${addMessageError.message}`);
-        throw errorGen('Error adding message', 500);
+        throw errorGen(`Error adding message: ${addMessageError.message}`, 512, 'failSupabaseInsert', true, 3);
       }
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in messages addWelcomeMessage', err.code || 520, err.name || 'unhandledError_messages-addWelcomeMessage', err.isOperational || false, err.severity || 2);
