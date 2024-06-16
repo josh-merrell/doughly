@@ -32,16 +32,17 @@ class AppError extends Error {
   name;
   code;
   isOperational;
+  message;
   severity;
 
-  constructor(name, message, code, isOperational) {
+  constructor(name, message, code, isOperational, severity) {
     super(message);
     Object.setPrototypeOf(this, new.target.prototype);
-    this.name = name;
-    this.code = code;
-    this.isOperational = isOperational;
-    this.timestamp = new Date();
-    this.severity = severity;
+    this.name = name || 'AppError';
+    this.message = message || 'An error occurred';
+    this.code = code || 500;
+    this.isOperational = isOperational || false;
+    this.severity = severity || 3;
 
     Error.captureStackTrace(this);
   }
@@ -51,7 +52,7 @@ module.exports.AppError = AppError;
 
 module.exports.errorGen = (m, c, n, o, s) => {
   if (!m || !c) return new AppError('missingErrorMessageOrCode', 'errorGen requires a message and a code', 500, true, 2);
-  const e = new AppError(n || 'errorName', m, c, o || true, s || 3);
+  const e = new AppError(n || 'errorName', m, c, o, s || 3);
   return e;
 };
 
@@ -72,17 +73,23 @@ class ErrorHandler {
 
     const constructedError = new AppError(errorName, errorMessage, statusCode, isOperational, severity);
 
-    await logError(constructedError);
+    await this.logError(constructedError);
     // await addMonitoringMetric(error);
     // crashIfNeededOrSendResponse(error, res);
 
     if (res) {
-      res.status(statusCode).json(constructedError);
+      res.status(statusCode).json({
+        name: constructedError.name,
+        message: constructedError.message,
+        code: constructedError.code,
+        isOperational: constructedError.isOperational,
+        severity: constructedError.severity,
+      });
     }
   }
 
   logError(error) {
-    severityLevels = {
+    const severityLevels = {
       0: 'error', // Emergency
       1: 'error', // Alert
       2: 'error', // Critical
@@ -95,6 +102,7 @@ class ErrorHandler {
 
     const level = severityLevels[error.severity] || 'error';
 
+    global.logger.info(`LOGGING IT: ${JSON.stringify(error)}`);
     global.logger.error({
       level: level,
       message: error.message,

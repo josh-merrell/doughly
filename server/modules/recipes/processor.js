@@ -637,8 +637,8 @@ module.exports = ({ db, dbPublic }) => {
       // validate resulting json, return if it lacks minimum requirements
       if (recipeJSON.error) {
         if (recipeJSON.error === 10) {
-          global.logger.error(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image.`);
-          throw errorGen(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image.`, 560);
+          // global.logger.error(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image.`);
+          throw errorGen('The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image', 560, 'recipeSourceImageUnclear', true, 3); //message, code, name, operational, severity
         }
         global.logger.error(`Could not analyze the provided image: ${recipeJSON.error}. Please try again later`);
         throw errorGen(`Could not analyze the provided image: ${recipeJSON.error}. Please try again later`, 560);
@@ -891,7 +891,7 @@ module.exports = ({ db, dbPublic }) => {
       sendSSEMessage(userID, { message: `done` });
       return recipeID;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes processRecipeJSON', 520, 'unhandledError_recipes-processRecipeJSON', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes processRecipeJSON', err.code || 520, err.name || 'unhandledError_recipes-processRecipeJSON', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -936,7 +936,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return recipeID;
     } catch (err) {
-      throw errorGen('Unhandled Error in recipes createVision', 520, 'unhandledError_recipes-createVision', false, 2); //message, code, name, operational, severity
+      throw errorGen(err.message || 'Unhandled Error in recipes processRecipeJSON', err.code || 520, err.name || 'unhandledError_recipes-processRecipeJSON', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 

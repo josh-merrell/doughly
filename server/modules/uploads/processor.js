@@ -15,7 +15,6 @@ module.exports = ({ db, dbDefault }) => {
 
       let command;
       // temp images (such as for used in vision recipe import) are stored in a different bucket to avoid cloudfront caching
-      console.log(`IN GET SIGNED URL. TYPE: ${type}, KEY: ${key}, fileName: ${fileName}, `);
       if (type === 'temp') {
         command = new PutObjectCommand({
           Bucket: process.env.AWS_TEMP_IMAGE_BUCKET_NAME,
