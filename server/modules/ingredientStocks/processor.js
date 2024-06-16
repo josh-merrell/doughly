@@ -10,152 +10,169 @@ module.exports = ({ db, dbPublic }) => {
   async function getAll(options) {
     const { userID, ingredientStockIDs, ingredientID, purchasedBy } = options;
 
-    let q = db.from('ingredientStocks').select().filter('userID', 'eq', userID).eq('deleted', false).order('ingredientStockID', { ascending: true });
-    if (ingredientStockIDs) {
-      q = q.in('ingredientStockID', ingredientStockIDs);
-    }
-    if (ingredientID) {
-      q = q.eq('ingredientID', ingredientID);
-    }
-    if (purchasedBy) {
-      q = q.eq('purchasedBy', purchasedBy);
-    }
-    const { data: ingredientStocks, error } = await q;
+    try {
+      let q = db.from('ingredientStocks').select().filter('userID', 'eq', userID).eq('deleted', false).order('ingredientStockID', { ascending: true });
+      if (ingredientStockIDs) {
+        q = q.in('ingredientStockID', ingredientStockIDs);
+      }
+      if (ingredientID) {
+        q = q.eq('ingredientID', ingredientID);
+      }
+      if (purchasedBy) {
+        q = q.eq('purchasedBy', purchasedBy);
+      }
+      const { data: ingredientStocks, error } = await q;
 
-    if (error) {
-      global.logger.error(`Error getting ingredientStocks: ${error.message}`);
-      throw errorGen('Error getting ingredientStocks', 400);
+      if (error) {
+        global.logger.error(`Error getting ingredientStocks: ${error.message}`);
+        throw errorGen('Error getting ingredientStocks', 400);
+      }
+      global.logger.info(`Got ${ingredientStocks.length} ingredientStocks`);
+      return ingredientStocks;
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks getAll', 520, 'unhandledError_ingredientStocks-getAll', false, 2); //message, code, name, operational, severity
     }
-    global.logger.info(`Got ${ingredientStocks.length} ingredientStocks`);
-    return ingredientStocks;
   }
 
   async function getIngredientStockByID(options) {
     const { ingredientStockID } = options;
-    const { data: ingredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false);
 
-    if (error) {
-      global.logger.error(`Error getting ingredientStock ID: ${ingredientStockID}: ${error.message}`);
-      throw errorGen(`Error getting ingredientStock ID: ${ingredientStockID}`, 400);
+    try {
+      const { data: ingredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false);
+
+      if (error) {
+        global.logger.error(`Error getting ingredientStock ID: ${ingredientStockID}: ${error.message}`);
+        throw errorGen(`Error getting ingredientStock ID: ${ingredientStockID}`, 400);
+      }
+      return ingredientStock[0];
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks getIngredientStockByID', 520, 'unhandledError_ingredientStocks-getIngredientStockByID', false, 2); //message, code, name, operational, severity
     }
-    return ingredientStock[0];
   }
 
   async function create(options) {
     const { authorization, customID, userID, ingredientID, measurement, purchasedDate } = options;
 
-    //verify that the provided ingredientID is valid, return error if not
-    const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
-    if (error) {
-      global.logger.error(`Error validating provided ingredientID: ${error.message}`);
-      throw errorGen(`Error validating provided ingredientID: ${error.message}`, 400);
+    try {
+      //verify that the provided ingredientID is valid, return error if not
+      const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
+      if (error) {
+        global.logger.error(`Error validating provided ingredientID: ${error.message}`);
+        throw errorGen(`Error validating provided ingredientID: ${error.message}`, 400);
+      }
+      if (existingIngredient.length === 0) {
+        global.logger.error(`Ingredient ID does not exist, cannot create ingredientStock`);
+        throw errorGen(`Ingredient ID does not exist, cannot create ingredientStock`, 400);
+      }
+
+      //verify that provided measurement is positive integer, return error if not
+      if (!measurement || measurement < 1) {
+        global.logger.error(`positive measurement integer is required`);
+        throw errorGen(`positive measurement integer is required`, 400);
+      }
+
+      //calculate grams for new stock using gramRatio for the ingredient
+      const grams = measurement * existingIngredient[0].gramRatio;
+
+      //create the ingredientStock
+      const { data: newIngredientStock, error: newIngredientStockError } = await db.from('ingredientStocks').insert({ ingredientStockID: customID, userID, ingredientID, purchasedDate, grams }).select().single();
+      if (newIngredientStockError) {
+        global.logger.error(`Error creating ingredientStock: ${newIngredientStockError.message}`);
+        throw errorGen(`Error creating ingredientStock: ${newIngredientStockError.message}`, 400);
+      }
+
+      //add a 'created' log entry
+      createKitchenLog(userID, authorization, 'createIngredientStock', Number(newIngredientStock.ingredientStockID), ingredientID, null, null, `Added ${newIngredientStock.grams} grams of ${existingIngredient[0].name}`);
+
+      return {
+        ingredientStockID: newIngredientStock.ingredientStockID,
+        ingredientID: newIngredientStock.ingredientID,
+        grams: newIngredientStock.grams,
+        purchasedDate: newIngredientStock.purchasedDate,
+      };
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks create', 520, 'unhandledError_ingredientStocks-create', false, 2); //message, code, name, operational, severity
     }
-    if (existingIngredient.length === 0) {
-      global.logger.error(`Ingredient ID does not exist, cannot create ingredientStock`);
-      throw errorGen(`Ingredient ID does not exist, cannot create ingredientStock`, 400);
-    }
-
-    //verify that provided measurement is positive integer, return error if not
-    if (!measurement || measurement < 1) {
-      global.logger.error(`positive measurement integer is required`);
-      throw errorGen(`positive measurement integer is required`, 400);
-    }
-
-    //calculate grams for new stock using gramRatio for the ingredient
-    const grams = measurement * existingIngredient[0].gramRatio;
-
-    //create the ingredientStock
-    const { data: newIngredientStock, error: newIngredientStockError } = await db.from('ingredientStocks').insert({ ingredientStockID: customID, userID, ingredientID, purchasedDate, grams }).select().single();
-    if (newIngredientStockError) {
-      global.logger.error(`Error creating ingredientStock: ${newIngredientStockError.message}`);
-      throw errorGen(`Error creating ingredientStock: ${newIngredientStockError.message}`, 400);
-    }
-
-    //add a 'created' log entry
-    createKitchenLog(userID, authorization, 'createIngredientStock', Number(newIngredientStock.ingredientStockID), ingredientID, null, null, `Added ${newIngredientStock.grams} grams of ${existingIngredient[0].name}`);
-
-    return {
-      ingredientStockID: newIngredientStock.ingredientStockID,
-      ingredientID: newIngredientStock.ingredientID,
-      grams: newIngredientStock.grams,
-      purchasedDate: newIngredientStock.purchasedDate,
-    };
   }
 
   async function update(options) {
     const { authorization, userID, ingredientStockID, grams } = options;
 
-    //verify that the provided ingredientStockID is valid, return error if not
-    const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().filter('userID', 'eq', userID).filter('ingredientStockID', 'eq', ingredientStockID);
-    if (error) {
-      global.logger.error(`Error validating provided ingredientStockID: ${error.message}`);
-      throw errorGen(`Error validating provided ingredientStockID: ${error.message}`, 400);
-    }
-    if (existingIngredientStock.length === 0) {
-      global.logger.error(`IngredientStock ID does not exist, cannot update ingredientStock`);
-      throw errorGen(`IngredientStock ID does not exist, cannot update ingredientStock`, 400);
-    }
-
-    //verify that provided grams is positive integer, return error if not
-    if (grams && grams < 1) {
-      global.logger.error(`positive grams integer is required`);
-      throw errorGen(`positive grams integer is required`, 400);
-    }
-
-    //update the ingredientStock
-    const updateFields = {};
-    for (let key in options) {
-      if (key !== 'ingredientStockID' && options[key] !== undefined && key !== 'authorization') {
-        updateFields[key] = options[key];
-      }
-    }
-
     try {
+      //verify that the provided ingredientStockID is valid, return error if not
+      const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().filter('userID', 'eq', userID).filter('ingredientStockID', 'eq', ingredientStockID);
+      if (error) {
+        global.logger.error(`Error validating provided ingredientStockID: ${error.message}`);
+        throw errorGen(`Error validating provided ingredientStockID: ${error.message}`, 400);
+      }
+      if (existingIngredientStock.length === 0) {
+        global.logger.error(`IngredientStock ID does not exist, cannot update ingredientStock`);
+        throw errorGen(`IngredientStock ID does not exist, cannot update ingredientStock`, 400);
+      }
+
+      //verify that provided grams is positive integer, return error if not
+      if (grams && grams < 1) {
+        global.logger.error(`positive grams integer is required`);
+        throw errorGen(`positive grams integer is required`, 400);
+      }
+
+      //update the ingredientStock
+      const updateFields = {};
+      for (let key in options) {
+        if (key !== 'ingredientStockID' && options[key] !== undefined && key !== 'authorization') {
+          updateFields[key] = options[key];
+        }
+      }
+
       const updatedIngredientStock = await updater(userID, authorization, 'ingredientStockID', ingredientStockID, 'ingredientStocks', updateFields);
       return updatedIngredientStock;
-    } catch (error) {
-      global.logger.error(`Error updating ingredientStock: ${error.message}`);
-      throw errorGen(`Error updating ingredientStock: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks update', 520, 'unhandledError_ingredientStocks-update', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function deleteIngredientStock(options) {
     const { userID, ingredientStockID, authorization, checkForLowStockBool = true } = options;
 
-    //verify that the provided ingredientStockID is valid, return error if not
-    const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false).single();
-    if (error) {
-      global.logger.error(`Error validating provided ingredientStockID: ${error.message}`);
-      throw errorGen(`Error validating provided ingredientStockID: ${error.message}`, 400);
+    try {
+      //verify that the provided ingredientStockID is valid, return error if not
+      const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false).single();
+      if (error) {
+        global.logger.error(`Error validating provided ingredientStockID: ${error.message}`);
+        throw errorGen(`Error validating provided ingredientStockID: ${error.message}`, 400);
+      }
+      if (existingIngredientStock.length === 0) {
+        global.logger.error(`IngredientStock ID does not exist, cannot delete ingredientStock`);
+        throw errorGen(`IngredientStock ID does not exist, cannot delete ingredientStock`, 400);
+      }
+
+      //get name of the associated ingredients
+      const { data: ingredient } = await db.from('ingredients').select('name').eq('ingredientID', existingIngredientStock.ingredientID).single();
+
+      //delete the ingredientStock
+      const { error: deleteError } = await db.from('ingredientStocks').update({ deleted: true }).eq('ingredientStockID', ingredientStockID);
+      if (deleteError) {
+        global.logger.error(`Error deleting ingredientStock: ${deleteError.message}`);
+        throw errorGen(`Error deleting ingredientStock: ${deleteError.message}`, 400);
+      }
+
+      //add a 'deleted' log entry
+      createKitchenLog(userID, authorization, 'deleteIngredientStock', Number(ingredientStockID), Number(existingIngredientStock.ingredientID), null, null, `Deleted: ${existingIngredientStock.grams} grams of ${ingredient.name}`);
+
+      // call the 'checkForLowStock' function, passing the ingredientID and userID
+      if (checkForLowStockBool) {
+        checkForLowStock({ ingredientID: existingIngredientStock.ingredientID, userID, authorization });
+      }
+
+      return { success: true };
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks deleteIngredientStock', 520, 'unhandledError_ingredientStocks-deleteIngredientStock', false, 2); //message, code, name, operational, severity
     }
-    if (existingIngredientStock.length === 0) {
-      global.logger.error(`IngredientStock ID does not exist, cannot delete ingredientStock`);
-      throw errorGen(`IngredientStock ID does not exist, cannot delete ingredientStock`, 400);
-    }
-
-    //get name of the associated ingredients
-    const { data: ingredient } = await db.from('ingredients').select('name').eq('ingredientID', existingIngredientStock.ingredientID).single();
-
-    //delete the ingredientStock
-    const { error: deleteError } = await db.from('ingredientStocks').update({ deleted: true }).eq('ingredientStockID', ingredientStockID);
-    if (deleteError) {
-      global.logger.error(`Error deleting ingredientStock: ${deleteError.message}`);
-      throw errorGen(`Error deleting ingredientStock: ${deleteError.message}`, 400);
-    }
-
-    //add a 'deleted' log entry
-    createKitchenLog(userID, authorization, 'deleteIngredientStock', Number(ingredientStockID), Number(existingIngredientStock.ingredientID), null, null, `Deleted: ${existingIngredientStock.grams} grams of ${ingredient.name}`);
-
-    // call the 'checkForLowStock' function, passing the ingredientID and userID
-    if (checkForLowStockBool) {
-      checkForLowStock({ ingredientID: existingIngredientStock.ingredientID, userID, authorization });
-    }
-
-    return { success: true };
   }
 
   async function deleteAllExpired(options) {
     const { authorization } = options;
+
     try {
       // get all unique userID's who have a non-deleted ingredientStock
       const { data: users, error: usersError } = await db.from('ingredientStockDistinctUsers').select('*');
@@ -174,9 +191,8 @@ module.exports = ({ db, dbPublic }) => {
 
       global.logger.info('Deleted all expired ingredientStocks');
       return { success: true };
-    } catch (error) {
-      global.logger.error(`Error deleting all expired ingredientStocks: ${error.message}`);
-      throw errorGen(`Error deleting all expired ingredientStocks: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks deleteAllExpired', 520, 'unhandledError_ingredientStocks-deleteAllExpired', false, 2); //message, code, name, operational, severity
     }
   }
 
@@ -306,9 +322,8 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return { success: true };
-    } catch (error) {
-      global.logger.error(`Error deleting expired ingredientStocks for user ${userID}: ${error.message}`);
-      throw errorGen(`Error deleting expired ingredientStocks for user ${userID}: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks deleteExpiredStockForUser', 520, 'unhandledError_ingredientStocks-deleteExpiredStockForUser', false, 2); //message, code, name, operational, severity
     }
   }
 
@@ -333,9 +348,8 @@ module.exports = ({ db, dbPublic }) => {
 
       global.logger.info('Notified all users of upcoming expirations');
       return { success: true };
-    } catch (error) {
-      global.logger.error(`Error notifying users of upcoming expirations: ${error.message}`);
-      throw errorGen(`Error notifying users of upcoming expirations: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks notifyOnUpcomingExpiration', 520, 'unhandledError_ingredientStocks-notifyOnUpcomingExpiration', false, 2); //message, code, name, operational, severity
     }
   }
 
@@ -415,18 +429,16 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return { success: true };
-    } catch (error) {
-      global.logger.error(`Error notifying user of upcoming expirations for user ${userID}: ${error.message}`);
-      throw errorGen(`Error notifying user of upcoming expirations for user ${userID}: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks notifyUserOfUpcomingExpiration', 520, 'unhandledError_ingredientStocks-notifyUserOfUpcomingExpiration', false, 2); //message, code, name, operational, severity
     }
   }
 
   async function checkForLowStock(options) {
     const { ingredientID, userID, authorization } = options;
 
-    global.logger.info(`Checking for low stock for ingredient ${ingredientID} and user ${userID}`);
-
     try {
+      global.logger.info(`Checking for low stock for ingredient ${ingredientID} and user ${userID}`);
       // get user profile to check if notifications are enabled
       const { data: profile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
       if (profileError) {
@@ -546,9 +558,8 @@ module.exports = ({ db, dbPublic }) => {
           }
         }
       }
-    } catch (error) {
-      global.logger.error(`Error checking for low stock for ingredient ${ingredientID} and user ${userID}: ${error.message}`);
-      throw errorGen(`Error checking for low stock for ingredient ${ingredientID} and user ${userID}: ${error.message}`, 400);
+    } catch (err) {
+      throw errorGen('Unhandled Error in ingredientStocks checkForLowStock', 520, 'unhandledError_ingredientStocks-checkForLowStock', false, 2); //message, code, name, operational, severity
     }
   }
 

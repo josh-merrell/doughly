@@ -50,7 +50,7 @@ class AppError extends Error {
 module.exports.AppError = AppError;
 
 module.exports.errorGen = (m, c, n, o, s) => {
-  if (!m || !c) return new AppError('errorName', 'errorGen requires a message and a code', 500, true, 2);
+  if (!m || !c) return new AppError('missingErrorMessageOrCode', 'errorGen requires a message and a code', 500, true, 2);
   const e = new AppError(n || 'errorName', m, c, o || true, s || 3);
   return e;
 };
@@ -63,33 +63,21 @@ module.exports.errorCatcher = (fn) => (req, res, next) => {
 
 class ErrorHandler {
   async handleError(error, req, res) {
-    await logError(error);
-    // await addMonitoringMetric(error);
-    // crashIfNeededOrSendResponse(error, res);
-
     // Extract properties from the error object
     const statusCode = error.code || 500;
     const errorMessage = error.message || 'Something went wrong!';
     const errorName = error.name || 'Error';
     const isOperational = error.isOperational || false;
-    const timestamp = error.timestamp || new Date();
     const severity = error.severity || 3;
 
+    const constructedError = new AppError(errorName, errorMessage, statusCode, isOperational, severity);
+
+    await logError(constructedError);
+    // await addMonitoringMetric(error);
+    // crashIfNeededOrSendResponse(error, res);
+
     if (res) {
-      // Send response with all relevant error properties
-      res.status(statusCode).json({
-        error: {
-          name: errorName,
-          message: errorMessage,
-          code: statusCode,
-          isOperational: isOperational,
-          timestamp: timestamp,
-          severity: severity,
-        },
-      });
-    } else {
-      // Handle 'uncaughtException' errors
-      global.logger.error(`Unhandled Exception: ${errorMessage}`);
+      res.status(statusCode).json(constructedError);
     }
   }
 
@@ -113,7 +101,6 @@ class ErrorHandler {
       name: error.name,
       code: error.code,
       stack: error.stack,
-      timestamp: error.timestamp,
       isOperational: error.isOperational,
       severity: error.severity,
     });
