@@ -32,16 +32,17 @@ class AppError extends Error {
   name;
   code;
   isOperational;
+  message;
   severity;
 
-  constructor(name, message, code, isOperational) {
+  constructor(name, message, code, isOperational, severity) {
     super(message);
     Object.setPrototypeOf(this, new.target.prototype);
-    this.name = name;
-    this.code = code;
-    this.isOperational = isOperational;
-    this.timestamp = new Date();
-    this.severity = severity;
+    this.name = name || 'AppError';
+    this.message = message || 'An error occurred';
+    this.code = code || 500;
+    this.isOperational = isOperational || false;
+    this.severity = severity || 3;
 
     Error.captureStackTrace(this);
   }
@@ -50,8 +51,8 @@ class AppError extends Error {
 module.exports.AppError = AppError;
 
 module.exports.errorGen = (m, c, n, o, s) => {
-  if (!m || !c) return new AppError('errorName', 'errorGen requires a message and a code', 500, true, 2);
-  const e = new AppError(n || 'errorName', m, c, o || true, s || 3);
+  if (!m || !c) return new AppError('missingErrorMessageOrCode', 'errorGen requires a message and a code', 500, true, 2);
+  const e = new AppError(n || 'errorName', m, c, o, s || 3);
   return e;
 };
 
@@ -63,38 +64,32 @@ module.exports.errorCatcher = (fn) => (req, res, next) => {
 
 class ErrorHandler {
   async handleError(error, req, res) {
-    await logError(error);
-    // await addMonitoringMetric(error);
-    // crashIfNeededOrSendResponse(error, res);
-
     // Extract properties from the error object
     const statusCode = error.code || 500;
     const errorMessage = error.message || 'Something went wrong!';
     const errorName = error.name || 'Error';
     const isOperational = error.isOperational || false;
-    const timestamp = error.timestamp || new Date();
     const severity = error.severity || 3;
 
+    const constructedError = new AppError(errorName, errorMessage, statusCode, isOperational, severity);
+
+    await this.logError(constructedError);
+    // await addMonitoringMetric(error);
+    // crashIfNeededOrSendResponse(error, res);
+
     if (res) {
-      // Send response with all relevant error properties
       res.status(statusCode).json({
-        error: {
-          name: errorName,
-          message: errorMessage,
-          code: statusCode,
-          isOperational: isOperational,
-          timestamp: timestamp,
-          severity: severity,
-        },
+        name: constructedError.name,
+        message: constructedError.message,
+        code: constructedError.code,
+        isOperational: constructedError.isOperational,
+        severity: constructedError.severity,
       });
-    } else {
-      // Handle 'uncaughtException' errors
-      global.logger.error(`Unhandled Exception: ${errorMessage}`);
     }
   }
 
   logError(error) {
-    severityLevels = {
+    const severityLevels = {
       0: 'error', // Emergency
       1: 'error', // Alert
       2: 'error', // Critical
@@ -107,13 +102,13 @@ class ErrorHandler {
 
     const level = severityLevels[error.severity] || 'error';
 
+    global.logger.info(`LOGGING IT: ${JSON.stringify(error)}`);
     global.logger.error({
       level: level,
       message: error.message,
       name: error.name,
       code: error.code,
       stack: error.stack,
-      timestamp: error.timestamp,
       isOperational: error.isOperational,
       severity: error.severity,
     });

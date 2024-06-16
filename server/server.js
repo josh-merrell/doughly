@@ -15,14 +15,12 @@ const logger = winston.createLogger({
     }),
     winston.format.json(),
     winston.format.printf((info) => {
-      delete info.service;
-      return `${info.timestamp} [${info.level}]: ${info.message}`;
+      // Ensure all relevant info fields are included in the log
+      const { timestamp, level, message, ...rest } = info;
+      return `${timestamp} [${level}]: ${message} ${JSON.stringify(rest)}`;
     }),
   ),
-  transports: [
-    new winston.transports.Console({ format: winston.format.simple() }),
-    new winston.transports.File({ filename: 'logger.log', level: 'info' })
-  ],
+  transports: [new winston.transports.Console({ format: winston.format.simple() }), new winston.transports.File({ filename: 'logger.log', level: 'info' })],
 });
 
 const { supabase, supabaseDefault } = require('./db');
@@ -130,22 +128,21 @@ app.use('/messages', messagesRouter);
 app.use('/link-previews', linkPreviewsRouter);
 app.use('/purchases', purchasesRouter);
 
-// Start the server
-const port = 3000;
-app.listen(port, () => {
-  global.logger.info(`Server is running at http://localhost:${port}`);
-});
-
 const errHandler = new ErrorHandler();
-
 // Global error-handling middleware
 app.use((err, req, res, next) => {
   errHandler.handleError(err, req, res);
 });
-
+// Error Handling for uncaught exceptions
 process.on('uncaughtException', (err) => {
   errHandler.handleError(err);
   if (!errHandler.isTrustedError(err)) process.exit(1);
+});
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  global.logger.info(`Server is running at http://localhost:${port}`);
 });
 
 module.exports = {
