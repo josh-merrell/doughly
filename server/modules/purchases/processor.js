@@ -3,26 +3,30 @@ const { productConstants } = require('../../services/purchaseService');
 ('use strict');
 module.exports = ({ db, dbDefault }) => {
   const unhideRecipes = async (userID) => {
-    // just set 'hidden' to false for all user recipes and recipe subscriptions
-    const { error: error } = await db.from('recipes').update({ hidden: false }).eq('userID', userID);
-    if (error) {
-      throw errorGen(`Error unhiding recipes: ${error.message}`, 400);
-    }
-    const { error: error2 } = await db.from('recipeSubscriptions').update({ hidden: false }).eq('userID', userID);
-    if (error2) {
-      throw errorGen(`Error unhiding recipe subscriptions: ${error2.message}`, 400);
-    }
+    try {
+      // just set 'hidden' to false for all user recipes and recipe subscriptions
+      const { error: error } = await db.from('recipes').update({ hidden: false }).eq('userID', userID);
+      if (error) {
+        throw errorGen(`Error unhiding recipes: ${error.message}`, 400);
+      }
+      const { error: error2 } = await db.from('recipeSubscriptions').update({ hidden: false }).eq('userID', userID);
+      if (error2) {
+        throw errorGen(`Error unhiding recipe subscriptions: ${error2.message}`, 400);
+      }
 
-    return 'success';
+      return 'success';
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in purchases unhideRecipes', err.code || 520, err.name || 'unhandledError_purchases-unhideRecipes', err.isOperational || false, err.severity || 2);
+    }
   };
 
   const calculateAITokenUpdate = async (userID) => {
-    const tokenUpdate = {
-      needsUpdate: false,
-      newCount: 0,
-      newDate: null,
-    };
     try {
+      const tokenUpdate = {
+        needsUpdate: false,
+        newCount: 0,
+        newDate: null,
+      };
       global.logger.info(`CALCULATING AI TOKEN UPDATE FOR USER: ${userID}`);
       // check for 'permAITokenLastRefreshData' value
       const { data: profile, error: error } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
@@ -68,15 +72,15 @@ module.exports = ({ db, dbDefault }) => {
         global.logger.info(`New permAITokenCount: ${tokenUpdate.newCount}, New permAITokenLastRefreshDate: ${tokenUpdate.newDate}`);
       }
       return tokenUpdate;
-    } catch (e) {
-      global.logger.error(`Error calculating AI token update: ${e.message}`);
-      throw errorGen(`Error calculating AI token update: ${e.message}`, 400);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in purchases calculateAITokenUpdate', err.code || 520, err.name || 'unhandledError_purchases-calculateAITokenUpdate', err.isOperational || false, err.severity || 2);
     }
   };
 
   return {
     processNewPurchase: async (options) => {
       const { userID, transaction, sku } = options;
+
       try {
         global.logger.info(`PROCESSING NEW PURCHASE. SKU: ${JSON.stringify(sku)}`);
         // get current profile
@@ -133,14 +137,14 @@ module.exports = ({ db, dbDefault }) => {
           throw errorGen(`Error updating profile: ${error.message}`, 400);
         }
         return updatedProfile;
-      } catch (e) {
-        global.logger.error(`Error processing new purchase. transaction: ${JSON.stringify(transaction)}, sku: ${JSON.stringify(sku)} ${e.message}`);
-        throw errorGen(`Error processing new purchase. transaction: ${JSON.stringify(transaction)}, sku: ${JSON.stringify(sku)} ${e.message}`, 400);
+      } catch (err) {
+        throw errorGen(err.message || 'Unhandled Error in purchases processNewPurchase', err.code || 520, err.name || 'unhandledError_purchases-processNewPurchase', err.isOperational || false, err.severity || 2);
       }
     },
 
     updatePermissions: async (options) => {
       const { userID, permissions } = options;
+
       try {
         if (!permissions) {
           throw errorGen('Missing transaction productId', 400);
@@ -182,9 +186,8 @@ module.exports = ({ db, dbDefault }) => {
           throw errorGen(`Error updating profile: ${error.message}`, 400);
         }
         return updatedProfile;
-      } catch (e) {
-        global.logger.error(`Error updating account permissions. Glassfy permissions: ${JSON.stringify(permissions)} ${e.message}`);
-        throw errorGen(`Error updating account permissions. Glassfy permissions: ${JSON.stringify(permissions)} ${e.message}`, 400);
+      } catch (err) {
+        throw errorGen(err.message || 'Unhandled Error in purchases updatePermissions', err.code || 520, err.name || 'unhandledError_purchases-updatePermissions', err.isOperational || false, err.severity || 2);
       }
     },
   };

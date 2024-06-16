@@ -4,64 +4,70 @@ const { generateIDFunction } = require('../../middleware/ID');
 
 module.exports = ({ db, dbPublic }) => {
   async function getAllMessages(options) {
-    global.logger.info(`Getting all messages for user ${options.userID}`);
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
-    // get 'lastMessageSyncTime' from profile
-    const { data: profile, error: profileError } = await dbPublic.from('profiles').select('lastMessageSyncTime').eq('user_id', userID).single();
-    if (profileError) {
-      global.logger.error(`Error getting profile: ${profileError.message}`);
-      throw errorGen('Error getting profile', 500);
-    }
-    const lastMessageSyncTime = profile.lastMessageSyncTime;
-
-    // Start all promises concurrently
-    const promises = [
-      getIngredientStockExpiredMessages({ userID, lastMessageSyncTime }),
-      getIngredientOutOfStockMessages({ userID, lastMessageSyncTime }),
-      getNewFollowerMessages({ userID, lastMessageSyncTime }),
-      getNewFriendMessages({ userID, lastMessageSyncTime }),
-      getNewFriendRequestMessages({ userID, lastMessageSyncTime }),
-      getfolloweePublicRecipeCreatedMessages({ userID, lastMessageSyncTime }),
-      getFriendHeirloomRecipeCreatedMessages({ userID, lastMessageSyncTime }),
-      getWelcomeMessage({ userID, lastMessageSyncTime }),
-    ];
-
-    // Wait for all promises to settle
-    const results = await Promise.allSettled(promises);
-
-    const messages = [];
-    for (const result of results) {
-      if (result.status === 'fulfilled') {
-        messages.push(...result.value);
-      } else {
-        // Log or handle the error as needed
-        global.logger.error(`Error in fetching messages: ${result.reason}`);
-        throw errorGen('Error in fetching messages', 500);
+    try {
+      global.logger.info(`Getting all messages for user ${options.userID}`);
+      if (!userID) {
+        throw errorGen('userID is required', 400);
       }
-    }
 
-    // update 'lastMessageSyncTime' in profile (timestampz)
-    const { error: updateError } = await dbPublic.from('profiles').update({ lastMessageSyncTime: new Date().toISOString() }).eq('user_id', userID);
-    if (updateError) {
-      global.logger.error(`Error updating lastMessageSyncTime: ${updateError.message}`);
-      throw errorGen('Error updating lastMessageSyncTime', 500);
-    }
+      // get 'lastMessageSyncTime' from profile
+      const { data: profile, error: profileError } = await dbPublic.from('profiles').select('lastMessageSyncTime').eq('user_id', userID).single();
+      if (profileError) {
+        global.logger.error(`Error getting profile: ${profileError.message}`);
+        throw errorGen('Error getting profile', 500);
+      }
+      const lastMessageSyncTime = profile.lastMessageSyncTime;
 
-    return messages;
+      // Start all promises concurrently
+      const promises = [
+        getIngredientStockExpiredMessages({ userID, lastMessageSyncTime }),
+        getIngredientOutOfStockMessages({ userID, lastMessageSyncTime }),
+        getNewFollowerMessages({ userID, lastMessageSyncTime }),
+        getNewFriendMessages({ userID, lastMessageSyncTime }),
+        getNewFriendRequestMessages({ userID, lastMessageSyncTime }),
+        getfolloweePublicRecipeCreatedMessages({ userID, lastMessageSyncTime }),
+        getFriendHeirloomRecipeCreatedMessages({ userID, lastMessageSyncTime }),
+        getWelcomeMessage({ userID, lastMessageSyncTime }),
+      ];
+
+      // Wait for all promises to settle
+      const results = await Promise.allSettled(promises);
+
+      const messages = [];
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          messages.push(...result.value);
+        } else {
+          // Log or handle the error as needed
+          global.logger.error(`Error in fetching messages: ${result.reason}`);
+          throw errorGen('Error in fetching messages', 500);
+        }
+      }
+
+      // update 'lastMessageSyncTime' in profile (timestampz)
+      const { error: updateError } = await dbPublic.from('profiles').update({ lastMessageSyncTime: new Date().toISOString() }).eq('user_id', userID);
+      if (updateError) {
+        global.logger.error(`Error updating lastMessageSyncTime: ${updateError.message}`);
+        throw errorGen('Error updating lastMessageSyncTime', 500);
+      }
+
+      return messages;
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getAllMessages', err.code || 520, err.name || 'unhandledError_messages-getAllMessages', err.isOperational || false, err.severity || 2);
+    }
   }
 
   async function acknowledgeMessage(options) {
     const { userID, message } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
-    global.logger.info(`Acknowledging message ${message.type} for user ${userID}`);
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+      global.logger.info(`Acknowledging message ${message.type} for user ${userID}`);
+
       switch (message.type) {
         case 'ingredientStockExpired':
           await db.from('ingredientStocks').update({ appMessageStatus: 'acked' }).eq('userID', userID).eq('ingredientStockID', message.messageData.data.ingredientStockID);
@@ -90,20 +96,20 @@ module.exports = ({ db, dbPublic }) => {
       return {
         result: 'success',
       };
-    } catch (e) {
-      global.logger.error(`'messages' 'acknowledgeMessage': ${e.message}`);
-      throw errorGen('Error acknowledging message', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages acknowledgeMessage', err.code || 520, err.name || 'unhandledError_messages-acknowledgeMessage', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function deleteMessage(options) {
     const { userID, message } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
-    global.logger.info(`Deleting message ${message.type} for user ${userID}`);
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
+      global.logger.info(`Deleting message ${message.type} for user ${userID}`);
       switch (message.type) {
         case 'ingredientStockExpired':
           await db.from('ingredientStocks').update({ appMessageStatus: null, appMessageDate: null }).eq('userID', userID).eq('ingredientStockID', message.messageData.data.ingredientStockID);
@@ -132,19 +138,19 @@ module.exports = ({ db, dbPublic }) => {
       return {
         result: 'success',
       };
-    } catch (e) {
-      global.logger.error(`'messages' 'deleteMessage': ${e.message}`);
-      throw errorGen('Error deleting message', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages deleteMessage', err.code || 520, err.name || 'unhandledError_messages-deleteMessage', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function getIngredientStockExpiredMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       const { data: ingredientStocks, error } = await db.from('ingredientStocks').select().eq('userID', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
       if (error) {
         global.logger.error(`Error getting ingredientStocks: ${error.message}`);
@@ -182,19 +188,19 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getIngredientStockExpiredMessages': ${e.message}`);
-      throw errorGen('Error getting ingredientStockExpired messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getIngredientStockExpiredMessages', err.code || 520, err.name || 'unhandledError_messages-getIngredientStockExpiredMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function getIngredientOutOfStockMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       const { data: ingredients, error } = await db.from('ingredients').select().eq('userID', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
       if (error) {
         global.logger.error(`Error getting ingredients: ${error.message}`);
@@ -223,19 +229,19 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getIngredientOutOfStockMessages': ${e.message}`);
-      throw errorGen('Error getting ingredientOutOfStock messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getIngredientOutOfStockMessages', err.code || 520, err.name || 'unhandledError_messages-getIngredientOutOfStockMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function getNewFollowerMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       const { data: followships, error } = await db.from('followships').select().eq('following', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
       if (error) {
         global.logger.error(`Error getting followships: ${error.message}`);
@@ -271,19 +277,19 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getNewFollowerMessages': ${e.message}`);
-      throw errorGen('Error getting newFollower messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getNewFollowerMessages', err.code || 520, err.name || 'unhandledError_messages-getNewFollowerMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function getNewFriendMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       const { data: friendships, error } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).in('appMessageStatusNewFriend', ['notAcked', 'acked']);
       if (error) {
         global.logger.error(`Error getting friendships: ${error.message}`);
@@ -319,19 +325,18 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getNewFriendMessages': ${e.message}`);
-      throw errorGen('Error getting newFriend messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getNewFriendMessages', err.code || 520, err.name || 'unhandledError_messages-getNewFriendMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function getNewFriendRequestMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
       const { data: friendRequests, error } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).in('appMessageStatusNewFriendRequest', ['notAcked', 'acked']);
       if (error) {
         global.logger.error(`Error getting friendRequests: ${error.message}`);
@@ -367,20 +372,20 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getNewFriendRequestMessages': ${e.message}`);
-      throw errorGen('Error getting newFriendRequest messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getNewFriendRequestMessages', err.code || 520, err.name || 'unhandledError_messages-getNewFriendRequestMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   // get messages for 'followeePublicRecipeCreated' events
   async function getfolloweePublicRecipeCreatedMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       // get any entries from 'messages' table where 'userID' is the follower and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'followeePublicRecipeCreated').neq('status', 'deleted');
       if (error) {
@@ -408,20 +413,20 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getFolloweePublicRecipeCreatedMessages': ${e.message}`);
-      throw errorGen('Error getting followeePublicRecipeCreated messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getFolloweePublicRecipeCreatedMessages', err.code || 520, err.name || 'unhandledError_messages-getFolloweePublicRecipeCreatedMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   // get messages for 'friendHeirloomRecipeCreated' events
   async function getFriendHeirloomRecipeCreatedMessages(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       // get any entries from 'messages' table where 'userID' is the userID and 'type' is 'friendHeirloomRecipeCreated' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'friendHeirloomRecipeCreated').neq('status', 'deleted');
       if (error) {
@@ -449,19 +454,19 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getFriendHeirloomRecipeCreatedMessages': ${e.message}`);
-      throw errorGen('Error getting friendHeirloomRecipeCreated messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getFriendHeirloomRecipeCreatedMessages', err.code || 520, err.name || 'unhandledError_messages-getFriendHeirloomRecipeCreatedMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function getWelcomeMessage(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
 
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+
       // get any entries from 'messages' table where 'userID' is the userID and 'type' is 'welcomeToDoughly' and 'status' is not 'deleted'
       const { data: messageRows, error } = await db.from('messages').select().eq('userID', userID).eq('type', 'welcomeToDoughly').neq('status', 'deleted');
       if (error) {
@@ -484,18 +489,18 @@ module.exports = ({ db, dbPublic }) => {
         });
       }
       return messages;
-    } catch (e) {
-      global.logger.error(`'messages' 'getWelcomeMessage': ${e.message}`);
-      throw errorGen('Error getting welcome messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages getWelcomeMessage', err.code || 520, err.name || 'unhandledError_messages-getWelcomeMessage', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function add(options) {
     const { userID, message } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
+
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
       switch (message.type) {
         case 'addFolloweePublicRecipeCreatedMessages':
           await addFolloweePublicRecipeCreatedMessages({ userID, recipeID: message.recipeID, recipeTitle: message.recipeTitle });
@@ -504,9 +509,8 @@ module.exports = ({ db, dbPublic }) => {
           await addFriendHeirloomRecipeCreatedMessages({ userID, recipeID: message.recipeID, recipeTitle: message.recipeTitle });
           break;
       }
-    } catch (e) {
-      global.logger.error(`'messages' 'add': ${e.message}`);
-      throw errorGen('Error adding message', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages add', err.code || 520, err.name || 'unhandledError_messages-add', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -516,16 +520,17 @@ module.exports = ({ db, dbPublic }) => {
 
   async function addFolloweePublicRecipeCreatedMessages(options) {
     const { userID, recipeID, recipeTitle } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
-    // get profile of the user (recipe author)
-    const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
-    if (profileError) {
-      global.logger.error(`Error getting profile: ${profileError.message}`);
-      throw errorGen('Error getting profile', 500);
-    }
+
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+      // get profile of the user (recipe author)
+      const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
+      if (profileError) {
+        global.logger.error(`Error getting profile: ${profileError.message}`);
+        throw errorGen('Error getting profile', 500);
+      }
       // get all followers of the user
       const { data: followships, error: followshipsError } = await db.from('followships').select().eq('following', userID).eq('deleted', false);
       if (followshipsError) {
@@ -561,24 +566,24 @@ module.exports = ({ db, dbPublic }) => {
           throw errorGen('Error adding message', 500);
         }
       }
-    } catch (e) {
-      global.logger.error(`'messages' 'addFolloweePublicRecipeCreatedMessages': ${e.message}`);
-      throw errorGen('Error adding followeePublicRecipeCreated messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages addFolloweePublicRecipeCreatedMessages', err.code || 520, err.name || 'unhandledError_messages-addFolloweePublicRecipeCreatedMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function addFriendHeirloomRecipeCreatedMessages(options) {
     const { userID, recipeID, recipeTitle } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
-    // get profile of the user (recipe author)
-    const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
-    if (profileError) {
-      global.logger.error(`Error getting profile: ${profileError.message}`);
-      throw errorGen('Error getting profile', 500);
-    }
+
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
+      // get profile of the user (recipe author)
+      const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
+      if (profileError) {
+        global.logger.error(`Error getting profile: ${profileError.message}`);
+        throw errorGen('Error getting profile', 500);
+      }
       // get all friends of the user
       const { data: friendships, error: friendshipsError } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).eq('status', 'confirmed');
       if (friendshipsError) {
@@ -613,18 +618,18 @@ module.exports = ({ db, dbPublic }) => {
           throw errorGen('Error adding message', 500);
         }
       }
-    } catch (e) {
-      global.logger.error(`'messages' 'addFriendHeirloomRecipeCreatedMessages': ${e.message}`);
-      throw errorGen('Error adding friendHeirloomRecipeCreated messages', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages addFriendHeirloomRecipeCreatedMessages', err.code || 520, err.name || 'unhandledError_messages-addFriendHeirloomRecipeCreatedMessages', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function addWelcomeMessage(options) {
     const { userID } = options;
-    if (!userID) {
-      throw errorGen('userID is required', 400);
-    }
+
     try {
+      if (!userID) {
+        throw errorGen('userID is required', 400);
+      }
       // add a message to 'messages' table
       const newMessageID = await generateIDFunction(75);
       const { error: addMessageError } = await db.from('messages').insert({
@@ -640,9 +645,8 @@ module.exports = ({ db, dbPublic }) => {
         global.logger.error(`Error adding message: ${addMessageError.message}`);
         throw errorGen('Error adding message', 500);
       }
-    } catch (e) {
-      global.logger.error(`'messages' 'addWelcomeMessage': ${e.message}`);
-      throw errorGen('Error adding welcome message', 500);
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in messages addWelcomeMessage', err.code || 520, err.name || 'unhandledError_messages-addWelcomeMessage', err.isOperational || false, err.severity || 2);
     }
   }
 
