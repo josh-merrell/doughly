@@ -9,7 +9,7 @@ async function getRecipeCategories(req, res) {
     const returner = await p.get.all({ userID, cursor, limit });
     return res.json(returner);
   } catch (e) {
-    global.logger.error(`'recipeCategories' 'getRecipeCategories': ${e.message}`);
+    global.logger.info({ message: `'recipeCategories' 'getRecipeCategories': ${e.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
     return res.status(e.code || 500).json({ error: e.message });
   }
 }

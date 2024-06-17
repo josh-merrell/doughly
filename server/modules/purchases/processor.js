@@ -7,11 +7,11 @@ module.exports = ({ db, dbDefault }) => {
       // just set 'hidden' to false for all user recipes and recipe subscriptions
       const { error: error } = await db.from('recipes').update({ hidden: false }).eq('userID', userID);
       if (error) {
-        throw errorGen(`Error unhiding recipes: ${error.message}`, 400);
+        throw errorGen(`Error unhiding recipes: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
       const { error: error2 } = await db.from('recipeSubscriptions').update({ hidden: false }).eq('userID', userID);
       if (error2) {
-        throw errorGen(`Error unhiding recipe subscriptions: ${error2.message}`, 400);
+        throw errorGen(`Error unhiding recipe subscriptions: ${error2.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return 'success';
@@ -31,10 +31,10 @@ module.exports = ({ db, dbDefault }) => {
       // check for 'permAITokenLastRefreshData' value
       const { data: profile, error: error } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
       if (error) {
-        throw errorGen(`Error getting profile: ${error.message}`, 400);
+        throw errorGen(`Error getting profile: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!profile) {
-        throw errorGen('Profile not found', 400);
+        throw errorGen(`Profile not found`, 515, 'cannotComplete', false, 3);
       }
       let addAITokens = false;
       let monthsPassed = 0;

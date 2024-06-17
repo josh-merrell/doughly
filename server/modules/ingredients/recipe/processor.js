@@ -73,7 +73,7 @@ module.exports = ({ db }) => {
       const { data: existingIngredient, error2 } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
       if (error2) {
         // throw errorGen(`Error validating provided ingredientID`, 400);
-        throw errorGen(``, 515, 'cannotComplete', true, 3);
+        throw errorGen(`Error validating provided ingredientID`, 515, 'cannotComplete', true, 3);
       }
       if (existingIngredient.length === 0) {
         throw errorGen(`IngredientID ${ingredientID} does not exist, cannot create recipeIngredient`, 510, 'dataValidationErr', false, 3);

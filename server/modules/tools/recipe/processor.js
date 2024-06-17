@@ -24,10 +24,9 @@ module.exports = ({ db }) => {
       const { data: recipeTools, error } = await q;
 
       if (error) {
-        global.logger.error(`Error getting recipeTools: ${error}`);
-        throw errorGen('error getting recipeTools', 400);
+        throw errorGen(`Error getting recipeTools: ${error}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got ${recipeTools.length} recipeTools`);
+      global.logger.info({ message: `Error getting recipeTools: ${error}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipeTools;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeTools getAll', err.code || 520, err.name || 'unhandledError_recipeTools-getAll', err.isOperational || false, err.severity || 2);
@@ -41,10 +40,9 @@ module.exports = ({ db }) => {
       const { data: recipeTool, error } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID).eq('deleted', false).single();
 
       if (error) {
-        global.logger.error(`Error getting recipeTool by ID: ${recipeToolID}: ${error}`);
-        throw errorGen(`error getting recipeTool by ID: ${recipeToolID}`, 400);
+        throw errorGen(`Error getting recipeTool by ID: ${recipeToolID}: ${error}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got recipeTool ${recipeToolID}`);
+      global.logger.info({ message: `Got recipeTool ${recipeToolID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipeTool;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeTools getByID', err.code || 520, err.name || 'unhandledError_recipeTools-getByID', err.isOperational || false, err.severity || 2);
@@ -58,12 +56,10 @@ module.exports = ({ db }) => {
       //validate that provided recipeID exists
       const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeID);
       if (recipeError) {
-        global.logger.error(`Error validating recipe ID: ${recipeID}: ${recipeError}`);
-        throw errorGen(`Error validating recipe ID: ${recipeID}`, 400);
+        throw errorGen(`Error validating recipe ID: ${recipeID}: ${recipeError}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipe.length) {
-        global.logger.error(`Provided recipe ID: ${recipeID} does not exist, cannot create recipeTool`);
-        throw errorGen(`Provided recipe ID: ${recipeID} does not exist, cannot create recipeTool`, 400);
+        throw errorGen(`Provided recipe ID: ${recipeID} does not exist, cannot create recipeTool`, 515, 'cannotComplete', false, 3);
       }
 
       //accept case of dummy recipeTool
@@ -72,15 +68,13 @@ module.exports = ({ db }) => {
         //check for existing dummy recipeTool
         const { data: existingDummyRecipeTool, error: existingDummyRecipeToolError } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('quantity', -1);
         if (existingDummyRecipeToolError) {
-          global.logger.error(`Error checking for existing dummy recipeTool: ${existingDummyRecipeToolError}`);
-          throw errorGen(`Error checking for existing dummy recipeTool: ${existingDummyRecipeToolError}`, 400);
+          throw errorGen(`Error checking for existing dummy recipeTool: ${existingDummyRecipeToolError}`, 511, 'failSupabaseSelect', true, 3);
         }
         if (!existingDummyRecipeTool.length) {
           //create dummy recipeTool
           const { data: newDummyRecipeTool, error: newDummyRecipeToolError } = await db.from('recipeTools').insert({ recipeToolID: customID, userID, recipeID, quantity, version: 1 }).select().single();
           if (newDummyRecipeToolError) {
-            global.logger.error(`Error creating dummy recipeTool: ${newDummyRecipeToolError}`);
-            throw errorGen(`Error creating dummy recipeTool: ${newDummyRecipeToolError}`, 400);
+            throw errorGen(`Error creating dummy recipeTool: ${newDummyRecipeToolError}`, 512, 'failSupabaseInsert', true, 3);
           }
           dummyRecipeTool = newDummyRecipeTool;
         }
@@ -89,23 +83,20 @@ module.exports = ({ db }) => {
           //undelete dummy recipeTool if deleted, also reset version to 1
           const { error: undeleteError } = await db.from('recipeTools').update({ deleted: false, version: 1 }).eq('recipeToolID', dummyRecipeTool.recipeToolID);
           if (undeleteError) {
-            global.logger.error(`Error undeleting dummy recipeTool: ${undeleteError}`);
-            throw errorGen(`Error undeleting dummy recipeTool: ${undeleteError}`, 400);
+            throw errorGen(`Error undeleting dummy recipeTool: ${undeleteError}`, 513, 'failSupabaseUpdate', true, 3);
           }
         }
         //if status of existingRecipe is 'noTools', check whether there are any recipeSteps
         if (recipe[0].status === 'noTools') {
           const { data: recipeSteps, error: recipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('deleted', false);
           if (recipeStepsError) {
-            global.logger.error(`Error getting recipeSteps for recipe: ${recipeStepsError}`);
-            throw errorGen(`Error getting recipeSteps for recipe: ${recipeStepsError}`, 400);
+            throw errorGen(`Error getting recipeSteps for recipe: ${recipeStepsError}`, 511, 'failSupabaseSelect', true, 3);
           }
           //if there are any, update status to 'published'
           if (recipeSteps.length) {
             const { error: updateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
             if (updateError) {
-              global.logger.error(`Error updating recipe status: ${updateError}`);
-              throw errorGen(`Error updating recipe status: ${updateError}`, 400);
+              throw errorGen(`Error updating recipe status: ${updateError}`, 513, 'failSupabaseUpdate', true, 3);
             }
             //log recipe status update
             const logID1 = await createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'published', `updated recipe status from 'noTools' to 'published'`);
@@ -138,36 +129,30 @@ module.exports = ({ db }) => {
       //validate that provided toolID exists
       const { data: tool, error: toolError } = await db.from('tools').select().eq('toolID', toolID);
       if (toolError) {
-        global.logger.error(`Error validating tool ID: ${toolID}: ${toolError}`);
-        throw errorGen(`Error validating tool ID: ${toolID}`, 400);
+        throw errorGen(`Error validating tool ID: ${toolID}: ${toolError}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!tool.length) {
-        global.logger.error(`Provided tool ID: ${toolID} does not exist, cannot create recipeTool`);
-        throw errorGen(`Provided tool ID: ${toolID} does not exist, cannot create recipeTool`, 400);
+        throw errorGen(`Provided tool ID: ${toolID} does not exist, cannot create recipeTool`, 515, 'cannotComplete', false, 3);
       }
 
       //validate that provided quantity is a positive integer
       if (quantity < 1) {
-        global.logger.error(`Provided quantity: ${quantity} is not a positive integer, cannot create recipeTool`);
-        throw errorGen(`Provided quantity: ${quantity} is not a positive integer, cannot create recipeTool`, 400);
+        throw errorGen(`Provided quantity: ${quantity} is not a positive integer, cannot create recipeTool`, 510, 'dataValidationErr', false, 3);
       }
 
       //validate that recipeTool does not already exist
       const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('toolID', toolID).eq;
       if (recipeToolError) {
-        global.logger.error(`Error checking for duplicate recipeTool: ${recipeToolError}`);
-        throw errorGen(`Error checking for duplicate recipeTool: ${recipeToolError}`, 400);
+        throw errorGen(`Error checking for duplicate recipeTool: ${recipeToolError}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (recipeTool && recipeTool[0].deleted === false) {
-        global.logger.error(`RecipeTool already exists, cannot create recipeTool`);
-        throw errorGen(`RecipeTool already exists, cannot create recipeTool`, 400);
+        throw errorGen(`RecipeTool already exists, cannot create recipeTool`, 515, 'cannotComplete', false, 3);
       }
       if (recipeTool && recipeTool[0].deleted === true) {
         //undelete existing recipeTool
         const { data: undeletedRecipeTool, error: undeleteError } = await db.from('recipeTools').update({ deleted: false }).eq('recipeToolID', recipeTool[0].recipeToolID).select().single();
         if (undeleteError) {
-          global.logger.error(`Error undeleting recipeTool: ${undeleteError}`);
-          throw errorGen(`Error undeleting recipeTool: ${undeleteError}`, 400);
+          throw errorGen(`Error undeleting recipeTool: ${undeleteError}`, 513, 'failSupabaseUpdate', true, 3);
         }
         //add a 'created' log entry
         const logID6 = await createRecipeLog(userID, authorization, 'createRecipeTool', Number(undeletedRecipeTool.recipeToolID), Number(recipeID), null, null, `created recipeTool with ID: ${undeletedRecipeTool.recipeToolID}`);
@@ -179,8 +164,7 @@ module.exports = ({ db }) => {
       //create recipeTool
       const { data: newRecipeTool, error: newRecipeToolError } = await db.from('recipeTools').insert({ recipeToolID: customID, userID, recipeID, toolID, quantity, version: 1 }).select().single();
       if (newRecipeToolError) {
-        global.logger.error(`Error creating recipeTool: ${newRecipeToolError}`);
-        throw errorGen(`Error creating recipeTool: ${newRecipeToolError}`, 400);
+        throw errorGen(`Error creating recipeTool: ${newRecipeToolError}`, 512, 'failSupabaseInsert', true, 3);
       }
 
       //add a 'created' log entry
@@ -193,15 +177,13 @@ module.exports = ({ db }) => {
       if (recipe[0].status === 'noTools') {
         const { data: recipeSteps, error: recipeStepsError } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('deleted', false);
         if (recipeStepsError) {
-          global.logger.error(`Error getting recipeSteps for recipe: ${recipeStepsError}`);
-          throw errorGen(`Error getting recipeSteps for recipe: ${recipeStepsError}`, 400);
+          throw errorGen(`Error getting recipeSteps for recipe: ${recipeStepsError}`, 511, 'failSupabaseSelect', true, 3);
         }
         //if there are any, update status to 'published'
         if (recipeSteps.length) {
           const { error: updateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
           if (updateError) {
-            global.logger.error(`Error updating recipe status: ${updateError}`);
-            throw errorGen(`Error updating recipe status: ${updateError}`, 400);
+            throw errorGen(`Error updating recipe status: ${updateError}`, 513, 'failSupabaseUpdate', true, 3);
           }
           //log recipe status update
           const logID5 = await createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'published', `updated recipe status from 'noTools' to 'published'`);
@@ -212,13 +194,12 @@ module.exports = ({ db }) => {
           // if there are no recipeSteps, update status to 'noSteps'
           const { error: updateError } = await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeID);
           if (updateError) {
-            global.logger.error(`Error updating recipe status: ${updateError}`);
+            global.logger.info({ message: `Error updating recipe status: ${updateError}, rolling back recipeTool create`, level: 3, timestamp: new Date().toISOString(), userID: userID });
             const { error: rollbackError } = await db.from('recipeTools').delete().eq('recipeToolID', newRecipeTool.recipeToolID);
             if (rollbackError) {
-              global.logger.error(`Error rolling back recipeTool: ${rollbackError}`);
-              throw errorGen(`Error rolling back recipeTool: ${rollbackError}`, 400);
+              throw errorGen(`Error rolling back recipeTool: ${rollbackError}`, 514, 'failSupabaseDelete', true, 3);
             }
-            throw errorGen(`Error updating recipe status: ${updateError}`, 400);
+            throw errorGen(`Error updating recipe status: ${updateError}, rolled back`, 513, 'failSupabaseUpdate', true, 3);
           }
           const logID5 = createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'noSteps', `updated recipe status from 'noTools' to 'noSteps'`);
           //increment recipe version and add a 'updatedRecipeVersion' log entry
@@ -245,18 +226,15 @@ module.exports = ({ db }) => {
       //validate that provided recipeToolID exists
       const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID);
       if (recipeToolError) {
-        global.logger.error(`Error validating recipeTool ID: ${recipeToolID}: ${recipeToolError}`);
-        throw errorGen(`Error validating recipeTool ID: ${recipeToolID}`, 400);
+        throw errorGen(`ror validating recipeTool ID: ${recipeToolID}: ${recipeToolError}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipeTool.length) {
-        global.logger.error(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot update recipeTool`);
-        throw errorGen(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot update recipeTool`, 400);
+        throw errorGen(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot update recipeTool`, 515, 'cannotComplete', false, 3);
       }
 
       //validate that provided quantity is a positive integer
       if (quantity < 1) {
-        global.logger.error(`Provided quantity: ${quantity} is not a positive integer, cannot update recipeTool`);
-        throw errorGen(`Provided quantity: ${quantity} is not a positive integer, cannot update recipeTool`, 400);
+        throw errorGen(`Provided quantity: ${quantity} is not a positive integer, cannot update recipeTool`, 510, 'dataValidationErr', false, 3);
       }
 
       //update recipeTool
@@ -280,26 +258,22 @@ module.exports = ({ db }) => {
       //validate that provided recipeToolID exists
       const { data: recipeTool, error: recipeToolError } = await db.from('recipeTools').select().eq('recipeToolID', recipeToolID).eq('deleted', false);
       if (recipeToolError) {
-        global.logger.error(`Error validating recipeTool ID: ${recipeToolID}: ${recipeToolError}`);
-        throw errorGen(`Error validating recipeTool ID: ${recipeToolID}`, 400);
+        throw errorGen(`Error validating recipeTool ID: ${recipeToolID}: ${recipeToolError}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (recipeTool.length === 0) {
-        global.logger.error(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot delete recipeTool`);
-        throw errorGen(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot delete recipeTool`, 400);
+        throw errorGen(`Provided recipeTool ID: ${recipeToolID} does not exist, cannot delete recipeTool`, 515, 'cannotComplete', false, 3);
       }
 
       //delete recipeTool
       const { error: deleteError } = await db.from('recipeTools').update({ deleted: true }).eq('recipeToolID', recipeToolID);
       if (deleteError) {
-        global.logger.error(`Error deleting recipeTool: ${deleteError}`);
-        throw errorGen(`Error deleting recipeTool: ${deleteError}`, 400);
+        throw errorGen(`Error deleting recipeTool: ${deleteError}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       //get current details of associated recipe
       const { data: recipe, error: recipeError } = await db.from('recipes').select().eq('recipeID', recipeTool[0].recipeID);
       if (recipeError) {
-        global.logger.error(`Error getting associated recipe: ${recipeError}`);
-        throw errorGen(`Error getting associated recipe: ${recipeError}`, 400);
+        throw errorGen(`Error getting associated recipe: ${recipeError}`, 511, 'failSupabaseSelect', true, 3);
       }
       //add a 'deleted' log entry
       const logID1 = createRecipeLog(userID, authorization, 'deleteRecipeTool', Number(recipeToolID), Number(recipeTool[0].recipeID), null, null, `deleted recipeTool with ID: ${recipeToolID}`);
@@ -311,14 +285,12 @@ module.exports = ({ db }) => {
       //if existing recipe has no more recipeTools, set recipe status to 'noTools'
       const { data: recipeTools, error: recipeToolsError } = await db.from('recipeTools').select().eq('recipeID', recipeTool[0].recipeID).eq('deleted', false);
       if (recipeToolsError) {
-        global.logger.error(`Error getting remaining recipeTools for recipe: ${recipeToolsError}`);
-        throw errorGen(`Error getting remaining recipeTools for recipe: ${recipeToolsError}`, 400);
+        throw errorGen(`Error getting remaining recipeTools for recipe: ${recipeToolsError}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipeTools.length) {
         const { error: updateError } = await db.from('recipes').update({ status: 'noTools' }).eq('recipeID', recipeTool[0].recipeID);
         if (updateError) {
-          global.logger.error(`Error updating recipe status: ${updateError}`);
-          throw errorGen(`Error updating recipe status: ${updateError}`, 400);
+          throw errorGen(`Error updating recipe status: ${updateError}`, 513, 'failSupabaseUpdate', true, 3);
         }
         //log recipe status update
         const logID2 = await createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeTool[0].recipeID), null, `${recipe.status}`, 'noTools', `updated recipe status from '${recipe.status}' to 'noTools'`);

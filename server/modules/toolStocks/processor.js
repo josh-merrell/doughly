@@ -23,10 +23,9 @@ module.exports = ({ db }) => {
       const { data: toolStocks, error } = await q;
 
       if (error) {
-        global.logger.error(`Error getting toolStocks: ${error.message}`);
-        throw errorGen('Error getting toolStocks', 400);
+        throw errorGen(`Error getting toolStocks: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got ${toolStocks.length} toolStocks`);
+      global.logger.info({ message: `Got ${toolStocks.length} toolStocks`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return toolStocks;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in toolStocks getAll', err.code || 520, err.name || 'unhandledError_toolStocks-getAll', err.isOperational || false, err.severity || 2);
@@ -40,10 +39,9 @@ module.exports = ({ db }) => {
       const { data: toolStock, error } = await db.from('toolStocks').select().eq('toolStockID', toolStockID).eq('deleted', false);
 
       if (error) {
-        global.logger.error(`Error getting toolStock: ${error.message}`);
-        throw errorGen('Error getting toolStock', 400);
+        throw errorGen(`Error getting toolStock: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info(`Got toolStock ID: ${toolStockID}`);
+      global.logger.info({ message: `Got toolStock ID: ${toolStockID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return toolStock;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in toolStocks getByID', err.code || 520, err.name || 'unhandledError_toolStocks-getByID', err.isOperational || false, err.severity || 2);
@@ -56,25 +54,21 @@ module.exports = ({ db }) => {
     try {
       //validate that the provided quantity is valid integer
       if (quantity < 1 || !Number.isInteger(quantity)) {
-        global.logger.error(`Invalid quantity for new Tool Stock: ${quantity}`);
-        throw errorGen(`Invalid quantity for new Tool Stock: ${quantity}`, 400);
+        throw errorGen(`Invalid quantity for new Tool Stock: ${quantity}`, 510, 'dataValidationErr', false, 3);
       }
 
       //validate that the provided toolID is valid
       const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', toolID);
       if (existingToolError) {
-        global.logger.error(`Error validating tool ID: ${toolID}: ${existingToolError.message}`);
-        throw errorGen(`Error validating tool ID: ${toolID}`, 400);
+        throw errorGen(`Error validating tool ID: ${toolID}: ${existingToolError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingTool.length === 0) {
-        global.logger.error(`Tool ID ${toolID} does not exist, cannot create toolStock`);
-        throw errorGen(`Tool ID ${toolID} does not exist, cannot create toolStock`, 400);
+        throw errorGen(`Tool ID ${toolID} does not exist, cannot create toolStock`, 515, 'cannotComplete', false, 3);
       }
 
       const { data: toolStock, error } = await db.from('toolStocks').insert({ toolStockID: customID, userID, toolID, quantity }).select().single();
       if (error) {
-        global.logger.error(`Error creating toolStock: ${error.message}`);
-        throw errorGen('Error creating toolStock', 400);
+        throw errorGen(`Error creating toolStock: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       createKitchenLog(userID, authorization, 'createToolStock', Number(toolStock.toolStockID), Number(toolID), null, null, `Added ${quantity} ${existingTool[0].name}`);
       return {
@@ -93,19 +87,16 @@ module.exports = ({ db }) => {
     try {
       //validate that the provided quantity is valid integer
       if (quantity < 1 || !Number.isInteger(quantity)) {
-        global.logger.error(`Invalid quantity for Tool Stock. Can't Update: ${quantity}`);
-        throw errorGen(`Invalid quantity for Tool Stock. Can't Update: ${quantity}`, 400);
+        throw errorGen(`Invalid quantity for Tool Stock. Can't Update: ${quantity}`, 510, 'dataValidationErr', false, 3);
       }
 
       //validate that the provided toolStockID exists
       const { data: existingToolStock, error: existingToolStockError } = await db.from('toolStocks').select().eq('toolStockID', toolStockID);
       if (existingToolStockError) {
-        global.logger.error(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`);
-        throw errorGen(`Error validating toolStock ID: ${toolStockID}`, 400);
+        throw errorGen(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingToolStock.length === 0) {
-        global.logger.error(`ToolStock ID ${toolStockID} does not exist, cannot update toolStock`);
-        throw errorGen(`ToolStock ID ${toolStockID} does not exist, cannot update toolStock`, 400);
+        throw errorGen(`ToolStock ID ${toolStockID} does not exist, cannot update toolStock`, 515, 'cannotComplete', false, 3);
       }
 
       //update toolStock
@@ -129,31 +120,26 @@ module.exports = ({ db }) => {
       //validate that the provided toolStockID exists
       const { data: existingToolStock, error: existingToolStockError } = await db.from('toolStocks').select().eq('toolStockID', toolStockID).eq('deleted', false);
       if (existingToolStockError) {
-        global.logger.error(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`);
-        throw errorGen(`Error validating toolStock ID: ${toolStockID}`, 400);
+        throw errorGen(`Error validating toolStock ID: ${toolStockID}: ${existingToolStockError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingToolStock.length === 0) {
-        global.logger.error(`ToolStock ID ${toolStockID} does not exist, cannot delete toolStock`);
-        throw errorGen(`ToolStock ID ${toolStockID} does not exist, cannot delete toolStock`, 400);
+        throw errorGen(`ToolStock ID ${toolStockID} does not exist, cannot delete toolStock`, 515, 'cannotComplete', false, 3);
       }
 
       //validate that the associated toolID exists
       const { data: existingTool, error: existingToolError } = await db.from('tools').select().eq('toolID', existingToolStock[0].toolID);
       if (existingToolError) {
-        global.logger.error(`Error validating tool ID: ${existingToolStock[0].toolID}: ${existingToolError.message}`);
-        throw errorGen(`Error validating tool ID: ${existingToolStock[0].toolID}`, 400);
+        throw errorGen(`Error validating tool ID: ${existingToolStock[0].toolID}: ${existingToolError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingTool.length === 0) {
-        global.logger.error(`Tool ID ${existingToolStock[0].toolID} does not exist, cannot delete toolStock`);
-        throw errorGen(`Tool ID ${existingToolStock[0].toolID} does not exist, cannot delete toolStock`, 400);
+        throw errorGen(`Tool ID ${existingToolStock[0].toolID} does not exist, cannot delete toolStock`, 515, 'cannotComplete', false, 3);
       }
 
       //delete toolStock
       const { error } = await db.from('toolStocks').update({ deleted: true }).eq('toolStockID', toolStockID);
 
       if (error) {
-        global.logger.error(`Error deleting toolStock ID: ${toolStockID}: ${error.message}`);
-        throw errorGen(`Error deleting toolStock ID: ${toolStockID}`, 400);
+        throw errorGen(`Error deleting toolStock ID: ${toolStockID}: ${error.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       //add a 'deleted' log entry
