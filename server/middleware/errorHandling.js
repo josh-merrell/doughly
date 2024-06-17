@@ -102,7 +102,6 @@ class ErrorHandler {
 
     const level = severityLevels[error.severity] || 'error';
 
-    global.logger.info(`LOGGING IT: ${JSON.stringify(error)}`);
     global.logger.error({
       level: level,
       message: error.message,

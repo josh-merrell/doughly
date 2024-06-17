@@ -4,17 +4,16 @@ const cheerio = require('cheerio');
 const getHtml = async (url) => {
   let browser;
   try {
-    global.logger.info(`Getting HTML from URL: ${url}`);
+    global.logger.info({ message: `Getting HTML from URL: ${url}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     browser = await playwright.chromium.launch();
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto(url);
     const html = await page.content();
-    global.logger.info(`HTML from URL: ${url} retrieved`);
+    global.logger.info({ message: `HTML from URL: ${url} retrieved`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     return { html };
-  } catch (error) {
-    global.logger.error(`Error getting HTML from URL: ${url}`);
-    throw error;
+  } catch (err) {
+    throw errorGen(err.message || 'Unhandled Error in scraper getHtml', err.code || 520, err.name || 'unhandledError_scraper-getHtml', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
   }
 };
 
@@ -39,7 +38,7 @@ const extractFromHtml = async (html) => {
     });
 
   text = text.replace(/<img[^>]*>/g, ''); // Remove any remaining image tags
-  // global.logger.info(`Text extracted from HTML: ${text}`);
+  // global.logger.info({message:`Text extracted from HTML: ${text}`, level:7, timestamp: new Date().toISOString(), 'userID': 0});
   return text.trim(); // Trim the text to remove any leading/trailing whitespace
 };
 

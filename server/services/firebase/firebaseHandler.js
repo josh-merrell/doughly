@@ -18,11 +18,11 @@ async function sendTokenNotifications(destTokens, type, data) {
       if (data['imageUrl']) {
         message = addImage(message, data['imageUrl']);
       }
-      global.logger.info(`Sending token message: ${JSON.stringify(message)}`);
+      global.logger.info({message:`Sending token message: ${JSON.stringify(message)}`, level:6, timestamp: new Date().toISOString(), 'userID': 0});
       await sendTokenNotification(message);
     }
-  } catch (error) {
-    global.logger.error('Error sending token message:', error);
+  } catch (err) {
+    throw errorGen(err.message || 'Unhandled Error in firebaseHandler sendTokenNotifications', err.code || 520, err.name || 'unhandledError_firebaseHandler-sendTokenNotifications', err.isOperational || false, err.severity || 2) //message, code, name, operational, severity
   }
 }
 
@@ -31,10 +31,10 @@ async function sendTokenNotification(message) {
   await messaging
     .send(message)
     .then((response) => {
-      global.logger.info('Successfully sent token message:', response);
+      global.logger.info({message:`Successfully sent token message: ${response}`, level:6, timestamp: new Date().toISOString(), 'userID': 0});
     })
     .catch((error) => {
-      global.logger.error('Error sending message:', error);
+      throw errorGen('err.message || Unhandled Error in firebaseHandler sendTokenNotification', err.code || 520, 'err.name || unhandledError_firebaseHandler-sendTokenNotification', err.isOperational || false, err.severity || 2) //message, code, name, operational, severity
     });
 }
 
