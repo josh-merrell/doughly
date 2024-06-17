@@ -199,7 +199,7 @@ module.exports = ({ db }) => {
             if (rollbackError) {
               throw errorGen(`Error rolling back recipeTool: ${rollbackError}`, 514, 'failSupabaseDelete', true, 3);
             }
-            throw errorGen(`Error updating recipe status: ${updateError}`, 400);
+            throw errorGen(`Error updating recipe status: ${updateError}, rolled back`, 513, 'failSupabaseUpdate', true, 3);
           }
           const logID5 = createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(recipeID), null, 'noTools', 'noSteps', `updated recipe status from 'noTools' to 'noSteps'`);
           //increment recipe version and add a 'updatedRecipeVersion' log entry

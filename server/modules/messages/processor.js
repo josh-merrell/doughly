@@ -187,7 +187,7 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
 
       const { data: ingredients, error } = await db.from('ingredients').select().eq('userID', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
@@ -227,7 +227,7 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
 
       const { data: followships, error } = await db.from('followships').select().eq('following', userID).eq('deleted', false).in('appMessageStatus', ['notAcked', 'acked']);
@@ -273,7 +273,7 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
 
       const { data: friendships, error } = await db.from('friendships').select().eq('userID', userID).eq('deleted', false).in('appMessageStatusNewFriend', ['notAcked', 'acked']);
@@ -365,7 +365,7 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
 
       // get any entries from 'messages' table where 'userID' is the follower and 'type' is 'followeePublicRecipeCreated' and 'status' is not 'deleted'
@@ -444,7 +444,7 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
 
       // get any entries from 'messages' table where 'userID' is the userID and 'type' is 'welcomeToDoughly' and 'status' is not 'deleted'
@@ -478,7 +478,8 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        // throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
       switch (message.type) {
         case 'addFolloweePublicRecipeCreatedMessages':
@@ -502,7 +503,7 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
       // get profile of the user (recipe author)
       const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
@@ -551,7 +552,7 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
       // get profile of the user (recipe author)
       const { data: authorProfile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
@@ -599,7 +600,7 @@ module.exports = ({ db, dbPublic }) => {
 
     try {
       if (!userID) {
-        throw errorGen('userID is required', 400);
+        throw errorGen(`userID is required`, 510, 'dataValidationErr', false, 3);
       }
       // add a message to 'messages' table
       const newMessageID = await generateIDFunction(75);

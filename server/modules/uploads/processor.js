@@ -71,7 +71,7 @@ module.exports = ({ db, dbDefault }) => {
         Key: `${type}/${userID}/${filename}`,
       });
       await s3Client.send(command);
-      global.logger.info(`Successfully deleted old backup file: backups/${userID}/${filename}`);
+      global.logger.info({message:`Successfully deleted old backup file: backups/${userID}/${filename}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return { message: 'Successfully deleted old backup file' };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in uploads deleteOldBackup', err.code || 520, err.name || 'unhandledError_uploads-deleteOldBackup', err.isOperational || false, err.severity || 2);
@@ -105,8 +105,7 @@ module.exports = ({ db, dbDefault }) => {
         // delete photo from recipeStep
         const { data: updatedRecipeStep, error } = await db.from('recipeSteps').update({ photoURL: null }).match({ recipeStepID: id }).select('*');
         if (error) {
-          global.logger.error(`Error deleting photo when updating recipeStep ${id}:`, error);
-          throw error;
+          throw errorGen(`Error deleting photo when updating recipeStep ${id}: ${error}`, 514, 'failSupabaseDelete', true, 3);
         } else {
           data = updatedRecipeStep[0];
         }
@@ -114,8 +113,7 @@ module.exports = ({ db, dbDefault }) => {
         // delete photo from recipeCategory
         const { data: updatedRecipeCategory, error } = await db.from('recipeCategories').update({ photoURL: null }).match({ recipeCategoryID: id }).select('*');
         if (error) {
-          global.logger.error(`Error deleting photo when updating recipeCategory ${id}:`, error);
-          throw error;
+          throw errorGen(`Error deleting photo when updating recipeCategory ${id}: ${error}`, 514, 'failSupabaseDelete', true, 3);
         } else {
           data = updatedRecipeCategory[0];
         }
@@ -123,8 +121,7 @@ module.exports = ({ db, dbDefault }) => {
         // delete photo from recipe
         const { data: updatedRecipe, error } = await db.from('recipes').update({ photoURL: null }).match({ recipeID: id }).select('*');
         if (error) {
-          global.logger.error(`Error deleting photo when updating recipe ${id}:`, error);
-          throw error;
+          throw errorGen(`Error deleting photo when updating recipe ${id}: ${error}`, 514, 'failSupabaseDelete', true, 3);
         } else {
           data = updatedRecipe[0];
         }
@@ -132,8 +129,7 @@ module.exports = ({ db, dbDefault }) => {
         // delete photo from profile
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update({ photo_url: null }).match({ user_id: userID }).select('*');
         if (error) {
-          global.logger.error(`Error deleting photo when updating profile for User ${userID}:`, error);
-          throw error;
+          throw errorGen(`Error deleting photo when updating profile for user ${id}: ${error}`, 514, 'failSupabaseDelete', true, 3);
         } else {
           data = updatedProfile[0];
         }

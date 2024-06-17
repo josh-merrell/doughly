@@ -1487,7 +1487,7 @@ module.exports = ({ db, dbPublic }) => {
       //create subscription
       const { data: subscription, error: subscriptionError } = await db.from('recipeSubscriptions').insert({ userID, subscriptionID: customID, sourceRecipeID, newRecipeID, startDate }).select().single();
       if (subscriptionError) {
-        throw errorGen(`Error creating subscription: ${subscriptionError.message}`, 400);
+        throw errorGen(`Error creating subscription: ${subscriptionError.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       return subscription.subscriptionID;
     } catch (err) {

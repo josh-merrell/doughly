@@ -32,7 +32,7 @@ const getNextYearMonthDaySequence = async (type) => {
 
     return `${yearMonthDay}${sequence}`;
   } catch (err) {
-    global.logger.info('Could not get next sequence:', err);
+    global.logger.info({message:`Could not get next sequence: ${err}`, level:3, timestamp: new Date().toISOString(), 'userID': 0});
     return null;
   }
 };

@@ -18,8 +18,7 @@ const supplyCheckMoreDemand = async (userID, neededQuantity, orderID, stockProdu
   //retrieve available stock, find all rows in productStocks table with matching stockProductID
   const { data: productStocks, error: productStocksError } = await supabase.from('productStocks').select('productStockID, daysRemaining').filter('userID', 'eq', userID).filter('stockProductID', 'eq', stockProductID);
   if (productStocksError) {
-    global.logger.error(`'supplyCheckMoreDemand' Error getting available product stocks: ${productStocksError.message}`);
-    throw errorGen(`'supplyCheckMoreDemand' Error getting available product stocks`, 400);
+    throw errorGen(`'supplyCheckMoreDemand' Error getting available product stocks: ${productStocksError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
   if (!productStocks.length) {
     //if no available stock, return 'insufficient'
@@ -31,8 +30,7 @@ const supplyCheckMoreDemand = async (userID, neededQuantity, orderID, stockProdu
   //Then retrieve all orders associated with those stockItemIDs. Use order column 'scheduledDeliveryTime' to order the stockItemIDs by date.
   const { data: stockItems, error: stockItemsError } = await supabase.from('orderStockItems').select('stockItemID, quantity, orderID, stockStatus').filter('userID', 'eq', userID).filter('stockProductID', 'eq', stockProductID);
   if (stockItemsError) {
-    global.logger.error(`'supplyCheckMoreDemand' Error getting stockItems: ${stockItemsError.message}`);
-    throw errorGen(`'supplyCheckMoreDemand' Error getting stockItems`, 400);
+    throw errorGen(`'supplyCheckMoreDemand' Error getting stockItems: ${stockItemsError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
   //if stockItemID is is not provided (new Item), add temp entry to stockItems array.
   if (!stockItemID) {
@@ -44,12 +42,10 @@ const supplyCheckMoreDemand = async (userID, neededQuantity, orderID, stockProdu
   for (const orderID of orderIDs) {
     const { data: order, error: orderError } = await supabase.from('orders').select('scheduledDeliveryTime').filter('userID', 'eq', userID).filter('orderID', 'eq', orderID);
     if (orderError) {
-      global.logger.error(`'supplyCheckMoreDemand' Error getting order: ${orderError.message}`);
-      throw errorGen(`'supplyCheckMoreDemand' Error getting order`, 400);
+      throw errorGen(`'supplyCheckMoreDemand' Error getting order: ${orderError.message}`, 511, 'failSupabaseSelect', true, 3);
     }
     orderDates[orderID] = order[0].scheduledDeliveryTime;
   }
-  // console.log(`ORDER DATES: ${JSON.stringify(orderDates)}`);
   let newStockStatus = 'insufficient';
   //sort stockItems by scheduledDeliveryTime ascending, then by stockItemID
   stockItems.sort((a, b) => {
@@ -88,11 +84,11 @@ const supplyCheckMoreDemand = async (userID, neededQuantity, orderID, stockProdu
       }
       const { error: patchStockItemError } = await supabase.from('orderStockItems').update({ stockStatus: 'insufficient' }).eq('stockItemID', stockItems[i].stockItemID);
       if (patchStockItemError) {
-        global.logger.error(`'supplyCheckMoreDemand' Error patching stockItem: ${patchStockItemError.message}`);
-        // return { error: patchStockItemError.message };
-        throw errorGen(`'supplyCheckMoreDemand' Error patching stockItem`, 400);
+        throw errorGen(`'supplyCheckMoreDemand' Error patching stockItem`, 515, 'cannotComplete', false, 3);
       }
-      if (stockItems[i].stockItemID > 0) global.logger.info(`New stockItem caused previously sufficient stockStatus of stockItem ID: ${stockItems[i].stockItemID} to be insufficient. Updated stockStatus.`);
+      if (stockItems[i].stockItemID > 0) {
+        global.logger.info({ message: `New stockItem caused previously sufficient stockStatus of stockItem ID: ${stockItems[i].stockItemID} to be insufficient. Updated stockStatus.`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      }
     }
   }
   return newStockStatus;
@@ -102,20 +98,17 @@ const supplyCheckMoreDemand = async (userID, neededQuantity, orderID, stockProdu
 const supplyCheckRecipe = async (userID, authorization, recipeID) => {
   const { data: recipeIngredients, error: recipeIngredientsError } = await supabase.from('recipeIngredients').select('ingredientID, measurement, purchaseUnitRatio').filter('recipeID', 'eq', recipeID).filter('deleted', 'eq', false);
   if (recipeIngredientsError) {
-    global.logger.error(`'supplyCheckRecipe' Error getting recipeIngredients: ${recipeIngredientsError.message}`);
-    throw errorGen(`'supplyCheckRecipe' Error getting recipeIngredients`, 400);
+    throw errorGen(`'supplyCheckRecipe' Error getting recipeIngredients: ${recipeIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
 
   const { data: recipeTools, error: recipeToolsError } = await supabase.from('recipeTools').select('toolID, quantity').filter('recipeID', 'eq', recipeID).filter('deleted', 'eq', false);
   if (recipeToolsError) {
-    global.logger.error(`'supplyCheckRecipe' Error getting recipeTools: ${recipeToolsError.message}`);
-    throw errorGen(`'supplyCheckRecipe' Error getting recipeTools`, 400);
+    throw errorGen(`'supplyCheckRecipe' Error getting recipeTools: ${recipeToolsError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
 
   const { data: recipe, error: recipeError } = await supabase.from('recipes').select('recipeID, title').filter('recipeID', 'eq', recipeID);
   if (recipeError) {
-    global.logger.error(`'supplyCheckRecipe' Error getting recipe: ${recipeError.message}`);
-    throw errorGen(`'supplyCheckRecipe' Error getting recipe`, 400);
+    throw errorGen(`'supplyCheckRecipe' Error getting recipe: ${recipeError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
 
   const insufficientIngredients = [];
@@ -123,14 +116,12 @@ const supplyCheckRecipe = async (userID, authorization, recipeID) => {
     //get the associated ingredient 'gramRatio' for the recipeIngredient
     const { data: ingredient, error: ingredientError } = await supabase.from('ingredients').select('gramRatio, name').filter('ingredientID', 'eq', recipeIngredients[i].ingredientID).single();
     if (ingredientError) {
-      global.logger.error(`'supplyCheckRecipe' Error getting ingredient: ${ingredientError.message}`);
-      throw errorGen(`'supplyCheckRecipe' Error getting ingredient`, 400);
+      throw errorGen(`'supplyCheckRecipe' Error getting ingredient: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
     }
     let gramsNeeded = recipeIngredients[i].measurement * recipeIngredients[i].purchaseUnitRatio * ingredient.gramRatio;
     const { data: ingredientStock, error: ingredientStockError } = await supabase.from('ingredientStocks').select('ingredientID, grams').filter('userID', 'eq', userID).filter('ingredientID', 'eq', recipeIngredients[i].ingredientID);
     if (ingredientStockError) {
-      global.logger.error(`'supplyCheckRecipe' Error getting ingredientStock: ${ingredientStockError.message}`);
-      throw errorGen(`'supplyCheckRecipe' Error getting ingredientStock`, 400);
+      throw errorGen(`'supplyCheckRecipe' Error getting ingredientStock: ${ingredientStockError.message}`, 511, 'failSupabaseSelect', true, 3);
     }
     for (let j = 0; j < ingredientStock.length; j++) {
       if (ingredientStock[j].grams >= gramsNeeded) {
@@ -150,8 +141,7 @@ const supplyCheckRecipe = async (userID, authorization, recipeID) => {
     if (recipeTools[i].quantity === -1) continue;
     const { data: toolStock, error: toolStockError } = await supabase.from('toolStocks').select('toolID').filter('userID', 'eq', userID).filter('toolID', 'eq', recipeTools[i].toolID);
     if (toolStockError) {
-      global.logger.error(`'supplyCheckRecipe' Error getting toolStock: ${toolStockError.message}`);
-      throw errorGen(`'supplyCheckRecipe' Error getting toolStock`, 400);
+      throw errorGen(`'supplyCheckRecipe' Error getting toolStock: ${toolStockError.message}`, 511, 'failSupabaseSelect', true, 3);
     }
     if (toolStock.length < recipeTools[i].quantity) {
       insufficientTools.push({ toolID: recipeTools[i].toolID, quantityNeeded: recipeTools[i].quantity });
@@ -166,27 +156,25 @@ const supplyCheckRecipe = async (userID, authorization, recipeID) => {
 };
 
 const supplyCheckRecipeIngredient = async (userID, authorization, ingredientID, recipeID) => {
-  global.logger.info(`IN supplyCheckRecipeIngredient: userID: ${userID}, ingredientID: ${ingredientID}, recipeID: ${recipeID}`);
+  global.logger.info({ message: `IN supplyCheckRecipeIngredient: userID: ${userID}, ingredientID: ${ingredientID}, recipeID: ${recipeID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
   const { data: recipeIngredient, error: recipeIngredientError } = await supabase.from('recipeIngredients').select('ingredientID, measurement, purchaseUnitRatio').filter('recipeID', 'eq', recipeID).filter('ingredientID', 'eq', ingredientID);
   if (recipeIngredientError) {
-    global.logger.error(`'supplyCheckRecipeIngredient' Error getting recipeIngredient: ${recipeIngredientError.message}`);
-    throw errorGen(`'supplyCheckRecipeIngredient' Error getting recipeIngredient`, 400);
+    throw errorGen(`'supplyCheckRecipeIngredient' Error getting recipeIngredient: ${recipeIngredientError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
 
   const { data: ingredient, error: ingredientError } = await supabase.from('ingredients').select('gramRatio, name').filter('ingredientID', 'eq', ingredientID).single();
   if (ingredientError) {
-    global.logger.error(`'supplyCheckRecipeIngredient' Error getting ingredient: ${ingredientError.message}`);
-    throw errorGen(`'supplyCheckRecipeIngredient' Error getting ingredient`, 400);
+    throw errorGen(`'supplyCheckRecipeIngredient' Error getting ingredient: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
   let gramsNeeded = recipeIngredient[0].measurement * recipeIngredient[0].purchaseUnitRatio * ingredient.gramRatio;
-  global.logger.info(`gramsNeeded: ${gramsNeeded}`);
+  // global.logger.info(`gramsNeeded: ${gramsNeeded}`);
+  global.logger.info({ message: `gramsNeeded: ${gramsNeeded}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
   const { data: ingredientStock, error: ingredientStockError } = await supabase.from('ingredientStocks').select('ingredientID, grams').filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID).filter('deleted', 'eq', false);
   if (ingredientStockError) {
-    global.logger.error(`'supplyCheckRecipeIngredient' Error getting ingredientStock: ${ingredientStockError.message}`);
-    throw errorGen(`'supplyCheckRecipeIngredient' Error getting ingredientStock`, 400);
+    throw errorGen(`'supplyCheckRecipeIngredient' Error getting ingredientStock: ${ingredientStockError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
   for (let j = 0; j < ingredientStock.length; j++) {
-    global.logger.info(`ingredientStock[j].grams: ${ingredientStock[j].grams}`);
+    global.logger.info({ message: `ingredientStock[j].grams: ${ingredientStock[j].grams}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
     if (ingredientStock[j].grams >= gramsNeeded) {
       gramsNeeded = 0;
       break;
@@ -207,8 +195,7 @@ const useRecipeIngredients = async (userID, authorization, recipeID) => {
   //get all recipeIngredients for the recipe
   const { data: recipeIngredients, error: recipeIngredientsError } = await supabase.from('recipeIngredients').select('ingredientID, measurement, purchaseUnitRatio').filter('recipeID', 'eq', recipeID);
   if (recipeIngredientsError) {
-    global.logger.error(`'useRecipeIngredients' Error getting recipeIngredients: ${recipeIngredientsError.message}`);
-    throw errorGen(`'useRecipeIngredients' Error getting recipeIngredients`, 400);
+    throw errorGen(`'useRecipeIngredients' Error getting recipeIngredients: ${recipeIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
 
   //for each
@@ -216,8 +203,7 @@ const useRecipeIngredients = async (userID, authorization, recipeID) => {
     //get the 'gramRatio' from the associated ingredient
     const { data: ingredient, error: ingredientError } = await supabase.from('ingredients').select('gramRatio').filter('ingredientID', 'eq', recipeIngredients[i].ingredientID).single();
     if (ingredientError) {
-      global.logger.error(`'useRecipeIngredients' Error getting ingredient: ${ingredientError.message}`);
-      throw errorGen(`'useRecipeIngredients' Error getting ingredient`, 400);
+      throw errorGen(`'useRecipeIngredients' Error getting ingredient: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
     }
     //calculate the neededGrams by multiplying recipeIngredient.measurement * recipeIngredient.purchaseUnitRatio * ingredient.gramRatio
     let neededGrams = recipeIngredients[i].measurement * recipeIngredients[i].purchaseUnitRatio * ingredient.gramRatio;
@@ -230,8 +216,7 @@ const useRecipeIngredients = async (userID, authorization, recipeID) => {
       .filter('deleted', 'eq', false)
       .order('purchasedDate', { ascending: true });
     if (ingredientStocksError) {
-      global.logger.error(`'useRecipeIngredients' Error getting ingredientStocks: ${ingredientStocksError.message}`);
-      throw errorGen(`'useRecipeIngredients' Error getting ingredientStocks. rollbackSuccess: true`, 400);
+      throw errorGen(`'useRecipeIngredients' Error getting ingredientStocks: ${ingredientStocksError.message}`, 511, 'failSupabaseSelect', true, 3);
     }
     //if stock grams >= neededGrams, subtract neededGrams from stock grams, update the db entry, and break. Otherwise, subtract stock grams from neededGrams, delete the stock and continue to next ingredientStock.
     for (let j = 0; j < ingredientStocks.length; j++) {
@@ -251,8 +236,14 @@ const useRecipeIngredients = async (userID, authorization, recipeID) => {
         );
         if (patchIngredientStockError) {
           const rollback = await rollbackDeletedIngredientStocks(userID, authorization, deletedIngredientStocks);
-          global.logger.error(`'useRecipeIngredients' Error patching ingredientStock: ${patchIngredientStockError.message}`);
-          throw errorGen(`'useRecipeIngredients' Error patching ingredientStock. rollbackSuccess: ${rollback.success}`, 400);
+
+          throw errorGen(
+            err.message || `'useRecipeIngredients' Error patching ingredientStock: ${patchIngredientStockError.message}`,
+            patchIngredientStockError.code || 520,
+            patchIngredientStockError.name || 'cannotComplete',
+            patchIngredientStockError.isOperational || false,
+            patchIngredientStockError.severity || 2,
+          ); //message, code, name, operational, severitypatchIngredientStockError
         }
         break;
       } else {
@@ -261,8 +252,7 @@ const useRecipeIngredients = async (userID, authorization, recipeID) => {
         const { error: deleteIngredientStockError } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks/${ingredientStocks[j].ingredientStockID}`, { headers: { authorization } });
         if (deleteIngredientStockError) {
           const rollback = await rollbackDeletedIngredientStocks(userID, authorization, deletedIngredientStocks);
-          global.logger.error(`'useRecipeIngredients' Error deleting ingredientStock: ${deleteIngredientStockError.message}`);
-          throw errorGen(`'useRecipeIngredients' Error deleting ingredientStock. rollbackSuccess: ${rollback.success}`, 400);
+          throw errorGen(`'useRecipeIngredients' Error deleting ingredientStock: ${deleteIngredientStockError.message}`, 514, 'failSupabaseDelete', true, 3);
         }
         deletedIngredientStocks.push(ingredientStocks[j].ingredientStockID);
       }
@@ -270,8 +260,7 @@ const useRecipeIngredients = async (userID, authorization, recipeID) => {
     // also need to check for low stock and send a notification if stock is low/empty. Include 'ingredientID' in the body of the request
     const { error: checkLowStockError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks/checkForLowStock`, { userID, ingredientID: recipeIngredients[i].ingredientID }, { headers: { authorization } });
     if (checkLowStockError) {
-      global.logger.error(`'useRecipeIngredients' Error checking low stock: ${checkLowStockError.message}`);
-      throw errorGen(`'useRecipeIngredients' Error checking low stock`, 400);
+      throw errorGen(err.message || `'useRecipeIngredients' Error checking low stock: ${checkLowStockError.message}`, checkLowStockError.code || 520, checkLowStockError.name || 'cannotComplete', checkLowStockError.isOperational || false, checkLowStockError.severity || 2); //message, code, name, operational, severitycheckLowStockError
     }
   }
   return { success: true };
@@ -282,8 +271,7 @@ const rollbackDeletedIngredientStocks = async (userID, authorization, deletedIng
   for (let i = 0; i < deletedIngredientStocks.length; i++) {
     const { error: updateIngredientStockError } = await supabase.from('ingredientStocks').update({ deleted: false }).eq('ingredientStockID', deletedIngredientStocks[i]);
     if (updateIngredientStockError) {
-      global.logger.error(`'rollbackDeletedIngredientStocks' Error updating ingredientStock: ${updateIngredientStockError.message}`);
-      throw errorGen(`'rollbackDeletedIngredientStocks' Error updating ingredientStock`, 400);
+      throw errorGen(`'rollbackDeletedIngredientStocks' Error updating ingredientStock: ${updateIngredientStockError.message}`, 513, 'failSupabaseUpdate', true, 3);
     }
 
     //log the rollback
