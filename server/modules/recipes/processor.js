@@ -1026,7 +1026,6 @@ module.exports = ({ db, dbPublic }) => {
                 if (ingredientJSON.foundMatch) {
                   const ingredientID = userIngredients.find((i) => i.name === ingredientJSON.ingredientName);
                   if (!ingredientID) {
-                    // global.logger.error(`Error matching ingredient with AI: ${ingredientJSON.error}`);
                     global.logger.info({ message: `Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                     return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                   }
