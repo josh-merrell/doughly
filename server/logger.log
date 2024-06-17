@@ -7,3 +7,457 @@
 2024-06-15T22:31:56 [error]: The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image {"name":"recipeSourceImageUnclear","code":560,"stack":"recipeSourceImageUnclear: The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image\n    at new AppError (/home/josh/repos/doughleap/server/middleware/errorHandling.js:47:11)\n    at ErrorHandler.handleError (/home/josh/repos/doughleap/server/middleware/errorHandling.js:74:30)\n    at /home/josh/repos/doughleap/server/server.js:134:14\n    at Layer.handle_error (/home/josh/repos/doughleap/server/node_modules/express/lib/router/layer.js:71:5)\n    at trim_prefix (/home/josh/repos/doughleap/server/node_modules/express/lib/router/index.js:326:13)\n    at /home/josh/repos/doughleap/server/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/home/josh/repos/doughleap/server/node_modules/express/lib/router/index.js:346:12)\n    at next (/home/josh/repos/doughleap/server/node_modules/express/lib/router/index.js:280:10)\n    at /home/josh/repos/doughleap/server/node_modules/express/lib/router/index.js:646:15\n    at next (/home/josh/repos/doughleap/server/node_modules/express/lib/router/index.js:265:14)","isOperational":true,"severity":3}
 2024-06-15T22:31:56 [info]: *SSE Session* disconnected userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced {}
 2024-06-15T22:31:56 [info]: **USER LOG MESSAGE: Used 1544 tokens to generateRecipeFromImage. ENTRY ID: 7224061500011132** openaiTokensUsed|subjectID:0|oldValue:null|newValue:1544 {}
+2024-06-16T14:19:17 [info]: Server is running at http://localhost:3000 {}
+2024-06-16T14:20:49 [info]: Got 29 tools {}
+2024-06-16T14:20:49 [info]: Got 0 toolStocks {}
+2024-06-16T14:20:49 [info]: Got 1 ingredientStocks {}
+2024-06-16T14:20:49 [info]: Got 5 recipes {}
+2024-06-16T14:20:49 [info]: Got 74 ingredients {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:49 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:20:49 [info]: Got 49 recipeIngredients {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:49 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:49 [info]: Got 14 recipeTools {}
+2024-06-16T14:20:49 [info]: Got 202 steps {}
+2024-06-16T14:20:49 [info]: Got 23 recipeSteps {}
+2024-06-16T14:20:49 [info]: Got recipe {}
+2024-06-16T14:20:49 [info]: sourceRecipe: {"recipeID":1124022400010007,"title":"10-Minute Olive Tapenade","servings":4,"recipeCategoryID":4,"lifespanDays":14,"userID":"a525810e-5531-4f97-95a4-39a082f7416b","deleted":false,"status":"published","timePrep":10,"timeBake":null,"photoURL":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/tapenade.jpg","version":18,"type":"public","discoverPage":true,"freeTier":false} {}
+2024-06-16T14:20:49 [info]: Got 4 friendships {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:49 [info]: Got 11 follower followships {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:49 [info]: Got 3 followships {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:50 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:50 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:50 [info]: Successfully retrieved 3 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:50 [info]: Got 1 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced {}
+2024-06-16T14:20:50 [info]: Successfully retrieved 11 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:20:50 [info]: Got 1 shopping lists {}
+2024-06-16T14:20:50 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:20:50 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:21:12 [info]: Got 0 toolStocks {}
+2024-06-16T14:21:12 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:21:12 [info]: Got 89 tools {}
+2024-06-16T14:21:12 [info]: Got 297 recipes {}
+2024-06-16T14:21:12 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:12 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:21:12 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:21:12 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:21:12 [info]: Got 909 recipeTools {}
+2024-06-16T14:21:12 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:12 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:21:12 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:12 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:12 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:12 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:12 [info]: Got 1753 steps {}
+2024-06-16T14:21:12 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:12 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:13 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:21:13 [info]: Got 1 shopping lists {}
+2024-06-16T14:21:13 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:13 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:21:17 [info]: Got 0 recipeFeedback logs {}
+2024-06-16T14:21:17 [info]: Got 0 recipeFeedback logs {}
+2024-06-16T14:21:17 [info]: Found 1 recipeSubscriptions for recipeID: 1124022400010007 {}
+2024-06-16T14:23:05 [info]: Got 0 recipeFeedback logs {}
+2024-06-16T14:23:05 [info]: Found 1 recipeSubscriptions for recipeID: 1124022400010010 {}
+2024-06-16T14:23:05 [info]: Got 0 recipeFeedback logs {}
+2024-06-16T14:23:46 [info]: **RECIPE LOG ENTRY ID: 7124061600011206** updateSteps-description|subjectID:1824022400010050|oldValue:Place the eggplant flesh, tahini, lemon juice, olive oil, garlic, and salt in a food processor and pulse until smooth. Transfer to a serving dish, sprinkle with chopped parsley, smoked paprika, and red pepper flakes, if using. Serve with pita and veggies.|newValue:Place the eggplant flesh, tahini, lemon juice, olive oil, garlic, and salt in a food processor and pulse until smooth. Move to a serving dish, sprinkle with chopped parsley, smoked paprika, and red pepper flakes, if using. Serve with pita and veggies. {}
+2024-06-16T14:23:46 [info]: **RECIPE LOG ENTRY ID: 7124061600011207** updateStepVersion|subjectID:1824022400010050|oldValue:1|newValue:2 {}
+2024-06-16T14:23:46 [info]: **RECIPE LOG ENTRY ID: 7124061600011208** updateRecipeVersion|subjectID:1124022400010010|oldValue:17|newValue:18 {}
+2024-06-16T14:23:47 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:25:37 [info]: Got 89 tools {}
+2024-06-16T14:25:37 [info]: Got 297 recipes {}
+2024-06-16T14:25:37 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:25:37 [info]: Got 0 toolStocks {}
+2024-06-16T14:25:37 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:37 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:25:37 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:25:37 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:25:37 [info]: Got 909 recipeTools {}
+2024-06-16T14:25:37 [info]: Got 1753 steps {}
+2024-06-16T14:25:37 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:37 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:25:37 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:37 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:37 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:38 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:38 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:38 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:38 [info]: Got 1 shopping lists {}
+2024-06-16T14:25:38 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:25:38 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:38 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:43 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:25:43 [info]: Got 0 toolStocks {}
+2024-06-16T14:25:43 [info]: Got 89 tools {}
+2024-06-16T14:25:43 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:25:43 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:43 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:25:43 [info]: Got 297 recipes {}
+2024-06-16T14:25:43 [info]: Got 909 recipeTools {}
+2024-06-16T14:25:43 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:25:43 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:43 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:25:43 [info]: Got 1753 steps {}
+2024-06-16T14:25:43 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:43 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:43 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:44 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:44 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:44 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:44 [info]: Got 1 shopping lists {}
+2024-06-16T14:25:44 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:25:44 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:44 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:56 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:25:56 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:25:56 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:56 [info]: Got 89 tools {}
+2024-06-16T14:25:56 [info]: Got 0 toolStocks {}
+2024-06-16T14:25:56 [info]: Got 297 recipes {}
+2024-06-16T14:25:56 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:25:56 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:25:56 [info]: Got 909 recipeTools {}
+2024-06-16T14:25:56 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:25:56 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:56 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:56 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:56 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:56 [info]: Got 1753 steps {}
+2024-06-16T14:25:56 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:56 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:56 [info]: Got 1 shopping lists {}
+2024-06-16T14:25:56 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:57 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:25:57 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:25:57 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Got 297 recipes {}
+2024-06-16T14:27:31 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:27:31 [info]: Got 89 tools {}
+2024-06-16T14:27:31 [info]: Got 0 toolStocks {}
+2024-06-16T14:27:31 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:27:31 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:27:31 [info]: Got 909 recipeTools {}
+2024-06-16T14:27:31 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:27:31 [info]: Got 1753 steps {}
+2024-06-16T14:27:31 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:27:31 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Got 1 shopping lists {}
+2024-06-16T14:27:31 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:31 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:27:32 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Got 89 tools {}
+2024-06-16T14:27:46 [info]: Got 0 toolStocks {}
+2024-06-16T14:27:46 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:27:46 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Got 297 recipes {}
+2024-06-16T14:27:46 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:27:46 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:27:46 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:27:46 [info]: Got 909 recipeTools {}
+2024-06-16T14:27:46 [info]: Got 1753 steps {}
+2024-06-16T14:27:46 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:27:46 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Got 1 shopping lists {}
+2024-06-16T14:27:46 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:27:46 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:46 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:27:50 [info]: Got 0 recipeFeedback logs {}
+2024-06-16T14:27:50 [info]: Found 0 recipeSubscriptions for recipeID: 1124031200010006 {}
+2024-06-16T14:27:50 [info]: Got 0 recipeFeedback logs {}
+2024-06-16T14:27:57 [info]: **RECIPE LOG ENTRY ID: 7124061600011209** updateRecipes-servings|subjectID:1124031200010006|oldValue:4|newValue:3 {}
+2024-06-16T14:27:57 [info]: **RECIPE LOG ENTRY ID: 7124061600011210** updateRecipeVersion|subjectID:1124031200010006|oldValue:9|newValue:10 {}
+2024-06-16T14:27:57 [info]: Got 1 push tokens for other user: 4fade568-275d-4f8b-a0f0-00ec1a1ce77d {"userID":"4fade568-275d-4f8b-a0f0-00ec1a1ce77d"}
+2024-06-16T14:27:57 [info]: Got 1 push tokens for other user: bccb0319-b6e4-42f9-b8f5-1050bcff876c {"userID":"bccb0319-b6e4-42f9-b8f5-1050bcff876c"}
+2024-06-16T14:27:57 [info]: Got 2 push tokens for other user: e443ee72-a0f9-4a45-8217-7c95dbd2645b {"userID":"e443ee72-a0f9-4a45-8217-7c95dbd2645b"}
+2024-06-16T14:27:57 [info]: Got 0 push tokens for other user: d6dc8513-8db6-4766-920e-1abaaaf02178 {"userID":"d6dc8513-8db6-4766-920e-1abaaaf02178"}
+2024-06-16T14:27:57 [info]: Got 1 push tokens for other user: aa439fd4-b22d-44d9-8d02-29fd0a453c17 {"userID":"aa439fd4-b22d-44d9-8d02-29fd0a453c17"}
+2024-06-16T14:27:57 [info]: Got 1 push tokens for other user: c0be201f-13f9-4bdd-b012-f87bfe2f1ff6 {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: [object Object], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"dUP-fAAfQt2AmkL4iprZzb:APA91bGi54xQr8U8KUQPFtkSpKSFB6y627au-oQEK0_NaUxgawpcH6NBYRNOnVK9Ham4Yp69mnOHR8OyFaFlmua6OF2aH4ce0yfjFOzADEguTHbEFgxfmSflRhcOpa0RRHop3yxQ2T2T","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: [object Object], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"dFZpAB9eTCaS4Haie5Sj8m:APA91bFCGIo6oMzWAEt8m22bK5LGlojjjRtz2-Q35q5bS6sFh4_LS2igCQ8ql1zv10YKJrfPtmQ7MmIZzTMe0lPW5IlyGy6Uhz_vMnH5i2E5Lle7s7osQvpbQvRz3mRFCm_4w9Z6cMax","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:57 [info]: Got 0 push tokens for other user: e0f885a5-0e46-408a-aaac-68fa8c093370 {"userID":"e0f885a5-0e46-408a-aaac-68fa8c093370"}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: [object Object],[object Object], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"fokOWQvz_ELclCb7lUPq_X:APA91bF1Gypq4JL_MaLzTn1wDf1EUuDdT7HOAl2VDwBLEJofLawkohFQvZ5paJ2VRPwXVMyCSOZ7zmhLXGef-4n-UJjfNn7ijfF3GrW_l2XvsjOf7R6dKDQKhRIHHrAz02HJotEHTH1h","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:57 [info]: Got 4 push tokens for other user: 42199648-12c4-43e0-8ede-71a502cba988 {"userID":"42199648-12c4-43e0-8ede-71a502cba988"}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: , type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: [object Object], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"dD1Glk2XkUIRkw2XOZnzcE:APA91bE5HvixZc3VXKv1uidJBlJHZzSakqRTEr9w5TgxtS5ib7F1hy_sJ-A11kMYXOBICwtpdyZwFXl2QZhqEVElKJrLynVpEOhFxR2Rn_rlZkZwYPIYclnTQw-sP-qzz-A0KbmCqmC9","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:57 [info]: Got 0 push tokens for other user: e6c79e5e-ebdc-47fb-9c49-8527aad2d21d {"userID":"e6c79e5e-ebdc-47fb-9c49-8527aad2d21d"}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: [object Object], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"c11e3mj8SEscrKRHvVptmo:APA91bG0viEuzVxlQiSTL2ouL8C_RzmWcMLeDn02KTp7iEEA9x3COFZiva6HCILSsLTBibrVCJxedap0Edaf1UYBNSGkNX2za1txE4jmlu_CQuAOlkBoXzkLq43_qrZ2y8M5qto2Jjrj","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: , type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: [object Object],[object Object],[object Object],[object Object], type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"ews5saiCQ9Ca6JGjFvhGBG:APA91bE9spUJdRonil87cVGPRo0xwdg_w9RuNIQV4MoObp4Rmagj8ujkGGqjIB0pGgqA-4m9l9e4KgsE0kYzhdQg-qK_iFigEq338YJ_PU8il-UWqpT0rgu9WYvh9OtKiHX3xzgmqt61","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:57 [info]: Got recipe {}
+2024-06-16T14:27:57 [info]: in sendNotification: destTokens: , type: notifyFollowersPublicRecipeCreated, data: {"recipeAuthor":"Doughly Recipes","recipeName":"10 Minute Pesto Pasta","imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg","recipeID":1124031200010006} {"userID":0}
+2024-06-16T14:27:57 [error]: Error sending message: Requested entity was not found. {"errorInfo":{"code":"messaging/registration-token-not-registered","message":"Requested entity was not found."},"codePrefix":"messaging","stack":"Error: Requested entity was not found.\n    at FirebaseMessagingError.fromServerError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/utils/error.js:254:16)\n    at createFirebaseError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-errors-internal.js:35:47)\n    at /home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-api-request-internal.js:79:75\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async sendTokenNotification (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:31:3)\n    at async sendTokenNotifications (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:22:7)"}
+2024-06-16T14:27:57 [info]: Successfully sent token message: {}
+2024-06-16T14:27:57 [info]: Successfully sent token message: {}
+2024-06-16T14:27:57 [error]: Error sending message: Requested entity was not found. {"errorInfo":{"code":"messaging/registration-token-not-registered","message":"Requested entity was not found."},"codePrefix":"messaging","stack":"Error: Requested entity was not found.\n    at FirebaseMessagingError.fromServerError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/utils/error.js:254:16)\n    at createFirebaseError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-errors-internal.js:35:47)\n    at /home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-api-request-internal.js:79:75\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async sendTokenNotification (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:31:3)\n    at async sendTokenNotifications (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:22:7)"}
+2024-06-16T14:27:57 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"djlJL9CjQxamKlxiYOW75K:APA91bGVX_GcI1YxLR1cqfEcI47n8ScugQCboLPukKaQ_DyMM7CjpGNM38uPp6-2ZlFo_LO53sDKpfejCmm2szlkJ-Z5xC-pCEYxZUvRu3t31XGHuniQc9sJvhyeOMZxm1_yrH5IOo8a","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:58 [error]: Error sending message: Requested entity was not found. {"errorInfo":{"code":"messaging/registration-token-not-registered","message":"Requested entity was not found."},"codePrefix":"messaging","stack":"Error: Requested entity was not found.\n    at FirebaseMessagingError.fromServerError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/utils/error.js:254:16)\n    at createFirebaseError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-errors-internal.js:35:47)\n    at /home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-api-request-internal.js:79:75\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async sendTokenNotification (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:31:3)\n    at async sendTokenNotifications (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:22:7)"}
+2024-06-16T14:27:58 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"ews5saiCQ9Ca6JGjFvhGBG:APA91bFWJLKEUR8anjlrNl1WVtwEtrIsxt8YVF7F9YGLxZJjs1Z8WzrZQDj7YWI2Alju0u3VFNXOyifX8I9lTCWF_GnxfNJfkySZUAg_kPPSyKlnej1oH8D_kkAafwgzmx5uVJrKDbpy","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:58 [error]: Error sending message: Requested entity was not found. {"errorInfo":{"code":"messaging/registration-token-not-registered","message":"Requested entity was not found."},"codePrefix":"messaging","stack":"Error: Requested entity was not found.\n    at FirebaseMessagingError.fromServerError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/utils/error.js:254:16)\n    at createFirebaseError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-errors-internal.js:35:47)\n    at /home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-api-request-internal.js:79:75\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async sendTokenNotification (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:31:3)\n    at async sendTokenNotifications (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:22:7)"}
+2024-06-16T14:27:58 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"ektZjJgtQAuANWmUT36muj:APA91bGxq7XTsfX4Dhy0nd-hyGGuSSb6mdwFlM5tT1zEwYrz465AzwMI0XUlWWocxYD12LmC-0XgAMBWFRvOeolObbkqM4EZkWBFTwegSfXD7ObXE4oqZUMfzRoUkWWUiJCPFMRW1DXB","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:58 [info]: Successfully sent token message: {}
+2024-06-16T14:27:58 [info]: Successfully sent token message: {}
+2024-06-16T14:27:58 [info]: Sending token message: {"data":{"type":"followeePublicRecipeCreated","newRecipe":"Doughly Recipes published a new recipe: 10 Minute Pesto Pasta","recipeID":"1124031200010006"},"notification":{"title":"New Recipe on Doughly","body":"Check out 10 Minute Pesto Pasta, a new public recipe published by Doughly Recipes, who you follow!"},"token":"cZUJjssHSPSkUPU7mpK6gv:APA91bEaflcLAgaN2Ni73FcOTgqPAHiymxCpo0V8DeBJXdAFkHZfWGq0l8ptEEJX5Drf-volD3I3sw3eNqChJqH6XAfStDNPKexA-9V9Uu6yN6QWUye8OonBPdx2De42BgDsOqpUAXWD","android":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"apns":{"payload":{"aps":{"mutable-content":1}},"fcm_options":{"image":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}},"webpush":{"notification":{"imageUrl":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/Pesto-Pasta.jpg"}}} {}
+2024-06-16T14:27:58 [error]: Error sending message: Requested entity was not found. {"errorInfo":{"code":"messaging/registration-token-not-registered","message":"Requested entity was not found."},"codePrefix":"messaging","stack":"Error: Requested entity was not found.\n    at FirebaseMessagingError.fromServerError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/utils/error.js:254:16)\n    at createFirebaseError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-errors-internal.js:35:47)\n    at /home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-api-request-internal.js:79:75\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async sendTokenNotification (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:31:3)\n    at async sendTokenNotifications (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:22:7)"}
+2024-06-16T14:27:58 [error]: Error sending message: Requested entity was not found. {"errorInfo":{"code":"messaging/registration-token-not-registered","message":"Requested entity was not found."},"codePrefix":"messaging","stack":"Error: Requested entity was not found.\n    at FirebaseMessagingError.fromServerError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/utils/error.js:254:16)\n    at createFirebaseError (/home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-errors-internal.js:35:47)\n    at /home/josh/repos/doughleap/server/node_modules/firebase-admin/lib/messaging/messaging-api-request-internal.js:79:75\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async sendTokenNotification (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:31:3)\n    at async sendTokenNotifications (/home/josh/repos/doughleap/server/services/firebase/firebaseHandler.js:22:7)"}
+2024-06-16T14:28:10 [info]: **RECIPE LOG ENTRY ID: 7124061600011211** updateRecipeIngredients-measurement|subjectID:1624031200010039|oldValue:50|newValue:45 {}
+2024-06-16T14:28:10 [info]: **RECIPE LOG ENTRY ID: 7124061600011212** updateRecipeVersion|subjectID:1124031200010006|oldValue:10|newValue:11 {}
+2024-06-16T14:28:10 [info]: **RECIPE LOG ENTRY ID: 7124061600011213** updateRecipeIngredientVersion|subjectID:1624031200010039|oldValue:1|newValue:2 {}
+2024-06-16T14:28:10 [info]: **RECIPE LOG ENTRY ID: 7124061600011214** updateRecipeIngredients-component|subjectID:1624031200010039|oldValue:null|newValue: testing {}
+2024-06-16T14:28:10 [info]: **RECIPE LOG ENTRY ID: 7124061600011215** updateRecipeVersion|subjectID:1124031200010006|oldValue:10|newValue:11 {}
+2024-06-16T14:28:10 [info]: **RECIPE LOG ENTRY ID: 7124061600011216** updateRecipeIngredientVersion|subjectID:1624031200010039|oldValue:1|newValue:2 {}
+2024-06-16T14:28:21 [info]: **RECIPE LOG ENTRY ID: 7124061600011217** updateRecipeIngredients-measurement|subjectID:1624031200010039|oldValue:45|newValue:50 {}
+2024-06-16T14:28:21 [info]: **RECIPE LOG ENTRY ID: 7124061600011218** updateRecipeVersion|subjectID:1124031200010006|oldValue:11|newValue:12 {}
+2024-06-16T14:28:21 [info]: **RECIPE LOG ENTRY ID: 7124061600011219** updateRecipeIngredientVersion|subjectID:1624031200010039|oldValue:2|newValue:3 {}
+2024-06-16T14:28:21 [info]: **RECIPE LOG ENTRY ID: 7124061600011220** updateRecipeIngredients-component|subjectID:1624031200010039|oldValue: testing|newValue: {}
+2024-06-16T14:28:21 [info]: **RECIPE LOG ENTRY ID: 7124061600011221** updateRecipeVersion|subjectID:1124031200010006|oldValue:11|newValue:12 {}
+2024-06-16T14:28:22 [info]: **RECIPE LOG ENTRY ID: 7124061600011222** updateRecipeIngredientVersion|subjectID:1624031200010039|oldValue:2|newValue:3 {}
+2024-06-16T14:29:15 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:29:15 [info]: Got 89 tools {}
+2024-06-16T14:29:15 [info]: Got 0 toolStocks {}
+2024-06-16T14:29:15 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:15 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:29:15 [info]: Got 297 recipes {}
+2024-06-16T14:29:15 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:29:15 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:29:15 [info]: Got 909 recipeTools {}
+2024-06-16T14:29:15 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:29:15 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:15 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:15 [info]: Got 1753 steps {}
+2024-06-16T14:29:15 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:15 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:15 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:15 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:15 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:15 [info]: Got 1 shopping lists {}
+2024-06-16T14:29:15 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:29:15 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:16 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:29:16 [info]: Found 0 recipeSubscriptions for recipeID: 1124031200010006 {}
+2024-06-16T14:29:16 [info]: Got 0 recipeFeedback logs {}
+2024-06-16T14:29:16 [info]: Got 0 recipeFeedback logs {}
+2024-06-16T14:30:15 [info]: Server is running at http://localhost:3000 {}
+2024-06-16T14:30:23 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:30:23 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:23 [info]: Got 89 tools {}
+2024-06-16T14:30:23 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:30:23 [info]: Got 297 recipes {}
+2024-06-16T14:30:23 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:30:23 [info]: Got 0 toolStocks {}
+2024-06-16T14:30:23 [info]: Got 909 recipeTools {}
+2024-06-16T14:30:23 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:30:24 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:24 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:30:24 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:24 [info]: Got 1753 steps {}
+2024-06-16T14:30:24 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:24 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:24 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:24 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:24 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:24 [info]: Got 1 shopping lists {}
+2024-06-16T14:30:24 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:30:24 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:24 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:30:28 [info]: Got 0 recipeFeedback logs {"userID":"bccb0319-b6e4-42f9-b8f5-1050bcff876c"}
+2024-06-16T14:30:28 [info]: Got 2 recipe logs {"userID":"bccb0319-b6e4-42f9-b8f5-1050bcff876c"}
+2024-06-16T14:31:16 [info]: Got 89 tools {}
+2024-06-16T14:31:16 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:31:16 [info]: Got 0 toolStocks {}
+2024-06-16T14:31:16 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:31:17 [info]: Got 297 recipes {}
+2024-06-16T14:31:17 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:31:17 [info]: Got 909 recipeTools {}
+2024-06-16T14:31:17 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:31:17 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:31:17 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Got 1753 steps {}
+2024-06-16T14:31:17 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Got 1 shopping lists {}
+2024-06-16T14:31:17 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:31:17 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:17 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:31:39 [info]: Got 89 tools {}
+2024-06-16T14:31:39 [info]: Got 0 toolStocks {}
+2024-06-16T14:31:39 [info]: Got 297 recipes {}
+2024-06-16T14:31:39 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:31:39 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:31:39 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:31:39 [info]: Got 909 recipeTools {}
+2024-06-16T14:31:39 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:31:39 [info]: Got 1753 steps {}
+2024-06-16T14:31:39 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Got 1 shopping lists {}
+2024-06-16T14:31:39 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:39 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:31:39 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:40 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:43 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:31:43 [info]: Got 0 toolStocks {}
+2024-06-16T14:31:43 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:43 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:31:43 [info]: Got 297 recipes {}
+2024-06-16T14:31:43 [info]: Got 89 tools {}
+2024-06-16T14:31:43 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:31:43 [info]: Got 909 recipeTools {}
+2024-06-16T14:31:43 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:31:43 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:31:43 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:43 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:43 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:43 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:43 [info]: Got 1753 steps {}
+2024-06-16T14:31:43 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:43 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:43 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:44 [info]: Got 1 shopping lists {}
+2024-06-16T14:31:44 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:31:44 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:44 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:31:51 [info]: Got 1 recipe logs {"userID":"e443ee72-a0f9-4a45-8217-7c95dbd2645b"}
+2024-06-16T14:31:51 [info]: Got 0 recipeFeedback logs {"userID":"e443ee72-a0f9-4a45-8217-7c95dbd2645b"}
+2024-06-16T14:31:54 [info]: Got 0 recipeFeedback logs {"userID":"bccb0319-b6e4-42f9-b8f5-1050bcff876c"}
+2024-06-16T14:31:54 [info]: Got 2 recipe logs {"userID":"bccb0319-b6e4-42f9-b8f5-1050bcff876c"}
+2024-06-16T14:32:09 [info]: Got 0 recipeFeedback logs {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:09 [info]: Got 22 recipe logs {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:13 [info]: Got 0 recipeFeedback logs {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:32:13 [info]: Got 4 recipe logs {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:32:24 [info]: Got 2 recipe logs {"userID":"bccb0319-b6e4-42f9-b8f5-1050bcff876c"}
+2024-06-16T14:32:24 [info]: Got 0 recipeFeedback logs {"userID":"bccb0319-b6e4-42f9-b8f5-1050bcff876c"}
+2024-06-16T14:32:31 [info]: Got 297 recipes {}
+2024-06-16T14:32:31 [info]: Got 89 tools {}
+2024-06-16T14:32:31 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:31 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:32:31 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:32:31 [info]: Got 0 toolStocks {}
+2024-06-16T14:32:31 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:31 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:32:31 [info]: Got 909 recipeTools {}
+2024-06-16T14:32:31 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:32:32 [info]: Got 1753 steps {}
+2024-06-16T14:32:32 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:32 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:32 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:32 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:32 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:32 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:32 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:32 [info]: Got 1 shopping lists {}
+2024-06-16T14:32:32 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:32:32 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:32 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:46 [info]: Got 297 recipes {}
+2024-06-16T14:32:46 [info]: Got 670 ingredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:46 [info]: Got 0 recipeSubscriptions for userID: a525810e-5531-4f97-95a4-39a082f7416b {}
+2024-06-16T14:32:46 [info]: Got 0 toolStocks {}
+2024-06-16T14:32:46 [info]: Got 89 tools {}
+2024-06-16T14:32:46 [info]: Got 0 ingredientStocks {}
+2024-06-16T14:32:46 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:46 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:32:46 [info]: Got 909 recipeTools {}
+2024-06-16T14:32:46 [info]: Got 1635 recipeSteps {}
+2024-06-16T14:32:46 [info]: Got 3815 recipeIngredients {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:46 [info]: Got 1753 steps {}
+2024-06-16T14:32:46 [info]: Got 0 followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:46 [info]: Got 10 friendships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:46 [info]: Got 9 follower followships {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:46 [info]: Successfully retrieved 0 following for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:46 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:46 [info]: Successfully retrieved 0 friends with status: requesting for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:47 [info]: Got 1 shopping lists {}
+2024-06-16T14:32:47 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:32:47 [info]: Successfully retrieved 9 followers for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:47 [info]: Successfully retrieved 10 friends with status: confirmed for userID a525810e-5531-4f97-95a4-39a082f7416b {"userID":"a525810e-5531-4f97-95a4-39a082f7416b"}
+2024-06-16T14:32:58 [info]: Got 5 recipes {}
+2024-06-16T14:32:59 [info]: Got 1 ingredientStocks {}
+2024-06-16T14:32:59 [info]: Got 0 toolStocks {}
+2024-06-16T14:32:59 [info]: Got 74 ingredients {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Got 29 tools {}
+2024-06-16T14:32:59 [info]: Got 296 discoverRecipes {}
+2024-06-16T14:32:59 [info]: Got 49 recipeIngredients {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Got 14 recipeTools {}
+2024-06-16T14:32:59 [info]: Got recipe {}
+2024-06-16T14:32:59 [info]: sourceRecipe: {"recipeID":1124022400010007,"title":"10-Minute Olive Tapenade","servings":4,"recipeCategoryID":4,"lifespanDays":14,"userID":"a525810e-5531-4f97-95a4-39a082f7416b","deleted":false,"status":"published","timePrep":10,"timeBake":null,"photoURL":"https://s3.us-west-2.amazonaws.com/dl.images-compressed/recipe/a525810e-5531-4f97-95a4-39a082f7416b/tapenade.jpg","version":18,"type":"public","discoverPage":true,"freeTier":false} {}
+2024-06-16T14:32:59 [info]: Got 202 steps {}
+2024-06-16T14:32:59 [info]: Got 34 recipeCategories {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Got 23 recipeSteps {}
+2024-06-16T14:32:59 [info]: Got 3 followships {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Got 4 friendships {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Got 11 follower followships {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Got 1 recipeSubscriptions for userID: ade96f70-4ec5-4ab9-adfe-0645b16e1ced {}
+2024-06-16T14:32:59 [info]: Successfully retrieved 0 friends with status: receivedRequest for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Successfully retrieved 3 following for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Successfully retrieved 0 friends with status: requesting for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Got 1 shopping lists {}
+2024-06-16T14:32:59 [info]: Successfully retrieved 11 followers for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Successfully retrieved 4 friends with status: confirmed for userID ade96f70-4ec5-4ab9-adfe-0645b16e1ced {"userID":"ade96f70-4ec5-4ab9-adfe-0645b16e1ced"}
+2024-06-16T14:32:59 [info]: Got 0 shoppingListRecipes {}
+2024-06-16T14:33:04 [info]: Got 4 recipe logs {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:04 [info]: Got 0 recipeFeedback logs {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got 5 recipeTools for recipeID: 1124052300000005 {}
+2024-06-16T14:33:05 [info]: Got 10 recipeIngredients for recipeID: 1124052300000005 {}
+2024-06-16T14:33:05 [info]: Found 0 recipeSubscriptions for recipeID: 1124052300000005 {}
+2024-06-16T14:33:05 [info]: Got 3 recipeSteps for recipeID: 1124052300000005 {}
+2024-06-16T14:33:05 [info]: Got recipe {}
+2024-06-16T14:33:05 [info]: Got tool {}
+2024-06-16T14:33:05 [info]: Got tool {}
+2024-06-16T14:33:05 [info]: Got tool {}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got tool {}
+2024-06-16T14:33:05 [info]: Got tool {}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:05 [info]: Got ingredient {"userID":"c0be201f-13f9-4bdd-b012-f87bfe2f1ff6"}
+2024-06-16T14:33:07 [info]: 'getUnitRatioProcessor'. UNITA: fluidOunce UNITB: tablespoon {}
+2024-06-16T14:33:07 [info]: 'getUnitRatio' Common ratio found for fluidOunce-tablespoon: 0.5 {}
+2024-06-16T14:33:07 [info]: 'getUnitRatioProcessor'. UNITA: bunch UNITB: bunch {}
+2024-06-16T14:33:07 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: tablespoon {}
+2024-06-16T14:33:07 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: pinch {}
+2024-06-16T14:33:07 [info]: 'getUnitRatioProcessor'. UNITA: weightOunce UNITB: clove {}
+2024-06-16T14:33:07 [info]: 'getUnitRatio' Store ratio found for Butter-pound-tablespoon: 0.031 {}
+2024-06-16T14:33:07 [info]: 'getUnitRatio' Store ratio found for Red Pepper Flakes-weightOunce-pinch: 0.035 {}
+2024-06-16T14:33:07 [info]: 'getUnitRatio' No store ratio found for Fresh Garlic-weightOunce-clove, asking AI {}
+2024-06-16T14:33:07 [info]: 'getUnitRatioProcessor'. UNITA: pound UNITB: tablespoon {}
+2024-06-16T14:33:07 [info]: 'getUnitRatio' Store ratio found for Butter-pound-tablespoon: 0.031 {}
+2024-06-16T14:33:08 [info]: UNIT CONVERSION VERTEXAI Fresh Garlic-weightOunce-clove RESPONSE: 0.5 {}
+2024-06-16T14:33:08 [info]: CHARACTER COUNT: 342, COST: $0.0000855 {}
+2024-06-16T14:33:08 [info]: 'getUnitRatio' AI estimate for Fresh Garlic-weightOunce-clove: 0.5. {}
+2024-06-16T14:33:08 [info]: 'addUnitRatio' Added unit ratio 'Fresh Garlic-weightOunce-clove' in draft currentStatus {}
