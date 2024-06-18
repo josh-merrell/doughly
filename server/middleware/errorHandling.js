@@ -44,7 +44,7 @@ class AppError extends Error {
     this.isOperational = isOperational || false;
     this.severity = severity || 3;
 
-    Error.captureStackTrace(this);
+    Error.captureStackTrace(this, this.constructor);
   }
 }
 
@@ -52,8 +52,7 @@ module.exports.AppError = AppError;
 
 module.exports.errorGen = (m, c, n, o, s) => {
   if (!m || !c) return new AppError('missingErrorMessageOrCode', 'errorGen requires a message and a code', 500, true, 2);
-  const e = new AppError(n || 'errorName', m, c, o, s || 3);
-  return e;
+  return new AppError(n || 'errorName', m, c, o, s || 3);
 };
 
 //with async/await, you need some way to catch error instead of using try/catch in each controller, so we wrap
@@ -71,19 +70,17 @@ class ErrorHandler {
     const isOperational = error.isOperational || false;
     const severity = error.severity || 3;
 
-    const constructedError = new AppError(errorName, errorMessage, statusCode, isOperational, severity);
-
-    await this.logError(constructedError);
+    await this.logError(error);
     // await addMonitoringMetric(error);
     // crashIfNeededOrSendResponse(error, res);
 
     if (res) {
       res.status(statusCode).json({
-        name: constructedError.name,
-        message: constructedError.message,
-        code: constructedError.code,
-        isOperational: constructedError.isOperational,
-        severity: constructedError.severity,
+        name: errorName,
+        message: errorMessage,
+        code: statusCode,
+        isOperational: isOperational,
+        severity: severity,
       });
     }
   }

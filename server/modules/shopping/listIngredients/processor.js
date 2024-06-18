@@ -19,7 +19,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting shopping list ingredient ${shoppingListIngredientID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got shoppingListIngredient`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredient.userID });
+      global.logger.info({ message: `Got shoppingListIngredient`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredient.userID || 0 });
       return shoppingListIngredient;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in listIngredients getShoppingListIngredientByID', err.code || 520, err.name || 'unhandledError_listIngredients-getShoppingListIngredientByID', err.isOperational || false, err.severity || 2);

@@ -42,7 +42,7 @@ module.exports = ({ db, dbDefault }) => {
 
       // if profile.permAITokenLastRefreshDate is not set or is at least a month old (same day of month), set 'addAITokens' to true
       if (!profile.permAITokenLastRefreshDate) {
-        global.logger.info({ message: `No permAITokenLastRefreshDate found`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `No permAITokenLastRefreshDate found`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
         monthsPassed = 1;
         addAITokens = true;
       } else {

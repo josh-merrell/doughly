@@ -400,7 +400,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateFriendships(userID, array) {
     try {
-      global.logger.info({ message: `Populating friendships`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `Populating friendships`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       // remove any existing friendships for userID, we'll start from scratch
       const { error: errorDeleteFriendships } = await db.from('friendships').delete().eq('userID', userID);
       if (errorDeleteFriendships) {
