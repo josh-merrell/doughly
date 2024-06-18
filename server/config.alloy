@@ -7,7 +7,7 @@ local.file_match "local_files" {
 }
 
 loki.source.file "log_scrape" {
-    targets    = local.file_match.local_files.targets
+    targets = local.file_match.local_files.path_targets
     forward_to = [loki.write.grafana_loki.receiver]
     tail_from_end = true
 }
@@ -27,13 +27,13 @@ loki.process "add_user_id_label" {
 }
 
 loki.write "grafana_loki" {
-  endpoint {
-    url = "http://44.230.129.14:3100/loki/api/v1/push"
-    name = "loki-ec2"
+    endpoint {
+        url = "http://44.230.129.14:3100/loki/api/v1/push"
+        name = "loki-ec2"
 
-    // basic_auth {
-    //  username = "admin"
-    //  password = "admin"
-    // }
-  }
+        // basic_auth {
+        //  username = "admin"
+        //  password = "admin"
+        // }
+    }
 }
