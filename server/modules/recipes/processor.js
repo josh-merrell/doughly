@@ -551,14 +551,14 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function getRecipeSubscriptionsByRecipeID(options) {
-    const { recipeID } = options;
+    const { recipeID, userID } = options;
 
     try {
       const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('sourceRecipeID', recipeID).eq('deleted', false);
       if (error) {
         throw errorGen(`Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: subscriptions[0].userID || 0 });
+      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return subscriptions;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSubscriptionsByRecipeID', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptionsByRecipeID', err.isOperational || false, err.severity || 2);
