@@ -150,7 +150,7 @@ module.exports = ({ db, dbPublic }) => {
       const messages = [];
       for (let ingredientStock of ingredientStocks) {
         if (!ingredientStock.appMessageDate) {
-          global.logger.info({ message: `IngredientStockExpired message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `IngredientStockExpired message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID || 0 });
           continue;
         }
         const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientStock.ingredientID).single();
@@ -198,7 +198,7 @@ module.exports = ({ db, dbPublic }) => {
       const messages = [];
       for (let ingredient of ingredients) {
         if (!ingredient.appMessageDate) {
-          global.logger.info({ message: `IngredientOutOfStock message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `IngredientOutOfStock message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID || 0 });
           continue;
         }
         messages.push({
@@ -238,7 +238,7 @@ module.exports = ({ db, dbPublic }) => {
       const messages = [];
       for (let followship of followships) {
         if (!followship.appMessageDate) {
-          global.logger.info({ message: `NewFollower message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `NewFollower message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID || 0 });
           continue;
         }
         const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', followship.userID).single();
@@ -284,7 +284,7 @@ module.exports = ({ db, dbPublic }) => {
       const messages = [];
       for (let friendship of friendships) {
         if (!friendship.appMessageDateNewFriend) {
-          global.logger.info({ message: `NewFriend message missing date`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `NewFriend message missing date`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
           continue;
         }
         const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', friendship.friend).single();
@@ -329,7 +329,7 @@ module.exports = ({ db, dbPublic }) => {
       const messages = [];
       for (let friendRequest of friendRequests) {
         if (!friendRequest.appMessageDateNewFriendRequest) {
-          global.logger.info({ message: `NewFriendRequest message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `NewFriendRequest message missing date`, level: 3, timestamp: new Date().toISOString(), userID: userID || 0 });
           continue;
         }
         const { data: user, error: userError } = await dbPublic.from('profiles').select().eq('user_id', friendRequest.friend).single();

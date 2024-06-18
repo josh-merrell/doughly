@@ -163,7 +163,7 @@ module.exports = ({ db }) => {
         }
         throw errorGen(`Error updating recipe status: ${recipeUpdateError.message}. Rolled back`, 515, 'cannotComplete', false, 3);
       }
-      global.logger.info({ message: `Recipe moved to "published" status`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `Recipe moved to "published" status`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       //add 'recipePublished' log entry
       createRecipeLog(userID, authorization, 'updatedRecipeStatus', Number(recipeID), null, null, 'published', `updated recipe status to published`);
     } catch (err) {
@@ -285,7 +285,7 @@ module.exports = ({ db }) => {
         if (recipeUpdateError) {
           throw errorGen(`Error updating recipe status: ${recipeUpdateError.message}`, 514, 'failSupabaseDelete', true, 3);
         }
-        global.logger.info({ message: `Recipe now has no Steps. Updated recipe status to noSteps`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `Recipe now has no Steps. Updated recipe status to noSteps`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       }
 
       //decrement the sequence of all recipeSteps with sequence > existing sequence

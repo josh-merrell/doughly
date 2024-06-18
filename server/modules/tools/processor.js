@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting tool: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got tool`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `Got tool`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       return tool;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in tools getByID', err.code || 520, err.name || 'unhandledError_tools-getByID', err.isOperational || false, err.severity || 2);
