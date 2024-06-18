@@ -38,7 +38,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting ingredient ID: ${ingredientID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ingredient`, level: 5, timestamp: new Date().toISOString(), userID: ingredient[0].userID });
+      global.logger.info({ message: `Got ingredient`, level: 5, timestamp: new Date().toISOString(), userID: ingredient[0].userID || 0 });
       return ingredient;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in ingredients getIngredientByID', err.code || 520, err.name || 'unhandledError_ingredients-getIngredientByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity

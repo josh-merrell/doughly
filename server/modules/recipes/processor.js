@@ -444,7 +444,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipe: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got recipe`, level: 6, timestamp: new Date().toISOString(), userID: recipe[0].userID });
+      global.logger.info({ message: `Got recipe`, level: 6, timestamp: new Date().toISOString(), userID: recipe[0].userID || 0 });
       return recipe;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getByID', err.code || 520, err.name || 'unhandledError_recipes-getByID', err.isOperational || false, err.severity || 2);
@@ -474,7 +474,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipeTools for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: recipeTools[0].userID });
+      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: recipeTools[0].userID || 0 });
       return recipeTools;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getRecipeTools', err.code || 520, err.name || 'unhandledError_recipes-getRecipeTools', err.isOperational || false, err.severity || 2);
@@ -558,7 +558,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: subscriptions[0].userID });
+      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: subscriptions[0].userID || 0 });
       return subscriptions;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSubscriptionsByRecipeID', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptionsByRecipeID', err.isOperational || false, err.severity || 2);
@@ -762,7 +762,7 @@ module.exports = ({ db, dbPublic }) => {
       let unitRatioCost = 0;
       // add purchaseUnitRatios to ingredients in parrallel
       const ingredientPurchaseUnitRatioPromises = [];
-      global.logger.info({ message: `ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].purchaseUnitRatio) {
           matchedIngredients[i].RIneedsReview = false;
@@ -897,7 +897,7 @@ module.exports = ({ db, dbPublic }) => {
         elapsedTime += 1;
         sendSSEMessage(userID, { message: `Getting recipe details from image. Expected Time: 25 seconds. Elapsed: ${elapsedTime}` });
       }, 1000); // Send progress update every second
-      global.logger.info({ message: `Calling visionRequest`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `Calling visionRequest`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       const visionStartTime = new Date();
       const { response, error } = await visionRequest(recipeSourceImageURL, userID, authorization, 'generateRecipeFromImage');
       clearInterval(timer);

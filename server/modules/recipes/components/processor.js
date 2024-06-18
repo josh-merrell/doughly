@@ -23,7 +23,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeComponents: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got recipeComponents for recipe`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `Got recipeComponents for recipe`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       return recipeComponents;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeComponents getAll', err.code || 520, err.name || 'unhandledError_recipeComponents-getAll', err.isOperational || false, err.severity || 2);
