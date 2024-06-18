@@ -422,7 +422,7 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
-  async function getDiscover() {
+  async function getDiscover(options) {
     const { userID, authorization } = options;
     try {
       const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false);
