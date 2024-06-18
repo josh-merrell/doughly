@@ -68,7 +68,7 @@ async function subscriptionsByRecipeID(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
-  const returner = await p.get.subscriptionsByRecipeID({ recipeID });
+  const returner = await p.get.subscriptionsByRecipeID({ recipeID, userID: req.userID});
   return res.json(returner);
 }
 
