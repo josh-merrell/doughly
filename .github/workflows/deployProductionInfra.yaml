@@ -52,7 +52,8 @@ jobs:
             # Navigate to the directory
             cd ${DEST_PATH}
 
-            # Install dependencies
+            # Clean and rebuild all node_modules
+            rm -rf node_modules package-lock.json
             npm install
             sudo npx playwright install-deps
 
