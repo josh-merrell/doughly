@@ -66,9 +66,9 @@ jobs:
             # Wait for 3 seconds
             sleep 3
 
-            # Check the status of the pm2 "doughly" instance
-            STATUS=$(pm2 status ${APP_NAME} | grep ${APP_NAME} | awk '{print $13}')
-            if [ "$STATUS" == "online" ]; then
+            # Check the status of the pm2 "doughly" instance using pm2 list
+            STATUS=$(pm2 list ${APP_NAME} | grep -i "online")
+            if [ -n "$STATUS" ]; then
               echo "${APP_NAME} is online"
             else
               echo "Failed to start ${APP_NAME}"
