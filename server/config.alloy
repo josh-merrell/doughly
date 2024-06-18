@@ -17,12 +17,11 @@ loki.process "add_user_id_label" {
 
     stage.regex {
         expression = "userID:\\s*(?P<userID>[a-f0-9-]+)"
-        # The named capture group 'userID' will extract the userID value.
     }
 
     stage.labels {
         values = {
-            userID = "userID"  # Set up the 'userID' label based on the extracted 'userID' value.
+            userID = "userID"
         }
     }
 }
