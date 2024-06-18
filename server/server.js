@@ -16,8 +16,8 @@ const logger = winston.createLogger({
     winston.format.json(),
     winston.format.printf((info) => {
       // Ensure all relevant info fields are included in the log
-      const { timestamp, level, message, ...rest } = info;
-      return `${timestamp} [${level}]: ${message} ${JSON.stringify(rest)}`;
+      const { timestamp, level, message, name, code, userID, stack, isOperational, severity } = info;
+      return `${timestamp} level=${level} severity=${severity || 7} message=${message} name=${name || ''} code=${code} userID=${userID || 0} isOperational=${isOperational || ''} stack=${stack || ''}`;
     }),
   ),
   transports: [new winston.transports.Console({ format: winston.format.simple() }), new winston.transports.File({ filename: 'logger.log', level: 'info' })],

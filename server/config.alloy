@@ -5,18 +5,32 @@ local.file_match "local_files" {
 
 loki.source.file "log_scrape" {
     targets = local.file_match.local_files.targets
-    forward_to = [loki.write.grafana_loki.receiver]
+    forward_to = [loki.process.add_labels.receiver]
     tail_from_end = true
 }
 
-loki.process "add_user_id_label" {
-    forward_to = [loki.write.grafana_loki.receiver]
-
-    stage.regex {expression = "userID:\\s*(?P<userID>[a-f0-9-]+)"}
+loki.process "add_labels" {
+    stage.logfmt {
+      mapping = {
+        "extracted_userID" = "userID",
+        "extracted_level" = "level", 
+        "extracted_code" = "code",
+        "extracted_name" = "name",
+        "extracted_severity" = "severity",
+      }
+    }
 
     stage.labels {
-        values = {userID = "userID"}
+        values = {
+          "userID" = "extracted_userID",
+          "level" = "extracted_level",
+          "code" = "extracted_code",
+          "name" = "extracted_name",
+          "severity" = "extracted_severity",
+        }
     }
+
+    forward_to = [loki.write.grafana_loki.receiver]
 }
 
 loki.write "grafana_loki" {
