@@ -12,7 +12,6 @@ const { getHtml, extractFromHtml } = require('../../services/scraper');
 const { sendSSEMessage } = require('../../server.js');
 // const path = require('path');
 // const fs = require('fs');
-
 module.exports = ({ db, dbPublic }) => {
   async function constructRecipe(options) {
     const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps } = options;
