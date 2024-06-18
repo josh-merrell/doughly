@@ -33,7 +33,7 @@ module.exports = ({ db }) => {
   }
 
   async function getByID(options) {
-    const { toolID } = options;
+    const { toolID, userID } = options;
 
     try {
       const { data: tool, error } = await db.from('tools').select().eq('toolID', toolID).eq('deleted', false);
