@@ -52,7 +52,8 @@ jobs:
             # Navigate to the directory
             cd ${DEST_PATH}
 
-            # Install dependencies
+            # Clean and rebuild all node_modules
+            rm -rf node_modules package-lock.json
             npm install
             sudo npx playwright install-deps
 
@@ -61,6 +62,18 @@ jobs:
             
             # Start the server using PM2
             pm2 start ../ecosystem.config.js
+
+            # Wait for 3 seconds
+            sleep 3
+
+            # Check the status of the pm2 "doughly" instance
+            STATUS=$(pm2 status ${APP_NAME} | grep ${APP_NAME} | awk '{print $13}')
+            if [ "$STATUS" == "online" ]; then
+              echo "${APP_NAME} is online"
+            else
+              echo "Failed to start ${APP_NAME}"
+              exit 1
+            fi
 
             # Save the PM2 process list to restart on server reboot
             pm2 save
