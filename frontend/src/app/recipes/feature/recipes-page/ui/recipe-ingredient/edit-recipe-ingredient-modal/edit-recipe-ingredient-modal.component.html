@@ -73,6 +73,7 @@
                 form.get('measurement')?.hasError('notPositiveFloat') || false
               "
               errorMessage="Must be a positive number"
+              appValueSync
             ></dl-text-input>
           </div>
 
@@ -94,6 +95,7 @@
                 false
               "
               errorMessage="Must be a positive number"
+              appValueSync
             ></dl-text-input>
             <div
               *ngIf="gettingUnitRatio()"
