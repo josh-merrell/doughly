@@ -123,6 +123,10 @@ export class SelectInputComponent implements ControlValueAccessor, Validator {
 
   toggleDropdown(): void {
     this.isOpen.set(!this.isOpen());
+    if (this.isOpen()) {
+      console.log('scrolling')
+      document.getElementById('expanded')?.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   selectOption(option: any): void {
@@ -142,4 +146,5 @@ export class SelectInputComponent implements ControlValueAccessor, Validator {
     );
     return selectedOption ? selectedOption.display : '';
   }
+
 }
