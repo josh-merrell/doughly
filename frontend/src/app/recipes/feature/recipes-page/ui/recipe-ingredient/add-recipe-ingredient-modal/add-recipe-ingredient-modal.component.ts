@@ -47,6 +47,7 @@ import { UnitService } from 'src/app/shared/utils/unitService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
+import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective'; 
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -61,6 +62,7 @@ import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-inpu
     AddIngredientModalComponent,
     TextInputComponent,
     SelectInputComponent,
+    ValueSyncDirective
   ],
   templateUrl: './add-recipe-ingredient-modal.component.html',
 })
@@ -113,6 +115,24 @@ export class AddRecipeIngredientModalComponent {
     this.purchaseUnits.sort((a, b) => a.localeCompare(b));
     this.setForm();
     this.subscribeToFormChanges();
+    this.logFormStatusOnChange();
+  }
+
+  logFormStatusOnChange() {
+    this.form.statusChanges.subscribe((status) => {
+      console.log('Form status changed:', status);
+      console.log('Form validity:', this.form.valid);
+      console.log('Form value:', this.form.value);
+
+      for (const controlName in this.form.controls) {
+        if (this.form.controls.hasOwnProperty(controlName)) {
+          const control = this.form.get(controlName);
+          console.log(
+            `Control: ${controlName}, Value: ${control?.value}, Valid: ${control?.valid}, Errors: ${control?.errors}`
+          );
+        }
+      }
+    });
   }
 
   setForm() {
@@ -139,7 +159,7 @@ export class AddRecipeIngredientModalComponent {
     // Update mUnit whenever measurementUnit value changes
     this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
       this.mUnit = value;
-      this.purLabel.set(`${this.pUnit} per ${this.mUnit}`)
+      this.purLabel.set(`${this.pUnit} per ${this.mUnit}`);
     });
 
     this.form.get('ingredientID')?.valueChanges.subscribe((ingredientID) => {
@@ -148,6 +168,10 @@ export class AddRecipeIngredientModalComponent {
       } else {
         this.form.get('measurement')?.disable();
       }
+    });
+
+    this.form.get('measurement')?.valueChanges.subscribe((value) => {
+      // manually get Validator result
     });
 
     combineLatest([
@@ -236,6 +260,13 @@ export class AddRecipeIngredientModalComponent {
           },
         });
     }
+  }
+
+  onMeasurementChange(newValue: string) {
+    setTimeout(() => {
+      this.form.get('measurement')?.setValue(newValue, { emitEvent: false });
+      this.form.get('measurement')?.updateValueAndValidity();
+    });  
   }
 
   onAddNewIngredient() {

@@ -97,7 +97,7 @@ export class EditRecipeIngredientModalComponent {
     this.pUnit = this.unitService.plural(
       this.data.recipeIngredient.purchaseUnit
     );
-    this.purLabel.set(`${this.pUnit} per ${this.mUnit}`)
+    this.purLabel.set(`${this.pUnit} per ${this.mUnit}`);
     this.recipeIngredient = signal(this.data.recipeIngredient);
     this.setForm();
     this.store
@@ -125,12 +125,11 @@ export class EditRecipeIngredientModalComponent {
       measurementUnit: ['', [Validators.required]],
       purchaseUnitRatio: ['', [Validators.required, positiveFloatValidator()]],
     });
-    
 
     // Update mUnit whenever measurementUnit value changes
     this.form.get('measurementUnit')?.valueChanges.subscribe((value) => {
       this.mUnit = this.unitService.singular(value);
-      this.purLabel.set(`${this.pUnit} per ${this.mUnit}`)
+      this.purLabel.set(`${this.pUnit} per ${this.mUnit}`);
     });
   }
 
