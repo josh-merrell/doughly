@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, forwardRef } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from 
 '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -29,6 +29,7 @@ export class TextInputComponent implements ControlValueAccessor, Validator {
   @Input() errorMessage: string = '';
   @Input() isTextArea: boolean = false;
   @Input() noLabel: boolean = false;
+  @Output() valueChange: EventEmitter<string> = new EventEmitter<string>();
 
   value: string = '';
   onTouched: () => void = () => {};
@@ -58,6 +59,7 @@ export class TextInputComponent implements ControlValueAccessor, Validator {
     const input = event.target as HTMLInputElement;
     this.value = input.value;
     this.onChange(this.value);
+    this.valueChange.emit(this.value);
     this.onTouched();
   }
 }

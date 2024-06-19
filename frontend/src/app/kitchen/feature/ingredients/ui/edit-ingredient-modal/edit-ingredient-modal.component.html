@@ -79,6 +79,7 @@
                 form.get('gramRatio')?.hasError('notPositiveFloat') || false
               "
               errorMessage="Must be a positive whole number"
+              appValueSync
             ></dl-text-input>
             <div
               *ngIf="gettingUnitRatio()"

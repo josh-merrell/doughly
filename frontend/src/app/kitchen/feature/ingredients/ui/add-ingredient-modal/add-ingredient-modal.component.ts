@@ -64,7 +64,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatMomentDateModule,
     MatInputModule,
     TextInputComponent,
-    SelectInputComponent
+    SelectInputComponent,
   ],
   templateUrl: './add-ingredient-modal.component.html',
 })
@@ -149,8 +149,8 @@ export class AddIngredientModalComponent {
             this.gramRatioSuggestion.set(response.ratio);
             console.log('Suggested unit ratio:', response.ratio);
             // if (typeof response.ratio === 'number') {
-              this.form.get('gramRatio')?.setErrors(null);
-              this.form.patchValue({ gramRatio: response.ratio });
+            this.form.get('gramRatio')?.setErrors(null);
+            this.form.patchValue({ gramRatio: response.ratio });
             // }
           },
           error: (err) => {
@@ -206,13 +206,18 @@ export class AddIngredientModalComponent {
         this.store.select(selectError).subscribe((error) => {
           if (error) {
             this.dialogRef.close(error);
-            this.modalService.open(ErrorModalComponent, {
-              maxWidth: '380px',
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
+            this.modalService.open(
+              ErrorModalComponent,
+              {
+                maxWidth: '380px',
+                data: {
+                  errorMessage: error.message,
+                  statusCode: error.statusCode,
+                },
               },
-            }, 2, true);
+              2,
+              true
+            );
           } else {
             // this.dialogRef.close('success');
             // return the new ingredientID after selecting the new ingredient from the store by name
@@ -222,7 +227,6 @@ export class AddIngredientModalComponent {
               .subscribe((ingredient) => {
                 this.dialogRef.close(ingredient?.ingredientID);
               });
-
           }
           this.isAdding = false;
         });

@@ -16,11 +16,7 @@ import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.comp
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectIngredientStockByID } from 'src/app/kitchen/feature/Inventory/feature/ingredient-inventory/state/ingredient-stock-selectors';
 import { Store, select } from '@ngrx/store';
-import {
-  Subscription,
-  filter,
-  take,
-} from 'rxjs';
+import { Subscription, filter, take } from 'rxjs';
 import { IngredientStock } from '../../state/ingredient-stock-state';
 import { IngredientStockActions } from '../../state/ingredient-stock-actions';
 import { Ingredient } from 'src/app/kitchen/feature/ingredients/state/ingredient-state';
@@ -60,7 +56,7 @@ import { UnitService } from 'src/app/shared/utils/unitService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
-    TextInputComponent
+    TextInputComponent,
   ],
   templateUrl: './edit-ingredient-stock-modal.component.html',
 })
@@ -95,7 +91,11 @@ export class EditIngredientStockModalComponent {
             .select(selectIngredientByID(ingredientStock.ingredientID))
             .subscribe((ingredient) => {
               this.ingredient.set(ingredient);
-              this.measurementLabel.set(`Measurement in ${this.unitService.plural(ingredient?.purchaseUnit)}`)
+              this.measurementLabel.set(
+                `Measurement in ${this.unitService.plural(
+                  ingredient?.purchaseUnit
+                )}`
+              );
             });
         }
       },
@@ -189,13 +189,18 @@ export class EditIngredientStockModalComponent {
               console.error(
                 `Updating Ingredient Stock failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.modalService.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  message: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    message: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              }, 2, true);
+                2,
+                true
+              );
             } else {
               this.dialogRef.close('success');
             }
