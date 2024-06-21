@@ -1,4 +1,10 @@
-import { Component, Inject, WritableSignal, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -42,7 +48,7 @@ import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-inpu
     MatInputModule,
     AddToolModalComponent,
     TextInputComponent,
-    SelectInputComponent
+    SelectInputComponent,
   ],
   templateUrl: './add-recipe-tool-modal.component.html',
 })
@@ -59,7 +65,8 @@ export class AddRecipeToolModalComponent {
     private store: Store,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private cdr: ChangeDetectorRef
   ) {
     this.isAdding$ = this.store.select(selectAdding);
     this.isLoading$ = this.store.select(selectLoading);
@@ -68,6 +75,7 @@ export class AddRecipeToolModalComponent {
 
   ngOnInit(): void {
     this.store.select(selectTools).subscribe((tools) => {
+      this.cdr.detectChanges();
       this.tools.set(tools);
     });
   }
@@ -93,7 +101,7 @@ export class AddRecipeToolModalComponent {
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result) => {
-        if (result === 'success') {
+        if (typeof result === 'number') {
           this.modalService.open(
             AddRequestConfirmationModalComponent,
             {
@@ -105,6 +113,8 @@ export class AddRecipeToolModalComponent {
             3,
             true
           );
+          this.cdr.detectChanges();
+          this.form.get('toolID')?.setValue(result);
         } else if (result) {
           this.modalService.open(
             AddRequestErrorModalComponent,

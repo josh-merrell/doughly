@@ -4,10 +4,14 @@ import { Tool } from './tool-state';
 export const selectTools = (state: any) => state.tool.tools;
 
 export const selectToolByID = (toolID: number) =>
-    createSelector(selectTools, (tools) => {
-      return tools.find((tool: Tool) => tool.toolID === toolID)
-    }
-  );
+  createSelector(selectTools, (tools) => {
+    return tools.find((tool: Tool) => tool.toolID === toolID);
+  });
+
+export const selectToolByName = (name: string) =>
+  createSelector(selectTools, (tools) => {
+    return tools.find((tool: Tool) => tool.name === name);
+  });
 
 export const selectDeleting = (state: any) => state.tool.deleting;
 
