@@ -33,7 +33,7 @@
       <div class="mb-dl-8 flex w-full flex-col items-center justify-between">
         <button
           (click)="signInWithGoogle()"
-          class="gsi-material-button !w-dl-15"
+          class="gsi-material-button !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -64,7 +64,8 @@
                 <path fill="none" d="M0 0h48v48H0z"></path>
               </svg>
             </div>
-            <span class="gsi-material-button-contents"
+            <span
+              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
               >Sign in with Google</span
             >
             <span style="display: none">Sign in with Google</span>
@@ -72,7 +73,7 @@
         </button>
         <button
           (click)="signInWithFacebook()"
-          class="gsi-material-button mt-dl-2 !w-dl-15"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -94,7 +95,8 @@
                 />
               </svg>
             </div>
-            <span class="gsi-material-button-contents"
+            <span
+              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
               >Sign in with Facebook</span
             >
             <span style="display: none">Sign in with Facebook</span>
@@ -102,7 +104,7 @@
         </button>
         <button
           (click)="signInWithApple()"
-          class="gsi-material-button mt-dl-2 !w-dl-15"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -118,7 +120,10 @@
                 />
               </svg>
             </div>
-            <span class="gsi-material-button-contents">Sign in with Apple</span>
+            <span
+              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
+              >Sign in with Apple</span
+            >
             <span style="display: none">Sign in with Apple</span>
           </div>
         </button>
@@ -135,7 +140,9 @@
             <input
               type="email"
               formControlName="email"
-              class="w-dl-15 rounded-full border-0 p-dl-2 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              appAutofocus
+              tabindex="1"
             />
 
             <div
@@ -163,7 +170,8 @@
             <input
               type="password"
               formControlName="password"
-              class="w-dl-15 rounded-full border-0 p-dl-2 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              tabindex="2"
             />
             <div
               [ngClass]="{
@@ -215,6 +223,7 @@
             login_form.get('password')!.value === '' ||
             login_form.get('email')!.value === ''
         }"
+        tabindex="3"
       >
         Sign In with Email
       </button>
@@ -237,6 +246,7 @@
       <a
         class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
         routerLink="/register"
+        tabindex="4"
         >Create an account</a
       >
     </p>
