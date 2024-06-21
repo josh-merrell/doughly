@@ -116,6 +116,7 @@ export class UserRecipeComponent {
   public ingredientsNeedReview: WritableSignal<boolean> = signal(false);
   public recipeIngredientsNeedReview: WritableSignal<boolean> = signal(false);
   public profile: WritableSignal<Profile | null> = signal(null);
+  public toolsExpanded: WritableSignal<boolean> = signal(false);
 
   // Onboarding
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
@@ -743,6 +744,9 @@ export class UserRecipeComponent {
     } else {
     }
   }
+  flipToolsExpanded() {
+    this.toolsExpanded.set(!this.toolsExpanded());
+  }
   viewShoppingList() {
     this.modalService.open(
       RecipeShoppingListModalComponent,
@@ -765,6 +769,26 @@ export class UserRecipeComponent {
   useRecipe() {
     this.router.navigate(['/recipe/using/' + this.recipeID()]);
   }
+  displayIngredientName(name: string, measurement, measurementUnit) {
+    if (
+      Number(measurement) > 1 &&
+      (measurementUnit === 'single' || measurementUnit === '') &&
+      !['s', 'S'].includes(name[name.length - 1])
+    ) {
+      return name + 's';
+    }
+    return name;
+  }
+  displayMeasurementUnit(unit: string, measurement: number) {
+    if (unit === 'weightOunces') {
+      return 'oz';
+    } else if (unit.includes('tablespoon')) {
+      return unit.replace('tablespoon', 'Tbsp');
+    } else if (unit.includes('teaspoon')) {
+      return unit.replace('teaspoon', 'tsp');
+    } else return unit;
+  }
+
   editRecipeSteps() {
     const ref = this.modalService.open(
       RecipeStepsModalComponent,
