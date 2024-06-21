@@ -5,10 +5,12 @@ import {
   Input,
   Renderer2,
   forwardRef,
-  signal,
-  WritableSignal,
+  OnChanges,
+  SimpleChanges,
   Output,
   EventEmitter,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -38,7 +40,7 @@ import { ExtraStuffService } from '../../utils/extraStuffService';
     },
   ],
 })
-export class SelectInputComponent implements ControlValueAccessor, Validator {
+export class SelectInputComponent implements ControlValueAccessor, Validator, OnChanges {
   @Input() label: string = '';
   @Input() formControlName: string = '';
   @Input() options: any[] = []; // Allow any type to handle objects
@@ -57,22 +59,14 @@ export class SelectInputComponent implements ControlValueAccessor, Validator {
     private renderer: Renderer2
   ) {}
 
-  ngOnInit(): void {
-    if (this.optionDisplayProperty) {
-      this.sortedOptions = this.options
-        .map((option) => ({
-          display: option[this.optionDisplayProperty],
-          value: option[this.optionValueProperty],
-        }))
-        .sort((a, b) => a.display.localeCompare(b.display));
-    } else {
-      this.sortedOptions = this.options
-        .map((option) => ({
-          display: option,
-          value: option,
-        }))
-        .sort();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['options']) {
+      this.updateSortedOptions();
     }
+  }
+
+  ngOnInit(): void {
+    this.updateSortedOptions();
   }
 
   private clickListener!: () => void;
@@ -124,8 +118,10 @@ export class SelectInputComponent implements ControlValueAccessor, Validator {
   toggleDropdown(): void {
     this.isOpen.set(!this.isOpen());
     if (this.isOpen()) {
-      console.log('scrolling')
-      document.getElementById('expanded')?.scrollIntoView({ behavior: 'smooth' });
+      console.log('scrolling');
+      document
+        .getElementById('expanded')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 
@@ -147,4 +143,21 @@ export class SelectInputComponent implements ControlValueAccessor, Validator {
     return selectedOption ? selectedOption.display : '';
   }
 
+  private updateSortedOptions(): void {
+    if (this.optionDisplayProperty) {
+      this.sortedOptions = this.options
+        .map((option) => ({
+          display: option[this.optionDisplayProperty],
+          value: option[this.optionValueProperty],
+        }))
+        .sort((a, b) => a.display.localeCompare(b.display));
+    } else {
+      this.sortedOptions = this.options
+        .map((option) => ({
+          display: option,
+          value: option,
+        }))
+        .sort();
+    }
+  }
 }

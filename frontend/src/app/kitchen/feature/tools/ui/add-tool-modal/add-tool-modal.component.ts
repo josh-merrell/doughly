@@ -9,9 +9,19 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatInputModule } from '@angular/material/input';
 import { Tool } from '../../state/tool-state';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { selectAdding, selectError, selectLoading, selectTools } from '../../state/tool-selectors';
+import {
+  selectAdding,
+  selectError,
+  selectLoading,
+  selectToolByName,
+  selectTools,
+} from '../../state/tool-selectors';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { nonDuplicateString } from 'src/app/shared/utils/formValidator';
 import { ToolActions } from '../../state/tool-actions';
@@ -30,7 +40,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatDatepickerModule,
     MatMomentDateModule,
     MatInputModule,
-    TextInputComponent
+    TextInputComponent,
   ],
   templateUrl: './add-tool-modal.component.html',
 })
@@ -56,17 +66,15 @@ export class AddToolModalComponent {
   }
 
   ngOnInit(): void {
-    this.toolsSubscription = this.tools$.subscribe(
-      (tools) => {
-        this.tools = tools;
-        this.setForm();
-      }
-    );
+    this.toolsSubscription = this.tools$.subscribe((tools) => {
+      this.tools = tools;
+      this.setForm();
+    });
   }
 
   setForm() {
     this.form = this.fb.group({
-      name: ['', [nonDuplicateString(this.tools.map(tool => tool.name))]],
+      name: ['', [nonDuplicateString(this.tools.map((tool) => tool.name))]],
       brand: ['', []],
     });
   }
@@ -75,29 +83,44 @@ export class AddToolModalComponent {
     this.isAdding = true;
     const payload = this.form.value;
 
-    this.store.dispatch(
-      ToolActions.addTool({ tool: payload })
-    );
+    this.store.dispatch(ToolActions.addTool({ tool: payload }));
     this.store
       .select(selectAdding)
-      .pipe(filter((adding) => !adding), take(1)).subscribe(() => {
-        this.store.select(selectError).pipe(take(1)).subscribe((error) => {
-          if (error) {
-            console.error(
-              `Error adding tool: ${error.message}, CODE: ${error.statusCode}`
-            );
-            this.modalService.open(ErrorModalComponent, {
-              maxWidth: '380px',
-              data: {
-                errorMessage: error.message,
-                statusCode: error.statusCode,
-              },
-            }, 1, true);
-          } else {
-            this.dialogRef.close('success');
-          }
-          this.isAdding = false;
-        });
+      .pipe(
+        filter((adding) => !adding),
+        take(1)
+      )
+      .subscribe(() => {
+        this.store
+          .select(selectError)
+          .pipe(take(1))
+          .subscribe((error) => {
+            if (error) {
+              console.error(
+                `Error adding tool: ${error.message}, CODE: ${error.statusCode}`
+              );
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
+                },
+                1,
+                true
+              );
+            } else {
+              this.store
+                .select(selectToolByName(payload.name))
+                .pipe(take(1))
+                .subscribe((tool) => {
+                  this.dialogRef.close(tool?.toolID);
+                });
+            }
+            this.isAdding = false;
+          });
       });
   }
 
