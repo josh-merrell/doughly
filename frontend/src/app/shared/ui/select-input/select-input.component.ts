@@ -121,7 +121,7 @@ export class SelectInputComponent implements ControlValueAccessor, Validator, On
       console.log('scrolling');
       document
         .getElementById('expanded')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
