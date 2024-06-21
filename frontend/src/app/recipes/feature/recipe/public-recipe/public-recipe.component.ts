@@ -62,6 +62,7 @@ interface displayIngredientsByComponent {
 })
 export class PublicRecipeComponent {
   recipeID: WritableSignal<number> = signal(0);
+  public toolsExpanded: WritableSignal<boolean> = signal(false);
   public recipe: WritableSignal<any> = signal(null);
   public recipeCategory: WritableSignal<RecipeCategory | null> = signal(null);
   public author: WritableSignal<any> = signal(false);
@@ -429,6 +430,31 @@ export class PublicRecipeComponent {
     }
   }
 
+  displayIngredientName(name: string, measurement, measurementUnit) {
+    if (
+      Number(measurement) > 1 &&
+      (measurementUnit === 'single' || measurementUnit === '') &&
+      !['s', 'S'].includes(name[name.length - 1])
+    ) {
+      return name + 's';
+    }
+    return name;
+  }
+
+  displayMeasurementUnit(unit: string, measurement: number) {
+    if (unit === 'weightOunces') {
+      return 'oz';
+    } else if (unit.includes('tablespoon')) {
+      return unit.replace('tablespoon', 'Tbsp');
+    } else if (unit.includes('teaspoon')) {
+      return unit.replace('teaspoon', 'tsp');
+    } else return unit;
+  }
+
+  flipToolsExpanded() {
+    this.toolsExpanded.set(!this.toolsExpanded());
+  }
+
   onboardingHandler(onboardingState: number) {
     // ** OLD ONBOARDING **
     // if (onboardingState === 3) {
@@ -469,5 +495,4 @@ export class PublicRecipeComponent {
   //   this.showOnboardingBadge.set(false);
   //   this.onboardingHandler(this.profile().onboardingState);
   // }
-
 }

@@ -1,4 +1,4 @@
-import { Component, Inject, WritableSignal, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -92,7 +92,8 @@ export class AddRecipeIngredientModalComponent {
     private fb: FormBuilder,
     public dialog: MatDialog,
     private unitService: UnitService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private cdr: ChangeDetectorRef
   ) {
     this.ingredientsToExclude = this.data.ingredientsToExclude;
     this.isAdding$ = this.store.select(selectAdding);
@@ -109,7 +110,7 @@ export class AddRecipeIngredientModalComponent {
         a.name.localeCompare(b.name)
       );
       this.ingredients.set(sorted);
-      // console.log(`SETTING INGREDIENTS: `, sorted)
+      this.cdr.detectChanges();
     });
     // sort the purchaseUnits
     this.purchaseUnits.sort((a, b) => a.localeCompare(b));
@@ -295,6 +296,8 @@ export class AddRecipeIngredientModalComponent {
             true
           );
           // update the value of the ingredientID form control
+          console.log(`NEW INGREDIENT: `, result);
+          this.cdr.detectChanges();
           this.form.get('ingredientID')?.setValue(result);
         } else if (result) {
           this.modalService.open(

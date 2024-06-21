@@ -1,5 +1,5 @@
 <div
-  class="relative flex h-dl-21 transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left items-center transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex h-dl-21 transform flex-col items-center bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-normal">
@@ -38,6 +38,27 @@
       <div class="flex h-full w-full flex-col">
         <!--FORM FIELDS-->
         <div class="mt-dl-4 flex-grow overflow-y-auto">
+          <!-- Measurement -->
+          <div id="form-measurement" class="relative flex flex-col">
+            <dl-text-input
+              label="Measurement"
+              formControlName="measurement"
+              placeholder="ex: 2.5"
+              [hasError]="
+                form.get('measurement')?.hasError('notPositiveFloat') || false
+              "
+              errorMessage="Must be a positive number"
+              appValueSync
+            ></dl-text-input>
+          </div>
+          <div id="form-measurementUnit" class="relative flex flex-col">
+            <dl-select-input
+              label="Unit (curr:
+              {{ recipeIngredient().measurementUnit }})"
+              formControlName="measurementUnit"
+              [options]="unitOptions"
+            ></dl-select-input>
+          </div>
           <!-- Component -->
           <div id="form-component" class="relative flex flex-col">
             <dl-text-input
@@ -61,29 +82,6 @@
               "
               errorMessage="Must be less than 40 characters"
             ></dl-text-input>
-          </div>
-
-          <!-- Measurement -->
-          <div id="form-measurement" class="relative flex flex-col">
-            <dl-text-input
-              label="Measurement"
-              formControlName="measurement"
-              placeholder="ex: 2.5"
-              [hasError]="
-                form.get('measurement')?.hasError('notPositiveFloat') || false
-              "
-              errorMessage="Must be a positive number"
-              appValueSync
-            ></dl-text-input>
-          </div>
-
-          <div id="form-measurementUnit" class="relative flex flex-col">
-            <dl-select-input
-              label="Unit (curr:
-              {{ recipeIngredient().measurementUnit }})"
-              formControlName="measurementUnit"
-              [options]="unitOptions"
-            ></dl-select-input>
           </div>
 
           <div id="form-purchaseUnitRatio" class="relative flex flex-col">
@@ -135,12 +133,13 @@
           </button>
           <button
             type="button"
-            class="shadow-s h-dl-5 transition-all duration-200 ease-in-out w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3"
+            class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
               'bg-dl-pink-4 text-white dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1':
                 form.valid && !form.pristine,
-              'bg-dl-grey-9 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-7': !form.valid || form.pristine
+              'bg-dl-grey-9 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-7':
+                !form.valid || form.pristine
             }"
             [disabled]="!form.valid || form.pristine"
             (click)="onSubmit()"
