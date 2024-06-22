@@ -149,6 +149,10 @@ module.exports = ({ db, dbDefault }) => {
         if (!permissions) {
           throw errorGen(`Missing transaction productId`, 510, 'dataValidationErr', false, 3);
         }
+        if (userID === 'a525810e-5531-4f97-95a4-39a082f7416b') {
+          global.logger.info({ message: `Skipping permissions update for Doughly Recipes user`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          return 'success';
+        }
 
         global.logger.info({ message: `PERMISSIONS TO UPDATE PROFILE: ${JSON.stringify(permissions.all)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         const newProfile = {};

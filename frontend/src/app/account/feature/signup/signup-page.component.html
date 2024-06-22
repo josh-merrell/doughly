@@ -30,7 +30,7 @@
       <div class="mb-dl-8 flex w-full flex-col items-center justify-between">
         <button
           (click)="signUpWithGoogle()"
-          class="gsi-material-button !w-dl-15"
+          class="gsi-material-button !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -61,7 +61,7 @@
                 <path fill="none" d="M0 0h48v48H0z"></path>
               </svg>
             </div>
-            <span class="gsi-material-button-contents"
+            <span class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
               >Sign Up with Google</span
             >
             <span style="display: none">Sign Up with Google</span>
@@ -69,7 +69,7 @@
         </button>
         <button
           (click)="signUpWithFacebook()"
-          class="gsi-material-button mt-dl-2 !w-dl-15"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -91,7 +91,7 @@
                 />
               </svg>
             </div>
-            <span class="gsi-material-button-contents"
+            <span class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
               >Sign Up with Facebook</span
             >
             <span style="display: none">Sign Up with Facebook</span>
@@ -99,7 +99,7 @@
         </button>
         <button
           (click)="signUpWithApple()"
-          class="gsi-material-button mt-dl-2 !w-dl-15"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -115,7 +115,7 @@
                 />
               </svg>
             </div>
-            <span class="gsi-material-button-contents">Sign Up with Apple</span>
+            <span class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10">Sign Up with Apple</span>
             <span style="display: none">Sign Up with Apple</span>
           </div>
         </button>
@@ -132,7 +132,9 @@
             <input
               type="email"
               formControlName="email"
-              class="p-dl-2 w-dl-15 rounded-full border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              class="p-dl-2 pl-dl-5 w-dl-15 rounded-full border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              appAutofocus
+              tabindex="1"
             />
 
             <div
@@ -158,7 +160,8 @@
           <input
             type="password"
             formControlName="password"
-            class="p-dl-2 w-dl-15 rounded-full border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+            class="p-dl-2 pl-dl-5 w-dl-15 rounded-full border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+            tabindex="2"
           />
           <div
             [ngClass]="{
@@ -183,7 +186,8 @@
           <input
             type="text"
             formControlName="username"
-            class="p-dl-2 w-dl-15 rounded-full border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+            class="p-dl-2 pl-dl-5 w-dl-15 rounded-full border-0 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+            tabindex="3"
           />
           <div
             [ngClass]="{
@@ -205,7 +209,7 @@
           emailErrorMessage() !== ''
         "
         style="height: 40px; width: 296px"
-        class="shadow-s inline-flex items-center justify-center rounded-dl-1 text-dl-5 font-dl-2 text-white dark:text-dl-grey-1"
+        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-white dark:text-dl-grey-1"
         [ngClass]="{
           'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
             signup_form.invalid === false,
@@ -214,6 +218,7 @@
             usernameErrorMessage() !== '' ||
             emailErrorMessage() !== ''
         }"
+        tabindex="4"
       >
         Sign Up
       </button>
@@ -229,6 +234,7 @@
       Already have an account?
       <a
         class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
+        tabindex="5"
         routerLink="/login"
         >Sign In</a
       >

@@ -397,7 +397,6 @@ export class DiscoverRecipesComponent {
   }
 
   async checkProfilePerms(profile: any) {
-    console.log(`CHECKING PROFILE PERMS: `, profile.lastPermRefreshDate);
     if (!profile || !profile.lastPermRefreshDate) return;
     // check if it's been more than 1 day since the last permission refresh
     const lastRefreshDate = new Date(profile.lastPermRefreshDate);

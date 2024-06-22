@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { AuthService } from '../../../shared/utils/authenticationService';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AutofocusDirective } from 'src/app/shared/utils/autofocusDirective';
 import {
   ReactiveFormsModule,
   FormControl,
@@ -22,6 +23,8 @@ import { Store } from '@ngrx/store';
 import { Capacitor } from '@capacitor/core';
 import { FacebookLogin } from '@capacitor-community/facebook-login';
 import { AuthError } from '@supabase/supabase-js';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 
 declare const google: any;
 @Component({
@@ -35,6 +38,7 @@ declare const google: any;
     MatProgressSpinnerModule,
     MatSelectModule,
     MatInputModule,
+    AutofocusDirective
   ],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
@@ -43,27 +47,54 @@ export class LoginPageComponent {
   public isWeb: WritableSignal<boolean> = signal(false);
   public isLoading: WritableSignal<boolean> = signal(false);
   public loginFailureMessage: WritableSignal<string> = signal('');
+  public darkMode: WritableSignal<boolean> = signal(true);
   showPasswordReset: WritableSignal<boolean> = signal(false);
   successMessage: WritableSignal<string> = signal('');
+  public profile: WritableSignal<any> = signal(null);
   rememberMe: WritableSignal<boolean> = signal(false);
   submitted = false;
   constructor(
     private store: Store,
     private router: Router,
     private authService: AuthService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    public extraStuffService: ExtraStuffService
   ) {
-    effect(() => {
-      const profile = this.authService.profile();
-      if (profile && profile.user_id) {
-        if (this.router.url !== '/reset-password') {
-          this.router.navigate(['/loading']);
+    effect(
+      () => {
+        const systemDarkMode = this.extraStuffService.systemDarkMode();
+        const profile = this.authService.profile();
+        console.log('profile', profile);
+        console.log('systemDarkMode', systemDarkMode);
+        if (profile && profile.user_id) {
+          if (this.router.url !== '/reset-password') {
+            this.router.navigate(['/loading']);
+          }
         }
-      }
-    });
+        if (!profile) {
+          this.darkMode.set(systemDarkMode);
+          return;
+        }
+        if (profile.darkMode === 'Enabled') {
+          this.darkMode.set(true);
+        } else if (profile.darkMode === 'Disabled') {
+          this.darkMode.set(false);
+        } else if (profile.darkMode === 'System Default' && systemDarkMode) {
+          this.darkMode.set(true);
+        } else if (profile.darkMode === 'System Default' && !systemDarkMode) {
+          this.darkMode.set(false);
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit() {
+    this.store.select(selectProfile).subscribe((profile) => {
+      if (!profile) return;
+      this.profile.set(profile);
+      console.log('profile', profile);
+    });
     // Check for persistent session (remember me)
     // const sessionData = this.authService.getPersistentSession();
     // if (sessionData) {

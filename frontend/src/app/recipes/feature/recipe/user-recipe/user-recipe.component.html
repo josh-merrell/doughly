@@ -634,8 +634,8 @@
       </div>
       <span
         *ngIf="
-          (toolsExpanded() && !displayTools().length) ||
-          displayTools()[0].quantity === -1
+          toolsExpanded() &&
+          (!displayTools().length || displayTools()[0].quantity === -1)
         "
         class="pl-dl-5 text-dl-6 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
       >
