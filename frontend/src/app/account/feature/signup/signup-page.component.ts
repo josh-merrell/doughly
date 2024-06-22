@@ -2,6 +2,7 @@ import { Component, NgZone, WritableSignal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AutofocusDirective } from 'src/app/shared/utils/autofocusDirective';
 import {
   AuthService,
 } from '../../../shared/utils/authenticationService';
@@ -34,6 +35,7 @@ import {
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    AutofocusDirective
   ],
   templateUrl: './signup-page.component.html',
   styleUrls: ['./signup-page.component.scss'],
