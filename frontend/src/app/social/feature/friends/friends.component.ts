@@ -45,6 +45,8 @@ export class FriendsComponent {
   public filteredFriends = computed(() => {
     const searchFilter = this.searchFilter();
     let friends = this.friends();
+    //first, remove any with a null username
+    friends = friends.filter((friend) => friend.username !== null);
     if (searchFilter) {
       return friends.filter((friend) => {
         return (
@@ -78,6 +80,10 @@ export class FriendsComponent {
       },
       { allowSignalWrites: true }
     );
+
+    effect(() => {
+      console.log(`FILTERED FRIENDS: `, this.filteredFriends());
+    });
   }
 
   ngOnInit(): void {
