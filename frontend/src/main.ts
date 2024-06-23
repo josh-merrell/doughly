@@ -50,6 +50,8 @@ import { ProfileReducer } from './app/profile/state/profile-reducers';
 import { ProfileEffects } from './app/profile/state/profile-effects';
 import { ShoppingListEffects } from './app/groceries/state/shopping-list-effects';
 import { ShoppingListReducer } from './app/groceries/state/shopping-list-reducers';
+import { SharedShoppingListEffects } from './app/groceries/state/sharedShoppingLists/shared-shopping-list-effects';
+import { SharedShoppingListReducer } from './app/groceries/state/sharedShoppingLists/shared-shopping-list-reducers';
 import { ShoppingListRecipeEffects } from './app/groceries/state/shopping-list-recipe-effects';
 import { ShoppingListRecipeReducer } from './app/groceries/state/shopping-list-recipe-reducers';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -81,6 +83,7 @@ bootstrapApplication(AppComponent, {
     provideState('profile', ProfileReducer),
     provideState('shoppingList', ShoppingListReducer),
     provideState('shoppingListRecipe', ShoppingListRecipeReducer),
+    provideState('sharedShoppingList', SharedShoppingListReducer),
     provideState('shoppingListIngredient', ShoppingListIngredientReducer),
     provideState('message', MessageReducer),
     provideEffects([
@@ -98,6 +101,7 @@ bootstrapApplication(AppComponent, {
       FollowshipEffects,
       ProfileEffects,
       ShoppingListEffects,
+      SharedShoppingListEffects,
       ShoppingListRecipeEffects,
       ShoppingListIngredientEffects,
       MessageEffects,

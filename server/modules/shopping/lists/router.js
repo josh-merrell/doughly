@@ -11,6 +11,7 @@ const router = express.Router();
 const h = handler;
 
 router.use(authenticateJWT);
+router.get('/shared', errorCatcher(h.getSharedShoppingLists));
 router.get('/:shoppingListID', routeValidator(getShoppingListSchema_params, 'params'), errorCatcher(h.getShoppingListByID));
 router.get('/', routeValidator(getShoppingListsSchema_query, 'query'), errorCatcher(h.getShoppingLists));
 router.post('/', generateID, errorCatcher(h.createShoppingList));

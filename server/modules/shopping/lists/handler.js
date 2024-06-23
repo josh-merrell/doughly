@@ -14,6 +14,13 @@ async function getShoppingLists(req, res) {
   return res.json(returner);
 }
 
+async function getSharedShoppingLists(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const returner = await p.get.shared({ invitedUserID: req.userID });
+  return res.json(returner);
+}
+
 async function createShoppingList(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -65,4 +72,5 @@ module.exports = {
   createShoppingList,
   updateShoppingList,
   deleteShoppingList,
+  getSharedShoppingLists,
 };

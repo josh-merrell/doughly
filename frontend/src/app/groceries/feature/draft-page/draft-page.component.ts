@@ -45,7 +45,7 @@ import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredi
 import { AddShoppingListIngredientModalComponent } from '../../ui/add-shopping-list-ingredient-modal/add-shopping-list-ingredient-modal.component';
 import { combineLatest, filter, first, map, take, tap } from 'rxjs';
 import { ShoppingListActions } from '../../state/shopping-list-actions';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
@@ -55,6 +55,7 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { UnitService } from 'src/app/shared/utils/unitService';
+import { selectSharedShoppingLists } from '../../state/sharedShoppingLists/shared-shopping-list-selectors';
 
 @Component({
   selector: 'dl-draft-page',
@@ -70,11 +71,13 @@ import { UnitService } from 'src/app/shared/utils/unitService';
 export class DraftPageComponent {
   Math = Math;
   public isDeleting: WritableSignal<boolean> = signal(false);
+  view: WritableSignal<string>;
   @ViewChild('menu') rowItemMenu!: ElementRef;
   menuOpen: boolean = false;
   globalClickListener: () => void = () => {};
 
   public shoppingLists: WritableSignal<any> = signal([]);
+  public sharedShoppingLists: WritableSignal<any> = signal([]);
   public listRecipes: WritableSignal<any> = signal([]);
   public recipes: WritableSignal<any> = signal([]);
   public recipeIngredients: WritableSignal<any> = signal([]);
@@ -168,8 +171,22 @@ export class DraftPageComponent {
     private stringsService: StringsService,
     private modalService: ModalService,
     public extraStuffService: ExtraStuffService,
-    public unitService: UnitService
+    public unitService: UnitService,
+    private route: ActivatedRoute
   ) {
+    this.view = signal('draft');
+    effect(
+      () => {
+        const view = this.view();
+        if (view === 'shared') {
+          this.router.navigate(['groceries/shared']);
+        } else {
+          this.view.set('draft');
+          this.router.navigate(['groceries/draft']);
+        }
+      },
+      { allowSignalWrites: true }
+    );
     effect(
       () => {
         const profile = this.profile();
@@ -270,6 +287,7 @@ export class DraftPageComponent {
 
   // LIFECYCLE HOOKS  *********************************
   ngOnInit(): void {
+    this.checkAndUpdateView();
     this.store.select(selectProfile).subscribe((profile) => {
       if (profile.onboardingState !== 0) {
         this.showOnboardingBadge.set(true);
@@ -279,6 +297,11 @@ export class DraftPageComponent {
     this.store.select(selectShoppingLists).subscribe((shoppingLists: any) => {
       this.shoppingLists.set(shoppingLists);
     });
+    this.store
+      .select(selectSharedShoppingLists)
+      .subscribe((sharedShoppingLists: any) => {
+        this.sharedShoppingLists.set(sharedShoppingLists);
+      });
     this.store
       .select(selectShoppingListRecipes)
       .subscribe((listRecipes: any) => {
@@ -300,6 +323,14 @@ export class DraftPageComponent {
     this.store.select(selectIngredients).subscribe((ingredients: any) => {
       this.ingredients.set(ingredients);
     });
+  }
+  private checkAndUpdateView() {
+    const childRoute = this.route.snapshot.firstChild;
+    const childSegment = childRoute ? childRoute.url[0]?.path : 'draft';
+    this.view.set(childSegment);
+  }
+  updateView(view: string) {
+    this.view.set(view);
   }
   ngAfterViewInit() {
     this.globalClickListener = this.renderer.listen(
@@ -803,5 +834,4 @@ export class DraftPageComponent {
     this.showOnboardingBadge.set(false);
     this.onboardingHandler(this.profile().onboardingState);
   }
-
 }

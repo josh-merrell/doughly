@@ -12,7 +12,9 @@ const loadShoppingListsFailure = createAction(
   props<{ error: any }>()
 );
 
-const loadShoppingListIngredients = createAction('[ShoppingListIngredients] Load');
+const loadShoppingListIngredients = createAction(
+  '[ShoppingListIngredients] Load'
+);
 const loadShoppingListIngredientsSuccess = createAction(
   '[ShoppingListIngredients] Load Success',
   props<{ shoppingListIngredients: ShoppingListIngredient[] }>()
@@ -52,7 +54,10 @@ const editShoppingListFailure = createAction(
   props<{ error: any }>()
 );
 
-const deleteShoppingList = createAction('[ShoppingLists] Delete', props<{ shoppingListID: number }>());
+const deleteShoppingList = createAction(
+  '[ShoppingLists] Delete',
+  props<{ shoppingListID: number }>()
+);
 const deleteShoppingListSuccess = createAction(
   '[ShoppingLists] Delete Success',
   props<{ shoppingListID: number }>()
@@ -81,4 +86,4 @@ export const ShoppingListActions = {
   deleteShoppingList,
   deleteShoppingListSuccess,
   deleteShoppingListFailure,
-}
+};

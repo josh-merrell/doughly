@@ -38,6 +38,9 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting shopping list ingredients: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
+      if (shoppingListIngredients.length === 0) {
+        return [];
+      }
       global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredients[0].userID || 0 });
       return shoppingListIngredients;
     } catch (err) {

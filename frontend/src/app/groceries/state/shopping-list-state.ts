@@ -1,4 +1,4 @@
-import { ShoppingListRecipe } from "./shopping-list-recipe-state";
+import { ShoppingListRecipe } from './shopping-list-recipe-state';
 
 export interface ShoppingList {
   shoppingListID: number;
