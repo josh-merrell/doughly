@@ -116,9 +116,6 @@ export class ShoppingPageComponent {
   ) {}
 
   ngOnInit(): void {
-    // this.route.paramMap.subscribe((params) => {
-    //   this.shoppingListID.set(Number(params.get('shoppingListID')!));
-    // });
     this.store.select(selectShoppingLists).subscribe((sl: any) => {
       this.shoppingListID.set(sl[0].shoppingListID);
     });
@@ -229,13 +226,14 @@ export class ShoppingPageComponent {
                       ConfirmationModalComponent,
                       {
                         data: {
-                          confirmationMessage: 'Purchased Items',
+                          confirmationMessage: `Purchased ${
+                            itemsToSave.length
+                          } Item${itemsToSave.length > 1 ? 's' : ''}. ${itemsToSave.length === neededItemCount ? 'Shopping List Complete!' : ''}`,
                         },
                       },
                       1,
                       true
                     );
-                    this.router.navigate(['/groceries']);
                   }
                 });
             });

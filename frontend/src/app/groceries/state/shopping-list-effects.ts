@@ -157,7 +157,6 @@ export class ShoppingListEffects {
   receiveItems$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListActions.receiveItems),
-      tap((action) => console.log('RECEIVING ITEMS:', action)),
       mergeMap((action) =>
         this.shoppingListService
           .receiveItems(
