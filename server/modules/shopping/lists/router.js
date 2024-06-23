@@ -11,10 +11,12 @@ const router = express.Router();
 const h = handler;
 
 router.use(authenticateJWT);
+router.get('/shared', errorCatcher(h.getSharedShoppingLists));
 router.get('/:shoppingListID', routeValidator(getShoppingListSchema_params, 'params'), errorCatcher(h.getShoppingListByID));
 router.get('/', routeValidator(getShoppingListsSchema_query, 'query'), errorCatcher(h.getShoppingLists));
 router.post('/', generateID, errorCatcher(h.createShoppingList));
 
+router.patch('/:shoppingListID/receiveItems', errorCatcher(h.receiveItems));
 router.patch('/:shoppingListID', routeValidator(ShoppingListUpdateSchema_body, 'body'), routeValidator(ShoppingListUpdateSchema_params, 'params'), errorCatcher(h.updateShoppingList));
 router.delete('/:shoppingListID', routeValidator(ShoppingListDeleteSchema_params, 'params'), errorCatcher(h.deleteShoppingList));
 

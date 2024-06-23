@@ -87,12 +87,12 @@
     <div class="w-full">
       <!-- Add Button -->
       <button
-        *ngIf="selectedIngredient().ingredientID !== 0"
+        *ngIf="selectedIngredient().ingredientID !== 0 && isLoading === false"
         id="add-button"
         type="button"
         class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
         (click)="onSubmit()"
-        [disabled]="!form.valid || form.pristine || isLoading === true"
+        [disabled]="!form.valid || form.pristine"
         [ngClass]="{
           ' bg-dl-pink-4 text-white dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1':
             form.valid && !form.pristine,
@@ -107,6 +107,7 @@
   </div>
   <button
     type="button"
+    *ngIf="isLoading === false"
     class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 dark:bg-dl-grey-1 dark:text-dl-grey-10"
     (click)="onCancel()"
   >

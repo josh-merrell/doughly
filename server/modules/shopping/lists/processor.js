@@ -69,6 +69,21 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
+  async function getShared(options) {
+    const { invitedUserID } = options;
+
+    try {
+      const { data: sharedLists, error } = await db.from('sharedShoppingLists').select('*').filter('invitedUserID', 'eq', invitedUserID);
+      if (error) {
+        throw errorGen(`Error getting shared shopping lists: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+      global.logger.info({ message: `Got ${sharedLists.length} shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID: invitedUserID });
+      return sharedLists;
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists shared', err.code || 520, err.name || 'unhandledError_shoppingLists-shared', err.isOperational || false, err.severity || 2);
+    }
+  }
+
   async function createShoppingList(options) {
     const { userID, customID, authorization } = options;
 
@@ -103,6 +118,7 @@ module.exports = ({ db, dbPublic }) => {
     const { userID, authorization, shoppingListID, status, fulfilledMethod } = options;
 
     try {
+      global.logger.info({ message: `Updating shoppingList ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       //verify that the provided shoppingListID exists
       const { data: existingShoppingList, error: existingShoppingListError } = await db.from('shoppingLists').select().filter('shoppingListID', 'eq', shoppingListID).single();
       if (existingShoppingListError) {
@@ -186,13 +202,130 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
+  async function receiveItems(options) {
+    const { authorization, userID, purchasedBy, shoppingListID, items, store } = options;
+    // console.log(`SLI: ${JSON.stringify(items)}`)
+
+    try {
+      if (!shoppingListID) {
+        throw errorGen(`Error updating shoppingList: shoppingListID is missing`, 510, 'dataValidationErr', false, 3);
+      }
+      // get the shoppingList
+      const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select().filter('shoppingListID', 'eq', shoppingListID).single();
+      if (shoppingListError) {
+        throw errorGen(`Error getting shoppingList ${shoppingListID}: ${shoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+      if (!shoppingList) {
+        throw errorGen(`Error updating shoppingList: shoppingList does not exist`, 515, 'cannotComplete', false, 3);
+      }
+
+      if (!store) {
+        throw errorGen(`Error updating shoppingList: store is missing`, 510, 'dataValidationErr', false, 3);
+      }
+      // validate each provided items has needed properties
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!item.ingredientID || !item.purchasedMeasurement || !item.purchasedDate || item.purchasedMeasurement < 0) {
+          throw errorGen(`Error updating shoppingList: items must have ingredientID, measurement, and purchasedDate`, 510, 'dataValidationErr', false, 3);
+        }
+      }
+
+      // build list of promises to create items
+      const itemPromises = [];
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        itemPromises.push(createIngredientStockEntry(authorization, userID, item));
+      }
+      itemResults = await Promise.all(itemPromises);
+
+      // if any failed, or if any are missing 'ingredientStockID', throw error
+      if (itemResults.some((result) => !result.ingredientStockID)) {
+        throw errorGen(`Error while adding ingredientStocks during shoppingList receiveItems`, 520, 'unhandledError_shoppingLists-receiveItems', false, 3);
+      }
+
+      // build list of promises to update shoppingListIngredients
+      const shoppingListIngredientUpdatePromises = [];
+      for (let i = 0; i < items.length; i++) {
+        const sli = items[i];
+        shoppingListIngredientUpdatePromises.push(updateShoppingListIngredient(authorization, userID, sli.purchasedMeasurement, purchasedBy, store, sli.shoppingListIngredientID));
+      }
+      shoppingListIngredientUpdateResults = await Promise.all(shoppingListIngredientUpdatePromises);
+
+      // if any failed, throw error
+      if (shoppingListIngredientUpdateResults.some((result) => !result)) {
+        throw errorGen(`Error while updating shoppingListIngredients during shoppingList receiveItems`, 520, 'unhandledError_shoppingLists-receiveItems', false, 3);
+      }
+
+      // get all shoppingListIngredients for the shoppingList
+      const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID, needMeasurement, purchasedMeasurement').filter('shoppingListID', 'eq', shoppingListID);
+      if (shoppingListIngredientsError) {
+        throw errorGen(`Error getting shoppingListIngredients for shoppingList ${shoppingListID}: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+
+      // if all have been purchased (greater than or equal to needMeasurement), update the shoppingList to 'fulfilled'
+      if (shoppingListIngredients.every((sli) => sli.purchasedMeasurement >= sli.needMeasurement)) {
+        await updateShoppingList({ userID, authorization, shoppingListID, status: 'fulfilled', fulfilledMethod: 'manual', fulfilledDate: new Date().toISOString() });
+      }
+
+      global.logger.info({ message: `Received ${items.length} items for shoppingList ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      return { shoppingListID: shoppingListID };
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists receiveItems', err.code || 520, err.name || 'unhandledError_shoppingLists-receiveItems', err.isOperational || false, err.severity || 2);
+    }
+  }
+
+  createIngredientStockEntry = async (authorization, userID, item) => {
+    try {
+      global.logger.info({ message: `Creating ingredientStock entry for item: ${JSON.stringify(item)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+
+      const { data } = await axios.post(
+        `${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks`,
+        {
+          authorization,
+          IDtype: 13,
+          ingredientID: item.ingredientID,
+          userID,
+          measurement: item.purchasedMeasurement,
+          purchasedDate: item.purchasedDate,
+        },
+        { headers: { authorization } },
+      );
+      return { ingredientStockID: data.ingredientStockID };
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists createIngredientStockEntry', err.code || 520, err.name || 'unhandledError_shoppingLists-createIngredientStockEntry', err.isOperational || false, err.severity || 2);
+    }
+  };
+
+  updateShoppingListIngredient = async (authorization, userID, purchasedMeasurement, purchasedBy, store, shoppingListIngredientID) => {
+    try {
+      global.logger.info({ message: `Updating shoppingListIngredient ${shoppingListIngredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+
+      const { data } = await axios.patch(
+        `${process.env.NODE_HOST}:${process.env.PORT}/shopping/listIngredients/${shoppingListIngredientID}`,
+        {
+          authorization,
+          userID,
+          purchasedBy,
+          purchasedMeasurement,
+          store,
+        },
+        { headers: { authorization } },
+      );
+      return data;
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists updateShoppingListIngredient', err.code || 520, err.name || 'unhandledError_shoppingLists-updateShoppingListIngredient', err.isOperational || false, err.severity || 2);
+    }
+  };
+
   return {
     get: {
       byID: getShoppingListByID,
       all: getShoppingLists,
+      shared: getShared,
     },
     create: createShoppingList,
     update: updateShoppingList,
     delete: deleteShoppingList,
+    receiveItems,
   };
 };

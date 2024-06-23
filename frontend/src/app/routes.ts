@@ -15,6 +15,7 @@ import { PublicRecipeComponent } from './recipes/feature/recipe/public-recipe/pu
 import { GroceriesPageComponent } from './groceries/groceries-page/groceries-page.component';
 import { DraftPageComponent } from './groceries/feature/draft-page/draft-page.component';
 import { ShoppingPageComponent } from './groceries/feature/shopping-page/shopping-page.component';
+import { SharedShoppingListsPageComponent } from './groceries/feature/shared-shopping-lists-page/shared-shopping-lists-page.component';
 import { FriendsComponent } from './social/feature/friends/friends.component';
 import { FollowersComponent } from './social/feature/followers/followers.component';
 import { ToolsComponent } from './kitchen/feature/tools/tools.component';
@@ -50,13 +51,18 @@ export const routes: Route[] = [
     canActivate: [ProfileGuard, stateLoaded],
     children: [
       {
-        path: 'draft/:shoppingListID',
+        path: 'draft',
         component: DraftPageComponent,
         canActivate: [ProfileGuard, stateLoaded],
       },
       {
-        path: 'shopping/:shoppingListID',
+        path: 'shopping',
         component: ShoppingPageComponent,
+        canActivate: [ProfileGuard, stateLoaded],
+      },
+      {
+        path: 'shared',
+        component: SharedShoppingListsPageComponent,
         canActivate: [ProfileGuard, stateLoaded],
       },
       {
@@ -125,7 +131,7 @@ export const routes: Route[] = [
         component: YourPremiumComponent,
         canActivate: [ProfileGuard, stateLoaded],
       },
-    ]
+    ],
   },
   {
     path: 'profile',
@@ -136,8 +142,8 @@ export const routes: Route[] = [
         path: 'delete',
         component: ProfileComponent,
         canActivate: [ProfileGuard, stateLoaded],
-      }
-    ]
+      },
+    ],
   },
   {
     path: 'settings',

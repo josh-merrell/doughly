@@ -70,46 +70,73 @@ const updater = async (userID, authorization, IDfield, ID, table, updateFields) 
     return { error: `In updater, don't know which logger to use based on provided table name: ${table}` };
   }
   //create needed log entries and version increments
+  const logPromises = [];
   for (const [key, value] of Object.entries(updateFields)) {
     if (value !== existingRow[key]) {
-      const logID1 = await logger(userID, authorization, `update${table.charAt(0).toUpperCase() + table.slice(1)}-${key}`, Number(ID), null, String(existingRow[key]), String(value), `updated ${key} of ${table} ID:${ID} from ${existingRow[key]} to ${value}`);
-      if (['recipeSteps', 'recipeIngredients', 'recipeTools', 'recipeComponents'].includes(table)) {
-        //update version of associated recipe and log the change
-        const newVersion = await incrementVersion('recipes', 'recipeID', existingRow.recipeID, recipeVersion);
-        //reference logID1 as associatedID in the 'updatedRecipeVersion' log entry
-        createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(existingRow.recipeID), logID1, String(recipeVersion), String(newVersion), `updated version of recipe ID:${existingRow.recipeID} from ${recipeVersion} to ${newVersion}`);
-      }
-      if (['steps', 'recipes', 'recipeTools', 'recipeIngredients', 'persons', 'friendships'].includes(table)) {
-        //update version of table and log the change
-        const newVersion = await incrementVersion(table, `${table.slice(0, -1)}ID`, ID, existingRow.version);
-        let logID2;
-        if (table !== 'persons') {
-          logID2 = createRecipeLog(userID, authorization, `update${table.charAt(0).toUpperCase() + table.slice(1, -1)}Version`, Number(ID), logID1, String(existingRow.version), String(newVersion), `updated version of ${table} ID:${ID} from ${existingRow.version} to ${newVersion}`);
-        } else {
-          createUserLog(userID, authorization, `update${table.charAt(0).toUpperCase() + table.slice(1, -1)}Version`, Number(ID), logID1, String(existingRow.version), String(newVersion), `updated version of ${table} ID:${ID} from ${existingRow.version} to ${newVersion}`);
-        }
-        if (table === 'steps') {
-          //find any related recipeSteps and update the associated recipe version
-          const { data: relatedRecipeSteps, error: stepError } = await supabase.from('recipeSteps').select().eq('stepID', ID).eq('deleted', false);
-          if (stepError) {
-            global.logger.info(`Error getting related recipeSteps for step to update: ${ID} : ${stepError.message}`);
-            return { error: stepError.message };
+      logPromises.push(
+        logger(userID, authorization, `update${table.charAt(0).toUpperCase() + table.slice(1)}-${key}`, Number(ID), null, String(existingRow[key]), String(value), `updated ${key} of ${table} ID:${ID} from ${existingRow[key]} to ${value}`).then((logID1) => {
+          const versionPromises = [];
+          if (['recipeSteps', 'recipeIngredients', 'recipeTools', 'recipeComponents'].includes(table)) {
+            versionPromises.push(
+              incrementVersion('recipes', 'recipeID', existingRow.recipeID, recipeVersion).then((newVersion) =>
+                createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(existingRow.recipeID), logID1, String(recipeVersion), String(newVersion), `updated version of recipe ID:${existingRow.recipeID} from ${recipeVersion} to ${newVersion}`),
+              ),
+            );
           }
-          for (let i = 0; i < relatedRecipeSteps.length; i++) {
-            //get the associated recipe
-            const { data: recipe, error: recipeError } = await supabase.from('recipes').select().eq('recipeID', relatedRecipeSteps[i].recipeID).eq('deleted', false).single();
-            if (recipeError) {
-              global.logger.info(`Error getting associated recipe for recipeStepID: ${relatedRecipeSteps[i].recipeStepID} prior to updating step ID: ${ID} : ${recipeError.message}`);
-              return { error: recipeError.message };
-            }
-            //increment version of associated recipe and log the change
-            const newVersion = await incrementVersion('recipes', 'recipeID', recipe.recipeID, recipe.version);
-            await createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipe.recipeID), Number(logID2), String(recipe.version), String(newVersion), `updated version of recipe: ${recipe.title} from ${recipe.version} to ${newVersion}`);
+          if (['steps', 'recipes', 'recipeTools', 'recipeIngredients', 'persons', 'friendships'].includes(table)) {
+            versionPromises.push(
+              incrementVersion(table, `${table.slice(0, -1)}ID`, ID, existingRow.version)
+                .then((newVersion) => {
+                  if (table !== 'persons') {
+                    return createRecipeLog(userID, authorization, `update${table.charAt(0).toUpperCase() + table.slice(1, -1)}Version`, Number(ID), logID1, String(existingRow.version), String(newVersion), `updated version of ${table} ID:${ID} from ${existingRow.version} to ${newVersion}`);
+                  } else {
+                    return createUserLog(userID, authorization, `update${table.charAt(0).toUpperCase() + table.slice(1, -1)}Version`, Number(ID), logID1, String(existingRow.version), String(newVersion), `updated version of ${table} ID:${ID} from ${existingRow.version} to ${newVersion}`);
+                  }
+                })
+                .then((logID2) => {
+                  if (table === 'steps') {
+                    return supabase
+                      .from('recipeSteps')
+                      .select()
+                      .eq('stepID', ID)
+                      .eq('deleted', false)
+                      .then(({ data: relatedRecipeSteps, error: stepError }) => {
+                        if (stepError) {
+                          global.logger.info(`Error getting related recipeSteps for step to update: ${ID} : ${stepError.message}`);
+                          return { error: stepError.message };
+                        }
+                        const stepPromises = relatedRecipeSteps.map((relatedRecipeStep) => {
+                          return supabase
+                            .from('recipes')
+                            .select()
+                            .eq('recipeID', relatedRecipeStep.recipeID)
+                            .eq('deleted', false)
+                            .single()
+                            .then(({ data: recipe, error: recipeError }) => {
+                              if (recipeError) {
+                                global.logger.info(`Error getting associated recipe for recipeStepID: ${relatedRecipeStep.recipeStepID} prior to updating step ID: ${ID} : ${recipeError.message}`);
+                                return { error: recipeError.message };
+                              }
+                              return incrementVersion('recipes', 'recipeID', recipe.recipeID, recipe.version).then((newVersion) =>
+                                createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipe.recipeID), Number(logID2), String(recipe.version), String(newVersion), `updated version of recipe: ${recipe.title} from ${recipe.version} to ${newVersion}`),
+                              );
+                            });
+                        });
+                        return Promise.all(stepPromises);
+                      });
+                  }
+                }),
+            );
           }
-        }
-      }
+          return Promise.all(versionPromises);
+        }),
+      );
     }
   }
+  Promise.all(logPromises).catch((error) => {
+    global.logger.info(`Error creating log entries in updater: ${error.message}`);
+    return { error: error.message };
+  });
   return data[0];
 };
 

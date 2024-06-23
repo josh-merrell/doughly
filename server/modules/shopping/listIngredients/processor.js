@@ -38,6 +38,9 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting shopping list ingredients: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
+      if (shoppingListIngredients.length === 0) {
+        return [];
+      }
       global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredients[0].userID || 0 });
       return shoppingListIngredients;
     } catch (err) {
@@ -95,7 +98,7 @@ module.exports = ({ db }) => {
   }
 
   async function updateShoppingListIngredient(options) {
-    const { userID, authorization, shoppingListIngredientID, purchasedMeasurement, purchasedUnit, store } = options;
+    const { userID, authorization, shoppingListIngredientID, purchasedMeasurement, purchasedBy, purchasedUnit, store } = options;
 
     try {
       //verify that provided shoppingListIngredient exists
@@ -119,8 +122,9 @@ module.exports = ({ db }) => {
       //update shoppingListIngredient
       const updateFields = {};
       if (purchasedMeasurement) updateFields.purchasedMeasurement = purchasedMeasurement;
-      if (purchasedUnit) updateFields.purchasedUnit = purchasedUnit;
+      if (purchasedUnit) updateFields.purchasedUnit = purchasedUnit || shoppingListIngredient[0].needUnit;
       if (store) updateFields.store = store;
+      updateFields.purchasedBy = purchasedBy || userID;
       const updatedShoppingListIngredient = await updater(userID, authorization, 'shoppingListIngredientID', shoppingListIngredientID, 'shoppingListIngredients', updateFields);
       return updatedShoppingListIngredient;
 

@@ -38,10 +38,11 @@ async function updateShoppingListIngredient(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { shoppingListIngredientID } = req.params;
-  const { purchasedMeasurement, purchasedUnit, store } = req.body;
+  const { purchasedBy, purchasedMeasurement, purchasedUnit, store } = req.body;
   const { authorization } = req.headers;
   const returner = await p.update({
     userID: req.userID,
+    purchasedBy,
     authorization,
     shoppingListIngredientID,
     purchasedMeasurement,

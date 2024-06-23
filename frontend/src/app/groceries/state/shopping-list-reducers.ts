@@ -20,11 +20,14 @@ export const ShoppingListReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(ShoppingListActions.loadShoppingListsSuccess, (state, { shoppingLists }) => ({
-    ...state,
-    shoppingLists,
-    loading: false,
-  })),
+  on(
+    ShoppingListActions.loadShoppingListsSuccess,
+    (state, { shoppingLists }) => ({
+      ...state,
+      shoppingLists,
+      loading: false,
+    })
+  ),
   on(ShoppingListActions.loadShoppingListsFailure, (state, { error }) => ({
     ...state,
     error,
@@ -35,31 +38,43 @@ export const ShoppingListReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(ShoppingListActions.loadShoppingListIngredientsSuccess, (state, { shoppingListIngredients }) => ({
-    ...state,
-    shoppingListIngredients,
-    loading: false,
-  })),
-  on(ShoppingListActions.loadShoppingListIngredientsFailure, (state, { error }) => ({
-    ...state,
-    error,
-    loading: false,
-  })),
+  on(
+    ShoppingListActions.loadShoppingListIngredientsSuccess,
+    (state, { shoppingListIngredients }) => ({
+      ...state,
+      shoppingListIngredients,
+      loading: false,
+    })
+  ),
+  on(
+    ShoppingListActions.loadShoppingListIngredientsFailure,
+    (state, { error }) => ({
+      ...state,
+      error,
+      loading: false,
+    })
+  ),
   on(ShoppingListActions.loadShoppingListRecipes, (state) => ({
     ...state,
     loading: true,
     error: null,
   })),
-  on(ShoppingListActions.loadShoppingListRecipesSuccess, (state, { shoppingListRecipes }) => ({
-    ...state,
-    shoppingListRecipes,
-    loading: false,
-  })),
-  on(ShoppingListActions.loadShoppingListRecipesFailure, (state, { error }) => ({
-    ...state,
-    error,
-    loading: false,
-  })),
+  on(
+    ShoppingListActions.loadShoppingListRecipesSuccess,
+    (state, { shoppingListRecipes }) => ({
+      ...state,
+      shoppingListRecipes,
+      loading: false,
+    })
+  ),
+  on(
+    ShoppingListActions.loadShoppingListRecipesFailure,
+    (state, { error }) => ({
+      ...state,
+      error,
+      loading: false,
+    })
+  ),
   on(ShoppingListActions.addShoppingList, (state) => ({
     ...state,
     adding: true,
@@ -81,15 +96,18 @@ export const ShoppingListReducer = createReducer(
     updating: true,
     error: null,
   })),
-  on(ShoppingListActions.editShoppingListSuccess, (state, { shoppingList }) => ({
-    ...state,
-    updating: false,
-    shoppingLists: state.shoppingLists.map((storeShoppingList) =>
-      storeShoppingList.shoppingListID === shoppingList.shoppingListID
-        ? shoppingList
-        : storeShoppingList
-    ),
-  })),
+  on(
+    ShoppingListActions.editShoppingListSuccess,
+    (state, { shoppingList }) => ({
+      ...state,
+      updating: false,
+      shoppingLists: state.shoppingLists.map((storeShoppingList) =>
+        storeShoppingList.shoppingListID === shoppingList.shoppingListID
+          ? shoppingList
+          : storeShoppingList
+      ),
+    })
+  ),
   on(ShoppingListActions.editShoppingListFailure, (state, { error }) => ({
     ...state,
     error,
@@ -101,13 +119,30 @@ export const ShoppingListReducer = createReducer(
     deleting: true,
     error: null,
   })),
-  on(ShoppingListActions.deleteShoppingListSuccess, (state, { shoppingListID }) => ({
-    ...state,
-    deleting: false,
-  })),
+  on(
+    ShoppingListActions.deleteShoppingListSuccess,
+    (state, { shoppingListID }) => ({
+      ...state,
+      deleting: false,
+    })
+  ),
   on(ShoppingListActions.deleteShoppingListFailure, (state, { error }) => ({
     ...state,
     error,
     deleting: false,
+  })),
+  on(ShoppingListActions.receiveItems, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(ShoppingListActions.receiveItemsSuccess, (state, { shoppingListID }) => ({
+    ...state,
+    loading: false,
+  })),
+  on(ShoppingListActions.receiveItemsFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
   }))
 );

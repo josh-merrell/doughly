@@ -17,6 +17,11 @@ import {
   selectUpdating as selectUpdatingShoppingListIngredient,
   selectError as selectErrorShoppingListIngredient,
 } from '../../state/shopping-list-ingredient-selectors';
+import {
+  selectLoading as selectLoadingShoppingList,
+  selectError as selectErrorShoppingList,
+  selectShoppingLists,
+} from '../../state/shopping-list-selectors';
 import { Store } from '@ngrx/store';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -24,6 +29,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
+import { ShoppingListActions } from '../../state/shopping-list-actions';
 import { PurchaseIngredientsModalComponent } from './ui/purchase-ingredients-modal/purchase-ingredients-modal.component';
 import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
@@ -110,8 +116,8 @@ export class ShoppingPageComponent {
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      this.shoppingListID.set(Number(params.get('shoppingListID')!));
+    this.store.select(selectShoppingLists).subscribe((sl: any) => {
+      this.shoppingListID.set(sl[0].shoppingListID);
     });
     this.store.select(selectIngredients).subscribe((ingr: any) => {
       this.ingredients.set(ingr);
@@ -181,37 +187,55 @@ export class ShoppingPageComponent {
             (item: any) => !item.store
           ).length;
           this.store.dispatch(
-            ShoppingListIngredientActions.batchUpdateShoppingListIngredientStocks(
-              {
-                shoppingListID: this.shoppingListID(),
-                store: modalResult.store,
-                shoppingListIngredients: itemsToSave,
-                listComplete: itemsToSave.length === neededItemCount,
-              }
-            )
+            ShoppingListActions.receiveItems({
+              shoppingListID: this.shoppingListID(),
+              items: itemsToSave,
+              store: modalResult.store,
+              purchasedBy: null,
+            })
           );
-
-          // subscribe to 'selectTempPurchase'. When it is false, then set isLoading to false and navigate navigate to /groceries page
           this.store
-            .select(selectTempPurchasing)
-            .subscribe((tempPurchasing: any) => {
-              if (!tempPurchasing) {
-                this.isLoading.set(false);
-                if (itemsToSave.length === neededItemCount) {
-                  this.modalService.open(
-                    ConfirmationModalComponent,
-                    {
-                      data: {
-                        confirmationMessage: 'Shopping List Completed',
+            .select(selectLoadingShoppingList)
+            .pipe(
+              filter((loading) => !loading),
+              take(1)
+            )
+            .subscribe(() => {
+              this.store
+                .select(selectErrorShoppingList)
+                .pipe(take(1))
+                .subscribe((error) => {
+                  if (error) {
+                    console.error(
+                      `Shopping List receiveItems failed: ${error.message}, CODE: ${error.statusCode}`
+                    );
+                    this.modalService.open(
+                      ErrorModalComponent,
+                      {
+                        maxWidth: '380px',
+                        data: {
+                          errorMessage: error.message,
+                          statusCode: error.statusCode,
+                        },
                       },
-                    },
-                    1,
-                    true
-                  );
-                } else {
-                  this.router.navigate(['/groceries']);
-                }
-              }
+                      1,
+                      true
+                    );
+                  } else {
+                    this.modalService.open(
+                      ConfirmationModalComponent,
+                      {
+                        data: {
+                          confirmationMessage: `Purchased ${
+                            itemsToSave.length
+                          } Item${itemsToSave.length > 1 ? 's' : ''}. ${itemsToSave.length === neededItemCount ? 'Shopping List Complete!' : ''}`,
+                        },
+                      },
+                      1,
+                      true
+                    );
+                  }
+                });
             });
         } else {
           this.isLoading.set(false);

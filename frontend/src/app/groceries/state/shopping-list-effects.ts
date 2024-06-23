@@ -75,6 +75,7 @@ export class ShoppingListEffects {
   editShoppingList$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ShoppingListActions.editShoppingList),
+      tap((action) => console.log('UPDATING SHOPPING LIST:', action)),
       mergeMap((action) =>
         this.shoppingListService.updateShoppingList(action).pipe(
           map((shoppingList: ShoppingList) =>
@@ -93,15 +94,6 @@ export class ShoppingListEffects {
           )
         )
       )
-    )
-  );
-
-  editShoppingListSuccess$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ShoppingListActions.editShoppingListSuccess),
-      map(() => {
-        return ShoppingListIngredientActions.removeTempPurchasing();
-      })
     )
   );
 
@@ -159,6 +151,46 @@ export class ShoppingListEffects {
           shoppingListID: action.shoppingListID,
         });
       })
+    )
+  );
+
+  receiveItems$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.receiveItems),
+      mergeMap((action) =>
+        this.shoppingListService
+          .receiveItems(
+            action.shoppingListID,
+            action.items,
+            action.store,
+            action.purchasedBy ? action.purchasedBy : null
+          )
+          .pipe(
+            map(() =>
+              ShoppingListActions.receiveItemsSuccess({
+                shoppingListID: action.shoppingListID,
+              })
+            ),
+            catchError((error) =>
+              of(
+                ShoppingListActions.receiveItemsFailure({
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
+                })
+              )
+            )
+          )
+      )
+    )
+  );
+
+  loadShoppingListsAfterPurchasing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.receiveItemsSuccess),
+      map((action) => ShoppingListActions.loadShoppingLists())
     )
   );
 }
