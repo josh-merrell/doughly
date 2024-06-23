@@ -90,6 +90,12 @@ import {
   selectError as selectShoppingListError,
 } from '../../.././groceries/state/shopping-list-selectors';
 
+import { SharedShoppingListActions } from 'src/app/groceries/state/sharedShoppingLists/shared-shopping-list-actions';
+import {
+  selectLoading as selectSharedShoppingListLoading,
+  selectError as selectSharedShoppingListError,
+} from 'src/app/groceries/state/sharedShoppingLists/shared-shopping-list-selectors';
+
 import { ShoppingListRecipeActions } from 'src/app/groceries/state/shopping-list-recipe-actions';
 import {
   selectLoading as selectShoppingListRecipeLoading,
@@ -128,6 +134,7 @@ export class LoadingPageComponent {
   private isLoadingFollowship: WritableSignal<boolean> = signal(true);
   private isLoadingProfile: WritableSignal<boolean> = signal(true);
   private isLoadingShoppingList: WritableSignal<boolean> = signal(true);
+  private isLoadingSharedShoppingList: WritableSignal<boolean> = signal(true);
   private isLoadingShoppingListRecipe: WritableSignal<boolean> = signal(true);
 
   private timeoutSubscription!: Subscription;
@@ -164,6 +171,7 @@ export class LoadingPageComponent {
         const isLoadingFollowship = this.isLoadingFollowship();
         const isLoadingProfile = this.isLoadingProfile();
         const isLoadingShoppingList = this.isLoadingShoppingList();
+        const isLoadingSharedShoppingList = this.isLoadingSharedShoppingList();
         const isLoadingShoppingListRecipe = this.isLoadingShoppingListRecipe();
 
         switch (stateToLoad) {
@@ -190,6 +198,7 @@ export class LoadingPageComponent {
               !isLoadingFollowship &&
               !isLoadingProfile &&
               !isLoadingShoppingList &&
+              !isLoadingSharedShoppingList &&
               !isLoadingShoppingListRecipe
             ) {
               this.extraStuffService.stateToLoad.set('');
@@ -243,6 +252,7 @@ export class LoadingPageComponent {
         this.loadFollowshipState();
         this.loadProfileState();
         this.loadShoppingListState();
+        this.loadSharedShoppingListState();
         this.loadShoppingListRecipeState();
         this.ProductService.initGlassfy();
     }
@@ -476,6 +486,21 @@ export class LoadingPageComponent {
           );
         } else {
           this.isLoadingShoppingList.set(state);
+        }
+      });
+    });
+  }
+
+  loadSharedShoppingListState() {
+    this.store.dispatch(SharedShoppingListActions.loadSharedShoppingLists());
+    this.store.select(selectSharedShoppingListLoading).subscribe((state) => {
+      this.store.select(selectSharedShoppingListError).subscribe((error) => {
+        if (error) {
+          console.error(
+            `Shared Shopping List State load failed: ${error.message}, CODE: ${error.statusCode}`
+          );
+        } else {
+          this.isLoadingSharedShoppingList.set(state);
         }
       });
     });
