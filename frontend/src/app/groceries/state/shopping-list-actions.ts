@@ -67,6 +67,24 @@ const deleteShoppingListFailure = createAction(
   props<{ error: any }>()
 );
 
+const receiveItems = createAction(
+  '[ShoppingLists] Receive Items',
+  props<{
+    shoppingListID: number;
+    items: any[];
+    store: string;
+    purchasedBy: string | null;
+  }>()
+);
+const receiveItemsSuccess = createAction(
+  '[ShoppingLists] Receive Items Success',
+  props<{ shoppingListID: number }>()
+);
+const receiveItemsFailure = createAction(
+  '[ShoppingLists] Receive Items Failure',
+  props<{ error: any }>()
+);
+
 export const ShoppingListActions = {
   loadShoppingLists,
   loadShoppingListsSuccess,
@@ -86,4 +104,7 @@ export const ShoppingListActions = {
   deleteShoppingList,
   deleteShoppingListSuccess,
   deleteShoppingListFailure,
+  receiveItems,
+  receiveItemsSuccess,
+  receiveItemsFailure,
 };

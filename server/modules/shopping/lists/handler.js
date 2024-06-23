@@ -66,6 +66,23 @@ async function deleteShoppingList(req, res) {
   return res.json(returner);
 }
 
+async function receiveItems(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { shoppingListID } = req.params;
+  const { items, store, purchasedBy } = req.body;
+  const { authorization } = req.headers;
+  const returner = await p.receiveItems({
+    userID: req.userID,
+    authorization,
+    shoppingListID,
+    purchasedBy,
+    store,
+    items,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   getShoppingListByID,
   getShoppingLists,
@@ -73,4 +90,5 @@ module.exports = {
   updateShoppingList,
   deleteShoppingList,
   getSharedShoppingLists,
+  receiveItems,
 };

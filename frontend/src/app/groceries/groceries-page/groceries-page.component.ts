@@ -1,9 +1,4 @@
-import {
-  Component,
-  WritableSignal,
-  effect,
-  signal,
-} from '@angular/core';
+import { Component, WritableSignal, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DraftPageComponent } from '../feature/draft-page/draft-page.component';
 import { ShoppingPageComponent } from '../feature/shopping-page/shopping-page.component';
@@ -12,12 +7,10 @@ import { selectShoppingLists } from '../state/shopping-list-selectors';
 import { ShoppingListRecipeActions } from '../state/shopping-list-recipe-actions';
 import { selectShoppingListRecipes } from '../state/shopping-list-recipe-selectors';
 import { ShoppingListIngredientActions } from '../state/shopping-list-ingredient-actions';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
-
-
 
 @Component({
   selector: 'dl-groceries-page',
@@ -33,16 +26,32 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class GroceriesPageComponent {
   public isDeleting: WritableSignal<boolean> = signal(false);
+  view: WritableSignal<string>;
   menuOpen: boolean = false;
-  public status: WritableSignal<string> = signal('');
   public shoppingLists: WritableSignal<any> = signal([]);
   public listRecipes: WritableSignal<any> = signal([]);
 
   constructor(
     public dialog: MatDialog,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private route: ActivatedRoute
   ) {
+    this.view = signal('draft');
+    effect(
+      () => {
+        const view = this.view();
+        if (view === 'shared') {
+          this.router.navigate(['groceries/shared']);
+        } else if (view === 'shopping') {
+          this.router.navigate(['groceries/shopping']);
+        } else {
+          this.view.set('draft');
+          this.router.navigate(['groceries/draft']);
+        }
+      },
+      { allowSignalWrites: true }
+    );
     effect(
       () => {
         const shoppingLists = this.shoppingLists();
@@ -61,32 +70,19 @@ export class GroceriesPageComponent {
       },
       { allowSignalWrites: true }
     );
-    effect(() => {
-      const status = this.status();
-      if (status === 'draft') {
-        this.router.navigate([
-          '/groceries/draft',
-          this.shoppingLists()[0].shoppingListID,
-        ]);
-      } else if (status === 'shopping') {
-        this.router.navigate([
-          '/groceries/shopping',
-          this.shoppingLists()[0].shoppingListID,
-        ]);
-      }
-    });
   }
 
   ngOnInit(): void {
+    this.checkAndUpdateView();
     this.store.select(selectShoppingLists).subscribe((shoppingLists: any) => {
       this.shoppingLists.set(shoppingLists);
       if (shoppingLists.length === 0) {
-        this.status.set('noList');
+        this.view.set('noList');
         // this.generateList();
       } else if (shoppingLists.length === 1) {
-        this.status.set(shoppingLists[0].status);
+        this.view.set(shoppingLists[0].status);
       } else {
-        this.status.set(shoppingLists[0].status);
+        this.view.set(shoppingLists[0].status);
       }
     });
 
@@ -95,4 +91,13 @@ export class GroceriesPageComponent {
     });
   }
 
+  private checkAndUpdateView() {
+    const childRoute = this.route.snapshot.firstChild;
+    const childSegment = childRoute ? childRoute.url[0]?.path : 'ingredients';
+    this.view.set(childSegment);
+  }
+
+  updateView(view: string) {
+    this.view.set(view);
+  }
 }

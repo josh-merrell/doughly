@@ -53,12 +53,13 @@
       <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-3">
         <button
           type="button"
-          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-2 font-dl-3 text-white dark:text-dl-grey-1"
+          class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:text-dl-grey-1"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
-            'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
+            'bg-dl-pink-4 dark:border-dl-pink-7 dark:bg-dl-pink-7':
               form.valid && !form.pristine,
-            'bg-dl-grey-7': !form.valid || form.pristine
+            'bg-dl-grey-7 dark:border-dl-grey-3 dark:bg-dl-grey-3':
+              !form.valid || form.pristine
           }"
           [disabled]="!form.valid || form.pristine"
           (click)="onConfirm()"

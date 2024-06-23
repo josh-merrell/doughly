@@ -332,20 +332,20 @@ export class DraftPageComponent {
   updateView(view: string) {
     this.view.set(view);
   }
-  ngAfterViewInit() {
-    this.globalClickListener = this.renderer.listen(
-      'document',
-      'click',
-      (event) => {
-        const clickedInside = this.rowItemMenu?.nativeElement.contains(
-          event.target
-        );
-        if (!clickedInside && this.rowItemMenu) {
-          this.closeMenu();
-        }
-      }
-    );
-  }
+  // ngAfterViewInit() {
+  //   this.globalClickListener = this.renderer.listen(
+  //     'document',
+  //     'click',
+  //     (event) => {
+  //       const clickedInside = this.rowItemMenu?.nativeElement.contains(
+  //         event.target
+  //       );
+  //       if (!clickedInside && this.rowItemMenu) {
+  //         this.closeMenu();
+  //       }
+  //     }
+  //   );
+  // }
 
   recipeCardClick(recipe) {
     if (this.selectedRecipeID() === recipe.shoppingListRecipeID) {
@@ -461,66 +461,66 @@ export class DraftPageComponent {
   }
 
   // INTERACTIVITY FUNCTIONS **************************
-  onDeleteClick() {
-    this.closeMenu();
-    this.isDeleting.set(true);
-    this.store.dispatch(
-      ShoppingListActions.deleteShoppingList({
-        shoppingListID: this.shoppingLists()[0].shoppingListID,
-      })
-    );
-    this.store
-      .select(selectDeletingShoppingList)
-      .pipe(
-        filter((deleting) => !deleting),
-        take(1)
-      )
-      .subscribe(() => {
-        this.store
-          .select(selectErrorShoppingList)
-          .pipe(take(1))
-          .subscribe((error) => {
-            if (error) {
-              console.error(
-                `Failed to delete shopping list: ${error.message}, CODE: ${error.statusCode}`
-              );
-              this.modalService.open(
-                ErrorModalComponent,
-                {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: error.message,
-                    statusCode: error.statusCode,
-                  },
-                },
-                1,
-                true
-              );
-            } else {
-              this.modalService.open(
-                ConfirmationModalComponent,
-                {
-                  maxWidth: '380px',
-                  data: {
-                    confirmationMessage: 'Shopping list deleted',
-                  },
-                },
-                1,
-                true
-              );
-            }
-            this.isDeleting.set(false);
-          });
-      });
-  }
+  // onDeleteClick() {
+  //   this.closeMenu();
+  //   this.isDeleting.set(true);
+  //   this.store.dispatch(
+  //     ShoppingListActions.deleteShoppingList({
+  //       shoppingListID: this.shoppingLists()[0].shoppingListID,
+  //     })
+  //   );
+  //   this.store
+  //     .select(selectDeletingShoppingList)
+  //     .pipe(
+  //       filter((deleting) => !deleting),
+  //       take(1)
+  //     )
+  //     .subscribe(() => {
+  //       this.store
+  //         .select(selectErrorShoppingList)
+  //         .pipe(take(1))
+  //         .subscribe((error) => {
+  //           if (error) {
+  //             console.error(
+  //               `Failed to delete shopping list: ${error.message}, CODE: ${error.statusCode}`
+  //             );
+  //             this.modalService.open(
+  //               ErrorModalComponent,
+  //               {
+  //                 maxWidth: '380px',
+  //                 data: {
+  //                   errorMessage: error.message,
+  //                   statusCode: error.statusCode,
+  //                 },
+  //               },
+  //               1,
+  //               true
+  //             );
+  //           } else {
+  //             this.modalService.open(
+  //               ConfirmationModalComponent,
+  //               {
+  //                 maxWidth: '380px',
+  //                 data: {
+  //                   confirmationMessage: 'Shopping list deleted',
+  //                 },
+  //               },
+  //               1,
+  //               true
+  //             );
+  //           }
+  //           this.isDeleting.set(false);
+  //         });
+  //     });
+  // }
 
-  closeMenu() {
-    this.menuOpen = false;
-  }
-  toggleMenu(event: any) {
-    event.stopPropagation();
-    this.menuOpen = !this.menuOpen;
-  }
+  // closeMenu() {
+  //   this.menuOpen = false;
+  // }
+  // toggleMenu(event: any) {
+  //   event.stopPropagation();
+  //   this.menuOpen = !this.menuOpen;
+  // }
 
   deleteListRecipe(shoppingListRecipeID: number, reason?: string) {
     this.isDeleting.set(true);

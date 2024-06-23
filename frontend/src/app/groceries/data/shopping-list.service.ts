@@ -46,4 +46,20 @@ export class ShoppingListService {
   deleteShoppingList(shoppingListID: number): Observable<any> {
     return this.http.delete<any>(`${this.API_URL}/${shoppingListID}`);
   }
+
+  receiveItems(
+    shoppingListID: number,
+    items: any[],
+    store: string,
+    purchasedBy: string | null
+  ): Observable<any> {
+    return this.http.patch<any>(
+      `${this.API_URL}/${shoppingListID}/receiveItems`,
+      {
+        items,
+        store,
+        purchasedBy,
+      }
+    );
+  }
 }

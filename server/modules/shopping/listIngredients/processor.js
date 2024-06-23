@@ -98,7 +98,7 @@ module.exports = ({ db }) => {
   }
 
   async function updateShoppingListIngredient(options) {
-    const { userID, authorization, shoppingListIngredientID, purchasedMeasurement, purchasedUnit, store } = options;
+    const { userID, authorization, shoppingListIngredientID, purchasedMeasurement, purchasedBy, purchasedUnit, store } = options;
 
     try {
       //verify that provided shoppingListIngredient exists
@@ -122,8 +122,9 @@ module.exports = ({ db }) => {
       //update shoppingListIngredient
       const updateFields = {};
       if (purchasedMeasurement) updateFields.purchasedMeasurement = purchasedMeasurement;
-      if (purchasedUnit) updateFields.purchasedUnit = purchasedUnit;
+      if (purchasedUnit) updateFields.purchasedUnit = purchasedUnit || shoppingListIngredient[0].needUnit;
       if (store) updateFields.store = store;
+      updateFields.purchasedBy = purchasedBy || userID;
       const updatedShoppingListIngredient = await updater(userID, authorization, 'shoppingListIngredientID', shoppingListIngredientID, 'shoppingListIngredients', updateFields);
       return updatedShoppingListIngredient;
 
