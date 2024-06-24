@@ -17,7 +17,7 @@ async function getShoppingLists(req, res) {
 async function getSharedShoppingLists(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const returner = await p.get.shared({ invitedUserID: req.userID });
+  const returner = await p.get.shared({ userID: req.userID });
   return res.json(returner);
 }
 

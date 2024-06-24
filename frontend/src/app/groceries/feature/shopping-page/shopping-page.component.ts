@@ -5,6 +5,7 @@ import {
   ViewChild,
   WritableSignal,
   computed,
+  effect,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -35,9 +36,14 @@ import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { AuthService } from 'src/app/shared/utils/authenticationService';
+import {
+  AuthService,
+  Profile,
+} from 'src/app/shared/utils/authenticationService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { UnitService } from 'src/app/shared/utils/unitService';
+import { selectSharedShoppingLists } from '../../state/sharedShoppingLists/shared-shopping-list-selectors';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 
 @Component({
   selector: 'dl-shopping-page',
@@ -62,7 +68,10 @@ export class ShoppingPageComponent {
 
   shoppingListID: WritableSignal<number> = signal(0);
   private shoppingListIngredients: WritableSignal<any> = signal([]);
+  private allSharedLists: WritableSignal<any> = signal([]);
   private ingredients: WritableSignal<any> = signal([]);
+  private profile: WritableSignal<Profile | null> = signal(null);
+  public listShares: WritableSignal<any[]> = signal([]);
   public displaySLIngr = computed(() => {
     const ingredients = this.ingredients() || [];
     const slIngr = this.shoppingListIngredients() || [];
@@ -113,9 +122,30 @@ export class ShoppingPageComponent {
     private modalService: ModalService,
     public extraStuffService: ExtraStuffService,
     public unitService: UnitService
-  ) {}
+  ) {
+    effect(
+      () => {
+        const profile = this.profile();
+        const allSharedLists = this.allSharedLists();
+        const shoppingListID = this.shoppingListID();
+        if (!profile || !allSharedLists || !shoppingListID) return;
+        // filter out any shared lists that are not the current shopping list or have an invitedUserID that equals profile.user_id
+        const sharedLists = allSharedLists.filter(
+          (list: any) =>
+            list.shoppingListID === shoppingListID &&
+            list.invitedUserID !== profile.user_id
+        );
+        this.listShares.set(sharedLists);
+        console.log(`Shared Lists: `, sharedLists);
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   ngOnInit(): void {
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.store.select(selectShoppingLists).subscribe((sl: any) => {
       this.shoppingListID.set(sl[0].shoppingListID);
     });
@@ -128,6 +158,9 @@ export class ShoppingPageComponent {
         this.isLoading.set(false);
         this.shoppingListIngredients.set(slIngr);
       });
+    this.store.select(selectSharedShoppingLists).subscribe((lists) => {
+      this.allSharedLists.set(lists);
+    });
   }
 
   toggleMenu(event: any) {
@@ -228,7 +261,11 @@ export class ShoppingPageComponent {
                         data: {
                           confirmationMessage: `Purchased ${
                             itemsToSave.length
-                          } Item${itemsToSave.length > 1 ? 's' : ''}. ${itemsToSave.length === neededItemCount ? 'Shopping List Complete!' : ''}`,
+                          } Item${itemsToSave.length > 1 ? 's' : ''}. ${
+                            itemsToSave.length === neededItemCount
+                              ? 'Shopping List Complete!'
+                              : ''
+                          }`,
                         },
                       },
                       1,
@@ -317,5 +354,13 @@ export class ShoppingPageComponent {
             this.isDeleting.set(false);
           });
       });
+  }
+
+  onViewListShares() {
+    console.log('view list shares clicked');
+  }
+
+  onShareClick() {
+    console.log('share clicked');
   }
 }

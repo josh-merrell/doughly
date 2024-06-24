@@ -70,14 +70,14 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function getShared(options) {
-    const { invitedUserID } = options;
+    const { userID } = options;
 
     try {
-      const { data: sharedLists, error } = await db.from('sharedShoppingLists').select('*').filter('invitedUserID', 'eq', invitedUserID);
+      const { data: sharedLists, error } = await db.from('sharedShoppingLists').select('*').or(`userID.eq.${userID},invitedUserID.eq.${userID}`);
       if (error) {
         throw errorGen(`Error getting shared shopping lists: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${sharedLists.length} shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID: invitedUserID });
+      global.logger.info({ message: `Got ${sharedLists.length} shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID });
       return sharedLists;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLists shared', err.code || 520, err.name || 'unhandledError_shoppingLists-shared', err.isOperational || false, err.severity || 2);
