@@ -49,6 +49,7 @@ import { selectRecipeByID } from 'src/app/recipes/state/recipe/recipe-selectors'
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
 
 @Component({
   selector: 'dl-edit-recipe-ingredient-modal',
@@ -62,6 +63,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatInputModule,
     TextInputComponent,
     SelectInputComponent,
+    ValueSyncDirective // needed to correctly update form values received from textInput
   ],
   templateUrl: './edit-recipe-ingredient-modal.component.html',
 })

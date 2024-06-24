@@ -14,4 +14,11 @@ export class ConfirmationModalComponent {
     public data: { confirmationMessage: string },
     public dialogRef: MatDialogRef<ConfirmationModalComponent>
   ) {}
+
+  ngOnInit() {
+    // close after 2.5 seconds
+    setTimeout(() => {
+      this.dialogRef.close();
+    }, 2000);
+  }
 }

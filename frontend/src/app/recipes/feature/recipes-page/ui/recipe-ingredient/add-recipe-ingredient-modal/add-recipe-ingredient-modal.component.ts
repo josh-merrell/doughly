@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, Inject, WritableSignal, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -47,7 +53,7 @@ import { UnitService } from 'src/app/shared/utils/unitService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
-import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective'; 
+import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -62,7 +68,7 @@ import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
     AddIngredientModalComponent,
     TextInputComponent,
     SelectInputComponent,
-    ValueSyncDirective
+    ValueSyncDirective, // needed to correctly update form values received from textInput
   ],
   templateUrl: './add-recipe-ingredient-modal.component.html',
 })
@@ -116,24 +122,6 @@ export class AddRecipeIngredientModalComponent {
     this.purchaseUnits.sort((a, b) => a.localeCompare(b));
     this.setForm();
     this.subscribeToFormChanges();
-    this.logFormStatusOnChange();
-  }
-
-  logFormStatusOnChange() {
-    this.form.statusChanges.subscribe((status) => {
-      console.log('Form status changed:', status);
-      console.log('Form validity:', this.form.valid);
-      console.log('Form value:', this.form.value);
-
-      for (const controlName in this.form.controls) {
-        if (this.form.controls.hasOwnProperty(controlName)) {
-          const control = this.form.get(controlName);
-          console.log(
-            `Control: ${controlName}, Value: ${control?.value}, Valid: ${control?.valid}, Errors: ${control?.errors}`
-          );
-        }
-      }
-    });
   }
 
   setForm() {
@@ -169,10 +157,6 @@ export class AddRecipeIngredientModalComponent {
       } else {
         this.form.get('measurement')?.disable();
       }
-    });
-
-    this.form.get('measurement')?.valueChanges.subscribe((value) => {
-      // manually get Validator result
     });
 
     combineLatest([
@@ -261,13 +245,6 @@ export class AddRecipeIngredientModalComponent {
           },
         });
     }
-  }
-
-  onMeasurementChange(newValue: string) {
-    setTimeout(() => {
-      this.form.get('measurement')?.setValue(newValue, { emitEvent: false });
-      this.form.get('measurement')?.updateValueAndValidity();
-    });  
   }
 
   onAddNewIngredient() {
