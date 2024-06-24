@@ -50,6 +50,7 @@ import {
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
 
 @Component({
   selector: 'dl-add-ingredient-modal',
@@ -65,6 +66,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatInputModule,
     TextInputComponent,
     SelectInputComponent,
+    ValueSyncDirective, // needed to correctly update form values received from textInput
   ],
   templateUrl: './add-ingredient-modal.component.html',
 })

@@ -1,1 +1,29 @@
-<p>shared-shopping-lists-page works!</p>
+<div class="flex h-full flex-col items-center">
+  <!-- List -->
+  <div
+    *ngIf="!isLoading()"
+    class="relative mb-dl-2 flex w-dl-16 flex-grow flex-col items-center overflow-y-auto"
+  >
+    <div
+      class="relative mb-dl-3 flex min-h-dl-6 w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2 dark:bg-dl-grey-2"
+      *ngFor="let item of displaySharedShoppingLists()"
+    >
+        <!-- Friend Image or Initials -->
+      <!-- <img
+        *ngIf="friend.imageURL"
+        class="h-dl-6 w-dl-6 rounded-full"
+        [src]="friend.imageURL | imageFromCDN"
+        alt="friend profile image"
+      />
+      <span
+        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
+        *ngIf="!friend.imageURL && friend.nameFirst && friend.nameLast"
+      >
+        <span
+          class="text-dl-6 font-dl-3 leading-none text-dl-grey-3 dark:text-dl-grey-9"
+          >{{ initials }}</span
+        >
+      </span> -->
+    </div>
+  </div>
+</div>
