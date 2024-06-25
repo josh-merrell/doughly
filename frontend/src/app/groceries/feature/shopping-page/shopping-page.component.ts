@@ -49,6 +49,7 @@ import {
   selectProfile,
 } from 'src/app/profile/state/profile-selectors';
 import { selectFriendships } from 'src/app/social/state/friendship-selectors';
+import { ViewListSharesModalComponent } from './ui/view-list-shares-modal/view-list-shares-modal.component';
 
 @Component({
   selector: 'dl-shopping-page',
@@ -404,6 +405,18 @@ export class ShoppingPageComponent {
 
   onViewListShares() {
     console.log('view list shares clicked');
+    this.modalService.open(
+      ViewListSharesModalComponent,
+      {
+        width: '90%',
+        maxWidth: '500px',
+        data: {
+          friendsShared: this.friendsShared(),
+          shoppingListID: this.shoppingListID(),
+        },
+      },
+      1
+    );
   }
 
   onShareClick() {

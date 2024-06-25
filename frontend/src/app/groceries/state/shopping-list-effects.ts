@@ -236,4 +236,46 @@ export class ShoppingListEffects {
       map((action) => SharedShoppingListActions.loadSharedShoppingLists())
     )
   );
+
+  unshareList$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.unshareList),
+      mergeMap((action) =>
+        this.shoppingListService
+          .unshareList(action.shoppingListID, action.invitedUserID)
+          .pipe(
+            map((result) =>
+              ShoppingListActions.unshareListSuccess({
+                shoppingListID: result.shoppingListID,
+              })
+            ),
+            catchError((error) =>
+              of(
+                ShoppingListActions.unshareListFailure({
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
+                })
+              )
+            )
+          )
+      )
+    )
+  );
+
+  loadShoppingListsAfterUnsharing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.unshareListSuccess),
+      map((action) => ShoppingListActions.loadShoppingLists())
+    )
+  );
+
+  loadSharedListsAfterUnsharing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.unshareListSuccess),
+      map((action) => SharedShoppingListActions.loadSharedShoppingLists())
+    )
+  );
 }

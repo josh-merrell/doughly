@@ -81,6 +81,21 @@ async function shareList(req, res) {
   return res.json(returner);
 }
 
+async function unshareList(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { shoppingListID } = req.params;
+  const { invitedUserID } = req.body;
+  const { authorization } = req.headers;
+  const returner = await p.unshare({
+    userID: req.userID,
+    authorization,
+    shoppingListID,
+    invitedUserID,
+  });
+  return res.json(returner);
+}
+
 async function receiveItems(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -106,5 +121,6 @@ module.exports = {
   deleteShoppingList,
   getSharedShoppingLists,
   shareList,
+  unshareList,
   receiveItems,
 };
