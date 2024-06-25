@@ -238,7 +238,7 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function searchProfiles(options) {
-    const { searchQuery } = options;
+    const { searchQuery, userID } = options;
 
     try {
       let q = ``;
