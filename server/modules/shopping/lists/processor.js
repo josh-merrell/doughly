@@ -369,6 +369,23 @@ module.exports = ({ db, dbPublic }) => {
     }
   };
 
+  unshare = async (options) => {
+    const { userID, authorization, shoppingListID, invitedUserID } = options;
+
+    try {
+      global.logger.info(`Unsharing shoppingList ${shoppingListID} with ${invitedUserID}`)
+      // attempt to remove any sharedShoppingLists with the invited user
+      const { data: sharedShoppingLists, error: sharedShoppingListsError } = await db.from('sharedShoppingLists').delete().eq('userID', userID).eq('invitedUserID', invitedUserID).eq('shoppingListID', shoppingListID);
+      if (sharedShoppingListsError) {
+        throw errorGen(`Error unsharing shoppingList: ${sharedShoppingListsError.message}`, 513, 'failSupabaseDelete', true, 3);
+      }
+
+      return { shoppingListID: shoppingListID };
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists unshare', err.code || 520, err.name || 'unhandledError_shoppingLists-unshare', err.isOperational || false, err.severity || 2);
+    }
+  };
+
   return {
     get: {
       byID: getShoppingListByID,
@@ -376,6 +393,7 @@ module.exports = ({ db, dbPublic }) => {
       shared: getShared,
     },
     share,
+    unshare,
     create: createShoppingList,
     update: updateShoppingList,
     delete: deleteShoppingList,

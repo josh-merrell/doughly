@@ -98,6 +98,19 @@ const shareListFailure = createAction(
   props<{ error: any }>()
 );
 
+const unshareList = createAction(
+  '[ShoppingLists] Unshare List',
+  props<{ shoppingListID: number; invitedUserID: number }>()
+);
+const unshareListSuccess = createAction(
+  '[ShoppingLists] Unshare List Success',
+  props<{ shoppingListID: number }>()
+);
+const unshareListFailure = createAction(
+  '[ShoppingLists] Unshare List Failure',
+  props<{ error: any }>()
+);
+
 export const ShoppingListActions = {
   loadShoppingLists,
   loadShoppingListsSuccess,
@@ -123,4 +136,7 @@ export const ShoppingListActions = {
   shareList,
   shareListSuccess,
   shareListFailure,
+  unshareList,
+  unshareListSuccess,
+  unshareListFailure,
 };

@@ -158,5 +158,19 @@ export const ShoppingListReducer = createReducer(
     ...state,
     error,
     loading: false,
+  })),
+  on(ShoppingListActions.unshareList, (state) => ({
+    ...state,
+    deleting: true,
+    error: null,
+  })),
+  on(ShoppingListActions.unshareListSuccess, (state, { shoppingListID }) => ({
+    ...state,
+    deleting: false,
+  })),
+  on(ShoppingListActions.unshareListFailure, (state, { error }) => ({
+    ...state,
+    error,
+    deleting: false,
   }))
 );
