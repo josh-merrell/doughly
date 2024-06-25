@@ -171,6 +171,12 @@ module.exports = ({ db, dbPublic }) => {
             createListError.severity || 2,
           );
         }
+
+        // also need to delete any sharedShoppingLists associated with the fulfilled list
+        const { data: sharedShoppingLists, error: sharedShoppingListsError } = await db.from('sharedShoppingLists').delete().eq('shoppingListID', shoppingListID);
+        if (sharedShoppingListsError) {
+          throw errorGen(`Error deleting sharedShoppingLists for shoppingList ${shoppingListID}: ${sharedShoppingListsError.message}`, 513, 'failSupabaseDelete', true, 3);
+        }
       }
       return updatedShoppingList;
     } catch (err) {
@@ -262,7 +268,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error getting shoppingListIngredients for shoppingList ${shoppingListID}: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
-      // if all have been purchased (greater than or equal to needMeasurement), update the shoppingList to 'fulfilled'
+      // if all have been purchased (greater than or equal to needMeasurement), update the shoppingList to 'fulfilled' and remove any associated sharedShoppingLists
       if (shoppingListIngredients.every((sli) => sli.purchasedMeasurement >= sli.needMeasurement)) {
         await updateShoppingList({ userID, authorization, shoppingListID, status: 'fulfilled', fulfilledMethod: 'manual', fulfilledDate: new Date().toISOString() });
       }

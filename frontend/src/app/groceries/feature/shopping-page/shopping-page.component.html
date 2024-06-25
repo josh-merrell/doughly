@@ -21,6 +21,9 @@
         id="add-button"
         type="button"
         class="h-dl-4.5 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6 dark:bg-dl-pink-7 dark:text-dl-grey-1 hover:dark:bg-dl-pink-6"
+        [ngClass]="{
+          invisible: friendsNotShared().length === 0
+        }"
         (click)="onShareClick()"
       >
         Share

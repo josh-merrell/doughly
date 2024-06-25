@@ -12,7 +12,7 @@
   ></mat-spinner>
 
   <!-- Friend Profile List -->
-  <div *ngIf="friendsNotShared() && !isLoading()" class="w-full mt-dl-3">
+  <div *ngIf="friendsNotShared() && !isLoading()" class="mt-dl-3 w-full">
     <div class="max-h-dl-18 overflow-auto pb-dl-5">
       <dl-profile-card
         *ngFor="let profile of friendsNotShared(); let i = index"
