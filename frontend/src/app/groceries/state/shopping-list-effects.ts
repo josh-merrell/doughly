@@ -7,6 +7,7 @@ import { ShoppingList } from './shopping-list-state';
 import { of } from 'rxjs';
 import { ShoppingListIngredientActions } from './shopping-list-ingredient-actions';
 import { ShoppingListRecipeActions } from './shopping-list-recipe-actions';
+import { SharedShoppingListActions } from './sharedShoppingLists/shared-shopping-list-actions';
 
 @Injectable()
 export class ShoppingListEffects {
@@ -191,6 +192,48 @@ export class ShoppingListEffects {
     this.actions$.pipe(
       ofType(ShoppingListActions.receiveItemsSuccess),
       map((action) => ShoppingListActions.loadShoppingLists())
+    )
+  );
+
+  shareList$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.shareList),
+      mergeMap((action) =>
+        this.shoppingListService
+          .shareList(action.shoppingListID, action.invitedUserID)
+          .pipe(
+            map((result) =>
+              ShoppingListActions.shareListSuccess({
+                shoppingListID: result.shoppingListID,
+              })
+            ),
+            catchError((error) =>
+              of(
+                ShoppingListActions.shareListFailure({
+                  error: {
+                    message: error.error.error,
+                    statusCode: error.status,
+                    rawError: error,
+                  },
+                })
+              )
+            )
+          )
+      )
+    )
+  );
+
+  loadShoppingListsAfterSharing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.shareListSuccess),
+      map((action) => ShoppingListActions.loadShoppingLists())
+    )
+  );
+
+  loadSharedListsAfterSharing$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ShoppingListActions.shareListSuccess),
+      map((action) => SharedShoppingListActions.loadSharedShoppingLists())
     )
   );
 }

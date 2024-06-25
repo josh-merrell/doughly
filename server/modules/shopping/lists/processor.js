@@ -70,14 +70,14 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function getShared(options) {
-    const { invitedUserID } = options;
+    const { userID } = options;
 
     try {
-      const { data: sharedLists, error } = await db.from('sharedShoppingLists').select('*').filter('invitedUserID', 'eq', invitedUserID);
+      const { data: sharedLists, error } = await db.from('sharedShoppingLists').select('*').or(`userID.eq.${userID},invitedUserID.eq.${userID}`);
       if (error) {
         throw errorGen(`Error getting shared shopping lists: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${sharedLists.length} shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID: invitedUserID });
+      global.logger.info({ message: `Got ${sharedLists.length} shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID });
       return sharedLists;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLists shared', err.code || 520, err.name || 'unhandledError_shoppingLists-shared', err.isOperational || false, err.severity || 2);
@@ -171,6 +171,12 @@ module.exports = ({ db, dbPublic }) => {
             createListError.severity || 2,
           );
         }
+
+        // also need to delete any sharedShoppingLists associated with the fulfilled list
+        const { data: sharedShoppingLists, error: sharedShoppingListsError } = await db.from('sharedShoppingLists').delete().eq('shoppingListID', shoppingListID);
+        if (sharedShoppingListsError) {
+          throw errorGen(`Error deleting sharedShoppingLists for shoppingList ${shoppingListID}: ${sharedShoppingListsError.message}`, 513, 'failSupabaseDelete', true, 3);
+        }
       }
       return updatedShoppingList;
     } catch (err) {
@@ -262,7 +268,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error getting shoppingListIngredients for shoppingList ${shoppingListID}: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
-      // if all have been purchased (greater than or equal to needMeasurement), update the shoppingList to 'fulfilled'
+      // if all have been purchased (greater than or equal to needMeasurement), update the shoppingList to 'fulfilled' and remove any associated sharedShoppingLists
       if (shoppingListIngredients.every((sli) => sli.purchasedMeasurement >= sli.needMeasurement)) {
         await updateShoppingList({ userID, authorization, shoppingListID, status: 'fulfilled', fulfilledMethod: 'manual', fulfilledDate: new Date().toISOString() });
       }
@@ -317,12 +323,59 @@ module.exports = ({ db, dbPublic }) => {
     }
   };
 
+  share = async (options) => {
+    const { userID, authorization, shoppingListID, invitedUserID } = options;
+
+    try {
+      // verify that the shoppingList exists and is in 'shopping' status
+      const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select().filter('shoppingListID', 'eq', shoppingListID).single();
+      if (shoppingListError) {
+        throw errorGen(`Error sharing shoppingList: ${shoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+      if (!shoppingList) {
+        throw errorGen(`Error sharing shoppingList: shoppingList does not exist`, 515, 'cannotComplete', false, 3);
+      }
+      if (shoppingList.status !== 'shopping') {
+        throw errorGen(`Error sharing shoppingList: shoppingList is not in 'shopping' status`, 515, 'cannotComplete', false, 3);
+      }
+
+      // verify that we have a 'confirmed' friendship with the invited user
+      const { data: friendship, error: friendshipError } = await db.from('friendships').select().filter('userID', 'eq', userID).filter('friend', 'eq', invitedUserID).filter('status', 'eq', 'confirmed').single();
+      if (friendshipError) {
+        throw errorGen(`Error sharing shoppingList: ${friendshipError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+      if (!friendship) {
+        throw errorGen(`Error sharing shoppingList: friendship with invited user is not 'confirmed'`, 515, 'cannotComplete', false, 3);
+      }
+
+      // verify we don't already have a sharedShoppingList with the invited user
+      const { data: existingSharedShoppingList, error: existingSharedShoppingListError } = await db.from('sharedShoppingLists').select().filter('userID', 'eq', userID).filter('invitedUserID', 'eq', invitedUserID).filter('shoppingListID', 'eq', shoppingListID);
+      if (existingSharedShoppingListError) {
+        throw errorGen(`Error sharing shoppingList: ${existingSharedShoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+      if (existingSharedShoppingList.length > 0) {
+        throw errorGen(`Error sharing shoppingList: shoppingList is already shared with invited user`, 515, 'cannotComplete', false, 3);
+      }
+
+      // create the sharedShoppingList
+      const { data: sharedShoppingList, error: sharedShoppingListError } = await db.from('sharedShoppingLists').insert({ userID, shoppingListID, invitedUserID }).select().single();
+      if (sharedShoppingListError) {
+        throw errorGen(`Error sharing shoppingList: ${sharedShoppingListError.message}`, 512, 'failSupabaseInsert', true, 3);
+      }
+      global.logger.info({ message: `Shared shoppingList ${shoppingListID} with ${invitedUserID}`, level: 6, timestamp: new Date().toISOString(), userID });
+      return { shoppingListID: shoppingListID };
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in shoppingLists share', err.code || 520, err.name || 'unhandledError_shoppingLists-share', err.isOperational || false, err.severity || 2);
+    }
+  };
+
   return {
     get: {
       byID: getShoppingListByID,
       all: getShoppingLists,
       shared: getShared,
     },
+    share,
     create: createShoppingList,
     update: updateShoppingList,
     delete: deleteShoppingList,

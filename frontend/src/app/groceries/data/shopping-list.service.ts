@@ -25,6 +25,12 @@ export class ShoppingListService {
     return this.http.get<any[]>(`${this.API_URL}/shared`);
   }
 
+  shareList(shoppingListID: number, invitedUserID: number): Observable<any> {
+    return this.http.patch<any>(`${this.API_URL}/${shoppingListID}/share`, {
+      invitedUserID
+    });
+  }
+
   getShoppingListByID(shoppingListID: number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/${shoppingListID}`);
   }

@@ -71,7 +71,7 @@
         type="button"
         class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:text-dl-grey-1"
         [ngClass]="{
-          'bg-dl-pink-4 text-white dark:text-dl-grey-1':
+          'bg-dl-pink-4 dark:bg-dl-pink-7 text-white dark:text-dl-grey-1':
             buttonTexts()[selectedCard()].followButton === 'Follow',
           'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
             buttonTexts()[selectedCard()].followButton === 'Unfollow'
@@ -86,10 +86,10 @@
         class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
-          'bg-dl-pink-4 text-white dark:text-dl-grey-1':
+          'bg-dl-pink-4 dark:bg-dl-pink-7 text-white dark:text-dl-grey-1':
             buttonTexts()[selectedCard()].friendButton === 'Add Friend' ||
             buttonTexts()[selectedCard()].friendButton === 'Accept Request',
-          '  bg-white text-dl-blue-4 dark:bg-dl-grey-1  dark:text-dl-blue-7':
+          '  bg-white text-dl-pink-4 dark:bg-dl-grey-1  dark:text-dl-pink-7':
             buttonTexts()[selectedCard()].friendButton === 'Cancel Request',
           'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
             buttonTexts()[selectedCard()].friendButton === 'Unfriend'

@@ -17,7 +17,7 @@ async function getShoppingLists(req, res) {
 async function getSharedShoppingLists(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
-  const returner = await p.get.shared({ invitedUserID: req.userID });
+  const returner = await p.get.shared({ userID: req.userID });
   return res.json(returner);
 }
 
@@ -66,6 +66,21 @@ async function deleteShoppingList(req, res) {
   return res.json(returner);
 }
 
+async function shareList(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { shoppingListID } = req.params;
+  const { invitedUserID } = req.body;
+  const { authorization } = req.headers;
+  const returner = await p.share({
+    userID: req.userID,
+    authorization,
+    shoppingListID,
+    invitedUserID,
+  });
+  return res.json(returner);
+}
+
 async function receiveItems(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -90,5 +105,6 @@ module.exports = {
   updateShoppingList,
   deleteShoppingList,
   getSharedShoppingLists,
+  shareList,
   receiveItems,
 };

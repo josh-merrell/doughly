@@ -1,0 +1,61 @@
+<div
+  class="relative flex flex-col items-center px-dl-5 pb-dl-3 pt-dl-4 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+>
+  <h3
+    class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
+  >
+    Share List with a Friend
+  </h3>
+  <mat-spinner
+    class="my-app-custom-spinner mb-dl-5"
+    *ngIf="isLoading()"
+  ></mat-spinner>
+
+  <!-- Friend Profile List -->
+  <div *ngIf="friendsNotShared() && !isLoading()" class="mt-dl-3 w-full">
+    <div class="max-h-dl-18 overflow-auto pb-dl-5">
+      <dl-profile-card
+        *ngFor="let profile of friendsNotShared(); let i = index"
+        class="h-dl-9 w-full border-dl-grey-9 py-dl-3 dark:border-dl-grey-3"
+        (click)="onCardClick(i)"
+        [ngClass]="{
+          'bg-dl-blue-10': selectedCard() === i,
+          'bg-white dark:bg-dl-grey-1': selectedCard() !== i
+        }"
+        [profile]="profile"
+        [index]="i"
+        [selectedIndex]="selectedCard()"
+        (friendshipLoaded)="onFriendshipLoaded(i, $event)"
+        (followshipLoaded)="onFollowshipLoaded(i, $event)"
+      ></dl-profile-card>
+    </div>
+    <!-- Buttons -->
+    <div class="mt-dl-3 flex w-full justify-between pb-dl-3">
+      <button
+        type="submit"
+        class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
+        [ngClass]="{
+          'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+            selectedCard() !== 999,
+          'bg-dl-grey-7': selectedCard() === 999
+        }"
+        (click)="onShareClick()"
+      >
+        Share
+      </button>
+    </div>
+  </div>
+  <!-- Exit Button -->
+  <button
+    class="absolute right-3 top-2 rounded-full bg-dl-grey-9 p-dl-2 dark:bg-dl-grey-2"
+    (click)="onExitClick()"
+    type="button"
+  >
+    <svg version="1.1" height="23" width="23" viewBox="-1 -10 100 125">
+      <path
+        [attr.fill]="this.extraStuffService.getFillColor(13)"
+        d="M65.1,49.9l26.6-26.6c4.2-4.2,4.2-11,0-15.2h0c-4.2-4.2-11-4.2-15.2,0L49.9,34.7L23.4,8.2c-4.2-4.2-11-4.2-15.2,0v0  c-4.2,4.2-4.2,11,0,15.2l26.6,26.6L8.2,76.5c-4.2,4.2-4.2,11,0,15.2c4.2,4.2,11,4.2,15.2,0l26.6-26.6l26.6,26.6  c4.2,4.2,11,4.2,15.2,0c4.2-4.2,4.2-11,0-15.2L65.1,49.9z"
+      />
+    </svg>
+  </button>
+</div>

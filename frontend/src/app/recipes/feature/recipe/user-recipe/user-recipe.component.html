@@ -16,7 +16,9 @@
       class="relative mx-dl-5 mb-dl-5 mt-dl-3 rounded-lg shadow-md dark:bg-dl-grey-2"
     >
       <!-- Title, Dropdown, Sync -->
-      <div class="mx-dl-5 mb-dl-3 mt-dl-5 flex items-center justify-between">
+      <div
+        class="mb-dl-3 ml-dl-5 mr-dl-4 mt-dl-5 flex items-center justify-between"
+      >
         <h1
           class="text-dl-7 font-dl-3 leading-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
         >
@@ -43,10 +45,8 @@
             recipeSubscription() && sourceRecipeVersion() !== recipe().version
           "
           (click)="toggleSyncMessage($event)"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
           version="1.1"
-          class="absolute right-14 top-4"
+          class="absolute right-14 top-2"
           height="38"
           width="38"
           viewBox="0 0 30 37.5"
@@ -56,7 +56,7 @@
           <g>
             <g>
               <path
-                [attr.fill]="this.extraStuffService.getFillColor(6)"
+                [attr.fill]="this.extraStuffService.getFillColor(17)"
                 d="M15,3C8.3800049,3,3,8.3800049,3,15s5.3800049,12,12,12s12-5.3800049,12-12S21.6199951,3,15,3z M15,22.2900391    c-0.960022,0-1.75-0.7900391-1.75-1.75c0-0.9700317,0.789978-1.75,1.75-1.75s1.75,0.7799683,1.75,1.75    C16.75,21.5,15.960022,22.2900391,15,22.2900391z M16.4199829,15.9700317    C16.3599854,16.710022,15.7399902,17.2900391,15,17.2900391s-1.3599854-0.5800171-1.4199829-1.3200073l-0.5700073-7.210022    c-0.0700073-0.8300171,0.5899658-1.539978,1.4199829-1.539978h1.1400146c0.8300171,0,1.4899902,0.7099609,1.4199829,1.539978    L16.4199829,15.9700317z"
               />
             </g>
@@ -95,7 +95,7 @@
         <span
           #syncMessage
           *ngIf="syncMessageOpen"
-          class="absolute right-24 top-2 z-10 rounded-dl-1 bg-white p-dl-2 text-dl-5 text-dl-grey-3 shadow-md ease-out dark:bg-dl-grey-1 dark:text-dl-grey-8"
+          class="absolute right-24 top-2 z-10 rounded-dl-1 bg-white p-dl-2 text-dl-5 text-dl-grey-3 shadow-md ease-out dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1 dark:text-dl-grey-8"
         >
           The source recipe authored by
           <span
