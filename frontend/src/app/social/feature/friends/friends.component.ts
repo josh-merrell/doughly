@@ -198,61 +198,6 @@ export class FriendsComponent {
     } else {
       this.router.navigate(['/tempRoute']);
     }
-    // ** OLD ONBOARDING STEPS **
-    // if (onboardingState === 6) {
-    //   this.showOnboardingBadge.set(false);
-    //   this.reopenOnboardingModal.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.socialPageOverview,
-    //         currentStep: 6,
-    //         showNextButton: true,
-    //       },
-    //       position: {
-    //         bottom: '70%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe((result) => {
-    //       this.onboardingModalOpen.set(false);
-    //       this.showOnboardingBadge.set(true);
-    //       if (result === 'nextClicked') {
-    //         this.onboardingCallback();
-    //       }
-    //     });
-    //   } else {
-    //   }
-    // } else if (onboardingState === 7) {
-    //   this.showOnboardingBadge.set(false);
-    //   this.reopenOnboardingModal.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.shoppingPageOverview,
-    //         currentStep: 7,
-    //         showNextButton: false,
-    //       },
-    //       position: {
-    //         bottom: '40%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe(() => {
-    //       this.onboardingModalOpen.set(false);
-    //       this.showOnboardingBadge.set(true);
-    //     });
-    //   } else {
-    //   }
-    // }
   }
 
   onboardingCallback() {
