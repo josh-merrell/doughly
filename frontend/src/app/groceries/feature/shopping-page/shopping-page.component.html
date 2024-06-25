@@ -5,6 +5,12 @@
       class="mb-dl-6 mt-dl-2 flex w-full items-center justify-between px-dl-2"
     >
       <span
+        *ngIf="listShares().length === 0"
+        class="mb-dl-3 w-full pt-dl-3 italic text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      >
+        List not shared
+      </span>
+      <span
         *ngIf="listShares().length > 0"
         class="mb-dl-3 w-full pt-dl-3 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
       >

@@ -1,81 +1,69 @@
-import {
-  Component,
-  Inject,
-  Input,
-  WritableSignal,
-  signal,
-} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Store } from '@ngrx/store';
-import { ProfileCardComponent } from 'src/app/social/feature/friends/ui/profile-card/profile-card.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { Component, Inject, WritableSignal, signal } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Store } from '@ngrx/store';
+import { filter, take } from 'rxjs';
 import { ShoppingListActions } from 'src/app/groceries/state/shopping-list-actions';
 import {
-  selectLoading,
+  selectDeleting,
   selectError,
 } from 'src/app/groceries/state/shopping-list-selectors';
-import { filter, take } from 'rxjs';
-import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
-import { ModalService } from 'src/app/shared/utils/modalService';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { ModalService } from 'src/app/shared/utils/modalService';
+import { ProfileCardComponent } from 'src/app/social/feature/friends/ui/profile-card/profile-card.component';
 
 @Component({
-  selector: 'dl-share-list-modal',
+  selector: 'dl-view-list-shares-modal',
   standalone: true,
   imports: [CommonModule, ProfileCardComponent, MatProgressSpinnerModule],
-  templateUrl: './share-list-modal.component.html',
+  templateUrl: './view-list-shares-modal.component.html',
 })
-export class ShareListModalComponent {
-  public friendsNotShared: WritableSignal<any[]> = signal([]);
+export class ViewListSharesModalComponent {
+  public friendsShared: WritableSignal<any[]> = signal([]);
   public selectedCard: WritableSignal<number> = signal(999);
   public buttonTexts: WritableSignal<any[]> = signal([]);
-  public isLoading: WritableSignal<boolean> = signal(false);
+  public isDeleting: WritableSignal<boolean> = signal(false);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private dialogRef: MatDialogRef<ShareListModalComponent>,
+    private dialogRef: MatDialogRef<ViewListSharesModalComponent>,
     public extraStuffService: ExtraStuffService,
     private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
-    this.friendsNotShared.set(this.data.friendsNotShared);
+    this.friendsShared.set(this.data.friendsShared);
   }
 
-  onExitClick() {
-    this.dialogRef.close();
-  }
-
-  onCardClick(index: number): void {
-    this.selectedCard.set(index);
-  }
-
-  onShareClick(): void {
-    // use selectedCard to find friend profile
-    const friend = this.friendsNotShared().filter(
+  onUnshareClick(): void {
+    const friend = this.friendsShared().filter(
       (_, index) => index === this.selectedCard()
     )[0];
-    this.isLoading.set(true);
+    this.isDeleting.set(true);
     this.store.dispatch(
-      ShoppingListActions.shareList({
+      ShoppingListActions.unshareList({
         shoppingListID: this.data.shoppingListID,
         invitedUserID: friend.userID,
       })
     );
     this.store
-      .select(selectLoading)
-      .pipe(filter((loading) => !loading))
+      .select(selectDeleting)
+      .pipe(
+        filter((val) => !val),
+        take(1)
+      )
       .subscribe(() => {
         this.store
           .select(selectError)
           .pipe(take(1))
           .subscribe((error) => {
-            this.isLoading.set(false);
+            this.isDeleting.set(false);
             if (error) {
-              console.error('Error sharing list: ', error);
+              console.error('Error unsharing list: ', error);
               this.modalService.open(
                 ErrorModalComponent,
                 {
@@ -94,7 +82,7 @@ export class ShareListModalComponent {
                 {
                   maxWidth: '380px',
                   data: {
-                    confirmationMessage: `List shared with ${friend.username}`,
+                    confirmationMessage: `Removed ${friend.username}'s access to the shopping list.`,
                   },
                 },
                 2,
@@ -104,6 +92,14 @@ export class ShareListModalComponent {
             }
           });
       });
+  }
+
+  onCardClick(index: number): void {
+    this.selectedCard.set(index);
+  }
+
+  onExitClick() {
+    this.dialogRef.close();
   }
 
   onFriendshipLoaded(index: number, friendship: any): void {
