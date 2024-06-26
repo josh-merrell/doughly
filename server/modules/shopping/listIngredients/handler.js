@@ -6,6 +6,14 @@ async function getShoppingListIngredientByID(req, res) {
   return res.json(returner);
 }
 
+async function getDisplayIngredientsByShoppingList(req, res) {
+  const db = req.client.db;
+  const p = require('./processor')({ db });
+  const { shoppingListID } = req.params;
+  const returner = await p.get.by.shoppingListDisplay({ userID: req.userID, shoppingListID });
+  return res.json(returner);
+}
+
 async function getIngredientsByShoppingList(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
@@ -67,6 +75,7 @@ async function deleteShoppingListIngredient(req, res) {
 
 module.exports = {
   getShoppingListIngredientByID,
+  getDisplayIngredientsByShoppingList,
   getIngredientsByShoppingList,
   createShoppingListIngredient,
   updateShoppingListIngredient,
