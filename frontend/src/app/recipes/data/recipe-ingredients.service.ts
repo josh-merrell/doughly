@@ -52,7 +52,9 @@ export class RecipeIngredientService {
   }
 
   getByRecipeID(recipeID: number): Observable<RecipeIngredient[]> {
-    return this.http.get<RecipeIngredient[]>(`${this.API_URL_RECIPE}/${recipeID}/ingredients`);
+    return this.http.get<RecipeIngredient[]>(
+      `${this.API_URL_RECIPE}/${recipeID}/ingredients`
+    );
   }
 
   add(recipeIngredient: RecipeIngredient): Observable<RecipeIngredient> {
@@ -61,12 +63,17 @@ export class RecipeIngredientService {
       recipeID: recipeIngredient.recipeID,
       ingredientID: recipeIngredient.ingredientID,
       measurement: recipeIngredient.measurement,
-      measurementUnit: recipeIngredient.measurementUnit,
+      measurementUnit: this.replaceOz(recipeIngredient.measurementUnit),
       preparation: recipeIngredient.preparation,
       component: recipeIngredient.component,
       purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
     };
     return this.http.post<RecipeIngredient>(this.API_URL, body);
+  }
+
+  replaceOz(unit: string) {
+    if (unit === 'oz') return 'weightOunce';
+    return unit;
   }
 
   delete(recipeIngredientID: number): Observable<RecipeIngredient> {
@@ -82,13 +89,19 @@ export class RecipeIngredientService {
     );
   }
 
-  getPurEstimate(ingredientName: string, measurementUnit: string, purchaseUnit: string): Observable<number> {
-    console.log(`getPurEstimate called with ${ingredientName}, ${measurementUnit}, ${purchaseUnit}`);
+  getPurEstimate(
+    ingredientName: string,
+    measurementUnit: string,
+    purchaseUnit: string
+  ): Observable<number> {
+    console.log(
+      `getPurEstimate called with ${ingredientName}, ${measurementUnit}, ${purchaseUnit}`
+    );
     return this.http.post<number>(`${this.API_URL}/purEst`, {
       // include body with three parameters
       ingredientName: ingredientName,
       measurementUnit: measurementUnit,
-      purchaseUnit: purchaseUnit
-    })
+      purchaseUnit: purchaseUnit,
+    });
   }
 }

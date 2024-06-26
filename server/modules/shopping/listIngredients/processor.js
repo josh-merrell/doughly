@@ -12,7 +12,7 @@ module.exports = ({ db }) => {
     try {
       const { data: shoppingListIngredient, error } = await db
         .from('shoppingListIngredients')
-        .select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store')
+        .select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store, purchasedBy')
         .filter('shoppingListIngredientID', 'eq', shoppingListIngredientID)
         .filter('deleted', 'eq', false)
         .single();
@@ -32,7 +32,7 @@ module.exports = ({ db }) => {
     try {
       const { data: shoppingListIngredients, error } = await db
         .from('shoppingListIngredients')
-        .select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store')
+        .select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store, purchasedBy')
         .filter('shoppingListID', 'eq', shoppingListID)
         .filter('deleted', 'eq', false);
       if (error) {
@@ -48,8 +48,59 @@ module.exports = ({ db }) => {
     }
   }
 
+  async function byShoppingListDisplay(options) {
+    const { shoppingListID } = options;
+    try {
+      // first, get all shoppingListIngredients for this shoppingList using 'getIngredientsByShoppingList'
+      const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db
+        .from('shoppingListIngredients')
+        .select('shoppingListIngredientID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedMeasurement, purchasedUnit, store, purchasedBy')
+        .filter('shoppingListID', 'eq', shoppingListID)
+        .filter('deleted', 'eq', false);
+      if (shoppingListIngredientsError) {
+        throw errorGen(`Error getting shoppingListIngredients for shoppingListID ${shoppingListID} during 'byShoppingListDisplay' call: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+      // if none, return an empty array
+      if (!shoppingListIngredients) {
+        return [];
+      }
+
+      // next, get all rows from 'ingredients' where ingredientID is in the shoppingListIngredients array
+      const ingredientIDs = shoppingListIngredients.map((ingredient) => ingredient.ingredientID);
+      const { data: ingredients, error: ingredientsError } = await db.from('ingredients').select('name, ingredientID').in('ingredientID', ingredientIDs);
+      if (ingredientsError) {
+        throw errorGen(`Error getting ingredients for shoppingListID ${shoppingListID} during 'byShoppingListDisplay' call: ${ingredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+      // if none, return an empty array
+      if (!ingredients) {
+        return [];
+      }
+
+      // finally, return a new array of objects that combines the shoppingListIngredients and ingredients arrays
+      const displayIngredients = shoppingListIngredients.map((shoppingListIngredient) => {
+        const ingredient = ingredients.find((ingredient) => ingredient.ingredientID === shoppingListIngredient.ingredientID);
+        return {
+          shoppingListIngredientID: shoppingListIngredient.shoppingListIngredientID,
+          shoppingListID: shoppingListIngredient.shoppingListID,
+          ingredientID: shoppingListIngredient.ingredientID,
+          ingredientName: ingredient.name,
+          needMeasurement: shoppingListIngredient.needMeasurement,
+          needUnit: shoppingListIngredient.needUnit,
+          source: shoppingListIngredient.source,
+          purchasedMeasurement: shoppingListIngredient.purchasedMeasurement,
+          purchasedUnit: shoppingListIngredient.purchasedUnit,
+          purchasedBy: shoppingListIngredient.purchasedBy,
+          store: shoppingListIngredient.store,
+        };
+      });
+      return displayIngredients;
+    } catch (err) {
+      throw errorGen(err.message || 'Unhandled Error in listIngredients byShoppingListDisplay', err.code || 520, err.name || 'unhandledError_listIngredients-byShoppingListDisplay', err.isOperational || false, err.severity || 2);
+    }
+  }
+
   async function createShoppingListIngredient(options) {
-    const { userID, customID, authorization, shoppingListID, ingredientID, needMeasurement, needUnit, source } = options;
+    const { userID, customID, authorization, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedBy } = options;
 
     try {
       if (!customID) {
@@ -84,7 +135,7 @@ module.exports = ({ db }) => {
       }
 
       // create shoppingListIngredient
-      const { data: shoppingListIngredient, error: shoppingListIngredientError } = await db.from('shoppingListIngredients').insert({ userID, shoppingListIngredientID: customID, shoppingListID, ingredientID, needMeasurement, needUnit, source }).select('*').single();
+      const { data: shoppingListIngredient, error: shoppingListIngredientError } = await db.from('shoppingListIngredients').insert({ userID, shoppingListIngredientID: customID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedBy }).select('*').single();
       if (shoppingListIngredientError) {
         throw errorGen(`Error creating shoppingListIngredient with ID ${customID}: ${shoppingListIngredientError.message}`, 512, 'failSupabaseInsert', true, 3);
       }
@@ -249,6 +300,7 @@ module.exports = ({ db }) => {
     get: {
       by: {
         ID: getShoppingListIngredientByID,
+        shoppingListDisplay: byShoppingListDisplay,
         shoppingList: getIngredientsByShoppingList,
       },
     },
