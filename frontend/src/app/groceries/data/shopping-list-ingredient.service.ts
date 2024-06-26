@@ -23,6 +23,15 @@ export class ShoppingListIngredientService {
     return this.http.get<any[]>(`${this.API_URL}/byList/${shoppingListID}`);
   }
 
+  getDisplayIngredientsByShoppingListID(
+    shoppingListID: number
+  ): Observable<any[]> {
+    if (!shoppingListID) return new Observable<any[]>(() => {});
+    return this.http.get<any[]>(
+      `${this.API_URL}/byListDisplay/${shoppingListID}`
+    );
+  }
+
   createShoppingListIngredient(
     shoppingListID: number,
     ingredientID: number,
@@ -80,13 +89,15 @@ export class ShoppingListIngredientService {
 
   batchUpdateShoppingListIngredients(
     shoppingListIngredients: any[],
-    store: string,
+    store: string
   ): Observable<any> {
     const requests = shoppingListIngredients.map((shoppingListIngredient) =>
       this.updateShoppingListIngredient(
         shoppingListIngredient.shoppingListIngredientID,
         shoppingListIngredient.purchasedMeasurement,
-        shoppingListIngredient.purchasedUnit ? shoppingListIngredient.purchasedUnit : shoppingListIngredient.needUnit,
+        shoppingListIngredient.purchasedUnit
+          ? shoppingListIngredient.purchasedUnit
+          : shoppingListIngredient.needUnit,
         store
       )
     );
