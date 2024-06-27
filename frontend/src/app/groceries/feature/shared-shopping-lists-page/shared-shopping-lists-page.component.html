@@ -2,17 +2,71 @@
   <!-- If not loading -->
   <div *ngIf="!isLoading()" class="flex h-full flex-col items-center">
     <!-- Horizontal List of Shared List Widgets -->
-    <div class="my-dl-4 flex w-full overflow-x-auto">
+    <div class="pl-dl-3 pb-dl-3 my-dl-4 flex max-w-100 overflow-x-auto whitespace-nowrap">
       <div
         *ngFor="let list of displaySharedShoppingLists()"
-        class="flex h-dl-5 w-dl-9 items-center rounded-full bg-white shadow-md dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
+        class="mr-dl-4 flex h-dl-6 flex-shrink-0 items-center rounded-full bg-white shadow-md dark:bg-dl-grey-2"
+        [ngClass]="{
+          'border border-dl-grey-3 dark:border dark:border-dl-grey-7': list.shoppingListID === selectedListID(),
+        }"
+        (click)="onListClick(list.shoppingListID)"
       >
-        <!-- List Author username-->
-        <p
-          class="mr-dl-3 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
-        >
-          {{ list.friend.username }}
-        </p>
+        <!-- List Author Image -->
+        <div class="ml-dl-3 mr-dl-4">
+          <img
+            *ngIf="list.friend.imageURL"
+            class="h-dl-5 w-dl-5 rounded-full"
+            [src]="list.friend.imageURL | imageFromCDN"
+            alt="friend profile image"
+          />
+          <span
+            class="inline-flex h-dl-5 w-dl-5 items-center justify-center rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
+            *ngIf="
+              !list.friend.imageURL &&
+              list.friend.nameFirst &&
+              list.friend.nameLast
+            "
+          >
+            <span
+              class="text-dl-6 font-dl-3 leading-none text-dl-grey-3 dark:text-dl-grey-9"
+              >{{ list.friend.nameFirst[0] + list.friend.nameLast[0] }}</span
+            >
+          </span>
+        </div>
+        <!-- List Author Username and Item Count -->
+        <div class="mr-dl-3 flex flex-col items-start justify-between">
+          <p
+            class="mr-dl-3 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+          >
+            {{ list.friend.username }}'s list
+          </p>
+          <!-- Item Count -->
+          <div class="flex items-center ">
+            <span
+              class=" mr-dl-2 inline-flex items-center justify-center text-dl-4 italic text-dl-teal-3 dark:text-dl-teal-7"
+            >
+              {{ getItemCountString(list) }}
+            </span>
+            <!-- Green Checkbox (only if item is already purchased and saved)-->
+            <svg
+              version="1.1"
+              height="18"
+              width="18"
+              viewBox="-949 951 110 105"
+            >
+              <switch>
+                <g i:extraneous="self">
+                  <g>
+                    <path
+                      [attr.fill]="this.extraStuffService.getFillColor(7)"
+                      d="M-873.7,953.5h-50.5c-12.3,0-22.2,10-22.2,22.2v50.5c0,12.3,10,22.2,22.2,22.2h50.5c12.3,0,22.2-10,22.2-22.2v-50.5     C-851.5,963.5-861.5,953.5-873.7,953.5z M-874.1,995.8l-24.5,24.5c-1.5,1.5-3.5,2.3-5.5,2.3s-4.1-0.8-5.5-2.3l-14.1-14.1     c-3.1-3.1-3.1-8,0-11.1c3.1-3.1,8-3.1,11.1,0l8.6,8.6l19-19c3.1-3.1,8-3.1,11.1,0C-871.1,987.8-871.1,992.8-874.1,995.8z"
+                    />
+                  </g>
+                </g>
+              </switch>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
     <!-- Header Row -->
@@ -88,7 +142,7 @@
             <span
               class="text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
             >
-              {{ item.name }}
+              {{ item.ingredientName }}
             </span>
             <div class="flex items-center">
               <span
@@ -118,12 +172,15 @@
             [min]="item.needMeasurement"
             max="999"
             placeholder="0"
-            [(ngModel)]="item.purchasedAmount"
+            [(ngModel)]="item.purchasedMeasurement"
             [ngClass]="{
               invisible: item.store
             }"
             (ngModelChange)="
-              onPurchasedAmountChange(item.ingredientID, item.purchasedAmount)
+              onPurchasedMeasurementChange(
+                item.ingredientID,
+                item.purchasedMeasurement
+              )
             "
           />
           <div
@@ -140,6 +197,16 @@
 
     <!-- Spacer div -->
     <div class="flex-grow"></div>
+
+    <!-- Save Button -->
+    <button
+      type="button"
+      *ngIf="isLoading() === false && selectedSLIngred().itemsToSave && selectedSLIngred().itemsToSave.length"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1"
+      (click)="onSaveClick()"
+    >
+      {{ saveButtonText }}
+    </button>
   </div>
 
   <!-- If loading -->

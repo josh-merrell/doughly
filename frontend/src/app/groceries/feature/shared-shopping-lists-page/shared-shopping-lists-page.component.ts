@@ -9,16 +9,27 @@ import {
 } from 'src/app/profile/state/profile-selectors';
 import { Profile } from 'src/app/profile/state/profile-state';
 import { ShoppingListIngredientService } from '../../data/shopping-list-ingredient.service';
-import { forkJoin, map } from 'rxjs';
+import { filter, forkJoin, map, take } from 'rxjs';
 import { Router } from '@angular/router';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { FormsModule } from '@angular/forms';
+import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+import { ModalService } from 'src/app/shared/utils/modalService';
+import { PurchaseIngredientsModalComponent } from '../shopping-page/ui/purchase-ingredients-modal/purchase-ingredients-modal.component';
+import {
+  selectLoading as selectLoadingShoppingList,
+  selectError as selectErrorShoppingList,
+  selectShoppingLists,
+} from '../../state/shopping-list-selectors';
+import { ShoppingListActions } from '../../state/shopping-list-actions';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'dl-shared-shopping-lists-page',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule, FormsModule],
+  imports: [CommonModule, ImageFromCDN, MatProgressSpinnerModule, FormsModule],
   templateUrl: './shared-shopping-lists-page.component.html',
 })
 export class SharedShoppingListsPageComponent {
@@ -30,7 +41,7 @@ export class SharedShoppingListsPageComponent {
   public sharedLists: WritableSignal<any[]> = signal([]);
   private allSharedLists: WritableSignal<any> = signal([]);
   private friends: WritableSignal<any[]> = signal([]);
-  private selectedListID: WritableSignal<number | null> = signal(null);
+  public selectedListID: WritableSignal<number | null> = signal(null);
   public sharedListIngredients: WritableSignal<any> = signal({});
 
   constructor(
@@ -38,7 +49,8 @@ export class SharedShoppingListsPageComponent {
     private shoppingListIngredientService: ShoppingListIngredientService,
     private router: Router,
     public extraStuffService: ExtraStuffService,
-    public unitService: UnitService
+    public unitService: UnitService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -81,15 +93,24 @@ export class SharedShoppingListsPageComponent {
 
     effect(
       () => {
+        console.log('here');
         const selectedListID = this.selectedListID();
         if (!selectedListID) return;
         const sharedListIngredients = this.sharedListIngredients();
         const selectedSLIngred = sharedListIngredients[selectedListID];
+        // add 'valueValid' property to each ingredient. Should be false if 'purchasedMeasurement' is present and less than 'neededMeasurement'
+        if (!selectedSLIngred) return;
+        selectedSLIngred.forEach((ingr: any) => {
+          ingr.valueValid =
+            !ingr.purchasedMeasurement ||
+            ingr.purchasedMeasurement >= ingr.neededMeasurement;
+        });
         const newSelectedSLIngred = {
           items: selectedSLIngred,
           itemsToSave: [],
         };
         this.selectedSLIngred.set(newSelectedSLIngred);
+        console.log(`SELECTED SL INGRED: `, newSelectedSLIngred);
       },
       { allowSignalWrites: true }
     );
@@ -108,26 +129,49 @@ export class SharedShoppingListsPageComponent {
         });
 
         this.displaySharedShoppingLists.set(displaySharedShoppingLists);
-        console.log(`DISPLAY SHARED SHOPPING LISTS: `, displaySharedShoppingLists)
+        console.log(
+          `DISPLAY SHARED SHOPPING LISTS: `,
+          displaySharedShoppingLists
+        );
       },
       { allowSignalWrites: true }
     );
   }
 
-  onPurchasedAmountChange(ingredientID: number, newAmount: number): void {
+  onPurchasedMeasurementChange(ingredientID: number, newAmount: number): void {
+    let itemsToSave: any[] = [];
     const updatedIngredients = this.selectedSLIngred().items.map((ingr) => {
-      if (ingr.ingredientID === ingredientID) {
-        return { ...ingr, purchasedMeasurement: newAmount };
+      const valueValid =
+        !ingr.purchasedMeasurement ||
+        ingr.purchasedMeasurement >= ingr.needMeasurement;
+      if (!ingr.store && ingr.purchasedMeasurement && valueValid) {
+        itemsToSave.push({
+          shoppingListIngredientID: ingr.shoppingListIngredientID,
+          ingredientID: ingr.ingredientID,
+          purchasedMeasurement: ingr.purchasedMeasurement,
+          purchasedUnit: ingr.needUnit,
+        });
       }
-      return ingr;
+      if (ingr.ingredientID === ingredientID) {
+        return { ...ingr, purchasedMeasurement: newAmount, valueValid };
+      }
+      return { ...ingr, valueValid };
     });
-    this.selectedSLIngred().items = updatedIngredients;
+    this.selectedSLIngred.set({
+      items: updatedIngredients,
+      itemsToSave,
+    });
+    console.log(`SELECTED SL INGRED: `, this.selectedSLIngred());
   }
 
   get saveButtonText(): string {
     const itemCount = this.selectedSLIngred().itemsToSave.length;
+    const selectedList = this.displaySharedShoppingLists().find(
+      (list) => list.shoppingListID === this.selectedListID()
+    );
+    const authorUsername = selectedList?.friend?.username || 'Friend';
     const itemText = itemCount > 1 ? 'Items' : 'Item';
-    return `Add ${itemCount} ${itemText} to Kitchen`;
+    return `Add ${itemCount} ${itemText} to ${authorUsername}'s Kitchen`;
   }
 
   ngOnInit(): void {
@@ -152,5 +196,123 @@ export class SharedShoppingListsPageComponent {
         })
       );
     });
+  }
+
+  onSaveClick() {
+    console.log(`SAVING ITEMS: `, this.selectedSLIngred().itemsToSave);
+
+    this.isLoading.set(true);
+    // open storeSelect Modal
+    const ref = this.modalService.open(
+      PurchaseIngredientsModalComponent,
+      {
+        width: '50%',
+        maxWidth: '360px',
+      },
+      1
+    );
+    if (ref) {
+      ref.afterClosed().subscribe((result) => {
+        if (!result || !result.store) {
+          console.error(`Store required`);
+          this.isLoading.set(false);
+          this.modalService.open(
+            ErrorModalComponent,
+            {
+              maxWidth: '380px',
+              data: {
+                errorMessage: `Store required`,
+                statusCode: 400,
+              },
+            },
+            1,
+            true
+          );
+        } else if (result.status === 'cancel') {
+          this.isLoading.set(false);
+          return;
+        }  else if (result.status === 'confirm') {
+          const itemsToSave = this.selectedSLIngred().itemsToSave;
+          itemsToSave.forEach((ingr) => {
+            ingr.purchasedDate = new Date().toISOString();
+          });
+
+          const neededItemCount = this.selectedSLIngred().items.filter(
+            (ingr) => !ingr.store
+          ).length;
+          this.store.dispatch(
+            ShoppingListActions.receiveItems({
+              shoppingListID: this.selectedListID() || 0,
+              items: itemsToSave,
+              store: result.store,
+              purchasedBy: this.profile()!.userID,
+            })
+          );
+          this.store
+            .select(selectLoadingShoppingList)
+            .pipe(
+              filter((loading) => !loading),
+              take(1)
+            )
+            .subscribe(() => {
+              this.store
+                .select(selectErrorShoppingList)
+                .pipe(take(1))
+                .subscribe((error) => {
+                  if (error) {
+                    console.error(
+                      `Shopping List receiveItems failed: ${error.message}, CODE: ${error.statusCode}`
+                    );
+                    this.modalService.open(
+                      ErrorModalComponent,
+                      {
+                        maxWidth: '380px',
+                        data: {
+                          errorMessage: error.message,
+                          statusCode: error.statusCode,
+                        },
+                      },
+                      1,
+                      true
+                    );
+                  } else {
+                    this.modalService.open(
+                      ConfirmationModalComponent,
+                      {
+                        data: {
+                          confirmationMessage: `Purchased ${
+                            itemsToSave.length
+                          } Item${itemsToSave.length > 1 ? 's' : ''}. ${
+                            itemsToSave.length === neededItemCount
+                              ? 'Shopping List Complete!'
+                              : ''
+                          }`,
+                        },
+                      },
+                      1,
+                      true
+                    );
+                  }
+                });
+            });
+        } else {
+          this.isLoading.set(false);
+          return;
+        }
+      });
+    }
+  }
+
+  onListClick(shoppingListID: number): void {
+    this.selectedListID.set(shoppingListID);
+  }
+
+  getItemCountString(list: any) {
+    const listIngredients = this.sharedListIngredients()[list.shoppingListID];
+    const totalCount = listIngredients.length;
+    const purchasedCount = listIngredients.filter(
+      (ingr) => ingr.store && ingr.purchasedMeasurement
+    ).length;
+    return `${purchasedCount} of ${totalCount}`;
   }
 }
