@@ -52,6 +52,7 @@ module.exports = ({ db, dbPublic }) => {
     const { authorization, customID, userID, ingredientID, measurement, purchasedDate } = options;
 
     try {
+      global.logger.info(`IN CREATE ING STOCK. customID: ${customID}, userID: ${userID}, ingredientID: ${ingredientID}, measurement: ${measurement}, purchasedDate: ${purchasedDate}`)
       //verify that the provided ingredientID is valid, return error if not
       const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
       if (error) {

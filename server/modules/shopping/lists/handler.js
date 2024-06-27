@@ -100,13 +100,19 @@ async function receiveItems(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
   const { shoppingListID } = req.params;
+  let userID;
+  if (req.body.userID) {
+    userID = req.body.userID;
+  } else {
+    userID = req.userID;
+  }
   const { items, store, purchasedBy } = req.body;
   const { authorization } = req.headers;
   const returner = await p.receiveItems({
-    userID: req.userID,
     authorization,
     shoppingListID,
     purchasedBy,
+    userID,
     store,
     items,
   });
