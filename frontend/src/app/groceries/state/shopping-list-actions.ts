@@ -74,6 +74,7 @@ const receiveItems = createAction(
     items: any[];
     store: string;
     purchasedBy: string | null;
+    userID: string | null;
   }>()
 );
 const receiveItemsSuccess = createAction(

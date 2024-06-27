@@ -164,7 +164,8 @@ export class ShoppingListEffects {
             action.shoppingListID,
             action.items,
             action.store,
-            action.purchasedBy ? action.purchasedBy : null
+            action.purchasedBy ? action.purchasedBy : null,
+            action.userID ? action.userID : null
           )
           .pipe(
             map(() =>

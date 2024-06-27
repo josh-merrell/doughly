@@ -64,8 +64,6 @@ export class LoginPageComponent {
       () => {
         const systemDarkMode = this.extraStuffService.systemDarkMode();
         const profile = this.authService.profile();
-        console.log('profile', profile);
-        console.log('systemDarkMode', systemDarkMode);
         if (profile && profile.user_id) {
           if (this.router.url !== '/reset-password') {
             this.router.navigate(['/loading']);
@@ -93,7 +91,6 @@ export class LoginPageComponent {
     this.store.select(selectProfile).subscribe((profile) => {
       if (!profile) return;
       this.profile.set(profile);
-      console.log('profile', profile);
     });
     // Check for persistent session (remember me)
     // const sessionData = this.authService.getPersistentSession();

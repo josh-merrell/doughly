@@ -272,6 +272,7 @@ export class ShoppingPageComponent {
               items: itemsToSave,
               store: modalResult.store,
               purchasedBy: null,
+              userID: null,
             })
           );
           this.store

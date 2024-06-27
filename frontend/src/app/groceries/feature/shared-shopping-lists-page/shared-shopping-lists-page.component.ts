@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, WritableSignal, effect, signal } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { selectSharedShoppingLists } from '../../state/sharedShoppingLists/shared-shopping-list-selectors';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -200,6 +200,10 @@ export class SharedShoppingListsPageComponent {
 
   onSaveClick() {
     console.log(`SAVING ITEMS: `, this.selectedSLIngred().itemsToSave);
+    // get correct list
+    const selectedList = this.displaySharedShoppingLists().find(
+      (list) => list.shoppingListID === this.selectedListID()
+    );
 
     this.isLoading.set(true);
     // open storeSelect Modal
@@ -246,6 +250,7 @@ export class SharedShoppingListsPageComponent {
               items: itemsToSave,
               store: result.store,
               purchasedBy: this.profile()!.userID,
+              userID: selectedList.friend.userID,
             })
           );
           this.store

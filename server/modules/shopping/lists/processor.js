@@ -210,7 +210,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function receiveItems(options) {
     const { authorization, userID, purchasedBy, shoppingListID, items, store } = options;
-    // console.log(`SLI: ${JSON.stringify(items)}`)
+    console.log(`SLI: ${JSON.stringify(items)}, store: ${store}, purchasedBy: ${purchasedBy}, shoppingListID: ${shoppingListID}, userID: ${userID}`)
 
     try {
       if (!shoppingListID) {
