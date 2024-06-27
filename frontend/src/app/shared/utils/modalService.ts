@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { StylesService } from './stylesService';
 import { AuthService } from './authenticationService';
 import { ExtraStuffService } from './extraStuffService';
+import { reflectComponentType } from '@angular/core';
 
 interface ModalInstance {
   ref: MatDialogRef<any>;
@@ -47,6 +48,23 @@ export class ModalService {
     }
 
     const dialogRef = this.dialog.open(component, config);
+
+    // need to manually apply our global modal styling (currently just border radius) to the divs wrapping the modal which are made by the mat-dialog-container element. For some reason, trying to use the documented approach of setting the panelClass on the MatDialogConfig doesn't work.
+    dialogRef.afterOpened().subscribe(() => {
+      const componentSelector = this.getComponentSelector(component);
+      // const modalElement = document.querySelector('dl-view-list-shares-modal');
+      const modalElement = document.querySelector(componentSelector || '');
+      if (modalElement) {
+        let parent = modalElement.parentElement;
+        for (let i = 0; i < 2; i++) {
+          if (parent) {
+            parent.classList.add('modal-global-styling');
+            parent = parent.parentElement;
+          }
+        }
+      }
+    });
+
     this.modals.push({
       ref: dialogRef,
       level: allowMultipleSameLevel ? 99 : level,
@@ -68,6 +86,12 @@ export class ModalService {
   closeByLevel(level: number): void {
     this.modals.filter((m) => m.level === level).forEach((m) => m.ref.close());
     this.modals = this.modals.filter((m) => m.level !== level);
+  }
+
+
+  private getComponentSelector<T>(component: ComponentType<T>): string | null {
+    const metadata = reflectComponentType(component);
+    return metadata?.selector || null;
   }
 
   async setModalStyles(): Promise<void> {

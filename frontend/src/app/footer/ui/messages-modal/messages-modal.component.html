@@ -1,5 +1,5 @@
 <div
-  class="dark:border dark:border-dl-grey-4 flex h-dl-21 w-full transform flex-col items-center bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all  dark:bg-dl-grey-1"
+  class="flex h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-nowrap">
@@ -19,7 +19,7 @@
           (click)="onMessageSelect(message, i)"
         >
           <div
-            class="relative my-dl-2 flex w-full flex-col items-start dark:bg-dl-grey-2 rounded-dl-3 py-dl-1 pl-dl-3 shadow-md"
+            class="relative my-dl-2 flex w-full flex-col items-start rounded-dl-3 py-dl-1 pl-dl-3 shadow-md dark:bg-dl-grey-2"
             [ngClass]="{
               'bg-dl-pink-10 dark:bg-dl-pink-1': selectedMessageIndex() === i
             }"
@@ -93,7 +93,7 @@
         </button>
         <button
           type="button"
-          class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10  dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
+          class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
           (click)="onCancel()"
         >
           Cancel
