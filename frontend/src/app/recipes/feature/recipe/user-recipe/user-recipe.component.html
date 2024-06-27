@@ -378,16 +378,18 @@
         class="mx-dl-4 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
         <div
-          class="mb-dl-1 ml-dl-2 flex w-full items-center justify-between px-dl-1 pt-dl-1"
+          class="mb-dl-1 ml-dl-1 flex w-full items-center justify-between px-dl-1 pt-dl-1"
         >
           <!-- Usage Date -->
-          <div class="flex">
-            <p class="text-dl-6 font-dl-2 text-dl-grey-4 dark:text-dl-grey-8">
+          <div class="flex max-w-dl-9 flex-wrap">
+            <p
+              class="flex-grow mr-dl-2 text-nowrap text-dl-6 font-dl-2 text-dl-grey-4 dark:text-dl-grey-8"
+            >
               Make it
             </p>
             <div
               style="position: relative"
-              class="ml-dl-2 text-dl-6 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
+              class="flex-grow text-dl-6 pr-dl-2 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
             >
               <div (click)="picker.open()">
                 {{ displayUsageDate }}

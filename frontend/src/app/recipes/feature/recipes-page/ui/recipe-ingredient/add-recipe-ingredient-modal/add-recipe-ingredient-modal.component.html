@@ -1,5 +1,5 @@
 <div
-  class="relative flex h-dl-21 w-full transform flex-col bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex h-dl-21 w-full transform flex-col rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <div class="mb-dl-3 text-center">
     <h3
@@ -81,7 +81,7 @@
 
           <div id="form-purchaseUnitRatio" class="relative flex flex-col">
             <dl-text-input
-              label={{purLabel()}}
+              label="{{ purLabel() }}"
               formControlName="purchaseUnitRatio"
               [hasError]="
                 form.get('purchaseUnitRatio')?.hasError('notPositiveFloat') ||

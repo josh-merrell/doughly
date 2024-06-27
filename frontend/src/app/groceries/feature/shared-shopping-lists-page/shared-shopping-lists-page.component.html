@@ -176,7 +176,7 @@
             [ngClass]="{
               invisible: item.store
             }"
-            (ngModelChange)="
+            (blur)="
               onPurchasedMeasurementChange(
                 item.ingredientID,
                 item.purchasedMeasurement

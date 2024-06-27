@@ -1,5 +1,5 @@
 <div
-  class="relative flex w-full transform flex-col items-center overflow-y-auto bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex w-full transform flex-col items-center overflow-y-auto rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
   [ngClass]="{
     'h-dl-21': confirmed,
     'h-dl-12': !confirmed
@@ -84,7 +84,11 @@
           </div>
 
           <div id="form-note" class="my-dl-4">
-            <dl-text-input [isTextArea]=true label="Notes" formControlName="note"></dl-text-input>
+            <dl-text-input
+              [isTextArea]="true"
+              label="Notes"
+              formControlName="note"
+            ></dl-text-input>
           </div>
         </div>
 
