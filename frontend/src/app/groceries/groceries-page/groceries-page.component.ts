@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
+import { selectSharedShoppingLists } from '../state/sharedShoppingLists/shared-shopping-list-selectors';
 
 @Component({
   selector: 'dl-groceries-page',
@@ -29,6 +30,7 @@ export class GroceriesPageComponent {
   view: WritableSignal<string>;
   menuOpen: boolean = false;
   public shoppingLists: WritableSignal<any> = signal([]);
+  private allSharedLists: WritableSignal<any> = signal([]);
   public listRecipes: WritableSignal<any> = signal([]);
 
   constructor(
@@ -85,10 +87,17 @@ export class GroceriesPageComponent {
         this.view.set(shoppingLists[0].status);
       }
     });
+    this.store.select(selectSharedShoppingLists).subscribe((lists) => {
+      this.allSharedLists.set(lists);
+    });
 
     this.store.select(selectShoppingListRecipes).subscribe((listRecipes) => {
       this.listRecipes.set(listRecipes);
     });
+  }
+
+  hasSharedList() {
+    return this.allSharedLists().length > 0;
   }
 
   private checkAndUpdateView() {
