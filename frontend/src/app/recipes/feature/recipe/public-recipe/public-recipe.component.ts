@@ -442,7 +442,7 @@ export class PublicRecipeComponent {
   }
 
   displayMeasurementUnit(unit: string, measurement: number) {
-    if (unit === 'weightOunces') {
+    if (unit === 'weightOunces' || unit === 'weightOunce') {
       return 'oz';
     } else if (unit.includes('tablespoon')) {
       return unit.replace('tablespoon', 'Tbsp');

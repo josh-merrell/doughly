@@ -6,7 +6,7 @@
     >
       <span
         *ngIf="listShares().length === 0"
-        class="mb-dl-3 w-full pt-dl-3 italic text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 w-full pt-dl-3 text-dl-6 font-dl-3 italic text-dl-grey-2 dark:text-dl-grey-9"
       >
         List not shared
       </span>
@@ -155,22 +155,22 @@
         <div class="relative flex items-center justify-between">
           <input
             class="w-full rounded-md border-0 bg-dl-grey-10 px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset ring-dl-grey-8 transition-all duration-200 ease-in-out placeholder:text-dl-grey-2 focus:bg-white focus:shadow-md focus:shadow-dl-blue-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-3 dark:text-dl-grey-9 dark:ring-dl-grey-1 placeholder:dark:text-dl-grey-9 dark:focus:bg-dl-grey-4"
-            *ngIf="!item.store"
             type="number"
             [min]="item.needMeasurement"
             max="999"
             placeholder="0"
             [(ngModel)]="item.purchasedAmount"
             [ngClass]="{
-              invisible: item.store
+              hidden: item.store
             }"
-            (ngModelChange)="
+            (blur)="
               onPurchasedAmountChange(item.ingredientID, item.purchasedAmount)
             "
           />
           <div
             class="mr-dl-3 flex w-dl-6 flex-col items-center"
             *ngIf="item.store"
+            [hidden]="!item.store"
           >
             <p class="text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
               {{ Math.ceil(item.purchasedMeasurement) }}

@@ -1,5 +1,5 @@
 <div
-  class="relative h-dl-17 w-dl-14 transform overflow-y-auto bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative h-dl-17 w-dl-14 transform overflow-y-auto rounded-dl-3 bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
@@ -22,10 +22,7 @@
         </div>
 
         <div id="form-ingredientBrand" class="relative flex flex-col">
-          <dl-text-input
-            label="Brand"
-            formControlName="brand"
-          ></dl-text-input>
+          <dl-text-input label="Brand" formControlName="brand"></dl-text-input>
         </div>
       </div>
       <!---->
