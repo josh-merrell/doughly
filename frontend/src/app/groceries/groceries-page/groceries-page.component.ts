@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { selectSharedShoppingLists } from '../state/sharedShoppingLists/shared-shopping-list-selectors';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 
 @Component({
   selector: 'dl-groceries-page',
@@ -32,6 +33,7 @@ export class GroceriesPageComponent {
   public shoppingLists: WritableSignal<any> = signal([]);
   private allSharedLists: WritableSignal<any> = signal([]);
   public listRecipes: WritableSignal<any> = signal([]);
+  private profile: WritableSignal<any> = signal({});
 
   constructor(
     public dialog: MatDialog,
@@ -90,14 +92,18 @@ export class GroceriesPageComponent {
     this.store.select(selectSharedShoppingLists).subscribe((lists) => {
       this.allSharedLists.set(lists);
     });
-
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.store.select(selectShoppingListRecipes).subscribe((listRecipes) => {
       this.listRecipes.set(listRecipes);
     });
   }
 
   hasSharedList() {
-    return this.allSharedLists().length > 0;
+    return this.allSharedLists().some((list) => {
+      list.status === 'shared' && list.userID !== this.profile().userID;
+    });
   }
 
   private checkAndUpdateView() {

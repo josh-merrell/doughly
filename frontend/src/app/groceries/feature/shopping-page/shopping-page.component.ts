@@ -14,7 +14,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   selectDeleting as selectDeletingShoppingListIngredient,
   selectShoppingListIngredients,
-  selectTempPurchasing,
   selectUpdating as selectUpdatingShoppingListIngredient,
   selectError as selectErrorShoppingListIngredient,
 } from '../../state/shopping-list-ingredient-selectors';
@@ -32,15 +31,11 @@ import { FormsModule } from '@angular/forms';
 import { ShoppingListIngredientActions } from '../../state/shopping-list-ingredient-actions';
 import { ShoppingListActions } from '../../state/shopping-list-actions';
 import { PurchaseIngredientsModalComponent } from './ui/purchase-ingredients-modal/purchase-ingredients-modal.component';
-import { filter, max, take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ShareListModalComponent } from './ui/share-list-modal/share-list-modal.component';
-import {
-  AuthService,
-  Profile,
-} from 'src/app/shared/utils/authenticationService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { selectSharedShoppingLists } from '../../state/sharedShoppingLists/shared-shopping-list-selectors';
@@ -48,7 +43,6 @@ import {
   selectFriends,
   selectProfile,
 } from 'src/app/profile/state/profile-selectors';
-import { selectFriendships } from 'src/app/social/state/friendship-selectors';
 import { ViewListSharesModalComponent } from './ui/view-list-shares-modal/view-list-shares-modal.component';
 
 @Component({
