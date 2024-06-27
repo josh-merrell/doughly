@@ -76,7 +76,7 @@ export class ShoppingPageComponent {
   private shoppingListIngredients: WritableSignal<any> = signal([]);
   private allSharedLists: WritableSignal<any> = signal([]);
   private ingredients: WritableSignal<any> = signal([]);
-  private profile: WritableSignal<Profile | null> = signal(null);
+  private profile: WritableSignal<any> = signal(null);
   private friends: WritableSignal<any[]> = signal([]);
   public friendsNotShared: WritableSignal<any[]> = signal([]);
   public friendsShared: WritableSignal<any[]> = signal([]);

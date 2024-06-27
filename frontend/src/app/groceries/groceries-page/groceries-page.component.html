@@ -38,6 +38,7 @@
         'border-transparent text-dl-grey-4 dark:text-dl-grey-7':
           view() !== 'shared'
       }"
+      *ngIf="hasSharedList()"
     >
       Shared
     </span>
