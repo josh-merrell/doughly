@@ -42,6 +42,18 @@ export class ShareListModalComponent {
   ) {}
 
   ngOnInit(): void {
+    this.data.friendsNotShared = this.data.friendsNotShared.filter(
+      (friend) => friend.username !== null
+    );
+    this.data.friendsNotShared.sort((a, b) => {
+      if (a.nameFirst < b.nameFirst) {
+        return -1;
+      }
+      if (a.nameFirst > b.nameFirst) {
+        return 1;
+      }
+      return 0;
+    });
     this.friendsNotShared.set(this.data.friendsNotShared);
   }
 

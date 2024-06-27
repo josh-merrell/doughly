@@ -17,13 +17,19 @@ async function getIngredientStockByID(req, res) {
 async function createIngredientStock(req, res) {
   const db = req.client.db;
   const p = require('./processor')({ db });
+  let userID;
+  if (req.body.userID) {
+    userID = req.body.userID;
+  } else {
+    userID = req.userID;
+  }
   const { ingredientID, purchasedDate, measurement } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
     customID,
     authorization,
-    userID: req.userID,
+    userID,
     ingredientID,
     purchasedDate,
     measurement,

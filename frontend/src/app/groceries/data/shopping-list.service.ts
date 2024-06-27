@@ -63,7 +63,8 @@ export class ShoppingListService {
     shoppingListID: number,
     items: any[],
     store: string,
-    purchasedBy: string | null
+    purchasedBy: string | null,
+    userID: string | null
   ): Observable<any> {
     return this.http.patch<any>(
       `${this.API_URL}/${shoppingListID}/receiveItems`,
@@ -71,6 +72,7 @@ export class ShoppingListService {
         items,
         store,
         purchasedBy,
+        userID
       }
     );
   }
