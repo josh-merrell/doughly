@@ -37,6 +37,14 @@ export class ModalService {
       console.warn(`A modal at level ${level} is already open.`);
       return null;
     }
+    // if component is 'ErrorModalComponent' and there is already an error modal open, don't open another
+    if (
+      component.name === 'ErrorModalComponent' &&
+      this.modals.some((m) => m.ref.componentInstance instanceof component)
+    ) {
+      console.warn(`An error modal is already open.`);
+      return null;
+    }
 
     const dialogRef = this.dialog.open(component, config);
     this.modals.push({
