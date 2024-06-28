@@ -186,6 +186,8 @@ export class RecipeListComponent {
     // Check the initial URL
     this.checkUrlAndAct(this.router.url);
 
+    console.log(`TYPE: `, this.type);
+
     // Listen for future URL changes
     this.router.events
       .pipe(
@@ -207,6 +209,7 @@ export class RecipeListComponent {
           ? recipe.type === 'subscription'
           : recipe.type !== 'subscription';
       });
+      console.log(`RECIPES: `, recipes);
 
       this.recipes.set(
         [...recipes].sort((a, b) => a.title.localeCompare(b.title))
@@ -295,7 +298,7 @@ export class RecipeListComponent {
     if (allowCreate) {
       // update url to include '/add' if it's not already there
       this.location.go('/recipes/created/add');
-      console.log('OPEN ADD RECIPE MODAL')
+      console.log('OPEN ADD RECIPE MODAL');
       const ref = this.modalService.open(
         AddRecipeModalComponent,
         {
