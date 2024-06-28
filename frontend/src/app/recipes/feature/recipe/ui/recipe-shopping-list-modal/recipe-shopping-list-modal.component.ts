@@ -25,6 +25,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { selectShoppingLists } from 'src/app/groceries/state/shopping-list-selectors';
 import { selectShoppingListRecipes } from 'src/app/groceries/state/shopping-list-recipe-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { UnitService } from 'src/app/shared/utils/unitService';
 
 @Component({
   selector: 'dl-recipe-shopping-list-modal',
@@ -51,7 +52,8 @@ export class RecipeShoppingListModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
     private store: Store,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private unitService: UnitService
   ) {
     this.shoppingList = this.data.shoppingList;
     this.usageDate = this.data.usageDate;
@@ -175,5 +177,27 @@ export class RecipeShoppingListModalComponent {
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  getDisplayItemUnit(measurement: number, unit: string) {
+    const adjustedUnit = measurement > 1 ? this.unitService.plural(unit) : unit;
+    if (adjustedUnit.includes('weightOunce')) {
+      return adjustedUnit.replace('weightOunce', 'oz');
+    } else if (adjustedUnit.includes('fluidOunce')) {
+      return adjustedUnit.replace('fluidOunce', 'fl oz');
+    } else return adjustedUnit;
+  }
+
+  displayIngredientName(name: string, measurement, measurementUnit) {
+    if (
+      Number(measurement) > 1 &&
+      (measurementUnit === 'single' || measurementUnit === '') &&
+      !['s', 'S'].includes(name[name.length - 1])
+    ) {
+      return name + 's';
+    } else if (measurementUnit === 'dozen') {
+      return name + 's';
+    }
+    return name;
   }
 }

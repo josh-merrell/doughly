@@ -1184,7 +1184,7 @@ module.exports = ({ db, dbPublic }) => {
             matchedTools.push(results[i].value);
           } else {
             // fallback match attempt looking for exact string match on name
-            const secondaryMatchResult = await secondaryToolsMatch(results[i].value, userTools);
+            const secondaryMatchResult = await secondaryToolsMatch(results[i].value, userTools, userID);
             matchedTools.push(secondaryMatchResult);
           }
         }
@@ -1196,7 +1196,7 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
-  async function secondaryToolsMatch(recipeTool, userTools) {
+  async function secondaryToolsMatch(recipeTool, userTools, userID) {
     try {
       global.logger.info({ message: `IN SECONDARY TOOLS MATCH. RT: ${JSON.stringify(recipeTool)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       const userToolMatch = userTools.find((t) => t.name.toLowerCase() === recipeTool.name.toLowerCase());

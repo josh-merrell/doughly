@@ -230,7 +230,7 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
 };
 
 const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, userItems) => {
-  global.logger.info({message:`MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`, level:6, timestamp: new Date().toISOString(), 'userID': 0});
+  global.logger.info({message:`MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`, level:6, timestamp: new Date().toISOString(), 'userID': userID | 0});
   const client = await getClient();
   const body = {
     messages: [requestMessages[type].message],

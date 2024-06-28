@@ -19,11 +19,13 @@ const authenticateJWT = async (req, res, next) => {
 
   const result = await supabase.auth.getUser(req.headers.authorization);
 
+  
   if (result && result.data && result.data.user && result.data.user.id) {
     // The JWT token is valid, and 'user' contains the authenticated user's info.
     req.userID = result.data.user.id;
     next();
   } else {
+    global.logger.info(`JWT AUTH RESULT ERROR: ${JSON.stringify(result)}`)
     // The JWT token is invalid or missing.
     global.logger.info({ message: `Error authenticating JWT for request made to: ${req.path}. Provided auth header: ${req.headers.authorization}`, level: 6, timestamp: new Date().toISOString(), userID: req.userID || 0 });
     res.status(401).send(`Error authenticating JWT for request made to: ${req.path}. Provided auth header: ${req.headers.authorization}`);

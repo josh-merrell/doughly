@@ -776,6 +776,8 @@ export class UserRecipeComponent {
       !['s', 'S'].includes(name[name.length - 1])
     ) {
       return name + 's';
+    } else if (measurementUnit === 'dozen') {
+      return name + 's';
     }
     return name;
   }
