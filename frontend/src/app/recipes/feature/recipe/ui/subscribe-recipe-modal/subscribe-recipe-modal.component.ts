@@ -95,7 +95,7 @@ export class SubscribeRecipeModalComponent {
     private sortingService: SortingService,
     private strings: StringsService,
     public extraStuffService: ExtraStuffService,
-    private modalService: ModalService,
+    private modalService: ModalService
   ) {
     effect(
       () => {
@@ -463,88 +463,22 @@ export class SubscribeRecipeModalComponent {
                   true
                 );
               } else {
-                // ** OLD ONBOARDING **
-              //   // advance onboarding if it is active
-              //   if (this.onboarding) {
-              //     this.store.dispatch(
-              //       ProfileActions.updateProfileProperty({
-              //         property: 'onboardingState',
-              //         value: 5,
-              //       })
-              //     );
-              //     this.store
-              //       .select(selectUpdating)
-              //       .pipe(
-              //         filter((updating) => !updating),
-              //         take(1)
-              //       )
-              //       .subscribe(() => {
-              //         this.store
-              //           .select(selectError)
-              //           .pipe(take(1))
-              //           .subscribe((error) => {
-              //             if (error) {
-              //               console.error(
-              //                 `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-              //               );
-              //             }
-              //           });
-              //       });
-              //   }
-              //   this.store.select(selectNewRecipeID).subscribe((recipeID) => {
-              //     this.dialogRef.close('success');
-              //     if (recipeID) {
-              //       this.extraStuffService.onboardingSubscribedRecipe.set(
-              //         recipeID
-              //       );
-              //       this.router.navigate(['/recipe', recipeID]);
-              //     }
-              //   });
+                this.store.select(selectNewRecipeID).subscribe((recipeID) => {
+                  this.dialogRef.close('success');
+                  if (recipeID) {
+                    this.extraStuffService.onboardingSubscribedRecipe.set(
+                      recipeID
+                    );
+                    this.router.navigate(['/recipe', recipeID]);
+                  }
+                });
               }
               this.loading.set(false);
             });
         });
     }
   }
-
-  onboardingHandler(state: number) {
-    // ** OLD ONBOARDING **
-    // if (state !== 4) {
-    //   this.showOnboardingBadge.set(false);
-    //   return;
-    // }
-    // this.onboardingModalOpen.set(true);
-    // this.reopenOnboardingModal.set(false);
-    // const dialogRef = this.modalService.open(
-    //   OnboardingMessageModalComponent,
-    //   {
-    //     data: {
-    //       message: this.strings.onboardingStrings.subscribeRecipeModal,
-    //       currentStep: 4,
-    //       showNextButton: false,
-    //     },
-    //     position: {
-    //       top: '50%',
-    //     },
-    //   },
-    //   2
-    // );
-    // if (dialogRef) {
-    //   dialogRef.afterClosed().subscribe(() => {
-    //     this.onboardingModalOpen.set(false);
-    //     this.showOnboardingBadge.set(true);
-    //   });
-    // } else {
-    // }
-  }
-
   onCancel() {
     this.dialogRef.close();
   }
-
-  // onboardingBadgeClick() {
-  //   this.showOnboardingBadge.set(false);
-  //   this.onboardingHandler(4);
-  // }
-
 }
