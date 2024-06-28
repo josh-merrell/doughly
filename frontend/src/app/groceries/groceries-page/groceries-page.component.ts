@@ -101,9 +101,10 @@ export class GroceriesPageComponent {
   }
 
   hasSharedList() {
-    return this.allSharedLists().some((list) => {
-      list.status === 'shared' && list.userID !== this.profile().userID;
+    const result = this.allSharedLists().some((list) => {
+      return list.invitedUserID === this.profile().userID;
     });
+    return result;
   }
 
   private checkAndUpdateView() {
