@@ -40,7 +40,9 @@ import { ExtraStuffService } from '../../utils/extraStuffService';
     },
   ],
 })
-export class SelectInputComponent implements ControlValueAccessor, Validator, OnChanges {
+export class SelectInputComponent
+  implements ControlValueAccessor, Validator, OnChanges
+{
   @Input() label: string = '';
   @Input() formControlName: string = '';
   @Input() options: any[] = []; // Allow any type to handle objects
@@ -150,6 +152,7 @@ export class SelectInputComponent implements ControlValueAccessor, Validator, On
           display: option[this.optionDisplayProperty],
           value: option[this.optionValueProperty],
         }))
+        .filter((option) => option.value !== this.value) // Filter out the current value
         .sort((a, b) => a.display.localeCompare(b.display));
     } else {
       this.sortedOptions = this.options
@@ -157,6 +160,7 @@ export class SelectInputComponent implements ControlValueAccessor, Validator, On
           display: option,
           value: option,
         }))
+        .filter((option) => option.value !== this.value) // Filter out the current value
         .sort();
     }
   }
