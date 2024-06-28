@@ -47,7 +47,7 @@
             >
               {{ getItemCountString(list) }}
             </span>
-            <!-- Green Checkbox (only if item is already purchased and saved)-->
+            <!-- Green Checkbox-->
             <svg
               version="1.1"
               height="18"
@@ -113,6 +113,26 @@
               </g>
             </switch>
           </svg>
+          <!-- Grey Trashcan (only if item 'purchasedMeasurement' is not present)-->
+          <svg
+            *ngIf="
+              !((!item.store && item.purchasedMeasurement && item.valueValid) || item.store)
+            "
+            data-name="Layer 1"
+            viewBox="20 20 70 75"
+            height="22"
+            class="invisible"
+            width="22"
+          >
+            <path
+              [attr.fill]="this.extraStuffService.getFillColor(4)"
+              d="M22,41h4.94l.12,1L30.84,73.2A10,10,0,0,0,40.77,82H59.23a10,10,0,0,0,9.93-8.8L72.94,42l.12-1H78a4,4,0,0,0,4-4.39A4.12,4.12,0,0,0,77.83,33H22.17A4.12,4.12,0,0,0,18,36.61,4,4,0,0,0,22,41Zm43,0L61.21,72.24a2,2,0,0,1-2,1.76H40.77a2,2,0,0,1-2-1.76L35,41Z"
+            />
+            <path
+              [attr.fill]="this.extraStuffService.getFillColor(4)"
+              d="M44,18a4,4,0,0,0,0,8H56a4,4,0,0,0,0-8Z"
+            />
+          </svg>
           <!-- Pink Checkbox (only if item 'purchasedMeasurement' is present but not yet saved)-->
           <svg
             *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
@@ -148,7 +168,7 @@
               <span
                 class="mr-dl-2 text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
               >
-                min. {{ Math.ceil(item.needMeasurement) }}
+                {{ Math.ceil(item.needMeasurement) }}
                 {{
                   Math.ceil(item.needMeasurement) <= 1
                     ? unitService.singular(item.needUnit)
@@ -184,7 +204,7 @@
             "
           />
           <div
-            class="mr-dl-3 flex w-dl-6 flex-col items-center"
+            class="mr-dl-6 flex w-dl-6 flex-col items-center"
             *ngIf="item.store"
           >
             <p class="text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
