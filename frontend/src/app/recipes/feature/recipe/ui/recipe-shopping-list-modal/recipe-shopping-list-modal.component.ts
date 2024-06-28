@@ -164,10 +164,7 @@ export class RecipeShoppingListModalComponent {
 
   onViewShoppingList() {
     this.dialogRef.close();
-    this.router.navigate([
-      '/groceries/shopping',
-      this.shoppingLists()[0].shoppingListID,
-    ]);
+    this.router.navigate(['/groceries']);
   }
 
   onViewSettings() {
