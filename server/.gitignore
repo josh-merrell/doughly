@@ -1,7 +1,7 @@
 node_modules/
 logger.log
 request.log
-ecosystem.config.js
+userdata-api.sh
 /test-results/
 /playwright-report/
 /blob-report/

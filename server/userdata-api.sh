@@ -16,21 +16,24 @@ sudo mkdir -p /home/ubuntu/dl
 sudo chown ubuntu:ubuntu /home/ubuntu/dl
 cd /home/ubuntu/dl
 git init
-git remote add origin https://TOKENXXX@github.com/josh-merrell/doughly.git
+git remote add origin https://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@github.com/josh-merrell/doughly.git
 git config core.sparseCheckout true
-echo "server/" >> .git/info/sparse-checkout
+echo "server/*" >> .git/info/sparse-checkout
 git pull origin main
 
-# Navigate to the server directory and install dependencies
-cd /home/ubuntu/dl/server
+# Move contents from server directory to the current directory and remove the server directory
+mv server/* .
+rm -rf server
+
+# install dependencies
 rm -rf node_modules package-lock.json
 npm install
 sudo npx playwright install-deps
 export GOOGLE_APPLICATION_CREDENTIALS="/home/ubuntu/dl/services/google/doughly-ee4c38c0be84.json"
 
 # Start the application using pm2
-pm2 start ../ecosystem.config.js
-pm2 save
+npx pm2 start ecosystem.config.js
+npx pm2 save
 
 # Install and configure Alloy logging agent
 sudo apt install -y gpg
