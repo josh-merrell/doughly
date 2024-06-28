@@ -73,6 +73,7 @@ export class RecipeIngredientService {
 
   replaceOz(unit: string) {
     if (unit === 'oz') return 'weightOunce';
+    if (unit === 'fl oz') return 'fluidOunce';
     return unit;
   }
 

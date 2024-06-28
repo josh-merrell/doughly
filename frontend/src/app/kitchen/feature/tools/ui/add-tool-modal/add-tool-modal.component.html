@@ -1,7 +1,10 @@
 <div
-  class="relative h-dl-17 w-dl-14 transform overflow-y-auto rounded-dl-3 bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex h-dl-17 w-dl-14 transform flex-col items-center overflow-y-auto rounded-dl-3 bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
-  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
+  <mat-spinner
+    class="my-app-custom-spinner w-full"
+    *ngIf="isAdding"
+  ></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isAdding">
     <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="sm:ml-dl-1 sm:mt-dl-0 sm:text-left mt-dl-1 text-center">
