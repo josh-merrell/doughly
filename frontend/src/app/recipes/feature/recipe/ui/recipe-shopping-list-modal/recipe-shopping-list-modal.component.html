@@ -45,12 +45,12 @@
             >
               <span
                 class="text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
-                >{{ item.ingredientName }}&nbsp;&nbsp;&nbsp;</span
+                >{{ displayIngredientName(item.ingredientName, item.quantity, item.unit) }}&nbsp;&nbsp;&nbsp;</span
               >
               <span
                 class="text-dl-5 font-dl-2 text-dl-grey-4 dark:text-dl-grey-7"
               >
-                {{ item.quantity }}&nbsp;{{ item.unit }}</span
+                {{ item.quantity }}&nbsp;{{ getDisplayItemUnit(item.quantity, item.unit) }}</span
               >
               <span
                 *ngIf="item.purchaseAfter"
