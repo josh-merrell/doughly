@@ -30,6 +30,7 @@ git pull origin main
 # Relocate the server files and clean up
 mv server/* .
 rm -rf server
+sudo chmod +x /home/ubuntu/dl/scripts/*.sh
 
 # Install application dependencies
 rm -rf node_modules package-lock.json
