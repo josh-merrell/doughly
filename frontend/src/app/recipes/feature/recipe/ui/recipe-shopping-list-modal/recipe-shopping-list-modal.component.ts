@@ -191,7 +191,12 @@ export class RecipeShoppingListModalComponent {
       (measurementUnit === 'single' || measurementUnit === '') &&
       !['s', 'S'].includes(name[name.length - 1])
     ) {
-      return name + 's';
+      // if last letter is "y" and not preceded by a vowel, change "y" to "ies"
+      if (['y'].includes(name[name.length - 1])) {
+        return name.slice(0, -1) + 'ies';
+      } else {
+        return name + 's';
+      }
     } else if (measurementUnit === 'dozen') {
       return name + 's';
     }

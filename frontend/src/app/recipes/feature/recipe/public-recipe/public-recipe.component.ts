@@ -436,7 +436,12 @@ export class PublicRecipeComponent {
       (measurementUnit === 'single' || measurementUnit === '') &&
       !['s', 'S'].includes(name[name.length - 1])
     ) {
-      return name + 's';
+      // if last letter is "y" and not preceded by a vowel, change "y" to "ies"
+      if (['y'].includes(name[name.length - 1])) {
+        return name.slice(0, -1) + 'ies';
+      } else {
+        return name + 's';
+      }
     }
     return name;
   }
@@ -448,7 +453,9 @@ export class PublicRecipeComponent {
       return unit.replace('tablespoon', 'Tbsp');
     } else if (unit.includes('teaspoon')) {
       return unit.replace('teaspoon', 'tsp');
-    } else return unit;
+    } else if (unit.includes('milliliters')) {
+      return unit.replace('milliliters', 'ml');
+    } return unit;
   }
 
   flipToolsExpanded() {

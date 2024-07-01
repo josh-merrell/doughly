@@ -775,7 +775,12 @@ export class UserRecipeComponent {
       (measurementUnit === 'single' || measurementUnit === '') &&
       !['s', 'S'].includes(name[name.length - 1])
     ) {
-      return name + 's';
+      // if last letter is "y" and not preceded by a vowel, change "y" to "ies"
+      if (['y'].includes(name[name.length - 1])) {
+        return name.slice(0, -1) + 'ies';
+      } else {
+        return name + 's';
+      }
     } else if (measurementUnit === 'dozen') {
       return name + 's';
     }
@@ -788,6 +793,8 @@ export class UserRecipeComponent {
       return unit.replace('tablespoon', 'Tbsp');
     } else if (unit.includes('teaspoon')) {
       return unit.replace('teaspoon', 'tsp');
+    } else if (unit.includes('milliliters')) {
+      return unit.replace('milliliters', 'ml');
     } else return unit;
   }
 
