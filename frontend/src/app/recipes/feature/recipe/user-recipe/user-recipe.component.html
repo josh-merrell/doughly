@@ -383,13 +383,13 @@
           <!-- Usage Date -->
           <div class="flex max-w-dl-9 flex-wrap">
             <p
-              class="flex-grow mr-dl-2 text-nowrap text-dl-6 font-dl-2 text-dl-grey-4 dark:text-dl-grey-8"
+              class="mr-dl-2 flex-grow text-nowrap text-dl-6 font-dl-2 text-dl-grey-4 dark:text-dl-grey-8"
             >
               Make it
             </p>
             <div
               style="position: relative"
-              class="flex-grow text-dl-6 pr-dl-2 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
+              class="flex-grow pr-dl-2 text-dl-6 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
             >
               <div (click)="picker.open()">
                 {{ displayUsageDate }}
@@ -562,9 +562,10 @@
                 class="min-w-dl-6 whitespace-nowrap text-dl-6 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
               >
                 {{
-                  ingredient.measurementUnit === "weightOunces"
-                    ? "oz"
-                    : ingredient.measurementUnit
+                  displayMeasurementUnit(
+                    ingredient.measurementUnit,
+                    ingredient.measurement
+                  )
                 }}
               </span>
             </div>
