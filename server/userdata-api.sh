@@ -1,3 +1,5 @@
+# Run this script as the user-data script for the API server instance upon initial launch. This script will install the necessary tools, clone the application repository, install dependencies, and start the application using PM2. When code changes are merged, a separate deployment script will be run to update the application on all current EC2 instances in the deployment group. This is managed with AWS CodeDeploy via the 'appspec.yml' file.
+
 #!/bin/bash
 set -e
 
@@ -30,6 +32,7 @@ git pull origin main
 # Relocate the server files and clean up
 mv server/* .
 rm -rf server
+sudo chmod +x /home/ubuntu/dl/scripts/*.sh
 
 # Install application dependencies
 rm -rf node_modules package-lock.json
