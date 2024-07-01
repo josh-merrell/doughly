@@ -4,116 +4,137 @@ on:
   pull_request:
     branches: [main]
 
+  push:
+    branches: [main]
+
 jobs:
   deploy-api-ec2-prod:
+  # USE FOLLOWING TO TRIGGER CODE DEPLOY TO AUTOSCALING EC2 GROUP
     name: deploy-api-ec2-prod
-    if: contains(github.event.pull_request.labels.*.name, 'deploy-back-api-production')
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: List directory
+        run: ls -la
+      - name: "Configure AWS Credentials"
+        uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: Create Code Deploy
+        id: deploy
+        uses: webfactory/create-aws-codedeploy-deployment@v0.2.2
+        with:
+          application: doughly
+    # USE FOLLOWING TO UPDATE CODE ON SINGLE EC2 INSTANCE
+    # steps:
+    #   - name: Checkout Repository
+    #     uses: actions/checkout@v3
+    #     with:
+    #       ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Deploy to EC2
-        env:
-          API_EC2_HOST: ${{ secrets.API_EC2_HOST }}
-          SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
-          DEST_PATH: '/home/ubuntu/dl/'
-          APP_NAME: 'doughly'
-        run: |
-          # Install SSH Client (if not present)
-          sudo apt-get update
-          sudo apt-get install -y openssh-client
+    #   - name: Deploy to EC2
+    #     env:
+    #       API_EC2_HOST: ${{ secrets.API_EC2_HOST }}
+    #       SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
+    #       DEST_PATH: '/home/ubuntu/dl/'
+    #       APP_NAME: 'doughly'
+    #     run: |
+    #       # Install SSH Client (if not present)
+    #       sudo apt-get update
+    #       sudo apt-get install -y openssh-client
 
-          # Setup SSH Key
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+    #       # Setup SSH Key
+    #       mkdir -p ~/.ssh
+    #       echo "$SSH_KEY" > ~/.ssh/id_rsa
+    #       chmod 600 ~/.ssh/id_rsa
 
-          # SSH into the EC2 instance and run commands
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
-            # Stop the server using PM2
-            pm2 stop ${APP_NAME} || true  # '|| true' to ignore if the app isn't found
+    #       # SSH into the EC2 instance and run commands
+    #       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
+    #         # Stop the server using PM2
+    #         pm2 stop ${APP_NAME} || true  # '|| true' to ignore if the app isn't found
 
-            # Clean the directory
-            if [ -n "${DEST_PATH}" ]; then
-              rm -rf ${DEST_PATH}/*
-            fi
+    #         # Clean the directory
+    #         if [ -n "${DEST_PATH}" ]; then
+    #           rm -rf ${DEST_PATH}/*
+    #         fi
 
-            # Exit SSH session
-          EOF
+    #         # Exit SSH session
+    #       EOF
 
-          # Rsync to EC2
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts" ./server/ ubuntu@${API_EC2_HOST}:${DEST_PATH}
+    #       # Rsync to EC2
+    #       rsync -avz -e "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts" ./server/ ubuntu@${API_EC2_HOST}:${DEST_PATH}
 
-          # SSH into the EC2 instance to restart the server
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
-            # Navigate to the directory
-            cd ${DEST_PATH}
+    #       # SSH into the EC2 instance to restart the server
+    #       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
+    #         # Navigate to the directory
+    #         cd ${DEST_PATH}
 
-            # Clean and rebuild all node_modules
-            rm -rf node_modules package-lock.json
-            npm install
-            sudo npx playwright install-deps
+    #         # Clean and rebuild all node_modules
+    #         rm -rf node_modules package-lock.json
+    #         npm install
+    #         sudo npx playwright install-deps
 
-            # Export path to Google Service Account Credentials
-            export GOOGLE_APPLICATION_CREDENTIALS="~/dl/services/google/doughly-ee4c38c0be84.json"
+    #         # Export path to Google Service Account Credentials
+    #         export GOOGLE_APPLICATION_CREDENTIALS="~/dl/services/google/doughly-ee4c38c0be84.json"
             
-            # Start the server using PM2
-            pm2 start ../ecosystem.config.js
+    #         # Start the server using PM2
+    #         pm2 start ../ecosystem.config.js
 
-            # Save the PM2 process list to restart on server reboot
-            pm2 save
+    #         # Save the PM2 process list to restart on server reboot
+    #         pm2 save
 
-            # Exit SSH session
-          EOF
-      - name: Start Grafana Alloy Service
-        env:
-          API_EC2_HOST: ${{ secrets.API_EC2_HOST }}
-          SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
-        run: |
-          # Install SSH Client (if not present)
-          sudo apt-get update
-          sudo apt-get install -y openssh-client
+    #         # Exit SSH session
+    #       EOF
+      # - name: Start Grafana Alloy Service
+      #   env:
+      #     API_EC2_HOST: ${{ secrets.API_EC2_HOST }}
+      #     SSH_KEY: ${{ secrets.API_SSH_PRIVATE_KEY }}
+      #   run: |
+      #     # Install SSH Client (if not present)
+      #     sudo apt-get update
+      #     sudo apt-get install -y openssh-client
 
-          # Setup SSH Key
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+      #     # Setup SSH Key
+      #     mkdir -p ~/.ssh
+      #     echo "$SSH_KEY" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
 
-          # SSH into the EC2 instance and run commands
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
-            # update gpg
-            sudo apt install gpg
+      #     # SSH into the EC2 instance and run commands
+      #     ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${API_EC2_HOST} << EOF
+      #       # update gpg
+      #       sudo apt install gpg
 
-            # Import the GPG key and add the Grafana package repository.
-            sudo mkdir -p /etc/apt/keyrings/
-            wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
-            echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+      #       # Import the GPG key and add the Grafana package repository.
+      #       sudo mkdir -p /etc/apt/keyrings/
+      #       wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+      #       echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
 
-            # Updata the Repos
-            sudo apt-get update
+      #       # Updata the Repos
+      #       sudo apt-get update
 
-            # Install Alloy
-            sudo apt-get install alloy
+      #       # Install Alloy
+      #       sudo apt-get install alloy
 
-            # Start the service
-            sudo systemctl start alloy
+      #       # Start the service
+      #       sudo systemctl start alloy
 
-            # Configure to start on boot
-            sudo systemctl enable alloy.service
+      #       # Configure to start on boot
+      #       sudo systemctl enable alloy.service
 
-            # Copy Config file from /home/ubuntu to /etc/alloy
-            sudo cp /home/ubuntu/dl/config.alloy /etc/alloy/config.alloy
+      #       # Copy Config file from /home/ubuntu to /etc/alloy
+      #       sudo cp /home/ubuntu/dl/config.alloy /etc/alloy/config.alloy
 
-            # Restart Alloy Service
-            sudo systemctl restart alloy
-          EOF
+      #       # Restart Alloy Service
+      #       sudo systemctl restart alloy
+      #     EOF
 
   deploy-loki-change:
     name: Deploy Loki Change
-    if: contains(github.event.pull_request.labels.*.name, 'deploy-back-loki-change')
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-back-loki-change')
     runs-on: ubuntu-latest
     env:
       LOKI_EC2_HOST: ${{ secrets.LOKI_EC2_HOST }}
@@ -162,7 +183,7 @@ jobs:
 
   deploy-frontend-to-s3:
     name: deploy-frontend-to-s3
-    if: contains(github.event.pull_request.labels.*.name, 'deploy-front-production')
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-front-production')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
