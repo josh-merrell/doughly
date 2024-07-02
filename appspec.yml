@@ -4,7 +4,7 @@ files:
   - source: server/
     destination: /home/ubuntu/dl/
     overwrite: true
-file_exists_behavior: overwrite
+file_exists_behavior: OVERWRITE
 branch_config:
   main:
     deploymentGroupName: doughly-deployment-group
@@ -12,7 +12,7 @@ branch_config:
       serviceRoleArn: arn:aws:iam::167410491712:role/CodeDeployDoughly
 hooks:
   BeforeInstall:
-    - location: scripts/install_dependencies.sh
+    - location: /home/ubuntu/dl/scripts/install_dependencies.sh
       timeout: 300
       runas: ubuntu
   AfterInstall:
