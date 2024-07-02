@@ -1,0 +1,25 @@
+version: 0.0
+os: linux
+files:
+  - source: server/
+    destination: /home/ubuntu/dl/
+    overwrite: true
+file_exists_behavior: overwrite
+branch_config:
+  main:
+    deploymentGroupName: doughly-deployment-group
+    deploymentGroupConfig:
+      serviceRoleArn: arn:aws:iam::167410491712:role/CodeDeployDoughly
+hooks:
+  BeforeInstall:
+    - location: /home/ubuntu/dl/scripts/install_dependencies.sh
+      timeout: 300
+      runas: ubuntu
+  AfterInstall:
+    - location: /home/ubuntu/dl/scripts/start_application.sh
+      timeout: 300
+      runas: ubuntu
+  ApplicationStart:
+    - location: /home/ubuntu/dl/scripts/restart_alloy.sh
+      timeout: 300
+      runas: ubuntu
