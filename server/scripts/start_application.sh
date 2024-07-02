@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Ensure the ubuntu user has ownership of the .pm2 directory
+sudo chown -R ubuntu:ubuntu /home/ubuntu/.pm2
+
 # Navigate to the application directory
 cd /home/ubuntu/dl
 
