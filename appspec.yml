@@ -12,14 +12,14 @@ branch_config:
       serviceRoleArn: arn:aws:iam::167410491712:role/CodeDeployDoughly
 hooks:
   BeforeInstall:
-    - location: /home/ubuntu/dl/scripts/install_dependencies.sh
+    - location: server/scripts/install_dependencies.sh
       timeout: 300
       runas: ubuntu
   AfterInstall:
-    - location: /home/ubuntu/dl/scripts/start_application.sh
+    - location: server/scripts/start_application.sh
       timeout: 300
       runas: ubuntu
   ApplicationStart:
-    - location: /home/ubuntu/dl/scripts/restart_alloy.sh
+    - location: server/scripts/restart_alloy.sh
       timeout: 300
       runas: ubuntu
