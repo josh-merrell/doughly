@@ -28,7 +28,7 @@ module.exports = ({ db }) => {
       global.logger.info({ message: `Got ${tools.length} tools`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // return tools;
       // return tools and add one dummy tool
-      return [...tools, { toolID: 999999, name: 'dummy', brand: 'dummy' }];
+      return [...tools, { toolID: 999998, name: 'dummy', brand: 'dummy' }];
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in tools getAll', err.code || 520, err.name || 'unhandledError_tools-getAll', err.isOperational || false, err.severity || 2);
     }
