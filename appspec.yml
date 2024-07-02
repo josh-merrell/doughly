@@ -12,7 +12,7 @@ branch_config:
       serviceRoleArn: arn:aws:iam::167410491712:role/CodeDeployDoughly
 hooks:
   BeforeInstall:
-    - location: /home/ubuntu/dl/scripts/install_dependencies.sh
+    - location: scripts/install_dependencies.sh
       timeout: 300
       runas: ubuntu
   AfterInstall:
