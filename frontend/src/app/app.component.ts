@@ -280,6 +280,14 @@ export class AppComponent {
               this.redirectPathService.setPath('/kitchen/ingredients');
               this.router.navigateByUrl('/loading');
               break;
+            case 'notifyFriendListShare':
+              this.redirectPathService.setPath('/groceries/shared');
+              this.router.navigateByUrl('/loading');
+              break;
+            case 'notifyFriendListProgress':
+              this.redirectPathService.setPath('/groceries/shopping');
+              this.router.navigateByUrl('/loading');
+              break;
             default:
               this.router.navigateByUrl('/login');
               break;

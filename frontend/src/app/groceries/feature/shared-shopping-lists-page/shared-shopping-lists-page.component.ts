@@ -25,6 +25,7 @@ import {
 import { ShoppingListActions } from '../../state/shopping-list-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 
 @Component({
   selector: 'dl-shared-shopping-lists-page',
@@ -50,7 +51,8 @@ export class SharedShoppingListsPageComponent {
     private router: Router,
     public extraStuffService: ExtraStuffService,
     public unitService: UnitService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private pushTokenService: PushTokenService
   ) {
     effect(
       () => {
@@ -235,7 +237,7 @@ export class SharedShoppingListsPageComponent {
         } else if (result.status === 'cancel') {
           this.isLoading.set(false);
           return;
-        }  else if (result.status === 'confirm') {
+        } else if (result.status === 'confirm') {
           const itemsToSave = this.selectedSLIngred().itemsToSave;
           itemsToSave.forEach((ingr) => {
             ingr.purchasedDate = new Date().toISOString();
@@ -281,6 +283,7 @@ export class SharedShoppingListsPageComponent {
                       true
                     );
                   } else {
+                    this.sendPushNotification(selectedList.friend.userID, itemsToSave.length);
                     this.modalService.open(
                       ConfirmationModalComponent,
                       {
@@ -306,6 +309,30 @@ export class SharedShoppingListsPageComponent {
         }
       });
     }
+  }
+
+  sendPushNotification(friendUserID, itemCount: number) {
+    if (!friendUserID || !itemCount) {
+      return;
+    }
+    this.pushTokenService
+      .sendPushNotificationToUserNoCheck(
+        friendUserID,
+        'notifyFriendListProgress',
+        {
+          purchasedBy: this.profile()!.username,
+          itemCount
+        }
+      )
+      .subscribe(
+        () => {},
+        (error) => {
+          console.error(
+            'Error sending push notification after sharing list: ',
+            error
+          );
+        }
+      );
   }
 
   onListClick(shoppingListID: number): void {

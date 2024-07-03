@@ -20,6 +20,8 @@ import { filter, take } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 
 @Component({
   selector: 'dl-share-list-modal',
@@ -32,19 +34,24 @@ export class ShareListModalComponent {
   public selectedCard: WritableSignal<number> = signal(999);
   public buttonTexts: WritableSignal<any[]> = signal([]);
   public isLoading: WritableSignal<boolean> = signal(false);
+  private profile: WritableSignal<any> = signal(null);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private dialogRef: MatDialogRef<ShareListModalComponent>,
     public extraStuffService: ExtraStuffService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private pushTokenService: PushTokenService
   ) {}
 
   ngOnInit(): void {
     this.data.friendsNotShared = this.data.friendsNotShared.filter(
       (friend) => friend.username !== null
     );
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.profile.set(profile);
+    });
     this.data.friendsNotShared.sort((a, b) => {
       if (a.nameFirst < b.nameFirst) {
         return -1;
@@ -66,6 +73,9 @@ export class ShareListModalComponent {
   }
 
   onShareClick(): void {
+    if (this.selectedCard() === 999) {
+      return;
+    }
     // use selectedCard to find friend profile
     const friend = this.friendsNotShared().filter(
       (_, index) => index === this.selectedCard()
@@ -79,7 +89,7 @@ export class ShareListModalComponent {
     );
     this.store
       .select(selectLoading)
-      .pipe(filter((loading) => !loading))
+      .pipe(filter((loading) => !loading),take(1))
       .subscribe(() => {
         this.store
           .select(selectError)
@@ -87,7 +97,6 @@ export class ShareListModalComponent {
           .subscribe((error) => {
             this.isLoading.set(false);
             if (error) {
-              console.error('Error sharing list: ', error);
               this.modalService.open(
                 ErrorModalComponent,
                 {
@@ -101,6 +110,7 @@ export class ShareListModalComponent {
                 true
               );
             } else {
+              this.sendPushNotification(friend.userID);
               this.modalService.open(
                 ConfirmationModalComponent,
                 {
@@ -116,6 +126,29 @@ export class ShareListModalComponent {
             }
           });
       });
+  }
+
+  sendPushNotification(friendUserID) {
+    if (!friendUserID) {
+      return;
+    }
+    this.pushTokenService
+      .sendPushNotificationToUserNoCheck(
+        friendUserID,
+        'notifyFriendListShare',
+        {
+          friendUsername: this.profile().username,
+        }
+      )
+      .subscribe(
+        () => {},
+        (error) => {
+          console.error(
+            'Error sending push notification after sharing list: ',
+            error
+          );
+        }
+      );
   }
 
   onFriendshipLoaded(index: number, friendship: any): void {
