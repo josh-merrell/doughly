@@ -45,9 +45,7 @@ import {
 } from 'src/app/shared/utils/formValidator';
 import { selectRecipeCategories } from 'src/app/recipes/state/recipe-category/recipe-category-selectors';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
-import {
-  selectProfile,
-} from 'src/app/profile/state/profile-selectors';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 
@@ -64,7 +62,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     ImageCropperModule,
     MatSlideToggleModule,
     TextInputComponent,
-    SelectInputComponent
+    SelectInputComponent,
   ],
   templateUrl: './edit-recipe-modal.component.html',
 })
@@ -304,13 +302,18 @@ export class EditRecipeModalComponent {
               console.error(
                 `Recipe update failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.modalService.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              }, 2, true);
+                2,
+                true
+              );
             } else {
               this.sendPushNotification();
               this.dialogRef.close('success');

@@ -219,9 +219,6 @@ export class FriendModalComponent {
   }
 
   onFriendButtonClick(): void {
-    if (!this.friendship()) {
-      return;
-    }
     switch (this.friendship()?.status) {
       case 'confirmed':
         this.isLoading.set(true);
@@ -346,8 +343,46 @@ export class FriendModalComponent {
           });
         break;
       default:
-        console.log(`No friend to add!`);
-        break;
+        // create new friendship
+        this.isLoading.set(true);
+        this.store.dispatch(
+          FriendshipActions.addFriendship({
+            friend: this.friend.userID,
+          })
+        );
+        this.store
+          .select(selectUpdatingFriendship)
+          .pipe(
+            filter((adding) => !adding),
+            take(1)
+          )
+          .subscribe(() => {
+            this.store
+              .select(selectErrorFriendship)
+              .pipe(take(1))
+              .subscribe((error) => {
+                if (error) {
+                  console.error(
+                    `Error adding friendship: ${error.message}, CODE: ${error.statusCode}`
+                  );
+                  this.modalService.open(
+                    ErrorModalComponent,
+                    {
+                      maxWidth: '380px',
+                      data: {
+                        errorMessage: error.message,
+                        statusCode: error.statusCode,
+                      },
+                    },
+                    2,
+                    true
+                  );
+                }
+                // notify user of friend request
+                this.sendPushNotification('notifyRequestFriendship');
+                this.isLoading.set(false);
+              });
+          });
     }
   }
 
@@ -513,6 +548,29 @@ export class FriendModalComponent {
             )
             .subscribe();
         }
+        return null;
+      case 'notifyRequestFriendship':
+        console.log('Sending push notification to requested friend')
+        this.pushTokenService
+          .sendPushNotificationToUserNoCheck(
+            this.friend.userID,
+            'notifyRequestFriendship',
+            {
+              requesterName: `${this.myProfile().nameFirst} ${
+                this.myProfile().nameLast
+              }`,
+              requesterUserID: this.myProfile().userID,
+            }
+          )
+          .subscribe(
+            () => {},
+            (error) => {
+              console.error(
+                'Error sending push notification after requesting friendship:',
+                error
+              );
+            }
+          );
         return null;
       default:
         return null;

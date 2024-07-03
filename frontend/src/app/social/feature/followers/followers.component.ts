@@ -25,8 +25,14 @@ export class FollowersComponent {
     const searchFilter = this.searchFilter();
     const persons =
       this.view() === 'followers' ? this.followers() : this.following();
+
+    // Filter out entries where 'person.nameFirst' or 'person.nameLast' are empty
+    const validPersons = persons.filter(
+      (person) => person.nameFirst && person.nameLast
+    );
+
     if (searchFilter) {
-      return persons.filter((person) => {
+      return validPersons.filter((person) => {
         return (
           person.nameFirst.toLowerCase().includes(searchFilter.toLowerCase()) ||
           person.nameLast.toLowerCase().includes(searchFilter.toLowerCase()) ||
@@ -34,7 +40,7 @@ export class FollowersComponent {
         );
       });
     } else {
-      return persons;
+      return validPersons;
     }
   });
 

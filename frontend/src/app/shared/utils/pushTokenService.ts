@@ -48,9 +48,9 @@ export class PushTokenService {
   }
 
   public getFriendPushTokensAndSendNotification(
-    settingName,
-    type,
-    data
+    settingName: string | null,
+    type: string,
+    data: any
   ): Observable<any> {
     return this.store.select(selectFriends).pipe(
       take(1),
@@ -62,21 +62,39 @@ export class PushTokenService {
       mergeMap((friend: any) =>
         this.store.select(selectFriendByUserID(friend.userID)).pipe(
           take(1),
-          filter(
-            (friendProfile) =>
-              !(
-                friendProfile[settingName] === 'None' ||
-                friendProfile[settingName] === 'Email Only'
-              )
-          ),
-          mergeMap((friendProfile) =>
-            this.getOtherUserPushTokens(friendProfile.userID).pipe(
-              catchError((error) => {
-                console.error('Error getting push tokens for user: ', error);
-                return of([]);
-              })
-            )
-          ),
+          mergeMap((friendProfile) => {
+            if (settingName === null || settingName === undefined) {
+              // If settingName is null, proceed directly
+              return this.getOtherUserPushTokens(friendProfile.userID).pipe(
+                catchError((error) => {
+                  console.error('Error getting push tokens for user: ', error);
+                  return of([]);
+                })
+              );
+            } else {
+              // Otherwise, check the setting
+              return of(friendProfile).pipe(
+                filter(
+                  (profile) =>
+                    !(
+                      profile[settingName] === 'None' ||
+                      profile[settingName] === 'Email Only'
+                    )
+                ),
+                mergeMap(() =>
+                  this.getOtherUserPushTokens(friendProfile.userID).pipe(
+                    catchError((error) => {
+                      console.error(
+                        'Error getting push tokens for user: ',
+                        error
+                      );
+                      return of([]);
+                    })
+                  )
+                )
+              );
+            }
+          }),
           mergeMap((tokens) =>
             this.sendPushNotification(tokens, type, data).pipe(
               catchError((error) => {
@@ -147,7 +165,13 @@ export class PushTokenService {
       }),
       mergeMap((searchResults) => from(searchResults)),
       filter((result: any) => result.userID === targetUserID),
-      filter((targetUser) => !(targetUser[settingName] === 'None' || targetUser[settingName] === 'Email Only')),
+      filter(
+        (targetUser) =>
+          !(
+            targetUser[settingName] === 'None' ||
+            targetUser[settingName] === 'Email Only'
+          )
+      ),
       mergeMap((targetUser) =>
         this.getOtherUserPushTokens(targetUser.userID).pipe(
           catchError((error) => {
@@ -167,8 +191,11 @@ export class PushTokenService {
     );
   }
 
-  public sendPushNotificationToUserNoCheck(targetUserID, type, data): Observable<any>{
-    console.log('HERE');
+  public sendPushNotificationToUserNoCheck(
+    targetUserID,
+    type,
+    data
+  ): Observable<any> {
     return this.getOtherUserPushTokens(targetUserID).pipe(
       mergeMap((tokens) =>
         this.sendPushNotification(tokens, type, data).pipe(

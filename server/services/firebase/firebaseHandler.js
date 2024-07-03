@@ -19,7 +19,6 @@ async function sendTokenNotifications(destTokens, type, data) {
       if (data['imageUrl']) {
         message = addImage(message, data['imageUrl']);
       }
-      global.logger.info({ message: `Sending token message: ${JSON.stringify(message)}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
       await sendTokenNotification(message);
     }
   } catch (err) {
@@ -28,14 +27,15 @@ async function sendTokenNotifications(destTokens, type, data) {
 }
 
 async function sendTokenNotification(message) {
+  global.logger.info({ message: `'sendTokenNotification' Sending Notification: ${JSON.stringify(message)}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
   const messaging = getMessaging(app);
   await messaging
     .send(message)
     .then((response) => {
       global.logger.info({ message: `Successfully sent token message: ${response}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     })
-    .catch((error) => {
-      throw errorGen('err.message || Unhandled Error in firebaseHandler sendTokenNotification', err.code || 520, 'err.name || unhandledError_firebaseHandler-sendTokenNotification', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+    .catch((err) => {
+      throw errorGen(`${err.message} || Unhandled Error in firebaseHandler sendTokenNotification`, err.code || 520, `${err.name} || unhandledError_firebaseHandler-sendTokenNotification`, err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     });
 }
 
@@ -174,6 +174,29 @@ function getPayload(type, data) {
         notification: {
           title: 'Ingredient Expires Soon',
           body: `${data['measurement']} ${data['measurementUnit']} of ${data['name']} will expire soon`,
+        },
+      };
+    // Implemented
+    case 'notifyFriendListShare':
+      return {
+        message: {
+          type: 'notifyFriendListShare',
+          message: 'Shopping List Shared',
+        },
+        notification: {
+          title: 'Shopping List Shared',
+          body: `${data['friendUsername']} shared their shopping list with you`,
+        },
+      };
+    case 'notifyFriendListProgress':
+      return {
+        message: {
+          type: 'notifyFriendListProgress',
+          message: 'Shopping List Progress',
+        },
+        notification: {
+          title: 'Shopping List Progress',
+          body: `${data['purchasedBy']} bought ${data['itemCount']} items from your shared shopping list`,
         },
       };
 

@@ -2,7 +2,9 @@
   <!-- If not loading -->
   <div *ngIf="!isLoading()" class="flex h-full flex-col items-center">
     <!-- Horizontal List of Shared List Widgets -->
-    <div class="pl-dl-3 pb-dl-3 my-dl-4 flex max-w-100 overflow-x-auto whitespace-nowrap">
+    <div
+      class="max-w-100 mt-dl-4 flex min-h-dl-7 overflow-x-auto whitespace-nowrap pb-dl-3 pl-dl-3"
+    >
       <div
         *ngFor="let list of displaySharedShoppingLists()"
         class="mr-dl-4 flex h-dl-6 flex-shrink-0 items-center rounded-full bg-white shadow-md dark:bg-dl-grey-2"
@@ -41,9 +43,9 @@
             {{ list.friend.username }}'s list
           </p>
           <!-- Item Count -->
-          <div class="flex items-center ">
+          <div class="flex items-center">
             <span
-              class=" mr-dl-2 inline-flex items-center justify-center text-dl-4 italic text-dl-teal-3 dark:text-dl-teal-7"
+              class="mr-dl-2 inline-flex items-center justify-center text-dl-4 italic text-dl-teal-3 dark:text-dl-teal-7"
             >
               {{ getItemCountString(list) }}
             </span>
@@ -70,7 +72,7 @@
       </div>
     </div>
     <!-- Header Row -->
-    <div class="mb-dl-5 flex w-full justify-between px-dl-5">
+    <div class="mb-dl-3 flex w-full justify-between px-dl-5">
       <p
         class="mb-dl-3 mt-dl-5 pl-dl-7 text-center text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
       >
@@ -116,7 +118,10 @@
           <!-- Grey Trashcan (only if item 'purchasedMeasurement' is not present)-->
           <svg
             *ngIf="
-              !((!item.store && item.purchasedMeasurement && item.valueValid) || item.store)
+              !(
+                (!item.store && item.purchasedMeasurement && item.valueValid) ||
+                item.store
+              )
             "
             data-name="Layer 1"
             viewBox="20 20 70 75"
@@ -221,7 +226,11 @@
     <!-- Save Button -->
     <button
       type="button"
-      *ngIf="isLoading() === false && selectedSLIngred().itemsToSave && selectedSLIngred().itemsToSave.length"
+      *ngIf="
+        isLoading() === false &&
+        selectedSLIngred().itemsToSave &&
+        selectedSLIngred().itemsToSave.length
+      "
       class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1"
       (click)="onSaveClick()"
     >
