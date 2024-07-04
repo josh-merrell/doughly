@@ -778,6 +778,8 @@ export class UserRecipeComponent {
       // if last letter is "y" and not preceded by a vowel, change "y" to "ies"
       if (['y'].includes(name[name.length - 1])) {
         return name.slice(0, -1) + 'ies';
+      } else if (['sh'].includes(name.slice(-2))) {
+        return name + 'es';
       } else {
         return name + 's';
       }

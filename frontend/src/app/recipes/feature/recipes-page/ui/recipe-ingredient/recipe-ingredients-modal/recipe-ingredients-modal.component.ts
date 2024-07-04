@@ -62,6 +62,7 @@ export class RecipeIngredientsModalComponent {
   displayNoReview: WritableSignal<any> = signal([]);
   displayNeedsReview$!: Observable<any[]>;
   displayNoReview$!: Observable<any[]>;
+  private components: WritableSignal<any> = signal([]);
 
   constructor(
     public dialog: MatDialog,
@@ -84,6 +85,13 @@ export class RecipeIngredientsModalComponent {
       this.ingredientsToAddSubject.asObservable(),
     ]).pipe(
       map(([recipeIngredients, allIngredients, ingredientsToAdd]) => {
+        const components = new Set();
+        recipeIngredients.forEach((ri) => {
+          if (ri.component) {
+            components.add(ri.component);
+          }
+        });
+        this.components.set(Array.from(components));
         const enrichedRecipeIngredients = recipeIngredients.map((ri) => ({
           ...ri,
           name: allIngredients.find(
@@ -115,6 +123,10 @@ export class RecipeIngredientsModalComponent {
         return sortedOne;
       })
     );
+
+    // effect(() => {
+    //   const displayedIngredients$
+    // })
   }
 
   enrichMeasurementUnit(measurementUnit) {
@@ -314,6 +326,7 @@ export class RecipeIngredientsModalComponent {
       EditRecipeIngredientModalComponent,
       {
         data: {
+          components: this.components(),
           recipeIngredient: {
             ingredient: recipeIngredient.name,
             recipeID: this.recipe.recipeID,

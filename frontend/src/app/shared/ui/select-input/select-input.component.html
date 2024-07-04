@@ -20,8 +20,6 @@
         *ngIf="!value"
         style="pointer-events: none"
         class="z-15 absolute right-5 top-1/2 -translate-y-1/2 rotate-90 transform"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
         version="1.1"
         height="15"
         width="15"
@@ -38,6 +36,19 @@
       *ngIf="isOpen()"
       class="absolute top-10 z-20 max-h-dl-12 w-full overflow-y-auto rounded-b-md border-2 border-t-0 border-dl-blue-5 bg-white shadow-lg dark:bg-dl-grey-2"
     >
+      <div class="sticky top-0 z-10 bg-white dark:bg-dl-grey-2">
+        <input
+          type="text"
+          class="w-full border px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-grey-4 ring-transparent focus:ring-transparent dark:bg-dl-grey-2 dark:text-dl-grey-8"
+          (input)="onFilterChange($event)"
+          [ngClass]="{
+            'rounded-b-none border-dl-blue-5 bg-white focus:border-dl-blue-4 dark:bg-dl-grey-3 focus:dark:border-dl-blue-7':
+              isOpen(),
+            'rounded-b-md border-transparent bg-dl-grey-10 ring-dl-grey-8 dark:bg-dl-grey-2':
+              !isOpen()
+          }"
+        />
+      </div>
       <div
         *ngIf="additionalOptionName"
         (click)="selectOption({ value: 'new', display: additionalOptionName })"

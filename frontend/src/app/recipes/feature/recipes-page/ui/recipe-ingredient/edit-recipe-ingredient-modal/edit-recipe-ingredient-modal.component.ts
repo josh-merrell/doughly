@@ -63,7 +63,7 @@ import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
     MatInputModule,
     TextInputComponent,
     SelectInputComponent,
-    ValueSyncDirective // needed to correctly update form values received from textInput
+    ValueSyncDirective, // needed to correctly update form values received from textInput
   ],
   templateUrl: './edit-recipe-ingredient-modal.component.html',
 })
@@ -79,6 +79,9 @@ export class EditRecipeIngredientModalComponent {
   public recipe!: WritableSignal<Recipe>;
   public purchaseUnitRatioSuggestion: WritableSignal<number> = signal(0);
   public gettingUnitRatio: WritableSignal<boolean> = signal(false);
+  public components: WritableSignal<string[]> = signal([]);
+  public selectedComponent: WritableSignal<string> = signal('');
+  public quickTapComponents: WritableSignal<string[]> = signal([]);
 
   constructor(
     public dialogRef: MatDialogRef<EditRecipeIngredientModalComponent>,
@@ -95,6 +98,8 @@ export class EditRecipeIngredientModalComponent {
   }
 
   ngOnInit() {
+    this.components.set(this.data.components);
+    this.quickTapComponents.set(this.data.components);
     // get plural
     this.pUnit = this.unitService.plural(
       this.data.recipeIngredient.purchaseUnit
@@ -116,6 +121,12 @@ export class EditRecipeIngredientModalComponent {
       ),
       purchaseUnitRatio: this.data.recipeIngredient.purchaseUnitRatio,
     });
+    this.selectedComponent.set(this.data.recipeIngredient.component);
+    this.quickTapComponents.set(
+      this.data.components.filter(
+        (c) => c !== this.data.recipeIngredient.component
+      )
+    );
     this.subscribeToFormChanges();
   }
 
@@ -259,6 +270,16 @@ export class EditRecipeIngredientModalComponent {
 
   onConfirm() {
     this.onSubmit();
+  }
+
+  componentQuickTap(component: string) {
+    this.form.patchValue({ component });
+    this.selectedComponent.set(component);
+    this.quickTapComponents.set(
+      this.components().filter((c) => c !== component)
+    );
+    // mark the form as not pristine
+    this.form.markAsDirty();
   }
 
   onCancel() {
