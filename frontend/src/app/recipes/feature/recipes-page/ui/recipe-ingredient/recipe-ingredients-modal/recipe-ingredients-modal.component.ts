@@ -277,6 +277,7 @@ export class RecipeIngredientsModalComponent {
           AddRecipeIngredientModalComponent,
           {
             data: {
+              components: this.components(),
               ingredientsToExclude: [],
             },
             width: '75%',
