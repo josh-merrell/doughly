@@ -80,6 +80,9 @@ export class AddRecipeIngredientModalComponent {
   isLoading$: Observable<boolean>;
   private addingSubscription!: Subscription;
   purchaseUnits: PurchaseUnit[] = Object.values(PurchaseUnit);
+  public components: WritableSignal<string[]> = signal([]);
+  public selectedComponent: WritableSignal<string> = signal('');
+  public quickTapComponents: WritableSignal<string[]> = signal([]);
 
   public purLabel: WritableSignal<string> = signal('Purchase Unit Ratio');
   public mUnit: string = 'Measurement Unit';
@@ -111,6 +114,9 @@ export class AddRecipeIngredientModalComponent {
   }
 
   ngOnInit() {
+    this.setForm();
+    this.components.set(this.data.components);
+    this.quickTapComponents.set(this.data.components);
     this.store.select(selectIngredients).subscribe((ingredients) => {
       const sorted = [...ingredients].sort((a, b) =>
         a.name.localeCompare(b.name)
@@ -120,7 +126,7 @@ export class AddRecipeIngredientModalComponent {
     });
     // sort the purchaseUnits
     this.purchaseUnits.sort((a, b) => a.localeCompare(b));
-    this.setForm();
+    this.quickTapComponents.set(this.data.components);
     this.subscribeToFormChanges();
   }
 
@@ -309,6 +315,16 @@ export class AddRecipeIngredientModalComponent {
 
   onCancel() {
     this.dialogRef.close('cancel');
+  }
+
+  componentQuickTap(component: string) {
+    this.form.patchValue({ component });
+    this.selectedComponent.set(component);
+    this.quickTapComponents.set(
+      this.components().filter((c) => c !== component)
+    );
+    // mark the form as not pristine
+    this.form.markAsDirty();
   }
 
   ngOnDestroy() {
