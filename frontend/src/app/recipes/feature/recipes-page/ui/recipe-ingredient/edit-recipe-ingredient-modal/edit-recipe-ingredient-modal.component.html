@@ -51,6 +51,7 @@
               appValueSync
             ></dl-text-input>
           </div>
+          <!-- Measurement Unit -->
           <div id="form-measurementUnit" class="relative flex flex-col">
             <dl-select-input
               label="Unit (curr:
@@ -75,9 +76,9 @@
               <div
                 *ngFor="let item of quickTapComponents()"
                 (click)="componentQuickTap(item)"
-                class="font-dl-2 mr-dl-3 mb-dl-3 items-center rounded-dl-1 bg-dl-grey-7 px-dl-2 text-dl-5 text-dl-grey-1 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2 dark:text-dl-grey-10"
+                class="mb-dl-3 mr-dl-3 items-center rounded-dl-1 bg-dl-grey-7 px-dl-2 text-dl-5 font-dl-2 text-dl-grey-1 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2 dark:text-dl-grey-10"
               >
-                {{item}}
+                {{ item }}
               </div>
             </div>
           </div>

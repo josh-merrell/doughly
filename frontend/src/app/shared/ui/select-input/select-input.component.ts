@@ -54,6 +54,7 @@ export class SelectInputComponent
   @Input() noLabel: boolean = false;
   @Output() newOptionSelected: EventEmitter<void> = new EventEmitter<void>();
   public sortedOptions: any[] = [];
+  public filterString: string = '';
 
   constructor(
     public extraStuffService: ExtraStuffService,
@@ -153,6 +154,9 @@ export class SelectInputComponent
           value: option[this.optionValueProperty],
         }))
         .filter((option) => option.value !== this.value) // Filter out the current value
+        .filter((option) =>
+          option.display.toLowerCase().includes(this.filterString.toLowerCase())
+        ) // Filter based on filterString
         .sort((a, b) => a.display.localeCompare(b.display));
     } else {
       this.sortedOptions = this.options
@@ -161,7 +165,16 @@ export class SelectInputComponent
           value: option,
         }))
         .filter((option) => option.value !== this.value) // Filter out the current value
+        .filter((option) =>
+          option.display.toLowerCase().includes(this.filterString.toLowerCase())
+        ) // Filter based on filterString
         .sort();
     }
+  }
+
+  onFilterChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.filterString = input.value;
+    this.updateSortedOptions();
   }
 }
