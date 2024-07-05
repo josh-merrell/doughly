@@ -109,11 +109,18 @@ import {
 } from 'src/app/footer/state/message-selectors';
 import { Subscription, timer } from 'rxjs';
 import { ProductService } from 'src/app/shared/utils/productService';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'dl-loading-page',
   standalone: true,
-  imports: [CommonModule, RouterLinkWithHref, MatProgressSpinnerModule],
+  imports: [
+    CommonModule,
+    RouterLinkWithHref,
+    MatProgressSpinnerModule,
+    LottieComponent,
+  ],
   templateUrl: './loading-page.component.html',
 })
 export class LoadingPageComponent {
@@ -136,6 +143,22 @@ export class LoadingPageComponent {
   private isLoadingShoppingList: WritableSignal<boolean> = signal(true);
   private isLoadingSharedShoppingList: WritableSignal<boolean> = signal(true);
   private isLoadingShoppingListRecipe: WritableSignal<boolean> = signal(true);
+  private isMinimumTimeDone: WritableSignal<boolean> = signal(false);
+
+  // Lottie animation
+  private animationItem: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/bubblingPot.json',
+    loop: true,
+    autoplay: true,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
 
   private timeoutSubscription!: Subscription;
 
@@ -173,6 +196,7 @@ export class LoadingPageComponent {
         const isLoadingShoppingList = this.isLoadingShoppingList();
         const isLoadingSharedShoppingList = this.isLoadingSharedShoppingList();
         const isLoadingShoppingListRecipe = this.isLoadingShoppingListRecipe();
+        const isMinimumTimeDone = this.isMinimumTimeDone();
 
         switch (stateToLoad) {
           case 'messages':
@@ -199,7 +223,8 @@ export class LoadingPageComponent {
               !isLoadingProfile &&
               !isLoadingShoppingList &&
               !isLoadingSharedShoppingList &&
-              !isLoadingShoppingListRecipe
+              !isLoadingShoppingListRecipe &&
+              isMinimumTimeDone
             ) {
               this.extraStuffService.stateToLoad.set('');
               this.isLoadingGlobal.set(false);
@@ -212,6 +237,7 @@ export class LoadingPageComponent {
 
   ngOnInit() {
     this.isLoadingGlobal.set(true);
+    this.waitMinumimTime();
     this.loadState();
     this.setupTimer();
   }
@@ -230,6 +256,15 @@ export class LoadingPageComponent {
       }
     });
   }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1);
+  }
+  loopComplete(): void {
+    // this.animationItem?.pause();
+  }
+
 
   loadState() {
     switch (this.extraStuffService.stateToLoad()) {
@@ -519,5 +554,11 @@ export class LoadingPageComponent {
         }
       });
     });
+  }
+
+  waitMinumimTime() {
+    setTimeout(() => {
+      this.isMinimumTimeDone.set(true);
+    }, 2000);
   }
 }

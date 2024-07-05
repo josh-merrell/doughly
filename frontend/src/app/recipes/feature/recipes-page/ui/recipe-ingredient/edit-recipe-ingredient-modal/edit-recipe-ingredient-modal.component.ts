@@ -50,6 +50,8 @@ import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'dl-edit-recipe-ingredient-modal',
@@ -64,6 +66,7 @@ import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
     TextInputComponent,
     SelectInputComponent,
     ValueSyncDirective, // needed to correctly update form values received from textInput
+    LottieComponent,
   ],
   templateUrl: './edit-recipe-ingredient-modal.component.html',
 })
@@ -74,6 +77,21 @@ export class EditRecipeIngredientModalComponent {
   public mUnit!: string;
   public pUnit!: string;
   public purLabel: WritableSignal<string> = signal('Purchase Unit Ratio');
+
+  // Lottie animation
+  private animationItem: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/stars-dark.json',
+    loop: true,
+    autoplay: true,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
 
   public recipeIngredient!: WritableSignal<any>;
   public recipe!: WritableSignal<Recipe>;
@@ -270,6 +288,14 @@ export class EditRecipeIngredientModalComponent {
 
   onConfirm() {
     this.onSubmit();
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.8);
+  }
+  loopComplete(): void {
+    this.animationItem?.pause();
   }
 
   componentQuickTap(component: string) {

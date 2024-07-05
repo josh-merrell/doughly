@@ -1,5 +1,21 @@
 <div class="flex h-full w-full flex-col items-center pt-dl-4 dark:bg-dl-grey-1">
-  <div *ngIf="isLoadingGlobal()" class="flex h-full w-full items-center justify-center">
-    <mat-spinner class="my-app-custom-spinner"></mat-spinner>
+  <div
+    *ngIf="isLoadingGlobal()"
+    class="px-dl-6 flex h-full w-full flex-col items-center justify-center"
+  >
+    <p
+      class="ml-dl-3 text-dl-6 font-dl-2 italic text-dl-grey-2 dark:text-dl-grey-9"
+    >
+      Cooking up something great
+    </p>
+    <!-- <mat-spinner class="my-app-custom-spinner"></mat-spinner> -->
+    <ng-lottie
+      containerClass=""
+      height="250px"
+      width="250px"
+      (animationCreated)="animationCreated($event)"
+      (loopComplete)="loopComplete()"
+      [options]="animationOptions"
+    />
   </div>
 </div>
