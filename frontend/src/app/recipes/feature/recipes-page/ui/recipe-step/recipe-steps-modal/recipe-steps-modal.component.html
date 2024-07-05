@@ -5,12 +5,21 @@
     class="my-app-custom-spinner"
     *ngIf="isAdding$ | async"
   ></mat-spinner>
-  <div class="mb-dl-3 text-center">
+  <div class="w-full flex flex-col relative mb-dl-3 text-center">
     <p
       class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
     >
       Steps
     </p>
+    <ng-lottie
+      containerClass="absolute -right-4 top-0"
+      height="45px"
+      width="45px"
+      (animationCreated)="animationCreated($event)"
+      (loopComplete)="loopComplete()"
+      [options]="animationOptions"
+      (click)="animationClick()"
+    />
   </div>
   <div
     *ngIf="!(isAdding$ | async)"

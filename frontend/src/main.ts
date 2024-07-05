@@ -59,10 +59,16 @@ import { ShoppingListIngredientReducer } from './app/groceries/state/shopping-li
 import { ShoppingListIngredientEffects } from './app/groceries/state/shopping-list-ingredient-effects';
 import { MessageReducer } from './app/footer/state/message-reducers';
 import { MessageEffects } from './app/footer/state/message-effects';
-
+import {
+  provideCacheableAnimationLoader,
+  provideLottieOptions,
+} from 'ngx-lottie';
+import player from 'lottie-web';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideLottieOptions({ player: () => player }),
+    provideCacheableAnimationLoader(),
     provideRouter(routes),
     provideStore(),
     provideState('shared', sharedReducer),
