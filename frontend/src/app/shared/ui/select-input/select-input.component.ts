@@ -11,6 +11,7 @@ import {
   EventEmitter,
   signal,
   WritableSignal,
+  ViewChild,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -43,6 +44,8 @@ import { ExtraStuffService } from '../../utils/extraStuffService';
 export class SelectInputComponent
   implements ControlValueAccessor, Validator, OnChanges
 {
+  @ViewChild('inputField') inputField!: ElementRef;
+
   @Input() label: string = '';
   @Input() formControlName: string = '';
   @Input() options: any[] = []; // Allow any type to handle objects
@@ -65,6 +68,12 @@ export class SelectInputComponent
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['options']) {
       this.updateSortedOptions();
+    }
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.isOpen() && this.inputField) {
+      this.inputField.nativeElement.focus();
     }
   }
 

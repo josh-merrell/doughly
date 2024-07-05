@@ -4,6 +4,8 @@ import {
   Inject,
   Renderer2,
   ViewChild,
+  WritableSignal,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -52,6 +54,8 @@ import { DeleteRecipeStepModalComponent } from '../delete-recipe-step-modal/dele
 import { EditRecipeStepModalComponent } from '../edit-recipe-step-modal/edit-recipe-step-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 interface RecipeStepToUpdate {
   recipeStepID: any; // Replace 'any' with a more specific type if possible
@@ -63,7 +67,12 @@ interface RecipeStepToUpdate {
 @Component({
   selector: 'dl-recipe-steps-modal',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule, DragDropModule],
+  imports: [
+    CommonModule,
+    MatProgressSpinnerModule,
+    DragDropModule,
+    LottieComponent,
+  ],
   templateUrl: './recipe-steps-modal.component.html',
 })
 export class RecipeStepsModalComponent {
@@ -79,6 +88,22 @@ export class RecipeStepsModalComponent {
   private displayRecipeStepsSubject = new BehaviorSubject<any[]>([]);
   displayRecipeSteps$ = this.displayRecipeStepsSubject.asObservable();
   modalActiveForRowID: number | null = null;
+
+  // Lottie animation
+  private animationItem: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/dragToReorder-dark.json',
+    loop: true,
+    autoplay: true,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
+  private loopCount: WritableSignal<number> = signal(0);
 
   itemMenuOpen = { index: -1, open: false };
   @ViewChild('itemMenu') rowItemMenu!: ElementRef;
@@ -154,6 +179,22 @@ export class RecipeStepsModalComponent {
     this.stepsToAdd = false;
     this.stepsToReorder = false;
     this.stepsToUpdate = false;
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.8);
+  }
+  loopComplete(): void {
+    this.loopCount.set(this.loopCount() + 1);
+    if (this.loopCount() > 0) {
+      // this.animationItem?.stop();
+      this.animationItem?.stop();
+    }
+  }
+  animationClick(): void {
+    this.loopCount.set(0);
+    this.animationItem?.goToAndPlay(0, true);
   }
 
   ngOnInit() {

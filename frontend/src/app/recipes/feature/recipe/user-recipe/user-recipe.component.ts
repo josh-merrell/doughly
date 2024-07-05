@@ -17,7 +17,6 @@ import {
   selectNewRecipeID,
   selectRecipeByID,
   selectSubscriptionByNewRecipeID,
-  selectUpdating,
 } from '../../../state/recipe/recipe-selectors';
 import { selectRecipeIngredientsByRecipeID } from '../../../state/recipe-ingredient/recipe-ingredient-selectors';
 import { selectIngredients } from 'src/app/kitchen/feature/ingredients/state/ingredient-selectors';
@@ -55,18 +54,12 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import JSConfetti from 'js-confetti';
 import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { setReviewRecipe } from 'src/app/kitchen/state/kitchen-actions';
-import {
-  selectError,
-  selectProfile,
-} from 'src/app/profile/state/profile-selectors';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { selectShoppingLists } from 'src/app/groceries/state/shopping-list-selectors';
 import { selectShoppingListRecipes } from 'src/app/groceries/state/shopping-list-recipe-selectors';
 // import { Share } from '/node_modules/@capacitor/share';
 import { Clipboard } from '@capacitor/clipboard';
-import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { StringsService } from 'src/app/shared/utils/strings';
-import { ProfileActions } from 'src/app/profile/state/profile-actions';
-import { filter, take } from 'rxjs';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
