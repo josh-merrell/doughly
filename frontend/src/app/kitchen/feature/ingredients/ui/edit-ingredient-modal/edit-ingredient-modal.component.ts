@@ -51,6 +51,8 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'dl-edit-ingredient-modal',
@@ -66,7 +68,8 @@ import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
     MatInputModule,
     TextInputComponent,
     SelectInputComponent,
-    ValueSyncDirective, // needed to correctly update form values received from textInput
+    ValueSyncDirective, // needed to correctly update form values received from textInput,
+    LottieComponent,
   ],
   templateUrl: './edit-ingredient-modal.component.html',
 })
@@ -84,7 +87,22 @@ export class EditIngredientModalComponent {
   public gramRatioSuggestion: WritableSignal<number> = signal(0);
   public gettingUnitRatio: WritableSignal<boolean> = signal(false);
   public gramRatioLabel: WritableSignal<string> = signal('Gram Ratio');
-  // pUnit() ? pUnit() : "Gram Ratio"
+
+  // Lottie animation
+  private animationItem: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/stars-dark.json',
+    loop: true,
+    autoplay: true,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
+
   constructor(
     public dialogRef: MatDialogRef<EditIngredientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -132,6 +150,14 @@ export class EditIngredientModalComponent {
       purchaseUnit: ['', [Validators.required]],
       gramRatio: ['', [Validators.required, positiveFloatValidator()]],
     });
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.8);
+  }
+  loopComplete(): void {
+    this.animationItem?.pause();
   }
 
   nameValidator(): ValidatorFn {

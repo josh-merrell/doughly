@@ -27,10 +27,13 @@ import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
+
 @Component({
   selector: 'dl-add-recipe-modal',
   standalone: true,
-  imports: [CommonModule, ManualAddRecipeModalComponent],
+  imports: [CommonModule, ManualAddRecipeModalComponent, LottieComponent],
   templateUrl: './add-recipe-modal.component.html',
 })
 export class AddRecipeModalComponent {
@@ -41,6 +44,22 @@ export class AddRecipeModalComponent {
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
   public onboardingModalOpen: WritableSignal<boolean> = signal(false);
   private reopenOnboardingModal: WritableSignal<boolean> = signal(true);
+
+  // Lottie animation
+  private animationItem: AnimationItem | undefined;
+  private animation2Item: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/stars-dark.json',
+    loop: true,
+    autoplay: true,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
 
   constructor(
     public dialogRef: MatDialogRef<AddRecipeModalComponent>,
@@ -91,6 +110,25 @@ export class AddRecipeModalComponent {
       }
       this.profile.set(profile);
     });
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.8);
+  }
+  animation2Created(animationItem: AnimationItem): void {
+    this.animation2Item = animationItem;
+    this.animation2Item.pause();
+    setTimeout(() => {
+      this.animation2Item?.setSpeed(1.8);
+      this.animation2Item?.play();
+    }, 500);
+  }
+  loopComplete(): void {
+    this.animationItem?.pause();
+  }
+  loop2Complete(): void {
+    this.animation2Item?.stop();
   }
 
   private checkUrlAndAct(fullUrl: string) {

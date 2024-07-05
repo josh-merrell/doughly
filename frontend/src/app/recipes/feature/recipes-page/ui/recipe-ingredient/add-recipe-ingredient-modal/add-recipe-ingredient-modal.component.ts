@@ -54,6 +54,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-input.component';
 import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'dl-add-recipe-ingredient-modal',
@@ -68,7 +70,8 @@ import { ValueSyncDirective } from 'src/app/shared/utils/valueSyncDirective';
     AddIngredientModalComponent,
     TextInputComponent,
     SelectInputComponent,
-    ValueSyncDirective, // needed to correctly update form values received from textInput
+    ValueSyncDirective, // needed to correctly update form values received from textInput,
+    LottieComponent,
   ],
   templateUrl: './add-recipe-ingredient-modal.component.html',
 })
@@ -83,6 +86,21 @@ export class AddRecipeIngredientModalComponent {
   public components: WritableSignal<string[]> = signal([]);
   public selectedComponent: WritableSignal<string> = signal('');
   public quickTapComponents: WritableSignal<string[]> = signal([]);
+
+  // Lottie animation
+  private animationItem: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/stars-dark.json',
+    loop: true,
+    autoplay: true,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
 
   public purLabel: WritableSignal<string> = signal('Purchase Unit Ratio');
   public mUnit: string = 'Measurement Unit';
@@ -298,6 +316,14 @@ export class AddRecipeIngredientModalComponent {
       });
     } else {
     }
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.8);
+  }
+  loopComplete(): void {
+    this.animationItem?.pause();
   }
 
   onSubmit() {
