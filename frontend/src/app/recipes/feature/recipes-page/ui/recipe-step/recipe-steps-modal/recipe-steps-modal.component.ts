@@ -188,7 +188,6 @@ export class RecipeStepsModalComponent {
   loopComplete(): void {
     this.loopCount.set(this.loopCount() + 1);
     if (this.loopCount() > 0) {
-      // this.animationItem?.stop();
       this.animationItem?.stop();
     }
   }

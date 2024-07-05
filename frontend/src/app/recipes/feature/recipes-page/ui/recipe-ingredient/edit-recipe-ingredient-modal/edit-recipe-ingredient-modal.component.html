@@ -60,42 +60,10 @@
               [options]="unitOptions"
             ></dl-select-input>
           </div>
-          <!-- Component -->
-          <div id="form-component" class="relative flex flex-col">
-            <dl-text-input
-              label="Component"
-              placeholder="ex: filling"
-              formControlName="component"
-              [hasError]="
-                form.get('component')?.hasError('moreThan20Chars') || false
-              "
-              errorMessage="Must be less than 20 characters"
-            ></dl-text-input>
-            <!-- Quick Tap Components-->
-            <div class="mb-dl-5 flex flex-wrap" *ngIf="components().length > 0">
-              <div
-                *ngFor="let item of quickTapComponents()"
-                (click)="componentQuickTap(item)"
-                class="mb-dl-3 mr-dl-3 items-center rounded-dl-1 bg-dl-grey-7 px-dl-2 text-dl-5 font-dl-2 text-dl-grey-1 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2 dark:text-dl-grey-10"
-              >
-                {{ item }}
-              </div>
-            </div>
-          </div>
-          <!-- Preparation -->
-          <div id="form-preparation" class="relative flex flex-col">
-            <dl-text-input
-              label="Notes"
-              formControlName="preparation"
-              placeholder="ex: peeled and diced"
-              [hasError]="
-                form.get('preparation')?.hasError('moreThan40Chars') || false
-              "
-              errorMessage="Must be less than 40 characters"
-            ></dl-text-input>
-          </div>
-
-          <div id="form-purchaseUnitRatio" class="relative flex flex-col">
+          <div
+            id="form-purchaseUnitRatio"
+            class="relative mb-dl-5 flex flex-col"
+          >
             <dl-text-input
               label="{{ purLabel() }}"
               formControlName="purchaseUnitRatio"
@@ -120,15 +88,62 @@
                 Getting Suggested Ratio...
               </p>
             </div>
+            <!-- AI Stars animation -->
+            <ng-lottie
+              *ngIf="
+                purchaseUnitRatioSuggestion() ===
+                form.get('purchaseUnitRatio')?.value
+              "
+              containerClass="absolute left-2 -bottom-1"
+              height="25px"
+              width="25px"
+              (animationCreated)="animationCreated($event)"
+              (loopComplete)="loopComplete()"
+              [options]="animationOptions"
+            />
             <p
               *ngIf="
                 purchaseUnitRatioSuggestion() ===
                 form.get('purchaseUnitRatio')?.value
               "
-              class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+              class="absolute -bottom-1 left-8 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
             >
               Suggested Ratio
             </p>
+          </div>
+          <!-- Component -->
+          <div id="form-component" class="relative flex flex-col">
+            <dl-text-input
+              label="Component"
+              placeholder="ex: filling"
+              formControlName="component"
+              [hasError]="
+                form.get('component')?.hasError('moreThan20Chars') || false
+              "
+              errorMessage="Must be less than 20 characters"
+            ></dl-text-input>
+            <!-- Quick Tap Components-->
+            <div class="mb-dl-5 flex flex-wrap" *ngIf="components().length > 0">
+              <div
+                *ngFor="let item of quickTapComponents()"
+                (click)="componentQuickTap(item)"
+                class="mb-dl-3 mr-dl-3 items-center rounded-dl-1 bg-dl-grey-10 px-dl-2 text-dl-5 font-dl-2 text-dl-grey-2 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2 dark:text-dl-grey-10"
+              >
+                {{ item }}
+              </div>
+            </div>
+          </div>
+          <!-- Preparation -->
+          <div id="form-preparation" class="relative flex flex-col">
+            <dl-text-input
+              label="Notes"
+              formControlName="preparation"
+              placeholder="ex: peeled and diced"
+              [hasError]="
+                form.get('preparation')?.hasError('moreThan40Chars') || false
+              "
+              errorMessage="Must be less than 40 characters"
+            ></dl-text-input>
           </div>
         </div>
         <!---->

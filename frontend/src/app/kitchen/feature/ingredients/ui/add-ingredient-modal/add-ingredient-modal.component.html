@@ -8,7 +8,10 @@
       >
     </div>
   </div>
-  <mat-spinner *ngIf="isAdding" class="w-full my-app-custom-spinner"></mat-spinner>
+  <mat-spinner
+    *ngIf="isAdding"
+    class="my-app-custom-spinner w-full"
+  ></mat-spinner>
   <div class="w-full flex-grow overflow-y-auto">
     <form
       class="h-full"
@@ -44,13 +47,6 @@
             ></dl-select-input>
           </div>
 
-          <div id="form-ingredientBrand" class="relative flex flex-col">
-            <dl-text-input
-              label="Brand"
-              formControlName="brand"
-            ></dl-text-input>
-          </div>
-
           <div id="form-ingredientLifespanDays" class="relative flex flex-col">
             <dl-text-input
               label="Lifespan (days)"
@@ -63,7 +59,10 @@
             ></dl-text-input>
           </div>
 
-          <div id="form-ingredientGramRatio" class="relative flex flex-col">
+          <div
+            id="form-ingredientGramRatio"
+            class="relative mb-dl-5 flex flex-col"
+          >
             <dl-text-input
               label="Gram Ratio"
               formControlName="gramRatio"
@@ -87,12 +86,29 @@
                 Getting Suggested Ratio...
               </p>
             </div>
+            <!-- AI Stars animation -->
+            <ng-lottie
+              *ngIf="gramRatioSuggestion() === form.get('gramRatio')?.value"
+              containerClass="absolute left-2 -bottom-1"
+              height="25px"
+              width="25px"
+              (animationCreated)="animationCreated($event)"
+              (loopComplete)="loopComplete()"
+              [options]="animationOptions"
+            />
             <p
               *ngIf="gramRatioSuggestion() === form.get('gramRatio')?.value"
-              class="absolute -bottom-1 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
+              class="absolute -bottom-1 left-8 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-3 dark:text-dl-grey-8"
             >
               Suggested Ratio
             </p>
+          </div>
+
+          <div id="form-ingredientBrand" class="relative flex flex-col">
+            <dl-text-input
+              label="Brand"
+              formControlName="brand"
+            ></dl-text-input>
           </div>
         </div>
         <!---->
