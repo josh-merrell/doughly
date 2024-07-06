@@ -45,22 +45,19 @@
       should clearly show all details, ingredients, and instructions.
       Optionally, choose a photo of the completed dish.
     </p>
-    <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
-    <!-- <p
-      *ngIf="isAdding && profile().onboardingState !== 12"
-      class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
-    >
-      You may navigate away while waiting
-    </p> -->
-    <p
-      *ngIf="isAdding && profile().onboardingState === 12"
-      class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
-    >
-      This should take one minute or less
-    </p>
+    <!-- AI Stars animation -->
+    <ng-lottie
+      *ngIf="isAdding"
+      containerClass=""
+      height="300px"
+      width="300px"
+      (animationCreated)="animationCreated($event)"
+      (loopComplete)="loopComplete()"
+      [options]="animationOptions"
+    />
     <p
       *ngIf="statusMessage() && isAdding"
-      class="mt-dl-2 px-dl-4 text-dl-6 font-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
+      class="mt-dl-5 px-dl-4 text-center text-dl-6 font-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
     >
       {{ statusMessage() }}
     </p>
