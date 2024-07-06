@@ -206,6 +206,9 @@ export class LoadingPageComponent {
             }
             break;
           default:
+            // console.log(
+            //   `CURRENT: irLoadingMessage: ${isLoadingMessage}, irLoadingIngredient: ${isLoadingIngredient}, irLoadingIngredientStock: ${isLoadingIngredientStock}, irLoadingTool: ${isLoadingTool}, irLoadingToolStock: ${isLoadingToolStock}, irLoadingRecipe: ${isLoadingRecipe}, irLoadingRecipeCategory: ${isLoadingRecipeCategory}, irLoadingRecipeIngredient: ${isLoadingRecipeIngredient}, irLoadingRecipeTool: ${isLoadingRecipeTool}, irLoadingStep: ${isLoadingStep}, irLoadingRecipeStep: ${isLoadingRecipeStep}, irLoadingFriendship: ${isLoadingFriendship}, irLoadingFollowship: ${isLoadingFollowship}, irLoadingProfile: ${isLoadingProfile}, irLoadingShoppingList: ${isLoadingShoppingList}, irLoadingSharedShoppingList: ${isLoadingSharedShoppingList}, irLoadingShoppingListRecipe: ${isLoadingShoppingListRecipe}`
+            // );
             if (
               !isLoadingMessage &&
               !isLoadingIngredient &&
@@ -249,7 +252,7 @@ export class LoadingPageComponent {
 
   setupTimer() {
     // Start a timer for 10 seconds
-    this.timeoutSubscription = timer(8000).subscribe(() => {
+    this.timeoutSubscription = timer(30000).subscribe(() => {
       // Check if isLoadingGlobal is still true
       if (this.isLoadingGlobal()) {
         this.router.navigate(['/login']);
@@ -264,7 +267,6 @@ export class LoadingPageComponent {
   loopComplete(): void {
     // this.animationItem?.pause();
   }
-
 
   loadState() {
     switch (this.extraStuffService.stateToLoad()) {

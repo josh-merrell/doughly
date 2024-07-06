@@ -1,6 +1,6 @@
 const playwright = require('playwright');
 const cheerio = require('cheerio');
-const { errorGen } = require('../utils/error');
+const { errorGen } = require('../middleware/errorHandling');
 
 const getHtml = async (url) => {
   let browser;
