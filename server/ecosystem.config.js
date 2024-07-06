@@ -34,7 +34,8 @@ module.exports = {
         NODE_HOST: 'http://localhost',
         PORT: '3000',
         LOCAL_TAX_RATE: '0.07',
-        MEASUREMENT_UNITS: 'gram,drop,kilogram,pint,ounce,pound,teaspoon,tablespoon,cup,quart,gallon,milliliter,liter,packet,bag,box,carton,pallet,bottle,container,bunch,dash,pinch,bar,stick,single,dozen',
+        MEASUREMENT_UNITS:
+          'block,gram,drop,drizzle,can,clove,kilogram,pint,fluidOunce,fillet,head,weightOunce,pound,kernel,teaspoon,tablespoon,cup,quart,gallon,milliliter,liter,leaf,loaf,packet,bag,box,carton,pallet,bottle,sprig,strip,sheet,sprinkle,container,bunch,dash,pinch,bar,stalk,stick,slice,single,dozen,rib',
 
         //SUPABASE
         SUPABASE_ACCOUNT_PW: '!qFzFGxmZ@9pcR6',
