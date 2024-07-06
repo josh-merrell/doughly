@@ -33,6 +33,8 @@ import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service'
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'app-footer',
@@ -43,11 +45,11 @@ import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
     RouterLinkWithHref,
     MatProgressSpinnerModule,
     ImageFromCDN,
+    LottieComponent,
   ],
   templateUrl: './app-footer.component.html',
 })
 export class AppFooterComponent {
-  iconPing: WritableSignal<boolean> = signal(false);
   @ViewChild('menu') menu!: ElementRef;
   globalClickListener: () => void = () => {};
   isMenuOpen = false;
@@ -60,6 +62,22 @@ export class AppFooterComponent {
   public currentLocation: WritableSignal<string> = signal('');
   private messages: WritableSignal<any> = signal([]);
   public unackedMessageLength: WritableSignal<number> = signal(0);
+
+  // Lottie animation
+  public creditCountRed: WritableSignal<boolean> = signal(false);
+  private animationItem: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/stars-dark.json',
+    loop: true,
+    autoplay: false,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
 
   options: any = { exact: false };
 
@@ -122,11 +140,8 @@ export class AppFooterComponent {
       .subscribe();
     this.store.select(selectNewRecipeID).subscribe((newRecipeID) => {
       if (newRecipeID) {
-        // this means user just used AI credit for vision/url recipe create. Cause the premium icon to ping for a couple seconds
-        this.iconPing.set(true);
-        setTimeout(() => {
-          this.iconPing.set(false);
-        }, 2800);
+        // this means user just used AI credit for vision/url recipe create. Play the AI stars animation
+        this.playAnimation();
       }
     });
   }
@@ -148,6 +163,22 @@ export class AppFooterComponent {
     if (this.globalClickListener) {
       this.globalClickListener();
     }
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.6);
+    this.animationItem.goToAndStop(0, true);
+  }
+  loopComplete(): void {
+    this.animationItem?.pause();
+  }
+  playAnimation(): void {
+    this.animationItem?.goToAndPlay(0);
+    this.creditCountRed.set(true);
+    setTimeout(() => {
+      this.creditCountRed.set(false);
+    }, 1200);
   }
 
   toggleMenu(event: any) {
