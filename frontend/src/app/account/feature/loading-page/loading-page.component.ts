@@ -252,7 +252,7 @@ export class LoadingPageComponent {
 
   setupTimer() {
     // Start a timer for 10 seconds
-    this.timeoutSubscription = timer(30000).subscribe(() => {
+    this.timeoutSubscription = timer(8000).subscribe(() => {
       // Check if isLoadingGlobal is still true
       if (this.isLoadingGlobal()) {
         this.router.navigate(['/login']);

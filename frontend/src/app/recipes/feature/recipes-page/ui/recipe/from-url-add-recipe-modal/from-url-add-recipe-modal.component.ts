@@ -1,10 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, WritableSignal, signal } from '@angular/core';
 import { Camera, CameraResultType } from '@capacitor/camera';
-import {
-  MatDialog,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
@@ -31,6 +28,8 @@ import { RecipeActions } from 'src/app/recipes/state/recipe/recipe-actions';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'dl-from-url-add-recipe-modal',
@@ -42,7 +41,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
-    TextInputComponent
+    TextInputComponent,
+    LottieComponent,
   ],
   templateUrl: './from-url-add-recipe-modal.component.html',
 })
@@ -51,6 +51,21 @@ export class FromUrlAddRecipeModalComponent {
   isAdding: boolean = false;
   statusMessage: WritableSignal<string> = signal('');
   private profile: WritableSignal<any> = this.authService.profile;
+
+  // Lottie animation
+  private animationItem: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/constructingRecipe.json',
+    loop: true,
+    autoplay: true,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
 
   // recipe photo upload
   photoURL!: string;
@@ -107,6 +122,14 @@ export class FromUrlAddRecipeModalComponent {
   }
   recipeLoadImageFailed() {
     this.imageLoadFailed = true;
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.0);
+  }
+  loopComplete(): void {
+    // this.animationItem?.pause();
   }
 
   async uploadCroppedImage() {
@@ -204,13 +227,18 @@ export class FromUrlAddRecipeModalComponent {
                 // remove the recipe photo if it was uploaded
                 this.removeFiles(true);
                 // show error modal
-                this.modalService.open(ErrorModalComponent, {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: `We couldn't add a recipe using that link. Make sure that web page has all details of a recipe and try again.`,
-                    statusCode: error.statusCode,
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: `We couldn't add a recipe using that link. Make sure that web page has all details of a recipe and try again.`,
+                      statusCode: error.statusCode,
+                    },
                   },
-                }, 3, true);
+                  3,
+                  true
+                );
               } else {
                 this.removeFiles(false);
                 this.recipeProgressService.stopListening();

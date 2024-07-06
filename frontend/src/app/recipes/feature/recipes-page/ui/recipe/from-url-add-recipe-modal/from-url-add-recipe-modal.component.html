@@ -16,16 +16,19 @@
       Paste the URL of the recipe you wish to add to your collection.
       Optionally, choose a photo of the completed dish.
     </p>
-    <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
-    <!-- <p
+    <!-- AI Stars animation -->
+    <ng-lottie
       *ngIf="isAdding"
-      class="px-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
-    >
-      You may navigate away while waiting
-    </p> -->
+      containerClass=""
+      height="300px"
+      width="300px"
+      (animationCreated)="animationCreated($event)"
+      (loopComplete)="loopComplete()"
+      [options]="animationOptions"
+    />
     <p
       *ngIf="statusMessage() && isAdding"
-      class="px-dl-4 text-dl-6 font-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
+      class="mt-dl-5 overflow-y-hidden h-dl-8 px-dl-4 text-center text-dl-6 font-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
     >
       {{ statusMessage() }}
     </p>
