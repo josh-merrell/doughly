@@ -68,7 +68,7 @@ async function subscriptionsByRecipeID(req, res) {
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
   const { recipeID } = req.params;
-  const returner = await p.get.subscriptionsByRecipeID({ recipeID, userID: req.userID});
+  const returner = await p.get.subscriptionsByRecipeID({ recipeID, userID: req.userID });
   return res.json(returner);
 }
 
@@ -76,7 +76,7 @@ async function createRecipe(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
-  const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = req.body;
+  const { title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type, sourceAuthor, sourceURL } = req.body;
   const { authorization } = req.headers;
   const { customID } = req;
   const returner = await p.create({
@@ -91,6 +91,8 @@ async function createRecipe(req, res) {
     timePrep,
     timeBake,
     photoURL,
+    sourceAuthor,
+    sourceURL,
   });
   return res.json(returner);
 }
@@ -185,7 +187,7 @@ async function constructRecipe(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
-  const { title, sourceRecipeID, servings, recipeCategoryID, lifespanDays, timePrep, timeBake, photoURL, type, components, ingredients, tools, steps } = req.body;
+  const { title, sourceRecipeID, servings, recipeCategoryID, lifespanDays, timePrep, timeBake, photoURL, type, components, ingredients, tools, steps, sourceAuthor, sourceURL } = req.body;
   const { authorization } = req.headers;
   const returner = await p.constructRecipe({
     authorization,
@@ -203,6 +205,8 @@ async function constructRecipe(req, res) {
     ingredients,
     tools,
     steps,
+    sourceAuthor,
+    sourceURL,
   });
   return res.json(returner);
 }

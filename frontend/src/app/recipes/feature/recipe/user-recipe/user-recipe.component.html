@@ -375,7 +375,7 @@
         </p>
       </div>
       <div
-        class="mx-dl-4 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
+        class="mx-dl-4 flex flex-col items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
         <div
           class="mb-dl-1 ml-dl-1 flex w-full items-center justify-between px-dl-1 pt-dl-1"
@@ -440,6 +440,24 @@
               Shopping
             </button>
           </div>
+        </div>
+
+        <!-- Source Author / URL-->
+        <div
+          class="mt-dl-4 flex w-full items-center justify-between px-dl-1"
+          *ngIf="recipe().sourceAuthor || recipe().sourceURL"
+        >
+          <p
+            class="mr-dl-2 flex-grow text-nowrap text-dl-4 font-dl-2 text-dl-grey-4 dark:text-dl-grey-8"
+          >
+            Source by {{ recipe().sourceAuthor }}
+          </p>
+          <p
+            class="flex-grow text-nowrap text-right text-dl-4 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
+            (click)="openSourceURL()"
+          >
+            Visit Source
+          </p>
         </div>
       </div>
     </div>

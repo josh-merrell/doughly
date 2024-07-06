@@ -404,6 +404,7 @@ Do not include any other properties in the JSON object response. If an optional 
 
 Return a JSON object. If the image does not depict a recipe, or if any of the required properties can't be reasonably estimated, the JSON should include a single property 'error' with a number value of 10. Otherwise, include the following properties:
 'title' <string> (required): The title of the recipe converted to title case,
+'sourceAuthor' <string>: Name of the recipe author. If not found, leave blank.
 'servings' <number>: The number of servings the recipe makes. estimate if not provided,
 'lifespanDays' <number>: The number of days the dish can be stored after being made,
 'timePrep' <number> (estimate): The number of minutes it takes to complete the steps, not including waiting time.

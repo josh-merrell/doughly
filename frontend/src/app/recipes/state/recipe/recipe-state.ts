@@ -53,6 +53,8 @@ export interface Recipe {
   subscription?: RecipeSubscription;
   hidden: boolean;
   freeTier: boolean;
+  sourceAuthor?: string;
+  sourceURL?: string;
 }
 
 export interface RecipeError {
