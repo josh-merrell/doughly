@@ -617,6 +617,9 @@ export class UserRecipeComponent {
     }
     return true;
   }
+  openSourceURL() {
+    window.open(this.recipe().sourceURL, '_blank');
+  }
   updateUsageDate(event: MatDatepickerInputEvent<Date>) {
     const date = event.value;
     if (date) {

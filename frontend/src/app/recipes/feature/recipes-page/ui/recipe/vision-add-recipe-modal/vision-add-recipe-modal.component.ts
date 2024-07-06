@@ -19,13 +19,13 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { ImageCropperModule, ImageCroppedEvent } from 'ngx-image-cropper';
 import { Router } from '@angular/router';
 import { StringsService } from 'src/app/shared/utils/strings';
-import {
-  selectProfile,
-} from 'src/app/profile/state/profile-selectors';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
@@ -35,6 +35,7 @@ import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
     ImageCropperModule,
     MatProgressSpinnerModule,
     ImageFromCDN,
+    LottieComponent,
   ],
   templateUrl: './vision-add-recipe-modal.component.html',
 })
@@ -47,6 +48,21 @@ export class VisionAddRecipeModalComponent {
   public sourceImageSelectedFile: File | null = null;
   public sourceImageSelectedFileUrl: string | null = null;
   public sourceImagePresent: boolean = false;
+
+  // Lottie animation
+  private animationItem: AnimationItem | undefined;
+  animationOptions: AnimationOptions = {
+    path: '/assets/animations/lottie/constructingRecipe.json',
+    loop: true,
+    autoplay: true,
+  };
+  lottieStyles = {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '40px',
+    width: '40px',
+  };
 
   // Onboarding
   // ** OLD ONBOARDING **
@@ -120,6 +136,14 @@ export class VisionAddRecipeModalComponent {
       // }
       this.profile.set(profile);
     });
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.0);
+  }
+  loopComplete(): void {
+    // this.animationItem?.pause();
   }
 
   // for recipe photo

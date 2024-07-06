@@ -14,7 +14,7 @@ const { sendSSEMessage } = require('../../server.js');
 // const fs = require('fs');
 module.exports = ({ db, dbPublic }) => {
   async function constructRecipe(options) {
-    const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps } = options;
+    const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps, sourceAuthor, sourceURL } = options;
 
     try {
       //start timer
@@ -36,6 +36,8 @@ module.exports = ({ db, dbPublic }) => {
           photoURL,
           IDtype: 11,
           recipeCategoryID,
+          sourceAuthor,
+          sourceURL,
         },
         { headers: { authorization } },
       );
@@ -565,7 +567,7 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function create(options) {
-    const { customID, authorization, userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type } = options;
+    const { customID, authorization, userID, title, servings, lifespanDays, recipeCategoryID, timePrep, timeBake, photoURL, type, sourceAuthor, sourceURL } = options;
 
     try {
       const status = 'noIngredients';
@@ -598,7 +600,7 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       //create recipe
-      const { data: recipe, error } = await db.from('recipes').insert({ recipeID: customID, userID, title, servings, lifespanDays, recipeCategoryID, status, timePrep, timeBake, photoURL, version: 1, type }).select().single();
+      const { data: recipe, error } = await db.from('recipes').insert({ recipeID: customID, userID, title, servings, lifespanDays, recipeCategoryID, status, timePrep, timeBake, photoURL, version: 1, type, sourceAuthor, sourceURL }).select().single();
 
       if (error) {
         throw errorGen(`Error inserting recipe into db: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
@@ -621,6 +623,8 @@ module.exports = ({ db, dbPublic }) => {
         photoURL: recipe.photoURL,
         type: recipe.type,
         version: 1,
+        sourceAuthor: recipe.sourceAuthor,
+        sourceURL: recipe.sourceURL,
       };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes create', err.code || 520, err.name || 'unhandledError_recipes-create', err.isOperational || false, err.severity || 2);
@@ -848,7 +852,9 @@ module.exports = ({ db, dbPublic }) => {
         ingredients: matchedIngredients,
         tools: matchedTools,
         steps: recipeJSON.steps,
-        ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }), //include 'timeBake' if not null
+        ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }), //include 'timeBake' if not null,
+        sourceAuthor: recipeJSON.sourceAuthor || '',
+        sourceURL: recipeJSON.sourceURL || '',
       };
       global.logger.info({ message: `CALLING CONSTRUCT WITH BODY: ${JSON.stringify(constructBody)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       if (recipePhotoURL) {
@@ -978,6 +984,7 @@ module.exports = ({ db, dbPublic }) => {
       clearInterval(timer);
 
       const recipeJSON = JSON.parse(result.response);
+      recipeJSON.sourceURL = recipeURL;
 
       const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
 
