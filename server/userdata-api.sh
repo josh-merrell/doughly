@@ -38,6 +38,7 @@ sudo chmod +x /home/ubuntu/dl/scripts/*.sh
 rm -rf node_modules package-lock.json
 npm install
 npx playwright install-deps
+npx playwright install
 
 # Configure environment variable for the session
 echo 'export GOOGLE_APPLICATION_CREDENTIALS="/home/ubuntu/dl/services/google/doughly-ee4c38c0be84.json"' >> ~/.bashrc

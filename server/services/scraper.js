@@ -8,8 +8,11 @@ const getHtml = async (url) => {
     global.logger.info({ message: `Getting HTML from URL: ${url}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     browser = await playwright.chromium.launch();
     const context = await browser.newContext();
+    global.logger.info({ message: `'getHtml' made new playwright chromium context.`, level: 7, userID: 0 });
     const page = await context.newPage();
+    global.logger.info({ message: `'getHtml' made new page with chromium context.`, level: 7, userID: 0 });
     await page.goto(url);
+    global.logger.info({ message: `'getHtml' opened recipe URL with chromium page.`, level: 7, userID: 0 });
     const html = await page.content();
     global.logger.info({ message: `HTML from URL: ${url} retrieved`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     return { html };
