@@ -14,3 +14,4 @@ sudo chown -R ubuntu:ubuntu /home/ubuntu/dl
 # Install dependencies
 npm install
 npx playwright install-deps
+npx playwright install
