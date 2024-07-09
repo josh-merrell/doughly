@@ -46,6 +46,7 @@ echo 'export GOOGLE_APPLICATION_CREDENTIALS="/home/ubuntu/dl/services/google/dou
 # Start the application using PM2
 npx pm2 start ecosystem.config.js
 npx pm2 save
+sudo chown ubuntu:ubuntu /home/ubuntu/.pm2/rpc.sock /home/ubuntu/.pm2/pub.sock
 
 # Install and configure Alloy logging agent
 sudo apt-get install -y gpg

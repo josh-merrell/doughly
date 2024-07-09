@@ -1,5 +1,8 @@
 // add this file to the API EC2 Server whenever you replace it. place it in /home/ubuntu. 'deploy-api-ec2-prod' github action will use it to start pm2 process
 // also run the following on new EC2 ubuntu instances to install node, nvm, pm2
+
+const { kill } = require('process');
+
 /**
 **INSTALL NODE
 sudo apt-get update
@@ -29,6 +32,13 @@ module.exports = {
     {
       name: 'doughly',
       script: '/home/ubuntu/dl/server.js',
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1028M',
+      exp_backoff_restart_delay: 100,
+      instances: max,
+      listen_timeout: 8000,
+      kill_timeout: 2000,
       env: {
         NODE_ENV: 'production',
         NODE_HOST: 'http://localhost',
