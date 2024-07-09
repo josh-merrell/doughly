@@ -1,1 +1,34 @@
-<p>web-page works!</p>
+<div class="flex h-screen w-screen flex-col">
+  <!-- Header -->
+  <div class="mb-dl-7 flex h-dl-7 w-full items-center justify-between px-dl-2">
+    <h3 class="text-dl-7 font-dl-4 text-dl-blue-3 dark:text-dl-blue-7">
+      Doughly
+    </h3>
+    <div class="relative h-dl-5 w-dl-9">
+      <button
+        type="button"
+        (click)="getDoughlyClick()"
+        (mouseover)="mouseOver('buttonOne')"
+        (mouseleave)="mouseLeave('buttonOne')"
+        class="button-transition absolute z-20 h-dl-5 w-dl-9 whitespace-nowrap rounded-full border-dl-grey-2 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6 dark:border-dl-grey-9 dark:bg-dl-pink-7 dark:text-dl-grey-1 hover:dark:bg-dl-pink-6"
+        id="user-menu-button"
+        [class.button-offset]="!buttonOneHover()"
+      >
+        Get Doughly
+      </button>
+      <div
+        class="z-15 absolute h-dl-5 w-dl-9 rounded-full border-0 bg-dl-teal-3 dark:bg-dl-teal-8"
+      ></div>
+    </div>
+  </div>
+  <div class="flex w-dl-16 items-center justify-between">
+    <p>Here's a Video</p>
+    <video #video1 loop width="320" height="240">
+      <source [src]="videoSource" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <script>
+      document.getElementById("video1").play();
+    </script>
+  </div>
+</div>
