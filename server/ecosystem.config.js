@@ -36,7 +36,7 @@ module.exports = {
       watch: false,
       max_memory_restart: '1028M',
       exp_backoff_restart_delay: 100,
-      instances: max,
+      instances: 1,
       listen_timeout: 8000,
       kill_timeout: 2000,
       env: {
