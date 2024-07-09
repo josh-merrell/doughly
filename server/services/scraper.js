@@ -18,6 +18,11 @@ const getHtml = async (url) => {
     return { html };
   } catch (err) {
     throw errorGen(err.message || 'Unhandled Error in scraper getHtml', err.code || 520, err.name || 'unhandledError_scraper-getHtml', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+  } finally {
+    if (browser) {
+      await browser.close();
+      global.logger.info({ message: `'getHtml' closed the playwright browser.`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    }
   }
 };
 
