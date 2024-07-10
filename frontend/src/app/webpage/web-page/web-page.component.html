@@ -1,10 +1,10 @@
-<div class="flex w-full flex-col items-center bg-white dark:bg-dl-grey-1">
-  <div
-    class="flex w-full max-w-dl-22 flex-col overflow-y-auto bg-white dark:bg-dl-grey-1"
-  >
+<div
+  class="relative flex w-full flex-col items-center bg-white dark:bg-dl-grey-1"
+>
+  <div class="flex w-full max-w-dl-22 flex-col bg-white dark:bg-dl-grey-1">
     <!-- Header -->
     <div
-      class="mb-dl-7 flex h-dl-7 w-full items-center justify-between px-dl-2"
+      class="sticky top-0 z-30 mb-dl-7 flex h-dl-7 w-full items-center justify-between bg-white px-dl-2 sm:h-dl-8 dark:bg-dl-grey-1"
     >
       <h3
         class="w-full text-center text-dl-9 font-dl-4 text-dl-blue-3 dark:text-dl-blue-7"
@@ -12,55 +12,57 @@
         Doughly
       </h3>
     </div>
-    <!-- Hero Image and Text -->
-    <div class="mb-dl-10 flex h-dl-18 w-full justify-around sm:h-dl-20">
-      <div
-        class="relative w-full bg-dl-pink-10 sm:mr-dl-10 sm:w-9/12 sm:rounded-3xl"
-      >
-        <h1
-          class="absolute left-8 top-8 w-full text-dl-8 font-dl-3 leading-tight tracking-wide sm:left-6 sm:top-12 sm:w-dl-15 sm:text-dl-9"
-        >
-          Your recipes, loved
-        </h1>
-        <p
-          class="absolute left-8 top-1/3 w-9/12 text-dl-7 font-dl-2 leading-tight tracking-normal sm:left-6 sm:w-dl-14"
-        >
-          Create, share, and more. Join other home chefs making the most of
-          their family recipes on Doughly.
-        </p>
-        <button
-          type="button"
-          (click)="getDoughlyClick()"
-          (mouseover)="mouseOver('buttonOne')"
-          (mouseleave)="mouseLeave('buttonOne')"
-          class="button-transition absolute z-20 h-dl-5 w-dl-9 whitespace-nowrap rounded-full border-dl-grey-2 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6 dark:border-dl-grey-9 dark:bg-dl-pink-7 dark:text-dl-grey-1 hover:dark:bg-dl-pink-6"
-          id="user-menu-button"
-          [class.button-offset]="!buttonOneHover()"
-        >
-          Get Doughly
-        </button>
+    <div class="flex w-full flex-col overflow-y-auto">
+      <!-- Hero Image and Text -->
+      <div class="mb-dl-8 flex h-dl-18 w-full justify-around sm:h-dl-20">
         <div
-          class="z-15 button-background absolute h-dl-5 w-dl-9 rounded-full border-0 bg-dl-blue-3 dark:bg-dl-blue-8"
-        ></div>
-        <img
-          src="assets/photos/grandmother-cooking-with-daughter.svg"
-          alt="Hero Image"
-          class="sm:scale-80 absolute -bottom-20 right-0 translate-y-1/3 scale-75 rounded-2xl sm:-right-28 sm:top-8 sm:-translate-x-0 sm:translate-y-0 sm:rounded-3xl md:scale-100"
-        />
+          class="relative w-full bg-dl-pink-10 sm:mr-dl-10 sm:w-9/12 sm:rounded-3xl"
+        >
+          <h1
+            class="absolute left-8 top-8 w-full text-dl-8 font-dl-3 leading-tight tracking-wide sm:left-6 sm:top-12 sm:w-dl-15 sm:text-dl-9"
+          >
+            Your recipes, loved
+          </h1>
+          <p
+            class="absolute left-8 top-1/3 w-9/12 text-dl-7 font-dl-2 leading-tight tracking-normal sm:left-6 sm:w-dl-14"
+          >
+            Create, share, and more. Join other home chefs making the most of
+            their family recipes on Doughly.
+          </p>
+          <button
+            type="button"
+            (click)="getDoughlyClick()"
+            (mouseover)="mouseOver('buttonOne')"
+            (mouseleave)="mouseLeave('buttonOne')"
+            class="button-transition absolute z-20 h-dl-5 w-dl-9 whitespace-nowrap rounded-full border-dl-grey-2 bg-dl-pink-4 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6 dark:border-dl-grey-9 dark:bg-dl-pink-7 dark:text-dl-grey-1 hover:dark:bg-dl-pink-6"
+            id="user-menu-button"
+            [class.button-offset]="!buttonOneHover()"
+          >
+            Get Doughly
+          </button>
+          <div
+            class="z-15 button-background absolute h-dl-5 w-dl-9 rounded-full border-0 bg-dl-blue-3 dark:bg-dl-blue-8"
+          ></div>
+          <img
+            src="assets/photos/grandmother-cooking-with-daughter.svg"
+            alt="Hero Image"
+            class="sm:scale-80 absolute -bottom-20 right-0 translate-y-2/3 scale-75 rounded-2xl xsm:translate-y-1/3 sm:-right-28 sm:top-8 sm:-translate-x-0 sm:translate-y-0 sm:rounded-3xl md:scale-100"
+          />
+        </div>
       </div>
-    </div>
-    <!-- Spacer Div -->
-    <div class="my-dl-9 h-dl-10 sm:my-0 sm:h-0"></div>
-    <!-- Add URL Recipe Video -->
-    <div class="flex w-dl-16 items-center justify-between">
-      <p>Here's a Video</p>
-      <video #video1 loop width="320" height="240">
-        <source [src]="videoSource" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <script>
-        document.getElementById("video1").play();
-      </script>
+      <!-- Spacer Div -->
+      <div class="my-dl-6 h-dl-4 sm:my-0 sm:h-dl-4"></div>
+
+      <!-- Add URL Recipe Video -->
+      <div class="flex w-dl-16 items-center justify-between">
+        <video #video1 loop width="320" height="240">
+          <source [src]="videoSource" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <script>
+          document.getElementById("video1").play();
+        </script>
+      </div>
     </div>
   </div>
 </div>
