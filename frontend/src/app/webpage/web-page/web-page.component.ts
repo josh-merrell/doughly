@@ -24,6 +24,10 @@ export class WebPageComponent {
     this.setVideoSource();
   }
 
+  // ngOnInit(): void {
+  //   this.elRef.nativeElement.ownerDocument.body.classList.remove('dark');
+  // }
+
   ngAfterViewInit(): void {
     const media = this.video1.nativeElement;
     media.muted = true;
@@ -47,6 +51,7 @@ export class WebPageComponent {
   }
 
   private setVideoSource(): void {
+    this.elRef.nativeElement.ownerDocument.body.classList.remove('dark');
     if (
       this.elRef.nativeElement.ownerDocument.body.classList.contains('dark')
     ) {
