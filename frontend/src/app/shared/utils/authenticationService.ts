@@ -178,7 +178,11 @@ export class AuthService {
       this.router.navigate(['/reset-password']);
     }
     if (event === 'USER_UPDATED') {
-      this.router.navigate(['/login']);
+      if (!Capacitor.isNativePlatform()) {
+        this.router.navigate(['/web']);
+      } else {
+        this.router.navigate(['/login']);
+      }
     }
     if (session) {
       this.getUserFromSession(session).then((user) => {
