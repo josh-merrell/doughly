@@ -3,7 +3,7 @@
 #!/bin/bash
 set -e
 
-# Install necessary tools
+# Install necessary tools!
 sudo apt-get update
 sudo apt-get install -y git net-tools
 
@@ -32,7 +32,7 @@ git pull origin main
 # Relocate the server files and clean up
 mv server/* .
 rm -rf server
-sudo chmod +x /home/ubuntu/dl/scripts/*.sh
+sudo chmod +x /home/ubuntu/dl/scripts/*
 
 # Install application dependencies
 rm -rf node_modules package-lock.json
