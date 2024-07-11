@@ -29,7 +29,10 @@ module.exports = {
   },
   theme: {
     screens: {
-      md: { max: "767px" },
+      xsm: "500px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
     },
     extend: {
       display: [
@@ -200,6 +203,10 @@ module.exports = {
         "dl-16": "21.5625rem",
         "dl-17": "24.375rem",
         "dl-18": "27.1875rem",
+        "dl-19": "30rem",
+        "dl-20": "34rem",
+        "dl-21": "40rem",
+        "dl-22": "46rem",
       },
       borderRadius: {
         "dl-0": "0rem",

@@ -34,12 +34,17 @@ import { OnboardingComponent } from './account/feature/onboarding/onboarding.com
 import { ProductsPageComponent } from './account/feature/products/products-page/products-page.component';
 import { UpgradePageComponent } from './account/feature/products/ui/upgrade-page/upgrade-page.component';
 import { YourPremiumComponent } from './account/feature/products/ui/your-premium/your-premium-page.component';
+import { WebPageComponent } from './webpage/web-page/web-page.component';
 
 export const routes: Route[] = [
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
+  },
+  {
+    path: 'web',
+    component: WebPageComponent,
   },
   {
     path: 'loading',

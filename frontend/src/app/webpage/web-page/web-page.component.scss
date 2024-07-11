@@ -1,0 +1,16 @@
+.button-transition {
+  transition: left 0.25s ease, bottom 0.25s ease, background-color 0.25s ease;
+  position: absolute; /* Ensure position is defined if not already */
+  left: 55px; /* Set initial left position */
+  bottom: 75px; /* Set initial top position */
+}
+
+.button-offset {
+  left: 48px; /* Adjust as needed */
+  bottom: 82px; /* Adjust as needed */
+}
+
+.button-background {
+  left: 55px;
+  bottom: 75px;
+}

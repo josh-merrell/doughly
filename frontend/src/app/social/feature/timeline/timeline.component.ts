@@ -47,6 +47,7 @@ export class TimelineComponent {
     // prepare past day logs
     let pastDayLogs = this.logs.filter((log) => {
       const logDate = new Date(log.logTime);
+      console.log(`DATE: `, logDate);
       return logDate >= todayStart;
     });
     pastDayLogs = this.cleanDates(pastDayLogs);
@@ -78,9 +79,10 @@ export class TimelineComponent {
     const result: Log[] = [];
     logs.forEach((log) => {
       const date = new Date(log.logTime);
+      const minutes = date.getMinutes().toString().padStart(2, '0');
       log.displayLogTime = `${
         date.getMonth() + 1
-      }/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+      }/${date.getDate()} ${date.getHours()}:${minutes}`;
       result.push(log);
     });
     return result;
