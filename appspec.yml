@@ -12,7 +12,7 @@ branch_config:
       serviceRoleArn: arn:aws:iam::167410491712:role/CodeDeployDoughly
 hooks:
   BeforeInstall:
-  - location: change_permissions.sh
+  - location: server/scripts/change_permissions.sh
     timeout: 6
     runas: root
   AfterInstall:
