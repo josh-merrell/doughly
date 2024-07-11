@@ -11,11 +11,15 @@ branch_config:
     deploymentGroupConfig:
       serviceRoleArn: arn:aws:iam::167410491712:role/CodeDeployDoughly
 hooks:
+  BeforeInstall:
+  - location: change_permissions.sh
+    timeout: 6
+    runas: root
   AfterInstall:
-    - location: home/ubuntu/dl/scripts/start_application.sh
+    - location: server/scripts/start_application.sh
       timeout: 300
       runas: ubuntu
   ApplicationStart:
-    - location: home/ubuntu/dl/scripts/restart_alloy.sh
+    - location: server/scripts/restart_alloy.sh
       timeout: 300
       runas: ubuntu
