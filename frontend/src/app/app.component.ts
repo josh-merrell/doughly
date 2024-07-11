@@ -54,6 +54,7 @@ export class AppComponent {
     '/privacy',
     '/products',
     '/web',
+    '/admin',
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);

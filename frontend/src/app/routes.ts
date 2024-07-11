@@ -35,12 +35,17 @@ import { ProductsPageComponent } from './account/feature/products/products-page/
 import { UpgradePageComponent } from './account/feature/products/ui/upgrade-page/upgrade-page.component';
 import { YourPremiumComponent } from './account/feature/products/ui/your-premium/your-premium-page.component';
 import { WebPageComponent } from './webpage/web-page/web-page.component';
+import { AdminComponent } from './shared/ui/admin/admin.component';
 
 export const routes: Route[] = [
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
+  },
+  {
+    path: 'admin',
+    component: AdminComponent,
   },
   {
     path: 'web',

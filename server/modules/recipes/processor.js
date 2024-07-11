@@ -959,7 +959,6 @@ module.exports = ({ db, dbPublic }) => {
 
   async function createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL) {
     try {
-      global.logger.info({ message: `TEST LOG DURING URL RECIPE CREATE`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       global.logger.info({ message: `Creating recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // call 'getHtml' to get recipe details from URL
       sendSSEMessage(userID, { message: `Opening provided web page...` });

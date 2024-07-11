@@ -124,7 +124,6 @@ import { AnimationItem } from 'lottie-web';
   templateUrl: './loading-page.component.html',
 })
 export class LoadingPageComponent {
-  //this.router.navigate(['/recipes/loading']);
   public isLoadingGlobal: WritableSignal<boolean> = signal(true);
   private isLoadingMessage: WritableSignal<boolean> = signal(true);
   private isLoadingIngredient: WritableSignal<boolean> = signal(true);

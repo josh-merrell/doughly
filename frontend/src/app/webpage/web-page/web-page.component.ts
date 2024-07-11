@@ -35,7 +35,11 @@ export class WebPageComponent {
   }
 
   getDoughlyClick() {
-    console.log('Doughly clicked');
+    window.open('https://forms.gle/RBjciXpJ7gKXSTkF6', '_blank');
+  }
+
+  onTesterSignup() {
+    window.open('https://forms.gle/RBjciXpJ7gKXSTkF6', '_blank');
   }
 
   mouseOver(button: string) {
