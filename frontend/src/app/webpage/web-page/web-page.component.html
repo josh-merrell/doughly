@@ -1,5 +1,5 @@
 <div
-  class="relative flex h-full w-full flex-col overflow-y-auto items-center overflow-x-hidden bg-dl-blue-10 dark:bg-dl-grey-1"
+  class="relative flex h-full w-full flex-col items-center overflow-y-auto overflow-x-hidden bg-dl-blue-10 dark:bg-dl-grey-1"
 >
   <div class="flex w-full max-w-dl-22 flex-col bg-white dark:bg-dl-grey-1">
     <!-- Header -->
@@ -54,7 +54,9 @@
       <div class="my-dl-6 h-dl-4"></div>
 
       <!-- Recipe Screenshots -->
-      <div class="mb-dl-11 xsm:mb-dl-12 mt-dl-13 h-dl-18 xsm:mt-dl-10 sm:mt-dl-5">
+      <div
+        class="mb-dl-11 mt-dl-13 h-dl-18 xsm:mb-dl-12 xsm:mt-dl-10 sm:mt-dl-5"
+      >
         <div
           class="relative h-dl-17 w-full bg-dl-blue-10 sm:ml-dl-11 sm:w-9/12 sm:rounded-3xl"
         >
@@ -71,7 +73,7 @@
           </p>
           <img
             src="assets/photos/tilted-recipe-screenshots.svg"
-            alt="Hero Image"
+            alt="Tilted Recipe Screenshots"
             class="scale-80 absolute bottom-0 right-0 translate-y-2/3 xsm:bottom-5 md:scale-100"
           />
         </div>
@@ -79,36 +81,68 @@
 
       <!-- Add URL Recipe Video -->
       <div
-        class="relative mt-dl-12 mb-dl-12 xsm:mt-dl-12 flex h-dl-22 w-full items-center justify-between pl-dl-8"
+        class="relative mb-dl-12 mt-dl-12 flex h-dl-22 w-full items-center justify-between pl-dl-8 xsm:mt-dl-12"
       >
         <!-- Text -->
         <div class="flex h-dl-12 w-full flex-col justify-between">
           <h2
-            class="xsw:w-dl-17 xsw:w-full absolute top-0 w-dl-16 text-dl-8 font-dl-3 leading-tight tracking-wide xsm:w-dl-17 text-left"
+            class="xsw:w-dl-17 xsw:w-full absolute top-0 w-dl-16 text-left text-dl-8 font-dl-3 leading-tight tracking-wide xsm:w-dl-17"
           >
             Crazy Smart Imports
           </h2>
           <p
-            class="absolute top-28 xsm:top-20 sm:w-dl-14 w-dl-16 text-dl-7 font-dl-2 leading-normal tracking-normal xsm:w-dl-17 text-left"
+            class="absolute top-28 w-dl-16 text-left text-dl-7 font-dl-2 leading-normal tracking-normal xsm:top-20 xsm:w-dl-17 sm:w-dl-14"
           >
             Generate a recipe from any website in seconds. Goodbye ads, hello
             cooking.
           </p>
         </div>
+        <img
+          src="assets/photos/steaming-pot.svg"
+          alt="Steaming Pot"
+          class="absolute scale-0 rounded-3xl sm:bottom-20 sm:left-0 sm:translate-y-1/3 sm:scale-75"
+        />
         <!-- Create URL Recipe Video -->
         <video
           #video1
           loop
           width="320"
           height="240"
-          class="absolute -top-36 xsm:-top-48 sm:-top-36 sm:translate-y-1/3 right-1/2 translate-x-1/2 sm:translate-x-0 sm:right-6 md:right-20 translate-y-1/2 scale-75 sm:scale-90 md:scale-100"
+          class="absolute -top-36 right-1/2 translate-x-1/2 translate-y-1/2 scale-75 xsm:-top-48 sm:-top-36 sm:right-6 sm:translate-x-0 sm:translate-y-1/3 sm:scale-90 md:right-20 md:scale-100"
         >
           <source [src]="videoSource" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <script>
+        <!-- <script>
           document.getElementById("video1").play();
-        </script>
+        </script> -->
+      </div>
+
+      <!-- Social -->
+      <div
+        class="relative h-dl-22 mb-dl-14 w-full bg-gradient-to-b from-dl-pink-10 to-white sm:w-9/12 sm:rounded-3xl"
+      >
+        <!-- Text -->
+        <div class="flex h-dl-12 w-full flex-col justify-between">
+          <h2
+            class="absolute top-5 w-full text-center text-dl-8 font-dl-3 leading-tight tracking-wider"
+          >
+            Recipes connect us
+          </h2>
+          <p
+            class="absolute top-24 w-full px-dl-8 text-center text-dl-7 font-dl-2 leading-normal tracking-normal"
+          >
+            Keep heirlooms in the family, or make public what you are proud of. See
+            what others are cooking.
+          </p>
+        </div>
+
+        <!-- Friend List Image -->
+        <img
+          src="assets/photos/friends-list.png"
+          alt="Friends List"
+          class="absolute -bottom-36 scale-75 rounded-3xl sm:bottom-20 sm:left-0 sm:translate-y-1/3 sm:scale-75"
+        />
       </div>
     </div>
   </div>

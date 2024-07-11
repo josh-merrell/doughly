@@ -33,8 +33,6 @@ import { Router } from '@angular/router';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 
-
-
 @Component({
   selector: 'dl-use-recipe-modal',
   standalone: true,
@@ -48,7 +46,7 @@ import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.comp
     MatInputModule,
     MatSlideToggleModule,
     SelectInputComponent,
-    TextInputComponent
+    TextInputComponent,
   ],
   templateUrl: './use-recipe-modal.component.html',
 })
@@ -57,7 +55,19 @@ export class UseRecipeModalComponent {
   public confirmed: boolean = false;
   public isSubmitting: boolean = false;
   public userProfile: WritableSignal<any> = signal(null);
-  public satisfactionOptions = [1,2,3,4,5,6,7,8,9,10];
+
+  public satisfactionOptions = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -94,8 +104,8 @@ export class UseRecipeModalComponent {
     this.store.dispatch(
       RecipeActions.useRecipe({
         recipeID: this.data.recipeID,
-        satisfaction,
-        difficulty,
+        satisfaction: Number(satisfaction),
+        difficulty: Number(difficulty),
         note,
         checkIngredientStock: this.userProfile().checkIngredientStock,
       })
@@ -115,13 +125,18 @@ export class UseRecipeModalComponent {
               console.error(
                 `Recipe use failed: ${error.message}, CODE: ${error.statusCode}`
               );
-              this.modalService.open(ErrorModalComponent, {
-                maxWidth: '380px',
-                data: {
-                  errorMessage: error.message,
-                  statusCode: error.statusCode,
+              this.modalService.open(
+                ErrorModalComponent,
+                {
+                  maxWidth: '380px',
+                  data: {
+                    errorMessage: error.message,
+                    statusCode: error.statusCode,
+                  },
                 },
-              }, 2, true);
+                2,
+                true
+              );
             } else {
               this.dialogRef.close('success');
             }
