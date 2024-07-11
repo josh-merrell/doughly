@@ -13,7 +13,7 @@ branch_config:
 hooks:
   BeforeInstall:
     - location: server/scripts/install_dependencies.sh
-      timeout: 300
+      timeout: 330
       runas: ubuntu
   AfterInstall:
     - location: server/scripts/start_application.sh
