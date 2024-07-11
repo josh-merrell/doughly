@@ -38,7 +38,7 @@ declare const google: any;
     MatProgressSpinnerModule,
     MatSelectModule,
     MatInputModule,
-    AutofocusDirective
+    AutofocusDirective,
   ],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
@@ -66,7 +66,14 @@ export class LoginPageComponent {
         const profile = this.authService.profile();
         if (profile && profile.user_id) {
           if (this.router.url !== '/reset-password') {
-            this.router.navigate(['/loading']);
+            if (
+              !this.router.url.includes('admin=true') &&
+              !Capacitor.isNativePlatform()
+            ) {
+              this.router.navigate(['/web']);
+            } else {
+              this.router.navigate(['/loading']);
+            }
           }
         }
         if (!profile) {
@@ -88,6 +95,12 @@ export class LoginPageComponent {
   }
 
   ngOnInit() {
+    if (
+      !this.router.url.includes('admin=true') &&
+      !Capacitor.isNativePlatform()
+    ) {
+      this.router.navigate(['/web']);
+    }
     this.store.select(selectProfile).subscribe((profile) => {
       if (!profile) return;
       this.profile.set(profile);

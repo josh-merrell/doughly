@@ -1,9 +1,16 @@
 <div class="flex h-full w-full flex-col bg-white pt-dl-4 dark:bg-dl-grey-1">
-  <div class="mb-dl-3 flex w-full flex-row-reverse pr-dl-5">
+  <div
+    class="px-dl-4 mb-dl-3 flex w-full flex-row-reverse items-center justify-between pr-dl-5"
+  >
     <span
       class="inline-flex items-center border-b-4 border-dl-blue-8 text-dl-7 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out dark:border-dl-blue-3 dark:text-dl-grey-9"
       >Settings</span
     >
+    <img
+      class="h-11 w-auto"
+      src="/assets/icons/logo-blue-light.svg"
+      alt="doughleap logo"
+    />
   </div>
   <div *ngIf="isEditing" class="flex h-full w-full items-center justify-center">
     <mat-spinner class="my-app-custom-spinner"></mat-spinner>
