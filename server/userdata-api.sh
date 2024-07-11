@@ -3,7 +3,7 @@
 #!/bin/bash
 set -e
 
-# Install necessary tools
+# Install necessary tools!
 sudo apt-get update
 sudo apt-get install -y git net-tools
 
