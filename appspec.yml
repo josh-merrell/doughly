@@ -13,11 +13,11 @@ branch_config:
 hooks:
   BeforeInstall:
   - location: server/scripts/change_permissions.sh
-    timeout: 6
+    timeout: 10
     runas: root
   AfterInstall:
     - location: server/scripts/start_application.sh
-      timeout: 300
+      timeout: 540
       runas: ubuntu
   ApplicationStart:
     - location: server/scripts/restart_alloy.sh
