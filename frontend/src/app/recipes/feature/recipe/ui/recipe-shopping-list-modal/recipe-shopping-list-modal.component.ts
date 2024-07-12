@@ -157,8 +157,7 @@ export class RecipeShoppingListModalComponent {
   onViewDraftList() {
     this.dialogRef.close();
     this.router.navigate([
-      '/groceries/draft',
-      this.shoppingLists()[0].shoppingListID,
+      '/groceries/draft'
     ]);
   }
 

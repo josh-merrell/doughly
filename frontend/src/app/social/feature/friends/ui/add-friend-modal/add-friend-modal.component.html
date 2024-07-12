@@ -35,8 +35,13 @@
     <button
       type="button"
       [disabled]="searchedQuery() === searchFilter()"
-      class="block whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1"
-      [ngClass]="{ invisible: searchedQuery() === searchFilter() }"
+      class="block whitespace-nowrap rounded-dl-2 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 shadow-sm transition-all duration-200 ease-in-out"
+      [ngClass]="{
+        'bg-dl-grey-7 text-dl-grey-2 dark:border-dl-grey-3 dark:bg-dl-grey-3 dark:text-dl-grey-8':
+          searchedQuery() === searchFilter(),
+        'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+          searchedQuery() !== searchFilter()
+      }"
       (click)="onSearch()"
     >
       Search

@@ -1,9 +1,9 @@
 <div class="flex h-full flex-col items-center">
   <!-- If not loading -->
-  <div *ngIf="!isLoading()" class="flex h-full flex-col items-center">
-    <!-- Horizontal List of Shared List Widgets -->
+  <div *ngIf="!isLoading()" class="flex h-full w-full flex-col items-center">
+    <!-- Horizontal List of Shared List Chips -->
     <div
-      class="max-w-100 mt-dl-4 flex min-h-dl-7 overflow-x-auto whitespace-nowrap pb-dl-3 pl-dl-3"
+      class="mt-dl-4 flex min-h-dl-7 w-full overflow-x-auto whitespace-nowrap pb-dl-3 pl-dl-3"
     >
       <div
         *ngFor="let list of displaySharedShoppingLists()"
@@ -87,7 +87,7 @@
     <!-- List -->
     <div
       *ngIf="!isLoading()"
-      class="relative mb-dl-2 flex w-dl-16 flex-grow flex-col items-center overflow-y-auto"
+      class="relative px-dl-3 mb-dl-5 flex w-full flex-grow flex-col items-center overflow-y-auto"
     >
       <div
         class="relative mb-dl-3 flex min-h-dl-6 w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2 dark:bg-dl-grey-2"
