@@ -372,14 +372,15 @@ export class SubscribeRecipeModalComponent {
           newIngredient['measurement'] = Number(ingredients[i].measurement);
         }
 
-        // if userIngredientID is not 0, this ingredient needs 'userIngredientID', 'userPurchaseUnitRatio', 'measurementUnit', 'measurement'
+        // if userIngredientID is not 0, this ingredient needs 'userIngredientID', 'userPurchaseUnitRatio', 'measurementUnit', 'measurement', and 'name'
         else {
           newIngredient['ingredientID'] = ingredients[i].userIngredientID;
           newIngredient['purchaseUnitRatio'] = Number(
-            1 / ingredients[i].userPurchaseUnitRatio
+            ingredients[i].userPurchaseUnitRatio
           );
           newIngredient['measurementUnit'] = ingredients[i].measurementUnit;
           newIngredient['measurement'] = Number(ingredients[i].measurement);
+          newIngredient['name'] = ingredients[i].name;
         }
 
         if (ingredients[i].brand) {

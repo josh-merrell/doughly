@@ -414,6 +414,37 @@ export class ShoppingPageComponent {
     );
   }
 
+  displayIngredientName(name: string, measurement, measurementUnit) {
+    if (
+      Number(measurement) > 1 &&
+      (measurementUnit === 'single' || measurementUnit === '') &&
+      !['s', 'S'].includes(name[name.length - 1])
+    ) {
+      // if last letter is "y" and not preceded by a vowel, change "y" to "ies"
+      if (['y'].includes(name[name.length - 1])) {
+        return name.slice(0, -1) + 'ies';
+      } else if (['sh'].includes(name.slice(-2))) {
+        return name + 'es';
+      } else {
+        return name + 's';
+      }
+    } else if (measurementUnit === 'dozen') {
+      return name + 's';
+    }
+    return name;
+  }
+  displayMeasurementUnit(unit: string, measurement: number) {
+    if (unit === 'weightOunces' || unit === 'weightOunce') {
+      return 'oz';
+    } else if (unit.includes('tablespoon')) {
+      return unit.replace('tablespoon', 'Tbsp');
+    } else if (unit.includes('teaspoon')) {
+      return unit.replace('teaspoon', 'tsp');
+    } else if (unit.includes('milliliters')) {
+      return unit.replace('milliliters', 'ml');
+    } else return unit;
+  }
+
   onShareClick() {
     this.modalService.open(
       ShareListModalComponent,
