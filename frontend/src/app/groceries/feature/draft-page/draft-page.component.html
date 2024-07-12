@@ -157,13 +157,13 @@
     <button
       type="button"
       *ngIf="isLoading() === false"
-      class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:text-dl-grey-1"
+      class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onShopClick()"
       [ngClass]="{
-        'bg-dl-grey-7 dark:border-dl-grey-3 dark:bg-dl-grey-3':
+        'bg-dl-grey-7 text-dl-grey-3 dark:border-dl-grey-3 dark:bg-dl-grey-3 dark:text-dl-grey-8':
           displaySLRecipeIngr().length === 0 &&
           displaySLStandaloneIngr().length === 0,
-        'bg-dl-pink-4 dark:border-dl-pink-7 dark:bg-dl-pink-7':
+        'bg-dl-pink-4 text-white dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1':
           displaySLRecipeIngr().length !== 0 ||
           displaySLStandaloneIngr().length !== 0
       }"

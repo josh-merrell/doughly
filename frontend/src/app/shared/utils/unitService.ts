@@ -10,6 +10,7 @@ export class UnitService {
   constructor(private http: HttpClient) {}
 
   singular(value: string) {
+    if (!value || value === '') return value;
     if (value[value.length - 1] === 's') {
       if (value === 'leaves' || value === 'loaves') {
         return value.slice(0, -3) + 'f';
@@ -36,6 +37,7 @@ export class UnitService {
   }
 
   plural(value: string) {
+    if (!value || value === '') return value;
     if (value[value.length - 1] !== 's') {
       if (value === 'leaf' || value === 'loaf') {
         return value.slice(0, -1) + 'ves';

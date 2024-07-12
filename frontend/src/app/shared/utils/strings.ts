@@ -5,19 +5,15 @@ import { Injectable } from '@angular/core';
 })
 export class StringsService {
   public readonly onboardingStrings = {
-    collectUserDetails:
-      'First things first! Tell us about yourself.',
+    collectUserDetails: 'First things first! Tell us about yourself.',
     welcomeToDoughly: `Welcome to Doughly! Let's show you around before you get cooking.`,
-    // discoverPageOverview: `Recipes can be set to be Public, Private, or Heirloom (friends only). This page features popular Public recipes. Open one that catches your eye!`,
-    discoverPageOverview: `Recipes can be set to be Public, Private, or Heirloom (friends only). The Discover page features popular Public recipes.`,
+    discoverPageOverview: `Recipes can be set as Public, Private, or Heirloom (only friends can see). The Discover page features popular Public recipes.`,
     publicRecipePage: `A great Choice! You'll find details about the recipe here. If you want to connect it to your kitchen, use the "Subscribe" button near the top. Let's try that now.`,
     subscribeRecipeModal: `Map each ingredient and tool to your own (we started you with a few) or choose "Copy to Kitchen". Doughly keeps track of all units and inventory behind the scenes, so we'll need some conversions as well. Our AI will offer suggestions, but you can always adjust them.`,
     subscribeRecipePage: `This copy of the Public recipe is now connected to your kitchen! Explore the "Make Now!" button, then navigate to "Social".`,
     socialPageOverview: `On the Social page you can connect with friends. Keep your cherished recipes in one place for family to refer to any time they're feeling hungry or nostalgic!`,
     kitchenPageOverview: `In the Kitchen page, you can see all your tools and ingredients. You can add new ones and manage stock entries.`,
-    // shoppingPageOverview: `To prep for a new grocery run, visit "Groceries" and add your recently subscribed recipe to the draft list. Once added, you'll see all needed ingredients appended. You can also add non-recipe items manually.`,
     shoppingPageOverview: `From the Groceries page, select recipes you plan on using. If you enable the setting, the app will check your kitchen inventory and add only what you don't have in stock to your shopping list!`,
-    // recipesCreatedPage: `We're rounding the corner! On this page, you'll see all the recipes you've created. You have a few options when adding a new one.`,
     recipesCreatedPage: `On the Created page, you'll see all the recipes you own. You have a few options when adding a new one...`,
     recipeCreateManual: `Want to get your hands dirty? Start a new recipe from scratch here.`,
     recipeCreateURL: `To speed things up, you can paste a URL from any recipe website and let AI build things for you. Avoid the stress of endless articles and ads!`,

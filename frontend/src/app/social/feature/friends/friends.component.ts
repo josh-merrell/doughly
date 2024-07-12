@@ -144,7 +144,7 @@ export class FriendsComponent {
     this.modalService.open(
       AddFriendModalComponent,
       {
-        width: '90%',
+        width: '80%',
         maxWidth: '500px',
       },
       1

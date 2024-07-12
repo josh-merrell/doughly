@@ -24,7 +24,7 @@
       <!-- Show Ingredients that need reviewing -->
       <ng-container *ngFor="let ingredient of displayNeedsReview$ | async">
         <div
-          class="mb-dl-2 flex w-full flex-grow items-center justify-between rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-grey-9"
+          class="mb-dl-3 flex w-full flex-grow items-center justify-between rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-grey-9"
         >
           <div
             (click)="onIngredientClick(ingredient)"
@@ -74,7 +74,7 @@
       <!-- Show Ingredients that don't need reviewing -->
       <ng-container *ngFor="let ingredient of displayNoReview$ | async">
         <div
-          class="mb-dl-2 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+          class="mb-dl-3 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
         >
           <div (click)="onIngredientClick(ingredient)">
             <span class="font-dl-3"

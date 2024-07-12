@@ -117,9 +117,6 @@ export class DraftPageComponent {
   });
   public displaySLRecipeIngr = computed(() => {
     const combinedSLRecipeIng = this.combinedSLRecipeIng();
-    // const standaloneIngr = this.standaloneIngr(); //add later when standalone ingredients are added
-    // for each standalone ingredient, if 'ingredientID' is in combinedSLRecipeIng, then add the 'needMeasure' from standalone ingredient to the combinedSLRecipeIng, then put the result in the displaySLIngr and remove the item from combinedSLRecipeIng. Otherwise, just put the standalone ingredient in the displaySLIngr.
-    // add any remaining items in combinedSLRecipeIng to the displaySLIngr
     return combinedSLRecipeIng;
   });
   public displaySLStandaloneIngr = computed(() => {
@@ -208,7 +205,7 @@ export class DraftPageComponent {
 
         displayRecipes.forEach((recipe) => {
           this.recipeService
-            .getShoppingList(recipe.recipeID, new Date(recipe.plannedDate))
+            .getShoppingList(recipe.recipeID, this.profile().checkIngredientStock, new Date(recipe.plannedDate))
             .subscribe((sl) => {
               tempMap.set(recipe.recipeID, sl);
 
