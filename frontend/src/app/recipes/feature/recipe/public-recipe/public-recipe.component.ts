@@ -465,6 +465,10 @@ export class PublicRecipeComponent {
     this.toolsExpanded.set(!this.toolsExpanded());
   }
 
+  openSourceURL() {
+    window.open(this.recipe().sourceURL, '_blank');
+  }
+
   onboardingHandler(onboardingState: number) {
     // ** OLD ONBOARDING **
     // if (onboardingState === 3) {
