@@ -6,6 +6,7 @@ const { uploadBackup, deleteOldBackup } = require('../../services/fileService');
 const fs = require('fs');
 const path = require('path');
 const recipeCategories = require('../../services/recipeCategoryService');
+const { createUserLog } = require('../../services/dbLogger');
 
 module.exports = ({ db, dbPublic }) => {
   async function retrieveProfile(userID, friendStatus = 'confirmed') {
@@ -798,6 +799,12 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
+  async function loadedData(options) {
+    const { userID, authorization } = options;
+    // add a user log noting that the user loaded their account data successfully
+    createUserLog(userID, authorization, 'dataLoaded', 1, null, null, null, `User ${userID} loaded account data`);
+  }
+
   return {
     getProfile,
     getFriends,
@@ -810,5 +817,6 @@ module.exports = ({ db, dbPublic }) => {
     populateAccount,
     createDailyBackup,
     dailyBackupAllUsers,
+    loadedData,
   };
 };

@@ -171,6 +171,7 @@ export class LoadingPageComponent {
       const isLoading = this.isLoadingGlobal();
       if (!isLoading) {
         this.timeoutSubscription.unsubscribe();
+        this.logUserLoaded();
         this.router.navigate(['/tempRoute'], { onSameUrlNavigation: 'reload' });
       }
     });
@@ -561,5 +562,9 @@ export class LoadingPageComponent {
     setTimeout(() => {
       this.isMinimumTimeDone.set(true);
     }, 2000);
+  }
+
+  logUserLoaded() {
+    this.extraStuffService.logUserDataLoaded();
   }
 }
