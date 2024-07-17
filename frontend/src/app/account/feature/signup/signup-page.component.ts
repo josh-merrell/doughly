@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AutofocusDirective } from 'src/app/shared/utils/autofocusDirective';
-import {
-  AuthService,
-} from '../../../shared/utils/authenticationService';
+import { AuthService } from '../../../shared/utils/authenticationService';
 import {
   ReactiveFormsModule,
   FormControl,
@@ -15,14 +13,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import {
-  catchError,
-  debounceTime,
-  map,
-  of,
-  startWith,
-  switchMap,
-} from 'rxjs';
+import { catchError, debounceTime, map, of, startWith, switchMap } from 'rxjs';
 
 @Component({
   selector: 'dl-signup-page',
@@ -35,12 +26,13 @@ import {
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    AutofocusDirective
+    AutofocusDirective,
   ],
   templateUrl: './signup-page.component.html',
   styleUrls: ['./signup-page.component.scss'],
 })
 export class SignupPageComponent {
+  imagePlaceholder: string = '/assets/icons/logo-text-only-dark.svg';
   checkEmailMessage: WritableSignal<string> = signal('');
   emailErrorMessage: WritableSignal<string> = signal('');
   usernameErrorMessage: WritableSignal<string> = signal('');
@@ -132,6 +124,13 @@ export class SignupPageComponent {
   });
 
   error?: string;
+
+  ngAfterViewInit(): void {
+    // check document for 'dark' class to determine if dark mode is enabled
+    if (!document.body.classList.contains('dark')) {
+      this.imagePlaceholder = '/assets/icons/logo-text-only-light.svg';
+    }
+  }
 
   onSubmit() {
     this.signUpFailureMessage.set('');

@@ -14,6 +14,7 @@ router.use(authenticateJWT);
 router.delete('/:userID', errorCatcher(h.deleteProfile));
 router.post('/backups/all', errorCatcher(h.dailyBackupAllUsers));
 router.post('/backups/:userID', errorCatcher(h.createDailyBackup));
+router.post('/loaded/:userID', errorCatcher(h.loadedData));
 router.post('/:userID', errorCatcher(h.populateAccount));
 router.get('/friends/:friendUserID', routeValidator(getFriendSchema_params, 'params'), errorCatcher(h.getFriend));
 router.get('/friends', routeValidator(getFriendSchema_query, 'query'), errorCatcher(h.getFriends));

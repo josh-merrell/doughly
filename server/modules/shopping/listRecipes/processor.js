@@ -129,7 +129,7 @@ module.exports = ({ db }) => {
         throw errorGen(`Error deleting shoppingListRecipe: ${shoppingListRecipeError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (shoppingListRecipe.length === 0) {
-        throw errorGen(`Error deleting shoppingListRecipe: shoppingListRecipe does not exist`, 515, 'cannotComplete', false, 3);
+        return { success: true };
       }
 
       //delete the shoppingListRecipe
