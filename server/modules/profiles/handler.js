@@ -126,6 +126,19 @@ async function dailyBackupAllUsers(req, res) {
   return res.json(returner);
 }
 
+async function loadedData(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const { userID } = req.params;
+  const { authorization } = req.headers;
+  const returner = await p.loadedData({
+    userID,
+    authorization,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   getProfile,
   getFriends,
@@ -138,4 +151,5 @@ module.exports = {
   populateAccount,
   createDailyBackup,
   dailyBackupAllUsers,
+  loadedData,
 };

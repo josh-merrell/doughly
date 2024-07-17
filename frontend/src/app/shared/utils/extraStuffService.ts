@@ -2,11 +2,13 @@ import { Injectable, WritableSignal, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './authenticationService';
 import { StylesService } from './stylesService';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExtraStuffService {
+  private API_URL = `${environment.BACKEND}/`;
   public stateToLoad: WritableSignal<string> = signal('');
   public onboardingPublicRecipe: WritableSignal<number> = signal(0);
   public onboardingSubscribedRecipe: WritableSignal<number> = signal(0);
@@ -18,6 +20,13 @@ export class ExtraStuffService {
     private authService: AuthService,
     private stylesService: StylesService
   ) {}
+
+  public logUserDataLoaded(): void {
+    const profile = this.authService.profile();
+    this.http
+      .post(`${this.API_URL}profiles/loaded/${profile?.user_id}`, {})
+      .subscribe();
+  }
 
   public getFillColor(index: number): string {
     const darkMode = this.authService.profile()?.darkMode;
