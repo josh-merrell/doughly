@@ -123,6 +123,9 @@ module.exports = ({ db, dbPublic }) => {
         case 'friendHeirloomRecipeCreated':
           await db.from('messages').update({ status: 'deleted' }).eq('messageID', message.messageData.data.messageID);
           break;
+        case 'welcomeToDoughly':
+          await db.from('messages').update({ status: 'deleted' }).eq('messageID', message.messageData.data.messageID);
+          break;
         default:
           throw errorGen(`Invalid message type`, 510, 'dataValidationErr', false, 3);
       }
