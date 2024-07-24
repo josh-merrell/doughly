@@ -21,7 +21,7 @@ dependencies {
     implementation project(':codetrix-studio-capacitor-google-auth')
     implementation project(':hugotomazi-capacitor-navigation-bar')
     implementation project(':capacitor-plugin-glassfy')
-    implementation "com.android.billingclient:billing:5.2.1"
+    implementation "com.android.billingclient:billing:7.0.0"
 }
 
 
