@@ -123,7 +123,6 @@ export class ProfileComponent {
           currentPhotoURL: this.profile.photo_url,
         },
         width: '70%',
-        height: '40%',
       },
       1
     );
