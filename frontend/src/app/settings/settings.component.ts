@@ -35,7 +35,7 @@ import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-inpu
     MatFormFieldModule,
     MatSlideToggleModule,
     MatSelectModule,
-    SelectInputComponent
+    SelectInputComponent,
   ],
   templateUrl: './settings.component.html',
 })
@@ -57,14 +57,22 @@ export class SettingsComponent {
         checkIngredientStock: newProfile.checkIngredientStock,
         autoDeleteExpiredStock: newProfile.autoDeleteExpiredStock,
         darkMode: newProfile.darkMode,
-        notifyOnLowStock: newProfile.notifyOnLowStock,
-        notifyOnNoStock: newProfile.notifyOnNoStock,
-        notifyUpcomingStockExpiry: newProfile.notifyUpcomingStockExpiry,
-        notifyExpiredStock: newProfile.notifyExpiredStock,
-        notifyFriendCreateRecipe: newProfile.notifyFriendCreateRecipe,
-        notifyFolloweeCreateRecipe: newProfile.notifyFolloweeCreateRecipe,
-        notifyFriendRequest: newProfile.notifyFriendRequest,
-        notifyNewFollower: newProfile.notifyNewFollower,
+        notifyOnLowStock:
+          newProfile.notifyOnLowStock === 'Enabled' ? true : false,
+        notifyOnNoStock:
+          newProfile.notifyOnNoStock === 'Enabled' ? true : false,
+        notifyUpcomingStockExpiry:
+          newProfile.notifyUpcomingStockExpiry === 'Enabled' ? true : false,
+        notifyExpiredStock:
+          newProfile.notifyExpiredStock === 'Enabled' ? true : false,
+        notifyFriendCreateRecipe:
+          newProfile.notifyFriendCreateRecipe === 'Enabled' ? true : false,
+        notifyFolloweeCreateRecipe:
+          newProfile.notifyFolloweeCreateRecipe === 'Enabled' ? true : false,
+        notifyFriendRequest:
+          newProfile.notifyFriendRequest === 'Enabled' ? true : false,
+        notifyNewFollower:
+          newProfile.notifyNewFollower === 'Enabled' ? true : false,
       });
     });
   }
@@ -81,7 +89,7 @@ export class SettingsComponent {
       checkIngredientStock: [false],
       autoDeleteExpiredStock: [false],
       darkMode: ['', [Validators.required]],
-      notifyOnLowStock: ['', [Validators.required]],
+      notifyOnLowStock: [true],
       notifyOnNoStock: ['', [Validators.required]],
       notifyUpcomingStockExpiry: ['', [Validators.required]],
       notifyExpiredStock: ['', [Validators.required]],
@@ -102,14 +110,24 @@ export class SettingsComponent {
         ? 'true'
         : 'false',
       darkMode: this.form.value.darkMode,
-      notifyOnLowStock: this.form.value.notifyOnLowStock,
-      notifyOnNoStock: this.form.value.notifyOnNoStock,
-      notifyUpcomingStockExpiry: this.form.value.notifyUpcomingStockExpiry,
-      notifyExpiredStock: this.form.value.notifyExpiredStock,
-      notifyFriendCreateRecipe: this.form.value.notifyFriendCreateRecipe,
-      notifyFolloweeCreateRecipe: this.form.value.notifyFolloweeCreateRecipe,
-      notifyFriendRequest: this.form.value.notifyFriendRequest,
-      notifyNewFollower: this.form.value.notifyNewFollower,
+      notifyOnLowStock: this.form.value.notifyOnLowStock ? 'Enabled' : 'None',
+      notifyOnNoStock: this.form.value.notifyOnNoStock ? 'Enabled' : 'None',
+      notifyUpcomingStockExpiry: this.form.value.notifyUpcomingStockExpiry
+        ? 'Enabled'
+        : 'None',
+      notifyExpiredStock: this.form.value.notifyExpiredStock
+        ? 'Enabled'
+        : 'None',
+      notifyFriendCreateRecipe: this.form.value.notifyFriendCreateRecipe
+        ? 'Enabled'
+        : 'None',
+      notifyFolloweeCreateRecipe: this.form.value.notifyFolloweeCreateRecipe
+        ? 'Enabled'
+        : 'None',
+      notifyFriendRequest: this.form.value.notifyFriendRequest
+        ? 'Enabled'
+        : 'None',
+      notifyNewFollower: this.form.value.notifyNewFollower ? 'Enabled' : 'None',
     };
     this.store.dispatch(ProfileActions.updateProfile({ profile: updateBody }));
     this.store
