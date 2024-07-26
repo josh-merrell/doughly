@@ -51,7 +51,7 @@ export class ProfileComponent {
     effect(() => {
       const profile = this.authService.profile();
       if (profile) {
-        console.log('profile', profile);
+        console.log('PROFILE', profile);
         this.profile = profile;
         this.profileImageLink = profile?.photo_url;
         this.initials =
@@ -123,26 +123,31 @@ export class ProfileComponent {
           currentPhotoURL: this.profile.photo_url,
         },
         width: '70%',
-        height: '40%',
       },
       1
     );
 
     if (ref) {
       ref.afterClosed().subscribe((result) => {
-        if (result === 'cancel' || !result)
-          if (result === 'success') {
-            this.modalService.open(
-              ConfirmationModalComponent,
-              {
-                data: {
-                  confirmationMessage: 'Profile photo updated successfully!',
-                },
+        if (result === 'cancel' || !result) {
+          return;
+        }
+        if (result === 'success') {
+          this.modalService.open(
+            ConfirmationModalComponent,
+            {
+              data: {
+                confirmationMessage: 'Profile photo updated successfully!',
               },
-              1,
-              true
-            );
-          }
+            },
+            1,
+            true
+          );
+          // wait 10 seconds, then refresh profile
+          setTimeout(() => {
+            this.authService.refreshProfile();
+          }, 10000);
+        }
       });
     } else {
     }

@@ -1,6 +1,6 @@
 <div class="flex h-full w-full flex-col bg-white pt-dl-4 dark:bg-dl-grey-1">
   <div
-    class="px-dl-4 mb-dl-3 flex w-full flex-row-reverse items-center justify-between pr-dl-5"
+    class="mb-dl-3 flex w-full flex-row-reverse items-center justify-between px-dl-4 pr-dl-5"
   >
     <span
       class="inline-flex items-center border-b-4 border-dl-blue-8 text-dl-7 font-dl-3 text-dl-grey-2 transition-all duration-100 ease-in-out dark:border-dl-blue-3 dark:text-dl-grey-9"
@@ -77,136 +77,151 @@
             <!-- Notify on Low Ingredient Stock -->
             <div
               id="form-notifyOnLowStock"
-              class="relative mt-dl-2 flex flex-row items-start"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
+              <mat-slide-toggle formControlName="notifyOnLowStock">
+              </mat-slide-toggle>
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+                class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient is low in stock</span
               >
-              <dl-select-input
+              <!-- <dl-select-input
                 class="flex-grow"
                 formControlName="notifyOnLowStock"
                 [options]="notificationMethods"
                 [noLabel]="true"
-              ></dl-select-input>
+              ></dl-select-input> -->
             </div>
 
             <!-- Notify on No Stock -->
             <div
               id="form-notifyOnNoStock"
-              class="relative mt-dl-2 flex flex-row items-start"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
+              <mat-slide-toggle formControlName="notifyOnNoStock">
+              </mat-slide-toggle>
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+                class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient has no more stock</span
               >
-              <dl-select-input
+              <!-- <dl-select-input
                 class="flex-grow"
                 formControlName="notifyOnNoStock"
                 [options]="notificationMethods"
                 [noLabel]="true"
-              ></dl-select-input>
+              ></dl-select-input> -->
             </div>
-
             <!-- Notify on Upcoming Expiration -->
             <div
               id="form-notifyUpcomingStockExpiry"
-              class="relative mt-dl-2 flex flex-row items-start"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
+              <mat-slide-toggle formControlName="notifyUpcomingStockExpiry">
+              </mat-slide-toggle>
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+                class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient stock is three days from expiration</span
               >
-              <dl-select-input
+              <!-- <dl-select-input
                 class="flex-grow"
                 formControlName="notifyUpcomingStockExpiry"
                 [options]="notificationMethods"
                 [noLabel]="true"
-              ></dl-select-input>
+              ></dl-select-input> -->
             </div>
 
             <!-- Notify on Expired Stock -->
             <div
               id="form-notifyExpiredStock"
-              class="relative mt-dl-2 flex flex-row items-start"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
+              <mat-slide-toggle formControlName="notifyExpiredStock">
+              </mat-slide-toggle>
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+                class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When an ingredient stock has expired</span
               >
-              <dl-select-input
+              <!-- <dl-select-input
                 class="flex-grow"
                 formControlName="notifyExpiredStock"
                 [options]="notificationMethods"
                 [noLabel]="true"
-              ></dl-select-input>
+              ></dl-select-input> -->
             </div>
             <!-- Notify Friend Created Recipe -->
             <div
               id="form-notifyFriendCreatedRecipe"
-              class="relative mt-dl-2 flex flex-row items-start"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
+              <mat-slide-toggle formControlName="notifyFriendCreateRecipe">
+              </mat-slide-toggle>
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+                class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When a friend creates a recipe</span
               >
-              <dl-select-input
+              <!-- <dl-select-input
                 class="flex-grow"
                 formControlName="notifyFriendCreateRecipe"
                 [options]="notificationMethods"
                 [noLabel]="true"
-              ></dl-select-input>
+              ></dl-select-input> -->
             </div>
 
             <!-- Notify Followee Created Recipe -->
             <div
               id="form-notifyFolloweeCreatedRecipe"
-              class="relative mt-dl-2 flex flex-row items-start"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
+              <mat-slide-toggle formControlName="notifyFolloweeCreateRecipe">
+              </mat-slide-toggle>
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+                class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When someone you follow creates a recipe</span
               >
-              <dl-select-input
+              <!-- <dl-select-input
                 class="flex-grow"
                 formControlName="notifyFolloweeCreateRecipe"
                 [options]="notificationMethods"
                 [noLabel]="true"
-              ></dl-select-input>
+              ></dl-select-input> -->
             </div>
 
             <!-- Notify on New Friend Reqest -->
             <div
               id="form-notifyFriendRequest"
-              class="relative mt-dl-2 flex flex-row items-start"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
+              <mat-slide-toggle formControlName="notifyFriendRequest">
+              </mat-slide-toggle>
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+                class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When you receive a friend request</span
               >
-              <dl-select-input
+              <!-- <dl-select-input
                 class="flex-grow"
                 formControlName="notifyFriendRequest"
                 [options]="notificationMethods"
                 [noLabel]="true"
-              ></dl-select-input>
+              ></dl-select-input> -->
             </div>
 
             <!-- Notify on New Follower -->
             <div
               id="form-notifyNewFollower"
-              class="relative mt-dl-2 flex flex-row items-start"
+              class="relative mt-dl-2 flex flex-row items-center"
             >
+              <mat-slide-toggle formControlName="notifyNewFollower">
+              </mat-slide-toggle>
               <span
-                class="max-w-dl-10 py-dl-3 pl-dl-1 pr-dl-2 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
+                class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-2 dark:text-dl-grey-9"
                 >When someone follows you</span
               >
-              <dl-select-input
+              <!-- <dl-select-input
                 class="flex-grow"
                 formControlName="notifyNewFollower"
                 [options]="notificationMethods"
                 [noLabel]="true"
-              ></dl-select-input>
+              ></dl-select-input> -->
             </div>
           </div>
         </div>

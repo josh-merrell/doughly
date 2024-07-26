@@ -1,5 +1,5 @@
-import { AbstractControl, ValidatorFn } from "@angular/forms";
-import { States } from "./types";
+import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { States } from './types';
 
 export function positiveIntegerValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -56,11 +56,15 @@ export function twoByteInteger(): ValidatorFn {
     return value >= 0 && value < 32767 && Number.isInteger(value)
       ? null
       : { notTwoByteInteger: { value: control.value } };
-  }
+  };
 }
 
 export function isState(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
+    const value = control.value;
+    if (value === '') {
+      return null; // No error for empty string
+    }
     return Object.values(States).includes(control.value)
       ? null
       : { notState: true };
