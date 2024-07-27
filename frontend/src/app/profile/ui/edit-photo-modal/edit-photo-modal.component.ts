@@ -151,6 +151,9 @@ export class EditPhotoModalComponent {
           this.croppedImage
         );
 
+        //wait 10 seconds
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+
         this.newPhotoURL = uploadResponseUrl;
         //set 'photo_url' to newPhotoURL in profile state via profile Service
         this.authService.updateField('photo_url', this.newPhotoURL).subscribe({
