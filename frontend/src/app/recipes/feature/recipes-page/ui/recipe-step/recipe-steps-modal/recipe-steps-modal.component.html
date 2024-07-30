@@ -3,7 +3,7 @@
 >
   <mat-spinner
     class="my-app-custom-spinner"
-    *ngIf="isAdding$ | async"
+    *ngIf="isAdding()"
   ></mat-spinner>
   <div class="w-full flex flex-col relative mb-dl-3 text-center">
     <p
@@ -22,18 +22,18 @@
     />
   </div>
   <div
-    *ngIf="!(isAdding$ | async)"
+    *ngIf="!isAdding()"
     class="flex h-full w-full flex-grow flex-col overflow-y-auto"
   >
     <!--List of Recipe Steps-->
-    <div class="mb-dl-5 flex w-full flex-grow flex-col overflow-y-auto">
+    <div class="mb-dl-4 flex w-full flex-grow flex-col overflow-y-auto">
       <div
         cdkDropList
         (cdkDropListDropped)="onDrop($event)"
         class="mb-dl-2 flex w-full flex-col items-start"
       >
         <ng-container
-          *ngFor="let step of displayRecipeSteps$ | async; let i = index"
+          *ngFor="let step of displayRecipeSteps(); let i = index"
         >
           <div
             cdkDrag
@@ -91,7 +91,7 @@
     </div>
     <button
       type="button"
-      class="relative mx-dl-1 flex h-dl-4 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-2 hover:dark:bg-dl-grey-3"
+      class="relative mx-dl-1 flex h-dl-4 py-dl-2 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-2 hover:dark:bg-dl-grey-3"
       (click)="onAddClick()"
       id="addRecipeStepButton"
     >
