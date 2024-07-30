@@ -8,6 +8,8 @@ import { environment } from 'src/environments/environment';
 export class ImageFromCDN implements PipeTransform {
   transform(value: string): string {
     if (!value) return value;
+    // if value includes "profile/", return the value as is
+    if (value.includes('profile/')) return value;
     return value.replace(
       's3.us-west-2.amazonaws.com/dl.images-compressed',
       environment.COMPRESSED_IMAGE_CDN
