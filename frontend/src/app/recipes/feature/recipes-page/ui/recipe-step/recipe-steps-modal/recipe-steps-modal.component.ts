@@ -5,6 +5,7 @@ import {
   Renderer2,
   ViewChild,
   WritableSignal,
+  effect,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -77,16 +78,15 @@ interface RecipeStepToUpdate {
 })
 export class RecipeStepsModalComponent {
   recipe;
-  isAdding$: Observable<boolean>;
-  isLoading$: Observable<boolean>;
+  isAdding: WritableSignal<boolean> = signal(false);
+  isLoading: WritableSignal<boolean> = signal(false);
   stepsToAdd!: boolean;
   stepsToReorder!: boolean;
   stepsToUpdate!: boolean;
-  recipeSteps$!: Observable<any[]>;
-  steps$!: Observable<Step[]>;
-  displayRecipeSteps: any[] = [];
-  private displayRecipeStepsSubject = new BehaviorSubject<any[]>([]);
-  displayRecipeSteps$ = this.displayRecipeStepsSubject.asObservable();
+  recipeSteps: WritableSignal<any[]> = signal([]);
+  originalRecipeSteps: WritableSignal<any[]> = signal([]);
+  steps: WritableSignal<Step[]> = signal([]);
+  displayRecipeSteps: WritableSignal<any[]> = signal([]);
   modalActiveForRowID: number | null = null;
 
   // Lottie animation
@@ -170,15 +170,39 @@ export class RecipeStepsModalComponent {
     private modalService: ModalService
   ) {
     this.recipe = this.data.recipe;
-    this.isAdding$ = this.store.select(selectAddingRecipeStep);
-    this.isLoading$ = this.store.select(selectLoadingRecipeStep);
-    this.recipeSteps$ = this.store.select(
-      selectRecipeStepsByID(this.recipe.recipeID)
-    );
-    this.steps$ = this.store.select(selectSteps);
     this.stepsToAdd = false;
     this.stepsToReorder = false;
     this.stepsToUpdate = false;
+
+    effect(
+      () => {
+        const drs = this.displayRecipeSteps();
+        drs.sort((a, b) => a.sequence - b.sequence);
+        this.displayRecipeSteps.set(drs);
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(
+      () => {
+        const recipeSteps = this.recipeSteps();
+        const steps = this.steps();
+        const displayRecipeSteps: any = [];
+        recipeSteps.forEach((recipeStep) => {
+          const step = steps.find((step) => step.stepID === recipeStep.stepID);
+          displayRecipeSteps.push({
+            ...recipeStep,
+            title: step!.title,
+            description: step!.description,
+            toAdd: false,
+            toUpdate: false,
+            sequenceChanged: false,
+          });
+        });
+        this.displayRecipeSteps.set(displayRecipeSteps);
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   animationCreated(animationItem: AnimationItem): void {
@@ -197,61 +221,50 @@ export class RecipeStepsModalComponent {
   }
 
   ngOnInit() {
-    // enhance recipeSteps with step.title into displayRecipeSteps
-    this.recipeSteps$.pipe(take(1)).subscribe((recipeSteps) => {
-      this.steps$.pipe(take(1)).subscribe((steps) => {
-        const displayRecipeSteps: any = [];
-        recipeSteps.forEach((recipeStep) => {
-          const step = steps.find((step) => step.stepID === recipeStep.stepID);
-          displayRecipeSteps.push({
-            ...recipeStep,
-            title: step!.title,
-            description: step!.description,
-            toAdd: false,
-            toUpdate: false,
-            sequenceChanged: false,
-          });
-        });
-        this.displayRecipeStepsSubject.next(displayRecipeSteps);
+    this.store.select(selectAddingRecipeStep).subscribe((adding) => {
+      this.isAdding.set(adding);
+    });
+    this.store.select(selectLoadingRecipeStep).subscribe((loading) => {
+      this.isLoading.set(loading);
+    });
+    this.store
+      .select(selectRecipeStepsByID(this.recipe.recipeID))
+      .subscribe((recipeSteps) => {
+        this.recipeSteps.set(recipeSteps);
       });
-    });
-    // sort displayRecipeSteps by sequence
-    this.displayRecipeSteps$.pipe(take(1)).subscribe((steps) => {
-      steps.sort((a, b) => a.sequence - b.sequence);
-    });
-    this.checkStepsToAdd().subscribe((stepsToAdd) => {
-      this.stepsToAdd = stepsToAdd;
-    });
-    this.checkStepsToReorder().subscribe((stepsToReorder) => {
-      this.stepsToReorder = stepsToReorder;
-    });
-    this.checkStepsToUpdate().subscribe((stepsToUpdate) => {
-      this.stepsToUpdate = stepsToUpdate;
+    this.store
+      .select(selectRecipeStepsByID(this.recipe.recipeID))
+      .pipe(take(1))
+      .subscribe((recipeSteps) => {
+        this.originalRecipeSteps.set(recipeSteps);
+      });
+    this.store.select(selectSteps).subscribe((steps) => {
+      this.steps.set(steps);
     });
   }
 
-  checkStepsToAdd(): Observable<boolean> {
-    return this.displayRecipeStepsSubject.pipe(
-      map((displayRecipeSteps) =>
-        displayRecipeSteps.some((recipeStep) => recipeStep.toAdd)
-      )
+  checkStepsToAdd(): boolean {
+    const result = this.displayRecipeSteps().some(
+      (recipeStep) => recipeStep.toAdd
     );
+    this.stepsToAdd = result;
+    return result;
   }
 
-  checkStepsToReorder(): Observable<boolean> {
-    return this.displayRecipeStepsSubject.pipe(
-      map((displayRecipeSteps) =>
-        displayRecipeSteps.some((recipeStep) => recipeStep.sequenceChanged)
-      )
+  checkStepsToReorder(): boolean {
+    const result = this.displayRecipeSteps().some(
+      (recipeStep) => recipeStep.sequenceChanged
     );
+    this.stepsToReorder = result;
+    return result;
   }
 
-  checkStepsToUpdate(): Observable<boolean> {
-    return this.displayRecipeStepsSubject.pipe(
-      map((displayRecipeSteps) =>
-        displayRecipeSteps.some((recipeStep) => recipeStep.toUpdate)
-      )
+  checkStepsToUpdate(): boolean {
+    const result = this.displayRecipeSteps().some(
+      (recipeStep) => recipeStep.toUpdate
     );
+    this.stepsToUpdate = result;
+    return result;
   }
 
   onAddClick() {
@@ -266,25 +279,25 @@ export class RecipeStepsModalComponent {
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result) => {
         if (result?.title) {
-          // Get the current value of displayRecipeSteps from the BehaviorSubject
-          this.displayRecipeStepsSubject
-            .pipe(take(1))
-            .subscribe((displayRecipeSteps) => {
-              const addedRecipeStep: any = {
-                title: result.title,
-                description: result.description,
-                sequence: displayRecipeSteps.length + 1,
-                photoURL: result.photoURL,
-                toAdd: true,
-                sequenceChanged: false,
-              };
+          // Get the current value of displayRecipeSteps from the Signal
+          const displayRecipeSteps = this.displayRecipeSteps();
+          const addedRecipeStep: any = {
+            title: result.title,
+            description: result.description,
+            sequence: displayRecipeSteps.length + 1,
+            photoURL: result.photoURL,
+            toAdd: true,
+            sequenceChanged: false,
+          };
 
-              // Add the new step to the local copy of the array
-              displayRecipeSteps.push(addedRecipeStep);
+          // Add the new step to the local copy of the array
+          displayRecipeSteps.push(addedRecipeStep);
 
-              // Push the updated steps back into the BehaviorSubject
-              this.displayRecipeStepsSubject.next(displayRecipeSteps);
-            });
+          // Update the Signal with the new steps
+          this.displayRecipeSteps.set(displayRecipeSteps);
+          console.log(`DISPLAY RS AFTER ADDING: `, displayRecipeSteps);
+
+          this.checkStepsToAdd();
         }
       });
     } else {
@@ -305,30 +318,31 @@ export class RecipeStepsModalComponent {
       dialogRef.afterClosed().subscribe((result) => {
         this.deactivateModalForRow();
         if (result?.title || result?.description) {
-          // Get the current value of displayRecipeSteps from the BehaviorSubject
-          this.displayRecipeStepsSubject
-            .pipe(take(1))
-            .subscribe((displayRecipeSteps) => {
-              const updatedRecipeStep: any = {
-                title: result.title,
-                description: result.description,
-                sequence: displayRecipeStep.sequence,
-                photoURL: result.photoURL,
-                toUpdate: true,
-                stepID: displayRecipeStep.stepID,
-                recipeStepID: displayRecipeStep.recipeStepID,
-                recipeID: displayRecipeStep.recipeID,
-              };
+          // Get the current value of displayRecipeSteps from the Signal
+          const displayRecipeSteps = this.displayRecipeSteps();
+          const updatedRecipeStep: any = {
+            title: result.title,
+            description: result.description,
+            sequence: displayRecipeStep.sequence,
+            photoURL: result.photoURL,
+            toUpdate: true,
+            stepID: displayRecipeStep.stepID,
+            recipeStepID: displayRecipeStep.recipeStepID,
+            recipeID: displayRecipeStep.recipeID,
+          };
 
-              // Replace the displayRecipeSteps entry matching the recipeStepID with the updatedRecipeStep
-              const index = displayRecipeSteps.findIndex(
-                (step) => step.recipeStepID === displayRecipeStep.recipeStepID
-              );
-              displayRecipeSteps[index] = updatedRecipeStep;
+          // Replace the displayRecipeSteps entry matching the recipeStepID with the updatedRecipeStep
+          const index = displayRecipeSteps.findIndex(
+            (step) => step.recipeStepID === displayRecipeStep.recipeStepID
+          );
+          displayRecipeSteps[index] = updatedRecipeStep;
 
-              // Push the updated steps back into the BehaviorSubject
-              this.displayRecipeStepsSubject.next(displayRecipeSteps);
-            });
+          // Update the Signal with the updated steps
+          this.displayRecipeSteps.set(displayRecipeSteps);
+
+          console.log(`DISPLAY RS AFTER UPDATING ONE: `, displayRecipeSteps);
+
+          this.checkStepsToUpdate();
         }
       });
     } else {
@@ -336,51 +350,46 @@ export class RecipeStepsModalComponent {
   }
 
   checkSequence() {
-    // Get the current value of displayRecipeSteps from the BehaviorSubject
-    this.displayRecipeStepsSubject
-      .pipe(take(1))
-      .subscribe((displayRecipeSteps) => {
-        this.recipeSteps$.pipe(take(1)).subscribe((originalRecipeSteps) => {
-          displayRecipeSteps.forEach((recipeStep) => {
-            const recipeStepID = recipeStep.recipeStepID;
-            const originalRecipeStep = originalRecipeSteps.find(
-              (originalRecipeStep) =>
-                originalRecipeStep.recipeStepID === recipeStepID
-            );
+    // Get the current value of displayRecipeSteps from the Signal
+    const displayRecipeSteps = this.displayRecipeSteps();
+    const originalRecipeSteps = this.recipeSteps();
+    displayRecipeSteps.forEach((recipeStep) => {
+      const recipeStepID = recipeStep.recipeStepID;
+      const originalRecipeStep = originalRecipeSteps.find(
+        (originalRecipeStep) => originalRecipeStep.recipeStepID === recipeStepID
+      );
 
-            if (originalRecipeStep) {
-              if (originalRecipeStep.sequence !== recipeStep.sequence) {
-                recipeStep.sequenceChanged = true;
-              } else {
-                recipeStep.sequenceChanged = false;
-              }
-            }
-          });
-          // Push the updated displayRecipeSteps back into the BehaviorSubject
-          this.displayRecipeStepsSubject.next(displayRecipeSteps);
-        });
-      });
+      if (originalRecipeStep) {
+        if (originalRecipeStep.sequence !== recipeStep.sequence) {
+          recipeStep.sequenceChanged = true;
+        } else {
+          recipeStep.sequenceChanged = false;
+        }
+      }
+    });
+
+    // Update the Signal with the updated steps
+    this.displayRecipeSteps.set(displayRecipeSteps);
+    this.checkStepsToReorder();
   }
 
   onDrop(event: CdkDragDrop<string[]>) {
     const prevIndex = event.previousIndex;
     const currIndex = event.currentIndex;
 
-    // Get the current value of displayRecipeSteps from the BehaviorSubject
-    this.displayRecipeStepsSubject
-      .pipe(take(1))
-      .subscribe((displayRecipeSteps) => {
-        // Move the item in the array for display purposes
-        moveItemInArray(displayRecipeSteps, prevIndex, currIndex);
+    // Get the current value of displayRecipeSteps from the Signal
+    const displayRecipeSteps = this.displayRecipeSteps();
+    // Move the item in the array for display purposes
+    moveItemInArray(displayRecipeSteps, prevIndex, currIndex);
 
-        // Update the sequence for all steps
-        for (let i = 0; i < displayRecipeSteps.length; i++) {
-          displayRecipeSteps[i].sequence = i + 1;
-        }
+    // Update the sequence for all steps
+    for (let i = 0; i < displayRecipeSteps.length; i++) {
+      displayRecipeSteps[i].sequence = i + 1;
+    }
 
-        // Push the updated steps back into the BehaviorSubject
-        this.displayRecipeStepsSubject.next(displayRecipeSteps);
-      });
+    // Update the Signal with the updated steps
+    this.displayRecipeSteps.set(displayRecipeSteps);
+    console.log(`DISPLAY RS AFTER DROPPING: `, displayRecipeSteps);
 
     this.checkSequence();
   }
@@ -414,49 +423,41 @@ export class RecipeStepsModalComponent {
             );
 
             // Compose a new 'updatedDisplayRecipeSteps' list
-            this.displayRecipeSteps$
-              .pipe(take(1))
-              .subscribe((displayRecipeSteps) => {
-                let updatedDisplayRecipeSteps = [...displayRecipeSteps];
+            const updatedDisplayRecipeSteps = this.displayRecipeSteps();
+            const recipeSteps = this.recipeSteps();
+            recipeSteps.forEach((freshStep) => {
+              const correspondingStep = updatedDisplayRecipeSteps.find(
+                (step) => step.recipeStepID === freshStep.recipeStepID
+              );
+              if (correspondingStep) {
+                correspondingStep.sequence = freshStep.sequence;
+              }
+            });
 
-                // Retrieve the latest recipe steps from the store
-                this.store
-                  .select(selectRecipeStepsByID(this.recipe.recipeID))
-                  .pipe(take(1))
-                  .subscribe((recipeSteps) => {
-                    recipeSteps.forEach((freshStep) => {
-                      const correspondingStep = updatedDisplayRecipeSteps.find(
-                        (step) => step.recipeStepID === freshStep.recipeStepID
-                      );
-                      if (correspondingStep) {
-                        correspondingStep.sequence = freshStep.sequence;
-                      }
-                    });
+            // Remove the deleted recipe step
+            const updatedDisplayRecipeStepsFiltered =
+              updatedDisplayRecipeSteps.filter(
+                (step) => step.recipeStepID !== displayRecipeStep.recipeStepID
+              );
 
-                    // Remove the deleted recipe step
-                    updatedDisplayRecipeSteps =
-                      updatedDisplayRecipeSteps.filter(
-                        (step) =>
-                          step.recipeStepID !== displayRecipeStep.recipeStepID
-                      );
+            // Decrement the sequence for 'toAdd' === true or 'sequenceChanged' === true
+            updatedDisplayRecipeStepsFiltered.forEach((step) => {
+              if (
+                step.toAdd === true ||
+                (step.sequenceChanged === true &&
+                  step.sequence > displayRecipeStep.sequence)
+              ) {
+                step.sequence--;
+              }
+            });
 
-                    // Decrement the sequence for 'toAdd' === true or 'sequenceChanged' === true
-                    updatedDisplayRecipeSteps.forEach((step) => {
-                      if (
-                        step.toAdd === true ||
-                        (step.sequenceChanged === true &&
-                          step.sequence > displayRecipeStep.sequence)
-                      ) {
-                        step.sequence--;
-                      }
-                    });
+            // Update the displayRecipeSteps Signal
+            this.displayRecipeSteps.set(updatedDisplayRecipeStepsFiltered);
 
-                    // Update the displayRecipeStepsSubject
-                    this.displayRecipeStepsSubject.next(
-                      updatedDisplayRecipeSteps
-                    );
-                  });
-              });
+            console.log(
+              `DISPLAY RS AFTER DELETING: `,
+              updatedDisplayRecipeStepsFiltered
+            );
           } else if (result) {
             this.modalService.open(
               DeleteRequestErrorModalComponent,
@@ -475,42 +476,40 @@ export class RecipeStepsModalComponent {
       } else {
       }
     } else {
-      // Update the steps in the BehaviorSubject for local removal
-      this.displayRecipeSteps$.pipe(take(1)).subscribe((steps) => {
-        const updatedSteps = steps.filter(
-          (step) => step.title !== displayRecipeStep.title
-        );
-        this.displayRecipeStepsSubject.next(updatedSteps);
-      });
+      // Update the steps in the Signal for local removal
+      const updatedSteps = this.displayRecipeSteps().filter(
+        (step) => step.title !== displayRecipeStep.title
+      );
+      this.displayRecipeSteps.set(updatedSteps);
+
+      console.log(`DISPLAY RS AFTER LOCAL DELETE: `, updatedSteps);
     }
   }
 
   onSubmit() {
-    this.displayRecipeStepsSubject
-      .pipe(
-        take(1),
-        concatMap((displayRecipeSteps) => {
-          // Perform each part sequentially
-          return concat(
-            this.updateSteps(displayRecipeSteps), // First part: Update any edited steps (and related recipeSteps)
-            this.addSteps(displayRecipeSteps), //Second part: Add any new steps (and related recipeSteps)
-            this.resequenceSteps(displayRecipeSteps) // Third part: Update sequence for any existing recipe steps that have been reordered
-          );
-        })
-      )
-      .subscribe({
-        next: () => this.dialogRef.close('success'),
-        error: (error) => {
-          this.dialogRef.close();
-          console.error('An unexpected error occurred:', error);
-        },
-      });
+    const displayRecipeSteps = this.displayRecipeSteps();
+
+    console.log(`DISPLAY RS BEFORE SUBMITTING: `, displayRecipeSteps);
+    // Perform each part sequentially
+    concat(
+      this.updateSteps(displayRecipeSteps), // First part: Update any edited steps (and related recipeSteps)
+      this.addSteps(displayRecipeSteps), //Second part: Add any new steps (and related recipeSteps)
+      this.resequenceSteps(displayRecipeSteps) // Third part: Update sequence for any existing recipe steps that have been reordered
+    ).subscribe({
+      next: () => this.dialogRef.close('success'),
+      error: (error) => {
+        this.dialogRef.close();
+        console.error('An unexpected error occurred:', error);
+      },
+    });
   }
 
   updateSteps(displayRecipeSteps: any[]): Observable<any> {
     const stepsToUpdate = displayRecipeSteps.filter(
       (recipeStep) => recipeStep.toUpdate
     );
+
+    console.log(`STEPS TO UPDATE: `, stepsToUpdate);
 
     const updateObservables = stepsToUpdate.map((recipeStep, index) => {
       return this.updateStepAndRecipeStep(recipeStep, index);
@@ -526,7 +525,6 @@ export class RecipeStepsModalComponent {
   }
 
   updateStepAndRecipeStep(recipeStep: any, index: number): Observable<any> {
-    // find the corresponding displayRecipeStep. If the title or description has changed, update the step
     const stepToUpdate = {
       stepID: recipeStep.stepID,
     };
@@ -547,6 +545,16 @@ export class RecipeStepsModalComponent {
         };
         if (recipeStep.photoURL) {
           recipeStepToUpdate.photoURL = recipeStep.photoURL;
+        }
+        const originalRecipeStep = this.originalRecipeSteps().find(
+          (step) => step.recipeStepID === recipeStep.recipeStepID
+        );
+        // if sequence or photoURL have not changed, do not dispatch the updateRecipeStep action
+        if (
+          recipeStepToUpdate.sequence === originalRecipeStep.sequence &&
+          recipeStepToUpdate.photoURL == originalRecipeStep.photoURL
+        ) {
+          return of(null);
         }
         this.store.dispatch(
           RecipeStepActions.updateRecipeStep({ recipeStep: recipeStepToUpdate })
@@ -570,6 +578,8 @@ export class RecipeStepsModalComponent {
     const stepsToAdd = displayRecipeSteps.filter(
       (recipeStep) => recipeStep.toAdd
     );
+
+    console.log(`STEPS TO ADD: `, stepsToAdd);
 
     return from(stepsToAdd).pipe(
       concatMap((recipeStep, index) => {
@@ -615,6 +625,8 @@ export class RecipeStepsModalComponent {
     const stepsToResequence = displayRecipeSteps.filter(
       (recipeStep) => recipeStep.sequenceChanged
     );
+
+    console.log(`STEPS TO RESEQUENCE: `, stepsToResequence);
 
     return this.updateSequences(stepsToResequence).pipe(
       catchError((error) => {

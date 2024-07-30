@@ -56,6 +56,13 @@ export class RecipeStepEffects {
     );
   });
 
+  addRecipeStepSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeStepActions.addRecipeStepSuccess),
+      map(() => RecipeStepActions.loadRecipeSteps())
+    )
+  );
+
   loadRecipeSteps$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RecipeStepActions.loadRecipeSteps),
@@ -203,6 +210,13 @@ export class RecipeStepEffects {
           )
         )
       )
+    )
+  );
+
+  deleteRecipeStepSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RecipeStepActions.deleteRecipeStepSuccess),
+      map(() => RecipeStepActions.loadRecipeSteps())
     )
   );
 }
