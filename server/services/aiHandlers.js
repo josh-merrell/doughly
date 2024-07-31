@@ -21,7 +21,7 @@ const getClient = async () => {
   return openai;
 };
 
-const visionRequest = async (recipeImageURL, userID, authorization, messageType) => {
+const visionRequest = async (recipeImageURLs, userID, authorization, messageType) => {
   const client = await getClient();
   const body = {
     messages: [requestMessages[messageType].message],
@@ -30,7 +30,20 @@ const visionRequest = async (recipeImageURL, userID, authorization, messageType)
     model: 'gpt-4o',
     max_tokens: 4000,
   };
-  body.messages[0].content[1].image_url.url = recipeImageURL;
+  // body.messages[0].content[1].image_url.url = recipeImageURL;
+  // for each image URL, add a message to the request
+  let i = 1;
+  while (i < recipeImageURLs.length + 1) {
+    body.messages[0].content.push({
+      type: 'image_url',
+      image_url: {
+        url: recipeImageURLs[i - 1],
+      },
+    });
+    i++;
+  }
+
+  global.logger.info(`VISION REQUEST SOURCE IMAGES: ${JSON.stringify(body.messages[0].content.slice(1))}`);
 
   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
     throw errorGen(`OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
@@ -82,7 +95,6 @@ const recipeFromTextRequest = async (recipeText, userID, authorization) => {
     throw errorGen(`OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
   });
 
-
   //log token usage
   createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to generateRecipeFromText`);
 
@@ -111,7 +123,7 @@ getPurchaseUnitLifespanDaysEstimate = async (ingredient) => {
     const vertexaiLocation = 'us-central1';
     const vertexaiEndpointID = '8420950649927106560';
     const promptText = `You are provided the name of a ingredient. You are also provided an array measurement units. Return two strings separated by a comma. The first should be a purchaseUnit appropriate for the ingredient and must be selected from the provided array of units. It should reflect the way in which this ingredient is purchased. When possible, this should be a specific unit, like 'weightOunce' or 'fluidOunce'. The second string should be a number estimate of how many days the ingredient will remain usable or fresh, assuming it is stored properly (this might involve refrigeration or freezing). For example, for the ingredient 'tomato', the return value might be 'weightOunce,12'. INGREDIENT:${ingredient}, UNITS: [${units}]`;
-    global.logger.info({message:`GETTING PU/LD VERTEXAI REQUEST: ${promptText}`, level:7, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `GETTING PU/LD VERTEXAI REQUEST: ${promptText}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
 
     const requestJson = {
       instances: [
@@ -139,19 +151,19 @@ getPurchaseUnitLifespanDaysEstimate = async (ingredient) => {
     const data = await response.json();
     const result = data.predictions[0].content.split(',');
     if (result[0] === 'weighOunce') result[0] = 'weightOunce';
-    global.logger.info({message:`RI NAME: ${ingredient} PU/LD VERTEXAI RESPONSE: ${result[0]}, ${result[1]}`, level:7, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `RI NAME: ${ingredient} PU/LD VERTEXAI RESPONSE: ${result[0]}, ${result[1]}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
 
     // calculate cost
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
     const cost = (characterCount / 1000) * billRatePer1000Chars;
-    global.logger.info({message:`CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level:7, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     return {
       purchaseUnit: result[0],
       lifespanDays: result[1],
       cost: cost,
     };
   } catch (error) {
-    global.logger.info({message:`Error estimating purchaseUnit and lifespanDays: ${error.message}`, level:3, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `Error estimating purchaseUnit and lifespanDays: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
     return {
       purchaseUnit: 'weightOunce',
       lifespanDays: 7,
@@ -193,12 +205,12 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
       body: JSON.stringify(requestJson),
     });
     const data = await response.json();
-    global.logger.info({message:`RI NAME: ${recipeIngredient} MATCHING VERTEXAI RESPONSE: ${data.predictions[0].content}`, level:7, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `RI NAME: ${recipeIngredient} MATCHING VERTEXAI RESPONSE: ${data.predictions[0].content}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     const matchResult = data.predictions[0].content;
     let resultJSON;
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
     let cost = (characterCount / 1000) * billRatePer1000Chars;
-    global.logger.info({message:`CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level:7, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
 
     // get est for purchaseUnit and lifespanDays from vertexai
     resultJSON = await getPurchaseUnitLifespanDaysEstimate(recipeIngredient);
@@ -221,7 +233,7 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
       cost: cost,
     };
   } catch (error) {
-    global.logger.info({message:`Error matching ingredient: ${error.message}`, level:3, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `Error matching ingredient: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
     return {
       reponse: { error: error.message },
       cost: cost || 0,
@@ -230,7 +242,7 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
 };
 
 const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, userItems) => {
-  global.logger.info({message:`MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`, level:6, timestamp: new Date().toISOString(), 'userID': userID | 0});
+  global.logger.info({ message: `MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`, level: 6, timestamp: new Date().toISOString(), userID: userID | 0 });
   const client = await getClient();
   const body = {
     messages: [requestMessages[type].message],
@@ -319,7 +331,7 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     const data = await response.json();
 
     if (!data.predictions || !Array.isArray(data.predictions) || data.predictions.length === 0) {
-      global.logger.info({message:`API response did not include expected 'predictions' array or it was empty.`, level:3, timestamp: new Date().toISOString(), 'userID': 0});
+      global.logger.info({ message: `API response did not include expected 'predictions' array or it was empty.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
       return {
         response: 1,
         cost: 0,
@@ -327,10 +339,10 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     }
 
     const result = data.predictions[0].content;
-    global.logger.info({message:`UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}`, level:7, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     // if result can not be converted to a number, return 1
     if (isNaN(result)) {
-      global.logger.info({message:`AI Unit Ratio estimate was not a number: ${result}, returning default "1"`, level:3, timestamp: new Date().toISOString(), 'userID': 0});
+      global.logger.info({ message: `AI Unit Ratio estimate was not a number: ${result}, returning default "1"`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
       return {
         response: 1,
         cost: cost || 0,
@@ -340,13 +352,13 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     // calculate cost
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
     const cost = (characterCount / 1000) * billRatePer1000Chars;
-    global.logger.info({message:`CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level:7, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     return {
       response: result,
       cost: cost,
     };
   } catch (error) {
-    global.logger.info({message:`Error estimating unit ratio: ${error.message}`, level:3, timestamp: new Date().toISOString(), 'userID': 0});
+    global.logger.info({ message: `Error estimating unit ratio: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
     return {
       response: 1,
       cost: cost || 0,
@@ -361,7 +373,7 @@ const requestMessages = {
       content: [
         {
           type: 'text',
-          text: `Attempt to gather information from this image depicting a recipe. Return a JSON object. If the image does not depict a recipe, or if any of the required properties can't be reasonably estimated, the JSON should include a single property 'error' with a number value of 10. Otherwise, include the following properties:
+          text: `Attempt to gather information from the provided image(s) depicting a recipe. Return a JSON object. If the image(s) do not depict a recipe, or if any of the required properties can't be reasonably estimated, the JSON should include a single property 'error' with a number value of 10. Otherwise, include the following properties:
 'title' <string> (required): The title of the recipe converted to title case,
 'servings' <number>: The number of servings the recipe makes. estimate if not provided,
 'lifespanDays' <number>: The number of days the dish can be stored after being made,
@@ -384,12 +396,12 @@ const requestMessages = {
 
 Do not include any other properties in the JSON object response. If an optional property can't be confidently determined, do not include it in the response. Do not return anything other than a JSON object. Convert any fractions to decimals.`,
         },
-        {
-          type: 'image_url',
-          image_url: {
-            url: 'placeholder',
-          },
-        },
+        // {
+        //   type: 'image_url',
+        //   image_url: {
+        //     url: 'placeholder',
+        //   },
+        // },
       ],
     },
     response_format: 'text',

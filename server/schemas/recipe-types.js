@@ -34,9 +34,9 @@ const newRecipeSchema_body = {
 
 const newRecipeVisionSchema_body = {
   type: 'object',
-  required: ['recipeSourceImageURL'],
+  required: ['recipeSourceImageURLs'],
   properties: {
-    recipeImageURL: { type: 'string' },
+    recipeSourceImageURLs: { type: 'array', items: { type: 'string' } },
     recipePhotoURL: { type: 'string' },
   },
 };

@@ -101,12 +101,12 @@ async function createRecipeVision(req, res) {
   const db = req.client.db;
   const dbPublic = req.defaultClient.db;
   const p = require('./processor')({ db, dbPublic });
-  const { recipeSourceImageURL, recipePhotoURL } = req.body;
+  const { recipeSourceImageURLs, recipePhotoURL } = req.body;
   const { authorization } = req.headers;
   const returner = await p.createVision({
     authorization,
     userID: req.userID,
-    recipeSourceImageURL,
+    recipeSourceImageURLs,
     recipePhotoURL,
   });
   return res.json(returner);

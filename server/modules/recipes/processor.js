@@ -893,7 +893,7 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function createVision(options) {
-    const { userID, recipeSourceImageURL, recipePhotoURL, authorization } = options;
+    const { userID, recipeSourceImageURLs, recipePhotoURL, authorization } = options;
 
     try {
       // call openaiHandler to build recipe json
@@ -904,7 +904,7 @@ module.exports = ({ db, dbPublic }) => {
       }, 1000); // Send progress update every second
       global.logger.info({ message: `Calling visionRequest`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       const visionStartTime = new Date();
-      const { response, error } = await visionRequest(recipeSourceImageURL, userID, authorization, 'generateRecipeFromImage');
+      const { response, error } = await visionRequest(recipeSourceImageURLs, userID, authorization, 'generateRecipeFromImage');
       clearInterval(timer);
       if (error) {
         throw errorGen(error.message || `Error creating recipe from source image: ${error.message}`, error.code || 520, error.name || 'unhandledError_recipes-processRecipeJSON', error.isOperational || false, error.severity || 3);

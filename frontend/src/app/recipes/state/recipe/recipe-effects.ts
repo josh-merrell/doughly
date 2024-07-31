@@ -50,7 +50,7 @@ export class RecipeEffects {
       ofType(RecipeActions.visionAddRecipe),
       mergeMap((action) =>
         this.recipeService
-          .visionAdd(action.recipeSourceImageURL, action.recipePhotoURL)
+          .visionAdd(action.recipeSourceImageURLs, action.recipePhotoURL)
           .pipe(
             map((recipeID) =>
               RecipeActions.visionAddRecipeSuccess({
