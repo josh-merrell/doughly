@@ -66,7 +66,7 @@
     <div class="text-center">
       <!-- Source Image Selection -->
       <div
-        id="photo-recipe"
+        id="recipe-source-image"
         class="mb-dl-3 mt-dl-1 w-full flex-col items-center"
       >
         <div class="relative flex w-full flex-col items-center">
@@ -92,6 +92,39 @@
             [src]="sourceImageSelectedFileUrl | imageFromCDN"
             class="mb-dl-4 max-w-dl-14"
             alt="Selected recipe source image"
+          />
+        </div>
+      </div>
+
+      <!-- Source Image2 Selection -->
+      <div
+        *ngIf="sourceImagePresent"
+        id="recipe-source-image2"
+        class="mb-dl-3 mt-dl-1 w-full flex-col items-center"
+      >
+        <div class="relative flex w-full flex-col items-center">
+          <button
+            type="button"
+            class="mb-dl-5 inline-block w-full cursor-pointer rounded px-4 py-2 text-dl-5"
+            [ngClass]="{
+              'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
+                sourceImage2Present,
+              'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+                !sourceImage2Present
+            }"
+            (click)="selectSourceImage2()"
+          >
+            {{
+              sourceImage2Present
+                ? "Change Second Source Image"
+                : "Add Source Image (maximum 2)"
+            }}
+          </button>
+          <img
+            *ngIf="sourceImage2Present && sourceImage2SelectedFileUrl"
+            [src]="sourceImage2SelectedFileUrl | imageFromCDN"
+            class="mb-dl-4 max-w-dl-14"
+            alt="Selected 2nd recipe source image"
           />
         </div>
       </div>
