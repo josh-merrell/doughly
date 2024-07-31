@@ -69,7 +69,7 @@ const addRecipeFailure = createAction(
 
 const visionAddRecipe = createAction(
   '[Recipes] Vision Add',
-  props<{ recipeSourceImageURL: string; recipePhotoURL?: string }>()
+  props<{ recipeSourceImageURLs: string[]; recipePhotoURL?: string }>()
 );
 const visionAddRecipeSuccess = createAction(
   '[Recipes] Vision Add Success',
