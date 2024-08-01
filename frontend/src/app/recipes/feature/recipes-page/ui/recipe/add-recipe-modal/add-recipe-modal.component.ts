@@ -80,9 +80,6 @@ export class AddRecipeModalComponent {
       () => {
         const profile = this.profile();
         if (!profile || profile.onboardingState === 0) return;
-        // if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
-        //   this.onboardingHandler(profile.onboardingState);
-        // }
       },
       { allowSignalWrites: true }
     );
