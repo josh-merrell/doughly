@@ -116,6 +116,7 @@ export class EditRecipeIngredientModalComponent {
   }
 
   ngOnInit() {
+    console.log(`DATA: `, this.data);
     this.components.set(this.data.components);
     this.quickTapComponents.set(this.data.components);
     // get plural
@@ -203,6 +204,21 @@ export class EditRecipeIngredientModalComponent {
   }
 
   onSubmit() {
+    // if recipeIngredientID is not provided, it means this is a draft recipeIngredient and we should return it without dispatching a service call
+    if (!this.data.recipeIngredient.recipeIngredientID) {
+      this.dialogRef.close({
+        status: 'updatedDraft',
+        measurement: Number(this.form.get('measurement')?.value),
+        measurementUnit: this.unitService.singular(this.form.get('measurementUnit')?.value),
+        purchaseUnitRatio: Number(this.form.get('purchaseUnitRatio')?.value),
+        component: this.form.get('component')?.value,
+        preparation: this.form.get('preparation')?.value,
+
+
+      });
+      return;
+    }
+
     const updatedRecipeIngredient: any = {
       recipeIngredientID: this.data.recipeIngredient.recipeIngredientID,
       ingredientID: this.data.recipeIngredient.ingredientID,

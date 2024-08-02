@@ -49,19 +49,15 @@ import { ModalService } from 'src/app/shared/utils/modalService';
 })
 export class RecipeIngredientsModalComponent {
   recipe;
-  recipeIngredients$!: Observable<any[]>;
-  ingredients$!: Observable<any[]>;
-  ingredientsToAdd: any[] = [];
-  private ingredientsToAddSubject = new BehaviorSubject<any[]>([]);
-  displayedIngredients$!: Observable<any[]>;
-  isAdding: boolean = false;
-  isLoading$: Observable<boolean>;
-  private addingSubscription!: Subscription;
-  private recipeIngredientsSubscription: Subscription = new Subscription();
+  recipeIngredients: WritableSignal<any> = signal([]);
+  ingredients: WritableSignal<any> = signal([]);
+  ingredientsToAdd: WritableSignal<any> = signal([]);
+  displayedIngredients: WritableSignal<any> = signal([]);
+  // isAdding: boolean = false;
+  isAdding: WritableSignal<boolean> = signal(false);
+  isLoading: WritableSignal<boolean> = signal(false);
   displayNeedsReview: WritableSignal<any> = signal([]);
   displayNoReview: WritableSignal<any> = signal([]);
-  displayNeedsReview$!: Observable<any[]>;
-  displayNoReview$!: Observable<any[]>;
   private components: WritableSignal<any> = signal([]);
 
   constructor(
@@ -72,61 +68,40 @@ export class RecipeIngredientsModalComponent {
     private modalService: ModalService
   ) {
     this.recipe = this.data.recipe;
-    this.isLoading$ = this.store.select(selectLoading);
-    this.recipeIngredients$ = this.store.select(
-      selectRecipeIngredientsByRecipeID(this.data.recipe.recipeID)
-    );
 
-    this.displayedIngredients$ = combineLatest([
-      this.store.select(
-        selectRecipeIngredientsByRecipeID(this.data.recipe.recipeID)
-      ),
-      this.store.select(selectIngredients),
-      this.ingredientsToAddSubject.asObservable(),
-    ]).pipe(
-      map(([recipeIngredients, allIngredients, ingredientsToAdd]) => {
-        const components = new Set();
-        recipeIngredients.forEach((ri) => {
-          if (ri.component) {
-            components.add(ri.component);
-          }
-        });
-        this.components.set(Array.from(components));
-        const enrichedRecipeIngredients = recipeIngredients.map((ri) => ({
-          ...ri,
-          name: allIngredients.find(
-            (ing: any) => ing.ingredientID === ri.ingredientID
-          )?.name,
-          purchaseUnit: allIngredients.find(
-            (ing: any) => ing.ingredientID === ri.ingredientID
-          )?.purchaseUnit,
-        }));
-        enrichedRecipeIngredients.forEach((ri) => {
-          if (ri.measurement > 1) {
-            // if the ingredient measurementUnit is equal to one of following strings, add "es" to it: 'box', 'bunch', 'pinch', 'dash'
-            ri.measurementUnit = this.enrichMeasurementUnit(ri.measurementUnit);
-          }
-        });
-        const fullList = [...enrichedRecipeIngredients, ...ingredientsToAdd];
-        const sortedOne = fullList.sort((a, b) => {
-          // sort by ingredient name
-          if (a.name < b.name) {
-            return -1;
-          } else return 1;
-        });
-        this.displayNeedsReview.set(
-          sortedOne.filter((ri) => ri.RIneedsReview === true)
-        );
-        this.displayNoReview.set(
-          sortedOne.filter((ri) => ri.RIneedsReview === false)
-        );
-        return sortedOne;
-      })
-    );
+    effect(() => {
+      const components = new Set();
+      this.recipeIngredients().forEach((ri) => {
+        if (ri.component) {
+          components.add(ri.component);
+        }
+      });
+      this.components.set(Array.from(components));
+      const enrichedRecipeIngredients = this.recipeIngredients().map((ri) => ({
+        ...ri,
+        name: this.ingredients().find(
+          (ing: any) => ing.ingredientID === ri.ingredientID
+        )?.name,
+        purchaseUnit: this.ingredients().find(
+          (ing: any) => ing.ingredientID === ri.ingredientID
+        )?.purchaseUnit,
+      }));
+      const fullList = [...enrichedRecipeIngredients, ...this.ingredientsToAdd()];
+      const sortedOne = fullList.sort((a, b) => {
+        // sort by ingredient name
+        if (a.name < b.name) {
+          return -1;
+        } else return 1;
+      });
+      this.displayedIngredients.set(sortedOne);
 
-    // effect(() => {
-    //   const displayedIngredients$
-    // })
+    }, { allowSignalWrites: true });
+
+    effect(() => {
+      const di = this.displayedIngredients();
+      this.displayNeedsReview.set(di.filter((ing) => ing.RIneedsReview === true));
+      this.displayNoReview.set(di.filter((ing) => ing.RIneedsReview === false));
+    }, { allowSignalWrites: true });
   }
 
   enrichMeasurementUnit(measurementUnit) {
@@ -144,17 +119,19 @@ export class RecipeIngredientsModalComponent {
   }
 
   ngOnInit() {
-    this.ingredients$ = this.store.select(selectIngredients);
-    this.displayNeedsReview$ = this.displayedIngredients$.pipe(
-      map((ingredients) =>
-        ingredients.filter((ingredient) => ingredient.RIneedsReview === true)
-      )
-    );
-    this.displayNoReview$ = this.displayedIngredients$.pipe(
-      map((ingredients) =>
-        ingredients.filter((ingredient) => ingredient.RIneedsReview === false)
-      )
-    );
+    this.store.select(selectIngredients).subscribe((ingredients) => {
+      this.ingredients.set(ingredients);
+    });
+
+    this.store
+      .select(selectRecipeIngredientsByRecipeID(this.data.recipe.recipeID))
+      .subscribe((recipeIngredients) => {
+        this.recipeIngredients.set(recipeIngredients);
+      });
+
+    this.store.select(selectLoading).subscribe((loading) => {
+      this.isLoading.set(loading);
+    });
   }
 
   /**
@@ -164,57 +141,57 @@ export class RecipeIngredientsModalComponent {
   - Once all actions are processed without errors, closes the modal with a success message. 
   **/
   onSubmit() {
-    this.isAdding = true;
+    this.isAdding.set(true);
     let hasErrorOccurred = false;
 
-    from(this.ingredientsToAdd)
-      .pipe(
-        concatMap((ingredient) => {
-          // Only dispatch if no error has occurred
-          if (!hasErrorOccurred) {
-            this.store.dispatch(
-              RecipeIngredientActions.addRecipeIngredient({
-                recipeIngredient: ingredient,
-              })
-            );
+    const ingredientsToAdd = this.ingredientsToAdd();
+    // dispatch the action for each ingredient to add, wait for each to complete before moving to the next
+    from(ingredientsToAdd).pipe(
+      concatMap((ingredient: any) => {
+        // Only dispatch if no error has occurred
+        if (!hasErrorOccurred) {
+          this.store.dispatch(
+            RecipeIngredientActions.addRecipeIngredient({
+              recipeIngredient: ingredient,
+            })
+          );
 
-            return this.store.select(selectAdding).pipe(
-              filter((isAdding) => !isAdding),
-              take(1),
-              concatMap(() => this.store.select(selectError).pipe(take(1))),
-              tap((error) => {
-                if (error) {
-                  this.isAdding = false;
-                  hasErrorOccurred = true; // Set flag on error
-                  this.modalService.open(
-                    ErrorModalComponent,
-                    {
-                      maxWidth: '380px',
-                      data: {
-                        errorMessage: error.message,
-                        statusCode: error.statusCode,
-                      },
+          return this.store.select(selectAdding).pipe(
+            filter((isAdding) => !isAdding),
+            take(1),
+            concatMap(() => this.store.select(selectError).pipe(take(1))),
+            tap((error) => {
+              if (error) {
+                this.isAdding.set(false);
+                hasErrorOccurred = true; // Set flag on error
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: error.message,
+                      statusCode: error.statusCode,
                     },
-                    2,
-                    true
-                  );
-                  this.dialogRef.close(); // Close the current modal
-                }
-              })
-            );
-          } else {
-            // Immediately complete the observable if an error has occurred
-            return EMPTY;
-          }
-        })
-      )
-      .subscribe({
-        complete: () => {
-          if (!hasErrorOccurred) {
-            this.dialogRef.close('success');
-          }
-        },
-      });
+                  },
+                  2,
+                  true
+                );
+                this.dialogRef.close(); // Close the current modal
+              }
+            })
+          );
+        } else {
+          // Immediately complete the observable if an error has occurred
+          return EMPTY;
+        }
+      })
+    ).subscribe({
+      complete: () => {
+        if (!hasErrorOccurred) {
+          this.dialogRef.close('success');
+        }
+      },
+    });
   }
 
   onDeleteClick(recipeIngredientID: number, ingredientID: number) {
@@ -247,10 +224,11 @@ export class RecipeIngredientsModalComponent {
       } else {
       }
     } else {
-      this.ingredientsToAdd = this.ingredientsToAdd.filter(
-        (ingredient) => ingredient.ingredientID !== ingredientID
+      this.ingredientsToAdd.set(
+        this.ingredientsToAdd().filter(
+          (ingredient) => ingredient.ingredientID !== ingredientID
+        )
       );
-      this.ingredientsToAddSubject.next(this.ingredientsToAdd);
     }
   }
 
@@ -258,71 +236,63 @@ export class RecipeIngredientsModalComponent {
     // Create a local variable for ingredients to exclude
     const ingredientsToExclude: any[] = [];
 
-    // Retrieve the recipe ingredients using the selector
-    this.store
-      .select(selectRecipeIngredientsByRecipeID(this.data.recipe.recipeID))
-      .pipe(take(1))
-      .subscribe((recipeIngredients) => {
-        // Add the ingredient IDs from the selector to the ingredientsToExclude list
-        recipeIngredients.map((recipeIngredient) => {
-          ingredientsToExclude.push(recipeIngredient.ingredientID);
-        });
+    const recipeIngredients = this.recipeIngredients();
+    // Add the ingredient IDs from the selector to the ingredientsToExclude list
+    recipeIngredients.map((recipeIngredient) => {
+      ingredientsToExclude.push(recipeIngredient.ingredientID);
+    });
 
-        // Add the 'ingredientsToAdd' IDs to 'ingredientsToExclude'
-        this.ingredientsToAdd.forEach((ingredient) => {
-          ingredientsToExclude.push(ingredient.ingredientID);
-        });
+    // Add the 'ingredientsToAdd' IDs to 'ingredientsToExclude'
+    this.ingredientsToAdd().forEach((ingredient) => {
+      ingredientsToExclude.push(ingredient.ingredientID);
+    });
 
-        const dialogRef = this.modalService.open(
-          AddRecipeIngredientModalComponent,
-          {
-            data: {
-              components: this.components(),
-              ingredientsToExclude: [],
-            },
-            width: '75%',
-          },
-          2
-        );
-        if (dialogRef) {
-          dialogRef.afterClosed().subscribe((result) => {
-            if (result?.ingredientID) {
-              this.ingredients$
-                .pipe(
-                  map(
-                    (ingredients) =>
-                      ingredients.find(
-                        (ing) => ing.ingredientID === result.ingredientID
-                      )?.name
-                  ),
-                  take(1)
-                )
-                .subscribe((ingredientName) => {
-                  const addedRecipeIngredient: any = {
-                    recipeID: this.recipe.recipeID,
-                    ingredientID: result.ingredientID,
-                    measurement: result.measurement,
-                    measurementUnit: result.measurementUnit,
-                    purchaseUnitRatio: result.purchaseUnitRatio,
-                    name: ingredientName,
-                    preparation: result.preparation,
-                    component: result.component,
-                    RIneedsReview: false,
-                    toAdd: true,
-                  };
+    const dialogRef = this.modalService.open(
+      AddRecipeIngredientModalComponent,
+      {
+        data: {
+          components: this.components(),
+          ingredientsToExclude: ingredientsToExclude,
+        },
+        width: '75%',
+      },
+      2
+    );
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result?.ingredientID) {
+          this.ingredients().filter((ing) => {
+            if (ing.ingredientID === result.ingredientID) {
+              const addedRecipeIngredient: any = {
+                recipeID: this.recipe.recipeID,
+                ingredientID: result.ingredientID,
+                measurement: result.measurement,
+                measurementUnit: result.measurementUnit,
+                purchaseUnitRatio: result.purchaseUnitRatio,
+                name: ing.name,
+                preparation: result.preparation,
+                component: result.component,
+                RIneedsReview: false,
+                toAdd: true,
+                // generate random ID for the ingredient to be added
+                draftID: Math.floor(Math.random() * 1000000),
+              };
 
-                  this.ingredientsToAdd.push(addedRecipeIngredient);
-
-                  this.ingredientsToAddSubject.next(this.ingredientsToAdd);
-                });
+              this.ingredientsToAdd.set([...this.ingredientsToAdd(), addedRecipeIngredient]);
             }
           });
-        } else {
         }
       });
+    } else {
+    }
   }
 
   onIngredientClick(recipeIngredient: any) {
+    // get associated ingredient
+    const ingredient = this.ingredients().find(
+      (ing) => ing.ingredientID === recipeIngredient.ingredientID
+    );
+
     const dialogRef = this.modalService.open(
       EditRecipeIngredientModalComponent,
       {
@@ -335,7 +305,7 @@ export class RecipeIngredientsModalComponent {
             ingredientID: recipeIngredient.ingredientID,
             measurement: recipeIngredient.measurement,
             measurementUnit: recipeIngredient.measurementUnit,
-            purchaseUnit: recipeIngredient.purchaseUnit,
+            purchaseUnit: ingredient.purchaseUnit,
             purchaseUnitRatio: recipeIngredient.purchaseUnitRatio,
             preparation: recipeIngredient.preparation,
             component: recipeIngredient.component,
@@ -348,6 +318,33 @@ export class RecipeIngredientsModalComponent {
     );
     if (dialogRef) {
       dialogRef!.afterClosed().subscribe((result: any) => {
+        if (result.status && result.status === 'updatedDraft') {
+          const updatedRecipeIngredient: any = {
+            recipeID: this.recipe.recipeID,
+            recipeIngredientID: recipeIngredient.recipeIngredientID,
+            ingredientID: recipeIngredient.ingredientID,
+            measurement: result.measurement,
+            measurementUnit: result.measurementUnit,
+            purchaseUnitRatio: result.purchaseUnitRatio,
+            preparation: result.preparation,
+            component: result.component,
+            RIneedsReview: recipeIngredient.RIneedsReview,
+            name: recipeIngredient.name,
+            purchaseUnit: recipeIngredient.purchaseUnit,
+            toAdd: true,
+            draftID: recipeIngredient.draftID,
+          };
+
+          this.ingredientsToAdd.set(
+            this.ingredientsToAdd().map((ingredient) => {
+              if (ingredient.draftID === recipeIngredient.draftID) {
+                return updatedRecipeIngredient;
+              } else {
+                return ingredient;
+              }
+            })
+          );
+        }
         if (result === 'success') {
           this.modalService.open(
             ConfirmationModalComponent,
@@ -370,14 +367,5 @@ export class RecipeIngredientsModalComponent {
   }
 
   ngOnDestroy() {
-    if (this.addingSubscription) {
-      this.addingSubscription.unsubscribe();
-    }
-    if (this.recipeIngredientsSubscription) {
-      this.recipeIngredientsSubscription.unsubscribe();
-    }
-    if (this.ingredientsToAddSubject) {
-      this.ingredientsToAddSubject.unsubscribe();
-    }
   }
 }
