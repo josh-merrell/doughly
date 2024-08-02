@@ -65,11 +65,11 @@ export class YourPremiumComponent {
       },
       { allowSignalWrites: true }
     );
-  }
 
-  ngOnInit() {
-    this.store.select(selectProfile).subscribe((profile) => {
+    effect(() => {
+      const profile = this.authService.profile();
       this.profile.set(profile);
+      console.log(`NEW PROFILE: `, profile);
       if (profile) {
         if (
           profile.permAITokenCount <
@@ -79,7 +79,10 @@ export class YourPremiumComponent {
           this.allowExtraTokenPurchase.set(true);
         }
       }
-    });
+    }, { allowSignalWrites: true });
+  }
+
+  ngOnInit() {
   }
 
   onConfirm() {
