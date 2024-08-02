@@ -259,6 +259,7 @@ export class RecipeListComponent {
     this.searchFilter.set(searchFilter);
   }
   onAddClick(): void {
+    console.log('ADD RECIPE CLICKED');
     let allowCreate = false;
     // check perms for profile
     const license =
@@ -499,6 +500,7 @@ export class RecipeListComponent {
       this.showOnboardingBadge.set(false);
       this.reopenOnboardingModal.set(false);
       this.onboardingModalOpen.set(true);
+      console.log('OPEN ONBOARDING MODAL');
       const ref = this.modalService.open(
         OnboardingMessageModalComponent,
         {
@@ -525,32 +527,6 @@ export class RecipeListComponent {
     } else {
       this.router.navigate(['/tempRoute']);
     }
-    // ** OLD ONBOARDING STEPS **
-    // if (onboardingState === 8) {
-    //   this.showOnboardingBadge.set(false);
-    //   this.reopenOnboardingModal.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.recipesCreatedPage,
-    //         currentStep: 8,
-    //         showNextButton: true,
-    //       },
-    //       position: {
-    //         bottom: '30%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe((result) => {
-    //       this.router.navigate(['/tempRoute']);
-    //     });
-    //   } else {
-    //   }
-    // }
   }
 
   onboardingCallback() {

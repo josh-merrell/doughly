@@ -445,8 +445,8 @@ export class AuthService {
 
   async resetPassword(email: string) {
     const redirectTo = Capacitor.isNativePlatform()
-      ? 'co.doughly.app://login'
-      : window.location.origin;
+      ? 'https://doughly.co/login'
+      : 'https://doughly.co/login?admin=true';
     const { data, error } = await this.supabase.auth.resetPasswordForEmail(
       email,
       {

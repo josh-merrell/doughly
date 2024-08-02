@@ -1,7 +1,7 @@
 <div
   class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-3 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
 >
-  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding"></mat-spinner>
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
   <div class="mb-dl-3 text-center">
     <p
       class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
@@ -10,19 +10,19 @@
     </p>
   </div>
   <div
-    *ngIf="!isAdding"
+    *ngIf="!isAdding()"
     class="flex h-full w-full flex-grow flex-col overflow-y-auto"
   >
     <!--List of Recipe Ingredients-->
     <div class="mb-dl-5 flex w-full flex-grow flex-col overflow-y-auto">
       <p
-        *ngIf="(displayNeedsReview$ | async)!.length"
+        *ngIf="(displayNeedsReview().length)"
         class="text-dl-5 font-dl-3 text-dl-yellow-4 dark:text-dl-yellow-7"
       >
         AI Created Ingredients, Need Review
       </p>
       <!-- Show Ingredients that need reviewing -->
-      <ng-container *ngFor="let ingredient of displayNeedsReview$ | async">
+      <ng-container *ngFor="let ingredient of displayNeedsReview()">
         <div
           class="mb-dl-3 flex w-full flex-grow items-center justify-between rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-grey-9"
         >
@@ -72,7 +72,7 @@
         </div>
       </ng-container>
       <!-- Show Ingredients that don't need reviewing -->
-      <ng-container *ngFor="let ingredient of displayNoReview$ | async">
+      <ng-container *ngFor="let ingredient of displayNoReview()">
         <div
           class="mb-dl-3 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
         >
@@ -121,7 +121,7 @@
     </div>
     <button
       type="button"
-      class="relative mx-dl-1 flex h-dl-4 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-2 dark:hover:bg-dl-grey-3"
+      class="relative mx-dl-1 flex py-dl-1 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-2 dark:hover:bg-dl-grey-3"
       (click)="onAddClick()"
       id="addRecipeIngredientButton"
     >
@@ -149,10 +149,10 @@
         class="shadow-s sm:ml-dl-4 w-full justify-center rounded-dl-1 px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
         [ngClass]="{
           'cursor-pointer bg-dl-pink-4 hover:bg-dl-pink-5 dark:bg-dl-pink-7 hover:dark:bg-dl-pink-6':
-            ingredientsToAdd.length > 0,
-          'bg-dl-grey-7': ingredientsToAdd.length === 0
+            ingredientsToAdd().length > 0,
+          'bg-dl-grey-7': ingredientsToAdd().length === 0
         }"
-        [disabled]="ingredientsToAdd.length === 0"
+        [disabled]="ingredientsToAdd().length === 0"
         (click)="onSubmit()"
       >
         Submit Additions
