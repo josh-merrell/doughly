@@ -7,6 +7,11 @@ import {
   GlassfySku,
   GlassfyTransaction,
 } from 'capacitor-plugin-glassfy';
+import {
+  Purchases,
+  PurchasesOfferings,
+  LOG_LEVEL,
+} from '@revenuecat/purchases-capacitor';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
 import { HttpClient } from '@angular/common/http';
@@ -59,8 +64,28 @@ export class ProductService {
     }
   }
 
+  async initRevenueCat() {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
+        if (Capacitor.getPlatform() === 'ios') {
+          await Purchases.configure({
+            apiKey: environment.REVENUECAT_AppleApiKey,
+          });
+        } else if (Capacitor.getPlatform() === 'android') {
+          await Purchases.configure({
+            apiKey: environment.REVENUECAT_GoogleApiKey,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing RevenueCat: ', error);
+    }
+  }
+
   ngOnInit() {
     this.initGlassfy();
+    this.initRevenueCat();
   }
 
   async restore() {
