@@ -10,5 +10,6 @@ router.use(authenticateJWT);
 
 router.post('/newPurchase', authenticateJWT, errorCatcher(h.processNewPurchase));
 router.post('/updatePermissions', authenticateJWT, errorCatcher(h.updatePermissions));
+router.post('/updateEntitlementsRevenueCat', authenticateJWT, errorCatcher(h.updateEntitlementsRevenueCat));
 
 module.exports = router;

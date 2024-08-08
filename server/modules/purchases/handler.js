@@ -25,7 +25,20 @@ async function updatePermissions(req, res) {
   return res.json(returner);
 }
 
+async function updateEntitlementsRevenueCat(req, res) {
+  const db = req.client.db;
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
+  const { entitlements } = req.body;
+  const returner = await p.updateEntitlementsRevenueCat({
+    userID: req.userID,
+    entitlements,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   processNewPurchase,
   updatePermissions,
+  updateEntitlementsRevenueCat,
 };

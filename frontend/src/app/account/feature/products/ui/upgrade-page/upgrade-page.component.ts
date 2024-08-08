@@ -151,10 +151,6 @@ export class UpgradePageComponent {
     }
   }
 
-  // async restore() {
-  //   await this.productService.restore();
-  // }
-
   skuClick(sku) {
     if (sku.skuId !== this.selectedIdentifier()) {
       this.selectedIdentifier.set(sku.skuId);

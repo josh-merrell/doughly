@@ -4,12 +4,16 @@ import {
   GlassfyOffering,
   GlassfyOfferings,
   GlassfyPermissions,
+  GlassfyPermission,
   GlassfySku,
   GlassfyTransaction,
 } from 'capacitor-plugin-glassfy';
 import {
   Purchases,
   PurchasesOfferings,
+  CustomerInfo,
+  PurchasesEntitlementInfos,
+  PurchasesEntitlementInfo,
   LOG_LEVEL,
 } from '@revenuecat/purchases-capacitor';
 import { environment } from 'src/environments/environment';
@@ -54,7 +58,7 @@ export class ProductService {
         });
         const permissions = await Glassfy.permissions();
         console.log('Glassfy Permissions: ', permissions);
-        await this.handleExistingPermissions(permissions).subscribe();
+        await this.handleExistingPermissions(permissions.all).subscribe();
 
         const offerings: GlassfyOfferings = await Glassfy.offerings();
         this.offerings.set(offerings.all);
@@ -88,16 +92,31 @@ export class ProductService {
     this.initRevenueCat();
   }
 
-  async restore() {
-    const permissions = await Glassfy.restorePurchases();
-    console.log('Glassfy Permissions restored: ', permissions);
-  }
-
   async updatePermissions() {
     // called when permissions may have changed
+    // ** GLASSFY **
     const permissions = await Glassfy.permissions();
     console.log('Updated Glassfy Permissions: ', permissions);
-    await this.handleExistingPermissions(permissions).subscribe();
+    await this.handleExistingPermissions(permissions.all).subscribe();
+
+    // ** REVENUECAT **
+    try {
+      const { customerInfo } = await Purchases.getCustomerInfo();
+      if (customerInfo.entitlements.all) {
+        const activeEntitlementsArray = Object.values(
+          customerInfo.entitlements.active
+        );
+        console.log(
+          'Up-to-date RevenueCat Entitlements: ',
+          activeEntitlementsArray
+        );
+        await this.handleExistingPermissions(
+          activeEntitlementsArray
+        ).subscribe();
+      }
+    } catch (error) {
+      console.error('Error getting up-to-date RevenueCat permissions: ', error);
+    }
   }
 
   async purchase(sku: GlassfySku): Promise<PurchaseResult> {
@@ -164,13 +183,27 @@ export class ProductService {
     return this.http.post(`${this.API_URL}/newPurchase`, body);
   }
 
-  handleExistingPermissions(permissions: GlassfyPermissions): Observable<any> {
+  handleExistingPermissions(permissions: any): Observable<any> {
     // send to backend for updating profile perms (including adding AI tokens if time to)
     const body = { permissions };
     console.log(`SENDING PERMISSIONS TO BACKEND: `, body);
     setTimeout(() => {
       this.authService.refreshProfile();
     }, 1500);
-    return this.http.post(`${this.API_URL}/updatePermissions`, body);
+    if (permissions.length > 0) {
+      if (permissions[0].permissionId) {
+        // need to use glassfy backend route
+        return this.http.post(`${this.API_URL}/updatePermissions`, body);
+      } else {
+        // use revenuecat backend route
+        return this.http.post(`${this.API_URL}/updatePermissions`, {
+          entitlements: permissions,
+        });
+      }
+    } else {
+      return this.http.post(`${this.API_URL}/updatePermissions`, {
+        entitlements: [],
+      });
+    }
   }
 }
