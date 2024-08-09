@@ -11,6 +11,7 @@ import {
 import {
   Purchases,
   PurchasesOfferings,
+  PurchasesOffering,
   CustomerInfo,
   PurchasesEntitlementInfos,
   PurchasesEntitlementInfo,
@@ -40,6 +41,8 @@ interface PurchaseResult {
 export class ProductService {
   private readonly API_URL = `${environment.BACKEND}/purchases`;
   public offerings: WritableSignal<GlassfyOffering[]> = signal([]);
+  public offeringsRevenueCat: WritableSignal<PurchasesOffering[]> =
+    signal([]);
   public licences = {
     recipeSubscribeLimit: 5,
     recipeCreateLimit: 5,
@@ -81,7 +84,15 @@ export class ProductService {
             apiKey: environment.REVENUECAT_GoogleApiKey,
           });
         }
-      }
+        const { customerInfo } = await Purchases.getCustomerInfo();
+        const entitlements = customerInfo.entitlements.active;
+        await this.handleExistingPermissions(entitlements).subscribe();
+
+        const offeringsRevenueCat: PurchasesOfferings =
+          await Purchases.getOfferings();
+        const offeringsArray = Object.values(offeringsRevenueCat.all);
+        this.offeringsRevenueCat.set(offeringsArray);
+      } else return;
     } catch (error) {
       console.error('Error initializing RevenueCat: ', error);
     }

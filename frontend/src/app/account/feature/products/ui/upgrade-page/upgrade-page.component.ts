@@ -7,12 +7,14 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { GlassfyOffering, GlassfySku } from 'capacitor-plugin-glassfy';
+import { PurchasesPackage } from '@revenuecat/purchases-capacitor';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { PurchasesOffering } from '@revenuecat/purchases-capacitor';
 @Component({
   selector: 'dl-upgrade-page',
   standalone: true,
@@ -29,6 +31,7 @@ export class UpgradePageComponent {
   public isLoading: WritableSignal<boolean> = signal(false);
   public view: WritableSignal<string> = signal('overview');
   public subscribeSKUs: WritableSignal<GlassfySku[]> = signal([]);
+  public subscribePackages: WritableSignal<PurchasesPackage[]> = signal([]);
   public selectedIdentifier: WritableSignal<string> = signal(
     'doughly_premium_6months_17.94'
   );
@@ -54,6 +57,29 @@ export class UpgradePageComponent {
           }
         } else {
           this.subscribeSKUs.set([]);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(
+      () => {
+        const offeringsRevenueCat = this.productService.offeringsRevenueCat();
+        if (offeringsRevenueCat.length) {
+          const premiumOfferingRevenueCat = offeringsRevenueCat.find(
+            (offering) => offering.identifier === 'doughly-premium'
+          );
+          if (premiumOfferingRevenueCat) {
+            this.subscribePackages.set(
+              premiumOfferingRevenueCat.availablePackages
+            );
+            console.log(
+              `REVENUECAT OFFERING PACKAGES: `,
+              this.subscribePackages()
+            );
+          }
+        } else {
+          this.subscribePackages.set([]);
         }
       },
       { allowSignalWrites: true }
