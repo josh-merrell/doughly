@@ -70,6 +70,7 @@
       class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-grey-10 transition-all duration-100 ease-in-out "
       >Choose a plan</span
     >
+    <!-- Glassfy -->
     <div class="flex w-full flex-col items-center">
       <dl-subscription-sku-card
         class="mb-dl-6 flex w-full flex-col items-center"
@@ -78,6 +79,17 @@
         [sku]="sku"
         [isSelected]="selectedIdentifier() === sku.skuId"
       ></dl-subscription-sku-card>
+    </div>
+    <span>RevenueCat Packages Below</span>
+    <!-- RevenueCat -->
+    <div class="flex w-full flex-col items-center">
+      <dl-subscription-package-card
+        class="mb-dl-6 flex w-full flex-col items-center"
+        *ngFor="let package of subscribePackages()"
+        (click)="packageClick(package)"
+        [package]="package"
+        [isSelected]="selectedIdentifier() === package.identifier"
+      ></dl-subscription-package-card>
     </div>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>

@@ -1,0 +1,63 @@
+<div
+  class="mx-dl-3 h-dl-8 w-10/12 rounded-dl-3 p-dl-1"
+  [ngStyle]="
+    isSelected
+      ? { transform: 'scale(1.1)', transition: 'transform 0.3s ease-in-out' }
+      : { transform: 'scale(1)', transition: 'transform 0.3s ease-in-out' }
+  "
+  [ngClass]="{
+    'bg-gradient-to-br from-dl-teal-6 via-dl-blue-6 to-dl-pink-7': isSelected,
+    'bg-dl-grey-9': !isSelected
+  }"
+>
+  <div
+    class="relative flex h-full w-full items-center justify-between rounded-dl-3 px-dl-4 pb-dl-4"
+    [ngClass]="{
+      'bg-dl-grey-10 shadow-xl': isSelected,
+      'bg-dl-grey-9 shadow-md': !isSelected
+    }"
+  >
+    <!-- Most Popular -->
+    <div
+      *ngIf="package.identifier === 'doughly_aicredits10_once_2.99'"
+      class="absolute left-0 top-0 flex w-dl-9 flex-col items-center rounded-br-xl rounded-tl-md py-dl-1.5"
+      [ngClass]="{
+        'bg-dl-grey-9': !isSelected,
+        'bg-gradient-to-r from-dl-teal-6 to-dl-mid-teal-6-to-blue-7': isSelected
+      }"
+    >
+      <span
+        class="text-center text-dl-4 font-dl-4 text-dl-grey-10 "
+        [ngClass]="{
+          'text-dl-teal-7': !isSelected,
+          'text-dl-grey-10': isSelected
+        }"
+        >MOST POPULAR</span
+      >
+    </div>
+
+    <!-- Title -->
+    <div
+      class="flex flex-col"
+      [ngClass]="{
+      'mt-dl-7': package.identifier === 'doughly_aicredits10_once_2.99',
+    }"
+    >
+      <p
+        class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-blue-2 "
+      >
+        {{ getTitleString(package.identifier) }}
+      </p>
+    </div>
+
+    <!-- Price -->
+    <span
+      class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-blue-2 "
+      >{{
+        package.product.price
+          | number : "1.0-2"
+          | currency : package.product.currencyCode
+      }}</span
+    >
+  </div>
+</div>

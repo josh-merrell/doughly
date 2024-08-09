@@ -16,6 +16,9 @@ import {
   PurchasesEntitlementInfos,
   PurchasesEntitlementInfo,
   LOG_LEVEL,
+  PurchasesPackage,
+  MakePurchaseResult,
+  PurchasesStoreProduct
 } from '@revenuecat/purchases-capacitor';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
@@ -30,7 +33,7 @@ import { ProfileService } from 'src/app/profile/data/profile.service';
 // define PurchaseResult interface--
 interface PurchaseResult {
   skuId: string | null;
-  permissions: GlassfyPermissions | null;
+  permissions: GlassfyPermissions | PurchasesEntitlementInfo[] | null;
   result: string;
   error: any;
 }
@@ -41,8 +44,7 @@ interface PurchaseResult {
 export class ProductService {
   private readonly API_URL = `${environment.BACKEND}/purchases`;
   public offerings: WritableSignal<GlassfyOffering[]> = signal([]);
-  public offeringsRevenueCat: WritableSignal<PurchasesOffering[]> =
-    signal([]);
+  public offeringsRevenueCat: WritableSignal<PurchasesOffering[]> = signal([]);
   public licences = {
     recipeSubscribeLimit: 5,
     recipeCreateLimit: 5,
@@ -185,6 +187,133 @@ export class ProductService {
     }
   }
 
+  async purchaseRevenueCatSubPackage(
+    revenueCatSubPackage: PurchasesPackage
+  ): Promise<PurchaseResult> {
+    try {
+      console.log(
+        `PURCHASING REVENUE CAT PACKAGE: ${JSON.stringify(revenueCatSubPackage)}`
+      );
+      const result = await Purchases.purchasePackage({
+        aPackage: revenueCatSubPackage,
+      });
+      console.log('Result: ', result);
+      if (result.customerInfo && result.customerInfo.entitlements) {
+        const activeEntitlementsArray = Object.values(
+          result.customerInfo.entitlements.active
+        );
+        await this.handleSuccessfulRevenueCatSubPackageTransactionResult(
+          activeEntitlementsArray,
+          revenueCatSubPackage
+        ).subscribe();
+        return {
+          skuId: revenueCatSubPackage.identifier,
+          permissions: activeEntitlementsArray,
+          result: 'success',
+          error: null,
+        };
+      }
+      return {
+        skuId: null,
+        permissions: null,
+        result: 'no permissions',
+        error: 'Receipt not validated',
+      };
+    } catch (error: any) {
+      console.log(`GOT ERROR: `, error);
+      // Log standard properties
+      console.log('Error message:', error.message);
+
+      if (error.message.includes('UserCancelPurchase')) {
+        return {
+          skuId: null,
+          permissions: null,
+          result: 'cancelled',
+          error: 'Purchase cancelled by user',
+        };
+      }
+      if (error.message.includes('ProductAlreadyOwned')) {
+        return {
+          skuId: null,
+          permissions: null,
+          result: 'alreadyOwned',
+          error: 'Purchase cancelled by user',
+        };
+      }
+      console.error('Error purchasing SKU: ', error);
+      return {
+        skuId: null,
+        permissions: null,
+        result: 'error',
+        error: error,
+      };
+    }
+  }
+
+  purchaseRevenueCatProdPackage(revenueCatProdPackage: PurchasesPackage): Promise<PurchaseResult> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log(
+          `PURCHASING REVENUE CAT PRODUCT: ${JSON.stringify(revenueCatProdPackage)}`
+        );
+        const result = await Purchases.purchasePackage({
+          aPackage: revenueCatProdPackage,
+        });
+        console.log('Result: ', result);
+        if (result.customerInfo && result.customerInfo.entitlements) {
+          const activeEntitlementsArray = Object.values(
+            result.customerInfo.entitlements.active
+          );
+          await this.handleSuccessfulRevenueCatProdPackageTransactionResult(
+            activeEntitlementsArray,
+            revenueCatProdPackage
+          ).subscribe();
+          resolve({
+            skuId: revenueCatProdPackage.identifier,
+            permissions: activeEntitlementsArray,
+            result: 'success',
+            error: null,
+          });
+        } else {
+          resolve({
+            skuId: null,
+            permissions: null,
+            result: 'no permissions',
+            error: 'Receipt not validated',
+          });
+        }
+      } catch (error: any) {
+        console.log(`GOT ERROR: `, error);
+        // Log standard properties
+        console.log('Error message:', error.message);
+
+        if (error.message.includes('UserCancelPurchase')) {
+          resolve({
+            skuId: null,
+            permissions: null,
+            result: 'cancelled',
+            error: 'Purchase cancelled by user',
+          });
+        }
+        if (error.message.includes('ProductAlreadyOwned')) {
+          resolve({
+            skuId: null,
+            permissions: null,
+            result: 'alreadyOwned',
+            error: 'Purchase cancelled by user',
+          });
+        }
+        console.error('Error purchasing SKU: ', error);
+        resolve({
+          skuId: null,
+          permissions: null,
+          result: 'error',
+          error: error,
+        });
+      }
+    });
+  }
+
   handleSuccessfulTransactionResult(
     transaction: GlassfyTransaction,
     sku: GlassfySku
@@ -192,6 +321,24 @@ export class ProductService {
     // send to backend for processing/adding profile perms
     const body = { transaction, sku };
     return this.http.post(`${this.API_URL}/newPurchase`, body);
+  }
+
+  handleSuccessfulRevenueCatSubPackageTransactionResult(
+    activeEntitlements: PurchasesEntitlementInfo[],
+    revenueCatSubPackage: PurchasesPackage
+  ): Observable<any> {
+    // send to backend for processing/adding profile perms
+    const body = { activeEntitlements, revenueCatSubPackage };
+    return this.http.post(`${this.API_URL}/newPurchaseRevenueCatSubPackage`, body);
+  }
+
+  handleSuccessfulRevenueCatProdPackageTransactionResult(
+    activeEntitlements: PurchasesEntitlementInfo[],
+    revenueCatProdPackage: PurchasesPackage
+  ): Observable<any> {
+    // send to backend for processing/adding profile perms
+    const body = { activeEntitlements, revenueCatProdPackage };
+    return this.http.post(`${this.API_URL}/newPurchaseRevenueCatProdPackage`, body);
   }
 
   handleExistingPermissions(permissions: any): Observable<any> {

@@ -81,6 +81,16 @@
         [isSelected]="selectedIdentifier() === sku.skuId"
       ></dl-product-sku-card>
     </div>
+    <span>RevenueCat Product Packages</span>
+    <div class="flex w-full flex-col items-center">
+      <dl-product-package-card
+        class="mb-dl-6 flex w-full flex-col items-center"
+        *ngFor="let package of productPackages()"
+        (click)="packageClick(package)"
+        [package]="package"
+        [isSelected]="selectedIdentifier() === package.identifier"
+      ></dl-product-package-card>
+    </div>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
     <span

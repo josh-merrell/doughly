@@ -15,6 +15,7 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { PurchasesOffering } from '@revenuecat/purchases-capacitor';
+import { SubscriptionPackageCardComponent } from '../product-card/subscription-package-card/subscription-package-card.component';
 @Component({
   selector: 'dl-upgrade-page',
   standalone: true,
@@ -24,6 +25,7 @@ import { PurchasesOffering } from '@revenuecat/purchases-capacitor';
     BenefitsChartComponent,
     SubscriptionSkuCardComponent,
     MatProgressSpinnerModule,
+    SubscriptionPackageCardComponent
   ],
   templateUrl: './upgrade-page.component.html',
 })
@@ -43,6 +45,7 @@ export class UpgradePageComponent {
     private authService: AuthService,
     private modalService: ModalService
   ) {
+    // Glassfy
     effect(
       () => {
         const offerings = this.productService.offerings();
@@ -62,6 +65,7 @@ export class UpgradePageComponent {
       { allowSignalWrites: true }
     );
 
+    // RevenueCat
     effect(
       () => {
         const offeringsRevenueCat = this.productService.offeringsRevenueCat();
@@ -102,19 +106,27 @@ export class UpgradePageComponent {
     this.router.navigate(['/recipes/discover']);
   }
 
-  async makePurchase(skuId: string) {
+  async makePurchase(selectedID: string) {
     // get sku with matching 'skuId'
-    const sku = this.subscribeSKUs().find((sku) => sku.skuId === skuId);
-    if (sku) {
+    // Glassfy
+    // const id = this.subscribeSKUs().find((sku) => sku.skuId === selectedID);
+    // RevenueCat
+    const revenueCatPackage = this.subscribePackages().find(
+      (revenueCatPackage) => revenueCatPackage.identifier === selectedID
+    );
+    if (revenueCatPackage) {
       this.isLoading.set(true);
-      const result = await this.productService.purchase(sku);
+      // Glassfy
+      // const result = await this.productService.purchase(id);
+      // RevenueCat
+      const result = await this.productService.purchaseRevenueCatSubPackage(revenueCatPackage);
       this.isLoading.set(false);
       if (result.result === 'no permissions') {
         this.modalService.open(
           ErrorModalComponent,
           {
             data: {
-              errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
+              errorMessage: `Error purchasing "${selectedID}"${result.error}`,
               statusCode: '500',
             },
           },
@@ -150,7 +162,7 @@ export class UpgradePageComponent {
           ErrorModalComponent,
           {
             data: {
-              errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
+              errorMessage: `Error purchasing "${selectedID}"${result.error}`,
               statusCode: '500',
             },
           },
@@ -180,6 +192,12 @@ export class UpgradePageComponent {
   skuClick(sku) {
     if (sku.skuId !== this.selectedIdentifier()) {
       this.selectedIdentifier.set(sku.skuId);
+    }
+  }
+
+  packageClick(revenueCatPackage) {
+    if (revenueCatPackage.identifier !== this.selectedIdentifier()) {
+      this.selectedIdentifier.set(revenueCatPackage.identifier);
     }
   }
 

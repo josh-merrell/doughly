@@ -142,6 +142,111 @@ module.exports = ({ db, dbDefault }) => {
       }
     },
 
+    newPurchaseRevenueCatSubPackage: async (options) => {
+      const { userID, activeEntitlements, revenueCatPackage } = options;
+
+      try {
+        global.logger.info({ message: `PROCESSING NEW PURCHASE. REVENUECAT PACKAGE: ${JSON.stringify(revenueCatPackage)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        // get current profile
+        const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
+        if (error1) {
+          throw errorGen(`Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
+        }
+        if (!profile) {
+          throw errorGen(`Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
+        }
+        if (!activeEntitlements || !revenueCatPackage) {
+          throw errorGen(`Missing activeEntitlements or revenueCatPackage, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
+        }
+
+        const newProfile = {};
+        let addTokens;
+        switch (revenueCatPackage.identifier) {
+          case 'doughly_premium_monthly_3.99':
+            newProfile['isPremium'] = true;
+            newProfile['permRecipeSubscribeUnlimited'] = true;
+            newProfile['permRecipeCreateUnlimited'] = true;
+            newProfile['permDataBackupDaily6MonthRetention'] = true;
+            break;
+          case 'doughly_premium_6months_17.94':
+            newProfile['isPremium'] = true;
+            newProfile['permRecipeSubscribeUnlimited'] = true;
+            newProfile['permRecipeCreateUnlimited'] = true;
+            newProfile['permDataBackupDaily6MonthRetention'] = true;
+            break;
+          default:
+            global.logger.info({ message: `Invalid purchase revenueCatPackage.identifier: ${revenueCatPackage.identifier}, cannot process purchase`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+        }
+
+        if (revenueCatPackage.identifier !== 'doughly_aicredits10_once_2.99') {
+          const tokenUpdate = await calculateAITokenUpdate(userID);
+          if (tokenUpdate.needsUpdate) {
+            newProfile['permAITokenCount'] = tokenUpdate.newCount;
+            newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
+          }
+        } else {
+          newProfile['permAITokenCount'] = Math.min(productConstants.subscription.maxAICredits, profile.permAITokenCount + addTokens);
+        }
+
+        global.logger.info({ message: `UPDATING PROFILE PERMS after purchase: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
+        if (error) {
+          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+        }
+        return updatedProfile;
+      } catch (err) {
+        throw errorGen(err.message || 'Unhandled Error in purchases newPurchaseRevenueCatPackage', err.code || 520, err.name || 'unhandledError_purchases-newPurchaseRevenueCatPackage', err.isOperational || false, err.severity || 2);
+      }
+    },
+
+    newPurchaseRevenueCatProdPackage: async (options) => {
+      const { userID, activeEntitlements, revenueCatProduct } = options;
+
+      try {
+        global.logger.info({ message: `PROCESSING NEW PURCHASE. REVENUECAT PRODUCT: ${JSON.stringify(revenueCatProduct)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        // get current profile
+        const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
+        if (error1) {
+          throw errorGen(`Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
+        }
+        if (!profile) {
+          throw errorGen(`Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
+        }
+        if (!activeEntitlements || !revenueCatProduct) {
+          throw errorGen(`Missing activeEntitlements or revenueCatProduct, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
+        }
+
+        const newProfile = {};
+        let addTokens;
+        switch (revenueCatProduct.identifier) {
+          case 'doughly_aicredits10_once_2.99':
+            addTokens = 10;
+            break;
+          default:
+            global.logger.info({ message: `Invalid purchase revenueCatProduct.identifier: ${revenueCatProduct.identifier}, cannot process purchase`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+        }
+
+        if (revenueCatProduct.identifier !== 'doughly_aicredits10_once_2.99') {
+          const tokenUpdate = await calculateAITokenUpdate(userID);
+          if (tokenUpdate.needsUpdate) {
+            newProfile['permAITokenCount'] = tokenUpdate.newCount;
+            newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
+          }
+        } else {
+          newProfile['permAITokenCount'] = Math.min(productConstants.subscription.maxAICredits, profile.permAITokenCount + addTokens);
+        }
+
+        global.logger.info({ message: `UPDATING PROFILE PERMS after purchase: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
+        if (error) {
+          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+        }
+        return updatedProfile;
+      } catch (err) {
+        throw errorGen(err.message || 'Unhandled Error in purchases newPurchaseRevenueCatProduct', err.code || 520, err.name || 'unhandledError_purchases-newPurchaseRevenueCatProduct', err.isOperational || false, err.severity || 2);
+      }
+    },
+
     updatePermissions: async (options) => {
       const { userID, permissions } = options;
 

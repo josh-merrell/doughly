@@ -25,6 +25,32 @@ async function updatePermissions(req, res) {
   return res.json(returner);
 }
 
+async function newPurchaseRevenueCatSubPackage(req, res) {
+  const db = req.client.db;
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
+  const { activeEntitlements, revenueCatPackage } = req.body;
+  const returner = await p.newPurchaseRevenueCatSubPackage({
+    userID: req.userID,
+    activeEntitlements,
+    revenueCatPackage
+  });
+  return res.json(returner);
+}
+
+async function newPurchaseRevenueCatProdPackage(req, res) {
+  const db = req.client.db;
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
+  const { activeEntitlements, revenueCatProduct } = req.body;
+  const returner = await p.newPurchaseRevenueCatProdPackage({
+    userID: req.userID,
+    activeEntitlements,
+    revenueCatProduct
+  });
+  return res.json(returner);
+}
+
 async function updateEntitlementsRevenueCat(req, res) {
   const db = req.client.db;
   const dbDefault = req.defaultClient.db;
@@ -40,5 +66,7 @@ async function updateEntitlementsRevenueCat(req, res) {
 module.exports = {
   processNewPurchase,
   updatePermissions,
+  newPurchaseRevenueCatSubPackage,
+  newPurchaseRevenueCatProdPackage,
   updateEntitlementsRevenueCat,
 };
