@@ -18,7 +18,7 @@ import {
   LOG_LEVEL,
   PurchasesPackage,
   MakePurchaseResult,
-  PurchasesStoreProduct
+  PurchasesStoreProduct,
 } from '@revenuecat/purchases-capacitor';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
@@ -88,6 +88,7 @@ export class ProductService {
         }
         const { customerInfo } = await Purchases.getCustomerInfo();
         const entitlements = customerInfo.entitlements.active;
+        console.log('RevenueCat Entitlements: ', entitlements);
         await this.handleExistingPermissions(entitlements).subscribe();
 
         const offeringsRevenueCat: PurchasesOfferings =
@@ -101,6 +102,7 @@ export class ProductService {
   }
 
   ngOnInit() {
+    console.log('Product Service Init');
     this.initGlassfy();
     this.initRevenueCat();
   }
@@ -192,7 +194,9 @@ export class ProductService {
   ): Promise<PurchaseResult> {
     try {
       console.log(
-        `PURCHASING REVENUE CAT PACKAGE: ${JSON.stringify(revenueCatSubPackage)}`
+        `PURCHASING REVENUE CAT PACKAGE: ${JSON.stringify(
+          revenueCatSubPackage
+        )}`
       );
       const result = await Purchases.purchasePackage({
         aPackage: revenueCatSubPackage,
@@ -250,11 +254,15 @@ export class ProductService {
     }
   }
 
-  purchaseRevenueCatProdPackage(revenueCatProdPackage: PurchasesPackage): Promise<PurchaseResult> {
+  purchaseRevenueCatProdPackage(
+    revenueCatProdPackage: PurchasesPackage
+  ): Promise<PurchaseResult> {
     return new Promise(async (resolve, reject) => {
       try {
         console.log(
-          `PURCHASING REVENUE CAT PRODUCT: ${JSON.stringify(revenueCatProdPackage)}`
+          `PURCHASING REVENUE CAT PRODUCT: ${JSON.stringify(
+            revenueCatProdPackage
+          )}`
         );
         const result = await Purchases.purchasePackage({
           aPackage: revenueCatProdPackage,
@@ -329,7 +337,10 @@ export class ProductService {
   ): Observable<any> {
     // send to backend for processing/adding profile perms
     const body = { activeEntitlements, revenueCatSubPackage };
-    return this.http.post(`${this.API_URL}/newPurchaseRevenueCatSubPackage`, body);
+    return this.http.post(
+      `${this.API_URL}/newPurchaseRevenueCatSubPackage`,
+      body
+    );
   }
 
   handleSuccessfulRevenueCatProdPackageTransactionResult(
@@ -338,7 +349,10 @@ export class ProductService {
   ): Observable<any> {
     // send to backend for processing/adding profile perms
     const body = { activeEntitlements, revenueCatProdPackage };
-    return this.http.post(`${this.API_URL}/newPurchaseRevenueCatProdPackage`, body);
+    return this.http.post(
+      `${this.API_URL}/newPurchaseRevenueCatProdPackage`,
+      body
+    );
   }
 
   handleExistingPermissions(permissions: any): Observable<any> {

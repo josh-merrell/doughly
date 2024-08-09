@@ -57,6 +57,7 @@ export class AppComponent {
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
+  private offerings: WritableSignal<any> = signal([]);
 
   constructor(
     public store: Store,
@@ -198,6 +199,8 @@ export class AppComponent {
     this.renderer.addClass(document.body, 'dark');
     this.renderer.removeClass(document.body, 'light');
     this.stylesService.updateStyles('#1F2933', 'dark');
+
+    this.offerings.set(this.productService.offerings());
 
     // register for push notifications on mobile
     if (Capacitor.isNativePlatform()) {
