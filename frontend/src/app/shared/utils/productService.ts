@@ -62,7 +62,7 @@ export class ProductService {
           watcherMode: false,
         });
         const permissions = await Glassfy.permissions();
-        console.log('Glassfy Permissions: ', permissions);
+        console.log('Glassfy Permissions: ', JSON.stringify(permissions));
         await this.handleExistingPermissions(permissions.all).subscribe();
 
         const offerings: GlassfyOfferings = await Glassfy.offerings();
@@ -88,7 +88,7 @@ export class ProductService {
         }
         const { customerInfo } = await Purchases.getCustomerInfo();
         const entitlements = customerInfo.entitlements.active;
-        console.log('RevenueCat Entitlements: ', entitlements);
+        console.log('RevenueCat Entitlements: ', JSON.stringify(entitlements));
         await this.handleExistingPermissions(entitlements).subscribe();
 
         const offeringsRevenueCat: PurchasesOfferings =
@@ -111,7 +111,7 @@ export class ProductService {
     // called when permissions may have changed
     // ** GLASSFY **
     const permissions = await Glassfy.permissions();
-    console.log('Updated Glassfy Permissions: ', permissions);
+    console.log('Updated Glassfy Permissions: ', JSON.stringify(permissions));
     await this.handleExistingPermissions(permissions.all).subscribe();
 
     // ** REVENUECAT **

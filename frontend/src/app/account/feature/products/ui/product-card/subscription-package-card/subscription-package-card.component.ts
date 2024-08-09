@@ -31,13 +31,14 @@ export class SubscriptionPackageCardComponent {
     return price.toFixed(2);
   }
 
-  getTitleString(planId: string) {
-    switch (planId) {
-      case 'per-month-3-99':
+  getTitleString(identifier: string) {
+    //android_doughly_premium_monthly_2.99:per-6-month-17-94
+    switch (identifier) {
+      case '$rc_monthly':
         return 'Month to month';
-      case 'per-6-month-17-94':
+      case '$rc_six_month':
         return '6 month bundle';
     }
-    return planId; // Return original if no match
+    return identifier; // Return original if no match
   }
 }

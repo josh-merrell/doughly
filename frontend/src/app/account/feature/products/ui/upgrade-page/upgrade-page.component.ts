@@ -56,7 +56,7 @@ export class UpgradePageComponent {
           );
           if (premiumOffering) {
             this.subscribeSKUs.set(premiumOffering.skus);
-            console.log(`SUBSCRIBE SKUS: `, this.subscribeSKUs());
+            console.log(`SUBSCRIBE SKUS: `, JSON.stringify(this.subscribeSKUs()));
           }
         } else {
           this.subscribeSKUs.set([]);
@@ -79,7 +79,7 @@ export class UpgradePageComponent {
             );
             console.log(
               `REVENUECAT OFFERING PACKAGES: `,
-              this.subscribePackages()
+              JSON.stringify(this.subscribePackages())
             );
           }
         } else {
