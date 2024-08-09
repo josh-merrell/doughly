@@ -1,5 +1,5 @@
 <div
-  class="flex h-dl-21 w-full transform flex-col rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+  class="flex h-dl-21 w-full transform flex-col rounded-dl-3 bg-dl-tan-10 px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-nowrap">
@@ -122,14 +122,14 @@
           <button
             type="button"
             *ngIf="(ingredient$ | async)?.needsReview && form.pristine"
-            class="mb-dl-3 inline-flex w-full justify-center rounded-dl-1 border-2 bg-dl-pinknew-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white shadow-sm dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
+            class="mb-dl-3 inline-flex w-full justify-center rounded-dl-1 border-2 bg-dl-pinknew-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
             (click)="onConfirm()"
           >
             Confirm Details
           </button>
           <button
             type="button"
-            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-tan-1 sm:ml-dl-4"
+            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
               'cursor-pointer bg-dl-pinknew-4 hover:bg-dl-pinknew-5 dark:bg-dl-pinknew-7 hover:dark:bg-dl-pinknew-6':
@@ -143,7 +143,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+            class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
             (click)="onCancel()"
           >
             Cancel

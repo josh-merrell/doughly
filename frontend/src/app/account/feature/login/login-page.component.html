@@ -1,6 +1,6 @@
 <script src="https://accounts.google.com/gsi/client" async></script>
 <div
-  class="flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 dark:bg-dl-tan-1 sm:px-dl-6 lg:px-dl-8"
+  class="flex h-full w-full flex-col items-center bg-dl-tan-9 px-dl-2 py-dl-6 dark:bg-dl-tan-1 sm:px-dl-6 lg:px-dl-8"
 >
   <div class="mt-dl-3 w-full items-center justify-center">
     <img
@@ -33,7 +33,7 @@
       <div class="mb-dl-8 flex w-full flex-col items-center justify-between">
         <button
           (click)="signInWithGoogle()"
-          class="gsi-material-button !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
+          class="gsi-material-button !w-dl-15 bg-dl-tan-9 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -73,7 +73,7 @@
         </button>
         <button
           (click)="signInWithFacebook()"
-          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-9 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -104,7 +104,7 @@
         </button>
         <button
           (click)="signInWithApple()"
-          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-9 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -214,7 +214,7 @@
           login_form.get('email')!.value === ''
         "
         style="height: 40px; width: 296px"
-        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-white dark:text-dl-tan-1"
+        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-dl-tan-10 dark:text-dl-tan-1"
         [ngClass]="{
           'cursor-pointer bg-dl-green-4 hover:bg-dl-green-5 dark:bg-dl-green-7 hover:dark:bg-dl-green-6':
             login_form.invalid === false,

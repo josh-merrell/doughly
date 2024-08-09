@@ -126,7 +126,7 @@
       class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
       (click)="onAddClick()"
       [ngClass]="{
-        'bg-dl-pinknew-4 text-white dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
+        'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
           view() === 'all' && selectedRecipeID() !== 0 && !isLoading(),
         'bg-dl-tan-9 text-dl-tan-4 dark:bg-dl-tan-2 dark:text-dl-tan-7':
           view() !== 'all' || selectedRecipeID() === 0 || isLoading()
@@ -136,7 +136,7 @@
     </button>
     <button
       type="button"
-      class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
+      class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
       (click)="onCancel()"
     >
       Cancel

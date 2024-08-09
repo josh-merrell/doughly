@@ -7,7 +7,7 @@
     >
       <div
         *ngFor="let list of displaySharedShoppingLists()"
-        class="mr-dl-4 flex h-dl-6 flex-shrink-0 items-center rounded-full bg-white shadow-md dark:bg-dl-tan-2"
+        class="mr-dl-4 flex h-dl-6 flex-shrink-0 items-center rounded-full bg-dl-tan-10 shadow-md dark:bg-dl-tan-2"
         [ngClass]="{
           'border border-dl-tan-3 dark:border dark:border-dl-tan-7': list.shoppingListID === selectedListID(),
         }"
@@ -189,7 +189,7 @@
         </div>
         <div class="relative flex items-center justify-between">
           <input
-            class="w-full rounded-md border-0 bg-dl-tan-10 px-dl-4 py-dl-4 text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset ring-dl-tan-8 transition-all duration-200 ease-in-out placeholder:text-dl-tan-2 focus:bg-white focus:shadow-md focus:shadow-dl-green-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-3 dark:text-dl-tan-9 dark:ring-dl-tan-1 placeholder:dark:text-dl-tan-9 dark:focus:bg-dl-tan-4"
+            class="w-full rounded-md border-0 bg-dl-tan-10 px-dl-4 py-dl-4 text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset ring-dl-tan-8 transition-all duration-200 ease-in-out placeholder:text-dl-tan-2 focus:bg-dl-tan-10 focus:shadow-md focus:shadow-dl-green-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-3 dark:text-dl-tan-9 dark:ring-dl-tan-1 placeholder:dark:text-dl-tan-9 dark:focus:bg-dl-tan-4"
             *ngIf="!item.store"
             type="number"
             [min]="item.needMeasurement"
@@ -229,7 +229,7 @@
         selectedSLIngred().itemsToSave &&
         selectedSLIngred().itemsToSave.length
       "
-      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-tan-10 shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
       (click)="onSaveClick()"
     >
       {{ saveButtonText }}

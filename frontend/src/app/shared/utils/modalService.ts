@@ -114,9 +114,9 @@ export class ModalService {
       case 1:
       case 99:
         if (useDarkMode === true) {
-          this.stylesService.updateStyles('#141B23', 'dark');
+          this.stylesService.updateStyles('#26221C', 'dark');
         } else {
-          this.stylesService.updateStyles('#ACACAC', 'light');
+          this.stylesService.updateStyles('#D4CDC4', 'light');
         }
         break;
       case 2:
@@ -135,9 +135,9 @@ export class ModalService {
         break;
       case 0:
         if (useDarkMode === true) {
-          this.stylesService.updateStyles('#1F2933', 'dark');
+          this.stylesService.updateStyles('#423C33', 'dark');
         } else {
-          this.stylesService.updateStyles('#FFFFFF', 'light');
+          this.stylesService.updateStyles('#f9f8f5', 'light');
         }
         break;
       default:

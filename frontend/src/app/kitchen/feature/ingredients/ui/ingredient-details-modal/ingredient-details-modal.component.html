@@ -1,5 +1,5 @@
 <div
-  class="relative w-full overflow-y-auto overflow-x-hidden rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-3 transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+  class="relative w-full overflow-y-auto overflow-x-hidden rounded-dl-3 bg-dl-tan-10 px-dl-4 pb-dl-4 pt-dl-3 transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <!-- Header -->
   <div
@@ -124,7 +124,7 @@
             <div
               #stockDropdownMenu
               *ngIf="menuOpenForIndex === i"
-              class="absolute right-5 top-12 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-tan-1 ring-opacity-5 ease-out focus:outline-none dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+              class="absolute right-5 top-12 z-10 flex flex-col bg-dl-tan-10 shadow-md ring-1 ring-dl-tan-1 ring-opacity-5 ease-out focus:outline-none dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
             >
               <button
                 (click)="openEditStockDialog(stock.ingredientStockID)"
@@ -148,7 +148,7 @@
     <button
       id="test-button"
       type="button"
-      class="mt-dl-5 block w-full whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pinknew-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 hover:dark:bg-dl-pinknew-6"
+      class="mt-dl-5 block w-full whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pinknew-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 hover:dark:bg-dl-pinknew-6"
       (click)="onAddStock()"
     >
       Add More

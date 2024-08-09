@@ -1,5 +1,5 @@
 <div
-  class="relative transform overflow-hidden rounded-dl-3 bg-white px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1 sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
+  class="relative transform overflow-hidden rounded-dl-3 bg-dl-tan-10 px-dl-4 pb-dl-3 pt-dl-2 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1 sm:my-dl-3 sm:w-full sm:max-w-dl-13 sm:p-dl-6"
 >
   <!-- Spinner-->
   <div
@@ -103,7 +103,7 @@
       <button
         type="button"
         *ngIf="draftList() && recipeOnList() === false"
-        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:bg-dl-pinknew-7 dark:text-dl-tan-1 sm:ml-dl-4"
+        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 sm:ml-dl-4"
         (click)="onAddToDraft()"
       >
         Add All to Draft List
@@ -113,7 +113,7 @@
       <button
         type="button"
         *ngIf="draftList() && recipeOnList() === true"
-        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 border border-dl-pinknew-4 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pinknew-4 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-7 sm:ml-dl-4"
+        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-pinknew-4 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-7 sm:ml-dl-4"
         (click)="onViewDraftList()"
       >
         View Draft Shopping List
@@ -121,7 +121,7 @@
 
       <button
         type="button"
-        class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+        class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
         Close

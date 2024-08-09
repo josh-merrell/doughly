@@ -37,9 +37,9 @@
         type="button"
         class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3"
         [ngClass]="{
-          'bg-dl-pinknew-4 text-white dark:border-dl-tan-1 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
+          'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-tan-1 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             selectedRecipeID() === 0,
-          'border-dl-pinknew-4 bg-white text-dl-pinknew-4  dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
+          'border-dl-pinknew-4 bg-dl-tan-10 text-dl-pinknew-4  dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
             selectedRecipeID() !== 0,
           invisible:
             recipes().length - displayRecipes().length === 0 &&
@@ -69,7 +69,7 @@
         <div class="flex min-h-dl-2 flex-wrap overflow-y-auto rounded-dl-3">
           @for (item of displaySLRecipeIngr(); track item.ingredientName) {
           <div
-            class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-white px-dl-1 dark:bg-dl-tan-1"
+            class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-1 dark:bg-dl-tan-1"
           >
             <span
               class="px-dl-2 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
@@ -108,7 +108,7 @@
             (click)="standaloneIngredientCardClick(item)"
             class="relative mx-dl-2 mb-dl-2 flex items-center justify-between overflow-y-auto rounded-dl-1 border border-dl-tan-5 px-dl-1 transition-all duration-200 ease-in-out dark:border-dl-tan-6"
             [ngClass]="{
-              'border-dl-tan-8 bg-white  dark:bg-dl-tan-1':
+              'border-dl-tan-8 bg-dl-tan-10  dark:bg-dl-tan-1':
                 item.shoppingListIngredientID !== selectedSLIngrID(),
               'border-dl-teal-8 bg-dl-teal-10 dark:bg-dl-teal-1':
                 item.shoppingListIngredientID === selectedSLIngrID()
@@ -145,8 +145,8 @@
       class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3"
       (click)="onItemButtonClick()"
       [ngClass]="{
-      'bg-dl-pinknew-4 text-white dark:border-dl-tan-2 dark:bg-dl-pinknew-7 dark:text-dl-tan-1': selectedSLIngrID() === 0,
-      'border-dl-pinknew-4 bg-white text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-9': selectedSLIngrID() !== 0,
+      'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-tan-2 dark:bg-dl-pinknew-7 dark:text-dl-tan-1': selectedSLIngrID() === 0,
+      'border-dl-pinknew-4 bg-dl-tan-10 text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-9': selectedSLIngrID() !== 0,
     }"
     >
       @if (selectedSLIngrID() === 0) { Add Other Item } @else { Remove Selected
@@ -163,7 +163,7 @@
         'bg-dl-tan-7 text-dl-tan-3 dark:border-dl-tan-3 dark:bg-dl-tan-3 dark:text-dl-tan-8':
           displaySLRecipeIngr().length === 0 &&
           displaySLStandaloneIngr().length === 0,
-        'bg-dl-pinknew-4 text-white dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
+        'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
           displaySLRecipeIngr().length !== 0 ||
           displaySLStandaloneIngr().length !== 0
       }"

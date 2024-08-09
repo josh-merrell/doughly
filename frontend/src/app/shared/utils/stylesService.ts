@@ -26,36 +26,26 @@ export class StylesService {
   private profile: WritableSignal<any> = signal(null);
   private extraStuffService!: ExtraStuffService;
   private colorClasses = {
-    'blue-1': '#035388',
-    'blue-2': '#0B69A3',
-    'blue-3': '#127FBF',
-    'blue-4': '#1992D4',
-    'blue-5': '#2BB0ED',
-    'blue-6': '#40C3F7',
-    'blue-7': '#5ED0FA',
-    'blue-8': '#81DEFD',
-    'blue-9': '#B3ECFF',
-    'blue-10': '#E3F8FF',
-    'grey-1': '#1F2933',
-    'grey-2': '#323F4B',
-    'grey-3': '#3E4C59',
-    'grey-4': '#52606D',
-    'grey-5': '#616E7C',
-    'grey-6': '#7B8794',
-    'grey-7': '#9AA5B1',
-    'grey-8': '#CBD2D9',
-    'grey-9': '#E4E7EB',
-    'grey-10': '#F5F7FA',
-    'pink-1': '#620042',
-    'pink-2': '#870557',
-    'pink-3': '#A30664',
-    'pink-4': '#BC0A6F',
-    'pink-5': '#DA127D',
-    'pink-6': '#E8368F',
-    'pink-7': '#F364A2',
-    'pink-8': '#FF8CBA',
-    'pink-9': '#FFB8D2',
-    'pink-10': '#FFE3EC',
+    'tan-1': '#26221C', 
+    'tan-2': '#423C33', 
+    'tan-3': '#50493F', 
+    'tan-4': '#615B51', 
+    'tan-5': '#847C71', 
+    'tan-6': '#A49D94', 
+    'tan-7': '#B9B1A7', 
+    'tan-8': '#D4CDC4', 
+    'tan-9': '#E9E6E2', 
+    'tan-10': '#f9f8f5',  
+    'pinknew-1': '#651B2D',
+    'pinknew-2': '#942944',
+    'pinknew-3': '#C0355A',
+    'pinknew-4': '#D55879',
+    'pinknew-5': '#DE7D9A',
+    'pinknew-6': '#E499B5',
+    'pinknew-7': '#E7ABC7',
+    'pinknew-8': '#EABED4',
+    'pinknew-9': '#EECDDE',
+    'pinknew-10': '#F4E6ED',
     'teal-1': '#014D40',
     'teal-2': '#0C6B58',
     'teal-3': '#147D64',
@@ -86,6 +76,16 @@ export class StylesService {
     'yellow-8': '#FCE588',
     'yellow-9': '#FFF3C4',
     'yellow-10': '#FFFBEA',
+    'green-1': '#2F3F1A',
+    'green-2': '#475B24',
+    'green-3': '#586B29',
+    'green-4': '#6A762D',
+    'green-5': '#7B8131',
+    'green-6': '#8d8c34',
+    'green-7': '#A2963A',
+    'green-8': '#C4B964',
+    'green-9': '#DDD6A7',
+    'green-10': '#F2F0E3',
   };
 
   constructor(private store: Store, private injector: Injector) {
@@ -127,14 +127,14 @@ export class StylesService {
     switch (this.profile['darkMode']) {
       case 'Enabled' ||
         ('System Default' && this.extraStuffService.systemDarkMode()):
-        this.setColor('#1F2933', 'dark');
+        this.setColor('#26221C', 'dark');
         if (Capacitor.isNativePlatform()) {
           this.setStatusBarStyle(Style.Dark);
         }
         break;
       case 'Disabled' ||
         ('System Default' && !this.extraStuffService.systemDarkMode()):
-        this.setColor('#FFFFFF', 'light');
+        this.setColor('#E9E6E2', 'light');
         if (Capacitor.isNativePlatform()) {
           this.setStatusBarStyle(Style.Light);
         }

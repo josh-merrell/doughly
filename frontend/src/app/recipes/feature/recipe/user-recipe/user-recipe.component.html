@@ -65,7 +65,7 @@
         <div
           #menu
           *ngIf="menuOpen"
-          class="focus:outling-none absolute right-16 top-2 z-10 flex flex-col rounded-dl-1 bg-white shadow-md ring-1 ring-dl-tan-1 ring-opacity-5 ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+          class="focus:outling-none absolute right-16 top-2 z-10 flex flex-col rounded-dl-1 bg-dl-tan-10 shadow-md ring-1 ring-dl-tan-1 ring-opacity-5 ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
         >
           <button
             *ngIf="!recipeSubscription()"
@@ -95,7 +95,7 @@
         <span
           #syncMessage
           *ngIf="syncMessageOpen"
-          class="absolute right-24 top-2 z-10 rounded-dl-1 bg-white p-dl-2 text-dl-5 text-dl-tan-3 shadow-md ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1 dark:text-dl-tan-8"
+          class="absolute right-24 top-2 z-10 rounded-dl-1 bg-dl-tan-10 p-dl-2 text-dl-5 text-dl-tan-3 shadow-md ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1 dark:text-dl-tan-8"
         >
           The source recipe authored by
           <span class="text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">{{
@@ -421,7 +421,7 @@
                 !recipeIngredientsNeedReview()
               "
               type="button"
-              class="mr-dl-2 block whitespace-nowrap rounded-dl-1 border bg-dl-pinknew-4 px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 dark:hover:bg-dl-tan-2"
+              class="mr-dl-2 block whitespace-nowrap rounded-dl-1 border bg-dl-pinknew-4 px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 dark:hover:bg-dl-tan-2"
               (click)="useRecipe()"
             >
               Make Now!
@@ -433,7 +433,7 @@
                 profile()?.checkIngredientStock === false
               "
               type="button"
-              class="block whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-white px-dl-2 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
+              class="block whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-2 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
               (click)="viewShoppingList()"
             >
               Shopping
@@ -484,7 +484,7 @@
             *ngIf="!recipeSubscription()"
             id="edit-recipe-ingredients-button"
             type="button"
-            class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-white px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
+            class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
             (click)="editRecipeIngredients()"
           >
             Edit
@@ -628,7 +628,7 @@
           *ngIf="!recipeSubscription()"
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-white px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
+          class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
           (click)="editRecipeTools()"
         >
           Edit
@@ -678,7 +678,7 @@
           *ngIf="!recipeSubscription()"
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-white px-dl-3 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
+          class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
           (click)="editRecipeSteps()"
         >
           Edit

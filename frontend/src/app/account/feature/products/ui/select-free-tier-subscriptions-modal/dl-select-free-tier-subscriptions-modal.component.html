@@ -1,6 +1,6 @@
 <div
   *ngIf="displayRecipes().length > 0"
-  class="relative flex w-full flex-col items-center overflow-x-hidden rounded-dl-3 bg-white p-dl-4 pb-dl-4 pt-dl-5 dark:bg-dl-tan-1"
+  class="relative flex w-full flex-col items-center overflow-x-hidden rounded-dl-3 bg-dl-tan-10 p-dl-4 pb-dl-4 pt-dl-5 dark:bg-dl-tan-1"
 >
   <span
     class="mx-dl-3 mb-dl-4 items-center rounded-dl-2 border border-dl-yellow-4 px-dl-2 py-dl-1 text-dl-5 font-dl-3 text-dl-yellow-2 transition-all duration-100 ease-in-out dark:border-dl-yellow-6 dark:text-dl-yellow-9"
@@ -101,7 +101,7 @@
   <button
     id="add-button"
     type="button"
-    class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-tan-1 sm:ml-dl-4"
+    class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
     (click)="onSubmitClick()"
     [ngClass]="{
       'cursor-pointer bg-dl-pinknew-4 dark:bg-dl-pinknew-7':
@@ -118,7 +118,7 @@
   </button>
   <button
     type="button"
-    class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+    class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
     (click)="onCancel()"
   >
     Cancel

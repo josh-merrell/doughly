@@ -10,7 +10,7 @@
       id="expanded"
       class="relative min-h-dl-5 w-full cursor-pointer rounded-md border-0 px-dl-4 py-dl-4 text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:text-dl-tan-9"
       [ngClass]="{
-        'rounded-b-none bg-white shadow-md shadow-dl-green-5/20 ring-dl-green-5 dark:bg-dl-tan-3  ':
+        'rounded-b-none bg-dl-tan-10 shadow-md shadow-dl-green-5/20 ring-dl-green-5 dark:bg-dl-tan-3  ':
           isOpen(),
         'rounded-b-md bg-dl-tan-10 ring-dl-tan-8 dark:bg-dl-tan-2 dark:ring-dl-tan-1':
           !isOpen()
@@ -34,9 +34,9 @@
     </div>
     <div
       *ngIf="isOpen()"
-      class="absolute top-10 z-20 max-h-dl-12 w-full overflow-y-auto rounded-b-md border-2 border-t-0 border-dl-green-5 bg-white shadow-lg dark:bg-dl-tan-2"
+      class="absolute top-10 z-20 max-h-dl-12 w-full overflow-y-auto rounded-b-md border-2 border-t-0 border-dl-green-5 bg-dl-tan-10 shadow-lg dark:bg-dl-tan-2"
     >
-      <div class="z-25 sticky top-0 bg-white dark:bg-dl-tan-2">
+      <div class="z-25 sticky top-0 bg-dl-tan-10 dark:bg-dl-tan-2">
         <div class="relative">
           <svg
             width="28"
@@ -58,7 +58,7 @@
             class="w-full border py-dl-3 pl-dl-7 pr-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 ring-transparent focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-8"
             (input)="onFilterChange($event)"
             [ngClass]="{
-              'rounded-b-none border-dl-green-5 bg-white focus:border-dl-green-4 dark:bg-dl-tan-3 focus:dark:border-dl-green-7':
+              'rounded-b-none border-dl-green-5 bg-dl-tan-10 focus:border-dl-green-4 dark:bg-dl-tan-3 focus:dark:border-dl-green-7':
                 isOpen(),
               'rounded-b-md border-transparent bg-dl-tan-10 ring-dl-tan-8 dark:bg-dl-tan-2':
                 !isOpen()
