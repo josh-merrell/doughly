@@ -7,12 +7,15 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { GlassfyOffering, GlassfySku } from 'capacitor-plugin-glassfy';
+import { PurchasesPackage } from '@revenuecat/purchases-capacitor';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { PurchasesOffering } from '@revenuecat/purchases-capacitor';
+import { SubscriptionPackageCardComponent } from '../product-card/subscription-package-card/subscription-package-card.component';
 @Component({
   selector: 'dl-upgrade-page',
   standalone: true,
@@ -22,16 +25,15 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     BenefitsChartComponent,
     SubscriptionSkuCardComponent,
     MatProgressSpinnerModule,
+    SubscriptionPackageCardComponent,
   ],
   templateUrl: './upgrade-page.component.html',
 })
 export class UpgradePageComponent {
   public isLoading: WritableSignal<boolean> = signal(false);
   public view: WritableSignal<string> = signal('overview');
-  public subscribeSKUs: WritableSignal<GlassfySku[]> = signal([]);
-  public selectedIdentifier: WritableSignal<string> = signal(
-    'doughly_premium_6months_17.94'
-  );
+  public subscribePackages: WritableSignal<PurchasesPackage[]> = signal([]);
+  public selectedIdentifier: WritableSignal<string> = signal('$rc_six_month');
   constructor(
     public dialog: MatDialog,
     private router: Router,
@@ -40,20 +42,25 @@ export class UpgradePageComponent {
     private authService: AuthService,
     private modalService: ModalService
   ) {
+    // RevenueCat
     effect(
       () => {
-        const offerings = this.productService.offerings();
-        if (offerings.length) {
-          // only get offering with 'offeringId' of "doughly-premium"
-          const premiumOffering = offerings.find(
-            (offering) => offering.offeringId === 'doughly-premium'
+        const offeringsRevenueCat = this.productService.offeringsRevenueCat();
+        if (offeringsRevenueCat.length) {
+          const premiumOfferingRevenueCat = offeringsRevenueCat.find(
+            (offering) => offering.identifier === 'doughly-premium'
           );
-          if (premiumOffering) {
-            this.subscribeSKUs.set(premiumOffering.skus);
-            console.log(`SUBSCRIBE SKUS: `, this.subscribeSKUs());
+          if (premiumOfferingRevenueCat) {
+            this.subscribePackages.set(
+              premiumOfferingRevenueCat.availablePackages
+            );
+            // console.log(
+            //   `REVENUECAT OFFERING PACKAGES: `,
+            //   JSON.stringify(this.subscribePackages())
+            // );
           }
         } else {
-          this.subscribeSKUs.set([]);
+          this.subscribePackages.set([]);
         }
       },
       { allowSignalWrites: true }
@@ -76,19 +83,24 @@ export class UpgradePageComponent {
     this.router.navigate(['/recipes/discover']);
   }
 
-  async makePurchase(skuId: string) {
-    // get sku with matching 'skuId'
-    const sku = this.subscribeSKUs().find((sku) => sku.skuId === skuId);
-    if (sku) {
+  async makePurchase(selectedID: string) {
+    // RevenueCat
+    const revenueCatPackage = this.subscribePackages().find(
+      (revenueCatPackage) => revenueCatPackage.identifier === selectedID
+    );
+    if (revenueCatPackage) {
       this.isLoading.set(true);
-      const result = await this.productService.purchase(sku);
+      // RevenueCat
+      const result = await this.productService.purchaseRevenueCatSubPackage(
+        revenueCatPackage
+      );
       this.isLoading.set(false);
       if (result.result === 'no permissions') {
         this.modalService.open(
           ErrorModalComponent,
           {
             data: {
-              errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
+              errorMessage: `Error purchasing "${selectedID}"${result.error}`,
               statusCode: '500',
             },
           },
@@ -124,7 +136,7 @@ export class UpgradePageComponent {
           ErrorModalComponent,
           {
             data: {
-              errorMessage: `Error purchasing "${sku.skuId}"${result.error}`,
+              errorMessage: `Error purchasing "${selectedID}"${result.error}`,
               statusCode: '500',
             },
           },
@@ -151,13 +163,15 @@ export class UpgradePageComponent {
     }
   }
 
-  // async restore() {
-  //   await this.productService.restore();
-  // }
-
   skuClick(sku) {
     if (sku.skuId !== this.selectedIdentifier()) {
       this.selectedIdentifier.set(sku.skuId);
+    }
+  }
+
+  packageClick(revenueCatPackage) {
+    if (revenueCatPackage.identifier !== this.selectedIdentifier()) {
+      this.selectedIdentifier.set(revenueCatPackage.identifier);
     }
   }
 

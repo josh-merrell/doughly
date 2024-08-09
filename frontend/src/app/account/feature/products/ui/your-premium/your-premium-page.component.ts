@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { SelectFreeTierRecipesModalComponent } from '../select-free-tier-recipes-modal/select-free-tier-recipes-modal.component';
+import { PurchasesPackage } from '@revenuecat/purchases-capacitor';
 import { SelectFreeTierSubscriptionsModalComponent } from '../select-free-tier-subscriptions-modal/select-free-tier-subscriptions-modal.component';
 import { GlassfySku } from 'capacitor-plugin-glassfy';
 import { ProductService } from 'src/app/shared/utils/productService';
@@ -17,6 +18,7 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { ProductPackageCardComponent } from '../product-card/product-package-card/product-package-card.component';
 @Component({
   selector: 'dl-your-premium',
   standalone: true,
@@ -26,6 +28,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
     MatProgressSpinnerModule,
     BenefitsChartComponent,
     ProductSkuCardComponent,
+    ProductPackageCardComponent,
   ],
   templateUrl: './your-premium-page.component.html',
 })
@@ -34,7 +37,8 @@ export class YourPremiumComponent {
   private profile: WritableSignal<any> = signal({});
   public view: WritableSignal<string> = signal('benefits');
   public isLoading: WritableSignal<boolean> = signal(false);
-  public productSKUs: WritableSignal<GlassfySku[]> = signal([]);
+  // public productSKUs: WritableSignal<GlassfySku[]> = signal([]);
+  public productPackages: WritableSignal<PurchasesPackage[]> = signal([]);
   public selectedIdentifier: WritableSignal<string> = signal(
     'doughly_aicredits10_once_2.99'
   );
@@ -47,43 +51,70 @@ export class YourPremiumComponent {
     private store: Store,
     private modalService: ModalService
   ) {
+    // Glassfy
+    // effect(
+    //   () => {
+    //     const offerings = this.productService.offerings();
+    //     if (offerings.length) {
+    //       // only get offering with 'offeringId' of "doughly-aicredits-10"
+    //       const creditsOffering = offerings.find(
+    //         (offering) => offering.offeringId === 'doughly-aicredits-10'
+    //       );
+    //       if (creditsOffering) {
+    //         this.productSKUs.set(creditsOffering.skus);
+    //         console.log(`CREDITS SKUS: `, this.productSKUs());
+    //       }
+    //     } else {
+    //       this.productSKUs.set([]);
+    //     }
+    //   },
+    //   { allowSignalWrites: true }
+    // );
+
+    // RevenueCat
     effect(
       () => {
-        const offerings = this.productService.offerings();
-        if (offerings.length) {
-          // only get offering with 'offeringId' of "doughly-aicredits-10"
-          const creditsOffering = offerings.find(
-            (offering) => offering.offeringId === 'doughly-aicredits-10'
+        const offeringsRevenueCat = this.productService.offeringsRevenueCat();
+        if (offeringsRevenueCat.length) {
+          const premiumOfferingRevenueCat = offeringsRevenueCat.find(
+            (offering) => offering.identifier === 'doughly-aicredits-10'
           );
-          if (creditsOffering) {
-            this.productSKUs.set(creditsOffering.skus);
-            console.log(`CREDITS SKUS: `, this.productSKUs());
+          if (premiumOfferingRevenueCat) {
+            this.productPackages.set(
+              premiumOfferingRevenueCat.availablePackages
+            );
+            // console.log(
+            //   `REVENUECAT OFFERING PACKAGES: `,
+            //   this.productPackages()
+            // );
           }
         } else {
-          this.productSKUs.set([]);
+          this.productPackages.set([]);
         }
       },
       { allowSignalWrites: true }
     );
 
-    effect(() => {
-      const profile = this.authService.profile();
-      this.profile.set(profile);
-      console.log(`NEW PROFILE: `, profile);
-      if (profile) {
-        if (
-          profile.permAITokenCount <
-          this.productService.licences.maxAICredits -
-            this.productService.licences.extraAITokenPurchaseCount
-        ) {
-          this.allowExtraTokenPurchase.set(true);
+    effect(
+      () => {
+        const profile = this.authService.profile();
+        this.profile.set(profile);
+        // console.log(`NEW PROFILE: `, profile);
+        if (profile) {
+          if (
+            profile.permAITokenCount <
+            this.productService.licences.maxAICredits -
+              this.productService.licences.extraAITokenPurchaseCount
+          ) {
+            this.allowExtraTokenPurchase.set(true);
+          }
         }
-      }
-    }, { allowSignalWrites: true });
+      },
+      { allowSignalWrites: true }
+    );
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   onConfirm() {
     if (this.view() === 'benefits') {
@@ -95,19 +126,24 @@ export class YourPremiumComponent {
     }
   }
 
-  async makePurchase(skuId: string) {
-    // get sku with matching 'skuId'
-    const sku = this.productSKUs().find((sku) => sku.skuId === skuId);
-    if (sku) {
+  async makePurchase(selectedID: string) {
+    // RevenueCat
+    const revenueCatPackage = this.productPackages().find(
+      (revenueCatPackage) => revenueCatPackage.identifier === selectedID
+    );
+    if (revenueCatPackage) {
       this.isLoading.set(true);
-      const result = await this.productService.purchase(sku);
+      // RevenueCat
+      const result = await this.productService.purchaseRevenueCatProdPackage(
+        revenueCatPackage
+      );
       this.isLoading.set(false);
       if (result.result === 'no permissions') {
         this.modalService.open(
           ErrorModalComponent,
           {
             data: {
-              errorMessage: `Error purchasing "${skuId}"${result.error}`,
+              errorMessage: `Error purchasing "${selectedID}"${result.error}`,
               statusCode: '500',
             },
           },
@@ -143,7 +179,7 @@ export class YourPremiumComponent {
           ErrorModalComponent,
           {
             data: {
-              errorMessage: `Error purchasing "${skuId}"${result.error}`,
+              errorMessage: `Error purchasing "${selectedID}"${result.error}`,
               statusCode: '500',
             },
           },
@@ -173,6 +209,12 @@ export class YourPremiumComponent {
   skuClick(sku) {
     if (sku.skuId !== this.selectedIdentifier()) {
       this.selectedIdentifier.set(sku.skuId);
+    }
+  }
+
+  packageClick(revenueCatPackage) {
+    if (revenueCatPackage.identifier !== this.selectedIdentifier()) {
+      this.selectedIdentifier.set(revenueCatPackage.identifier);
     }
   }
 

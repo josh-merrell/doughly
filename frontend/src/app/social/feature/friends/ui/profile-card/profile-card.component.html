@@ -24,7 +24,7 @@
         >
       </span>
     </div>
-    <div class="items-left ml-dl-4 flex flex-col justify-between">
+    <div class="items-left ml-dl-4 pb-dl-2 flex flex-col justify-between">
       <!-- Name -->
       <div class="flex text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
         <span>{{ profile.nameFirst }}</span>
@@ -32,7 +32,7 @@
       </div>
 
       <!-- Username -->
-      <span class="text-dl-5 font-dl-2 text-dl-grey-6 dark:text-dl-grey-5">{{
+      <span class="text-dl-5 font-dl-2 text-dl-grey-5 dark:text-dl-grey-7">{{
         profile.username
       }}</span>
     </div>
@@ -40,12 +40,15 @@
 
   <!-- Location-->
   <div *ngIf="profile.city && profile.state" class="ml-dl-4 mt-dl-4">
-    <span class="text-dl-5 font-dl-3 text-dl-grey-5 dark:text-dl-grey-7">{{
+    <span class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-8">{{
       profile.city
     }}</span
-    ><span class="text-dl-5 font-dl-3 text-dl-grey-5 dark:text-dl-grey-7"
+    ><span class="text-dl-5 font-dl-3 text-dl-grey-4 dark:text-dl-grey-8"
       >, {{ profile.state }}</span
     >
+  </div>
+  <div *ngIf="!profile.city || !profile.state" class="h-dl-4">
+
   </div>
 
   <!-- Recipes, Friendship/Followship Status-->

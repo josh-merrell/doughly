@@ -13,7 +13,6 @@ import { Store } from '@ngrx/store';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ExtraStuffService } from './shared/utils/extraStuffService';
-import { GlassfyOffering } from 'capacitor-plugin-glassfy';
 import {
   ActionPerformed,
   PushNotificationSchema,
@@ -58,7 +57,7 @@ export class AppComponent {
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
-  offerings: WritableSignal<GlassfyOffering[]> = this.productService.offerings;
+  private offerings: WritableSignal<any> = signal([]);
 
   constructor(
     public store: Store,
@@ -108,12 +107,6 @@ export class AppComponent {
       },
       { allowSignalWrites: true }
     );
-
-    // log product offerings
-    effect(() => {
-      const offerings = this.offerings();
-      // console.log('OFFERINGS: ', offerings);
-    });
   }
 
   initializeApp() {
@@ -206,6 +199,8 @@ export class AppComponent {
     this.renderer.addClass(document.body, 'dark');
     this.renderer.removeClass(document.body, 'light');
     this.stylesService.updateStyles('#1F2933', 'dark');
+
+    this.offerings.set(this.productService.offerings());
 
     // register for push notifications on mobile
     if (Capacitor.isNativePlatform()) {

@@ -19,7 +19,7 @@
   >
     <!-- Most Popular -->
     <div
-      *ngIf="sku.product.basePlanId === 'per-6-month-17-94'"
+      *ngIf="package.identifier === '$rc_six_month'"
       class="absolute left-0 top-0 flex w-dl-9 flex-col items-center rounded-br-xl rounded-tl-md py-dl-1.5"
       [ngClass]="{
         'bg-dl-grey-9': !isSelected,
@@ -40,18 +40,18 @@
     <div
       class="flex flex-col"
       [ngClass]="{
-      'mt-dl-7': sku.product.basePlanId === 'per-6-month-17-94',
+      'mt-dl-7': package.identifier === '$rc_six_month',
     }"
     >
       <p class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-blue-2">
-        {{ getTitleString(sku.product.basePlanId) }}
+        {{ getTitleString(package.identifier) }}
       </p>
       <span class="whitespace-nowrap text-dl-5 font-dl-2 text-dl-blue-2"
-        >{{ getPeriodString(sku.product.period) }} -
+        >{{ getPeriodString(package.product.subscriptionPeriod) }} -
         {{
-          sku.product.price
+          package.product.price
             | number : "1.0-2"
-            | currency : sku.product.currencyCode
+            | currency : package.product.currencyCode
         }}</span
       >
     </div>
@@ -60,12 +60,15 @@
     <span
       class="whitespace-nowrap text-center text-dl-6 font-dl-3 text-dl-blue-2"
       [ngClass]="{
-        'mt-dl-5': sku.product.basePlanId === 'per-6-month-17-94',
+        'mt-dl-5': package.identifier === '$rc_six_month',
       }"
       >{{
-        getMonthlyPrice(sku.product.price, sku.product.period)
+        getMonthlyPrice(
+          package.product.price,
+          package.product.subscriptionPeriod
+        )
           | number : "1.0-2"
-          | currency : sku.product.currencyCode
+          | currency : package.product.currencyCode
       }}
       / MO</span
     >

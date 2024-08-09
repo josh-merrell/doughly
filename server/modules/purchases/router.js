@@ -9,6 +9,9 @@ const h = handler;
 router.use(authenticateJWT);
 
 router.post('/newPurchase', authenticateJWT, errorCatcher(h.processNewPurchase));
+router.post('/newPurchaseRevenueCatSubPackage', authenticateJWT, errorCatcher(h.newPurchaseRevenueCatSubPackage));
+router.post('/newPurchaseRevenueCatProdPackage', authenticateJWT, errorCatcher(h.newPurchaseRevenueCatProdPackage));
 router.post('/updatePermissions', authenticateJWT, errorCatcher(h.updatePermissions));
+router.post('/updateEntitlementsRevenueCat', authenticateJWT, errorCatcher(h.updateEntitlementsRevenueCat));
 
 module.exports = router;
