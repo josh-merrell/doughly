@@ -6,15 +6,16 @@
       : { transform: 'scale(1)', transition: 'transform 0.3s ease-in-out' }
   "
   [ngClass]="{
-    'bg-gradient-to-br from-dl-teal-6 via-dl-blue-6 to-dl-pink-7': isSelected,
-    'bg-dl-grey-9': !isSelected
+    'bg-gradient-to-br from-dl-teal-6 via-dl-green-6 to-dl-pinknew-7':
+      isSelected,
+    'bg-dl-tan-9': !isSelected
   }"
 >
   <div
     class="relative flex h-full w-full items-center justify-between rounded-dl-3 px-dl-4 pb-dl-4"
     [ngClass]="{
-      'bg-dl-grey-10 shadow-xl': isSelected,
-      'bg-dl-grey-9 shadow-md': !isSelected
+      'bg-dl-tan-10 shadow-xl': isSelected,
+      'bg-dl-tan-9 shadow-md': !isSelected
     }"
   >
     <!-- Most Popular -->
@@ -22,15 +23,15 @@
       *ngIf="sku.skuId === 'doughly_aicredits10_once_2.99'"
       class="absolute left-0 top-0 flex w-dl-9 flex-col items-center rounded-br-xl rounded-tl-md py-dl-1.5"
       [ngClass]="{
-        'bg-dl-grey-9': !isSelected,
+        'bg-dl-tan-9': !isSelected,
         'bg-gradient-to-r from-dl-teal-6 to-dl-mid-teal-6-to-blue-7': isSelected
       }"
     >
       <span
-        class="text-center text-dl-4 font-dl-4 text-dl-grey-10 "
+        class="text-center text-dl-4 font-dl-4 text-dl-tan-10"
         [ngClass]="{
           'text-dl-teal-7': !isSelected,
-          'text-dl-grey-10': isSelected
+          'text-dl-tan-10': isSelected
         }"
         >MOST POPULAR</span
       >
@@ -43,21 +44,14 @@
       'mt-dl-7': sku.skuId === 'doughly_aicredits10_once_2.99',
     }"
     >
-      <p
-        class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-blue-2 "
-      >
+      <p class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-green-2">
         {{ getTitleString(sku.skuId) }}
       </p>
     </div>
 
     <!-- Price -->
-    <span
-      class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-blue-2 "
-      >{{
-        sku.product.price
-          | number : "1.0-2"
-          | currency : sku.product.currencyCode
-      }}</span
-    >
+    <span class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-green-2">{{
+      sku.product.price | number : "1.0-2" | currency : sku.product.currencyCode
+    }}</span>
   </div>
 </div>

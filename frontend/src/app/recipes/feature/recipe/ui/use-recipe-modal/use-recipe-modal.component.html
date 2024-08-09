@@ -1,5 +1,5 @@
 <div
-  class="relative flex w-full transform flex-col items-center overflow-y-auto rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex w-full transform flex-col items-center overflow-y-auto rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
   [ngClass]="{
     'h-dl-21': confirmed,
     'h-dl-12': !confirmed
@@ -9,13 +9,13 @@
   <div class="text-center">
     <h3
       *ngIf="!isSubmitting"
-      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-9"
+      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 dark:text-dl-tan-9"
     >
       Use Recipe
     </h3>
     <h2
       *ngIf="isSubmitting"
-      class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 dark:text-dl-grey-9"
+      class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 dark:text-dl-tan-9"
     >
       Processing..
     </h2>
@@ -31,7 +31,7 @@
       [(ngModel)]="confirmed"
       class="select-slider"
     ></mat-slide-toggle>
-    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4 dark:text-dl-grey-8"
+    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-tan-4 dark:text-dl-tan-8"
       >Use this recipe and deduct ingredient inventory from kitchen</span
     >
   </div>
@@ -44,12 +44,12 @@
       [(ngModel)]="confirmed"
       class="select-slider"
     ></mat-slide-toggle>
-    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-grey-4 dark:text-dl-grey-8"
+    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-tan-4 dark:text-dl-tan-8"
       >Your Kitchen Inventory will not be checked or used. You can change this
       behavior in
       <span
         (click)="onViewSettings()"
-        class="text-dl-5 font-dl-3 text-dl-blue-4 dark:text-dl-blue-7"
+        class="text-dl-5 font-dl-3 text-dl-green-4 dark:text-dl-green-7"
       >
         Settings</span
       ></span
@@ -95,16 +95,16 @@
         <!-- Buttons -->
         <div
           *ngIf="!isSubmitting"
-          class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-4"
+          class="mt-dl-4 sm:mt-dl-4 sm:flex sm:flex-row-reverse"
         >
           <button
             type="button"
-            class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
+            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-tan-1 sm:ml-dl-4"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
-              'cursor-pointer bg-dl-pink-4 dark:bg-dl-pink-7':
+              'cursor-pointer bg-dl-pinknew-4 dark:bg-dl-pinknew-7':
                 form.valid && !form.pristine,
-              'bg-dl-grey-7': !form.valid || form.pristine
+              'bg-dl-tan-7': !form.valid || form.pristine
             }"
             [disabled]="!form.valid || form.pristine"
             (click)="onSubmit()"
@@ -113,7 +113,7 @@
           </button>
           <button
             type="button"
-            class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
+            class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
             (click)="onCancel()"
           >
             Cancel
@@ -125,7 +125,7 @@
     <button
       *ngIf="!isSubmitting && !confirmed"
       type="button"
-      class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 hover:dark:bg-dl-grey-2"
+      class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
       (click)="onCancel()"
     >
       Cancel

@@ -1,9 +1,7 @@
 <div
-  class="relative flex flex-col items-center rounded-dl-3 px-dl-3 pb-dl-3 pt-dl-4 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex flex-col items-center rounded-dl-3 px-dl-3 pb-dl-3 pt-dl-4 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
-  <h3
-    class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
-  >
+  <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8">
     Find People
   </h3>
   <!-- Search Bar-->
@@ -13,7 +11,7 @@
         width="35"
         height="35"
         viewBox="0 0 15 15"
-        class="pt-dl-1 text-dl-grey-3 dark:text-dl-grey-8"
+        class="pt-dl-1 text-dl-tan-3 dark:text-dl-tan-8"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -27,7 +25,7 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-10 rounded-dl-2 border-none pt-dl-2 text-dl-4 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent dark:bg-dl-grey-2 dark:text-dl-grey-7 dark:placeholder-dl-grey-7"
+        class="ml-dl-2 w-dl-10 rounded-dl-2 border-none pt-dl-2 text-dl-4 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
         [placeholder]="!searchFilter() ? 'Name or Username' : searchFilter()"
         (input)="searchFilter.set(searchInput.value)"
       />
@@ -37,9 +35,9 @@
       [disabled]="searchedQuery() === searchFilter()"
       class="block whitespace-nowrap rounded-dl-2 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 shadow-sm transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'bg-dl-grey-7 text-dl-grey-2 dark:border-dl-grey-3 dark:bg-dl-grey-3 dark:text-dl-grey-8':
+        'bg-dl-tan-7 text-dl-tan-2 dark:border-dl-tan-3 dark:bg-dl-tan-3 dark:text-dl-tan-8':
           searchedQuery() === searchFilter(),
-        'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+        'bg-dl-pinknew-4 text-white dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
           searchedQuery() !== searchFilter()
       }"
       (click)="onSearch()"
@@ -54,14 +52,14 @@
 
   <!-- Profile List -->
   <div *ngIf="searchResults() && !isLoading()" class="w-full">
-    <div class="max-h-dl-18 overflow-auto pb-dl-5 px-dl-2">
+    <div class="max-h-dl-18 overflow-auto px-dl-2 pb-dl-5">
       <dl-profile-card
         *ngFor="let profile of searchResults(); let i = index"
-        class="h-dl-9 w-full border-dl-grey-9 py-dl-3 dark:border-dl-grey-3"
+        class="h-dl-9 w-full border-dl-tan-9 py-dl-3 dark:border-dl-tan-3"
         (click)="onCardClick(i)"
         [ngClass]="{
-          'bg-dl-blue-10': selectedCard() === i,
-          'bg-white dark:bg-dl-grey-1': selectedCard() !== i
+          'bg-dl-green-10': selectedCard() === i,
+          'bg-white dark:bg-dl-tan-1': selectedCard() !== i
         }"
         [profile]="profile"
         [index]="i"
@@ -74,11 +72,11 @@
     <div class="mt-dl-3 flex w-full justify-between pb-dl-3">
       <button
         type="button"
-        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:text-dl-grey-1"
+        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
         [ngClass]="{
-          'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+          'bg-dl-pinknew-4 text-white dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             buttonTexts()[selectedCard()].followButton === 'Follow',
-          'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
+          'border-2 border-dl-pinknew-4 bg-white text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-7':
             buttonTexts()[selectedCard()].followButton === 'Unfollow'
         }"
         (click)="onFollowButtonClick()"
@@ -88,15 +86,15 @@
       </button>
       <button
         type="button"
-        class="block w-2/5 whitespace-nowrap text-dl-pink-4 dark:text-dl-pink-7 rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
+        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm dark:text-dl-pinknew-7"
         (click)="onFriendButtonClick()"
         [ngClass]="{
-          'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+          'bg-dl-pinknew-4 text-white dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             buttonTexts()[selectedCard()].friendButton === 'Add Friend' ||
             buttonTexts()[selectedCard()].friendButton === 'Accept Request',
-          '  bg-white text-dl-pink-4 dark:bg-dl-grey-1  dark:text-dl-pink-7':
+          '  bg-white text-dl-pinknew-4 dark:bg-dl-tan-1  dark:text-dl-pinknew-7':
             buttonTexts()[selectedCard()].friendButton === 'Cancel Request',
-          'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
+          'border-2 border-dl-pinknew-4 bg-white text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-7':
             buttonTexts()[selectedCard()].friendButton === 'Unfriend',
             
         }"
@@ -108,7 +106,7 @@
   </div>
   <!-- Exit Button -->
   <button
-    class="absolute right-3 top-2 rounded-full bg-dl-grey-9 p-dl-2 dark:bg-dl-grey-2"
+    class="absolute right-3 top-2 rounded-full bg-dl-tan-9 p-dl-2 dark:bg-dl-tan-2"
     (click)="onExitClick()"
     type="button"
   >

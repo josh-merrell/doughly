@@ -6,18 +6,18 @@
     >
       <span
         *ngIf="listShares().length === 0"
-        class="mb-dl-3 w-full pt-dl-3 text-dl-6 font-dl-3 italic text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 w-full pt-dl-3 text-dl-6 font-dl-3 italic text-dl-tan-2 dark:text-dl-tan-9"
       >
         List not shared
       </span>
       <span
         *ngIf="listShares().length > 0"
-        class="mb-dl-3 w-full pt-dl-3 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 w-full pt-dl-3 text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Shared with
         <span
           (click)="onViewListShares()"
-          class="text-dl-blue-3 dark:text-dl-blue-8"
+          class="text-dl-green-3 dark:text-dl-green-8"
           >{{ friendsShared().length }}
           {{ friendsShared().length > 1 ? "people" : "person" }}</span
         >
@@ -26,7 +26,7 @@
       <button
         id="add-button"
         type="button"
-        class="h-dl-4.5 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pink-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pink-6 dark:bg-dl-pink-7 dark:text-dl-grey-1 hover:dark:bg-dl-pink-6"
+        class="h-dl-4.5 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-4 py-dl-2 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pinknew-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 hover:dark:bg-dl-pinknew-6"
         [ngClass]="{
           invisible: friendsNotShared().length === 0
         }"
@@ -39,12 +39,12 @@
     <!-- Header Row -->
     <div class="mb-dl-5 flex w-full justify-between px-dl-5">
       <p
-        class="mb-dl-3 mt-dl-5 pl-dl-7 text-center text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 mt-dl-5 pl-dl-7 text-center text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Item
       </p>
       <p
-        class="mb-dl-3 mt-dl-5 text-center text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 mt-dl-5 text-center text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Purchased Amount
       </p>
@@ -55,7 +55,7 @@
       class="relative mb-dl-2 flex w-dl-16 flex-grow flex-col items-center overflow-y-auto"
     >
       <div
-        class="relative mb-dl-3 flex min-h-dl-6 w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2 dark:bg-dl-grey-2"
+        class="relative mb-dl-3 flex min-h-dl-6 w-full items-center justify-between rounded-dl-2 bg-dl-tan-10 px-dl-5 py-dl-2 dark:bg-dl-tan-2"
         *ngFor="let item of displaySLIngr().items"
       >
         <div
@@ -123,13 +123,11 @@
           <!-- Box to cover Checkmark (only if item 'purchasedMeasurement' is present but not yet saved)-->
           <div
             *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
-            class="absolute left-5 top-6 z-20 h-3 w-4 bg-dl-pink-7 dark:bg-dl-pink-4"
+            class="absolute left-5 top-6 z-20 h-3 w-4 bg-dl-pinknew-7 dark:bg-dl-pinknew-4"
           ></div>
 
           <div class="ml-dl-4 flex flex-col">
-            <span
-              class="text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
-            >
+            <span class="text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10">
               {{
                 displayIngredientName(
                   item.name,
@@ -140,15 +138,12 @@
             </span>
             <div class="flex items-center">
               <span
-                class="mr-dl-2 text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+                class="mr-dl-2 text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               >
                 min. {{ Math.ceil(item.needMeasurement) }}
                 {{
-                  displayMeasurementUnit(
-                    item.needUnit,
-                    item.needMeasurement
-                  )
-                }}  
+                  displayMeasurementUnit(item.needUnit, item.needMeasurement)
+                }}
               </span>
               <p
                 *ngIf="!item.valueValid"
@@ -161,7 +156,7 @@
         </div>
         <div class="relative flex items-center justify-between">
           <input
-            class="w-full rounded-md border-0 bg-dl-grey-10 px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset ring-dl-grey-8 transition-all duration-200 ease-in-out placeholder:text-dl-grey-2 focus:bg-white focus:shadow-md focus:shadow-dl-blue-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-3 dark:text-dl-grey-9 dark:ring-dl-grey-1 placeholder:dark:text-dl-grey-9 dark:focus:bg-dl-grey-4"
+            class="w-full rounded-md border-0 bg-dl-tan-10 px-dl-4 py-dl-4 text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset ring-dl-tan-8 transition-all duration-200 ease-in-out placeholder:text-dl-tan-2 focus:bg-white focus:shadow-md focus:shadow-dl-green-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-3 dark:text-dl-tan-9 dark:ring-dl-tan-1 placeholder:dark:text-dl-tan-9 dark:focus:bg-dl-tan-4"
             type="number"
             [min]="item.needMeasurement"
             max="999"
@@ -179,7 +174,7 @@
             *ngIf="item.store"
             [hidden]="!item.store"
           >
-            <p class="text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
+            <p class="text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
               {{ Math.ceil(item.purchasedMeasurement) }}
             </p>
           </div>
@@ -194,7 +189,7 @@
     <button
       type="button"
       *ngIf="isLoading() === false && displaySLIngr().itemsToSave.length"
-      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
       (click)="onSaveClick()"
     >
       {{ saveButtonText }}

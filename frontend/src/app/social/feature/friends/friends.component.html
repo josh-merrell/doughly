@@ -1,6 +1,4 @@
-<div
-  class="relative flex h-full w-full flex-col items-center px-dl-4"
->
+<div class="relative flex h-full w-full flex-col items-center px-dl-4">
   <!-- Search, Add-->
   <div class="mx-dl-7 mb-dl-6 flex items-center">
     <!-- Search Bar -->
@@ -9,7 +7,7 @@
         width="35"
         height="35"
         viewBox="0 0 15 15"
-        class="pt-dl-1 text-dl-grey-3 dark:text-dl-grey-8"
+        class="pt-dl-1 text-dl-tan-3 dark:text-dl-tan-8"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -23,7 +21,7 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-13 rounded-dl-2 border-none text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent dark:bg-dl-grey-2 dark:text-dl-grey-7 dark:placeholder-dl-grey-7"
+        class="ml-dl-2 w-dl-13 rounded-dl-2 border-none text-dl-5 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
         [placeholder]="
           !searchFilter() ? 'Filter by First or Last Name...' : searchFilter()
         "
@@ -34,16 +32,18 @@
 
   <!-- Friend Requests -->
   <div
-    *ngIf="requests().length > 0" 
+    *ngIf="requests().length > 0"
     class="mb-dl-3 flex w-full flex-col items-center"
   >
-    <div class="dark:border-dl-pink-8 bg-dl-pink-9 dark:bg-dl-grey-1 dark:border rounded-full py-dl-1 px-dl-4">
+    <div
+      class="rounded-full bg-dl-pinknew-9 px-dl-4 py-dl-1 dark:border dark:border-dl-pinknew-8 dark:bg-dl-tan-1"
+    >
       <span
-        class="text-dl-5 font-dl-2 text-dl-pink-1 dark:text-dl-pink-8"
+        class="text-dl-5 font-dl-2 text-dl-pinknew-1 dark:text-dl-pinknew-8"
         (click)="onRequestsClick()"
         >{{ requests().length }} friend request</span
       ><span
-        class="text-dl-5 font-dl-2 text-dl-pink-1 dark:text-dl-pink-6"
+        class="text-dl-5 font-dl-2 text-dl-pinknew-1 dark:text-dl-pinknew-6"
         *ngIf="requests().length > 1"
         >s</span
       >
@@ -55,7 +55,7 @@
     <dl-friend-card
       (click)="onFriendClick(friend)"
       *ngFor="let friend of filteredFriends(); let i = index"
-      class="w-dl-16 border-dl-grey-9 py-dl-3 dark:border-dl-grey-3"
+      class="w-dl-16 border-dl-tan-9 py-dl-3 dark:border-dl-tan-3"
       [ngClass]="{
         'border-b-2': i !== filteredFriends().length - 1
       }"
@@ -66,7 +66,7 @@
   <!-- Total Count -->
   <span
     *ngIf="friends().length > 0"
-    class="text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
+    class="text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >{{ friends().length }} total</span
   >
   <!-- Add Button -->
@@ -74,7 +74,7 @@
     <button
       id="test-button"
       type="button"
-      class="my-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1"
+      class="my-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
       (click)="onAddFriend()"
     >
       Search New Friends
@@ -83,7 +83,7 @@
   <div
     *ngIf="showOnboardingBadge()"
     (click)="onboardingBadgeClick()"
-    class="fixed bottom-36 left-4 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-blue-2 dark:bg-dl-blue-9"
+    class="fixed bottom-36 left-4 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-green-2 dark:bg-dl-green-9"
   >
     <svg
       class="h-11 w-8"

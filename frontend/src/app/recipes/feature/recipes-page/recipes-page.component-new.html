@@ -1,5 +1,5 @@
 <div
-  class="relative flex h-full w-full flex-col bg-white pt-dl-4 dark:bg-dl-grey-1"
+  class="relative flex h-full w-full flex-col bg-white pt-dl-4 dark:bg-dl-tan-1"
 >
   <!-- View Header -->
   <div class="mb-dl-3 flex w-full flex-row-reverse pr-dl-5">
@@ -7,9 +7,9 @@
       (click)="navigateToCreated()"
       class="inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-8 dark:border-dl-blue-3 text-dl-grey-2 dark:text-dl-grey-9 ':
+        ' border-dl-green-8 dark:border-dl-green-3 text-dl-tan-2 dark:text-dl-tan-9 ':
         view() === 'created',
-        ' text-dl-grey-4 dark:text-dl-grey-7 border-transparent': view() !== 'created'
+        ' text-dl-tan-4 dark:text-dl-tan-7 border-transparent': view() !== 'created'
       }"
     >
       Created
@@ -18,9 +18,9 @@
       (click)="navigateToSubscribed()"
       class="mr-dl-5 inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
-      ' border-dl-blue-8 dark:border-dl-blue-3  text-dl-grey-2 dark:text-dl-grey-9 ':
+      ' border-dl-green-8 dark:border-dl-green-3  text-dl-tan-2 dark:text-dl-tan-9 ':
       view() === 'subscribed',
-      ' text-dl-grey-4 dark:text-dl-grey-7 border-transparent': view() !== 'subscribed'
+      ' text-dl-tan-4 dark:text-dl-tan-7 border-transparent': view() !== 'subscribed'
     }"
     >
       Subscribed
@@ -29,9 +29,9 @@
       (click)="navigateToDiscover()"
       class="mr-dl-5 inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-8 dark:border-dl-blue-3 text-dl-grey-2 dark:text-dl-grey-9 ':
+        ' border-dl-green-8 dark:border-dl-green-3 text-dl-tan-2 dark:text-dl-tan-9 ':
         view() === 'discover',
-        ' text-dl-grey-4 dark:text-dl-grey-7 border-transparent': view() !== 'discover'
+        ' text-dl-tan-4 dark:text-dl-tan-7 border-transparent': view() !== 'discover'
       }"
     >
       Discover

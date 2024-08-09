@@ -9,11 +9,11 @@
         alt="friendRequest profile image"
       />
       <span
-        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-grey-6 dark:bg-dl-grey-7"
+        class="inline-flex h-dl-6 w-dl-6 items-center justify-center rounded-full bg-dl-tan-6 dark:bg-dl-tan-7"
         *ngIf="!friendRequest.imageURL"
       >
         <span
-          class="text-dl-6 font-dl-3 leading-none text-dl-grey-9 dark:text-dl-grey-3"
+          class="text-dl-6 font-dl-3 leading-none text-dl-tan-9 dark:text-dl-tan-3"
           >{{ initials }}</span
         >
       </span>
@@ -24,7 +24,7 @@
     <!-- Name -->
     <div
       *ngIf="friendRequest.nameFirst && friendRequest.nameLast"
-      class="flex text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      class="flex text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
     >
       <span>{{ friendRequest.nameFirst }}</span>
       <span class="mb-dl-2 ml-dl-1">{{ friendRequest.nameLast }}</span>
@@ -37,7 +37,7 @@
       <!-- Accept Button-->
       <button
         type="button"
-        class="mr-dl-2 block w-dl-8 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1"
+        class="mr-dl-2 block w-dl-8 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 py-dl-1 text-center text-dl-5 font-dl-3 text-white shadow-sm transition-all duration-200 ease-in-out dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
         (click)="onAcceptRequest()"
       >
         Accept
@@ -47,7 +47,7 @@
       <button
         type="button"
         id="declineRequest"
-        class="ml-dl-3 block whitespace-nowrap rounded-dl-1 border-2 border-dl-pink-4 bg-white px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pink-4 shadow-sm transition-all duration-200 ease-in-out dark:border-dl-pink-7 dark:bg-dl-grey-1 dark:text-dl-pink-7"
+        class="ml-dl-3 block whitespace-nowrap rounded-dl-1 border-2 border-dl-pinknew-4 bg-white px-dl-3 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-7"
         (click)="onDeclineRequest()"
       >
         Decline

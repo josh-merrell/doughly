@@ -1,18 +1,18 @@
 <div class="flex flex-col">
   <label
     *ngIf="!noLabel"
-    class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-6 dark:text-dl-grey-8"
+    class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-6 dark:text-dl-tan-8"
     >{{ label }}</label
   >
   <div class="relative flex w-full flex-col items-center">
     <div
       (click)="toggleDropdown()"
       id="expanded"
-      class="relative min-h-dl-5 w-full cursor-pointer rounded-md border-0 px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:text-dl-grey-9"
+      class="relative min-h-dl-5 w-full cursor-pointer rounded-md border-0 px-dl-4 py-dl-4 text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:text-dl-tan-9"
       [ngClass]="{
-        'rounded-b-none bg-white shadow-md shadow-dl-blue-5/20 ring-dl-blue-5 dark:bg-dl-grey-3  ':
+        'rounded-b-none bg-white shadow-md shadow-dl-green-5/20 ring-dl-green-5 dark:bg-dl-tan-3  ':
           isOpen(),
-        'rounded-b-md bg-dl-grey-10 ring-dl-grey-8 dark:bg-dl-grey-2 dark:ring-dl-grey-1':
+        'rounded-b-md bg-dl-tan-10 ring-dl-tan-8 dark:bg-dl-tan-2 dark:ring-dl-tan-1':
           !isOpen()
       }"
     >
@@ -34,15 +34,15 @@
     </div>
     <div
       *ngIf="isOpen()"
-      class="absolute top-10 z-20 max-h-dl-12 w-full overflow-y-auto rounded-b-md border-2 border-t-0 border-dl-blue-5 bg-white shadow-lg dark:bg-dl-grey-2"
+      class="absolute top-10 z-20 max-h-dl-12 w-full overflow-y-auto rounded-b-md border-2 border-t-0 border-dl-green-5 bg-white shadow-lg dark:bg-dl-tan-2"
     >
-      <div class="z-25 sticky top-0 bg-white dark:bg-dl-grey-2">
+      <div class="z-25 sticky top-0 bg-white dark:bg-dl-tan-2">
         <div class="relative">
           <svg
             width="28"
             height="28"
             viewBox="0 0 15 15"
-            class="absolute top-2 text-dl-grey-3 dark:text-dl-grey-8"
+            class="absolute top-2 text-dl-tan-3 dark:text-dl-tan-8"
             fill="none"
           >
             <path
@@ -55,12 +55,12 @@
           <input
             #inputField
             type="text"
-            class="w-full border py-dl-3 pl-dl-7 pr-dl-4 text-dl-6 font-dl-3 text-dl-grey-4 ring-transparent focus:ring-transparent dark:bg-dl-grey-2 dark:text-dl-grey-8"
+            class="w-full border py-dl-3 pl-dl-7 pr-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 ring-transparent focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-8"
             (input)="onFilterChange($event)"
             [ngClass]="{
-              'rounded-b-none border-dl-blue-5 bg-white focus:border-dl-blue-4 dark:bg-dl-grey-3 focus:dark:border-dl-blue-7':
+              'rounded-b-none border-dl-green-5 bg-white focus:border-dl-green-4 dark:bg-dl-tan-3 focus:dark:border-dl-green-7':
                 isOpen(),
-              'rounded-b-md border-transparent bg-dl-grey-10 ring-dl-grey-8 dark:bg-dl-grey-2':
+              'rounded-b-md border-transparent bg-dl-tan-10 ring-dl-tan-8 dark:bg-dl-tan-2':
                 !isOpen()
             }"
           />
@@ -69,14 +69,14 @@
       <div
         *ngIf="additionalOptionName"
         (click)="selectOption({ value: 'new', display: additionalOptionName })"
-        class="hover:dark:text-dl-grey- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-grey-4 hover:bg-dl-blue-9 hover:text-dl-grey-3 dark:text-dl-grey-8 dark:hover:bg-dl-blue-2 dark:hover:text-dl-grey-9"
+        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-9 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
       >
         {{ additionalOptionName }}
       </div>
       <div
         *ngFor="let option of sortedOptions"
         (click)="selectOption(option)"
-        class="hover:dark:text-dl-grey- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-grey-4 hover:bg-dl-blue-9 hover:text-dl-grey-3 dark:text-dl-grey-8 dark:hover:bg-dl-blue-2 dark:hover:text-dl-grey-9"
+        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-9 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
       >
         {{ option.display }}
       </div>

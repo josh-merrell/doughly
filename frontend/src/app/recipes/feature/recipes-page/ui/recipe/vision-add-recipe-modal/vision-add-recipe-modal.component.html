@@ -1,5 +1,5 @@
 <div
-  class="relative max-h-dl-21 w-full transform overflow-hidden overflow-y-auto rounded-dl-3 bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative max-h-dl-21 w-full transform overflow-hidden overflow-y-auto rounded-dl-3 bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <div class="mb-dl-7 flex w-full flex-col items-center">
     <!-- Title, Help -->
@@ -7,7 +7,7 @@
       <!-- Title -->
       <h3
         *ngIf="!isAdding"
-        class="leading-dl-4 mb-dl-4 text-dl-7 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="leading-dl-4 mb-dl-4 text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Recipe Vision
       </h3>
@@ -39,7 +39,7 @@
     </div>
     <p
       *ngIf="!isAdding"
-      class="px-dl-4 text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
+      class="px-dl-4 text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >
       Choose a Recipe Source Image that shows the recipe you want to add. It
       should clearly show all details, ingredients, and instructions.
@@ -57,7 +57,7 @@
     />
     <p
       *ngIf="statusMessage() && isAdding"
-      class="mt-dl-5 h-dl-8 overflow-y-hidden px-dl-4 text-center text-dl-6 font-dl-2 text-dl-grey-1 dark:text-dl-grey-10"
+      class="mt-dl-5 h-dl-8 overflow-y-hidden px-dl-4 text-center text-dl-6 font-dl-2 text-dl-tan-1 dark:text-dl-tan-10"
     >
       {{ statusMessage() }}
     </p>
@@ -74,9 +74,9 @@
             type="button"
             class="mb-dl-5 inline-block w-full cursor-pointer rounded px-4 py-2 text-dl-5"
             [ngClass]="{
-              'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
+              'border-2 border-dl-pinknew-4 bg-white text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-7':
                 sourceImagePresent,
-              'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+              'bg-dl-pinknew-4 text-white dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
                 !sourceImagePresent
             }"
             (click)="selectSourceImage()"
@@ -107,9 +107,9 @@
             type="button"
             class="mb-dl-5 inline-block w-full cursor-pointer rounded px-4 py-2 text-dl-5"
             [ngClass]="{
-              'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
+              'border-2 border-dl-pinknew-4 bg-white text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-7':
                 sourceImage2Present,
-              'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+              'bg-dl-pinknew-4 text-white dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
                 !sourceImage2Present
             }"
             (click)="selectSourceImage2()"
@@ -136,9 +136,9 @@
             type="button"
             class="inline-block w-full cursor-pointer rounded px-4 py-2 text-dl-5"
             [ngClass]="{
-              'border-2 border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-7':
+              'border-2 border-dl-pinknew-4 bg-white text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-7':
                 imagePresent,
-              'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+              'bg-dl-pinknew-4 text-white dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
                 !imagePresent
             }"
             (click)="selectImage()"
@@ -163,12 +163,12 @@
       <div class="mt-dl-6">
         <button
           type="button"
-          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-tan-1 sm:ml-dl-4"
           [class.cursor-pointer]="sourceImagePresent"
           [ngClass]="{
-            'cursor-pointer bg-dl-pink-4 hover:bg-dl-pink-5 dark:bg-dl-pink-7 hover:dark:bg-dl-pink-6':
+            'cursor-pointer bg-dl-pinknew-4 hover:bg-dl-pinknew-5 dark:bg-dl-pinknew-7 hover:dark:bg-dl-pinknew-6':
               sourceImagePresent,
-            'bg-dl-grey-7': !sourceImagePresent
+            'bg-dl-tan-7': !sourceImagePresent
           }"
           [disabled]="!sourceImagePresent"
           (click)="onSubmit()"
@@ -177,7 +177,7 @@
         </button>
         <button
           type="button"
-          class="sm:mt-0 sm:w-auto mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
+          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
           (click)="onCancel()"
         >
           Cancel

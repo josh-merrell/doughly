@@ -1,13 +1,10 @@
 <div
-  class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
-  <mat-spinner
-    class="my-app-custom-spinner"
-    *ngIf="isAdding()"
-  ></mat-spinner>
-  <div class="w-full flex flex-col relative mb-dl-3 text-center">
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
+  <div class="relative mb-dl-3 flex w-full flex-col text-center">
     <p
-      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
     >
       Steps
     </p>
@@ -32,17 +29,15 @@
         (cdkDropListDropped)="onDrop($event)"
         class="mb-dl-2 flex w-full flex-col items-start"
       >
-        <ng-container
-          *ngFor="let step of displayRecipeSteps(); let i = index"
-        >
+        <ng-container *ngFor="let step of displayRecipeSteps(); let i = index">
           <div
             cdkDrag
             class="relative flex flex-col"
             (click)="toggleItemMenu($event, i)"
           >
             <div
-              class="mt-dl-3 flex flex-wrap items-center justify-center rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
-              [ngClass]="{ 'bg-dl-grey-9': modalActiveForRowID === i }"
+              class="mt-dl-3 flex flex-wrap items-center justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-4 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+              [ngClass]="{ 'bg-dl-tan-9': modalActiveForRowID === i }"
             >
               <span class="font-dl-3"
                 >{{ step.sequence }}:&nbsp;{{
@@ -51,36 +46,36 @@
               >
               <span
                 *ngIf="step.toAdd"
-                class="text-dl-5 font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
+                class="text-dl-5 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
                 >&nbsp;&nbsp;&nbsp;adding&nbsp;&nbsp;</span
               >
               <span
                 *ngIf="step.toUpdate"
-                class="text-dl-5 font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
+                class="text-dl-5 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
                 >&nbsp;&nbsp;&nbsp;updating&nbsp;&nbsp;</span
               >
               <span
                 *ngIf="step.sequenceChanged"
-                class="font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
+                class="font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
                 >&nbsp;&nbsp;&nbsp;moving</span
               >
             </div>
             <div
               #itemMenu
               *ngIf="itemMenuOpen.open && itemMenuOpen.index === i"
-              class="focus:outling-none absolute right-2 top-2 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-grey-1 ring-opacity-5 ease-out dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+              class="focus:outling-none absolute right-2 top-2 z-10 flex flex-col bg-white shadow-md ring-1 ring-dl-tan-1 ring-opacity-5 ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
             >
               <button
                 (click)="onUpdateClick(step, i)"
                 type="button"
-                class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10 dark:text-dl-grey-8 dark:hover:bg-dl-grey-2"
+                class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
               >
                 Edit
               </button>
               <button
                 (click)="onDeleteClick(step, i)"
                 type="button"
-                class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-grey-3 hover:bg-dl-grey-10 dark:text-dl-grey-8 dark:hover:bg-dl-grey-2"
+                class="block cursor-pointer px-dl-3 py-dl-2 text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
               >
                 Delete
               </button>
@@ -91,13 +86,13 @@
     </div>
     <button
       type="button"
-      class="relative mx-dl-1 flex h-dl-4 py-dl-2 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-2 hover:dark:bg-dl-grey-3"
+      class="relative mx-dl-1 flex h-dl-4 items-center justify-center rounded-dl-1 bg-dl-tan-10 py-dl-2 text-dl-2 transition-all duration-150 hover:bg-dl-tan-9 focus:outline-none focus:ring-2 focus:ring-dl-tan-7 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-2 hover:dark:bg-dl-tan-3"
       (click)="onAddClick()"
       id="addRecipeStepButton"
     >
       <span class="sr-only">Add Recipe Step</span>
       <svg
-        class="text-dl-grey-2 dark:text-dl-grey-9"
+        class="text-dl-tan-2 dark:text-dl-tan-9"
         width="22"
         height="22"
         viewBox="0 0 15 15"
@@ -113,16 +108,16 @@
     </button>
 
     <!-- Cancel, Submit Buttons-->
-    <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mx-dl-1 mb-dl-1 mt-dl-3">
+    <div class="mx-dl-1 mb-dl-1 mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
       <button
         type="button"
-        class="shadow-s sm:ml-dl-4 w-full justify-center rounded-dl-1 px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
+        class="shadow-s w-full justify-center rounded-dl-1 px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-tan-1 sm:ml-dl-4"
         [ngClass]="{
-          'cursor-pointer bg-dl-pink-4  dark:bg-dl-pink-7':
+          'cursor-pointer bg-dl-pinknew-4  dark:bg-dl-pinknew-7':
             stepsToAdd === true ||
             stepsToReorder === true ||
             stepsToUpdate === true,
-          'bg-dl-grey-7':
+          'bg-dl-tan-7':
             stepsToAdd === false &&
             stepsToReorder === false &&
             stepsToUpdate === false
@@ -138,7 +133,7 @@
       </button>
       <button
         type="button"
-        class="sm:mt-0 sm:w-auto mt-dl-3 w-full justify-center rounded-dl-1 bg-white px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-2 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-9 dark:hover:bg-dl-grey-2"
+        class="mt-dl-3 w-full justify-center rounded-dl-1 bg-white px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-2 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-9 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
         Cancel

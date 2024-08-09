@@ -1,6 +1,6 @@
 <script src="https://accounts.google.com/gsi/client" async></script>
 <div
-  class="flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 dark:bg-dl-grey-1 sm:px-dl-6 lg:px-dl-8"
+  class="flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 dark:bg-dl-tan-1 sm:px-dl-6 lg:px-dl-8"
 >
   <div class="mt-dl-3 w-full items-center justify-center">
     <img
@@ -26,14 +26,14 @@
     >
       <div class="relative mb-dl-5 flex flex-col">
         <div class="mt-dl-4 text-center">
-          <!-- <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8">Sign In</h3> -->
+          <!-- <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8">Sign In</h3> -->
         </div>
       </div>
       <!-- OAuth Sign In -->
       <div class="mb-dl-8 flex w-full flex-col items-center justify-between">
         <button
           (click)="signInWithGoogle()"
-          class="gsi-material-button !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
+          class="gsi-material-button !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -65,7 +65,7 @@
               </svg>
             </div>
             <span
-              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
+              class="gsi-material-button-contents text-dl-tan-1 dark:text-dl-tan-10"
               >Sign in with Google</span
             >
             <span style="display: none">Sign in with Google</span>
@@ -73,7 +73,7 @@
         </button>
         <button
           (click)="signInWithFacebook()"
-          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -96,7 +96,7 @@
               </svg>
             </div>
             <span
-              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
+              class="gsi-material-button-contents text-dl-tan-1 dark:text-dl-tan-10"
               >Sign in with Facebook</span
             >
             <span style="display: none">Sign in with Facebook</span>
@@ -104,7 +104,7 @@
         </button>
         <button
           (click)="signInWithApple()"
-          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -121,7 +121,7 @@
               </svg>
             </div>
             <span
-              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
+              class="gsi-material-button-contents text-dl-tan-1 dark:text-dl-tan-10"
               >Sign in with Apple</span
             >
             <span style="display: none">Sign in with Apple</span>
@@ -132,7 +132,7 @@
       <div id="form-email">
         <div class="relative mb-dl-2 flex flex-col">
           <label
-            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             for="email"
             >Email</label
           >
@@ -140,7 +140,7 @@
             <input
               type="email"
               formControlName="email"
-              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
               appAutofocus
               tabindex="1"
             />
@@ -162,7 +162,7 @@
       <div id="form-password">
         <div class="relative mb-dl-3 flex flex-col">
           <label
-            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             for="password"
             >Password</label
           >
@@ -170,7 +170,7 @@
             <input
               type="password"
               formControlName="password"
-              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
               tabindex="2"
             />
             <div
@@ -195,7 +195,7 @@
       >
         <div class="leading-dl-6 text-dl-2" (click)="resetPassword()">
           <a
-            class="cursor-pointer text-dl-5 font-dl-3 text-dl-blue-5 hover:text-dl-blue-5 dark:text-dl-blue-6 dark:hover:text-dl-blue-6"
+            class="cursor-pointer text-dl-5 font-dl-3 text-dl-green-5 hover:text-dl-green-5 dark:text-dl-green-6 dark:hover:text-dl-green-6"
             [ngClass]="{
               invisible: !showPasswordReset()
             }"
@@ -214,11 +214,11 @@
           login_form.get('email')!.value === ''
         "
         style="height: 40px; width: 296px"
-        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-white dark:text-dl-grey-1"
+        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-white dark:text-dl-tan-1"
         [ngClass]="{
-          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
+          'cursor-pointer bg-dl-green-4 hover:bg-dl-green-5 dark:bg-dl-green-7 hover:dark:bg-dl-green-6':
             login_form.invalid === false,
-          'bg-dl-grey-7':
+          'bg-dl-tan-7':
             login_form.invalid ||
             login_form.get('password')!.value === '' ||
             login_form.get('email')!.value === ''
@@ -241,10 +241,10 @@
     >
       {{ successMessage() }}
     </p>
-    <p class="mt-dl-4 text-center text-dl-5 text-dl-grey-4 dark:text-dl-grey-8">
+    <p class="mt-dl-4 text-center text-dl-5 text-dl-tan-4 dark:text-dl-tan-8">
       New here?
       <a
-        class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
+        class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-green-5 dark:text-dl-green-6"
         routerLink="/register"
         tabindex="4"
         >Create an account</a
