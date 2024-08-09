@@ -63,7 +63,7 @@
 
   <!-- SUBSCRIBE OPTIONS -->
   <div
-    *ngIf="view() === 'options' && subscribeSKUs().length > 0 && !isLoading()"
+    *ngIf="view() === 'options' && subscribePackages().length > 0 && !isLoading()"
     class="flex h-full w-full flex-col items-center"
   >
     <span
@@ -110,7 +110,7 @@
     >
   </div>
   <div
-    *ngIf="view() === 'options' && subscribeSKUs().length === 0"
+    *ngIf="view() === 'options' && subscribePackages().length === 0"
     class="flex h-full flex-col items-center"
   >
     <span

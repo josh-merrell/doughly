@@ -291,7 +291,6 @@ export class LoadingPageComponent {
         this.loadShoppingListState();
         this.loadSharedShoppingListState();
         this.loadShoppingListRecipeState();
-        this.ProductService.initGlassfy();
         this.ProductService.initRevenueCat();
     }
   }

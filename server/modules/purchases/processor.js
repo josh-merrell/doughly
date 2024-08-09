@@ -146,6 +146,7 @@ module.exports = ({ db, dbDefault }) => {
       const { userID, activeEntitlements, revenueCatPackage } = options;
 
       try {
+        global.logger.info({ message: `ACTIVE ENTITLEMENTS: ${JSON.stringify(activeEntitlements)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         global.logger.info({ message: `PROCESSING NEW PURCHASE. REVENUECAT PACKAGE: ${JSON.stringify(revenueCatPackage)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         // get current profile
         const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
@@ -162,13 +163,13 @@ module.exports = ({ db, dbDefault }) => {
         const newProfile = {};
         let addTokens;
         switch (revenueCatPackage.identifier) {
-          case 'doughly_premium_monthly_3.99':
+          case '$rc_monthly':
             newProfile['isPremium'] = true;
             newProfile['permRecipeSubscribeUnlimited'] = true;
             newProfile['permRecipeCreateUnlimited'] = true;
             newProfile['permDataBackupDaily6MonthRetention'] = true;
             break;
-          case 'doughly_premium_6months_17.94':
+          case '$rc_six_month':
             newProfile['isPremium'] = true;
             newProfile['permRecipeSubscribeUnlimited'] = true;
             newProfile['permRecipeCreateUnlimited'] = true;

@@ -42,7 +42,7 @@ interface PurchaseResult {
   providedIn: 'root',
 })
 export class ProductService {
-  private readonly API_URL = `${environment.BACKEND}/purchases`;
+  private readonly API_URL = `${environment.BACKEND}`;
   public offerings: WritableSignal<GlassfyOffering[]> = signal([]);
   public offeringsRevenueCat: WritableSignal<PurchasesOffering[]> = signal([]);
   public licences = {
@@ -54,24 +54,24 @@ export class ProductService {
   };
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  async initGlassfy() {
-    try {
-      if (Capacitor.isNativePlatform()) {
-        await Glassfy.initialize({
-          apiKey: environment.GLASSFY_ApiKey,
-          watcherMode: false,
-        });
-        const permissions = await Glassfy.permissions();
-        console.log('Glassfy Permissions: ', JSON.stringify(permissions));
-        await this.handleExistingPermissions(permissions.all).subscribe();
+  // async initGlassfy() {
+  //   try {
+  //     if (Capacitor.isNativePlatform()) {
+  //       await Glassfy.initialize({
+  //         apiKey: environment.GLASSFY_ApiKey,
+  //         watcherMode: false,
+  //       });
+  //       const permissions = await Glassfy.permissions();
+  //       console.log('Glassfy Permissions: ', JSON.stringify(permissions));
+  //       await this.handleExistingPermissions(permissions.all).subscribe();
 
-        const offerings: GlassfyOfferings = await Glassfy.offerings();
-        this.offerings.set(offerings.all);
-      } else return;
-    } catch (error) {
-      console.error('Error initializing Glassfy: ', error);
-    }
-  }
+  //       const offerings: GlassfyOfferings = await Glassfy.offerings();
+  //       this.offerings.set(offerings.all);
+  //     } else return;
+  //   } catch (error) {
+  //     console.error('Error initializing Glassfy: ', error);
+  //   }
+  // }
 
   async initRevenueCat() {
     try {
@@ -102,8 +102,6 @@ export class ProductService {
   }
 
   ngOnInit() {
-    console.log('Product Service Init');
-    this.initGlassfy();
     this.initRevenueCat();
   }
 
@@ -201,10 +199,17 @@ export class ProductService {
       const result = await Purchases.purchasePackage({
         aPackage: revenueCatSubPackage,
       });
-      console.log('Result: ', result);
       if (result.customerInfo && result.customerInfo.entitlements) {
         const activeEntitlementsArray = Object.values(
           result.customerInfo.entitlements.active
+        );
+        console.log(
+          'ACTIVE ENTITLEMENTS: ',
+          JSON.stringify(activeEntitlementsArray)
+        );
+        console.log(
+          'REVENUE CAT SUB PACKAGE: ',
+          JSON.stringify(revenueCatSubPackage)
         );
         await this.handleSuccessfulRevenueCatSubPackageTransactionResult(
           activeEntitlementsArray,

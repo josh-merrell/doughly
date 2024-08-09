@@ -35,7 +35,7 @@ export class UpgradePageComponent {
   public subscribeSKUs: WritableSignal<GlassfySku[]> = signal([]);
   public subscribePackages: WritableSignal<PurchasesPackage[]> = signal([]);
   public selectedIdentifier: WritableSignal<string> = signal(
-    'doughly_premium_6months_17.94'
+    '$rc_six_month'
   );
   constructor(
     public dialog: MatDialog,
