@@ -35,5 +35,8 @@ project(':codetrix-studio-capacitor-google-auth').projectDir = new File('../node
 include ':hugotomazi-capacitor-navigation-bar'
 project(':hugotomazi-capacitor-navigation-bar').projectDir = new File('../node_modules/@hugotomazi/capacitor-navigation-bar/android')
 
+include ':revenuecat-purchases-capacitor'
+project(':revenuecat-purchases-capacitor').projectDir = new File('../node_modules/@revenuecat/purchases-capacitor/android')
+
 include ':capacitor-plugin-glassfy'
 project(':capacitor-plugin-glassfy').projectDir = new File('../node_modules/capacitor-plugin-glassfy/android')

@@ -13,4 +13,6 @@ export const environment = {
   GLASSFY_ApiKey: 'c9c03d0d8f914ba1813b10c4d027aec6',
   GLASSFY_REST_API_Key: 'beb92739d1324e7c86c4431506664e2c',
   COMPRESSED_IMAGE_CDN: 'd1fksulu953xbh.cloudfront.net',
+  REVENUECAT_AppleApiKey: 'appl_JLeIcCgUaWouzTejpkwvtkBQbEB',
+  REVENUECAT_GoogleApiKey: 'goog_rVTEtiZTPjOFPqduOFqNFmXmcJM',
 };

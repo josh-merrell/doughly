@@ -25,7 +25,48 @@ async function updatePermissions(req, res) {
   return res.json(returner);
 }
 
+async function newPurchaseRevenueCatSubPackage(req, res) {
+  const db = req.client.db;
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
+  const { activeEntitlements, revenueCatSubPackage } = req.body;
+  const returner = await p.newPurchaseRevenueCatSubPackage({
+    userID: req.userID,
+    activeEntitlements,
+    revenueCatPackage: revenueCatSubPackage
+  });
+  return res.json(returner);
+}
+
+async function newPurchaseRevenueCatProdPackage(req, res) {
+  const db = req.client.db;
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
+  const { activeEntitlements, revenueCatProduct } = req.body;
+  const returner = await p.newPurchaseRevenueCatProdPackage({
+    userID: req.userID,
+    activeEntitlements,
+    revenueCatProduct
+  });
+  return res.json(returner);
+}
+
+async function updateEntitlementsRevenueCat(req, res) {
+  const db = req.client.db;
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
+  const { entitlements } = req.body;
+  const returner = await p.updateEntitlementsRevenueCat({
+    userID: req.userID,
+    entitlements,
+  });
+  return res.json(returner);
+}
+
 module.exports = {
   processNewPurchase,
   updatePermissions,
+  newPurchaseRevenueCatSubPackage,
+  newPurchaseRevenueCatProdPackage,
+  updateEntitlementsRevenueCat,
 };
