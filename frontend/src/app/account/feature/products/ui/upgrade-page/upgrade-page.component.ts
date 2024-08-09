@@ -25,18 +25,15 @@ import { SubscriptionPackageCardComponent } from '../product-card/subscription-p
     BenefitsChartComponent,
     SubscriptionSkuCardComponent,
     MatProgressSpinnerModule,
-    SubscriptionPackageCardComponent
+    SubscriptionPackageCardComponent,
   ],
   templateUrl: './upgrade-page.component.html',
 })
 export class UpgradePageComponent {
   public isLoading: WritableSignal<boolean> = signal(false);
   public view: WritableSignal<string> = signal('overview');
-  public subscribeSKUs: WritableSignal<GlassfySku[]> = signal([]);
   public subscribePackages: WritableSignal<PurchasesPackage[]> = signal([]);
-  public selectedIdentifier: WritableSignal<string> = signal(
-    '$rc_six_month'
-  );
+  public selectedIdentifier: WritableSignal<string> = signal('$rc_six_month');
   constructor(
     public dialog: MatDialog,
     private router: Router,
@@ -45,26 +42,6 @@ export class UpgradePageComponent {
     private authService: AuthService,
     private modalService: ModalService
   ) {
-    // Glassfy
-    effect(
-      () => {
-        const offerings = this.productService.offerings();
-        if (offerings.length) {
-          // only get offering with 'offeringId' of "doughly-premium"
-          const premiumOffering = offerings.find(
-            (offering) => offering.offeringId === 'doughly-premium'
-          );
-          if (premiumOffering) {
-            this.subscribeSKUs.set(premiumOffering.skus);
-            console.log(`SUBSCRIBE SKUS: `, JSON.stringify(this.subscribeSKUs()));
-          }
-        } else {
-          this.subscribeSKUs.set([]);
-        }
-      },
-      { allowSignalWrites: true }
-    );
-
     // RevenueCat
     effect(
       () => {
@@ -77,10 +54,10 @@ export class UpgradePageComponent {
             this.subscribePackages.set(
               premiumOfferingRevenueCat.availablePackages
             );
-            console.log(
-              `REVENUECAT OFFERING PACKAGES: `,
-              JSON.stringify(this.subscribePackages())
-            );
+            // console.log(
+            //   `REVENUECAT OFFERING PACKAGES: `,
+            //   JSON.stringify(this.subscribePackages())
+            // );
           }
         } else {
           this.subscribePackages.set([]);
@@ -107,19 +84,16 @@ export class UpgradePageComponent {
   }
 
   async makePurchase(selectedID: string) {
-    // get sku with matching 'skuId'
-    // Glassfy
-    // const id = this.subscribeSKUs().find((sku) => sku.skuId === selectedID);
     // RevenueCat
     const revenueCatPackage = this.subscribePackages().find(
       (revenueCatPackage) => revenueCatPackage.identifier === selectedID
     );
     if (revenueCatPackage) {
       this.isLoading.set(true);
-      // Glassfy
-      // const result = await this.productService.purchase(id);
       // RevenueCat
-      const result = await this.productService.purchaseRevenueCatSubPackage(revenueCatPackage);
+      const result = await this.productService.purchaseRevenueCatSubPackage(
+        revenueCatPackage
+      );
       this.isLoading.set(false);
       if (result.result === 'no permissions') {
         this.modalService.open(

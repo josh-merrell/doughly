@@ -37,7 +37,7 @@ export class YourPremiumComponent {
   private profile: WritableSignal<any> = signal({});
   public view: WritableSignal<string> = signal('benefits');
   public isLoading: WritableSignal<boolean> = signal(false);
-  public productSKUs: WritableSignal<GlassfySku[]> = signal([]);
+  // public productSKUs: WritableSignal<GlassfySku[]> = signal([]);
   public productPackages: WritableSignal<PurchasesPackage[]> = signal([]);
   public selectedIdentifier: WritableSignal<string> = signal(
     'doughly_aicredits10_once_2.99'
@@ -52,24 +52,24 @@ export class YourPremiumComponent {
     private modalService: ModalService
   ) {
     // Glassfy
-    effect(
-      () => {
-        const offerings = this.productService.offerings();
-        if (offerings.length) {
-          // only get offering with 'offeringId' of "doughly-aicredits-10"
-          const creditsOffering = offerings.find(
-            (offering) => offering.offeringId === 'doughly-aicredits-10'
-          );
-          if (creditsOffering) {
-            this.productSKUs.set(creditsOffering.skus);
-            console.log(`CREDITS SKUS: `, this.productSKUs());
-          }
-        } else {
-          this.productSKUs.set([]);
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    // effect(
+    //   () => {
+    //     const offerings = this.productService.offerings();
+    //     if (offerings.length) {
+    //       // only get offering with 'offeringId' of "doughly-aicredits-10"
+    //       const creditsOffering = offerings.find(
+    //         (offering) => offering.offeringId === 'doughly-aicredits-10'
+    //       );
+    //       if (creditsOffering) {
+    //         this.productSKUs.set(creditsOffering.skus);
+    //         console.log(`CREDITS SKUS: `, this.productSKUs());
+    //       }
+    //     } else {
+    //       this.productSKUs.set([]);
+    //     }
+    //   },
+    //   { allowSignalWrites: true }
+    // );
 
     // RevenueCat
     effect(
@@ -77,16 +77,16 @@ export class YourPremiumComponent {
         const offeringsRevenueCat = this.productService.offeringsRevenueCat();
         if (offeringsRevenueCat.length) {
           const premiumOfferingRevenueCat = offeringsRevenueCat.find(
-            (offering) => offering.identifier === 'doughly-premium'
+            (offering) => offering.identifier === 'doughly-aicredits-10'
           );
           if (premiumOfferingRevenueCat) {
             this.productPackages.set(
               premiumOfferingRevenueCat.availablePackages
             );
-            console.log(
-              `REVENUECAT OFFERING PACKAGES: `,
-              this.productPackages()
-            );
+            // console.log(
+            //   `REVENUECAT OFFERING PACKAGES: `,
+            //   this.productPackages()
+            // );
           }
         } else {
           this.productPackages.set([]);
@@ -99,7 +99,7 @@ export class YourPremiumComponent {
       () => {
         const profile = this.authService.profile();
         this.profile.set(profile);
-        console.log(`NEW PROFILE: `, profile);
+        // console.log(`NEW PROFILE: `, profile);
         if (profile) {
           if (
             profile.permAITokenCount <
@@ -127,19 +127,16 @@ export class YourPremiumComponent {
   }
 
   async makePurchase(selectedID: string) {
-    // get sku with matching 'skuId'
-    // Glassfy
-    // const id = this.productSKUs().find((sku) => sku.skuId === selectedID);
     // RevenueCat
     const revenueCatPackage = this.productPackages().find(
       (revenueCatPackage) => revenueCatPackage.identifier === selectedID
     );
     if (revenueCatPackage) {
       this.isLoading.set(true);
-      // Glassfy
-      // const result = await this.productService.purchase(id);
       // RevenueCat
-      const result = await this.productService.purchaseRevenueCatProdPackage(revenueCatPackage); 
+      const result = await this.productService.purchaseRevenueCatProdPackage(
+        revenueCatPackage
+      );
       this.isLoading.set(false);
       if (result.result === 'no permissions') {
         this.modalService.open(

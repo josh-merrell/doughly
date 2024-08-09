@@ -42,7 +42,7 @@ interface PurchaseResult {
   providedIn: 'root',
 })
 export class ProductService {
-  private readonly API_URL = `${environment.BACKEND}`;
+  private readonly API_URL = `${environment.BACKEND}/purchases`;
   public offerings: WritableSignal<GlassfyOffering[]> = signal([]);
   public offeringsRevenueCat: WritableSignal<PurchasesOffering[]> = signal([]);
   public licences = {
@@ -108,9 +108,9 @@ export class ProductService {
   async updatePermissions() {
     // called when permissions may have changed
     // ** GLASSFY **
-    const permissions = await Glassfy.permissions();
-    console.log('Updated Glassfy Permissions: ', JSON.stringify(permissions));
-    await this.handleExistingPermissions(permissions.all).subscribe();
+    // const permissions = await Glassfy.permissions();
+    // console.log('Updated Glassfy Permissions: ', JSON.stringify(permissions));
+    // await this.handleExistingPermissions(permissions.all).subscribe();
 
     // ** REVENUECAT **
     try {
@@ -132,70 +132,15 @@ export class ProductService {
     }
   }
 
-  async purchase(sku: GlassfySku): Promise<PurchaseResult> {
-    try {
-      console.log(`PURCHASING SKU: ${JSON.stringify(sku)}`);
-      const transaction = await Glassfy.purchaseSku({ sku });
-      console.log('Transaction: ', transaction);
-      if (transaction.permissions) {
-        // Ensure the observable completes by converting it to a promise
-        await this.handleSuccessfulTransactionResult(
-          transaction,
-          sku
-        ).subscribe();
-        return {
-          skuId: sku.skuId,
-          permissions: transaction.permissions,
-          result: 'success',
-          error: null,
-        };
-      }
-      return {
-        skuId: null,
-        permissions: null,
-        result: 'no permissions',
-        error: 'Receipt not validated',
-      };
-    } catch (error: any) {
-      console.log(`GOT ERROR: `, error);
-      // Log standard properties
-      console.log('Error message:', error.message);
-
-      if (error.message.includes('UserCancelPurchase')) {
-        return {
-          skuId: null,
-          permissions: null,
-          result: 'cancelled',
-          error: 'Purchase cancelled by user',
-        };
-      }
-      if (error.message.includes('ProductAlreadyOwned')) {
-        return {
-          skuId: null,
-          permissions: null,
-          result: 'alreadyOwned',
-          error: 'Purchase cancelled by user',
-        };
-      }
-      console.error('Error purchasing SKU: ', error);
-      return {
-        skuId: null,
-        permissions: null,
-        result: 'error',
-        error: error,
-      };
-    }
-  }
-
   async purchaseRevenueCatSubPackage(
     revenueCatSubPackage: PurchasesPackage
   ): Promise<PurchaseResult> {
     try {
-      console.log(
-        `PURCHASING REVENUE CAT PACKAGE: ${JSON.stringify(
-          revenueCatSubPackage
-        )}`
-      );
+      // console.log(
+      //   `PURCHASING REVENUE CAT PACKAGE: ${JSON.stringify(
+      //     revenueCatSubPackage
+      //   )}`
+      // );
       const result = await Purchases.purchasePackage({
         aPackage: revenueCatSubPackage,
       });
@@ -203,14 +148,14 @@ export class ProductService {
         const activeEntitlementsArray = Object.values(
           result.customerInfo.entitlements.active
         );
-        console.log(
-          'ACTIVE ENTITLEMENTS: ',
-          JSON.stringify(activeEntitlementsArray)
-        );
-        console.log(
-          'REVENUE CAT SUB PACKAGE: ',
-          JSON.stringify(revenueCatSubPackage)
-        );
+        // console.log(
+        //   'ACTIVE ENTITLEMENTS: ',
+        //   JSON.stringify(activeEntitlementsArray)
+        // );
+        // console.log(
+        //   'REVENUE CAT SUB PACKAGE: ',
+        //   JSON.stringify(revenueCatSubPackage)
+        // );
         await this.handleSuccessfulRevenueCatSubPackageTransactionResult(
           activeEntitlementsArray,
           revenueCatSubPackage
@@ -264,11 +209,12 @@ export class ProductService {
   ): Promise<PurchaseResult> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log(
-          `PURCHASING REVENUE CAT PRODUCT: ${JSON.stringify(
-            revenueCatProdPackage
-          )}`
-        );
+        console
+          .log
+          // `PURCHASING REVENUE CAT PRODUCT: ${JSON.stringify(
+          //   revenueCatProdPackage
+          // )}`
+          ();
         const result = await Purchases.purchasePackage({
           aPackage: revenueCatProdPackage,
         });
