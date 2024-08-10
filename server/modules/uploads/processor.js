@@ -71,7 +71,7 @@ module.exports = ({ db, dbDefault }) => {
         Key: `${type}/${userID}/${filename}`,
       });
       await s3Client.send(command);
-      global.logger.info({message:`Successfully deleted old backup file: backups/${userID}/${filename}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*uploads-deleteOldBackup* Successfully deleted old backup file: backups/${userID}/${filename}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return { message: 'Successfully deleted old backup file' };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in uploads deleteOldBackup', err.code || 520, err.name || 'unhandledError_uploads-deleteOldBackup', err.isOperational || false, err.severity || 2);

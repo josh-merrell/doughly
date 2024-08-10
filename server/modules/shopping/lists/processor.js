@@ -14,7 +14,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting shopping list ${shoppingListID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got shoppingList`, level: 6, timestamp: new Date().toISOString(), userID: shoppingList.userID || 0 });
+      global.logger.info({ message: `*shoppingLists-getShoppingListByID* Got shoppingList`, level: 6, timestamp: new Date().toISOString(), userID: shoppingList.userID || 0 });
       return shoppingList;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLists getShoppingListByID', err.code || 520, err.name || 'unhandledError_shoppingLists-getShoppingListByID', err.isOperational || false, err.severity || 2);
@@ -62,7 +62,7 @@ module.exports = ({ db, dbPublic }) => {
       } else {
         returnData = shoppingLists;
       }
-      global.logger.info({ message: `Got ${returnData.length} shopping lists`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*shoppingLists-getShoppingLists* Got ${returnData.length} shopping lists`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return returnData;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLists getShoppingLists', err.code || 520, err.name || 'unhandledError_shoppingLists-getShoppingLists', err.isOperational || false, err.severity || 2);
@@ -77,7 +77,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting shared shopping lists: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${sharedLists.length} shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID });
+      global.logger.info({ message: `*shoppingLists-getShared* Got ${sharedLists.length} shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID });
       return sharedLists;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLists shared', err.code || 520, err.name || 'unhandledError_shoppingLists-shared', err.isOperational || false, err.severity || 2);
@@ -118,7 +118,7 @@ module.exports = ({ db, dbPublic }) => {
     const { userID, authorization, shoppingListID, status, fulfilledMethod } = options;
 
     try {
-      global.logger.info({ message: `Updating shoppingList ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*shoppingLists-updateShoppingList* Updating shoppingList ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       //verify that the provided shoppingListID exists
       const { data: existingShoppingList, error: existingShoppingListError } = await db.from('shoppingLists').select().filter('shoppingListID', 'eq', shoppingListID).single();
       if (existingShoppingListError) {
@@ -199,7 +199,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error deleting shoppingList children: ${error2.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: options.userID || 0 });
+      global.logger.info({ message: `*shoppingLists-deleteShoppingList* here`, level: 6, timestamp: new Date().toISOString(), userID: options.userID || 0 });
 
       //we don't actually delete the list, we just remove the child recipes and standalone ingredients
       return { shoppingListID: shoppingListID };
@@ -273,7 +273,7 @@ module.exports = ({ db, dbPublic }) => {
         await updateShoppingList({ userID, authorization, shoppingListID, status: 'fulfilled', fulfilledMethod: 'manual', fulfilledDate: new Date().toISOString() });
       }
 
-      global.logger.info({ message: `Received ${items.length} items for shoppingList ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*shoppingLists-receiveItems* Received ${items.length} items for shoppingList ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return { shoppingListID: shoppingListID };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLists receiveItems', err.code || 520, err.name || 'unhandledError_shoppingLists-receiveItems', err.isOperational || false, err.severity || 2);
@@ -282,7 +282,7 @@ module.exports = ({ db, dbPublic }) => {
 
   createIngredientStockEntry = async (authorization, userID, item) => {
     try {
-      global.logger.info({ message: `Creating ingredientStock entry for item: ${JSON.stringify(item)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*shoppingLists-createIngredientStockEntry* Creating ingredientStock entry for item: ${JSON.stringify(item)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       const { data } = await axios.post(
         `${process.env.NODE_HOST}:${process.env.PORT}/ingredientStocks`,
@@ -304,7 +304,7 @@ module.exports = ({ db, dbPublic }) => {
 
   updateShoppingListIngredient = async (authorization, userID, purchasedMeasurement, purchasedBy, store, shoppingListIngredientID) => {
     try {
-      global.logger.info({ message: `Updating shoppingListIngredient ${shoppingListIngredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*shoppingLists-updateShoppingListIngredient* Updating shoppingListIngredient ${shoppingListIngredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       const { data } = await axios.patch(
         `${process.env.NODE_HOST}:${process.env.PORT}/shopping/listIngredients/${shoppingListIngredientID}`,
@@ -362,7 +362,7 @@ module.exports = ({ db, dbPublic }) => {
       if (sharedShoppingListError) {
         throw errorGen(`Error sharing shoppingList: ${sharedShoppingListError.message}`, 512, 'failSupabaseInsert', true, 3);
       }
-      global.logger.info({ message: `Shared shoppingList ${shoppingListID} with ${invitedUserID}`, level: 6, timestamp: new Date().toISOString(), userID });
+      global.logger.info({ message: `*shoppingLists-share* Shared shoppingList ${shoppingListID} with ${invitedUserID}`, level: 6, timestamp: new Date().toISOString(), userID });
       return { shoppingListID: shoppingListID };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLists share', err.code || 520, err.name || 'unhandledError_shoppingLists-share', err.isOperational || false, err.severity || 2);
@@ -373,7 +373,7 @@ module.exports = ({ db, dbPublic }) => {
     const { userID, authorization, shoppingListID, invitedUserID } = options;
 
     try {
-      global.logger.info(`Unsharing shoppingList ${shoppingListID} with ${invitedUserID}`)
+      global.logger.info(`*shoppingLists-unshare* Unsharing shoppingList ${shoppingListID} with ${invitedUserID}`)
       // attempt to remove any sharedShoppingLists with the invited user
       const { data: sharedShoppingLists, error: sharedShoppingListsError } = await db.from('sharedShoppingLists').delete().eq('userID', userID).eq('invitedUserID', invitedUserID).eq('shoppingListID', shoppingListID);
       if (sharedShoppingListsError) {

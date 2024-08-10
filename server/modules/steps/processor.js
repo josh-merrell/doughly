@@ -24,7 +24,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting steps: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${steps.length} steps`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*steps-getAll* Got ${steps.length} steps`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return steps;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in steps getAll', err.code || 520, err.name || 'unhandledError_steps-getAll', err.isOperational || false, err.severity || 2);

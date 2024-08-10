@@ -133,7 +133,7 @@ module.exports = ({ db, dbPublic }) => {
       const friendProfiles = await Promise.all(promises);
       const validFriendProfiles = friendProfiles.filter((profile) => profile !== null);
 
-      global.logger.info({ message: `Successfully retrieved ${validFriendProfiles.length} friends with status: ${friendStatus} for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-getProfile* Successfully retrieved ${validFriendProfiles.length} friends with status: ${friendStatus} for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return validFriendProfiles;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFriends', err.code || 520, err.name || 'unhandledError_profiles-getFriends', err.isOperational || false, err.severity || 2);
@@ -155,7 +155,7 @@ module.exports = ({ db, dbPublic }) => {
 
       //get friend's profile
       const friendProfile = await retrieveProfile(friendUserID);
-      global.logger.info({ message: `Successfully retrieved friend for userID ${userID} and friendUserID ${friendUserID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-getFriend* Successfully retrieved friend for userID ${userID} and friendUserID ${friendUserID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return friendProfile;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFriend', err.code || 520, err.name || 'unhandledError_profiles-getFriend', err.isOperational || false, err.severity || 2);
@@ -182,7 +182,7 @@ module.exports = ({ db, dbPublic }) => {
       const followerProfiles = await Promise.all(promises);
       const validfollowerProfiles = followerProfiles.filter((profile) => profile !== null);
 
-      global.logger.info({ message: `Successfully retrieved ${validfollowerProfiles.length} followers for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-getFollowers* Successfully retrieved ${validfollowerProfiles.length} followers for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return validfollowerProfiles;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFollowers', err.code || 520, err.name || 'unhandledError_profiles-getFollowers', err.isOperational || false, err.severity || 2);
@@ -204,7 +204,7 @@ module.exports = ({ db, dbPublic }) => {
 
       //get follower's profile
       const followerProfile = await retrieveProfile(followerUserID);
-      global.logger.info({ message: `Successfully retrieved follower for userID ${userID} and followerUserID ${followerUserID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-getFollower* Successfully retrieved follower for userID ${userID} and followerUserID ${followerUserID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return followerProfile;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFollower', err.code || 520, err.name || 'unhandledError_profiles-getFollower', err.isOperational || false, err.severity || 2);
@@ -231,7 +231,7 @@ module.exports = ({ db, dbPublic }) => {
       const followingProfiles = await Promise.all(promises);
       const validFollowingProfiles = followingProfiles.filter((profile) => profile !== null);
 
-      global.logger.info({ message: `Successfully retrieved ${validFollowingProfiles.length} following for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-getFollowing* Successfully retrieved ${validFollowingProfiles.length} following for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return validFollowingProfiles;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles getFollowing', err.code || 520, err.name || 'unhandledError_profiles-getFollowing', err.isOperational || false, err.severity || 2);
@@ -266,7 +266,7 @@ module.exports = ({ db, dbPublic }) => {
       const profiles = await Promise.all(promises);
       const validProfiles = profiles.filter((profile) => profile !== null);
 
-      global.logger.info({ message: `Successfully retrieved ${validProfiles.length} profiles for searchQuery ${searchQuery}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-searchProfiles* Successfully retrieved ${validProfiles.length} profiles for searchQuery ${searchQuery}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return validProfiles;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles searchProfiles', err.code || 520, err.name || 'unhandledError_profiles-searchProfiles', err.isOperational || false, err.severity || 2);
@@ -291,7 +291,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error deleting user for userID ${userID}: ${errorDeleteUser.message}`, 515, 'cannotComplete', false, 3);
       }
 
-      global.logger.info({ message: `Successfully deleted profile for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-deleteProfile* Successfully deleted profile for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return true;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles deleteProfile', err.code || 520, err.name || 'unhandledError_profiles-deleteProfile', err.isOperational || false, err.severity || 2);
@@ -302,7 +302,7 @@ module.exports = ({ db, dbPublic }) => {
     const { userID } = options;
 
     try {
-      global.logger.info({ message: `Populating initial account data for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-populateAccount* Populating initial account data for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // Prevent concurrent execution by using a lock (example using a simple flag in the database)
       const { data: lockData, error: lockError } = await dbPublic.from('profiles').select('isPopulating,dataLoadStatus').eq('user_id', userID).single();
 
@@ -314,10 +314,10 @@ module.exports = ({ db, dbPublic }) => {
         // if dataLoadStatus is 'done', remove lock and return 'success'
         if (lockData.dataLoadStatus === 'done') {
           await dbPublic.from('profiles').update({ isPopulating: false }).eq('user_id', userID);
-          global.logger.info({ message: `PopulateAccount is already running for userID ${userID}, but data is already loaded`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*profiles-populateAccount* PopulateAccount is already running for userID ${userID}, but data is already loaded`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           return 'success';
         }
-        global.logger.info({ message: `PopulateAccount is already running for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*profiles-populateAccount* PopulateAccount is already running for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         return;
       }
 
@@ -330,7 +330,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error getting dataLoadStatus for userID ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (data.dataLoadStatus === 'done') {
-        global.logger.info({ message: `Data already loaded for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*profiles-populateAccount* Data already loaded for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         return 'success';
       }
 
@@ -341,7 +341,7 @@ module.exports = ({ db, dbPublic }) => {
 
       // Attempt all remaining data loading steps
       for (let i = currentSequence; i < 7; i++) {
-        global.logger.info({ message: `Starting data load for userID ${userID}. Current step: ${currentSequence}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*profiles-populateAccount* Starting data load for userID ${userID}. Current step: ${currentSequence}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         // Call helper function for this step
         let stepFunction;
         switch (i) {
@@ -401,7 +401,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateFriendships(userID, array) {
     try {
-      global.logger.info({ message: `Populating friendships`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*profiles-populateFriendships* Populating friendships`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       // remove any existing friendships for userID, we'll start from scratch
       const { error: errorDeleteFriendships } = await db.from('friendships').delete().eq('userID', userID);
       if (errorDeleteFriendships) {
@@ -455,7 +455,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateFollowships(userID, array) {
     try {
-      global.logger.info({ message: `Populating followships for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-populateFollowships* Populating followships for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing followships for userID, we'll start from scratch
       const { error: errorDeleteFollowships } = await db.from('followships').delete().eq('userID', userID);
       if (errorDeleteFollowships) {
@@ -509,7 +509,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateIngredients(userID, array) {
     try {
-      global.logger.info({ message: `Populating ingredients for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-populateIngredients* Populating ingredients for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing ingredients for userID, we'll start from scratch
       const { error: errorDeleteIngredients } = await db.from('ingredients').delete().eq('userID', userID);
       if (errorDeleteIngredients) {
@@ -562,7 +562,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateTools(userID, array) {
     try {
-      global.logger.info({ message: `Populating tools for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-populateTools* Populating tools for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing tools for userID, we'll start from scratch
       const { error: errorDeleteTools } = await db.from('tools').delete().eq('userID', userID);
       if (errorDeleteTools) {
@@ -605,7 +605,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateRecipes(userID, array) {
     try {
-      global.logger.info({ message: `Populating recipes for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-populateRecipes* Populating recipes for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing recipes for userID, we'll start from scratch
       const { error: errorDeleteRecipes } = await db.from('recipes').delete().eq('userID', userID);
       if (errorDeleteRecipes) {
@@ -646,7 +646,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function populateMessages(userID, array) {
     try {
-      global.logger.info({ message: `Populating messages for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-populateMessages* Populating messages for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // remove any existing messages for userID, we'll start from scratch
       const { error: errorDeleteMessages } = await db.from('messages').delete().eq('userID', userID);
       if (errorDeleteMessages) {
@@ -677,7 +677,7 @@ module.exports = ({ db, dbPublic }) => {
   async function createUserBackupFile(userID) {
     try {
       // for the given user, create a new sql backup file with all 'bakery' schema table rows. Add these rows in the order they should be loaded into the db.
-      global.logger.info({ message: `Creating backup file for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-createUserBackupFile* Creating backup file for userID ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       const tables = [
         'pushTokens',
         'friendships',
@@ -733,7 +733,7 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       fs.writeFileSync(filePath, backupScript);
-      global.logger.info({ message: `Successfully created backup file for userID ${userID} on ${datestring}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-createUserBackupFile* Successfully created backup file for userID ${userID} on ${datestring}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       return { filePath };
     } catch (err) {
@@ -751,7 +751,7 @@ module.exports = ({ db, dbPublic }) => {
       if (uploadResponse.error) {
         throw errorGen(uploadResponse.error.message || 'Unhandled Error in profiles createDailyBackup', uploadResponse.error.code || 520, uploadResponse.error.name || 'unhandledError_profiles-createDailyBackup', uploadResponse.error.isOperational || false, uploadResponse.error.severity || 2);
       }
-      global.logger.info({ message: `Successfully uploaded daily backup for user ${userID}, filename: ${filePath}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-createDailyBackup* Successfully uploaded daily backup for user ${userID}, filename: ${filePath}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       const { data: profile, errorProfile } = await dbPublic.from('profiles').select('joined_at').eq('user_id', userID).single();
       if (errorProfile) {
@@ -772,7 +772,7 @@ module.exports = ({ db, dbPublic }) => {
         await deleteOldBackup(userID, deleteFileName);
       }
 
-      global.logger.info({ message: `Successfully created daily backup for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*profiles-createDailyBackup* Successfully created daily backup for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles createDailyBackup', err.code || 520, err.name || 'unhandledError_profiles-createDailyBackup', err.isOperational || false, err.severity || 2);
     }
@@ -793,7 +793,7 @@ module.exports = ({ db, dbPublic }) => {
         }
       }
 
-      global.logger.info({ message: `Successfully created daily backups for all ${userIDs.length} users`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+      global.logger.info({ message: `*profiles-dailyBackupAllUsers* Successfully created daily backups for all ${userIDs.length} users`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in profiles dailyBackupAllUsers', err.code || 520, err.name || 'unhandledError_profiles-dailyBackupAllUsers', err.isOperational || false, err.severity || 2);
     }

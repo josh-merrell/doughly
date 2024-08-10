@@ -8,7 +8,7 @@ module.exports = () => {
     const { material, unitA, unitB, authorization, userID } = options;
 
     try {
-      global.logger.info({message:`'getUnitRatioProcessor'. UNITA: ${unitA} UNITB: ${unitB}`, level:7, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`'*unitRatios-getUnitRatioProcessor* getUnitRatioProcessor'. UNITA: ${unitA} UNITB: ${unitB}`, level:7, timestamp: new Date().toISOString(), 'userID': userID});
       if (unitA === unitB) return { ratio: 1, needsReview: false };
       // use 'getUnitRatio' method from 'unitRatioStoreService' to get the ratio. It will first check common ratios for a match, then check the store for an approved ratio match, then fallback to asking AI. If AI returns a ratio, it will submit it as a draft to the store for admin approval.
       const returner = await getUnitRatio(material, unitA, unitB, authorization, userID);

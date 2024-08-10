@@ -38,7 +38,7 @@ module.exports = ({ db, dbPublic }) => {
 
       //return only matching followships
       const result = followships.filter((followship) => followship.match);
-      global.logger.info({ message: `Got ${result.length} followships`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*followships-getAll* Got ${result.length} followships`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return result;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in followships getAll', err.code || 520, err.name || 'unhandledError_followships-getAll', err.isOperational || false, err.severity || 2);
@@ -60,7 +60,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error getting follower followships: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
-      global.logger.info({ message: `Got ${followships.length} follower followships`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*followships-getAllFollowers* Got ${followships.length} follower followships`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return followships;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in followships getAllFollowers', err.code || 520, err.name || 'unhandledError_followships-getAllFollowers', err.isOperational || false, err.severity || 2);
@@ -74,7 +74,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting followship ${options.followshipID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got followship ${options.followshipID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
+      global.logger.info({ message: `*followships-getFollowshipByID* Got followship ${options.followshipID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
       return data;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in followships getFollowshipByID', err.code || 520, err.name || 'unhandledError_followships-getFollowshipByID', err.isOperational || false, err.severity || 2);
@@ -107,7 +107,7 @@ module.exports = ({ db, dbPublic }) => {
         if (undeleteError) {
           throw errorGen(`Error undeleting followship ${existingFollowship[0].followshipID}: ${undeleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
-        global.logger.info({ message: `Undeleted followship ${existingFollowship[0].followshipID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*followships-create* Undeleted followship ${existingFollowship[0].followshipID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         createUserLog(userID, authorization, 'createdFollowship', existingFollowship[0].followshipID, null, null, null, 'Now following ' + profile.name_first + ' ' + profile.name_last);
         return {
           followshipID: undelete.followshipID,
@@ -121,7 +121,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error creating followship: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
-      global.logger.info({ message: `Created followship ${customID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*followships-create* Created followship ${customID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       createUserLog(userID, authorization, 'createdFollowship', followship.followshipID, null, null, null, 'Now following ' + profile.name_first + ' ' + profile.name_last);
       return {
         followshipID: followship.followshipID,
@@ -149,7 +149,7 @@ module.exports = ({ db, dbPublic }) => {
       if (deleteError) {
         throw errorGen(`Error deleting followship ${options.followshipID}: ${deleteError.message}`, 514, 'failSupabaseDelete', true, 3);
       }
-      global.logger.info({ message: `Deleted followship ${options.followshipID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
+      global.logger.info({ message: `*followships-deleteFollowship* Deleted followship ${options.followshipID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
       createUserLog(options.userID, options.authorization, 'deletedFollowship', Number(options.followshipID), null, null, null, 'No longer followng ' + followship.following);
       return data;
     } catch (err) {

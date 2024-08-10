@@ -42,7 +42,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting persons: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({message:`Got ${persons.length} persons`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*persons-getAll* Got ${persons.length} persons`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return persons;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in persons getAll', err.code || 520, err.name || 'unhandledError_persons-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity

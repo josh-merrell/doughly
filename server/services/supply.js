@@ -87,7 +87,7 @@ const supplyCheckMoreDemand = async (userID, neededQuantity, orderID, stockProdu
         throw errorGen(`'supplyCheckMoreDemand' Error patching stockItem`, 515, 'cannotComplete', false, 3);
       }
       if (stockItems[i].stockItemID > 0) {
-        global.logger.info({ message: `New stockItem caused previously sufficient stockStatus of stockItem ID: ${stockItems[i].stockItemID} to be insufficient. Updated stockStatus.`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*supply-supplyCheckMoreDemand* New stockItem caused previously sufficient stockStatus of stockItem ID: ${stockItems[i].stockItemID} to be insufficient. Updated stockStatus.`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       }
     }
   }
@@ -156,7 +156,7 @@ const supplyCheckRecipe = async (userID, authorization, recipeID) => {
 };
 
 const supplyCheckRecipeIngredient = async (userID, authorization, ingredientID, recipeID) => {
-  global.logger.info({ message: `IN supplyCheckRecipeIngredient: userID: ${userID}, ingredientID: ${ingredientID}, recipeID: ${recipeID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+  global.logger.info({ message: `*supply-supplyCheckRecipeIngredient* IN supplyCheckRecipeIngredient: userID: ${userID}, ingredientID: ${ingredientID}, recipeID: ${recipeID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
   const { data: recipeIngredient, error: recipeIngredientError } = await supabase.from('recipeIngredients').select('ingredientID, measurement, purchaseUnitRatio').filter('recipeID', 'eq', recipeID).filter('ingredientID', 'eq', ingredientID);
   if (recipeIngredientError) {
     throw errorGen(`'supplyCheckRecipeIngredient' Error getting recipeIngredient: ${recipeIngredientError.message}`, 511, 'failSupabaseSelect', true, 3);
@@ -168,13 +168,13 @@ const supplyCheckRecipeIngredient = async (userID, authorization, ingredientID, 
   }
   let gramsNeeded = recipeIngredient[0].measurement * recipeIngredient[0].purchaseUnitRatio * ingredient.gramRatio;
   // global.logger.info(`gramsNeeded: ${gramsNeeded}`);
-  global.logger.info({ message: `gramsNeeded: ${gramsNeeded}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+  global.logger.info({ message: `*supply-supplyCheckRecipeIngredient* gramsNeeded: ${gramsNeeded}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
   const { data: ingredientStock, error: ingredientStockError } = await supabase.from('ingredientStocks').select('ingredientID, grams').filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID).filter('deleted', 'eq', false);
   if (ingredientStockError) {
     throw errorGen(`'supplyCheckRecipeIngredient' Error getting ingredientStock: ${ingredientStockError.message}`, 511, 'failSupabaseSelect', true, 3);
   }
   for (let j = 0; j < ingredientStock.length; j++) {
-    global.logger.info({ message: `ingredientStock[j].grams: ${ingredientStock[j].grams}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+    global.logger.info({ message: `*supply-supplyCheckRecipeIngredient* ingredientStock[j].grams: ${ingredientStock[j].grams}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
     if (ingredientStock[j].grams >= gramsNeeded) {
       gramsNeeded = 0;
       break;

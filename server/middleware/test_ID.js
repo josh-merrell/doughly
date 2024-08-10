@@ -23,13 +23,11 @@ global.redis = redis;
 const typeFromArg = process.argv[2];
 
 if (!typeFromArg) {
-  console.log('Please provide a type argument.');
   process.exit(1);
 }
 
 const runTest = async () => {
   const result = await getNextSequence(typeFromArg);
-  console.log('Result:', result);
   process.exit(0);
 };
 

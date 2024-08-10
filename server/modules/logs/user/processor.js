@@ -27,7 +27,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({message:`Got ${logs.length} user logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*userLogs-getAll* Got ${logs.length} user logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return logs;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in userLogs getAll', err.code || 520, err.name || 'unhandledError_userLogs-getAll', err.isOperational || false, err.severity || 2);
@@ -43,7 +43,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({message:`Got log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
+      global.logger.info({message:`*userLogs-getByID* Got log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
       return log;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in userLogs getByID', err.code || 520, err.name || 'unhandledError_userLogs-getByID', err.isOperational || false, err.severity || 2);

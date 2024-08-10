@@ -25,7 +25,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting tools: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${tools.length} tools`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*tools-getAll* Got ${tools.length} tools`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return tools;
       // return tools and add one dummy tool
       // return [...tools, { toolID: 999998, name: 'dummy', brand: 'dummy' }];
@@ -43,7 +43,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting tool: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got tool`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*tools-getByID* Got tool`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       return tool;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in tools getByID', err.code || 520, err.name || 'unhandledError_tools-getByID', err.isOperational || false, err.severity || 2);

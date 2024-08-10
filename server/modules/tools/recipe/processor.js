@@ -26,7 +26,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeTools: ${error}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Error getting recipeTools: ${error}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipeTools-getAll* Error getting recipeTools: ${error}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipeTools;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeTools getAll', err.code || 520, err.name || 'unhandledError_recipeTools-getAll', err.isOperational || false, err.severity || 2);
@@ -42,7 +42,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeTool by ID: ${recipeToolID}: ${error}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got recipeTool ${recipeToolID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipeTools-getByID* Got recipeTool ${recipeToolID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipeTool;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeTools getByID', err.code || 520, err.name || 'unhandledError_recipeTools-getByID', err.isOperational || false, err.severity || 2);
@@ -194,7 +194,7 @@ module.exports = ({ db }) => {
           // if there are no recipeSteps, update status to 'noSteps'
           const { error: updateError } = await db.from('recipes').update({ status: 'noSteps' }).eq('recipeID', recipeID);
           if (updateError) {
-            global.logger.info({ message: `Error updating recipe status: ${updateError}, rolling back recipeTool create`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+            global.logger.info({ message: `*recipeTools-create* Error updating recipe status: ${updateError}, rolling back recipeTool create`, level: 3, timestamp: new Date().toISOString(), userID: userID });
             const { error: rollbackError } = await db.from('recipeTools').delete().eq('recipeToolID', newRecipeTool.recipeToolID);
             if (rollbackError) {
               throw errorGen(`Error rolling back recipeTool: ${rollbackError}`, 514, 'failSupabaseDelete', true, 3);

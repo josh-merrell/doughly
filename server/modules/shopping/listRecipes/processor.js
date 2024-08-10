@@ -12,7 +12,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting shopping list recipe ${shoppingListRecipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got shoppingListRecipe`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListRecipe.userID || 0 });
+      global.logger.info({ message: `*listRecipes-getShoppingListRecipeByID* Got shoppingListRecipe`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListRecipe.userID || 0 });
       return shoppingListRecipe;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in listRecipes getShoppingListRecipeByID', err.code || 520, err.name || 'unhandledError_listRecipes-getShoppingListRecipeByID', err.isOperational || false, err.severity || 2);
@@ -27,7 +27,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting shopping list recipes: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${shoppingListRecipes.length} recipes for shoppingList ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*listRecipes-getRecipesByShoppingList* Got ${shoppingListRecipes.length} recipes for shoppingList ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       return shoppingListRecipes;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in listRecipes getRecipesByShoppingList', err.code || 520, err.name || 'unhandledError_listRecipes-getRecipesByShoppingList', err.isOperational || false, err.severity || 2);
@@ -42,7 +42,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting all shopping list recipes: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${shoppingListRecipes.length} shoppingListRecipes`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*listRecipes-getAllShoppingListRecipes* Got ${shoppingListRecipes.length} shoppingListRecipes`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       return shoppingListRecipes;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in listRecipes getAllShoppingListRecipes', err.code || 520, err.name || 'unhandledError_listRecipes-getAllShoppingListRecipes', err.isOperational || false, err.severity || 2);
@@ -86,7 +86,7 @@ module.exports = ({ db }) => {
         const { error: undeleteError } = await db.from('shoppingListRecipes').update({ deleted: false, plannedDate }).eq('shoppingListRecipeID', existingShoppingListRecipe[0].shoppingListRecipeID);
         //log it
         await createShoppingLog(userID, authorization, 'undeleteRecipeFromShoppingList', Number(existingShoppingListRecipe[0].shoppingListRecipeID), Number(shoppingListID), null, null, `undeleted Recipe from ShoppingList: ${existingShoppingListRecipe[0].shoppingListRecipeID}`);
-        global.logger.info({ message: `Undeleted shoppingListRecipe ${existingShoppingListRecipe[0].shoppingListRecipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+        global.logger.info({ message: `*listRecipes-createShoppingListRecipe* Undeleted shoppingListRecipe ${existingShoppingListRecipe[0].shoppingListRecipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
         const result = {
           shoppingListRecipeID: existingShoppingListRecipe[0].shoppingListRecipeID,
           shoppingListID: existingShoppingListRecipe[0].shoppingListID,

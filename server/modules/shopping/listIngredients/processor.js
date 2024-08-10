@@ -19,7 +19,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting shopping list ingredient ${shoppingListIngredientID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got shoppingListIngredient`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredient.userID || 0 });
+      global.logger.info({ message: `*listIngredients-getShoppingListIngredientByID* Got shoppingListIngredient`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredient.userID || 0 });
       return shoppingListIngredient;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in listIngredients getShoppingListIngredientByID', err.code || 520, err.name || 'unhandledError_listIngredients-getShoppingListIngredientByID', err.isOperational || false, err.severity || 2);
@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
       if (shoppingListIngredients.length === 0) {
         return [];
       }
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredients[0].userID || 0 });
+      global.logger.info({ message: `*listIngredients-getIngredientsByShoppingList* Got ${shoppingListIngredients.length} shoppingListIngredients for shoppingList: ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredients[0].userID || 0 });
       return shoppingListIngredients;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in listIngredients getIngredientsByShoppingList', err.code || 520, err.name || 'unhandledError_listIngredients-getIngredientsByShoppingList', err.isOperational || false, err.severity || 2);

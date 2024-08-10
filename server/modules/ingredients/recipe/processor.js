@@ -26,7 +26,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeIngredients`, 511, `failSupabaseSelect`, true, 3);
       }
-      global.logger.info({message:`Got ${recipeIngredients.length} recipeIngredients`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*recipeIngredients-getAll* Got ${recipeIngredients.length} recipeIngredients`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return recipeIngredients;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeIngredients getAll', err.code || 520, err.name || 'unhandledError_recipeIngredients-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeIngredient ID: ${recipeIngredientID}`, 511, `failSupabaseSelect`, true, 3);
       }
-      global.logger.info({message:`Got recipeIngredient`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*recipeIngredients-getRecipeIngredientByID* Got recipeIngredient`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return recipeIngredient;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeIngredients getRecipeIngredientByID', err.code || 520, err.name || 'unhandledError_recipeIngredients-getRecipeIngredientByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -52,7 +52,7 @@ module.exports = ({ db }) => {
     const { customID, authorization, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, preparation, component, RIneedsReview = false } = options;
 
     try {
-      global.logger.info({message:`CREATING RECIPE INGREDIENT, PREPARATION: ${preparation}`, level:7, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*recipeIngredients-create* CREATING RECIPE INGREDIENT, PREPARATION: ${preparation}`, level:7, timestamp: new Date().toISOString(), 'userID': userID});
 
       //verify that 'customID' exists on the request
       if (!customID) {
@@ -100,7 +100,7 @@ module.exports = ({ db }) => {
       if (existingRecipe[0].status === 'noIngredients' && recipeIngredient.recipeIngredientID) {
         const { error4 } = await db.from('recipes').update({ status: 'noTools' }).eq('recipeID', recipeID);
         if (error4) {
-          global.logger.info({message:`Error updating recipe status: ${error4.message}, rolling back`, level:3, timestamp: new Date().toISOString(), 'userID': userID});
+          global.logger.info({message:`*recipeIngredients-create* Error updating recipe status: ${error4.message}, rolling back`, level:3, timestamp: new Date().toISOString(), 'userID': userID});
           const { error5 } = await db.from('recipeIngredients').delete().eq('recipeIngredientID', recipeIngredient.recipeIngredientID);
           if (error5) {
             throw errorGen(`Error rolling back recipeIngredient: ${error5.message}`, 514, 'failSupabaseDelete', true, 3);
@@ -226,11 +226,11 @@ module.exports = ({ db }) => {
     const { userID, authorization, ingredientName, measurementUnit, purchaseUnit } = options;
 
     try {
-      global.logger.info({message:`GETTING PURCHASE UNIT RATIO ESTIMATE FOR ${ingredientName} ${measurementUnit} and ${purchaseUnit}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*recipeIngredients-getPurEst* GETTING PURCHASE UNIT RATIO ESTIMATE FOR ${ingredientName} ${measurementUnit} and ${purchaseUnit}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
 
       const data = await getUnitRatio(userID, authorization, ingredientName, measurementUnit, purchaseUnit);
       const parsedData = JSON.parse(data.response);
-      global.logger.info({message:`PURCHASE UNIT RATIO EST RESULT: ${JSON.stringify(parsedData)}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*recipeIngredients-getPurEst* PURCHASE UNIT RATIO EST RESULT: ${JSON.stringify(parsedData)}`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       if (!parsedData.unitRatio) {
         global.logger.warn({message:`Error getting unitRatioEstimate from openAI for ${ingredientName} ${measurementUnit} and ${purchaseUnit}. Defaulting to 1`, level:4, timestamp: new Date().toISOString(), 'userID': userID});
         return 1;

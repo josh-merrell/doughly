@@ -22,7 +22,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting ingredients: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${ingredients.length} ingredients`, level: 5, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*ingredients-getAll* Got ${ingredients.length} ingredients`, level: 5, timestamp: new Date().toISOString(), userID: userID });
       return ingredients;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in ingredients getAll', err.code || 520, err.name || 'unhandledError_ingredients-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -38,7 +38,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting ingredient ID: ${ingredientID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ingredient`, level: 5, timestamp: new Date().toISOString(), userID: ingredient[0].userID || 0 });
+      global.logger.info({ message: `*ingredients-getIngredientByID* Got ingredient`, level: 5, timestamp: new Date().toISOString(), userID: ingredient[0].userID || 0 });
       return ingredient;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in ingredients getIngredientByID', err.code || 520, err.name || 'unhandledError_ingredients-getIngredientByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -173,10 +173,10 @@ module.exports = ({ db, dbPublic }) => {
       //add a 'deleted' log entry
       createKitchenLog(userID, authorization, 'ingredientDeleted', Number(ingredientID), null, null, null, `Deleted ${data} from kitchen`);
 
-      global.logger.info({ message: `Deleted ingredient ID: ${ingredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*ingredients-deleteIngredient* Deleted ingredient ID: ${ingredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return { success: true };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredients deleteIngredient', err.code || 520, err.name || 'unhandledError_ingredients-deleteIngredient', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredients-deleteIngredient* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredients-deleteIngredient', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 

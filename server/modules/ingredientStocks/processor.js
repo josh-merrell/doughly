@@ -26,7 +26,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting ingredientStocks: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${ingredientStocks.length} ingredientStocks`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*ingredientStocks-getAll* Got ${ingredientStocks.length} ingredientStocks`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       return ingredientStocks;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in ingredientStocks getAll', err.code || 520, err.name || 'unhandledError_ingredientStocks-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -52,7 +52,7 @@ module.exports = ({ db, dbPublic }) => {
     const { authorization, customID, userID, ingredientID, measurement, purchasedDate } = options;
 
     try {
-      global.logger.info(`IN CREATE ING STOCK. customID: ${customID}, userID: ${userID}, ingredientID: ${ingredientID}, measurement: ${measurement}, purchasedDate: ${purchasedDate}`)
+      global.logger.info(`*ingredientStocks-create* IN CREATE ING STOCK. customID: ${customID}, userID: ${userID}, ingredientID: ${ingredientID}, measurement: ${measurement}, purchasedDate: ${purchasedDate}`)
       //verify that the provided ingredientID is valid, return error if not
       const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
       if (error) {
@@ -177,7 +177,7 @@ module.exports = ({ db, dbPublic }) => {
       // use Promise.allSettled to ensure all promises are resolved before returning
       await Promise.allSettled(promises);
 
-      global.logger.info('Deleted all expired ingredientStocks');
+      global.logger.info('*ingredientStocks-deleteAllExpired* Deleted all expired ingredientStocks');
       return { success: true };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in ingredientStocks deleteAllExpired', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteAllExpired', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -215,7 +215,7 @@ module.exports = ({ db, dbPublic }) => {
             throw errorGen(`Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
           }
           if (!result.autoDeleteExpiredStock) {
-            global.logger.info({ message: `autoDeleteExpiredStock setting is false for user ${userID}, skipping deletion`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+            global.logger.info({ message: `*ingredientStocks-deleteExpiredStockForUser* autoDeleteExpiredStock setting is false for user ${userID}, skipping deletion`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
             return { success: true };
           }
 
@@ -244,7 +244,7 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       // log count of deleted ingredientStocks
-      global.logger.info({ message: `Auto Deleted ${deletePromises.length} expired ingredientStocks for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*ingredientStocks-deleteExpiredStockForUser* Auto Deleted ${deletePromises.length} expired ingredientStocks for user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       // get user push tokens
       const { data: tokens, error: getTokensError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/${userID}`, {
@@ -334,7 +334,7 @@ module.exports = ({ db, dbPublic }) => {
       // use Promise.allSettled to ensure all promises are resolved before returning
       await Promise.allSettled(promises);
 
-      global.logger.info({ message: `Notified all users of upcoming expirations`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+      global.logger.info({ message: `*ingredientStocks-notifyOnUpcomingExpiration* Notified all users of upcoming expirations`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
       return { success: true };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in ingredientStocks notifyOnUpcomingExpiration', err.code || 520, err.name || 'unhandledError_ingredientStocks-notifyOnUpcomingExpiration', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -349,7 +349,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error getting notifyOnUpcomingExpiry setting for user ${userID}: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (profile.notifyUpcomingStockExpiry !== 'Enabled' && profile.notifyUpcomingStockExpiry !== 'Email and App Push') {
-        global.logger.info({ message: `notifyOnUpcomingExpiry setting is disabled for user ${userID}, skipping notification`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*ingredientStocks-notifyOnUpcomingExpiration* notifyOnUpcomingExpiry setting is disabled for user ${userID}, skipping notification`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         return { success: true };
       }
       // get all non-deleted ingredientStocks for the user
@@ -427,7 +427,7 @@ module.exports = ({ db, dbPublic }) => {
     const { ingredientID, userID, authorization } = options;
 
     try {
-      global.logger.info({ message: `Checking for low stock for ingredient ${ingredientID} and user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*ingredientStocks-checkForLowStock* Checking for low stock for ingredient ${ingredientID} and user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // get user profile to check if notifications are enabled
       const { data: profile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
       if (profileError) {
@@ -451,7 +451,7 @@ module.exports = ({ db, dbPublic }) => {
         // add app message 'ingredientOutOfStock' for this row
         await db.from('ingredients').update({ appMessageStatus: 'notAcked', appMessageDate: new Date() }).eq('ingredientID', ingredientID);
 
-        global.logger.info({ message: `No ingredientStocks found for ingredient ${ingredientID} and user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*ingredientStocks-checkForLowStock* No ingredientStocks found for ingredient ${ingredientID} and user ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         if (profile.notifyOnNoStock !== 'Enabled' && profile.notifyOnNoStock !== 'Email and App Push') {
           return;
         }
@@ -497,7 +497,7 @@ module.exports = ({ db, dbPublic }) => {
 
         // if no recipeIngredients, return
         if (recipeIngredients.length === 0) {
-          global.logger.info({ message: `No recipeIngredients found for ingredient ${ingredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*ingredientStocks-checkForLowStock* No recipeIngredients found for ingredient ${ingredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           return;
         }
 
@@ -505,7 +505,7 @@ module.exports = ({ db, dbPublic }) => {
         // for each recipeIngredient, check if the ingredientStocks are sufficient
         for (const ri of recipeIngredients) {
           const check = await supplyCheckRecipeIngredient(userID, authorization, ingredientID, ri.recipeID);
-          global.logger.info({ message: `Result of supplyCheckRecipeIngredient for ingredient ${ingredientID} and user ${userID}: ${JSON.stringify(check)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*ingredientStocks-checkForLowStock* Result of supplyCheckRecipeIngredient for ingredient ${ingredientID} and user ${userID}: ${JSON.stringify(check)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           if (check.status === 'insufficient') {
             recipeCountInsufficient++;
           }
@@ -516,7 +516,7 @@ module.exports = ({ db, dbPublic }) => {
           if (profile.notifyOnLowStock !== 'Enabled' && profile.notifyOnLowStock !== 'Email and App Push') {
             return;
           }
-          global.logger.info({ message: `Low stock found for ${recipeCountInsufficient} recipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*ingredientStocks-checkForLowStock* Low stock found for ${recipeCountInsufficient} recipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           const { data: tokens, error: getTokensError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/pushTokens/${userID}`, {
             headers: {
               authorization,

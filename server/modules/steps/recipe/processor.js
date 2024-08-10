@@ -35,7 +35,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeSteps: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${recipeSteps.length} recipeSteps`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipeSteps-getAll* Got ${recipeSteps.length} recipeSteps`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipeSteps;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeSteps getAll', err.code || 520, err.name || 'unhandledError_recipeSteps-getAll', err.isOperational || false, err.severity || 2);
@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeStep by ID: ${options.recipeStepID}:${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got recipeStep ${options.recipeStepID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID || 0 });
+      global.logger.info({ message: `*recipeSteps-getStepByID* Got recipeStep ${options.recipeStepID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID || 0 });
       return data;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeSteps getStepByID', err.code || 520, err.name || 'unhandledError_recipeSteps-getStepByID', err.isOperational || false, err.severity || 2);
@@ -137,7 +137,7 @@ module.exports = ({ db }) => {
       if (recipe[0].status === 'noSteps') {
         await publish(recipeID, newRecipeStep.recipeStepID, userID, authorization);
       }
-      global.logger.info({ message: `Created recipeStep ${newRecipeStep.recipeStepID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipeSteps-create* Created recipeStep ${newRecipeStep.recipeStepID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // return newRecipeStep;
       return {
         recipeStepID: newRecipeStep.recipeStepID,
@@ -155,7 +155,7 @@ module.exports = ({ db }) => {
     try {
       const { error: recipeUpdateError } = await db.from('recipes').update({ status: 'published' }).eq('recipeID', recipeID);
       if (recipeUpdateError) {
-        global.logger.info({ message: `Error updating recipe status: ${recipeUpdateError.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipeSteps-publish* Error updating recipe status: ${recipeUpdateError.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
         //rollback recipeStep creation
         const { error: rollbackError } = await db.from('recipeSteps').delete().eq('recipeStepID', recipeStepID);
         if (rollbackError) {
@@ -163,7 +163,7 @@ module.exports = ({ db }) => {
         }
         throw errorGen(`Error updating recipe status: ${recipeUpdateError.message}. Rolled back`, 515, 'cannotComplete', false, 3);
       }
-      global.logger.info({ message: `Recipe moved to "published" status`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*recipeSteps-publish* Recipe moved to "published" status`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       //add 'recipePublished' log entry
       createRecipeLog(userID, authorization, 'updatedRecipeStatus', Number(recipeID), null, null, 'published', `updated recipe status to published`);
     } catch (err) {
@@ -241,7 +241,7 @@ module.exports = ({ db }) => {
               authorization: authorization,
             },
           });
-          global.logger.info({ message: `Deleted photo for recipeStepID ${recipeStepID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipeSteps-deleteStep* Deleted photo for recipeStepID ${recipeStepID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         } catch (err) {
           throw errorGen(err.message || `Error deleting photo for recipeStep ${recipeStepID}: ${err.message}`, err.code || 520, err.name || 'unhandledError_recipeSteps-deleteStep', err.isOperational || false, err.severity || 2);
         }
@@ -285,14 +285,14 @@ module.exports = ({ db }) => {
         if (recipeUpdateError) {
           throw errorGen(`Error updating recipe status: ${recipeUpdateError.message}`, 514, 'failSupabaseDelete', true, 3);
         }
-        global.logger.info({ message: `Recipe now has no Steps. Updated recipe status to noSteps`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+        global.logger.info({ message: `*recipeSteps-deleteStep* Recipe now has no Steps. Updated recipe status to noSteps`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       }
 
       //decrement the sequence of all recipeSteps with sequence > existing sequence
       for (let i = recipeStep[0].sequence; i < existingRecipeSteps.length; i++) {
         await sequenceShifter(userID, authorization, existingRecipeSteps[i].recipeStepID, existingRecipeSteps[i].sequence - 1);
       }
-      global.logger.info({ message: `Decremented sequence of all recipeSteps with sequence greater than deleted recipeStep ID ${recipeStepID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipeSteps-deleteStep* Decremented sequence of all recipeSteps with sequence greater than deleted recipeStep ID ${recipeStepID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeSteps deleteStep', err.code || 520, err.name || 'unhandledError_recipeSteps-deleteStep', err.isOperational || false, err.severity || 2);
     }

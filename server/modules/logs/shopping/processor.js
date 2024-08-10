@@ -27,8 +27,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      // global.logger.info(`Got ${logs.length} shopping logs`);
-      global.logger.info({message:`Got ${logs.length} shopping logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*shoppingLogs-getAll* Got ${logs.length} shopping logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return logs;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLogs getAll', err.code || 520, err.name || 'unhandledError_shoppingLogs-getAll', err.isOperational || false, err.severity || 2);
@@ -44,7 +43,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({message:`Got log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
+      global.logger.info({message:`*shoppingLogs-getShoppingListByID* Got log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
       return log;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in shoppingLogs getShoppingListByID', err.code || 520, err.name || 'unhandledError_shoppingLogs-getShoppingListByID', err.isOperational || false, err.severity || 2);

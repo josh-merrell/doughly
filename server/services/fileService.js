@@ -4,7 +4,7 @@ const { errorGen } = require('../middleware/errorHandling');
 ('use strict');
 
 async function uploadBackup(type, userID, filepath) {
-  global.logger.info({ message: `ploading backup filename: ${filepath}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+  global.logger.info({ message: `*fileService-uploadBackup* Uploading backup filename: ${filepath}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
   const fs = require('fs');
   const path = require('path');
 
@@ -44,7 +44,7 @@ async function deleteOldBackup(userID, filename) {
 
   try {
     await s3Client.send(command);
-    global.logger.info({ message: `Successfully deleted old backup file: daily/${userID}/${filename}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+    global.logger.info({ message: `*fileService-deleteOldBackup* Successfully deleted old backup file: daily/${userID}/${filename}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     return { message: 'Successfully deleted old backup file' };
   } catch (err) {
     throw errorGen(err.message || 'Unhandled Error in fileService deleteOldBackup', err.code || 520, err.name || 'unhandledError_fileService-deleteOldBackup', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity

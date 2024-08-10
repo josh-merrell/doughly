@@ -79,7 +79,7 @@ const addUnitRatio = async (material, unitA, unitB, ratio) => {
     if (checkData.Item) {
       // if item is approved, return
       if (checkData.Item.currentStatus === 'approved') {
-        global.logger.info({ message: `'addUnitRatio' Unit ratio '${material}-${unitA}-${unitB}' already exists and is approved`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+        global.logger.info({ message: `*unitRatioStoreService-addUnitRatio* Unit ratio '${material}-${unitA}-${unitB}' already exists and is approved`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
         return {
           currentStatus: 'success',
           data: null,
@@ -89,7 +89,7 @@ const addUnitRatio = async (material, unitA, unitB, ratio) => {
 
     // no approved item found, so add the draft or overwrite the existing draft
     const data = await docClient.put(params).promise();
-    global.logger.info({ message: `'addUnitRatio' Added unit ratio '${material}-${unitA}-${unitB}' in draft currentStatus`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*unitRatioStoreService-addUnitRatio* Added unit ratio '${material}-${unitA}-${unitB}' in draft currentStatus`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     return {
       currentStatus: 'success',
       data,
@@ -100,7 +100,7 @@ const addUnitRatio = async (material, unitA, unitB, ratio) => {
 };
 
 const getDraftUnitRatios = async () => {
-  global.logger.info({ message: `'getDraftUnitRatios' Retrieving all draft unit ratios`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+  global.logger.info({ message: `*unitRatioStoreService-getDraftUnitRatios* Retrieving all draft unit ratios`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
   const params = {
     TableName: 'dl-prod-unit-conversion-store',
     FilterExpression: 'currentStatus = :currentStatus',
@@ -110,7 +110,7 @@ const getDraftUnitRatios = async () => {
   };
   try {
     const data = await docClient.scan(params).promise();
-    global.logger.info({ message: `'getDraftUnitRatios' Retrieved ${data.Items.length} draft unit ratios`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `'*unitRatioStoreService-getDraftUnitRatios* Retrieved ${data.Items.length} draft unit ratios`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     return {
       currentStatus: 'success',
       data: data.Items,
@@ -135,7 +135,7 @@ const batchApproveUnitRatios = async (ratios) => {
   });
   try {
     const data = await Promise.all(promises);
-    global.logger.info({ message: `'batchApproveUnitRatios' Approved ${ratios.length} unit ratios`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*unitRatioStoreService-batchApproveUnitRatios* Approved ${ratios.length} unit ratios`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     return {
       currentStatus: 'success',
       data,
@@ -158,7 +158,7 @@ const batchDeleteUnitRatios = async (ratios) => {
   });
   try {
     const data = await Promise.all(promises);
-    global.logger.info({ message: `'batchDeleteUnitRatios' Deleted ${ratios.length} unit ratios`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*unitRatioStoreService-batchDeleteUnitRatios* Deleted ${ratios.length} unit ratios`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     return {
       currentStatus: 'success',
       data,
@@ -173,7 +173,7 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   // first, check for common ratio
   const checkCommonResult = await checkCommonRatios(unitA, unitB);
   if (checkCommonResult.success) {
-    global.logger.info({ message: `'getUnitRatio' Common ratio found for ${unitA}-${unitB}: ${checkCommonResult.ratio}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*unitRatioStoreService-getUnitRatio* Common ratio found for ${unitA}-${unitB}: ${checkCommonResult.ratio}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     return { ratio: checkCommonResult.ratio, needsReview: false, cost: 0 };
   }
 
@@ -181,15 +181,15 @@ const getUnitRatio = async (material, unitA, unitB, authorization, userID) => {
   const storeCheck = await checkForRatio(material, unitA, unitB);
   if (storeCheck.currentStatus === 'success') {
     if (storeCheck.ratio) {
-      global.logger.info({ message: `'getUnitRatio' Store ratio found for ${material}-${unitA}-${unitB}: ${storeCheck.ratio}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+      global.logger.info({ message: `*unitRatioStoreService-getUnitRatio* Store ratio found for ${material}-${unitA}-${unitB}: ${storeCheck.ratio}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
       return { ratio: storeCheck.ratio, needsReview: false, cost: 0 };
     }
   }
-  global.logger.info({ message: `'getUnitRatio' No store ratio found for ${material}-${unitA}-${unitB}, asking AI`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+  global.logger.info({ message: `*unitRatioStoreService-getUnitRatio* No store ratio found for ${material}-${unitA}-${unitB}, asking AI`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
   // try asking AI for estimate
   const data = await getUnitRatioAI(userID, authorization, material, unitA, unitB);
   const aiEstimate = Number(JSON.parse(data.response));
-  global.logger.info({ message: `'getUnitRatio' AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate}.`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
+  global.logger.info({ message: `*unitRatioStoreService-getUnitRatio* AI estimate for ${material}-${unitA}-${unitB}: ${aiEstimate}.`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
   if (aiEstimate) {
     // submit this returned ratio as a draft to the store
     addUnitRatio(material, unitA, unitB, aiEstimate);

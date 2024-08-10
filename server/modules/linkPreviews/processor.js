@@ -23,7 +23,7 @@ module.exports = ({ db, dbPublic }) => {
       // get recipe data
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
-        global.logger.info({ message: `Error getting recipe: ${recipeID}: ${error.message}. Returning fallback content.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
+        global.logger.info({ message: `*linkPreviews-recipePreview* Error getting recipe: ${recipeID}: ${error.message}. Returning fallback content.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
         return fallbackContent;
       }
       if (recipe.length === 0) {
@@ -33,7 +33,7 @@ module.exports = ({ db, dbPublic }) => {
 
       const { data: author, error: authorError } = await dbPublic.from('profiles').select().eq('user_id', recipeData.userID).single();
       if (authorError) {
-        global.logger.info({ message: `Error getting author: ${recipeData.userID}: ${error.message}. Returning recipe content without author name.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
+        global.logger.info({ message: `*linkPreviews-recipePreview* Error getting author: ${recipeData.userID}: ${error.message}. Returning recipe content without author name.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
       }
       let description = 'Check out my recipe, then make and share your own!';
       if (author.name_first) {

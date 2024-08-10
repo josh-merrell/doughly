@@ -25,7 +25,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting toolStocks: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${toolStocks.length} toolStocks`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*toolStocks-getAll* Got ${toolStocks.length} toolStocks`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return toolStocks;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in toolStocks getAll', err.code || 520, err.name || 'unhandledError_toolStocks-getAll', err.isOperational || false, err.severity || 2);
@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting toolStock: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got toolStock ID: ${toolStockID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*toolStocks-getByID* Got toolStock ID: ${toolStockID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return toolStock;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in toolStocks getByID', err.code || 520, err.name || 'unhandledError_toolStocks-getByID', err.isOperational || false, err.severity || 2);

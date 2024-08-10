@@ -32,7 +32,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeFeedback logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({message:`Got ${logs.length} recipeFeedback logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*recipeFeedbackLogs-getAll* Got ${logs.length} recipeFeedback logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return logs;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeFeedbackLogs getAll', err.code || 520, err.name || 'unhandledError_recipeFeedbackLogs-getAll', err.isOperational || false, err.severity || 2);
@@ -48,7 +48,7 @@ module.exports = ({ db }) => {
       if (error) {
         throw errorGen(`Error getting recipeFeedback log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({message:`Got recipeFeedback log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
+      global.logger.info({message:`*recipeFeedbackLogs-getByID* Got recipeFeedback log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
       return log;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipeFeedbackLogs getByID', err.code || 520, err.name || 'unhandledError_recipeFeedbackLogs-getByID', err.isOperational || false, err.severity || 2);

@@ -27,7 +27,7 @@ async function sendTokenNotifications(destTokens, type, data) {
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
         global.logger.error({
-          message: `Error sending notification to token ${destTokens[index].pushToken}: ${result.reason.message}`,
+          message: `*firebaseHandler-sendTokenNotifications* Error sending notification to token ${destTokens[index].pushToken}: ${result.reason.message}`,
           level: 3,
           timestamp: new Date().toISOString(),
           userID: 0,
@@ -41,7 +41,7 @@ async function sendTokenNotifications(destTokens, type, data) {
 
 async function sendTokenNotification(message) {
   global.logger.info({
-    message: `'sendTokenNotification' Sending Notification: ${JSON.stringify(message)}`,
+    message: `*firebaseHandler-sendTokenNotification*  Sending Notification: ${JSON.stringify(message)}`,
     level: 7,
     timestamp: new Date().toISOString(),
     userID: 0,
@@ -50,7 +50,7 @@ async function sendTokenNotification(message) {
   try {
     const response = await messaging.send(message);
     global.logger.info({
-      message: `Successfully sent token message: ${response}`,
+      message: `*firebaseHandler-sendTokenNotification* Successfully sent token message: ${response}`,
       level: 6,
       timestamp: new Date().toISOString(),
       userID: 0,

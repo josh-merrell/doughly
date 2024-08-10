@@ -54,7 +54,7 @@ module.exports = ({ db, dbPublic }) => {
           uniqueNameIngredients[i.name]['ingredients'].push(i);
         }
       });
-      global.logger.info({ message: `UNIQUE NAME INGREDIENTS: ${JSON.stringify(uniqueNameIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-contructRecipe* UNIQUE NAME INGREDIENTS: ${JSON.stringify(uniqueNameIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       const ingredientIDPromises = [];
       for (const [name, value] of Object.entries(uniqueNameIngredients)) {
         // first get 'ingredientID' for each group of ingredients with the same name using 'getIngredientID' endpoint
@@ -65,7 +65,7 @@ module.exports = ({ db, dbPublic }) => {
         );
       }
       await Promise.allSettled(ingredientIDPromises);
-      global.logger.info({ message: `UNIQUE NAME INGREDIENTS AFTER GETTING INGREDIENTID: ${JSON.stringify(uniqueNameIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipe* UNIQUE NAME INGREDIENTS AFTER GETTING INGREDIENTID: ${JSON.stringify(uniqueNameIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       // then create recipeIngredients for each ingredient group
       const ingredientPromises = [];
       for (const [, value] of Object.entries(uniqueNameIngredients)) {
@@ -148,8 +148,8 @@ module.exports = ({ db, dbPublic }) => {
       // Stop timer and calculate duration
       const constructEndTime = new Date();
       const constructDuration = constructEndTime - constructStartTime;
-      global.logger.info({ message: `Successfully constructed recipe ${recipe.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
-      global.logger.info({ message: `*TIME* constructRecipe: ${constructDuration / 1000} seconds`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipe* Successfully constructed recipe ${recipe.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipe* *TIME* constructRecipe: ${constructDuration / 1000} seconds`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       return { recipeID: recipe.recipeID };
     } catch (error) {
       //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
@@ -190,7 +190,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
       ingredientID = Number(data.ingredientID);
-      global.logger.info({ message: `CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getIngredientID* CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // return ingredientID
       return ingredientID;
     } catch (err) {
@@ -200,13 +200,13 @@ module.exports = ({ db, dbPublic }) => {
 
   async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
     try {
-      global.logger.info({ message: `CONSTRUCT RI: ${JSON.stringify(ingredient)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipeIngredient* CONSTRUCT RI: ${JSON.stringify(ingredient)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       if (!ingredient.ingredientID || ingredient.ingredientID === 0) {
         throw errorGen(`'constructRecipeIngredient' ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`, 510, 'dataValidationErr', false, 3);
       }
       // Then, create the recipeIngredient
       global.logger.info({
-        message: `CALLING RI CREATE WITH BODY: ${JSON.stringify({
+        message: `*recipes-constructRecipeIngredient* CALLING RI CREATE WITH BODY: ${JSON.stringify({
           recipeID,
           ingredientID: ingredient.ingredientID,
           measurementUnit: ingredient.measurementUnit,
@@ -245,7 +245,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function constructRecipeTool(tool, authorization, userID, recipeID) {
     try {
-      global.logger.info({ message: `CONSTRUCT RT: ${tool}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipeTool* CONSTRUCT RT: ${tool}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       let toolID;
       if (tool.quantity === -1) {
         // create dummy recipeTool
@@ -261,7 +261,7 @@ module.exports = ({ db, dbPublic }) => {
           },
           { headers: { authorization } },
         );
-        global.logger.info({ message: `RETURNING DUMMY RT: ${data}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-constructRecipeTool* RETURNING DUMMY RT: ${data}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         return { recipeToolID: data.recipeToolID, toolID: toolID };
       }
 
@@ -279,14 +279,14 @@ module.exports = ({ db, dbPublic }) => {
           { headers: { authorization } },
         );
         toolID = Number(data.toolID);
-        global.logger.info({ message: `CREATED TOOL, NOW TOOLID IS: ${toolID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-constructRecipeTool* CREATED TOOL, NOW TOOLID IS: ${toolID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       } else {
         toolID = Number(tool.toolID);
-        global.logger.info({ message: `EXISTING TOOLID IS: ${toolID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-constructRecipeTool* EXISTING TOOLID IS: ${toolID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       }
       // Then, create the recipeTool
       global.logger.info({
-        message: `CALLING RT CREATE WITH BODY: ${JSON.stringify({
+        message: `*recipes-constructRecipeTool* CALLING RT CREATE WITH BODY: ${JSON.stringify({
           recipeID,
           toolID,
           quantity: tool.quantity,
@@ -416,7 +416,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipes: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${recipes.length} recipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getAll* Got ${recipes.length} recipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipes;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getAll', err.code || 520, err.name || 'unhandledError_recipes-getAll', err.isOperational || false, err.severity || 2);
@@ -430,7 +430,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting discoverRecipes: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${discoverRecipes.length} discoverRecipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getDiscover* Got ${discoverRecipes.length} discoverRecipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return discoverRecipes;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getDiscover', err.code || 520, err.name || 'unhandledError_recipes-getDiscover', err.isOperational || false, err.severity || 2);
@@ -445,7 +445,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipe: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got recipe`, level: 6, timestamp: new Date().toISOString(), userID: recipe[0].userID || 0 });
+      global.logger.info({ message: `*recipes-getByID* Got recipe`, level: 6, timestamp: new Date().toISOString(), userID: recipe[0].userID || 0 });
       return recipe;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getByID', err.code || 520, err.name || 'unhandledError_recipes-getByID', err.isOperational || false, err.severity || 2);
@@ -460,7 +460,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipeIngredients for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${recipeIngredients.length} recipeIngredients for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeIngredients[0].userID });
+      global.logger.info({ message: `*recipes-getRecipeIngredients* Got ${recipeIngredients.length} recipeIngredients for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeIngredients[0].userID });
       return recipeIngredients;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getRecipeIngredients', err.code || 520, err.name || 'unhandledError_recipes-getRecipeIngredients', err.isOperational || false, err.severity || 2);
@@ -475,7 +475,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipeTools for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: recipeTools[0].userID || 0 });
+      global.logger.info({ message: `*recipes-getRecipeTools* Got ${recipeTools.length} recipeTools for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeTools[0].userID || 0 });
       return recipeTools;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getRecipeTools', err.code || 520, err.name || 'unhandledError_recipes-getRecipeTools', err.isOperational || false, err.severity || 2);
@@ -491,7 +491,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipeSteps for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeSteps[0].userID });
+      global.logger.info({ message: `*recipes-getRecipeSteps* Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeSteps[0].userID });
       return recipeSteps;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSteps', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSteps', err.isOperational || false, err.severity || 2);
@@ -519,7 +519,7 @@ module.exports = ({ db, dbPublic }) => {
             sourceRecipeError.severity || 2,
           );
         }
-        global.logger.info({ message: `sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-getRecipeSubscriptions* sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
         // get profile using axios endpoint providing userID in query
         const { data: profile, error: profileError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/profiles?userID=${sourceRecipe[0].userID}`, { headers: { authorization } });
@@ -544,7 +544,7 @@ module.exports = ({ db, dbPublic }) => {
           authorPhotoURL: profile.imageURL,
         });
       }
-      global.logger.info({ message: `Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getRecipeSubscriptions* Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return enhancedSubscriptions;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSubscriptions', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptions', err.isOperational || false, err.severity || 2);
@@ -559,7 +559,7 @@ module.exports = ({ db, dbPublic }) => {
       if (error) {
         throw errorGen(`Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getRecipeSubscriptionsByRecipeID* Found ${subscriptions.length} subscriptions for recipe: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return subscriptions;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSubscriptionsByRecipeID', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptionsByRecipeID', err.isOperational || false, err.severity || 2);
@@ -609,7 +609,7 @@ module.exports = ({ db, dbPublic }) => {
       //add a 'created' log entry
       createRecipeLog(userID, authorization, 'createRecipe', recipe.recipeID, null, null, null, `Created Recipe: ${recipe.title}`);
 
-      global.logger.info({ message: `Created recipe ID:${recipe.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-create* Created recipe ID:${recipe.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // return recipe;
       return {
         recipeID: recipe.recipeID,
@@ -650,7 +650,7 @@ module.exports = ({ db, dbPublic }) => {
       //   fs.mkdirSync(path.dirname(recipeJSONPath), { recursive: true });
       // }
       // fs.writeFileSync(recipeJSONPath, JSON.stringify(recipeJSON));
-      global.logger.info({ message: `'processRecipeJSON' JSON: ${JSON.stringify(recipeJSON)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON*  JSON: ${JSON.stringify(recipeJSON)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
       if (!recipeJSON.category) {
         throw errorGen(`No recipe category found in image. Can't create recipe.`, 515, 'cannotComplete', false, 3);
@@ -669,15 +669,15 @@ module.exports = ({ db, dbPublic }) => {
       const indexesToRemove = new Set();
       for (let i = 0; i < recipeJSON.ingredients.length; i++) {
         if (!recipeJSON.ingredients[i].name) {
-          global.logger.info({ message: `ingredient missing name. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* ingredient missing name. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           indexesToRemove.add(i);
         }
         if (!recipeJSON.ingredients[i].measurement || recipeJSON.ingredients[i].measurement <= 0) {
-          global.logger.info({ message: `missing or invalid ingredient measurement. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* missing or invalid ingredient measurement. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           indexesToRemove.add(i);
         }
         if (!recipeJSON.ingredients[i].measurementUnit) {
-          global.logger.info({ message: `missing ingredient measurementUnit. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* missing ingredient measurementUnit. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           indexesToRemove.add(i);
         }
         // convert units to singular
@@ -697,7 +697,7 @@ module.exports = ({ db, dbPublic }) => {
           if (recipeJSON.ingredients[i].measurementUnit === 'ounce') {
             recipeJSON.ingredients[i].measurementUnit = 'weightOunce';
           } else {
-            global.logger.info({ message: `invalid ingredient measurementUnit. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+            global.logger.info({ message: `*recipes-processRecipeJSON* invalid ingredient measurementUnit. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
             indexesToRemove.add(i);
           }
           continue;
@@ -736,11 +736,11 @@ module.exports = ({ db, dbPublic }) => {
       recipeJSON.steps = addStepSequences(recipeJSON.steps);
       for (let i = 0; i < recipeJSON.steps.length; i++) {
         if (!recipeJSON.steps[i].title) {
-          global.logger.info({ message: `step missing title. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* step missing title. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           toolIndexesToRemove.add(i);
         }
         if (!recipeJSON.steps[i].description) {
-          global.logger.info({ message: `step missing description. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* step missing description. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           toolIndexesToRemove.add(i);
         }
         recipeJSON.steps[i].stepID = 0;
@@ -765,7 +765,7 @@ module.exports = ({ db, dbPublic }) => {
       let unitRatioCost = 0;
       // add purchaseUnitRatios to ingredients in parrallel
       const ingredientPurchaseUnitRatioPromises = [];
-      global.logger.info({ message: `ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*recipes-processRecipeJSON* ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].purchaseUnitRatio) {
           matchedIngredients[i].RIneedsReview = false;
@@ -781,7 +781,7 @@ module.exports = ({ db, dbPublic }) => {
               if (result.cost) {
                 unitRatioCost += result.cost;
               }
-              global.logger.info({ message: `GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+              global.logger.info({ message: `*recipes-processRecipeJSON* GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
               matchedIngredients[i].purchaseUnitRatio = result.ratio;
               matchedIngredients[i].RIneedsReview = result.needsReview;
             }),
@@ -793,17 +793,17 @@ module.exports = ({ db, dbPublic }) => {
       matchedIngredients = matchedIngredients.filter((i) => {
         if (i.purchaseUnitRatio && typeof i.purchaseUnitRatio === 'number' && i.purchaseUnitRatio > 0) return true;
         else {
-          global.logger.info({ message: `Invalid purchaseUnitRatio for ingredient ${i.name}: ${i.purchaseUnitRatio}, removing from recipe.`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* Invalid purchaseUnitRatio for ingredient ${i.name}: ${i.purchaseUnitRatio}, removing from recipe.`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           return false;
         }
       });
-      global.logger.info({ message: `DONE ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS, MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* DONE ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS, MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       // if ingredientID is 0, also need to get gramRatio
       const ingredientGramRatioPromises = [];
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].ingredientID === 0) {
-          global.logger.info({ message: `ADDING GRAMRATIO TO NEW INGREDIENT: ${JSON.stringify(matchedIngredients[i])}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* ADDING GRAMRATIO TO NEW INGREDIENT: ${JSON.stringify(matchedIngredients[i])}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           const gramRatioPromise = getUnitRatio(matchedIngredients[i].name, 'gram', matchedIngredients[i].purchaseUnit, authorization, userID);
           ingredientGramRatioPromises.push(
             gramRatioPromise.then((result) => {
@@ -816,20 +816,20 @@ module.exports = ({ db, dbPublic }) => {
         }
       }
       await Promise.allSettled(ingredientGramRatioPromises);
-      global.logger.info({ message: `'processRecipeJSON' PRE FILTER: ${JSON.stringify(matchedIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON*  PRE FILTER: ${JSON.stringify(matchedIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       // remove any ingredients that have ingredientID of 0 and a gramRatio that is missing or less than 1
       matchedIngredients = matchedIngredients.filter((i) => {
         if (i.ingredientID !== 0) {
           return true;
         }
         if (!i.gramRatio || i.gramRatio <= 0 || typeof i.gramRatio !== 'number') {
-          global.logger.info({ message: `Invalid gramRatio for ingredient ${i.name}: ${i.gramRatio}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* Invalid gramRatio for ingredient ${i.name}: ${i.gramRatio}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           return false;
         }
         return true;
       });
 
-      global.logger.info({ message: `DONE ADDING GRAMRATIO TO MATCHED INGREDIENTS. MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* DONE ADDING GRAMRATIO TO MATCHED INGREDIENTS. MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // ***************************************************************************
 
       // match tools with user tools
@@ -856,11 +856,11 @@ module.exports = ({ db, dbPublic }) => {
         sourceAuthor: recipeJSON.sourceAuthor || '',
         sourceURL: recipeJSON.sourceURL || '',
       };
-      global.logger.info({ message: `CALLING CONSTRUCT WITH BODY: ${JSON.stringify(constructBody)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* CALLING CONSTRUCT WITH BODY: ${JSON.stringify(constructBody)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       if (recipePhotoURL) {
         constructBody['photoURL'] = recipePhotoURL;
       }
-      global.logger.info({ message: `CONSTRUCT BODY: ${JSON.stringify(constructBody)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* CONSTRUCT BODY: ${JSON.stringify(constructBody)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
       // call constructRecipe with body
       sendSSEMessage(userID, { message: `Details ready! Building new Recipe...` });
@@ -873,9 +873,9 @@ module.exports = ({ db, dbPublic }) => {
       // fix the vertexaiCost to 4 decimals
       const vertexaiCost = parseFloat(matchedIngredientsResponse.vertexaiCost).toFixed(4);
       // global.logger.info(`vertexAI Cost (all ingr) to find match and get PU/LD: ${vertexaiCost}`);
-      global.logger.info({ message: `vertexAI Cost (all ingr) to find match and get PU/LD: ${vertexaiCost}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* vertexAI Cost (all ingr) to find match and get PU/LD: ${vertexaiCost}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       const vertexaiUnitConversionCost = parseFloat(unitRatioCost).toFixed(4);
-      global.logger.info({ message: `vertexAI Cost (all unit conversion): ${vertexaiUnitConversionCost}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* vertexAI Cost (all unit conversion): ${vertexaiUnitConversionCost}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       sendSSEMessage(userID, { message: `done` });
       return recipeID;
     } catch (err) {
@@ -902,7 +902,7 @@ module.exports = ({ db, dbPublic }) => {
         elapsedTime += 1;
         sendSSEMessage(userID, { message: `Getting recipe details from image. Expected Time: 25 seconds. Elapsed: ${elapsedTime}` });
       }, 1000); // Send progress update every second
-      global.logger.info({ message: `Calling visionRequest`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*recipes-createVision* Calling visionRequest`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       const visionStartTime = new Date();
       const { response, error } = await visionRequest(recipeSourceImageURLs, userID, authorization, 'generateRecipeFromImage');
       clearInterval(timer);
@@ -913,13 +913,13 @@ module.exports = ({ db, dbPublic }) => {
       // Stop timer and calculate duration
       const visionEndTime = new Date();
       const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
-      global.logger.info({ message: `*TIME* recipe visionRequest: ${visionDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createVision* *TIME* recipe visionRequest: ${visionDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;
-      global.logger.info({ message: `*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createVision* *TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       return recipeID;
     } catch (err) {
@@ -939,18 +939,18 @@ module.exports = ({ db, dbPublic }) => {
       let attempt = 1;
       while (attempt <= maxAttempts) {
         try {
-          global.logger.info({ message: `Attempt ${attempt} to create recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-createFromURL* Attempt ${attempt} to create recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           recipeID = await createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL);
           break;
         } catch (error) {
-          global.logger.info({ message: `Error creating recipe from URL: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-createFromURL* Error creating recipe from URL: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
           if (attempt === maxAttempts) {
             throw errorGen(`Reached Max retries for creating recipe from URL: ${error.message}`, 500);
           }
           attempt++;
         }
       }
-      global.logger.info({ message: `Created recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createFromURL* Created recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipeID;
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes createFromURL', err.code || 520, err.name || 'unhandledError_recipes-createFromURL', err.isOperational || false, err.severity || 2);
@@ -959,7 +959,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL) {
     try {
-      global.logger.info({ message: `Creating recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createFromURLAttempt* Creating recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // call 'getHtml' to get recipe details from URL
       sendSSEMessage(userID, { message: `Opening provided web page...` });
       const { html, error } = await getHtml(recipeURL, userID, authorization, 'generateRecipeFromURL');
@@ -971,7 +971,7 @@ module.exports = ({ db, dbPublic }) => {
       if (!htmlText) {
         throw errorGen(`Error extracting recipe details from URL: ${recipeURL}, cannot create recipe`, 515, 'cannotComplete', false, 2);
       }
-      global.logger.info({ message: `HTML TEXT: ${htmlText}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createFromURLAttempt* HTML TEXT: ${htmlText}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
       // call openaiHandler to build recipe json
       let elapsedTime = 0;
@@ -990,7 +990,7 @@ module.exports = ({ db, dbPublic }) => {
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;
-      global.logger.info({ message: `*TIME* URL recipe and construct total: ${totalDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createFromURLAttempt* *TIME* URL recipe and construct total: ${totalDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       return recipeID;
     } catch (err) {
@@ -1010,7 +1010,7 @@ module.exports = ({ db, dbPublic }) => {
         const primaryMatchResult = await matchIngredientByName(userID, authorization, ingredients[i], userIngredientsInfo);
         matchedIngredients.push(primaryMatchResult);
       }
-      global.logger.info({ message: `MATCHED INGREDIENTS AFTER PRIMARY METHOD: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-matchIngredients* MATCHED INGREDIENTS AFTER PRIMARY METHOD: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       const matchedTwiceIngredients = [];
       // Fallback to try using AI to find matches
@@ -1019,20 +1019,20 @@ module.exports = ({ db, dbPublic }) => {
       for (let i = 0; i < matchedIngredients.length; i++) {
         // if the matchedIngredient has an ingredientID of 0, we need to try asking AI to match it with an existing userIngredient. Make a promise of each call to the 'matchRecipeItemRequest' function and add to promises array. If the ingredientID is not 0, we already found a match and can skip this item.
         if (matchedIngredients[i].ingredientID === 0) {
-          global.logger.info({ message: `MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-matchIngredients* MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`, level: 7, timestamp: new Date().toISOString(), userID: userID });
           promises.push(
             matchRecipeIngredientRequest(userID, authorization, matchedIngredients[i].name, userIngredientNames)
               .then((data) => {
                 const ingredientJSON = data.response;
                 if (ingredientJSON.error) {
-                  global.logger.info({ message: `Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+                  global.logger.info({ message: `*recipes-matchIngredients* Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                   return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                 }
-                global.logger.info({ message: `AI MATCHED INGREDIENT: ${JSON.stringify(ingredientJSON)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+                global.logger.info({ message: `*recipes-matchIngredients* AI MATCHED INGREDIENT: ${JSON.stringify(ingredientJSON)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
                 if (ingredientJSON.foundMatch) {
                   const ingredientID = userIngredients.find((i) => i.name === ingredientJSON.ingredientName);
                   if (!ingredientID) {
-                    global.logger.info({ message: `Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+                    global.logger.info({ message: `*recipes-matchIngredients* Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                     return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                   }
                   return {
@@ -1045,11 +1045,11 @@ module.exports = ({ db, dbPublic }) => {
                 } else {
                   const validUnits = process.env.MEASUREMENT_UNITS.split(',');
                   if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
-                    global.logger.info({ message: `AI provided Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+                    global.logger.info({ message: `*recipes-matchIngredients* AI provided Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                     return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                   }
                   if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
-                    global.logger.info({ message: `AI provided Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+                    global.logger.info({ message: `*recipes-matchIngredients* AI provided Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                     return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                   }
                   return {
@@ -1064,7 +1064,7 @@ module.exports = ({ db, dbPublic }) => {
                 // add character count to vertexaiCharacters
               })
               .catch((error) => {
-                global.logger.info({ message: `Error matching ingredient with AI: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+                global.logger.info({ message: `*recipes-matchIngredients* Error matching ingredient with AI: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
                 return { ...matchedIngredients[i], invalid: true };
               }),
           );
@@ -1081,11 +1081,11 @@ module.exports = ({ db, dbPublic }) => {
       for (let i = 0; i < results.length; i++) {
         vertexaiCost += results[i].value?.cost || 0;
         if (results[i].status === 'fulfilled' && results[i].invalid) {
-          global.logger.info({ message: `Invalid ingredient, not adding to recipe: ${JSON.stringify(results[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-matchIngredients* Invalid ingredient, not adding to recipe: ${JSON.stringify(results[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           //don't add invalid ingredients to the matchedTwiceIngredients array
         }
         if (results[i].status === 'fulfilled' && results[i].value && !results[i].value.invalid) {
-          global.logger.info({ message: `PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-matchIngredients* PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           matchedTwiceIngredients.push(results[i].value);
         }
       }
@@ -1099,14 +1099,14 @@ module.exports = ({ db, dbPublic }) => {
   async function matchIngredientByName(userID, authorization, recipeIngredient, userIngredientNames) {
     try {
       // search for exact name match (case-insensitive) among existing user ingredients for provided recipe ingredient. If one is found, return resulting recipeIngredient with ingredientID and retrieved purchasedUnitRatio, also including the 'needsReview' value provided by getPurchaseUnitRatio. If no match is found, return recipeIngredient with ingredientID of 0.
-      global.logger.info({ message: `IN PRIMARY INGREDIENT NAME MATCH. RI: ${JSON.stringify(recipeIngredient)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-matchIngredientByName* IN PRIMARY INGREDIENT NAME MATCH. RI: ${JSON.stringify(recipeIngredient)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
       const userIngredientMatch = userIngredientNames.find((i) => i.name.toLowerCase() === recipeIngredient.name.toLowerCase());
 
       if (userIngredientMatch) {
-        global.logger.info({ message: `FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-matchIngredientByName* FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
-        global.logger.info({ message: `GETTING PUR FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-matchIngredientByName* GETTING PUR FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         let purchaseUnitRatio;
         let needsReview;
         if (!userIngredientMatch.measurementUnit === userIngredientMatch.purchaseUnit) {
@@ -1117,7 +1117,7 @@ module.exports = ({ db, dbPublic }) => {
           purchaseUnitRatio = data.unitRatio;
           needsReview = data.needsReview;
         }
-        global.logger.info({ message: `PUR RESULT: ${purchaseUnitRatio}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-matchIngredientByName* PUR RESULT: ${purchaseUnitRatio}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
         const result = {
           name: recipeIngredient.name,
@@ -1139,7 +1139,7 @@ module.exports = ({ db, dbPublic }) => {
         return result;
       }
 
-      global.logger.info({ message: `NO MATCH FOUND FOR ${recipeIngredient.name}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-matchIngredientByName* NO MATCH FOUND FOR ${recipeIngredient.name}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       return {
         name: recipeIngredient.name,
         measurement: recipeIngredient.measurement,
@@ -1178,7 +1178,7 @@ module.exports = ({ db, dbPublic }) => {
             return toolJSON.toolID ? { toolID: Number(toolJSON.toolID), name: tool.name, quantity: tool.quantity } : { toolID: 0, quantity: tool.quantity, name: tool.name };
           })
           .catch((error) => {
-            global.logger.info({ message: `Error matching tool: ${error.message}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+            global.logger.info({ message: `*recipes-matchTools* Error matching tool: ${error.message}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
             return null;
           });
       });
@@ -1205,13 +1205,13 @@ module.exports = ({ db, dbPublic }) => {
 
   async function secondaryToolsMatch(recipeTool, userTools, userID) {
     try {
-      global.logger.info({ message: `IN SECONDARY TOOLS MATCH. RT: ${JSON.stringify(recipeTool)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-secondaryToolsMatch* IN SECONDARY TOOLS MATCH. RT: ${JSON.stringify(recipeTool)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       const userToolMatch = userTools.find((t) => t.name.toLowerCase() === recipeTool.name.toLowerCase());
       if (userToolMatch) {
-        global.logger.info({ message: `FOUND MATCH FOR ${recipeTool.name} in ${JSON.stringify(userToolMatch)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-secondaryToolsMatch* FOUND MATCH FOR ${recipeTool.name} in ${JSON.stringify(userToolMatch)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         return { toolID: Number(userToolMatch.toolID), name: recipeTool.name, quantity: recipeTool.quantity };
       }
-      global.logger.info({ message: `NO MATCH FOUND FOR ${recipeTool.name}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-secondaryToolsMatch* NO MATCH FOUND FOR ${recipeTool.name}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       return { toolID: 0, name: recipeTool.name, quantity: recipeTool.quantity };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes secondaryToolsMatch', err.code || 520, err.name || 'unhandledError_recipes-secondaryToolsMatch', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -1347,7 +1347,7 @@ module.exports = ({ db, dbPublic }) => {
       if (recipe[0].photoURL) {
         const url = `${process.env.NODE_HOST}:${process.env.PORT}/uploads/image?userID=${encodeURIComponent(options.userID)}&photoURL=${encodeURIComponent(recipe[0].photoURL)}&type=recipe&id=${options.recipeID}`;
         await axios.delete(url, { headers: { authorization: options.authorization } });
-        global.logger.info({ message: `Deleted photo for recipeID ${options.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
+        global.logger.info({ message: `*recipes-deleteRecipe* Deleted photo for recipeID ${options.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
       }
 
       // attempt to delete the recipe and all component data
@@ -1363,7 +1363,7 @@ module.exports = ({ db, dbPublic }) => {
 
       //add a 'deleted' log entry
       createRecipeLog(options.userID, options.authorization, 'deleteRecipe', Number(options.recipeID), null, null, null, `deleted recipe: ${recipe[0].title}, ID: ${options.recipeID}`);
-      global.logger.info({ message: `Deleted recipe ID: ${options.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
+      global.logger.info({ message: `*recipes-deleteRecipe* Deleted recipe ID: ${options.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
       return { success: true };
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes deleteRecipe', err.code || 520, err.name || 'unhandledError_recipes-deleteRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
@@ -1548,7 +1548,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error archiving created recipes: ${archiveError.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
-      global.logger.info({ message: `Updated 'freeTier' recipe selections: ${recipeIDs}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-archiveCreatedRecipe* Updated 'freeTier' recipe selections: ${recipeIDs}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes archiveCreatedRecipes', err.code || 520, err.name || 'unhandledError_recipes-archiveCreatedRecipes', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
@@ -1570,7 +1570,7 @@ module.exports = ({ db, dbPublic }) => {
         throw errorGen(`Error archiving subscriptions: ${archiveError.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
-      global.logger.info({ message: `Updated 'freeTier' subscription selections: ${subscriptionIDs}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-archiveSubscriptions* Updated 'freeTier' subscription selections: ${subscriptionIDs}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
       throw errorGen(err.message || 'Unhandled Error in recipes archiveSubscriptions', err.code || 520, err.name || 'unhandledError_recipes-archiveSubscriptions', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
