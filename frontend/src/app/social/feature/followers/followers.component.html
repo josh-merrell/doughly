@@ -5,7 +5,7 @@
       width="35"
       height="35"
       viewBox="0 0 15 15"
-      class="pt-dl-1 text-dl-grey-3 dark:text-dl-grey-8"
+      class="pt-dl-1 text-dl-tan-3 dark:text-dl-tan-8"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -19,7 +19,7 @@
     <input
       #searchInput
       type="text"
-      class="dark:bg-dl-grey-2 rounded-dl-2 ml-dl-2 w-dl-13 border-none text-dl-5 text-dl-grey-4 placeholder-dl-grey-4 focus:ring-transparent dark:text-dl-grey-7 dark:placeholder-dl-grey-7"
+      class="ml-dl-2 w-dl-13 rounded-dl-2 border-none text-dl-5 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
       [placeholder]="
         !searchFilter() ? 'Filter by First or Last Name...' : searchFilter()
       "
@@ -32,9 +32,9 @@
     <span
       class="inline-flex items-center border-b-4 text-dl-6 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-8 text-dl-grey-2 dark:border-dl-blue-3 dark:text-dl-grey-9':
+        ' border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'followers',
-        'border-transparent text-dl-grey-5 dark:text-dl-grey-6':
+        'border-transparent text-dl-tan-5 dark:text-dl-tan-6':
           view() !== 'followers'
       }"
       (click)="view.set('followers')"
@@ -44,9 +44,9 @@
     <span
       class="inline-flex items-center border-b-4 text-dl-6 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        ' border-dl-blue-8 text-dl-grey-2 dark:border-dl-blue-3 dark:text-dl-grey-9':
+        ' border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'following',
-        'border-transparent text-dl-grey-5 dark:text-dl-grey-6':
+        'border-transparent text-dl-tan-5 dark:text-dl-tan-6':
           view() !== 'following'
       }"
       (click)="view.set('following')"
@@ -63,7 +63,7 @@
       <dl-friend-card
         *ngFor="let person of filteredPersons(); let i = index"
         (click)="onPersonClick(person)"
-        class="w-dl-16 border-dl-grey-9 py-dl-3 dark:border-dl-grey-3"
+        class="w-dl-16 border-dl-tan-9 py-dl-3 dark:border-dl-tan-3"
         [friend]="person"
         [ngClass]="{
           'border-b-2': i !== filteredPersons().length - 1
@@ -75,7 +75,7 @@
   <!-- Total Count -->
   <span
     *ngIf="filteredPersons().length > 0"
-    class="text-dl-5 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
+    class="text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >{{ filteredPersons().length }} total</span
   >
 </div>

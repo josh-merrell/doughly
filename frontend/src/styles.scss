@@ -61,17 +61,17 @@ body {
 // Create light theme class
 .light {
   @include mat.all-component-themes($my-light-theme);
-  background-color: #ffffff;
+  background-color: #E9E6E2;
 }
 
 // Create dark theme class
 .dark {
   @include mat.all-component-themes($my-dark-theme);
-  background-color: #1f2933;
+  background-color: #26221C;
 }
 
 .product-page {
-  background-color: #127fbf !important;
+  background-color: #6A762D !important;
 }
 
 .modal-global-styling {

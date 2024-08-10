@@ -27,7 +27,7 @@ async function sendTokenNotifications(destTokens, type, data) {
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
         global.logger.error({
-          message: `Error sending notification to token ${destTokens[index].pushToken}: ${result.reason.message}`,
+          message: `*firebaseHandler-sendTokenNotifications* Error sending notification to token ${destTokens[index].pushToken}: ${result.reason.message}`,
           level: 3,
           timestamp: new Date().toISOString(),
           userID: 0,
@@ -35,13 +35,13 @@ async function sendTokenNotifications(destTokens, type, data) {
       }
     });
   } catch (err) {
-    throw errorGen(err.message || 'Unhandled Error in firebaseHandler sendTokenNotifications', err.code || 520, err.name || 'unhandledError_firebaseHandler-sendTokenNotifications', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+    throw errorGen(err.message || '*firebaseHandler-sendTokenNotifications* Unhandled Error', err.code || 520, err.name || 'unhandledError_firebaseHandler-sendTokenNotifications', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
   }
 }
 
 async function sendTokenNotification(message) {
   global.logger.info({
-    message: `'sendTokenNotification' Sending Notification: ${JSON.stringify(message)}`,
+    message: `*firebaseHandler-sendTokenNotification*  Sending Notification: ${JSON.stringify(message)}`,
     level: 7,
     timestamp: new Date().toISOString(),
     userID: 0,
@@ -50,13 +50,13 @@ async function sendTokenNotification(message) {
   try {
     const response = await messaging.send(message);
     global.logger.info({
-      message: `Successfully sent token message: ${response}`,
+      message: `*firebaseHandler-sendTokenNotification* Successfully sent token message: ${response}`,
       level: 6,
       timestamp: new Date().toISOString(),
       userID: 0,
     });
   } catch (err) {
-    throw errorGen(`${err.message} || Unhandled Error in firebaseHandler sendTokenNotification`, err.code || 520, `${err.name} || unhandledError_firebaseHandler-sendTokenNotification`, err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+    throw errorGen(err.message || `*firebaseHandler-sendTokenNotification* Unhandled Error in firebaseHandler sendTokenNotification`, err.code || 520, `${err.name} || unhandledError_firebaseHandler-sendTokenNotification`, err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
   }
 }
 

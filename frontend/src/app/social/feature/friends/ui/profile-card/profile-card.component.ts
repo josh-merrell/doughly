@@ -101,20 +101,20 @@ export class ProfileCardComponent {
     switch (index) {
       case 1:
         return useDarkMode
-          ? this.stylesService.getHex('pink-7')
-          : this.stylesService.getHex('pink-4');
+          ? this.stylesService.getHex('pinknew-7')
+          : this.stylesService.getHex('pinknew-4');
       case 2:
         return useDarkMode
-          ? this.stylesService.getHex('grey-10')
-          : this.stylesService.getHex('grey-1');
+          ? this.stylesService.getHex('tan-10')
+          : this.stylesService.getHex('tan-1');
       case 3:
         return useDarkMode
-          ? this.stylesService.getHex('grey-7')
-          : this.stylesService.getHex('grey-4');
+          ? this.stylesService.getHex('tan-7')
+          : this.stylesService.getHex('tan-4');
       default:
         return useDarkMode
-          ? this.stylesService.getHex('pink-7')
-          : this.stylesService.getHex('pink-4');
+          ? this.stylesService.getHex('pinknew-7')
+          : this.stylesService.getHex('pinknew-4');
     }
   }
 

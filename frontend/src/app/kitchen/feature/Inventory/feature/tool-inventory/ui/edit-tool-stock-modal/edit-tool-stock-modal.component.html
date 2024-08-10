@@ -1,15 +1,15 @@
 <div
-  class="max-h-dl-17 w-dl-14 transform overflow-y-auto rounded-dl-3 bg-white px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="max-h-dl-17 w-dl-14 transform overflow-y-auto rounded-dl-3 bg-dl-tan-10 px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isUpdating"></mat-spinner>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isUpdating">
     <div class="flex w-full flex-col">
       <div class="mt-dl-2 space-x-1 whitespace-nowrap text-center">
-        <span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6">Edit</span
-        ><span class="text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">{{
+        <span class="text-dl-6 text-dl-tan-5 dark:text-dl-tan-6">Edit</span
+        ><span class="text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">{{
           tool()?.name
         }}</span
-        ><span class="text-dl-6 text-dl-grey-5 dark:text-dl-grey-6">stock</span>
+        ><span class="text-dl-6 text-dl-tan-5 dark:text-dl-tan-6">stock</span>
       </div>
 
       <!--FORM FIELDS-->
@@ -23,15 +23,15 @@
       </div>
       <!---->
 
-      <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mt-dl-3">
+      <div class="mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
         <button
           type="button"
-          class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
-            'cursor-pointer bg-dl-pink-4 dark:bg-dl-pink-7':
+            'cursor-pointer bg-dl-pinknew-4 dark:bg-dl-pinknew-7':
               form.valid && !form.pristine,
-            'bg-dl-grey-7': !form.valid || form.pristine
+            'bg-dl-tan-7': !form.valid || form.pristine
           }"
           [disabled]="!form.valid || form.pristine"
           (click)="onSubmit()"
@@ -40,7 +40,7 @@
         </button>
         <button
           type="button"
-          class="sm:mt-0 sm:w-auto mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
+          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
           (click)="onCancel()"
         >
           Cancel

@@ -7,9 +7,9 @@
     >
       <div
         *ngFor="let list of displaySharedShoppingLists()"
-        class="mr-dl-4 flex h-dl-6 flex-shrink-0 items-center rounded-full bg-white shadow-md dark:bg-dl-grey-2"
+        class="mr-dl-4 flex h-dl-6 flex-shrink-0 items-center rounded-full bg-dl-tan-10 shadow-md dark:bg-dl-tan-2"
         [ngClass]="{
-          'border border-dl-grey-3 dark:border dark:border-dl-grey-7': list.shoppingListID === selectedListID(),
+          'border border-dl-tan-3 dark:border dark:border-dl-tan-7': list.shoppingListID === selectedListID(),
         }"
         (click)="onListClick(list.shoppingListID)"
       >
@@ -22,7 +22,7 @@
             alt="friend profile image"
           />
           <span
-            class="inline-flex h-dl-5 w-dl-5 items-center justify-center rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
+            class="inline-flex h-dl-5 w-dl-5 items-center justify-center rounded-full bg-dl-tan-9 dark:bg-dl-tan-3"
             *ngIf="
               !list.friend.imageURL &&
               list.friend.nameFirst &&
@@ -30,7 +30,7 @@
             "
           >
             <span
-              class="text-dl-6 font-dl-3 leading-none text-dl-grey-3 dark:text-dl-grey-9"
+              class="text-dl-6 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
               >{{ list.friend.nameFirst[0] + list.friend.nameLast[0] }}</span
             >
           </span>
@@ -38,7 +38,7 @@
         <!-- List Author Username and Item Count -->
         <div class="mr-dl-3 flex flex-col items-start justify-between">
           <p
-            class="mr-dl-3 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+            class="mr-dl-3 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
           >
             {{ list.friend.username }}'s list
           </p>
@@ -74,12 +74,12 @@
     <!-- Header Row -->
     <div class="mb-dl-3 flex w-full justify-between px-dl-5">
       <p
-        class="mb-dl-3 mt-dl-5 pl-dl-7 text-center text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 mt-dl-5 pl-dl-7 text-center text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Item
       </p>
       <p
-        class="mb-dl-3 mt-dl-5 text-center text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-3 mt-dl-5 text-center text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Purchased Amount
       </p>
@@ -87,10 +87,10 @@
     <!-- List -->
     <div
       *ngIf="!isLoading()"
-      class="relative px-dl-3 mb-dl-5 flex w-full flex-grow flex-col items-center overflow-y-auto"
+      class="relative mb-dl-5 flex w-full flex-grow flex-col items-center overflow-y-auto px-dl-3"
     >
       <div
-        class="relative mb-dl-3 flex min-h-dl-6 w-full items-center justify-between rounded-dl-2 bg-dl-grey-10 px-dl-5 py-dl-2 dark:bg-dl-grey-2"
+        class="relative mb-dl-3 flex min-h-dl-6 w-full items-center justify-between rounded-dl-2 bg-dl-tan-10 px-dl-5 py-dl-2 dark:bg-dl-tan-2"
         *ngFor="let item of selectedSLIngred().items"
       >
         <div
@@ -160,18 +160,16 @@
           <!-- Box to cover Checkmark (only if item 'purchasedMeasurement' is present but not yet saved)-->
           <div
             *ngIf="!item.store && item.purchasedMeasurement && item.valueValid"
-            class="absolute left-5 top-6 z-20 h-3 w-4 bg-dl-pink-7 dark:bg-dl-pink-4"
+            class="absolute left-5 top-6 z-20 h-3 w-4 bg-dl-pinknew-7 dark:bg-dl-pinknew-4"
           ></div>
 
           <div class="ml-dl-4 flex flex-col">
-            <span
-              class="text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
-            >
+            <span class="text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10">
               {{ item.ingredientName }}
             </span>
             <div class="flex items-center">
               <span
-                class="mr-dl-2 text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+                class="mr-dl-2 text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               >
                 {{ Math.ceil(item.needMeasurement) }}
                 {{
@@ -191,7 +189,7 @@
         </div>
         <div class="relative flex items-center justify-between">
           <input
-            class="w-full rounded-md border-0 bg-dl-grey-10 px-dl-4 py-dl-4 text-dl-6 text-dl-grey-1 outline-none ring-2 ring-inset ring-dl-grey-8 transition-all duration-200 ease-in-out placeholder:text-dl-grey-2 focus:bg-white focus:shadow-md focus:shadow-dl-blue-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-3 dark:text-dl-grey-9 dark:ring-dl-grey-1 placeholder:dark:text-dl-grey-9 dark:focus:bg-dl-grey-4"
+            class="w-full rounded-md border-0 bg-dl-tan-10 px-dl-4 py-dl-4 text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset ring-dl-tan-8 transition-all duration-200 ease-in-out placeholder:text-dl-tan-2 focus:bg-dl-tan-10 focus:shadow-md focus:shadow-dl-green-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-3 dark:text-dl-tan-9 dark:ring-dl-tan-1 placeholder:dark:text-dl-tan-9 dark:focus:bg-dl-tan-4"
             *ngIf="!item.store"
             type="number"
             [min]="item.needMeasurement"
@@ -212,7 +210,7 @@
             class="mr-dl-6 flex w-dl-6 flex-col items-center"
             *ngIf="item.store"
           >
-            <p class="text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
+            <p class="text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
               {{ Math.ceil(item.purchasedMeasurement) }}
             </p>
           </div>
@@ -231,7 +229,7 @@
         selectedSLIngred().itemsToSave &&
         selectedSLIngred().itemsToSave.length
       "
-      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pink-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-white shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-tan-10 shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
       (click)="onSaveClick()"
     >
       {{ saveButtonText }}

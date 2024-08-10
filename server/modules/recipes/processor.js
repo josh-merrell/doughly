@@ -54,7 +54,7 @@ module.exports = ({ db, dbPublic }) => {
           uniqueNameIngredients[i.name]['ingredients'].push(i);
         }
       });
-      global.logger.info({ message: `UNIQUE NAME INGREDIENTS: ${JSON.stringify(uniqueNameIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-contructRecipe* UNIQUE NAME INGREDIENTS: ${JSON.stringify(uniqueNameIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       const ingredientIDPromises = [];
       for (const [name, value] of Object.entries(uniqueNameIngredients)) {
         // first get 'ingredientID' for each group of ingredients with the same name using 'getIngredientID' endpoint
@@ -65,7 +65,7 @@ module.exports = ({ db, dbPublic }) => {
         );
       }
       await Promise.allSettled(ingredientIDPromises);
-      global.logger.info({ message: `UNIQUE NAME INGREDIENTS AFTER GETTING INGREDIENTID: ${JSON.stringify(uniqueNameIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipe* UNIQUE NAME INGREDIENTS AFTER GETTING INGREDIENTID: ${JSON.stringify(uniqueNameIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       // then create recipeIngredients for each ingredient group
       const ingredientPromises = [];
       for (const [, value] of Object.entries(uniqueNameIngredients)) {
@@ -80,7 +80,7 @@ module.exports = ({ db, dbPublic }) => {
         if (result.status === 'fulfilled') {
           createdItems.push({ ingredientID: result.value.ingredientID });
         } else {
-          throw errorGen(`constructRecipe' Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason}`, 515, 'cannotComplete', false, 3);
+          throw errorGen(`*recipes-constructRecipe* constructRecipe' Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason}`, 515, 'cannotComplete', false, 3);
         }
       }
 
@@ -94,7 +94,7 @@ module.exports = ({ db, dbPublic }) => {
           if (result.status === 'fulfilled') {
             createdItems.push({ toolID: result.value.toolID });
           } else {
-            throw errorGen(`constructRecipe' Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`, 515, 'cannotComplete', false, 3);
+            throw errorGen(`*recipes-constructRecipe* constructRecipe' Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`, 515, 'cannotComplete', false, 3);
           }
         }
       }
@@ -105,7 +105,7 @@ module.exports = ({ db, dbPublic }) => {
         if (result.status === 'fulfilled') {
           createdItems.push({ stepID: result.value.stepID });
         } else {
-          throw errorGen(`constructRecipe' Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`, 515, 'cannotComplete', false, 3);
+          throw errorGen(`*recipes-constructRecipe* constructRecipe' Failed when creating recipeSteps. Rolled-back. Failure: ${result.reason}`, 515, 'cannotComplete', false, 3);
         }
       }
 
@@ -125,7 +125,7 @@ module.exports = ({ db, dbPublic }) => {
         );
         if (subscriptionError) {
           throw errorGen(
-            subscriptionError.message || `'constructRecipe' Failed when creating recipeSubscription. Failure: ${subscriptionError}`,
+            subscriptionError.message || `*recipes-constructRecipe*  Failed when creating recipeSubscription. Failure: ${subscriptionError}`,
             subscriptionError.code || 520,
             subscriptionError.name || 'unhandledError_recipeCategories-getAll',
             subscriptionError.isOperational || false,
@@ -137,19 +137,19 @@ module.exports = ({ db, dbPublic }) => {
         //get current version of source recipe and update newRecipe version to match
         const { data: sourceRecipe, error: sourceRecipeError } = await db.from('recipes').select('version').eq('recipeID', sourceRecipeID).eq('deleted', false).single();
         if (sourceRecipeError) {
-          throw errorGen(`'constructRecipe' Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*recipes-constructRecipe*  Failed when getting sourceRecipe. Failure: ${sourceRecipeError}`, 511, 'failSupabaseSelect', true, 3);
         }
         const { error: updateError } = await db.from('recipes').update({ version: sourceRecipe.version }).eq('recipeID', recipe.recipeID);
         if (updateError) {
-          throw errorGen(`'constructRecipe' Failed when updating newRecipe version. Failure: ${updateError}`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*recipes-constructRecipe*  Failed when updating newRecipe version. Failure: ${updateError}`, 513, 'failSupabaseUpdate', true, 3);
         }
       }
 
       // Stop timer and calculate duration
       const constructEndTime = new Date();
       const constructDuration = constructEndTime - constructStartTime;
-      global.logger.info({ message: `Successfully constructed recipe ${recipe.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
-      global.logger.info({ message: `*TIME* constructRecipe: ${constructDuration / 1000} seconds`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipe* Successfully constructed recipe ${recipe.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipe* *TIME* constructRecipe: ${constructDuration / 1000} seconds`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       return { recipeID: recipe.recipeID };
     } catch (error) {
       //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
@@ -159,7 +159,7 @@ module.exports = ({ db, dbPublic }) => {
           deleteItem(createdItems[i], authorization);
         }
       }
-      throw errorGen(error.message || 'Unhandled Error in recipes constructRecipe', error.code || 520, error.name || 'unhandledError_recipe-constructRecipe', error.isOperational || false, error.severity || 2);
+      throw errorGen(error.message || '*recipes-constructRecipe* Unhandled Error', error.code || 520, error.name || 'unhandledError_recipe-constructRecipe', error.isOperational || false, error.severity || 2);
     }
   }
 
@@ -190,23 +190,23 @@ module.exports = ({ db, dbPublic }) => {
       }
       const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
       ingredientID = Number(data.ingredientID);
-      global.logger.info({ message: `CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getIngredientID* CREATED ING, NOW INGREDIENTID IS: ${ingredientID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // return ingredientID
       return ingredientID;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getIngredientID', err.code || 520, err.name || 'unhandledError_recipes-getIngredientID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getIngredientID* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getIngredientID', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function constructRecipeIngredient(ingredient, authorization, userID, recipeID) {
     try {
-      global.logger.info({ message: `CONSTRUCT RI: ${JSON.stringify(ingredient)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipeIngredient* CONSTRUCT RI: ${JSON.stringify(ingredient)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       if (!ingredient.ingredientID || ingredient.ingredientID === 0) {
-        throw errorGen(`'constructRecipeIngredient' ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-constructRecipeIngredient* ingredientID is 0. Cannot create recipeIngredient without a valid ingredientID`, 510, 'dataValidationErr', false, 3);
       }
       // Then, create the recipeIngredient
       global.logger.info({
-        message: `CALLING RI CREATE WITH BODY: ${JSON.stringify({
+        message: `*recipes-constructRecipeIngredient* CALLING RI CREATE WITH BODY: ${JSON.stringify({
           recipeID,
           ingredientID: ingredient.ingredientID,
           measurementUnit: ingredient.measurementUnit,
@@ -239,13 +239,13 @@ module.exports = ({ db, dbPublic }) => {
       );
       return { recipeIngredientID: data.recipeIngredientID, ingredientID: ingredient.ingredientID };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes constructRecipeIngredient', err.code || 520, err.name || 'unhandledError_recipes-constructRecipeIngredient', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-constructRecipeIngredient* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-constructRecipeIngredient', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function constructRecipeTool(tool, authorization, userID, recipeID) {
     try {
-      global.logger.info({ message: `CONSTRUCT RT: ${tool}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-constructRecipeTool* CONSTRUCT RT: ${tool}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       let toolID;
       if (tool.quantity === -1) {
         // create dummy recipeTool
@@ -261,7 +261,7 @@ module.exports = ({ db, dbPublic }) => {
           },
           { headers: { authorization } },
         );
-        global.logger.info({ message: `RETURNING DUMMY RT: ${data}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-constructRecipeTool* RETURNING DUMMY RT: ${data}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         return { recipeToolID: data.recipeToolID, toolID: toolID };
       }
 
@@ -279,14 +279,14 @@ module.exports = ({ db, dbPublic }) => {
           { headers: { authorization } },
         );
         toolID = Number(data.toolID);
-        global.logger.info({ message: `CREATED TOOL, NOW TOOLID IS: ${toolID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-constructRecipeTool* CREATED TOOL, NOW TOOLID IS: ${toolID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       } else {
         toolID = Number(tool.toolID);
-        global.logger.info({ message: `EXISTING TOOLID IS: ${toolID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-constructRecipeTool* EXISTING TOOLID IS: ${toolID}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       }
       // Then, create the recipeTool
       global.logger.info({
-        message: `CALLING RT CREATE WITH BODY: ${JSON.stringify({
+        message: `*recipes-constructRecipeTool* CALLING RT CREATE WITH BODY: ${JSON.stringify({
           recipeID,
           toolID,
           quantity: tool.quantity,
@@ -309,7 +309,7 @@ module.exports = ({ db, dbPublic }) => {
       );
       return { recipeToolID: data.recipeToolID, toolID: toolID };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes constructRecipeTool', err.code || 520, err.name || 'unhandledError_recipes-constructRecipeTool', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-constructRecipeTool* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-constructRecipeTool', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -355,7 +355,7 @@ module.exports = ({ db, dbPublic }) => {
           },
         });
       }
-      throw errorGen(error.message || 'Unhandled Error in recipes constructRecipeStep', error.code || 520, error.name || 'unhandledError_recipes-constructRecipeStep', error.isOperational || false, error.severity || 2);
+      throw errorGen(error.message || '*recipes-constructRecipeStep* Unhandled Error', error.code || 520, error.name || 'unhandledError_recipes-constructRecipeStep', error.isOperational || false, error.severity || 2);
     }
   }
 
@@ -393,7 +393,7 @@ module.exports = ({ db, dbPublic }) => {
         });
       }
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes deleteItem', err.code || 520, err.name || 'unhandledError_recipes-deleteItem', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-deleteItem* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-deleteItem', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -414,12 +414,12 @@ module.exports = ({ db, dbPublic }) => {
       const { data: recipes, error } = await q;
 
       if (error) {
-        throw errorGen(`Error getting recipes: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-getAll* Error getting recipes: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${recipes.length} recipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getAll* Got ${recipes.length} recipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipes;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getAll', err.code || 520, err.name || 'unhandledError_recipes-getAll', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getAll* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -428,12 +428,12 @@ module.exports = ({ db, dbPublic }) => {
     try {
       const { data: discoverRecipes, error } = await db.from('recipes').select().eq('discoverPage', true).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting discoverRecipes: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-getDiscover* Error getting discoverRecipes: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${discoverRecipes.length} discoverRecipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getDiscover* Got ${discoverRecipes.length} discoverRecipes`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return discoverRecipes;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getDiscover', err.code || 520, err.name || 'unhandledError_recipes-getDiscover', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getDiscover* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getDiscover', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -443,12 +443,12 @@ module.exports = ({ db, dbPublic }) => {
     try {
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting recipe: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-getByID* Error getting recipe: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got recipe`, level: 6, timestamp: new Date().toISOString(), userID: recipe[0].userID || 0 });
+      global.logger.info({ message: `*recipes-getByID* Got recipe`, level: 6, timestamp: new Date().toISOString(), userID: recipe[0].userID || 0 });
       return recipe;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getByID', err.code || 520, err.name || 'unhandledError_recipes-getByID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getByID* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -458,12 +458,12 @@ module.exports = ({ db, dbPublic }) => {
     try {
       const { data: recipeIngredients, error } = await db.from('recipeIngredients').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting recipeIngredients for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-getRecipeIngredients* Error getting recipeIngredients for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${recipeIngredients.length} recipeIngredients for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeIngredients[0].userID });
+      global.logger.info({ message: `*recipes-getRecipeIngredients* Got ${recipeIngredients.length} recipeIngredients for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeIngredients[0].userID });
       return recipeIngredients;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeIngredients', err.code || 520, err.name || 'unhandledError_recipes-getRecipeIngredients', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getRecipeIngredients* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getRecipeIngredients', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -473,12 +473,12 @@ module.exports = ({ db, dbPublic }) => {
     try {
       const { data: recipeTools, error } = await db.from('recipeTools').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting recipeTools for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-getRecipeTools* Error getting recipeTools for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: recipeTools[0].userID || 0 });
+      global.logger.info({ message: `*recipes-getRecipeTools* Got ${recipeTools.length} recipeTools for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeTools[0].userID || 0 });
       return recipeTools;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeTools', err.code || 520, err.name || 'unhandledError_recipes-getRecipeTools', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getRecipeTools* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getRecipeTools', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -489,12 +489,12 @@ module.exports = ({ db, dbPublic }) => {
       const { data: recipeSteps, error } = await db.from('recipeSteps').select().eq('recipeID', recipeID).eq('deleted', false);
 
       if (error) {
-        throw errorGen(`Error getting recipeSteps for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-getRecipeSteps* Error getting recipeSteps for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeSteps[0].userID });
+      global.logger.info({ message: `*recipes-getRecipeSteps* Got ${recipeSteps.length} recipeSteps for recipeID: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: recipeSteps[0].userID });
       return recipeSteps;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSteps', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSteps', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getRecipeSteps* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSteps', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -504,7 +504,7 @@ module.exports = ({ db, dbPublic }) => {
     try {
       const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('userID', userID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting recipeSubscriptions for userID: ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-getRecipeSubscriptions* Error getting recipeSubscriptions for userID: ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const enhancedSubscriptions = [];
       for (let i = 0; i < subscriptions.length; i++) {
@@ -512,20 +512,20 @@ module.exports = ({ db, dbPublic }) => {
         const { data: sourceRecipe, error: sourceRecipeError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${subscriptions[i].sourceRecipeID}`, { headers: { authorization } });
         if (sourceRecipeError) {
           throw errorGen(
-            sourceRecipeError.message || `Error getting sourceRecipe for subscriptionID: ${subscriptions[i].subscriptionID}: ${sourceRecipeError.message}`,
+            sourceRecipeError.message || `*recipes-getRecipeSubscriptions* Error getting sourceRecipe for subscriptionID: ${subscriptions[i].subscriptionID}: ${sourceRecipeError.message}`,
             sourceRecipeError.code || 520,
             sourceRecipeError.name || 'unhandledError_recipes-getRecipeSubscriptions',
             sourceRecipeError.isOperational || false,
             sourceRecipeError.severity || 2,
           );
         }
-        global.logger.info({ message: `sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-getRecipeSubscriptions* sourceRecipe: ${JSON.stringify(sourceRecipe[0])}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
         // get profile using axios endpoint providing userID in query
         const { data: profile, error: profileError } = await axios.get(`${process.env.NODE_HOST}:${process.env.PORT}/profiles?userID=${sourceRecipe[0].userID}`, { headers: { authorization } });
         if (profileError) {
           throw errorGen(
-            sourceRecipeError.message || `Error getting profile for userID: ${sourceRecipe[0].userID}: ${profileError.message}`,
+            sourceRecipeError.message || `*recipes-getRecipeSubscriptions* Error getting profile for userID: ${sourceRecipe[0].userID}: ${profileError.message}`,
             sourceRecipeError.code || 520,
             sourceRecipeError.name || 'unhandledError_recipes-getRecipeSubscriptions',
             sourceRecipeError.isOperational || false,
@@ -544,10 +544,10 @@ module.exports = ({ db, dbPublic }) => {
           authorPhotoURL: profile.imageURL,
         });
       }
-      global.logger.info({ message: `Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getRecipeSubscriptions* Got ${subscriptions.length} recipeSubscriptions for userID: ${userID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return enhancedSubscriptions;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSubscriptions', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptions', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getRecipeSubscriptions* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptions', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -557,12 +557,12 @@ module.exports = ({ db, dbPublic }) => {
     try {
       const { data: subscriptions, error } = await db.from('recipeSubscriptions').select('subscriptionID, sourceRecipeID, newRecipeID, startDate').eq('sourceRecipeID', recipeID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-getRecipeSubscriptionsByRecipeID* Error getting recipeSubscriptions for recipeID: ${recipeID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: ``, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-getRecipeSubscriptionsByRecipeID* Found ${subscriptions.length} subscriptions for recipe: ${recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return subscriptions;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes getRecipeSubscriptionsByRecipeID', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptionsByRecipeID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-getRecipeSubscriptionsByRecipeID* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-getRecipeSubscriptionsByRecipeID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -573,29 +573,29 @@ module.exports = ({ db, dbPublic }) => {
       const status = 'noIngredients';
 
       if (!title) {
-        throw errorGen(`Title is required to create recipe`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-create* Title is required to create recipe`, 510, 'dataValidationErr', false, 3);
       }
       if (!servings || servings < 0) {
-        throw errorGen(`positive Servings integer is required to create recipe`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-create* positive Servings integer is required to create recipe`, 510, 'dataValidationErr', false, 3);
       }
       if (!lifespanDays || lifespanDays < 0) {
-        throw errorGen(`positive LifespanDays integer is required to create recipe`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-create* positive LifespanDays integer is required to create recipe`, 510, 'dataValidationErr', false, 3);
       }
       if (!timePrep || timePrep < 0) {
-        throw errorGen(`positive TimePrep integer is required`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-create* positive TimePrep integer is required`, 510, 'dataValidationErr', false, 3);
       }
       if (timeBake && timeBake < 1) {
-        throw errorGen(`positive TimeBake integer is required`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-create* positive TimeBake integer is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //verify that the provided recipeCategoryID exists, return error if not
       if (recipeCategoryID) {
         const { data: recipeCategory, error } = await db.from('recipeCategories').select().eq('recipeCategoryID', recipeCategoryID);
         if (error) {
-          throw errorGen(`Error getting recipeCategory: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*recipes-create* Error getting recipeCategory: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         if (!recipeCategory.length) {
-          throw errorGen(`Provided RecipeCategory ID:(${recipeCategoryID}) does not exist, cannot create recipe`, 515, 'cannotComplete', false, 3);
+          throw errorGen(`*recipes-create* Provided RecipeCategory ID:(${recipeCategoryID}) does not exist, cannot create recipe`, 515, 'cannotComplete', false, 3);
         }
       }
 
@@ -603,13 +603,13 @@ module.exports = ({ db, dbPublic }) => {
       const { data: recipe, error } = await db.from('recipes').insert({ recipeID: customID, userID, title, servings, lifespanDays, recipeCategoryID, status, timePrep, timeBake, photoURL, version: 1, type, sourceAuthor, sourceURL }).select().single();
 
       if (error) {
-        throw errorGen(`Error inserting recipe into db: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*recipes-create* Error inserting recipe into db: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
 
       //add a 'created' log entry
       createRecipeLog(userID, authorization, 'createRecipe', recipe.recipeID, null, null, null, `Created Recipe: ${recipe.title}`);
 
-      global.logger.info({ message: `Created recipe ID:${recipe.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-create* Created recipe ID:${recipe.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // return recipe;
       return {
         recipeID: recipe.recipeID,
@@ -627,7 +627,7 @@ module.exports = ({ db, dbPublic }) => {
         sourceURL: recipe.sourceURL,
       };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes create', err.code || 520, err.name || 'unhandledError_recipes-create', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-create* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -636,12 +636,12 @@ module.exports = ({ db, dbPublic }) => {
       // validate resulting json, return if it lacks minimum requirements
       if (recipeJSON.error) {
         if (recipeJSON.error === 10) {
-          throw errorGen(`The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image`, 515, 'cannotComplete', false, 4);
+          throw errorGen(`*recipes-processRecipeJSON* The provided image does not show enough recipe details or is not clear enough to be analyzed. Please try again with a different image`, 515, 'cannotComplete', false, 4);
         }
-        throw errorGen(`Could not analyze the provided image: ${recipeJSON.error}. Please try again later`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-processRecipeJSON* Could not analyze the provided image: ${recipeJSON.error}. Please try again later`, 515, 'cannotComplete', false, 3);
       }
       if (!recipeJSON.title) {
-        throw errorGen(`No recipe title found in image. Can't create recipe.`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-processRecipeJSON* No recipe title found in image. Can't create recipe.`, 515, 'cannotComplete', false, 3);
       }
       // save recipeJSON to file
       // const sanitizedTitle = recipeJSON.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -650,10 +650,10 @@ module.exports = ({ db, dbPublic }) => {
       //   fs.mkdirSync(path.dirname(recipeJSONPath), { recursive: true });
       // }
       // fs.writeFileSync(recipeJSONPath, JSON.stringify(recipeJSON));
-      global.logger.info({ message: `'processRecipeJSON' JSON: ${JSON.stringify(recipeJSON)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON*  JSON: ${JSON.stringify(recipeJSON)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
       if (!recipeJSON.category) {
-        throw errorGen(`No recipe category found in image. Can't create recipe.`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-processRecipeJSON* No recipe category found in image. Can't create recipe.`, 515, 'cannotComplete', false, 3);
       }
 
       sendSSEMessage(userID, { message: `General Recipe details look good, checking ingredient details...` });
@@ -662,22 +662,22 @@ module.exports = ({ db, dbPublic }) => {
 
       // validate returned ingredients
       if (recipeJSON.ingredients.length < 1) {
-        throw errorGen(`No ingredients found in image. Can't create recipe.`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-processRecipeJSON* No ingredients found in image. Can't create recipe.`, 515, 'cannotComplete', false, 3);
       }
       const units = process.env.MEASUREMENT_UNITS.split(',');
 
       const indexesToRemove = new Set();
       for (let i = 0; i < recipeJSON.ingredients.length; i++) {
         if (!recipeJSON.ingredients[i].name) {
-          global.logger.info({ message: `ingredient missing name. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* ingredient missing name. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           indexesToRemove.add(i);
         }
         if (!recipeJSON.ingredients[i].measurement || recipeJSON.ingredients[i].measurement <= 0) {
-          global.logger.info({ message: `missing or invalid ingredient measurement. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* missing or invalid ingredient measurement. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           indexesToRemove.add(i);
         }
         if (!recipeJSON.ingredients[i].measurementUnit) {
-          global.logger.info({ message: `missing ingredient measurementUnit. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* missing ingredient measurementUnit. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           indexesToRemove.add(i);
         }
         // convert units to singular
@@ -697,7 +697,7 @@ module.exports = ({ db, dbPublic }) => {
           if (recipeJSON.ingredients[i].measurementUnit === 'ounce') {
             recipeJSON.ingredients[i].measurementUnit = 'weightOunce';
           } else {
-            global.logger.info({ message: `invalid ingredient measurementUnit. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+            global.logger.info({ message: `*recipes-processRecipeJSON* invalid ingredient measurementUnit. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
             indexesToRemove.add(i);
           }
           continue;
@@ -715,10 +715,10 @@ module.exports = ({ db, dbPublic }) => {
       } else {
         for (let i = 0; i < recipeJSON.tools.length; i++) {
           if (!recipeJSON.tools[i].name) {
-            throw errorGen(`tool missing name, cannot create recipe`, 515, 'cannotComplete', false, 3);
+            throw errorGen(`*recipes-processRecipeJSON* tool missing name, cannot create recipe`, 515, 'cannotComplete', false, 3);
           }
           if (recipeJSON.tools[i].quantity < 0) {
-            throw errorGen(`invalid tool quantity, cannot create recipe`, 515, 'cannotComplete', false, 3);
+            throw errorGen(`*recipes-processRecipeJSON* invalid tool quantity, cannot create recipe`, 515, 'cannotComplete', false, 3);
           }
           if (!recipeJSON.tools[i].quantity) {
             recipeJSON.tools[i]['quantity'] = 1;
@@ -729,18 +729,18 @@ module.exports = ({ db, dbPublic }) => {
       //validate return steps
       sendSSEMessage(userID, { message: `Checking step details...` });
       if (recipeJSON.steps.length < 1) {
-        throw errorGen(`no recipe steps found in image, cannot create recipe`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-processRecipeJSON* no recipe steps found in image, cannot create recipe`, 515, 'cannotComplete', false, 3);
       }
 
       const toolIndexesToRemove = new Set();
       recipeJSON.steps = addStepSequences(recipeJSON.steps);
       for (let i = 0; i < recipeJSON.steps.length; i++) {
         if (!recipeJSON.steps[i].title) {
-          global.logger.info({ message: `step missing title. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* step missing title. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           toolIndexesToRemove.add(i);
         }
         if (!recipeJSON.steps[i].description) {
-          global.logger.info({ message: `step missing description. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* step missing description. Removing from draft recipe. JSON: ${JSON.stringify(recipeJSON.ingredients[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           toolIndexesToRemove.add(i);
         }
         recipeJSON.steps[i].stepID = 0;
@@ -753,7 +753,7 @@ module.exports = ({ db, dbPublic }) => {
       // get user ingredients from supabase
       const { data: userIngredients, error: userIngredientsError } = await db.from('ingredients').select('name, purchaseUnit, ingredientID, gramRatio').eq('userID', userID).eq('deleted', false);
       if (userIngredientsError) {
-        throw errorGen(`Error getting userIngredients to map in recipe creation: ${userIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-processRecipeJSON* Error getting userIngredients to map in recipe creation: ${userIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // match ingredients with user Ingredients
@@ -765,7 +765,7 @@ module.exports = ({ db, dbPublic }) => {
       let unitRatioCost = 0;
       // add purchaseUnitRatios to ingredients in parrallel
       const ingredientPurchaseUnitRatioPromises = [];
-      global.logger.info({ message: `ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*recipes-processRecipeJSON* ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].purchaseUnitRatio) {
           matchedIngredients[i].RIneedsReview = false;
@@ -781,7 +781,7 @@ module.exports = ({ db, dbPublic }) => {
               if (result.cost) {
                 unitRatioCost += result.cost;
               }
-              global.logger.info({ message: `GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+              global.logger.info({ message: `*recipes-processRecipeJSON* GOT RESULT FROM AI PUR ESTIMATE: ${JSON.stringify(result)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
               matchedIngredients[i].purchaseUnitRatio = result.ratio;
               matchedIngredients[i].RIneedsReview = result.needsReview;
             }),
@@ -793,17 +793,17 @@ module.exports = ({ db, dbPublic }) => {
       matchedIngredients = matchedIngredients.filter((i) => {
         if (i.purchaseUnitRatio && typeof i.purchaseUnitRatio === 'number' && i.purchaseUnitRatio > 0) return true;
         else {
-          global.logger.info({ message: `Invalid purchaseUnitRatio for ingredient ${i.name}: ${i.purchaseUnitRatio}, removing from recipe.`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* Invalid purchaseUnitRatio for ingredient ${i.name}: ${i.purchaseUnitRatio}, removing from recipe.`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           return false;
         }
       });
-      global.logger.info({ message: `DONE ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS, MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* DONE ADDING PURCHASEUNITRATIOS TO MATCHED INGREDIENTS, MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       // if ingredientID is 0, also need to get gramRatio
       const ingredientGramRatioPromises = [];
       for (let i = 0; i < matchedIngredients.length; i++) {
         if (matchedIngredients[i].ingredientID === 0) {
-          global.logger.info({ message: `ADDING GRAMRATIO TO NEW INGREDIENT: ${JSON.stringify(matchedIngredients[i])}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* ADDING GRAMRATIO TO NEW INGREDIENT: ${JSON.stringify(matchedIngredients[i])}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           const gramRatioPromise = getUnitRatio(matchedIngredients[i].name, 'gram', matchedIngredients[i].purchaseUnit, authorization, userID);
           ingredientGramRatioPromises.push(
             gramRatioPromise.then((result) => {
@@ -816,20 +816,20 @@ module.exports = ({ db, dbPublic }) => {
         }
       }
       await Promise.allSettled(ingredientGramRatioPromises);
-      global.logger.info({ message: `'processRecipeJSON' PRE FILTER: ${JSON.stringify(matchedIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON*  PRE FILTER: ${JSON.stringify(matchedIngredients)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       // remove any ingredients that have ingredientID of 0 and a gramRatio that is missing or less than 1
       matchedIngredients = matchedIngredients.filter((i) => {
         if (i.ingredientID !== 0) {
           return true;
         }
         if (!i.gramRatio || i.gramRatio <= 0 || typeof i.gramRatio !== 'number') {
-          global.logger.info({ message: `Invalid gramRatio for ingredient ${i.name}: ${i.gramRatio}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-processRecipeJSON* Invalid gramRatio for ingredient ${i.name}: ${i.gramRatio}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           return false;
         }
         return true;
       });
 
-      global.logger.info({ message: `DONE ADDING GRAMRATIO TO MATCHED INGREDIENTS. MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* DONE ADDING GRAMRATIO TO MATCHED INGREDIENTS. MATCHED INGREDIENTS: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // ***************************************************************************
 
       // match tools with user tools
@@ -856,30 +856,30 @@ module.exports = ({ db, dbPublic }) => {
         sourceAuthor: recipeJSON.sourceAuthor || '',
         sourceURL: recipeJSON.sourceURL || '',
       };
-      global.logger.info({ message: `CALLING CONSTRUCT WITH BODY: ${JSON.stringify(constructBody)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* CALLING CONSTRUCT WITH BODY: ${JSON.stringify(constructBody)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       if (recipePhotoURL) {
         constructBody['photoURL'] = recipePhotoURL;
       }
-      global.logger.info({ message: `CONSTRUCT BODY: ${JSON.stringify(constructBody)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* CONSTRUCT BODY: ${JSON.stringify(constructBody)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
       // call constructRecipe with body
       sendSSEMessage(userID, { message: `Details ready! Building new Recipe...` });
       const { data: recipeID, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
       if (constructError) {
-        throw errorGen(constructError.message || `Error constructing recipe from image details: ${constructError.message}`, constructError.code || 520, constructError.name || 'unhandledError_recipes-processRecipeJSON', constructError.isOperational || false, constructError.severity || 3);
+        throw errorGen(constructError.message || `*recipes-processRecipeJSON* Error constructing recipe from image details: ${constructError.message}`, constructError.code || 520, constructError.name || 'unhandledError_recipes-processRecipeJSON', constructError.isOperational || false, constructError.severity || 3);
       }
       // const recipeID = recipe.recipeID;
 
       // fix the vertexaiCost to 4 decimals
       const vertexaiCost = parseFloat(matchedIngredientsResponse.vertexaiCost).toFixed(4);
       // global.logger.info(`vertexAI Cost (all ingr) to find match and get PU/LD: ${vertexaiCost}`);
-      global.logger.info({ message: `vertexAI Cost (all ingr) to find match and get PU/LD: ${vertexaiCost}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* vertexAI Cost (all ingr) to find match and get PU/LD: ${vertexaiCost}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       const vertexaiUnitConversionCost = parseFloat(unitRatioCost).toFixed(4);
-      global.logger.info({ message: `vertexAI Cost (all unit conversion): ${vertexaiUnitConversionCost}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-processRecipeJSON* vertexAI Cost (all unit conversion): ${vertexaiUnitConversionCost}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       sendSSEMessage(userID, { message: `done` });
       return recipeID;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes processRecipeJSON', err.code || 520, err.name || 'unhandledError_recipes-processRecipeJSON', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-processRecipeJSON* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-processRecipeJSON', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -902,28 +902,28 @@ module.exports = ({ db, dbPublic }) => {
         elapsedTime += 1;
         sendSSEMessage(userID, { message: `Getting recipe details from image. Expected Time: 25 seconds. Elapsed: ${elapsedTime}` });
       }, 1000); // Send progress update every second
-      global.logger.info({ message: `Calling visionRequest`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*recipes-createVision* Calling visionRequest`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       const visionStartTime = new Date();
       const { response, error } = await visionRequest(recipeSourceImageURLs, userID, authorization, 'generateRecipeFromImage');
       clearInterval(timer);
       if (error) {
-        throw errorGen(error.message || `Error creating recipe from source image: ${error.message}`, error.code || 520, error.name || 'unhandledError_recipes-processRecipeJSON', error.isOperational || false, error.severity || 3);
+        throw errorGen(error.message || `*recipes-createVision* Error creating recipe from source image: ${error.message}`, error.code || 520, error.name || 'unhandledError_recipes-processRecipeJSON', error.isOperational || false, error.severity || 3);
       }
       const recipeJSON = JSON.parse(response);
       // Stop timer and calculate duration
       const visionEndTime = new Date();
       const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
-      global.logger.info({ message: `*TIME* recipe visionRequest: ${visionDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createVision* *TIME* recipe visionRequest: ${visionDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;
-      global.logger.info({ message: `*TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createVision* *TIME* vison recipe and construct total: ${totalDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       return recipeID;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes processRecipeJSON', err.code || 520, err.name || 'unhandledError_recipes-processRecipeJSON', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-createVision* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-processRecipeJSON', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -939,39 +939,39 @@ module.exports = ({ db, dbPublic }) => {
       let attempt = 1;
       while (attempt <= maxAttempts) {
         try {
-          global.logger.info({ message: `Attempt ${attempt} to create recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-createFromURL* Attempt ${attempt} to create recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           recipeID = await createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL);
           break;
         } catch (error) {
-          global.logger.info({ message: `Error creating recipe from URL: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-createFromURL* Error creating recipe from URL: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
           if (attempt === maxAttempts) {
-            throw errorGen(`Reached Max retries for creating recipe from URL: ${error.message}`, 500);
+            throw errorGen(`*recipes-createFromURL* Reached Max retries for creating recipe from URL: ${error.message}`, 500);
           }
           attempt++;
         }
       }
-      global.logger.info({ message: `Created recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createFromURL* Created recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return recipeID;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes createFromURL', err.code || 520, err.name || 'unhandledError_recipes-createFromURL', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-createFromURL* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-createFromURL', err.isOperational || false, err.severity || 2);
     }
   }
 
   async function createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL) {
     try {
-      global.logger.info({ message: `Creating recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createFromURLAttempt* Creating recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // call 'getHtml' to get recipe details from URL
       sendSSEMessage(userID, { message: `Opening provided web page...` });
       const { html, error } = await getHtml(recipeURL, userID, authorization, 'generateRecipeFromURL');
       if (error) {
-        throw errorGen(error.message || `Error getting Source Recipe details. Can't create recipe: ${error.message}`, error.code || 520, error.name || 'unhandledError_recipes-createFromURL', error.isOperational || false, error.severity || 2);
+        throw errorGen(error.message || `*recipes-createFromURLAttempt* Error getting Source Recipe details. Can't create recipe: ${error.message}`, error.code || 520, error.name || 'unhandledError_recipes-createFromURL', error.isOperational || false, error.severity || 2);
       }
 
       const htmlText = await extractFromHtml(html);
       if (!htmlText) {
-        throw errorGen(`Error extracting recipe details from URL: ${recipeURL}, cannot create recipe`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipes-createFromURLAttempt* Error extracting recipe details from URL: ${recipeURL}, cannot create recipe`, 515, 'cannotComplete', false, 2);
       }
-      global.logger.info({ message: `HTML TEXT: ${htmlText}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createFromURLAttempt* HTML TEXT: ${htmlText}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
       // call openaiHandler to build recipe json
       let elapsedTime = 0;
@@ -990,11 +990,11 @@ module.exports = ({ db, dbPublic }) => {
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;
-      global.logger.info({ message: `*TIME* URL recipe and construct total: ${totalDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-createFromURLAttempt* *TIME* URL recipe and construct total: ${totalDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       return recipeID;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes createFromURLAttempt', err.code || 520, err.name || 'unhandledError_recipes-createFromURLAttempt', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipes-createFromURLAttempt* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-createFromURLAttempt', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -1010,7 +1010,7 @@ module.exports = ({ db, dbPublic }) => {
         const primaryMatchResult = await matchIngredientByName(userID, authorization, ingredients[i], userIngredientsInfo);
         matchedIngredients.push(primaryMatchResult);
       }
-      global.logger.info({ message: `MATCHED INGREDIENTS AFTER PRIMARY METHOD: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-matchIngredients* MATCHED INGREDIENTS AFTER PRIMARY METHOD: ${JSON.stringify(matchedIngredients)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
       const matchedTwiceIngredients = [];
       // Fallback to try using AI to find matches
@@ -1019,20 +1019,20 @@ module.exports = ({ db, dbPublic }) => {
       for (let i = 0; i < matchedIngredients.length; i++) {
         // if the matchedIngredient has an ingredientID of 0, we need to try asking AI to match it with an existing userIngredient. Make a promise of each call to the 'matchRecipeItemRequest' function and add to promises array. If the ingredientID is not 0, we already found a match and can skip this item.
         if (matchedIngredients[i].ingredientID === 0) {
-          global.logger.info({ message: `MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-matchIngredients* MATCHED INGREDIENT ${matchedIngredients[i].name} HAS INGREDIENTID 0, ATTEMPTING TO MATCH WITH AI`, level: 7, timestamp: new Date().toISOString(), userID: userID });
           promises.push(
             matchRecipeIngredientRequest(userID, authorization, matchedIngredients[i].name, userIngredientNames)
               .then((data) => {
                 const ingredientJSON = data.response;
                 if (ingredientJSON.error) {
-                  global.logger.info({ message: `Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+                  global.logger.info({ message: `*recipes-matchIngredients* Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                   return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                 }
-                global.logger.info({ message: `AI MATCHED INGREDIENT: ${JSON.stringify(ingredientJSON)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+                global.logger.info({ message: `*recipes-matchIngredients* AI MATCHED INGREDIENT: ${JSON.stringify(ingredientJSON)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
                 if (ingredientJSON.foundMatch) {
                   const ingredientID = userIngredients.find((i) => i.name === ingredientJSON.ingredientName);
                   if (!ingredientID) {
-                    global.logger.info({ message: `Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+                    global.logger.info({ message: `*recipes-matchIngredients* Error matching ingredient with AI: ${ingredientJSON.error}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                     return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                   }
                   return {
@@ -1045,11 +1045,11 @@ module.exports = ({ db, dbPublic }) => {
                 } else {
                   const validUnits = process.env.MEASUREMENT_UNITS.split(',');
                   if (!ingredientJSON.lifespanDays || ingredientJSON.lifespanDays <= 0) {
-                    global.logger.info({ message: `AI provided Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+                    global.logger.info({ message: `*recipes-matchIngredients* AI provided Invalid lifespanDays for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                     return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                   }
                   if (!validUnits.includes(ingredientJSON.purchaseUnit)) {
-                    global.logger.info({ message: `AI provided Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+                    global.logger.info({ message: `*recipes-matchIngredients* AI provided Invalid purchaseUnit for ingredient ${matchedIngredients[i].name}: ${ingredientJSON.lifespanDays}, removing from recipe.`, level: 4, timestamp: new Date().toISOString(), userID: userID });
                     return { ...matchedIngredients[i], invalid: true, cost: data.cost };
                   }
                   return {
@@ -1064,7 +1064,7 @@ module.exports = ({ db, dbPublic }) => {
                 // add character count to vertexaiCharacters
               })
               .catch((error) => {
-                global.logger.info({ message: `Error matching ingredient with AI: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+                global.logger.info({ message: `*recipes-matchIngredients* Error matching ingredient with AI: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
                 return { ...matchedIngredients[i], invalid: true };
               }),
           );
@@ -1081,32 +1081,32 @@ module.exports = ({ db, dbPublic }) => {
       for (let i = 0; i < results.length; i++) {
         vertexaiCost += results[i].value?.cost || 0;
         if (results[i].status === 'fulfilled' && results[i].invalid) {
-          global.logger.info({ message: `Invalid ingredient, not adding to recipe: ${JSON.stringify(results[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-matchIngredients* Invalid ingredient, not adding to recipe: ${JSON.stringify(results[i])}`, level: 4, timestamp: new Date().toISOString(), userID: userID });
           //don't add invalid ingredients to the matchedTwiceIngredients array
         }
         if (results[i].status === 'fulfilled' && results[i].value && !results[i].value.invalid) {
-          global.logger.info({ message: `PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          global.logger.info({ message: `*recipes-matchIngredients* PUSHING AI MATCHED INGREDIENT TO MATCHEDTWICEINGREDIENTS: ${JSON.stringify(results[i].value)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
           matchedTwiceIngredients.push(results[i].value);
         }
       }
 
       return { matchedTwiceIngredients, vertexaiCost };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes matchIngredients', err.code || 520, err.name || 'unhandledError_recipes-matchIngredients', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-matchIngredients* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-matchIngredients', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
   async function matchIngredientByName(userID, authorization, recipeIngredient, userIngredientNames) {
     try {
       // search for exact name match (case-insensitive) among existing user ingredients for provided recipe ingredient. If one is found, return resulting recipeIngredient with ingredientID and retrieved purchasedUnitRatio, also including the 'needsReview' value provided by getPurchaseUnitRatio. If no match is found, return recipeIngredient with ingredientID of 0.
-      global.logger.info({ message: `IN PRIMARY INGREDIENT NAME MATCH. RI: ${JSON.stringify(recipeIngredient)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-matchIngredientByName* IN PRIMARY INGREDIENT NAME MATCH. RI: ${JSON.stringify(recipeIngredient)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
       const userIngredientMatch = userIngredientNames.find((i) => i.name.toLowerCase() === recipeIngredient.name.toLowerCase());
 
       if (userIngredientMatch) {
-        global.logger.info({ message: `FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-matchIngredientByName* FOUND MATCH FOR ${recipeIngredient.name} in ${JSON.stringify(userIngredientMatch)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
-        global.logger.info({ message: `GETTING PUR FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-matchIngredientByName* GETTING PUR FOR ${recipeIngredient.name} ${recipeIngredient.measurementUnit} and ${userIngredientMatch.purchaseUnit}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         let purchaseUnitRatio;
         let needsReview;
         if (!userIngredientMatch.measurementUnit === userIngredientMatch.purchaseUnit) {
@@ -1117,7 +1117,7 @@ module.exports = ({ db, dbPublic }) => {
           purchaseUnitRatio = data.unitRatio;
           needsReview = data.needsReview;
         }
-        global.logger.info({ message: `PUR RESULT: ${purchaseUnitRatio}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-matchIngredientByName* PUR RESULT: ${purchaseUnitRatio}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
 
         const result = {
           name: recipeIngredient.name,
@@ -1139,7 +1139,7 @@ module.exports = ({ db, dbPublic }) => {
         return result;
       }
 
-      global.logger.info({ message: `NO MATCH FOUND FOR ${recipeIngredient.name}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-matchIngredientByName* NO MATCH FOUND FOR ${recipeIngredient.name}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       return {
         name: recipeIngredient.name,
         measurement: recipeIngredient.measurement,
@@ -1153,7 +1153,7 @@ module.exports = ({ db, dbPublic }) => {
         component: recipeIngredient.component,
       };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes matchIngredientByName', err.code || 520, err.name || 'unhandledError_recipes-matchIngredientByName', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-matchIngredientByName* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-matchIngredientByName', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1162,7 +1162,7 @@ module.exports = ({ db, dbPublic }) => {
       // get user tools from supabase
       const { data: userTools, error: userToolsError } = await db.from('tools').select('name, toolID').eq('userID', userID).eq('deleted', false);
       if (userToolsError) {
-        throw errorGen(`Error getting userTools: ${userToolsError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-matchTools* Error getting userTools: ${userToolsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const matchedTools = [];
 
@@ -1178,7 +1178,7 @@ module.exports = ({ db, dbPublic }) => {
             return toolJSON.toolID ? { toolID: Number(toolJSON.toolID), name: tool.name, quantity: tool.quantity } : { toolID: 0, quantity: tool.quantity, name: tool.name };
           })
           .catch((error) => {
-            global.logger.info({ message: `Error matching tool: ${error.message}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+            global.logger.info({ message: `*recipes-matchTools* Error matching tool: ${error.message}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
             return null;
           });
       });
@@ -1199,22 +1199,22 @@ module.exports = ({ db, dbPublic }) => {
 
       return matchedTools;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes matchTools', err.code || 520, err.name || 'unhandledError_recipes-matchTools', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-matchTools* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-matchTools', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
   async function secondaryToolsMatch(recipeTool, userTools, userID) {
     try {
-      global.logger.info({ message: `IN SECONDARY TOOLS MATCH. RT: ${JSON.stringify(recipeTool)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-secondaryToolsMatch* IN SECONDARY TOOLS MATCH. RT: ${JSON.stringify(recipeTool)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       const userToolMatch = userTools.find((t) => t.name.toLowerCase() === recipeTool.name.toLowerCase());
       if (userToolMatch) {
-        global.logger.info({ message: `FOUND MATCH FOR ${recipeTool.name} in ${JSON.stringify(userToolMatch)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*recipes-secondaryToolsMatch* FOUND MATCH FOR ${recipeTool.name} in ${JSON.stringify(userToolMatch)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         return { toolID: Number(userToolMatch.toolID), name: recipeTool.name, quantity: recipeTool.quantity };
       }
-      global.logger.info({ message: `NO MATCH FOUND FOR ${recipeTool.name}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-secondaryToolsMatch* NO MATCH FOUND FOR ${recipeTool.name}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
       return { toolID: 0, name: recipeTool.name, quantity: recipeTool.quantity };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes secondaryToolsMatch', err.code || 520, err.name || 'unhandledError_recipes-secondaryToolsMatch', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-secondaryToolsMatch* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-secondaryToolsMatch', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1223,11 +1223,11 @@ module.exports = ({ db, dbPublic }) => {
       // get categories from supabase
       const { data: categories, error: categoriesError } = await db.from('recipeCategories').select('recipeCategoryID, name');
       if (categoriesError) {
-        throw errorGen(`Error getting categories: ${categoriesError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-matchCategory* Error getting categories: ${categoriesError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const { response, error } = await matchRecipeItemRequest(userID, authorization, 'findMatchingCategory', recipeCategory, categories);
       if (error) {
-        throw errorGen(error.message || `Error matching category: ${error.message}`, error.code || 520, error.name || 'unhandledError_recipes-matchCategory', error.isOperational || false, error.severity || 2);
+        throw errorGen(error.message || `*recipes-matchCategory* Error matching category: ${error.message}`, error.code || 520, error.name || 'unhandledError_recipes-matchCategory', error.isOperational || false, error.severity || 2);
       }
       const categoryJSON = JSON.parse(response);
 
@@ -1238,7 +1238,7 @@ module.exports = ({ db, dbPublic }) => {
         return 2023112900000005;
       }
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes matchCategory', err.code || 520, err.name || 'unhandledError_recipes-matchCategory', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-matchCategory* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-matchCategory', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1250,42 +1250,42 @@ module.exports = ({ db, dbPublic }) => {
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
 
       if (error) {
-        throw errorGen(`Error getting recipe: ${error.message} during update attempt`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-update* Error getting recipe: ${error.message} during update attempt`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipe.length) {
-        throw errorGen(`Recipe with provided ID (${recipeID}) does not exist, cannot update`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-update* Recipe with provided ID (${recipeID}) does not exist, cannot update`, 515, 'cannotComplete', false, 3);
       }
 
       //verify that the provided recipeCategoryID exists, return error if not
       if (recipeCategoryID) {
         const { data: recipeCategory, error } = await db.from('recipeCategories').select().eq('recipeCategoryID', recipeCategoryID);
         if (error) {
-          throw errorGen(`Error getting recipeCategory: ${error.message} during recipe update attempt`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*recipes-update* Error getting recipeCategory: ${error.message} during recipe update attempt`, 511, 'failSupabaseSelect', true, 3);
         }
         if (!recipeCategory.length) {
-          throw errorGen(`Provided RecipeCategory ID:(${recipeCategoryID}) does not exist, cannot update recipe`, 515, 'cannotComplete', false, 3);
+          throw errorGen(`*recipes-update* Provided RecipeCategory ID:(${recipeCategoryID}) does not exist, cannot update recipe`, 515, 'cannotComplete', false, 3);
         }
       }
 
       //verify that servings, lifespanDays, timePrep, and timeBake are positive integers, if provided. Return error if not
       if (options.servings && options.servings < 1) {
-        throw errorGen(`Servings should be positive integer`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-update* Servings should be positive integer`, 510, 'dataValidationErr', false, 3);
       }
       if (options.lifespanDays && options.lifespanDays < 1) {
-        throw errorGen(`LifespanDays should be positive integer`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-update* LifespanDays should be positive integer`, 510, 'dataValidationErr', false, 3);
       }
       if (timePrep && timePrep < 1) {
-        throw errorGen(`TimePrep should be positive integer`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-update* TimePrep should be positive integer`, 510, 'dataValidationErr', false, 3);
       }
       if (timeBake && timeBake < 1) {
-        throw errorGen(`TimeBake should be positive integer`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-update* TimeBake should be positive integer`, 510, 'dataValidationErr', false, 3);
       }
 
       const updateFields = {};
       if (options.status) {
         //ensure provided status is valid value
         if (options.status !== 'noIngredients' && options.status !== 'noTools' && options.status !== 'noSteps' && options.status !== 'published') {
-          throw errorGen(`Invalid status provided, can't update recipe`, 510, 'dataValidationErr', false, 3);
+          throw errorGen(`*recipes-update* Invalid status provided, can't update recipe`, 510, 'dataValidationErr', false, 3);
         }
       }
       for (let key in options) {
@@ -1328,7 +1328,7 @@ module.exports = ({ db, dbPublic }) => {
       }
       return updatedRecipe;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes update', err.code || 520, err.name || 'unhandledError_recipes-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-update* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1337,36 +1337,36 @@ module.exports = ({ db, dbPublic }) => {
       //verify that the provided recipeID exists, return error if not
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', options.recipeID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting recipe: ${error.message} during delete attempt`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-deleteRecipe* Error getting recipe: ${error.message} during delete attempt`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipe.length) {
-        throw errorGen(`Recipe with provided ID (${options.recipeID}) does not exist, cannot delete`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-deleteRecipe* Recipe with provided ID (${options.recipeID}) does not exist, cannot delete`, 515, 'cannotComplete', false, 3);
       }
 
       //if recipe has photoURL, delete photo from s3
       if (recipe[0].photoURL) {
         const url = `${process.env.NODE_HOST}:${process.env.PORT}/uploads/image?userID=${encodeURIComponent(options.userID)}&photoURL=${encodeURIComponent(recipe[0].photoURL)}&type=recipe&id=${options.recipeID}`;
         await axios.delete(url, { headers: { authorization: options.authorization } });
-        global.logger.info({ message: `Deleted photo for recipeID ${options.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
+        global.logger.info({ message: `*recipes-deleteRecipe* Deleted photo for recipeID ${options.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
       }
 
       // attempt to delete the recipe and all component data
       const { data, error2 } = await dbPublic.rpc('recipe_delete', { recipe: Number(options.recipeID) });
       if (error2) {
-        throw errorGen(`Error deleting recipe: ${error2.message}`, 514, 'failSupabaseDelete', true, 3);
+        throw errorGen(`*recipes-deleteRecipe* Error deleting recipe: ${error2.message}`, 514, 'failSupabaseDelete', true, 3);
       }
       if (data === 'NONE') {
-        throw errorGen(`Recipe with provided ID (${options.recipeID}) does not exist, cannot delete`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipes-deleteRecipe* Recipe with provided ID (${options.recipeID}) does not exist, cannot delete`, 515, 'cannotComplete', false, 2);
       } else if (!data) {
-        throw errorGen(`Error deleting recipe: ${error2.message}`, 514, 'failSupabaseDelete', true, 3);
+        throw errorGen(`*recipes-deleteRecipe* Error deleting recipe: ${error2.message}`, 514, 'failSupabaseDelete', true, 3);
       }
 
       //add a 'deleted' log entry
       createRecipeLog(options.userID, options.authorization, 'deleteRecipe', Number(options.recipeID), null, null, null, `deleted recipe: ${recipe[0].title}, ID: ${options.recipeID}`);
-      global.logger.info({ message: `Deleted recipe ID: ${options.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
+      global.logger.info({ message: `*recipes-deleteRecipe* Deleted recipe ID: ${options.recipeID}`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
       return { success: true };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes deleteRecipe', err.code || 520, err.name || 'unhandledError_recipes-deleteRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-deleteRecipe* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-deleteRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1376,21 +1376,21 @@ module.exports = ({ db, dbPublic }) => {
     try {
       //ensure provided satisfaction is valid number one through ten
       if (!satisfaction || satisfaction < 1 || satisfaction > 10) {
-        throw errorGen(`Satisfaction should be integer between 1 and 10`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-useRecipe* Satisfaction should be integer between 1 and 10`, 510, 'dataValidationErr', false, 3);
       }
 
       //ensure provided difficulty is valid number one through ten
       if (!difficulty || difficulty < 1 || difficulty > 10) {
-        throw errorGen(`Difficulty should be integer between 1 and 10`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipes-useRecipe* Difficulty should be integer between 1 and 10`, 510, 'dataValidationErr', false, 3);
       }
 
       //ensure provided recipeID exists
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting recipe details: ${error.message} during use attempt`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-useRecipe* Error getting recipe details: ${error.message} during use attempt`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipe.length) {
-        throw errorGen(`Recipe with provided ID ${recipeID} does not exist, cannot use it`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-useRecipe* Recipe with provided ID ${recipeID} does not exist, cannot use it`, 515, 'cannotComplete', false, 3);
       }
 
       if (checkIngredientStock) {
@@ -1398,7 +1398,7 @@ module.exports = ({ db, dbPublic }) => {
         const { data: supplyCheckResult, error: supplyCheckError } = await supplyCheckRecipe(options.userID, authorization, recipeID);
         if (supplyCheckError) {
           throw errorGen(
-            supplyCheckError.message || `Error checking supply for recipeID: ${recipeID} : ${supplyCheckError}, can't use recipe`,
+            supplyCheckError.message || `*recipes-useRecipe* Error checking supply for recipeID: ${recipeID} : ${supplyCheckError}, can't use recipe`,
             supplyCheckError.code || 520,
             supplyCheckError.name || 'unhandledError_recipes-deleteRecipe',
             supplyCheckError.isOperational || false,
@@ -1406,7 +1406,7 @@ module.exports = ({ db, dbPublic }) => {
           );
         }
         if (supplyCheckResult.status === 'insufficient') {
-          throw errorGen(`Insufficient stock to make recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`, 515, 'cannotComplete', false, 3);
+          throw errorGen(`*recipes-useRecipe* Insufficient stock to make recipeID: ${recipeID}. Need ${JSON.stringify(supplyCheckResult.insufficientIngredients)} ingredients and ${JSON.stringify(supplyCheckResult.insufficientTools)} tools`, 515, 'cannotComplete', false, 3);
         }
       }
 
@@ -1415,7 +1415,7 @@ module.exports = ({ db, dbPublic }) => {
         const useIngredientsResult = await useRecipeIngredients(options.userID, authorization, recipeID);
         if (useIngredientsResult.error) {
           throw errorGen(
-            useIngredientsResult.message || `useRecipe' Error using recipeIngredients for recipeID: ${recipeID}. Rollback of inventory state was successful: ${useIngredientsResult.error.rollbackSuccess}`,
+            useIngredientsResult.message || `*recipes-useRecipe* Error using recipeIngredients for recipeID: ${recipeID}. Rollback of inventory state was successful: ${useIngredientsResult.error.rollbackSuccess}`,
             useIngredientsResult.code || 520,
             useIngredientsResult.name || 'unhandledError_recipes-deleteRecipe',
             useIngredientsResult.isOperational || false,
@@ -1427,12 +1427,12 @@ module.exports = ({ db, dbPublic }) => {
       //log use of recipe
       const { log, createLogError } = await createRecipeFeedbackLog(options.userID, authorization, Number(recipeID), recipe[0].title, String(satisfaction), String(difficulty), note);
       if (createLogError) {
-        throw errorGen(createLogError.message || `'useRecipe' Error logging recipe use: ${createLogError.message}`, createLogError.code || 520, createLogError.name || 'unhandledError_recipes-deleteRecipe', createLogError.isOperational || false, createLogError.severity || 2);
+        throw errorGen(createLogError.message || `*recipes-useRecipe* Error logging recipe use: ${createLogError.message}`, createLogError.code || 520, createLogError.name || 'unhandledError_recipes-deleteRecipe', createLogError.isOperational || false, createLogError.severity || 2);
       }
       //return the log entry
       return log;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes useRecipe', err.code || 520, err.name || 'unhandledError_recipes-useRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-useRecipe* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-useRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1443,34 +1443,34 @@ module.exports = ({ db, dbPublic }) => {
       //ensure provided sourceRecipeID exists and is not deleted
       const { data: sourceRecipe, error } = await db.from('recipes').select().eq('recipeID', sourceRecipeID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting sourceRecipe: ${error.message} during subscribe attempt`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-subscribeRecipe* Error getting sourceRecipe: ${error.message} during subscribe attempt`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!sourceRecipe.length) {
-        throw errorGen(`Error subscribing to recipe. Recipe with provided ID (${sourceRecipeID}) does not exist, cannot subscribe to recipe`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-subscribeRecipe* Error subscribing to recipe. Recipe with provided ID (${sourceRecipeID}) does not exist, cannot subscribe to recipe`, 515, 'cannotComplete', false, 3);
       }
       if (sourceRecipe[0].userID === userID) {
-        throw errorGen(`Error subscribing to recipe. Cannot subscribe to your own recipe`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipes-subscribeRecipe* Error subscribing to recipe. Cannot subscribe to your own recipe`, 515, 'cannotComplete', false, 2);
       }
 
       //ensure provided newRecipeID exists and is not deleted
       const { data: newRecipe, error: newRecipeError } = await db.from('recipes').select().eq('recipeID', newRecipeID).eq('deleted', false);
       if (newRecipeError) {
-        throw errorGen(`Error getting newRecipe: ${newRecipeError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-subscribeRecipe* Error getting newRecipe: ${newRecipeError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!newRecipe.length) {
-        throw errorGen(`Error subscribing to recipe. Recipe with provided ID (${newRecipeID}) does not exist`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-subscribeRecipe* Error subscribing to recipe. Recipe with provided ID (${newRecipeID}) does not exist`, 515, 'cannotComplete', false, 3);
       }
 
       //ensure provided sourceRecipeID is not the same as newRecipeID
       if (sourceRecipeID === newRecipeID) {
-        throw errorGen(`Error subscribing to recipe. sourceRecipeID and newRecipeID cannot be the same`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipes-subscribeRecipe* Error subscribing to recipe. sourceRecipeID and newRecipeID cannot be the same`, 515, 'cannotComplete', false, 2);
       }
 
       //ensure provided sourceRecipeID is not already subscribed to newRecipeID
       const { data: existingSubscription, error: existingSubscriptionError } = await db.from('recipeSubscriptions').select('*').eq('sourceRecipeID', sourceRecipeID).eq('newRecipeID', newRecipeID);
       if (existingSubscriptionError) {
         throw errorGen(
-          existingSubscriptionError.message || `Error getting existing subscription: ${existingSubscriptionError.message}`,
+          existingSubscriptionError.message || `*recipes-subscribeRecipe* Error getting existing subscription: ${existingSubscriptionError.message}`,
           existingSubscriptionError.code || 520,
           existingSubscriptionError.name || 'unhandledError_recipes-useRecipe',
           existingSubscriptionError.isOperational || false,
@@ -1482,21 +1482,21 @@ module.exports = ({ db, dbPublic }) => {
       if (existingSubscription.length && existingSubscription[0].deleted) {
         const { data: updatedSubscription, error: undeleteError } = await db.from('recipeSubscriptions').update({ deleted: false, startDate }).eq('recipeSubscriptionID', existingSubscription[0].recipeSubscriptionID).single();
         if (undeleteError) {
-          throw errorGen(`Error undeleting existing subscription: ${undeleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*recipes-subscribeRecipe* Error undeleting existing subscription: ${undeleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         return updatedSubscription.subscriptionID;
       } else if (existingSubscription.length) {
-        throw errorGen(`Error subscribing to recipe. sourceRecipeID: ${sourceRecipeID} is already subscribed to newRecipeID: ${newRecipeID}`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipes-subscribeRecipe* Error subscribing to recipe. sourceRecipeID: ${sourceRecipeID} is already subscribed to newRecipeID: ${newRecipeID}`, 515, 'cannotComplete', false, 2);
       }
 
       //create subscription
       const { data: subscription, error: subscriptionError } = await db.from('recipeSubscriptions').insert({ userID, subscriptionID: customID, sourceRecipeID, newRecipeID, startDate }).select().single();
       if (subscriptionError) {
-        throw errorGen(`Error creating subscription: ${subscriptionError.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*recipes-subscribeRecipe* Error creating subscription: ${subscriptionError.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       return subscription.subscriptionID;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes subscribeRecipe', err.code || 520, err.name || 'unhandledError_recipes-subscribeRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-subscribeRecipe* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-subscribeRecipe', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1507,28 +1507,28 @@ module.exports = ({ db, dbPublic }) => {
       //ensure provided subscriptionID exists and is not deleted
       const { data: subscription, error } = await db.from('recipeSubscriptions').select().eq('subscriptionID', subscriptionID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error getting subscription: ${error.message} when attempting subscription delete`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipes-deleteRecipeSubscription* Error getting subscription: ${error.message} when attempting subscription delete`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!subscription.length) {
-        throw errorGen(`Error deleting subscription. Subscription with provided ID (${subscriptionID}) does not exist`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-deleteRecipeSubscription* Error deleting subscription. Subscription with provided ID (${subscriptionID}) does not exist`, 515, 'cannotComplete', false, 3);
       }
       if (subscription[0].userID !== userID) {
-        throw errorGen(`Error deleting subscription. Subscription with provided ID (${subscriptionID}) does not belong to user`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipes-deleteRecipeSubscription* Error deleting subscription. Subscription with provided ID (${subscriptionID}) does not belong to user`, 515, 'cannotComplete', false, 3);
       }
 
       //delete subscription
       const { error: deleteError } = await db.from('recipeSubscriptions').update({ deleted: true }).eq('subscriptionID', subscriptionID);
       if (deleteError) {
-        throw errorGen(`Error deleting subscription: ${deleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*recipes-deleteRecipeSubscription* Error deleting subscription: ${deleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       //make axios call to delete recipe
       const { data: deleteResult } = await axios.delete(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/${subscription[0].newRecipeID}`, { headers: { authorization } });
       if (deleteResult.error) {
-        throw errorGen(`Error deleting recipe: ${deleteResult.error}`, 514, 'failSupabaseDelete', true, 3);
+        throw errorGen(`*recipes-deleteRecipeSubscription* Error deleting recipe: ${deleteResult.error}`, 514, 'failSupabaseDelete', true, 3);
       }
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes deleteRecipeSubscription', err.code || 520, err.name || 'unhandledError_recipes-deleteRecipeSubscription', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-deleteRecipeSubscription* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-deleteRecipeSubscription', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1539,18 +1539,18 @@ module.exports = ({ db, dbPublic }) => {
       // update all user recipes 'freeTier' property to false
       const { error } = await db.from('recipes').update({ freeTier: false }).neq('type', 'subscription').eq('userID', userID);
       if (error) {
-        throw errorGen(`Error setting all recipes 'freeTier' to true during 'archiveCreatedRecipes': ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*recipes-archiveCreatedRecipes* Error setting all recipes 'freeTier' to true during 'archiveCreatedRecipes': ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       // update 'freeTier' to true for any recipes in recipeIDs
       const { error: archiveError } = await db.from('recipes').update({ freeTier: true }).in('recipeID', recipeIDs).eq('userID', userID);
       if (archiveError) {
-        throw errorGen(`Error archiving created recipes: ${archiveError.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*recipes-archiveCreatedRecipes* Error archiving created recipes: ${archiveError.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
-      global.logger.info({ message: `Updated 'freeTier' recipe selections: ${recipeIDs}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-archiveCreatedRecipe* Updated 'freeTier' recipe selections: ${recipeIDs}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes archiveCreatedRecipes', err.code || 520, err.name || 'unhandledError_recipes-archiveCreatedRecipes', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-archiveCreatedRecipes* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-archiveCreatedRecipes', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -1561,18 +1561,18 @@ module.exports = ({ db, dbPublic }) => {
       // update all user subscriptions 'freeTier' property to false
       const { error } = await db.from('recipes').update({ freeTier: false }).eq('type', 'subscription').eq('userID', userID);
       if (error) {
-        throw errorGen(`Error setting all subscriptions 'freeTier' to true: ${error.message} during archiveSubscriptions`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*recipes-archiveSubscriptions* Error setting all subscriptions 'freeTier' to true: ${error.message} during archiveSubscriptions`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       // update 'freeTier' to true for any subscriptions in subscriptionIDs
       const { error: archiveError } = await db.from('recipes').update({ freeTier: true }).in('recipeID', subscriptionIDs).eq('userID', userID);
       if (archiveError) {
-        throw errorGen(`Error archiving subscriptions: ${archiveError.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*recipes-archiveSubscriptions* Error archiving subscriptions: ${archiveError.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
-      global.logger.info({ message: `Updated 'freeTier' subscription selections: ${subscriptionIDs}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*recipes-archiveSubscriptions* Updated 'freeTier' subscription selections: ${subscriptionIDs}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipes archiveSubscriptions', err.code || 520, err.name || 'unhandledError_recipes-archiveSubscriptions', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipes-archiveSubscriptions* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipes-archiveSubscriptions', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 

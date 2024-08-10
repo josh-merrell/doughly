@@ -1,5 +1,5 @@
 <div
-  class="flex h-full w-full flex-col items-center bg-white px-dl-2 py-dl-6 sm:px-dl-6 lg:px-dl-8 dark:bg-dl-grey-1"
+  class="flex h-full w-full flex-col items-center bg-dl-tan-9 px-dl-2 py-dl-6 dark:bg-dl-tan-1 sm:px-dl-6 lg:px-dl-8"
 >
   <div class="mt-dl-3 w-full items-center justify-center">
     <img
@@ -23,14 +23,14 @@
     >
       <div class="relative mb-dl-5 flex flex-col">
         <div class="mt-dl-4 text-center">
-          <!-- <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8">Sign Up</h3> -->
+          <!-- <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8">Sign Up</h3> -->
         </div>
       </div>
       <!-- OAuth Sign Up -->
       <div class="mb-dl-8 flex w-full flex-col items-center justify-between">
         <button
           (click)="signUpWithGoogle()"
-          class="gsi-material-button !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
+          class="gsi-material-button !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -62,7 +62,7 @@
               </svg>
             </div>
             <span
-              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
+              class="gsi-material-button-contents text-dl-tan-1 dark:text-dl-tan-10"
               >Sign Up with Google</span
             >
             <span style="display: none">Sign Up with Google</span>
@@ -70,7 +70,7 @@
         </button>
         <button
           (click)="signUpWithFacebook()"
-          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -93,7 +93,7 @@
               </svg>
             </div>
             <span
-              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
+              class="gsi-material-button-contents text-dl-tan-1 dark:text-dl-tan-10"
               >Sign Up with Facebook</span
             >
             <span style="display: none">Sign Up with Facebook</span>
@@ -101,7 +101,7 @@
         </button>
         <button
           (click)="signUpWithApple()"
-          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-grey-10 dark:border dark:border-dl-grey-7 dark:bg-dl-grey-2"
+          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -113,12 +113,13 @@
                 viewBox="0 -3.552713678800501e-15 880 1050"
               >
                 <path
+                  class="fill-current text-black dark:text-white"
                   d="M404.345 229.846c52.467 0 98.494-20.488 138.08-61.465s59.38-88.626 59.38-142.947c0-5.966-.472-14.444-1.414-25.434-6.912.942-12.096 1.727-15.552 2.355-48.383 6.908-90.954 30.615-127.713 71.12-36.758 40.506-55.137 83.838-55.137 129.996 0 5.337.785 14.13 2.356 26.375zM592.379 950c37.387 0 78.701-25.59 123.943-76.772S796.122 761.915 820 692.836c-88.912-45.844-133.368-111.626-133.368-197.348 0-71.591 35.973-132.82 107.92-183.688-49.954-62.486-115.931-93.729-197.931-93.729-34.56 0-66.134 5.181-94.724 15.543l-17.908 6.594-24.035 9.42c-15.709 5.966-30.004 8.95-42.885 8.95-10.054 0-23.25-3.455-39.586-10.363l-18.38-7.536-17.436-7.065c-25.449-10.676-52.782-16.014-82-16.014-78.23 0-141.065 26.376-188.506 79.128C23.72 349.479 0 419.03 0 505.379c0 121.517 38.015 233.772 114.046 336.763C166.828 914.047 215.054 950 258.724 950c18.537 0 36.916-3.611 55.138-10.833l23.092-9.42 18.38-6.594c25.762-9.106 49.482-13.659 71.16-13.659 22.935 0 49.326 5.81 79.173 17.427l14.609 5.652C550.75 944.191 574.786 950 592.379 950z"
                 />
               </svg>
             </div>
             <span
-              class="gsi-material-button-contents text-dl-grey-1 dark:text-dl-grey-10"
+              class="gsi-material-button-contents text-dl-tan-1 dark:text-dl-tan-10"
               >Sign Up with Apple</span
             >
             <span style="display: none">Sign Up with Apple</span>
@@ -129,7 +130,7 @@
       <div id="form-email">
         <div class="relative flex flex-col">
           <label
-            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             for="email"
             >Email</label
           >
@@ -137,7 +138,7 @@
             <input
               type="email"
               formControlName="email"
-              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
               appAutofocus
               tabindex="1"
             />
@@ -157,7 +158,7 @@
 
       <div id="form-password">
         <label
-          class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+          class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
           for="email"
           >Password</label
         >
@@ -165,7 +166,7 @@
           <input
             type="password"
             formControlName="password"
-            class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+            class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
             tabindex="2"
           />
           <div
@@ -183,7 +184,7 @@
 
       <div id="form-username">
         <label
-          class="mb-dl-4 ml-dl-1 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+          class="mb-dl-4 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
           for="username"
           >Username</label
         >
@@ -191,7 +192,7 @@
           <input
             type="text"
             formControlName="username"
-            class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-grey-2 ring-1 ring-inset ring-dl-grey-7 placeholder:text-dl-grey-6 focus:ring-2 focus:ring-inset focus:ring-dl-blue-5 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+            class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
             tabindex="3"
           />
           <div
@@ -214,11 +215,11 @@
           emailErrorMessage() !== ''
         "
         style="height: 40px; width: 296px"
-        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-white dark:text-dl-grey-1"
+        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-dl-tan-10 dark:text-dl-tan-1"
         [ngClass]="{
-          'cursor-pointer bg-dl-blue-4 hover:bg-dl-blue-5 dark:bg-dl-blue-7 hover:dark:bg-dl-blue-6':
+          'cursor-pointer bg-dl-green-4 hover:bg-dl-green-5 dark:bg-dl-green-7 hover:dark:bg-dl-green-6':
             signup_form.invalid === false,
-          'bg-dl-grey-7':
+          'bg-dl-tan-7':
             signup_form.invalid === true ||
             usernameErrorMessage() !== '' ||
             emailErrorMessage() !== ''
@@ -235,10 +236,10 @@
       {{ checkEmailMessage() }}
     </p>
 
-    <p class="mt-dl-4 text-center text-dl-5 text-dl-grey-3 dark:text-dl-grey-8">
+    <p class="mt-dl-4 text-center text-dl-5 text-dl-tan-3 dark:text-dl-tan-8">
       Already have an account?
       <a
-        class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
+        class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-green-5 dark:text-dl-green-8"
         tabindex="5"
         routerLink="/login"
         >Sign In</a

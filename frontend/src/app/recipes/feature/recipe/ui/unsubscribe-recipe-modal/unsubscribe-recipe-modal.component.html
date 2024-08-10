@@ -1,5 +1,5 @@
 <div
-  class="rounded-dl-3 border-dl-yellow-5 bg-white p-4 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="rounded-dl-3 border-dl-yellow-5 bg-dl-tan-10 p-4 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
   [ngClass]="{ 'border-l-4 border-r-4': !isDeleting }"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isDeleting"></mat-spinner>
@@ -26,15 +26,15 @@
           Unsubscribe
         </p>
         <div class="mt-dl-4 space-x-1" *ngIf="recipeTitle()">
-          <span class="mt-dl-1 text-dl-5 text-dl-grey-5 dark:text-dl-grey-8"
+          <span class="mt-dl-1 text-dl-5 text-dl-tan-5 dark:text-dl-tan-8"
             >Are you sure you want to remove</span
           ><span
-            class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+            class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
             >{{ recipeTitle() }}</span
-          ><span class="mt-dl-1 text-dl-5 text-dl-grey-5 dark:text-dl-grey-8"
+          ><span class="mt-dl-1 text-dl-5 text-dl-tan-5 dark:text-dl-tan-8"
             >, authored by
             <span
-              class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+              class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
               >{{ authorName() }}</span
             >, from your Recipe book?</span
           >
@@ -43,14 +43,14 @@
       <div class="mt-dl-5 flex flex-row-reverse">
         <button
           type="button"
-          class="shadow-sinline-flex ml-dl-4 w-dl-7 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 dark:bg-dl-yellow-7 dark:text-dl-grey-1 hover:dark:bg-dl-yellow-6"
+          class="shadow-sinline-flex ml-dl-4 w-dl-7 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 dark:bg-dl-yellow-7 dark:text-dl-tan-1 hover:dark:bg-dl-yellow-6"
           (click)="onSubmit()"
         >
           Confirm
         </button>
         <button
           type="button"
-          class="inline-flex w-dl-6 justify-center rounded-dl-1 bg-white px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 focus:outline-1 dark:bg-dl-grey-1 dark:text-dl-grey-10 dark:hover:bg-dl-grey-2"
+          class="inline-flex w-dl-6 justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 focus:outline-1 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2"
           (click)="onCancel()"
         >
           Cancel

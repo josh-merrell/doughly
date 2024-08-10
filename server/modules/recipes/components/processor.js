@@ -21,12 +21,12 @@ module.exports = ({ db }) => {
       const { data: recipeComponents, error } = await q;
 
       if (error) {
-        throw errorGen(`Error getting recipeComponents: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeComponent-getAll* Error getting recipeComponents: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got recipeComponents for recipe`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
+      global.logger.info({ message: `*recipeComponents-getAll* Got recipeComponents for recipe`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       return recipeComponents;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeComponents getAll', err.code || 520, err.name || 'unhandledError_recipeComponents-getAll', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipeComponent-getAll* Unhandled Error in recipeComponents getAll', err.code || 520, err.name || 'unhandledError_recipeComponents-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -36,32 +36,32 @@ module.exports = ({ db }) => {
     try {
       //if params are not present, return error
       if (!recipeID || !componentID || !componentAdvanceDays) {
-        throw errorGen(`RecipeID, componentID, and componentAdvanceDays are required to create component`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipeComponent-create* RecipeID, componentID, and componentAdvanceDays are required to create component`, 510, 'dataValidationErr', false, 3);
       }
 
       if (recipeID === componentID) {
-        throw errorGen(`RecipeID and componentID cannot be the same when creating recipe component`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipeComponent-create* RecipeID and componentID cannot be the same when creating recipe component`, 515, 'cannotComplete', false, 2);
       }
 
       //verify that provided recipeID and compomentID (recipe) exist, return error if not
       const { data: recipe, error } = await db.from('recipes').select().eq('recipeID', recipeID);
       if (error) {
-        throw errorGen(`Error getting recipe: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeComponent-create* Error getting recipe: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipe.length) {
-        throw errorGen(`Recipe with provided ID (${recipeID}) does not exist, cannot create component`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipeComponent-create* Recipe with provided ID (${recipeID}) does not exist, cannot create component`, 515, 'cannotComplete', false, 2);
       }
       const { data: component, error: error2 } = await db.from('recipes').select().eq('recipeID', componentID);
       if (error2) {
-        throw errorGen(`Error getting component Recipe: ${error2.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeComponent-create* Error getting component Recipe: ${error2.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!component.length) {
-        throw errorGen(`Component Recipe with provided ID (${componentID}) does not exist, cannot create component`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipeComponent-create* Component Recipe with provided ID (${componentID}) does not exist, cannot create component`, 515, 'cannotComplete', false, 2);
       }
 
       const { data, errorInsert } = await db.from('recipeComponents').insert({ recipeComponentID: customID, userID, recipeID, componentID, componentAdvanceDays }).select().single();
       if (error) {
-        throw errorGen(`Error creating recipeComponent: ${errorInsert.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*recipeComponent-create* Error creating recipeComponent: ${errorInsert.message}`, 512, 'failSupabaseInsert', true, 3);
       }
 
       //add a 'created' log entry
@@ -72,7 +72,7 @@ module.exports = ({ db }) => {
       createRecipeLog(userID, authorization, 'updateRecipeVersion', Number(recipeID), Number(logID1), String(recipe[0].version), String(newVersion), `updated Recipe, ID: ${recipeID} to version: ${newVersion}`);
       return data;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeComponents create', err.code || 520, err.name || 'unhandledError_recipeComponents-create', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipeComponent-create* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeComponents-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -82,10 +82,10 @@ module.exports = ({ db }) => {
       const { data: recipeComponent, error } = await db.from('recipeComponents').select().eq('recipeComponentID', options.recipeComponentID);
 
       if (error) {
-        throw errorGen(`Error getting recipeComponent: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeComponent-update* Error getting recipeComponent: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipeComponent.length) {
-        throw errorGen(`RecipeComponent with provided ID (${options.recipeComponentID}) does not exist, cannot update`, 515, 'cannotComplete', false, 2);
+        throw errorGen(`*recipeComponent-update* RecipeComponent with provided ID (${options.recipeComponentID}) does not exist, cannot update`, 515, 'cannotComplete', false, 2);
       }
 
       //update recipeComponent
@@ -99,7 +99,7 @@ module.exports = ({ db }) => {
       const updatedRecipeComponent = await updater(options.userID, options.authorization, 'recipeComponentID', options.recipeComponentID, 'recipeComponents', updateFields);
       return updatedRecipeComponent;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeComponents update', err.code || 520, err.name || 'unhandledError_recipeComponents-update', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipeComponent-update* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeComponents-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -109,16 +109,16 @@ module.exports = ({ db }) => {
       const { data: recipeComponent, error } = await db.from('recipeComponents').select().eq('recipeComponentID', options.recipeComponentID).eq('deleted', false);
 
       if (error) {
-        throw errorGen(`Error getting recipeComponent: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeComponent-deleteRecipeComponent* Error getting recipeComponent: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipeComponent.length) {
-        throw errorGen(`RecipeComponent with provided ID (${options.recipeComponentID}) does not exist, cannot delete`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*recipeComponent-deleteRecipeComponent* RecipeComponent with provided ID (${options.recipeComponentID}) does not exist, cannot delete`, 515, 'cannotComplete', false, 3);
       }
 
       //delete recipeComponent
       const { data, error: deleteError } = await db.from('recipeComponents').update({ deleted: true }).match({ recipeComponentID: options.recipeComponentID });
       if (deleteError) {
-        throw errorGen(`Error deleting recipeComponent: ${deleteError.message}`, 514, 'failSupabaseDelete', true, 3);
+        throw errorGen(`*recipeComponent-deleteRecipeComponent* Error deleting recipeComponent: ${deleteError.message}`, 514, 'failSupabaseDelete', true, 3);
       }
       //add a 'deleted' log entry
       const logID1 = await createRecipeLog(options.userID, options.authorization, 'deleteRecipeComponent', Number(options.recipeComponentID), Number(recipeComponent[0].recipeID), null, null, `deleted recipeComponent with ID: ${options.recipeComponentID}`);
@@ -130,7 +130,7 @@ module.exports = ({ db }) => {
 
       return data;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeComponents deleteRecipeComponent', err.code || 520, err.name || 'unhandledError_recipeComponents-deleteRecipeComponent', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipeComponent-deleteRecipeComponent* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeComponents-deleteRecipeComponent', err.isOperational || false, err.severity || 2);
     }
   }
 

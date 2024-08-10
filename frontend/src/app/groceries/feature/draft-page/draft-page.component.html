@@ -12,7 +12,7 @@
     <!-- recipes/ingredients columns-->
     <div class="flex w-full flex-grow flex-col items-center overflow-y-auto">
       <!-- ShoppingListRecipes -->
-      <p class="w-full text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
+      <p class="w-full text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
         Planned Recipes
       </p>
       <div
@@ -37,9 +37,9 @@
         type="button"
         class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3"
         [ngClass]="{
-          'bg-dl-pink-4 text-white dark:border-dl-grey-1 dark:bg-dl-pink-7 dark:text-dl-grey-1':
+          'bg-dl-pinknew-4 text-dl-tan-9 dark:border-dl-tan-1 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             selectedRecipeID() === 0,
-          'border-dl-pink-4 bg-white text-dl-pink-4  dark:border-dl-pink-7 dark:bg-dl-grey-1 dark:text-dl-pink-9':
+          'border-dl-pinknew-4 bg-dl-tan-9 text-dl-pinknew-4  dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
             selectedRecipeID() !== 0,
           invisible:
             recipes().length - displayRecipes().length === 0 &&
@@ -53,30 +53,30 @@
 
       <!-- ShoppingListIngredients -->
       <p
-        class="mb-dl-1 mt-dl-3 w-full text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mb-dl-1 mt-dl-3 w-full text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Items to Buy
       </p>
       <div
-        class="relative mb-dl-4 flex w-full flex-grow flex-col overflow-y-auto border-dl-grey-2 bg-dl-grey-10 px-dl-3 py-dl-2 dark:border-dl-grey-9 dark:bg-dl-grey-2"
+        class="relative mb-dl-4 flex w-full flex-grow flex-col overflow-y-auto border-dl-tan-2 bg-dl-tan-9 px-dl-3 py-dl-2 dark:border-dl-tan-9 dark:bg-dl-tan-2"
       >
         <!-- Planned Recipe Items -->
         <p
-          class="mb-dl-2 ml-dl-2 text-dl-5 font-dl-3 text-dl-pink-6 dark:text-dl-pink-9"
+          class="mb-dl-2 ml-dl-2 text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-9"
         >
           Planned Recipe Items
         </p>
         <div class="flex min-h-dl-2 flex-wrap overflow-y-auto rounded-dl-3">
           @for (item of displaySLRecipeIngr(); track item.ingredientName) {
           <div
-            class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-white px-dl-1 dark:bg-dl-grey-1"
+            class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-1 dark:bg-dl-tan-1"
           >
             <span
-              class="px-dl-2 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+              class="px-dl-2 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             >
               {{ item.ingredientName }}
               <span
-                class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+                class="text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               >
                 {{ Math.ceil(item.quantity) }}
                 {{
@@ -89,7 +89,7 @@
           </div>
           } @empty {
           <p
-            class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
+            class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
           >
             None
           </p>
@@ -98,7 +98,7 @@
 
         <!-- Standalone Items -->
         <p
-          class="mb-dl-2 ml-dl-2 mt-dl-3 text-dl-5 font-dl-3 text-dl-pink-6 dark:text-dl-pink-9"
+          class="mb-dl-2 ml-dl-2 mt-dl-3 text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-9"
         >
           Other Items
         </p>
@@ -106,20 +106,20 @@
           @for (item of displaySLStandaloneIngr(); track item.ingredientID) {
           <div
             (click)="standaloneIngredientCardClick(item)"
-            class="relative mx-dl-2 mb-dl-2 flex items-center justify-between overflow-y-auto rounded-dl-1 border border-dl-grey-5 px-dl-1 transition-all duration-200 ease-in-out dark:border-dl-grey-6"
+            class="relative mx-dl-2 mb-dl-2 flex items-center justify-between overflow-y-auto rounded-dl-1 border border-dl-tan-5 px-dl-1 transition-all duration-200 ease-in-out dark:border-dl-tan-6"
             [ngClass]="{
-              'border-dl-grey-8 bg-white  dark:bg-dl-grey-1':
+              'border-dl-tan-8 bg-dl-tan-10  dark:bg-dl-tan-1':
                 item.shoppingListIngredientID !== selectedSLIngrID(),
-              'border-dl-teal-8 bg-dl-teal-10 dark:bg-dl-teal-1':
+              'border-dl-yellow-8 bg-dl-yellow-10 dark:bg-dl-yellow-1':
                 item.shoppingListIngredientID === selectedSLIngrID()
             }"
           >
             <span
-              class="px-dl-2 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-1 dark:text-dl-grey-10"
+              class="px-dl-2 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             >
               {{ item.name }}
               <span
-                class="text-dl-5 font-dl-2 text-dl-grey-3 dark:text-dl-grey-8"
+                class="text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               >
                 {{ Math.ceil(item.needMeasurement) }}
                 {{
@@ -132,7 +132,7 @@
           </div>
           } @empty {
           <p
-            class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
+            class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
           >
             None
           </p>
@@ -145,8 +145,8 @@
       class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3"
       (click)="onItemButtonClick()"
       [ngClass]="{
-      'bg-dl-pink-4 text-white dark:border-dl-grey-2 dark:bg-dl-pink-7 dark:text-dl-grey-1': selectedSLIngrID() === 0,
-      'border-dl-pink-4 bg-white text-dl-pink-4 dark:border-dl-pink-7  dark:bg-dl-grey-1 dark:text-dl-pink-9': selectedSLIngrID() !== 0,
+      'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-tan-2 dark:bg-dl-pinknew-7 dark:text-dl-tan-1': selectedSLIngrID() === 0,
+      'border-dl-pinknew-4 bg-dl-tan-9 text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-9': selectedSLIngrID() !== 0,
     }"
     >
       @if (selectedSLIngrID() === 0) { Add Other Item } @else { Remove Selected
@@ -160,10 +160,10 @@
       class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onShopClick()"
       [ngClass]="{
-        'bg-dl-grey-7 text-dl-grey-3 dark:border-dl-grey-3 dark:bg-dl-grey-3 dark:text-dl-grey-8':
+        'bg-dl-tan-7 text-dl-tan-3 dark:border-dl-tan-3 dark:bg-dl-tan-3 dark:text-dl-tan-8':
           displaySLRecipeIngr().length === 0 &&
           displaySLStandaloneIngr().length === 0,
-        'bg-dl-pink-4 text-white dark:border-dl-pink-7 dark:bg-dl-pink-7 dark:text-dl-grey-1':
+        'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
           displaySLRecipeIngr().length !== 0 ||
           displaySLStandaloneIngr().length !== 0
       }"
@@ -184,7 +184,7 @@
   <div
     *ngIf="showOnboardingBadge()"
     (click)="onboardingBadgeClick()"
-    class="fixed left-4 top-4 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-blue-2 dark:bg-dl-blue-9"
+    class="fixed left-4 top-4 flex h-dl-5 w-dl-5 flex-col items-center rounded-full bg-dl-green-2 dark:bg-dl-green-9"
   >
     <svg
       class="h-11 w-8"
