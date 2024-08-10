@@ -26,12 +26,12 @@ module.exports = ({ db }) => {
       const { data: logs, error } = await q;
 
       if (error) {
-        throw errorGen(`Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeLogs-getAll* Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       global.logger.info({ message: `*recipeLogs-getAll* Got ${logs.length} recipe logs`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return logs;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeLogs getAll', err.code || 520, err.name || 'unhandledError_recipeLogs-getAll', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipeLogs-getAll* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeLogs-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -42,12 +42,12 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('recipeLogs').select().eq('recipeLogID', logID);
 
       if (error) {
-        throw errorGen(`Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeLogs-getByID* Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       global.logger.info({ message: `*recipeLogs-getByID* Got log with ID: ${log[0].logID}`, level: 5, timestamp: new Date().toISOString(), userID: log[0].userID });
       return log;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeLogs getByID', err.code || 520, err.name || 'unhandledError_recipeLogs-getByID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipeLogs-getByID* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeLogs-getByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -60,13 +60,13 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('recipeLogs').insert({ recipeLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
       if (error) {
-        throw errorGen(`Error creating recipeLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*recipeLogs-create* Error creating recipeLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       return {
         recipeLogID: log.recipeLogID,
       };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeLogs create', err.code || 520, err.name || 'unhandledError_recipeLogs-create', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*recipeLogs-create* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeLogs-create', err.isOperational || false, err.severity || 2);
     }
   }
 

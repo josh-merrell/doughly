@@ -17,12 +17,12 @@ module.exports = ({ db }) => {
         .filter('deleted', 'eq', false)
         .single();
       if (error) {
-        throw errorGen(`Error getting shopping list ingredient ${shoppingListIngredientID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-getShoppingListIngredientByID* Error getting shopping list ingredient ${shoppingListIngredientID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       global.logger.info({ message: `*listIngredients-getShoppingListIngredientByID* Got shoppingListIngredient`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredient.userID || 0 });
       return shoppingListIngredient;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in listIngredients getShoppingListIngredientByID', err.code || 520, err.name || 'unhandledError_listIngredients-getShoppingListIngredientByID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*listIngredients-getShoppingListIngredientByID* Unhandled Error', err.code || 520, err.name || 'unhandledError_listIngredients-getShoppingListIngredientByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -36,7 +36,7 @@ module.exports = ({ db }) => {
         .filter('shoppingListID', 'eq', shoppingListID)
         .filter('deleted', 'eq', false);
       if (error) {
-        throw errorGen(`Error getting shopping list ingredients: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-getIngredientsByShoppingList* Error getting shopping list ingredients: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (shoppingListIngredients.length === 0) {
         return [];
@@ -44,7 +44,7 @@ module.exports = ({ db }) => {
       global.logger.info({ message: `*listIngredients-getIngredientsByShoppingList* Got ${shoppingListIngredients.length} shoppingListIngredients for shoppingList: ${shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID: shoppingListIngredients[0].userID || 0 });
       return shoppingListIngredients;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in listIngredients getIngredientsByShoppingList', err.code || 520, err.name || 'unhandledError_listIngredients-getIngredientsByShoppingList', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*listIngredients-getIngredientsByShoppingList* Unhandled Error', err.code || 520, err.name || 'unhandledError_listIngredients-getIngredientsByShoppingList', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -58,7 +58,7 @@ module.exports = ({ db }) => {
         .filter('shoppingListID', 'eq', shoppingListID)
         .filter('deleted', 'eq', false);
       if (shoppingListIngredientsError) {
-        throw errorGen(`Error getting shoppingListIngredients for shoppingListID ${shoppingListID} during 'byShoppingListDisplay' call: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-byShoppingListDisplay* Error getting shoppingListIngredients for shoppingListID ${shoppingListID} during 'byShoppingListDisplay' call: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       // if none, return an empty array
       if (!shoppingListIngredients) {
@@ -69,7 +69,7 @@ module.exports = ({ db }) => {
       const ingredientIDs = shoppingListIngredients.map((ingredient) => ingredient.ingredientID);
       const { data: ingredients, error: ingredientsError } = await db.from('ingredients').select('name, ingredientID').in('ingredientID', ingredientIDs);
       if (ingredientsError) {
-        throw errorGen(`Error getting ingredients for shoppingListID ${shoppingListID} during 'byShoppingListDisplay' call: ${ingredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-byShoppingListDisplay* Error getting ingredients for shoppingListID ${shoppingListID} during 'byShoppingListDisplay' call: ${ingredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       // if none, return an empty array
       if (!ingredients) {
@@ -95,7 +95,7 @@ module.exports = ({ db }) => {
       });
       return displayIngredients;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in listIngredients byShoppingListDisplay', err.code || 520, err.name || 'unhandledError_listIngredients-byShoppingListDisplay', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*listIngredients-byShoppingListDisplay* Unhandled Error', err.code || 520, err.name || 'unhandledError_listIngredients-byShoppingListDisplay', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -104,47 +104,47 @@ module.exports = ({ db }) => {
 
     try {
       if (!customID) {
-        throw errorGen(`customID is missing, can't create shoppingListIngredient`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*listIngredients-createShoppingListIngredient* customID is missing, can't create shoppingListIngredient`, 510, 'dataValidationErr', false, 3);
       }
 
       //verify that provided shoppingList exists and is in draft status
       const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select('shoppingListID').filter('shoppingListID', 'eq', shoppingListID).filter('status', 'eq', 'draft');
       if (shoppingListError) {
-        throw errorGen(`Error getting shoppingList: ${shoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-createShoppingListIngredient* Error getting shoppingList: ${shoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (shoppingList.length === 0) {
-        throw errorGen(`shoppingList does not exist or is not in draft status, can't create shoppingListIngredient`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*listIngredients-createShoppingListIngredient* shoppingList does not exist or is not in draft status, can't create shoppingListIngredient`, 515, 'cannotComplete', false, 3);
       }
 
       //verify that provided ingredient exists
       const { data: ingredient, error: ingredientError } = await db.from('ingredients').select('ingredientID').filter('ingredientID', 'eq', ingredientID).filter('deleted', 'eq', false);
       if (ingredientError) {
-        throw errorGen(`Error getting ingredient: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-createShoppingListIngredient* Error getting ingredient: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (ingredient.length === 0) {
-        throw errorGen(`ingredient does not exist, can't create shoppingListIngredient`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*listIngredients-createShoppingListIngredient* ingredient does not exist, can't create shoppingListIngredient`, 515, 'cannotComplete', false, 3);
       }
 
       //verify no other shoppingListIngredient exists for this shoppingList and ingredient
       const { data: existingShoppingListIngredient, error: existingShoppingListIngredientError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID').filter('shoppingListID', 'eq', shoppingListID).filter('ingredientID', 'eq', ingredientID).filter('deleted', 'eq', false);
       if (existingShoppingListIngredientError) {
-        throw errorGen(`error getting existing shoppingListIngredients when creating shoppingListIngredient`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-createShoppingListIngredient* error getting existing shoppingListIngredients when creating shoppingListIngredient`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingShoppingListIngredient.length > 0) {
-        throw errorGen(`this ingredient already exists on this shoppingList`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*listIngredients-createShoppingListIngredient* this ingredient already exists on this shoppingList`, 515, 'cannotComplete', false, 3);
       }
 
       // create shoppingListIngredient
       const { data: shoppingListIngredient, error: shoppingListIngredientError } = await db.from('shoppingListIngredients').insert({ userID, shoppingListIngredientID: customID, shoppingListID, ingredientID, needMeasurement, needUnit, source, purchasedBy }).select('*').single();
       if (shoppingListIngredientError) {
-        throw errorGen(`Error creating shoppingListIngredient with ID ${customID}: ${shoppingListIngredientError.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*listIngredients-createShoppingListIngredient* Error creating shoppingListIngredient with ID ${customID}: ${shoppingListIngredientError.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       //add a 'addedIngredientToShoppingList' log
       await createShoppingLog(userID, authorization, 'addIngredientToShoppingList', Number(shoppingListIngredient.shoppingListIngredientID), Number(shoppingListID), null, null, `addedIngredientToShoppingList: ${shoppingListIngredient.shoppingListIngredientID}`);
 
       return { shoppingListIngredientID: shoppingListIngredient.shoppingListIngredientID };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in listIngredients createShoppingListIngredient', err.code || 520, err.name || 'unhandledError_listIngredients-createShoppingListIngredient', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*listIngredients-createShoppingListIngredient* Unhandled Error', err.code || 520, err.name || 'unhandledError_listIngredients-createShoppingListIngredient', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -155,19 +155,19 @@ module.exports = ({ db }) => {
       //verify that provided shoppingListIngredient exists
       const { data: shoppingListIngredient, error: shoppingListIngredientError } = await db.from('shoppingListIngredients').select('*').filter('shoppingListIngredientID', 'eq', shoppingListIngredientID).filter('deleted', 'eq', false);
       if (shoppingListIngredientError) {
-        throw errorGen(`Error getting shoppingListIngredient: ${shoppingListIngredientError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-updateShoppingListIngredient* Error getting shoppingListIngredient: ${shoppingListIngredientError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (shoppingListIngredient.length === 0) {
-        throw errorGen(`shoppingListIngredient does not exist, can't update`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*listIngredients-updateShoppingListIngredient* shoppingListIngredient does not exist, can't update`, 515, 'cannotComplete', false, 3);
       }
 
       //verify that provided shoppingList exists and is not deleted
       const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select('shoppingListID').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID).filter('status', 'neq', 'deleted');
       if (shoppingListError) {
-        throw errorGen(`Error getting shoppingList: ${shoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-updateShoppingListIngredient* Error getting shoppingList: ${shoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (shoppingList.length === 0) {
-        throw errorGen(`shoppingList does not exist`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*listIngredients-updateShoppingListIngredient* shoppingList does not exist`, 515, 'cannotComplete', false, 3);
       }
 
       //update shoppingListIngredient
@@ -181,7 +181,7 @@ module.exports = ({ db }) => {
 
       //add a 'updatedIngredientInShoppingList' log entry
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in listIngredients updateShoppingListIngredient', err.code || 520, err.name || 'unhandledError_listIngredients-updateShoppingListIngredient', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*listIngredients-updateShoppingListIngredient* Unhandled Error', err.code || 520, err.name || 'unhandledError_listIngredients-updateShoppingListIngredient', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -192,25 +192,25 @@ module.exports = ({ db }) => {
       //verify that provided shoppingListIngredient exists
       const { data: shoppingListIngredient, error: shoppingListIngredientError } = await db.from('shoppingListIngredients').select('*').filter('shoppingListIngredientID', 'eq', shoppingListIngredientID).filter('deleted', 'eq', false);
       if (shoppingListIngredientError) {
-        throw errorGen(`Error getting shoppingListIngredient: ${shoppingListIngredientError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-deleteShoppingListIngredient* Error getting shoppingListIngredient: ${shoppingListIngredientError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (shoppingListIngredient.length === 0) {
-        throw errorGen(`shoppingListIngredient does not exist, can't delete`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*listIngredients-deleteShoppingListIngredient* shoppingListIngredient does not exist, can't delete`, 515, 'cannotComplete', false, 3);
       }
 
       //verify that provided shoppingList exists
       const { data: shoppingList, error: shoppingListError } = await db.from('shoppingLists').select('shoppingListID, status').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID);
       if (shoppingListError) {
-        throw errorGen(`Error getting shoppingList: ${shoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*listIngredients-deleteShoppingListIngredient* Error getting shoppingList: ${shoppingListError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (shoppingList.length === 0) {
-        throw errorGen(`shoppingList does not exist, cannot delete shoppingListIngredient`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*listIngredients-deleteShoppingListIngredient* shoppingList does not exist, cannot delete shoppingListIngredient`, 515, 'cannotComplete', false, 3);
       }
 
       //delete shoppingListIngredient
       const { error: deleteError } = await db.from('shoppingListIngredients').update({ deleted: true }).filter('shoppingListIngredientID', 'eq', shoppingListIngredientID);
       if (deleteError) {
-        throw errorGen(`Error deleting shoppingListIngredient: ${deleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*listIngredients-deleteShoppingListIngredient* Error deleting shoppingListIngredient: ${deleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       //if shoppingList is in 'shopping' status, get any remaining shoppingListIngredients
@@ -222,14 +222,14 @@ module.exports = ({ db }) => {
           .filter('deleted', 'eq', false)
           .is('store', null);
         if (remainingShoppingListIngredientsError) {
-          throw errorGen(`Error getting remaining shoppingListIngredients: ${remainingShoppingListIngredientsError}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*listIngredients-deleteShoppingListIngredient* Error getting remaining shoppingListIngredients: ${remainingShoppingListIngredientsError}`, 511, 'failSupabaseSelect', true, 3);
         }
         //if none remaining, delete any shoppingListRecipes and standalone ingredients, then set shoppingList status to 'draft'
         if (remainingShoppingListIngredients.length === 0) {
           //delete any shoppingListRecipes for this shoppingList using axios calls
           const { data: shoppingListRecipes, error: shoppingListRecipesError } = await db.from('shoppingListRecipes').select('shoppingListRecipeID').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID).filter('deleted', 'eq', false);
           if (shoppingListRecipesError) {
-            throw errorGen(`Error getting shoppingListRecipes while clearing shoppingList ID: ${shoppingListIngredient[0].shoppingListID}: ${shoppingListRecipesError.message}`, 511, 'failSupabaseSelect', true, 3);
+            throw errorGen(`*listIngredients-deleteShoppingListIngredient* Error getting shoppingListRecipes while clearing shoppingList ID: ${shoppingListIngredient[0].shoppingListID}: ${shoppingListRecipesError.message}`, 511, 'failSupabaseSelect', true, 3);
           }
           if (shoppingListRecipes.length > 0) {
             for (let i = 0; i < shoppingListRecipes.length; i++) {
@@ -245,7 +245,7 @@ module.exports = ({ db }) => {
               });
               if (deleteShoppingListRecipeError) {
                 throw errorGen(
-                  deleteShoppingListRecipeError.message || `Error deleting shoppingListRecipe ID: ${shoppingListRecipes[i].shoppingListRecipeID}: ${deleteShoppingListRecipeError.message}`,
+                  deleteShoppingListRecipeError.message || `*listIngredients-deleteShoppingListIngredient* Error deleting shoppingListRecipe ID: ${shoppingListRecipes[i].shoppingListRecipeID}: ${deleteShoppingListRecipeError.message}`,
                   deleteShoppingListRecipeError.code || 520,
                   deleteShoppingListRecipeError.name || 'unhandledError_listIngredients-updateShoppingListIngredient',
                   deleteShoppingListRecipeError.isOperational || false,
@@ -258,7 +258,7 @@ module.exports = ({ db }) => {
           //delete any standalone shoppingListIngredients for this shoppingList using axios calls
           const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID').filter('shoppingListID', 'eq', shoppingListIngredient[0].shoppingListID).filter('deleted', 'eq', false);
           if (shoppingListIngredientsError) {
-            throw errorGen(`Error getting standalone ingredients while clearing shoppingList ID: ${shoppingListIngredient[0].shoppingListID}: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+            throw errorGen(`*listIngredients-deleteShoppingListIngredient* Error getting standalone ingredients while clearing shoppingList ID: ${shoppingListIngredient[0].shoppingListID}: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
           }
           if (shoppingListIngredients.length > 0) {
             for (let i = 0; i < shoppingListIngredients.length; i++) {
@@ -274,7 +274,7 @@ module.exports = ({ db }) => {
               });
               if (deleteShoppingListIngredientError) {
                 throw errorGen(
-                  deleteShoppingListIngredientError.message || `Error deleting shoppingListIngredient ID: ${shoppingListRecipes[i].shoppingListRecipeID}: ${deleteShoppingListRecipeError.message}`,
+                  deleteShoppingListIngredientError.message || `*listIngredients-deleteShoppingListIngredient* Error deleting shoppingListIngredient ID: ${shoppingListRecipes[i].shoppingListRecipeID}: ${deleteShoppingListRecipeError.message}`,
                   deleteShoppingListIngredientError.code || 520,
                   deleteShoppingListIngredientError.name || 'unhandledError_listIngredients-deleteShoppingListIngredient',
                   deleteShoppingListIngredientError.isOperational || false,
@@ -292,7 +292,7 @@ module.exports = ({ db }) => {
       //add a 'deleted' log entry
       await createShoppingLog(userID, authorization, 'deleteIngredientFromShoppingList', Number(shoppingListIngredientID), Number(shoppingListIngredient[0].shoppingListID), null, null, `deletedIngredientFromShoppingList: ${shoppingListIngredientID}`);
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in listIngredients deleteShoppingListIngredient', err.code || 520, err.name || 'unhandledError_listIngredients-deleteShoppingListIngredient', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*listIngredients-deleteShoppingListIngredient* Unhandled Error', err.code || 520, err.name || 'unhandledError_listIngredients-deleteShoppingListIngredient', err.isOperational || false, err.severity || 2);
     }
   }
 

@@ -46,7 +46,7 @@ const visionRequest = async (recipeImageURLs, userID, authorization, messageType
   global.logger.info(`*aiHandlers-visionRequest* VISION REQUEST SOURCE IMAGES: ${JSON.stringify(body.messages[0].content.slice(1))}`);
 
   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
-    throw errorGen(`OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
+    throw errorGen(`*aiHandlers-visionRequest* OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
   });
 
   //log token usage
@@ -54,10 +54,10 @@ const visionRequest = async (recipeImageURLs, userID, authorization, messageType
 
   //Check for unsuccessful completions
   if (chatCompletionObject.choices[0].finish_reason === 'length') {
-    throw errorGen(`OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
+    throw errorGen(`*aiHandlers-createUserLog* OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
   }
   if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
-    throw errorGen(`Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
+    throw errorGen(`*aiHandlers-createUserLog* Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
   }
 
   //Clean up the response JSON
@@ -92,7 +92,7 @@ const recipeFromTextRequest = async (recipeText, userID, authorization) => {
   });
 
   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
-    throw errorGen(`OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
+    throw errorGen(`*aiHandlers-recipeFromTextRequest* OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
   });
 
   //log token usage
@@ -100,11 +100,11 @@ const recipeFromTextRequest = async (recipeText, userID, authorization) => {
 
   //Check for unsuccessful completions
   if (chatCompletionObject.choices[0].finish_reason === 'length') {
-    throw errorGen(`OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', true, 3);
+    throw errorGen(`*aiHandlers-recipeFromTextRequest* OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', true, 3);
   }
   if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
     // throw errorGen('Content Omitted due to filter being flagged', 400);
-    throw errorGen(`Content Omitted due to filter being flagged`, 515, 'aiContentViolation', true, 3);
+    throw errorGen(`*aiHandlers-recipeFromTextRequest* Content Omitted due to filter being flagged`, 515, 'aiContentViolation', true, 3);
   }
   //Clean up the response JSON
   let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');
@@ -275,7 +275,7 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
     ],
   });
   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
-    throw errorGen(`OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
+    throw errorGen(`*aiHandlers-matchRecipeItemRequest* OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
   });
 
   //log token usage
@@ -283,10 +283,10 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
 
   //Check for unsuccessful completions
   if (chatCompletionObject.choices[0].finish_reason === 'length') {
-    throw errorGen(`OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
+    throw errorGen(`*aiHandlers-matchRecipeItemRequest* OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
   }
   if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
-    throw errorGen(`Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
+    throw errorGen(`*aiHandlers-matchRecipeItemRequest* Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
   }
   //Clean up the response JSON
   let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');

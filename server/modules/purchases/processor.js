@@ -7,16 +7,16 @@ module.exports = ({ db, dbDefault }) => {
       // just set 'hidden' to false for all user recipes and recipe subscriptions
       const { error: error } = await db.from('recipes').update({ hidden: false }).eq('userID', userID);
       if (error) {
-        throw errorGen(`Error unhiding recipes: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*purchases-unhideRecipes* Error unhiding recipes: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
       const { error: error2 } = await db.from('recipeSubscriptions').update({ hidden: false }).eq('userID', userID);
       if (error2) {
-        throw errorGen(`Error unhiding recipe subscriptions: ${error2.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*purchases-unhideRecipes* Error unhiding recipe subscriptions: ${error2.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       return 'success';
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in purchases unhideRecipes', err.code || 520, err.name || 'unhandledError_purchases-unhideRecipes', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*purchases-unhideRecipes* Unhandled Error ', err.code || 520, err.name || 'unhandledError_purchases-unhideRecipes', err.isOperational || false, err.severity || 2);
     }
   };
 
@@ -31,10 +31,10 @@ module.exports = ({ db, dbDefault }) => {
       // check for 'permAITokenLastRefreshData' value
       const { data: profile, error: error } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
       if (error) {
-        throw errorGen(`Error getting profile: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*purchases-calculateAITokenUpdate* Error getting profile: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!profile) {
-        throw errorGen(`Profile not found`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*purchases-calculateAITokenUpdate* Profile not found`, 515, 'cannotComplete', false, 3);
       }
       let addAITokens = false;
       let monthsPassed = 0;
@@ -73,7 +73,7 @@ module.exports = ({ db, dbDefault }) => {
       }
       return tokenUpdate;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in purchases calculateAITokenUpdate', err.code || 520, err.name || 'unhandledError_purchases-calculateAITokenUpdate', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*purchases-calculateAITokenUpdate* Unhandled Error', err.code || 520, err.name || 'unhandledError_purchases-calculateAITokenUpdate', err.isOperational || false, err.severity || 2);
     }
   };
 
@@ -86,16 +86,16 @@ module.exports = ({ db, dbDefault }) => {
         // get current profile
         const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
         if (error1) {
-          throw errorGen(`Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*purchases-processNewPurchase* Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         if (!profile) {
-          throw errorGen(`Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
+          throw errorGen(`*purchases-processNewPurchase* Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
         }
         if (!transaction || !sku) {
-          throw errorGen(`Missing transaction or sku, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
+          throw errorGen(`*purchases-processNewPurchase* Missing transaction or sku, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
         }
         if (!transaction.permissions) {
-          throw errorGen(`Missing transaction productId, cannot process purchase`, 515, 'cannotComplete', false, 3);
+          throw errorGen(`*purchases-processNewPurchase* Missing transaction productId, cannot process purchase`, 515, 'cannotComplete', false, 3);
         }
 
         const newProfile = {};
@@ -134,11 +134,11 @@ module.exports = ({ db, dbDefault }) => {
         global.logger.info({ message: `*purchases-processNewPurchase* UPDATING PROFILE PERMS after purchase: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
-          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*purchases-processNewPurchase* Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         return updatedProfile;
       } catch (err) {
-        throw errorGen(err.message || 'Unhandled Error in purchases processNewPurchase', err.code || 520, err.name || 'unhandledError_purchases-processNewPurchase', err.isOperational || false, err.severity || 2);
+        throw errorGen(err.message || '*purchases-processNewPurchase* Unhandled Error', err.code || 520, err.name || 'unhandledError_purchases-processNewPurchase', err.isOperational || false, err.severity || 2);
       }
     },
 
@@ -151,13 +151,13 @@ module.exports = ({ db, dbDefault }) => {
         // get current profile
         const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
         if (error1) {
-          throw errorGen(`Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*purchases-newPurchaseRevenueCatSubPackage* Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         if (!profile) {
-          throw errorGen(`Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
+          throw errorGen(`*purchases-newPurchaseRevenueCatSubPackage* Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
         }
         if (!activeEntitlements || !revenueCatPackage) {
-          throw errorGen(`Missing activeEntitlements or revenueCatPackage, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
+          throw errorGen(`*purchases-newPurchaseRevenueCatSubPackage* Missing activeEntitlements or revenueCatPackage, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
         }
 
         const newProfile = {};
@@ -192,11 +192,11 @@ module.exports = ({ db, dbDefault }) => {
         global.logger.info({ message: `*purchases-newPurchaseRevenueCatSubPackage* UPDATING PROFILE PERMS after purchase: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
-          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*purchases-newPurchaseRevenueCatSubPackage* Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         return updatedProfile;
       } catch (err) {
-        throw errorGen(err.message || 'Unhandled Error in purchases newPurchaseRevenueCatPackage', err.code || 520, err.name || 'unhandledError_purchases-newPurchaseRevenueCatPackage', err.isOperational || false, err.severity || 2);
+        throw errorGen(err.message || '*purchases-newPurchaseRevenueCatSubPackage* Unhandled Error', err.code || 520, err.name || 'unhandledError_purchases-newPurchaseRevenueCatPackage', err.isOperational || false, err.severity || 2);
       }
     },
 
@@ -208,13 +208,13 @@ module.exports = ({ db, dbDefault }) => {
         // get current profile
         const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
         if (error1) {
-          throw errorGen(`Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*purchases-newPurchaseRevenueCatProdPackage* Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         if (!profile) {
-          throw errorGen(`Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
+          throw errorGen(`*purchases-newPurchaseRevenueCatProdPackage* Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
         }
         if (!activeEntitlements || !revenueCatProduct) {
-          throw errorGen(`Missing activeEntitlements or revenueCatProduct, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
+          throw errorGen(`*purchases-newPurchaseRevenueCatProdPackage* Missing activeEntitlements or revenueCatProduct, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
         }
 
         const newProfile = {};
@@ -240,11 +240,11 @@ module.exports = ({ db, dbDefault }) => {
         global.logger.info({ message: `*purchases-newPurchaseRevenueCatProdPackage* UPDATING PROFILE PERMS after purchase: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
-          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*purchases-newPurchaseRevenueCatProdPackage* Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         return updatedProfile;
       } catch (err) {
-        throw errorGen(err.message || 'Unhandled Error in purchases newPurchaseRevenueCatProduct', err.code || 520, err.name || 'unhandledError_purchases-newPurchaseRevenueCatProduct', err.isOperational || false, err.severity || 2);
+        throw errorGen(err.message || '*purchases-newPurchaseRevenueCatProdPackage* Unhandled Error', err.code || 520, err.name || 'unhandledError_purchases-newPurchaseRevenueCatProduct', err.isOperational || false, err.severity || 2);
       }
     },
 
@@ -253,7 +253,7 @@ module.exports = ({ db, dbDefault }) => {
 
       try {
         if (!permissions) {
-          throw errorGen(`Missing glassfy permissions array`, 510, 'dataValidationErr', false, 3);
+          throw errorGen(`*purchases-updatePermissions* Missing glassfy permissions array`, 510, 'dataValidationErr', false, 3);
         }
         if (userID === 'a525810e-5531-4f97-95a4-39a082f7416b') {
           global.logger.info({ message: `*purchases-updatePermissions* Skipping permissions update for Doughly Recipes user`, level: 6, timestamp: new Date().toISOString(), userID: userID });
@@ -293,11 +293,11 @@ module.exports = ({ db, dbDefault }) => {
         global.logger.info({ message: `*purchases-updatePermissions* UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
-          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*purchases-updatePermissions* Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         return updatedProfile;
       } catch (err) {
-        throw errorGen(err.message || 'Unhandled Error in purchases updatePermissions', err.code || 520, err.name || 'unhandledError_purchases-updatePermissions', err.isOperational || false, err.severity || 2);
+        throw errorGen(err.message || '*purchases-updatePermissions* Unhandled Error', err.code || 520, err.name || 'unhandledError_purchases-updatePermissions', err.isOperational || false, err.severity || 2);
       }
     },
     updateEntitlementsRevenueCat: async (options) => {
@@ -305,7 +305,7 @@ module.exports = ({ db, dbDefault }) => {
 
       try {
         if (!entitlements) {
-          throw errorGen(`Missing RevenueCat active entitlements array`, 510, 'dataValidationErr', false, 3);
+          throw errorGen(`*purchases-updateEntitlementsRevenueCat* Missing RevenueCat active entitlements array`, 510, 'dataValidationErr', false, 3);
         }
         if (userID === 'a525810e-5531-4f97-95a4-39a082f7416b') {
           global.logger.info({ message: `*purchases-updateEntitlementsRevenueCat* Skipping entitlements update for Doughly Recipes user`, level: 6, timestamp: new Date().toISOString(), userID: userID });
@@ -316,11 +316,11 @@ module.exports = ({ db, dbDefault }) => {
         const { data: profile, error1 } = await dbDefault.from('profiles').select('manualPerms').eq('user_id', userID).single();
         //if error, throw error
         if (error1) {
-          throw errorGen(`Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*purchases-updateEntitlementsRevenueCat* Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
         }
         //if no profile, throw error
         if (!profile) {
-          throw errorGen(`Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
+          throw errorGen(`*purchases-updateEntitlementsRevenueCat* Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
         }
         //if 'manualPerms' is true, skip updating entitlements
         if (profile.manualPerms === true) {
@@ -361,11 +361,11 @@ module.exports = ({ db, dbDefault }) => {
         global.logger.info({ message: `*purchases-updateEntitlementsRevenueCat* UPDATING PROFILE PERMS: ${JSON.stringify(newProfile)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         const { data: updatedProfile, error } = await dbDefault.from('profiles').update(newProfile).eq('user_id', userID);
         if (error) {
-          throw errorGen(`Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*purchases-updateEntitlementsRevenueCat* Error updating profile: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         return updatedProfile;
       } catch (err) {
-        throw errorGen(err.message || 'Unhandled Error in purchases updateEntitlementsRevenueCat', err.code || 520, err.name || 'unhandledError_purchases-updateEntitlementsRevenueCat', err.isOperational || false, err.severity || 2);
+        throw errorGen(err.message || '*purchases-updateEntitlementsRevenueCat* Unhandled Error', err.code || 520, err.name || 'unhandledError_purchases-updateEntitlementsRevenueCat', err.isOperational || false, err.severity || 2);
       }
     },
   };

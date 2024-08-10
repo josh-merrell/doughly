@@ -24,12 +24,12 @@ module.exports = ({ db, dbPublic }) => {
       const { data: ingredientStocks, error } = await q;
 
       if (error) {
-        throw errorGen(`Error getting ingredientStocks: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-getAll* Error getting ingredientStocks: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       global.logger.info({ message: `*ingredientStocks-getAll* Got ${ingredientStocks.length} ingredientStocks`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
       return ingredientStocks;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks getAll', err.code || 520, err.name || 'unhandledError_ingredientStocks-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-getAll* Unhandled Error in ingredientStocks getAll', err.code || 520, err.name || 'unhandledError_ingredientStocks-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -40,11 +40,11 @@ module.exports = ({ db, dbPublic }) => {
       const { data: ingredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false);
 
       if (error) {
-        throw errorGen(`Error getting ingredientStock ID: ${ingredientStockID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-getIngredientStockByID* Error getting ingredientStock ID: ${ingredientStockID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       return ingredientStock[0];
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks getIngredientStockByID', err.code || 520, err.name || 'unhandledError_ingredientStocks-getIngredientStockByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-getIngredientStockByID* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-getIngredientStockByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -56,15 +56,15 @@ module.exports = ({ db, dbPublic }) => {
       //verify that the provided ingredientID is valid, return error if not
       const { data: existingIngredient, error } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
       if (error) {
-        throw errorGen(`Error validating provided ingredientID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-create* Error validating provided ingredientID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingIngredient.length === 0) {
-        throw errorGen(`Ingredient ID does not exist, cannot create ingredientStock`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*ingredientStocks-create* Ingredient ID does not exist, cannot create ingredientStock`, 515, 'cannotComplete', false, 3);
       }
 
       //verify that provided measurement is positive integer, return error if not
       if (!measurement || measurement < 1) {
-        throw errorGen(`positive measurement integer is required`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*ingredientStocks-create* positive measurement integer is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //calculate grams for new stock using gramRatio for the ingredient
@@ -73,7 +73,7 @@ module.exports = ({ db, dbPublic }) => {
       //create the ingredientStock
       const { data: newIngredientStock, error: newIngredientStockError } = await db.from('ingredientStocks').insert({ ingredientStockID: customID, userID, ingredientID, purchasedDate, grams }).select().single();
       if (newIngredientStockError) {
-        throw errorGen(`Error creating ingredientStock: ${newIngredientStockError.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*ingredientStocks-create* Error creating ingredientStock: ${newIngredientStockError.message}`, 512, 'failSupabaseInsert', true, 3);
       }
 
       //add a 'created' log entry
@@ -86,7 +86,7 @@ module.exports = ({ db, dbPublic }) => {
         purchasedDate: newIngredientStock.purchasedDate,
       };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks create', err.code || 520, err.name || 'unhandledError_ingredientStocks-create', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-create* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-create', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -97,15 +97,15 @@ module.exports = ({ db, dbPublic }) => {
       //verify that the provided ingredientStockID is valid, return error if not
       const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().filter('userID', 'eq', userID).filter('ingredientStockID', 'eq', ingredientStockID);
       if (error) {
-        throw errorGen(`Error validating provided ingredientStockID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-update* Error validating provided ingredientStockID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingIngredientStock.length === 0) {
-        throw errorGen(`IngredientStock ID does not exist, cannot update ingredientStock`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*ingredientStocks-update* IngredientStock ID does not exist, cannot update ingredientStock`, 515, 'cannotComplete', false, 3);
       }
 
       //verify that provided grams is positive integer, return error if not
       if (grams && grams < 1) {
-        throw errorGen(`positive grams integer is required`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*ingredientStocks-update* positive grams integer is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //update the ingredientStock
@@ -119,7 +119,7 @@ module.exports = ({ db, dbPublic }) => {
       const updatedIngredientStock = await updater(userID, authorization, 'ingredientStockID', ingredientStockID, 'ingredientStocks', updateFields);
       return updatedIngredientStock;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks update', err.code || 520, err.name || 'unhandledError_ingredientStocks-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-update* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -130,10 +130,10 @@ module.exports = ({ db, dbPublic }) => {
       //verify that the provided ingredientStockID is valid, return error if not
       const { data: existingIngredientStock, error } = await db.from('ingredientStocks').select().eq('ingredientStockID', ingredientStockID).eq('deleted', false).single();
       if (error) {
-        throw errorGen(`Error validating provided ingredientStockID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-deleteIngredientStock* Error validating provided ingredientStockID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingIngredientStock.length === 0) {
-        throw errorGen(`IngredientStock ID does not exist, cannot delete ingredientStock`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-deleteIngredientStock* IngredientStock ID does not exist, cannot delete ingredientStock`, 511, 'failSupabaseSelect', true, 3);
       }
 
       //get name of the associated ingredients
@@ -142,7 +142,7 @@ module.exports = ({ db, dbPublic }) => {
       //delete the ingredientStock
       const { error: deleteError } = await db.from('ingredientStocks').update({ deleted: true }).eq('ingredientStockID', ingredientStockID);
       if (deleteError) {
-        throw errorGen(`Error deleting ingredientStock: ${deleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*ingredientStocks-deleteIngredientStock* Error deleting ingredientStock: ${deleteError.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       //add a 'deleted' log entry
@@ -155,7 +155,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return { success: true };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks deleteIngredientStock', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteIngredientStock', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-deleteIngredientStock* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteIngredientStock', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -166,7 +166,7 @@ module.exports = ({ db, dbPublic }) => {
       // get all unique userID's who have a non-deleted ingredientStock
       const { data: users, error: usersError } = await db.from('ingredientStockDistinctUsers').select('*');
       if (usersError) {
-        throw errorGen(`Error getting unique userID's: ${usersError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-deleteAllExpired* Error getting unique userID's: ${usersError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const promises = [];
       for (const user of users) {
@@ -180,7 +180,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info('*ingredientStocks-deleteAllExpired* Deleted all expired ingredientStocks');
       return { success: true };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks deleteAllExpired', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteAllExpired', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-deleteAllExpired* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteAllExpired', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -189,7 +189,7 @@ module.exports = ({ db, dbPublic }) => {
       // get all non-deleted ingredientStocks for the user
       const { data: stocks, error: expiredStocksError } = await db.from('ingredientStocks').select().eq('userID', userID).eq('deleted', false);
       if (expiredStocksError) {
-        throw errorGen(`Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-deleteExpiredStockForUser* Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const deletePromises = [];
       let notifications = [];
@@ -197,7 +197,7 @@ module.exports = ({ db, dbPublic }) => {
         const { ingredientStockID, ingredientID } = stock;
         const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientID).single();
         if (ingredientError) {
-          throw errorGen(`Error getting ingredient for ingredientStockID ${ingredientStockID}: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*ingredientStocks-deleteExpiredStockForUser* Error getting ingredient for ingredientStockID ${ingredientStockID}: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
         }
 
         // determine expire date using ingredient.lifespanDays and stock.purchasedDate
@@ -212,7 +212,7 @@ module.exports = ({ db, dbPublic }) => {
           // get 'autoDeleteExpiredStock' setting for the user
           const { data: result, error } = await dbPublic.from('profiles').select('autoDeleteExpiredStock').eq('user_id', userID).single();
           if (error) {
-            throw errorGen(`Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+            throw errorGen(`*ingredientStocks-deleteExpiredStockForUser* Error getting autoDeleteExpiredStock setting for user ${userID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
           }
           if (!result.autoDeleteExpiredStock) {
             global.logger.info({ message: `*ingredientStocks-deleteExpiredStockForUser* autoDeleteExpiredStock setting is false for user ${userID}, skipping deletion`, level: 6, timestamp: new Date().toISOString(), userID: userID || 0 });
@@ -253,7 +253,7 @@ module.exports = ({ db, dbPublic }) => {
         },
       });
       if (getTokensError) {
-        throw errorGen(getTokensError.message || `Error getting push tokens for user ${userID}: ${getTokensError.message}`, getTokensError.code || 520, getTokensError.name || 'unhandledError_', getTokensError.isOperational || false, getTokensError.severity || 2); //message, code, name, operational, severity
+        throw errorGen(getTokensError.message || `*ingredientStocks-deleteExpiredStockForUser* Error getting push tokens for user ${userID}: ${getTokensError.message}`, getTokensError.code || 520, getTokensError.name || 'unhandledError_', getTokensError.isOperational || false, getTokensError.severity || 2); //message, code, name, operational, severity
       }
 
       // NOTIFICATIONS
@@ -297,7 +297,7 @@ module.exports = ({ db, dbPublic }) => {
       );
       if (sendNotificationError) {
         throw errorGen(
-          sendNotificationError.message || `Error sending push tokens for user ${userID}: ${sendNotificationError.message}`,
+          sendNotificationError.message || `*ingredientStocks-deleteExpiredStockForUser* Error sending push tokens for user ${userID}: ${sendNotificationError.message}`,
           sendNotificationError.code || 520,
           sendNotificationError.name || 'unhandledError_',
           sendNotificationError.isOperational || false,
@@ -312,7 +312,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return { success: true };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks deleteExpiredStockForUser', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteExpiredStockForUser', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-deleteExpiredStockForUser* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-deleteExpiredStockForUser', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -323,7 +323,7 @@ module.exports = ({ db, dbPublic }) => {
       // get all unique userID's who have a non-deleted ingredientStock
       const { data: users, error: usersError } = await db.from('ingredientStockDistinctUsers').select('*');
       if (usersError) {
-        throw errorGen(`Error getting unique userID's: ${usersError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-notifyOnUpcomingExpiration* Error getting unique userID's: ${usersError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const promises = [];
       for (const user of users) {
@@ -337,7 +337,7 @@ module.exports = ({ db, dbPublic }) => {
       global.logger.info({ message: `*ingredientStocks-notifyOnUpcomingExpiration* Notified all users of upcoming expirations`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
       return { success: true };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks notifyOnUpcomingExpiration', err.code || 520, err.name || 'unhandledError_ingredientStocks-notifyOnUpcomingExpiration', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-notifyOnUpcomingExpiration* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-notifyOnUpcomingExpiration', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -346,7 +346,7 @@ module.exports = ({ db, dbPublic }) => {
       // get 'notifyOnUpcomingExpiry' value from user profile
       const { data: profile, error: profileError } = await dbPublic.from('profiles').select('notifyUpcomingStockExpiry').eq('user_id', userID).single();
       if (profileError) {
-        throw errorGen(`Error getting notifyOnUpcomingExpiry setting for user ${userID}: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-notifyUserOfUpcomingExpiration* Error getting notifyOnUpcomingExpiry setting for user ${userID}: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (profile.notifyUpcomingStockExpiry !== 'Enabled' && profile.notifyUpcomingStockExpiry !== 'Email and App Push') {
         global.logger.info({ message: `*ingredientStocks-notifyOnUpcomingExpiration* notifyOnUpcomingExpiry setting is disabled for user ${userID}, skipping notification`, level: 6, timestamp: new Date().toISOString(), userID: userID });
@@ -355,14 +355,14 @@ module.exports = ({ db, dbPublic }) => {
       // get all non-deleted ingredientStocks for the user
       const { data: stocks, error: expiredStocksError } = await db.from('ingredientStocks').select().eq('userID', userID).eq('deleted', false);
       if (expiredStocksError) {
-        throw errorGen(`Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-notifyUserOfUpcomingExpiration* Error getting expired ingredientStocks for user ${userID}: ${expiredStocksError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       const notifications = [];
       for (const stock of stocks) {
         const { ingredientStockID, ingredientID } = stock;
         const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientID).single();
         if (ingredientError) {
-          throw errorGen(`Error getting ingredient for ingredientStockID ${ingredientStockID}: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*ingredientStocks-notifyUserOfUpcomingExpiration* Error getting ingredient for ingredientStockID ${ingredientStockID}: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
         }
 
         // determine expire date using ingredient.lifespanDays and stock.purchasedDate
@@ -387,7 +387,7 @@ module.exports = ({ db, dbPublic }) => {
         },
       });
       if (getTokensError) {
-        throw errorGen(getTokensError.message || `Error getting push tokens for user ${userID}: ${getTokensError.message}`, getTokensError.code || 520, getTokensError.name || 'unhandledError_', getTokensError.isOperational || false, getTokensError.severity || 2); //message, code, name, operational, severity
+        throw errorGen(getTokensError.message || `*ingredientStocks-notifyUserOfUpcomingExpiration* Error getting push tokens for user ${userID}: ${getTokensError.message}`, getTokensError.code || 520, getTokensError.name || 'unhandledError_', getTokensError.isOperational || false, getTokensError.severity || 2); //message, code, name, operational, severity
       }
 
       // send expiration notifications
@@ -408,7 +408,7 @@ module.exports = ({ db, dbPublic }) => {
         );
         if (sendNotificationError) {
           throw errorGen(
-            sendNotificationError.message || `Error sending push tokens for user ${userID}: ${sendNotificationError.message}`,
+            sendNotificationError.message || `*ingredientStocks-notifyUserOfUpcomingExpiration* Error sending push tokens for user ${userID}: ${sendNotificationError.message}`,
             sendNotificationError.code || 520,
             sendNotificationError.name || 'unhandledError_',
             sendNotificationError.isOperational || false,
@@ -419,7 +419,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return { success: true };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks notifyUserOfUpcomingExpiration', err.code || 520, err.name || 'unhandledError_ingredientStocks-notifyUserOfUpcomingExpiration', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-notifyUserOfUpcomingExpiration* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-notifyUserOfUpcomingExpiration', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -431,19 +431,19 @@ module.exports = ({ db, dbPublic }) => {
       // get user profile to check if notifications are enabled
       const { data: profile, error: profileError } = await dbPublic.from('profiles').select().eq('user_id', userID).single();
       if (profileError) {
-        throw errorGen(`Error getting profile for user ${userID}: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-checkForLowStock* Error getting profile for user ${userID}: ${profileError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // get ingredient details
       const { data: ingredient, error: ingredientError } = await db.from('ingredients').select().eq('ingredientID', ingredientID).single();
       if (ingredientError) {
-        throw errorGen(`Error getting ingredient for ingredient ${ingredientID}: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-checkForLowStock* Error getting ingredient for ingredient ${ingredientID}: ${ingredientError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // get all ingredientStocks for the ingredient
       const { data: stocks, error: stocksError } = await db.from('ingredientStocks').select().eq('userID', userID).eq('ingredientID', ingredientID).eq('deleted', false);
       if (stocksError) {
-        throw errorGen(`Error getting ingredientStocks for ingredient ${ingredientID} and user ${userID}: ${stocksError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*ingredientStocks-checkForLowStock* Error getting ingredientStocks for ingredient ${ingredientID} and user ${userID}: ${stocksError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       // if there are no ingredientStocks, send notification to user if notifyOnNoStock is enabled
@@ -461,7 +461,7 @@ module.exports = ({ db, dbPublic }) => {
           },
         });
         if (getTokensError) {
-          throw errorGen(getTokensError.message || `Error getting push tokens for user ${userID}: ${getTokensError.message}`, getTokensError.code || 520, getTokensError.name || 'unhandledError_', getTokensError.isOperational || false, getTokensError.severity || 2); //message, code, name, operational, severity
+          throw errorGen(getTokensError.message || `*ingredientStocks-checkForLowStock* Error getting push tokens for user ${userID}: ${getTokensError.message}`, getTokensError.code || 520, getTokensError.name || 'unhandledError_', getTokensError.isOperational || false, getTokensError.severity || 2); //message, code, name, operational, severity
         }
 
         const { error: sendNotificationError } = await axios.post(
@@ -481,7 +481,7 @@ module.exports = ({ db, dbPublic }) => {
 
         if (sendNotificationError) {
           throw errorGen(
-            sendNotificationError.message || `Error sending push tokens for user ${userID}: ${sendNotificationError.message}`,
+            sendNotificationError.message || `*ingredientStocks-checkForLowStock* Error sending push tokens for user ${userID}: ${sendNotificationError.message}`,
             sendNotificationError.code || 520,
             sendNotificationError.name || 'unhandledError_',
             sendNotificationError.isOperational || false,
@@ -492,7 +492,7 @@ module.exports = ({ db, dbPublic }) => {
         // get all recipeIngredients for the ingredient
         const { data: recipeIngredients, error: recipeIngredientsError } = await db.from('recipeIngredients').select().eq('ingredientID', ingredientID);
         if (recipeIngredientsError) {
-          throw errorGen(`Error getting recipeIngredients for ingredient ${ingredientID}: ${recipeIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*ingredientStocks-checkForLowStock* Error getting recipeIngredients for ingredient ${ingredientID}: ${recipeIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
         }
 
         // if no recipeIngredients, return
@@ -523,7 +523,7 @@ module.exports = ({ db, dbPublic }) => {
             },
           });
           if (getTokensError) {
-            throw errorGen(getTokensError.message || `Error getting push tokens for user ${userID}: ${getTokensError.message}`, getTokensError.code || 520, getTokensError.name || 'unhandledError_', getTokensError.isOperational || false, getTokensError.severity || 2); //message, code, name, operational, severity
+            throw errorGen(getTokensError.message || `*ingredientStocks-checkForLowStock* Error getting push tokens for user ${userID}: ${getTokensError.message}`, getTokensError.code || 520, getTokensError.name || 'unhandledError_', getTokensError.isOperational || false, getTokensError.severity || 2); //message, code, name, operational, severity
           }
 
           const { error: sendNotificationError } = await axios.post(
@@ -542,7 +542,7 @@ module.exports = ({ db, dbPublic }) => {
           );
           if (sendNotificationError) {
             throw errorGen(
-              sendNotificationError.message || `Error sending push tokens for user ${userID}: ${sendNotificationError.message}`,
+              sendNotificationError.message || `*ingredientStocks-checkForLowStock* Error sending push tokens for user ${userID}: ${sendNotificationError.message}`,
               sendNotificationError.code || 520,
               sendNotificationError.name || 'unhandledError_',
               sendNotificationError.isOperational || false,
@@ -552,7 +552,7 @@ module.exports = ({ db, dbPublic }) => {
         }
       }
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in ingredientStocks checkForLowStock', err.code || 520, err.name || 'unhandledError_ingredientStocks-checkForLowStock', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*ingredientStocks-checkForLowStock* Unhandled Error', err.code || 520, err.name || 'unhandledError_ingredientStocks-checkForLowStock', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 

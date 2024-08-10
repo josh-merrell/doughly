@@ -35,7 +35,7 @@ async function sendTokenNotifications(destTokens, type, data) {
       }
     });
   } catch (err) {
-    throw errorGen(err.message || 'Unhandled Error in firebaseHandler sendTokenNotifications', err.code || 520, err.name || 'unhandledError_firebaseHandler-sendTokenNotifications', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+    throw errorGen(err.message || '*firebaseHandler-sendTokenNotifications* Unhandled Error', err.code || 520, err.name || 'unhandledError_firebaseHandler-sendTokenNotifications', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
   }
 }
 
@@ -56,7 +56,7 @@ async function sendTokenNotification(message) {
       userID: 0,
     });
   } catch (err) {
-    throw errorGen(`${err.message} || Unhandled Error in firebaseHandler sendTokenNotification`, err.code || 520, `${err.name} || unhandledError_firebaseHandler-sendTokenNotification`, err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+    throw errorGen(err.message || `*firebaseHandler-sendTokenNotification* Unhandled Error in firebaseHandler sendTokenNotification`, err.code || 520, `${err.name} || unhandledError_firebaseHandler-sendTokenNotification`, err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
   }
 }
 

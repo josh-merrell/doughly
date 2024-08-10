@@ -27,7 +27,7 @@ module.exports = ({ db, dbPublic }) => {
         return fallbackContent;
       }
       if (recipe.length === 0) {
-        throw errorGen(`Recipe not found: ${recipeID}`, 515, 'cannotComplete', true, 3);
+        throw errorGen(`*linkPreviews-recipePreview* Recipe not found: ${recipeID}`, 515, 'cannotComplete', true, 3);
       }
       const recipeData = recipe[0];
 
@@ -66,7 +66,7 @@ module.exports = ({ db, dbPublic }) => {
 
       return htmlContent;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in linkPreviews recipePreview', err.code || 520, err.name || 'unhandledError_linkPreviews-recipePreview', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*linkPreviews-recipePreview* Unhandled Error', err.code || 520, err.name || 'unhandledError_linkPreviews-recipePreview', err.isOperational || false, err.severity || 2);
     }
   }
 

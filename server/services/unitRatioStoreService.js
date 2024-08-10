@@ -54,7 +54,7 @@ const checkForRatio = async (material, unitA, unitB) => {
       ratio: null,
     };
   } catch (err) {
-    throw errorGen(err.message || `Unhandled Error in unitRationStoreService checkForRatio, ${material}-${unitA}-${unitB}': ${error}`, err.code || 520, err.name || 'unhandledError_unitRationStoreService-checkForRatio', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+    throw errorGen(err.message || `*unitRatioStoreService-checkForRatio* Unhandled Error, ${material}-${unitA}-${unitB}': ${error}`, err.code || 520, err.name || 'unhandledError_unitRationStoreService-checkForRatio', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
   }
 };
 
@@ -95,7 +95,7 @@ const addUnitRatio = async (material, unitA, unitB, ratio) => {
       data,
     };
   } catch (error) {
-    throw errorGen(error.message || `Unhandled Error in unitRationStoreService addUnitRatio, ${material}-${unitA}-${unitB}': ${error}`, error.code || 520, error.name || 'unhandledError_unitRationStoreService-addUnitRatio', error.isOperational || false, error.severity || 2); //message, code, name, operational, severity
+    throw errorGen(error.message || `*unitRatioStoreService-addUnitRatio* Unhandled Error, ${material}-${unitA}-${unitB}': ${error}`, error.code || 520, error.name || 'unhandledError_unitRationStoreService-addUnitRatio', error.isOperational || false, error.severity || 2); //message, code, name, operational, severity
   }
 };
 
@@ -116,7 +116,7 @@ const getDraftUnitRatios = async () => {
       data: data.Items,
     };
   } catch (error) {
-    throw errorGen(error.message || `Unhandled Error in unitRationStoreService getDraftUnitRatios: ${error}`, error.code || 520, error.name || 'unhandledError_unitRationStoreService-getDraftUnitRatios', error.isOperational || false, error.severity || 2); //message, code, name, operational, severity
+    throw errorGen(error.message || `*unitRatioStoreService-getDraftUnitRatios* Unhandled Error: ${error}`, error.code || 520, error.name || 'unhandledError_unitRationStoreService-getDraftUnitRatios', error.isOperational || false, error.severity || 2); //message, code, name, operational, severity
   }
 };
 
@@ -141,7 +141,7 @@ const batchApproveUnitRatios = async (ratios) => {
       data,
     };
   } catch (error) {
-    throw errorGen(error.message || `Unhandled Error in unitRationStoreService batchApproveUnitRatios: ${error}`, error.code || 520, error.name || 'unhandledError_unitRationStoreService-batchApproveUnitRatios', error.isOperational || false, error.severity || 2); //message, code, name, operational, severity
+    throw errorGen(error.message || `*unitRatioStoreService-batchApproveUnitRatios* Unhandled Error: ${error}`, error.code || 520, error.name || 'unhandledError_unitRationStoreService-batchApproveUnitRatios', error.isOperational || false, error.severity || 2); //message, code, name, operational, severity
   }
 };
 
@@ -164,7 +164,7 @@ const batchDeleteUnitRatios = async (ratios) => {
       data,
     };
   } catch (error) {
-    throw errorGen(error.message || `Unhandled Error in unitRationStoreService batchDeleteUnitRatios: ${error}`, error.code || 520, error.name || 'unhandledError_unitRationStoreService-batchDeleteUnitRatios', error.isOperational || false, error.severity || 2); //message, code, name, operational, severity
+    throw errorGen(error.message || `*unitRatioStoreService-batchDeleteUnitRatios* Unhandled Error: ${error}`, error.code || 520, error.name || 'unhandledError_unitRationStoreService-batchDeleteUnitRatios', error.isOperational || false, error.severity || 2); //message, code, name, operational, severity
   }
 };
 

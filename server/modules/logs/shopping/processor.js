@@ -25,12 +25,12 @@ module.exports = ({ db }) => {
       const { data: logs, error } = await q;
 
       if (error) {
-        throw errorGen(`Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*shoppingLogs-getAll* Error getting logs: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       global.logger.info({message:`*shoppingLogs-getAll* Got ${logs.length} shopping logs`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return logs;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in shoppingLogs getAll', err.code || 520, err.name || 'unhandledError_shoppingLogs-getAll', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*shoppingLogs-getAll* Unhandled Error', err.code || 520, err.name || 'unhandledError_shoppingLogs-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -41,12 +41,12 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('shoppingLogs').select().eq('shoppingLogID', logID);
 
       if (error) {
-        throw errorGen(`Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*shoppingLogs-getShoppingListByID* Error getting log: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       global.logger.info({message:`*shoppingLogs-getShoppingListByID* Got log with ID: ${log[0].logID}`, level:6, timestamp: new Date().toISOString(), 'userID': log[0].userID});
       return log;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in shoppingLogs getShoppingListByID', err.code || 520, err.name || 'unhandledError_shoppingLogs-getShoppingListByID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*shoppingLogs-getShoppingListByID* Unhandled Error', err.code || 520, err.name || 'unhandledError_shoppingLogs-getShoppingListByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -59,13 +59,13 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('shoppingLogs').insert({ shoppingLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
       if (error) {
-        throw errorGen(`Error creating shoppingLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*shoppingLogs-create* Error creating shoppingLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       return {
         shoppingLogID: log.shoppingLogID,
       };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in shoppingLogs create', err.code || 520, err.name || 'unhandledError_shoppingLogs-create', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*shoppingLogs-create* Unhandled Error', err.code || 520, err.name || 'unhandledError_shoppingLogs-create', err.isOperational || false, err.severity || 2);
     }
   }
 

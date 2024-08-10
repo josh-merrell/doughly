@@ -24,12 +24,12 @@ module.exports = ({ db }) => {
       const { data: recipeIngredients, error } = await q;
 
       if (error) {
-        throw errorGen(`Error getting recipeIngredients`, 511, `failSupabaseSelect`, true, 3);
+        throw errorGen(`*recipeIngredients-getAll* Error getting recipeIngredients`, 511, `failSupabaseSelect`, true, 3);
       }
       global.logger.info({message:`*recipeIngredients-getAll* Got ${recipeIngredients.length} recipeIngredients`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return recipeIngredients;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeIngredients getAll', err.code || 520, err.name || 'unhandledError_recipeIngredients-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipeIngredients-getAll* Unhandled Error in recipeIngredients getAll', err.code || 520, err.name || 'unhandledError_recipeIngredients-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -39,12 +39,12 @@ module.exports = ({ db }) => {
       const { data: recipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID).eq('deleted', false);
 
       if (error) {
-        throw errorGen(`Error getting recipeIngredient ID: ${recipeIngredientID}`, 511, `failSupabaseSelect`, true, 3);
+        throw errorGen(`*recipeIngredients-getRecipeIngredientByID* Error getting recipeIngredient ID: ${recipeIngredientID}`, 511, `failSupabaseSelect`, true, 3);
       }
       global.logger.info({message:`*recipeIngredients-getRecipeIngredientByID* Got recipeIngredient`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return recipeIngredient;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeIngredients getRecipeIngredientByID', err.code || 520, err.name || 'unhandledError_recipeIngredients-getRecipeIngredientByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipeIngredients-getRecipeIngredientByID* Unhandled Error in recipeIngredients getRecipeIngredientByID', err.code || 520, err.name || 'unhandledError_recipeIngredients-getRecipeIngredientByID', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -56,44 +56,44 @@ module.exports = ({ db }) => {
 
       //verify that 'customID' exists on the request
       if (!customID) {
-        throw errorGen(`Error creating recipeIngredient: customID is missing`, 510, `dataValidationErr`, false, 3);
+        throw errorGen(`*recipeIngredients-create* Error creating recipeIngredient: customID is missing`, 510, `dataValidationErr`, false, 3);
       }
 
       //verify that the provided recipeID exists, return error if not
       const { data: existingRecipe, error } = await db.from('recipes').select().filter('userID', 'eq', userID).filter('recipeID', 'eq', recipeID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error validating provided recipeID`, 510, `dataValidationErr`, false, 3);
+        throw errorGen(`*recipeIngredients-create* Error validating provided recipeID`, 510, `dataValidationErr`, false, 3);
       }
       if (existingRecipe.length === 0) {
         // throw errorGen(`RecipeID does not exist, cannot create recipeIngredient`, 400);
-        throw errorGen(`RecipeID does not exist, cannot create recipeIngredient`, 515, `cannotComplete`, true, 3);
+        throw errorGen(`*recipeIngredients-create* RecipeID does not exist, cannot create recipeIngredient`, 515, `cannotComplete`, true, 3);
       }
 
       //verify that the provided ingredientID exists, return error if not
       const { data: existingIngredient, error2 } = await db.from('ingredients').select().filter('userID', 'eq', userID).filter('ingredientID', 'eq', ingredientID);
       if (error2) {
         // throw errorGen(`Error validating provided ingredientID`, 400);
-        throw errorGen(`Error validating provided ingredientID`, 515, 'cannotComplete', true, 3);
+        throw errorGen(`*recipeIngredients-create* Error validating provided ingredientID`, 515, 'cannotComplete', true, 3);
       }
       if (existingIngredient.length === 0) {
-        throw errorGen(`IngredientID ${ingredientID} does not exist, cannot create recipeIngredient`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipeIngredients-create* IngredientID ${ingredientID} does not exist, cannot create recipeIngredient`, 510, 'dataValidationErr', false, 3);
       }
 
       //verify that the provided measurement is a positive number, return error if not
       if (!measurement || measurement <= 0) {
-        throw errorGen(`positive measurement number is required`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipeIngredients-create* positive measurement number is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //verify that the provided purchaseUnitRatio is a positive number, return error if not
       if (!purchaseUnitRatio || purchaseUnitRatio <= 0) {
-        throw errorGen(`positive purchaseUnitRatio number is required, got ${purchaseUnitRatio}`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipeIngredients-create* positive purchaseUnitRatio number is required, got ${purchaseUnitRatio}`, 510, 'dataValidationErr', false, 3);
       }
 
       //create the recipeIngredient
       const { data: recipeIngredient, error3 } = await db.from('recipeIngredients').insert({ recipeIngredientID: customID, userID, recipeID, ingredientID, measurementUnit, measurement, purchaseUnitRatio, version: 1, preparation, component, RIneedsReview }).select().single();
 
       if (error3) {
-        throw errorGen(`Error creating recipeIngredient: ${error3.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*recipeIngredients-create* Error creating recipeIngredient: ${error3.message}`, 512, 'failSupabaseInsert', true, 3);
       }
 
       //if status of existingRecipe is 'noIngredients', update status to 'noTools'
@@ -103,9 +103,9 @@ module.exports = ({ db }) => {
           global.logger.info({message:`*recipeIngredients-create* Error updating recipe status: ${error4.message}, rolling back`, level:3, timestamp: new Date().toISOString(), 'userID': userID});
           const { error5 } = await db.from('recipeIngredients').delete().eq('recipeIngredientID', recipeIngredient.recipeIngredientID);
           if (error5) {
-            throw errorGen(`Error rolling back recipeIngredient: ${error5.message}`, 514, 'failSupabaseDelete', true, 3);
+            throw errorGen(`*recipeIngredients-create* Error rolling back recipeIngredient: ${error5.message}`, 514, 'failSupabaseDelete', true, 3);
           }
-          throw errorGen(`Error updating recipe status`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*recipeIngredients-create* Error updating recipe status`, 513, 'failSupabaseUpdate', true, 3);
         }
       }
 
@@ -127,7 +127,7 @@ module.exports = ({ db }) => {
         RIneedsReview,
       };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeIngredients create', err.code || 520, err.name || 'unhandledError_recipeIngredients-create', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipeIngredients-create* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeIngredients-create', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -138,20 +138,20 @@ module.exports = ({ db }) => {
       //verify that the provided recipeIngredientID exists, return error if not
       const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().filter('userID', 'eq', userID).filter('recipeIngredientID', 'eq', recipeIngredientID);
       if (error) {
-        throw errorGen(`Error validating provided recipeIngredientID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeIngredients-update* Error validating provided recipeIngredientID: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingRecipeIngredient.length === 0) {
-        throw errorGen(`RecipeIngredientID does not exist, cannot update recipeIngredient`, 515, 'cannotComplete', true, 3);
+        throw errorGen(`*recipeIngredients-update* RecipeIngredientID does not exist, cannot update recipeIngredient`, 515, 'cannotComplete', true, 3);
       }
 
       //if provided, verify that the provided measurement is a positive number, return error if not
       if (measurement && measurement <= 0) {
-        throw errorGen(`positive measurement number is required`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipeIngredients-update* positive measurement number is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //if provided, verify that the provided purchaseUnitRatio is a positive number, return error if not
       if (purchaseUnitRatio && purchaseUnitRatio <= 0) {
-        throw errorGen(`positive purchaseUnitRatio number is required`, 510, 'dataValidationErr', false, 3);
+        throw errorGen(`*recipeIngredients-update* positive purchaseUnitRatio number is required`, 510, 'dataValidationErr', false, 3);
       }
 
       //update the recipeIngredient
@@ -169,7 +169,7 @@ module.exports = ({ db }) => {
       const updatedRecipeIngredient = await updater(userID, authorization, 'recipeIngredientID', recipeIngredientID, 'recipeIngredients', updateFields);
       return updatedRecipeIngredient;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeIngredients update', err.code || 520, err.name || 'unhandledError_recipeIngredients-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipeIngredients-update* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeIngredients-update', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -180,17 +180,17 @@ module.exports = ({ db }) => {
       //verify that the provided recipeIngredientID exists, return error if not
       const { data: existingRecipeIngredient, error } = await db.from('recipeIngredients').select().eq('recipeIngredientID', recipeIngredientID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error validating provided recipeIngredientID`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeIngredients-deleteRecipeIngredient* Error validating provided recipeIngredientID`, 511, 'failSupabaseSelect', true, 3);
       }
       if (existingRecipeIngredient.length === 0) {
-        throw errorGen(`RecipeIngredientID does not exist, cannot delete recipeIngredient`, 515, 'cannotComplete', true, 3);
+        throw errorGen(`*recipeIngredients-deleteRecipeIngredient* RecipeIngredientID does not exist, cannot delete recipeIngredient`, 515, 'cannotComplete', true, 3);
       }
 
       //delete the recipeIngredient
       const { error2 } = await db.from('recipeIngredients').update({ deleted: true }).eq('recipeIngredientID', recipeIngredientID);
 
       if (error2) {
-        throw errorGen(`Error deleting recipeIngredient ID: ${recipeIngredientID}`, 512, 'failSupabaseDelete', true, 3);
+        throw errorGen(`*recipeIngredients-deleteRecipeIngredient* Error deleting recipeIngredient ID: ${recipeIngredientID}`, 512, 'failSupabaseDelete', true, 3);
       }
 
       //add a 'deleted' log entry
@@ -204,21 +204,21 @@ module.exports = ({ db }) => {
       //if existingRecipe has no more recipeIngredients, update status to 'noIngredients'
       const { data: recipeIngredients, error: recipeIngredientsError } = await db.from('recipeIngredients').select().eq('recipeID', existingRecipeIngredient[0].recipeID).eq('deleted', false);
       if (recipeIngredientsError) {
-        throw errorGen(`Error getting remaining recipeIngredients for recipe`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*recipeIngredients-deleteRecipeIngredient* Error getting remaining recipeIngredients for recipe`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!recipeIngredients.length) {
         //get current recipe status
         const { data: existingRecipe } = await db.from('recipes').select().eq('recipeID', existingRecipeIngredient[0].recipeID).single();
         const { error: updateError } = await db.from('recipes').update({ status: 'noIngredients' }).eq('recipeID', existingRecipeIngredient[0].recipeID);
         if (updateError) {
-          throw errorGen(`Error updating recipe status`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*recipeIngredients-deleteRecipeIngredient* Error updating recipe status`, 513, 'failSupabaseUpdate', true, 3);
         }
         //log the change
         createRecipeLog(userID, authorization, 'updateRecipeStatus', Number(existingRecipeIngredient[0].recipeID), Number(logID1), `${existingRecipe.status}`, 'noIngredients', `Updated Status of Recipe: ${existingRecipe.title} to 'noIngredients'`);
       }
       return { success: true };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeIngredients deleteRecipeIngredient', err.code || 520, err.name || 'unhandledError_recipeIngredients-deleteReciepIngredient', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipeIngredients-deleteRecipeIngredient* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeIngredients-deleteReciepIngredient', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -237,7 +237,7 @@ module.exports = ({ db }) => {
       }
       return Number(parsedData.unitRatio);
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in recipeIngredients getPurEst', err.code || 520, err.name || 'unhandledError_recipeIngredients-getPurEst', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*recipeIngredients-getPurEst* Unhandled Error', err.code || 520, err.name || 'unhandledError_recipeIngredients-getPurEst', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
