@@ -1,5 +1,5 @@
 <div
-  class="overflow-y-scroll dark:bg-dl-tan-1"
+  class="overflow-y-scroll bg-dl-tan-9 dark:bg-dl-tan-1"
   [ngClass]="{
   'blur-sm': onboardingModalOpen(),
 }"
@@ -13,7 +13,7 @@
     />
     <!-- Overview -->
     <div
-      class="relative mx-dl-5 mb-dl-5 mt-dl-3 rounded-lg shadow-md dark:bg-dl-tan-2"
+      class="relative mx-dl-5 mb-dl-5 mt-dl-3 rounded-lg bg-dl-tan-10 shadow-md dark:bg-dl-tan-2"
     >
       <!-- Title, Dropdown, Sync -->
       <div
@@ -464,7 +464,7 @@
     <!-- Ingredients -->
     <div
       *ngIf="displayIngredientsByComponent()"
-      class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md dark:bg-dl-tan-2"
+      class="bg-dl-tan-10 mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md dark:bg-dl-tan-2"
     >
       <div class="flex items-center justify-between">
         <p
@@ -596,7 +596,7 @@
       (click)="flipToolsExpanded()"
       *ngIf="displayTools()"
       [ngClass]="{ 'h-dl-5': !toolsExpanded() }"
-      class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md transition-all duration-200 ease-in-out dark:bg-dl-tan-2"
+      class="bg-dl-tan-10 mx-dl-5 mt-dl-5 flex flex-col rounded-lg pb-dl-5 shadow-md transition-all duration-200 ease-in-out dark:bg-dl-tan-2"
     >
       <div class="relative flex justify-between" *ngIf="!toolsExpanded()">
         <p
@@ -666,7 +666,7 @@
     <!-- Steps -->
     <div
       *ngIf="displaySteps()"
-      class="mx-dl-5 mb-dl-2 mt-dl-5 flex flex-col items-center rounded-lg pb-dl-5 shadow-md dark:bg-dl-tan-2"
+      class="bg-dl-tan-10 mx-dl-5 mb-dl-2 mt-dl-5 flex flex-col items-center rounded-lg pb-dl-5 shadow-md dark:bg-dl-tan-2"
     >
       <div class="mb-dl-4 flex w-full items-center justify-between">
         <p

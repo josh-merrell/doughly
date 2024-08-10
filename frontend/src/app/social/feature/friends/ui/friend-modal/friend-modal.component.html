@@ -1,5 +1,5 @@
 <div
-  class="relative w-full transform overflow-hidden rounded-dl-3 bg-dl-tan-10 px-dl-2 pb-dl-4 pt-dl-5 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+  class="relative w-full transform overflow-hidden rounded-dl-3 bg-dl-tan-9 px-dl-2 pb-dl-4 pt-dl-5 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <!-- Joined, Image, Counts-->
   <div class="mb-dl-3 flex justify-between px-dl-2">
@@ -147,12 +147,12 @@
         class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
-          'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
+          'bg-dl-pinknew-3 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             buttonTexts().friendButton === 'Add Friend' ||
             buttonTexts().friendButton === 'Accept Request',
           '  bg-dl-tan-10 text-dl-pinknew-4  dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
             buttonTexts().friendButton === 'Cancel Request',
-          'border-2 border-dl-pinknew-4 bg-dl-tan-10 text-dl-pinknew-4 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
+          'border-2 border-dl-pinknew-3 bg-dl-tan-9 text-dl-pinknew-3 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
             buttonTexts().friendButton === 'Unfriend'
         }"
       >
@@ -162,9 +162,9 @@
         type="button"
         class="block whitespace-nowrap rounded-dl-1 px-dl-4 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
         [ngClass]="{
-          'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
+          'bg-dl-pinknew-3 text-dl-tan-10 dark:border-dl-pinknew-3 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             buttonTexts().followButton === 'Follow',
-          'border-2 border-dl-pinknew-4 bg-dl-tan-10 text-dl-pinknew-4 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
+          'border-2 border-dl-pinknew-3 bg-dl-tan-9 text-dl-pinknew-3 dark:border-dl-pinknew-7  dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
             buttonTexts().followButton === 'Unfollow'
         }"
         (click)="onFollowButtonClick()"

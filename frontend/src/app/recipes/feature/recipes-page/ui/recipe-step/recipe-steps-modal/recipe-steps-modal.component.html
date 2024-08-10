@@ -1,5 +1,5 @@
 <div
-  class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-dl-tan-10 px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+  class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-dl-tan-9 px-dl-5 pb-dl-4 pt-dl-4 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
   <div class="relative mb-dl-3 flex w-full flex-col text-center">
@@ -36,8 +36,7 @@
             (click)="toggleItemMenu($event, i)"
           >
             <div
-              class="border-1 mt-dl-3 flex flex-wrap items-center justify-center rounded-dl-1 border-dl-tan-1 bg-dl-tan-9 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-3 dark:bg-dl-tan-2 dark:text-dl-tan-9"
-              [ngClass]="{ 'bg-dl-tan-9': modalActiveForRowID === i }"
+              class="border-1 mt-dl-3 flex flex-wrap items-center justify-center rounded-dl-1 border-dl-tan-1  px-dl-3 py-dl-2 text-dl-5 text-dl-tan-3 dark:bg-dl-tan-2 dark:text-dl-tan-9 bg-dl-tan-10"
             >
               <span class="font-dl-3"
                 >{{ step.sequence }}:&nbsp;{{
@@ -86,7 +85,7 @@
     </div>
     <button
       type="button"
-      class="relative mx-dl-1 flex h-dl-4 items-center justify-center rounded-dl-1 bg-dl-tan-10 py-dl-2 text-dl-2 transition-all duration-150 hover:bg-dl-tan-9 focus:outline-none focus:ring-2 focus:ring-dl-tan-7 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-2 hover:dark:bg-dl-tan-3"
+      class="relative mx-dl-1 flex h-dl-4 items-center justify-center rounded-dl-1 bg-dl-tan-10 py-dl-2 text-dl-2 transition-all duration-150 hover:bg-dl-tan-9 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-2 hover:dark:bg-dl-tan-3"
       (click)="onAddClick()"
       id="addRecipeStepButton"
     >

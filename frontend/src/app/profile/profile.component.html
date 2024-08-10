@@ -1,5 +1,5 @@
 <div
-  class="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden dark:bg-dl-tan-1"
+  class="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden bg-dl-tan-9 dark:bg-dl-tan-1"
 >
   <!-- Header with Profile Photo and name-->
   <div
@@ -23,7 +23,7 @@
         alt="profile image"
       />
       <span
-        class="inline-flex h-dl-7 w-dl-7 items-center justify-center rounded-full bg-dl-tan-9 dark:bg-dl-tan-3"
+        class="inline-flex h-dl-7 w-dl-7 items-center justify-center rounded-full bg-dl-tan-8 dark:bg-dl-tan-3"
         *ngIf="!profileImageLink && initials"
         (click)="updatePhoto()"
       >
@@ -94,7 +94,7 @@
     <!-- Name -->
     <div
       *ngIf="profile.name_first || profile.name_last"
-      class="z-15 absolute left-1/2 flex h-dl-4 w-3/4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-dl-tan-10 dark:border-dl-tan-2 dark:bg-dl-tan-1"
+      class="z-15 absolute left-1/2 flex h-dl-4 w-3/4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-dl-tan-9 dark:border-dl-tan-2 dark:bg-dl-tan-1"
     >
       <span
         class="ml-dl-6 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
@@ -106,7 +106,7 @@
 
   <!-- Account Details inc username, email, city, state-->
   <div
-    class="items-left mt-dl-3 flex flex-col bg-dl-tan-10 pb-dl-3 dark:bg-dl-tan-1"
+    class="items-left mt-dl-3 flex flex-col bg-dl-tan-9 pb-dl-3 dark:bg-dl-tan-1"
   >
     <span
       class="ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-green-5 dark:text-dl-green-6"
@@ -158,7 +158,7 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 bg-dl-tan-10 p-dl-1 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.name_first }}</span
       >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
@@ -170,7 +170,8 @@
       *ngIf="!profile.name_first"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+      <span
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >First Name</span
       >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
@@ -182,10 +183,10 @@
     <div
       (click)="updateProfile('name_last')"
       *ngIf="profile.name_last"
-      class="ml-dl-5 mt-dl-4 flex flex-col rounded-dl-3"
+      class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 bg-dl-tan-10 p-dl-1 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.name_last }}</span
       >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
@@ -197,7 +198,8 @@
       *ngIf="!profile.name_last"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="p-dl-1 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+      <span
+        class="rounded-dl-2 border border-dl-tan-6 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Last Name</span
       >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
@@ -212,7 +214,7 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 bg-dl-tan-10 p-dl-1 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.city }}</span
       >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
@@ -224,7 +226,8 @@
       *ngIf="!profile.city"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+      <span
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >City</span
       >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
@@ -239,7 +242,7 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-6 bg-dl-tan-10 p-dl-1 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-6 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.state }}</span
       >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
@@ -251,7 +254,8 @@
       *ngIf="!profile.state"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+      <span
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >State</span
       >
       <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
@@ -261,7 +265,7 @@
   </div>
   <!-- Links for Privacy, Help, etc -->
   <div
-    class="items-left mt-dl-3 flex flex-col bg-dl-tan-10 pb-dl-3 dark:bg-dl-tan-1"
+    class="items-left mt-dl-3 flex flex-col bg-dl-tan-9 pb-dl-3 dark:bg-dl-tan-1"
   >
     <span
       class="mb-dl-2 ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-green-5 dark:text-dl-green-6"

@@ -106,6 +106,10 @@ export class ExtraStuffService {
         return useDarkMode
           ? this.stylesService.getHex('tan-8')
           : this.stylesService.getHex('tan-8');
+      case 22:
+        return useDarkMode
+        ? '#FFFFFF'
+        : '000000'
       default:
         return useDarkMode ? this.stylesService.getHex('tan-8') : this.stylesService.getHex('tan-3');
     }

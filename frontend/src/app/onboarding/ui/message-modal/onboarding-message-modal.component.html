@@ -1,5 +1,5 @@
 <div
-  class="z-30 flex flex-col rounded-dl-3 bg-dl-green-10 p-dl-4 dark:border dark:border-dl-tan-4 dark:bg-dl-green-1"
+  class="z-30 flex flex-col rounded-dl-3 bg-dl-green-9 p-dl-4 dark:border dark:border-dl-tan-4 dark:bg-dl-green-2"
 >
   <mat-spinner
     class="my-app-custom-spinner w-full"
@@ -78,7 +78,7 @@
             <input
               type="text"
               formControlName="username"
-              class="w-dl-13 rounded-md border-0 text-dl-green-2 ring-1 ring-inset ring-dl-green-7 placeholder:text-dl-green-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             />
             <div
               *ngIf="usernameErrorMessage()"
@@ -100,7 +100,7 @@
             <input
               type="text"
               formControlName="nameFirst"
-              class="w-dl-13 rounded-md border-0 text-dl-green-2 ring-1 ring-inset ring-dl-green-7 placeholder:text-dl-green-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             />
             <div
               *ngIf="nameFirstErrorMessage()"
@@ -122,7 +122,7 @@
             <input
               type="text"
               formControlName="nameLast"
-              class="w-dl-13 rounded-md border-0 text-dl-green-2 ring-1 ring-inset ring-dl-green-7 placeholder:text-dl-green-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             />
             <div
               *ngIf="nameLastErrorMessage()"
@@ -144,7 +144,7 @@
             <input
               type="text"
               formControlName="city"
-              class="w-dl-13 rounded-md border-0 text-dl-green-2 ring-1 ring-inset ring-dl-green-7 placeholder:text-dl-green-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             />
             <div
               *ngIf="cityErrorMessage()"
@@ -187,7 +187,7 @@
           <div class="w-dl-13">
             <select
               formControlName="state"
-              class="w-dl-13 rounded-md border-0 text-dl-green-2 ring-1 ring-inset ring-dl-green-7 placeholder:text-dl-green-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             >
               <option value="">Select a state</option>
               <option *ngFor="let state of states" [value]="state">
@@ -219,7 +219,7 @@
       "
       class="shadow-s mt-dl-3 inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
       [ngClass]="{
-        'cursor-pointer bg-dl-green-4 hover:bg-dl-green-5 dark:bg-dl-green-7 hover:dark:bg-dl-green-6':
+        'cursor-pointer bg-dl-green-2 hover:bg-dl-green-5 dark:bg-dl-green-8 hover:dark:bg-dl-green-6':
           form.invalid === false,
         'bg-dl-tan-7':
           form.invalid === true ||

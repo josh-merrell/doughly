@@ -1,8 +1,8 @@
 <div
-  class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-dl-tan-10 px-dl-4 pb-dl-4 pt-dl-3 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+  class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-dl-tan-9 px-dl-4 pb-dl-4 pt-dl-3 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
-  <div class="mb-dl-3 text-center">
+  <div class="mb-dl-4 text-center">
     <p
       class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
     >
@@ -14,7 +14,7 @@
     class="flex h-full w-full flex-grow flex-col overflow-y-auto"
   >
     <!--List of Recipe Ingredients-->
-    <div class="mb-dl-5 flex w-full flex-grow flex-col overflow-y-auto">
+    <div class="mb-dl-5 px-dl-3 flex w-full flex-grow flex-col overflow-y-auto">
       <p
         *ngIf="displayNeedsReview().length"
         class="text-dl-5 font-dl-3 text-dl-yellow-4 dark:text-dl-yellow-7"
@@ -24,7 +24,7 @@
       <!-- Show Ingredients that need reviewing -->
       <ng-container *ngFor="let ingredient of displayNeedsReview()">
         <div
-          class="mb-dl-3 flex w-full flex-grow items-center justify-between rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-tan-9"
+          class="mb-dl-4 flex w-full flex-grow items-center justify-between rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-tan-9"
         >
           <div
             (click)="onIngredientClick(ingredient)"
@@ -74,7 +74,7 @@
       <!-- Show Ingredients that don't need reviewing -->
       <ng-container *ngFor="let ingredient of displayNoReview()">
         <div
-          class="mb-dl-3 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-4 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+          class="mb-dl-4 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-4 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >
           <div (click)="onIngredientClick(ingredient)">
             <span class="font-dl-3"
@@ -121,7 +121,7 @@
     </div>
     <button
       type="button"
-      class="relative mx-dl-1 flex items-center justify-center rounded-dl-1 bg-dl-tan-10 py-dl-1 text-dl-2 transition-all duration-150 hover:bg-dl-tan-9 focus:outline-none focus:ring-2 focus:ring-dl-tan-7 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-2 dark:hover:bg-dl-tan-3"
+      class="relative mx-dl-1 flex items-center justify-center rounded-dl-1 bg-dl-tan-10 py-dl-2 text-dl-2 transition-all duration-150 hover:bg-dl-tan-9 focus:outline-none focus:ring-2 focus:ring-dl-tan-7 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-2 dark:hover:bg-dl-tan-3"
       (click)="onAddClick()"
       id="addRecipeIngredientButton"
     >
