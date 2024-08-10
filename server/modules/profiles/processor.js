@@ -623,7 +623,13 @@ module.exports = ({ db, dbPublic }) => {
           },
         });
         if (errorCreateRecipe) {
-          throw errorGen(errorCreateRecipe.message || '*profiles-populateRecipes* Unhandled Error in profiles populateRecipes', errorCreateRecipe.code || 520, errorCreateRecipe.name || 'unhandledError_profiles-populateRecipes', errorCreateRecipe.isOperational || false, errorCreateRecipe.severity || 2);
+          throw errorGen(
+            errorCreateRecipe.message || '*profiles-populateRecipes* Unhandled Error in profiles populateRecipes',
+            errorCreateRecipe.code || 520,
+            errorCreateRecipe.name || 'unhandledError_profiles-populateRecipes',
+            errorCreateRecipe.isOperational || false,
+            errorCreateRecipe.severity || 2,
+          );
         }
       }
       // update 'freeTier' to true for all userID's recipes
@@ -693,6 +699,7 @@ module.exports = ({ db, dbPublic }) => {
         'recipeSteps',
         'recipeSubscriptions',
         'shoppingLists',
+        'sharedShoppingLists',
         'shoppingListIngredients',
         'shoppingListRecipes',
         'shoppingLogs',
@@ -749,7 +756,13 @@ module.exports = ({ db, dbPublic }) => {
 
       const uploadResponse = await uploadBackup('daily', userID, filePath);
       if (uploadResponse.error) {
-        throw errorGen(uploadResponse.error.message || '*profiles-createDailyBackup* Unhandled Error in profiles createDailyBackup', uploadResponse.error.code || 520, uploadResponse.error.name || 'unhandledError_profiles-createDailyBackup', uploadResponse.error.isOperational || false, uploadResponse.error.severity || 2);
+        throw errorGen(
+          uploadResponse.error.message || '*profiles-createDailyBackup* Unhandled Error in profiles createDailyBackup',
+          uploadResponse.error.code || 520,
+          uploadResponse.error.name || 'unhandledError_profiles-createDailyBackup',
+          uploadResponse.error.isOperational || false,
+          uploadResponse.error.severity || 2,
+        );
       }
       global.logger.info({ message: `*profiles-createDailyBackup* Successfully uploaded daily backup for user ${userID}, filename: ${filePath}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
