@@ -62,12 +62,13 @@ export class AppFooterComponent {
   public currentLocation: WritableSignal<string> = signal('');
   private messages: WritableSignal<any> = signal([]);
   public unackedMessageLength: WritableSignal<number> = signal(0);
+  stars: string = '/assets/animations/lottie/stars-dark.json';
 
   // Lottie animation
   public creditCountRed: WritableSignal<boolean> = signal(false);
   private animationItem: AnimationItem | undefined;
   animationOptions: AnimationOptions = {
-    path: '/assets/animations/lottie/stars-dark.json',
+    path: this.stars,
     loop: true,
     autoplay: false,
   };
@@ -157,6 +158,10 @@ export class AppFooterComponent {
         }
       }
     );
+
+    if (!document.body.classList.contains('dark')) {
+      this.stars = '/assets/animations/lottie/stars-light.json';
+    }
   }
 
   ngOnDestroy() {

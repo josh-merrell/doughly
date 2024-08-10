@@ -1,7 +1,7 @@
 <div class="flex flex-col">
   <label
     *ngIf="!noLabel"
-    class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-6 dark:text-dl-tan-8"
+    class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
     >{{ label }}</label
   >
   <div class="relative flex w-full flex-col items-center">
@@ -55,28 +55,22 @@
           <input
             #inputField
             type="text"
-            class="w-full border py-dl-3 pl-dl-7 pr-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 ring-transparent focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-8"
+            class="border-y-1 w-full rounded-b-none border-x-0 border-dl-green-5 bg-dl-tan-10 py-dl-3 pl-dl-7 pr-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 ring-transparent focus:border-dl-green-4 focus:ring-transparent dark:bg-dl-tan-3 dark:text-dl-tan-8 focus:dark:border-dl-green-7"
             (input)="onFilterChange($event)"
-            [ngClass]="{
-              'rounded-b-none border-dl-green-5 bg-dl-tan-10 focus:border-dl-green-4 dark:bg-dl-tan-3 focus:dark:border-dl-green-7':
-                isOpen(),
-              'rounded-b-md border-transparent bg-dl-tan-10 ring-dl-tan-8 dark:bg-dl-tan-2':
-                !isOpen()
-            }"
           />
         </div>
       </div>
       <div
         *ngIf="additionalOptionName"
         (click)="selectOption({ value: 'new', display: additionalOptionName })"
-        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-9 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
+        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-10 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
       >
         {{ additionalOptionName }}
       </div>
       <div
         *ngFor="let option of sortedOptions"
         (click)="selectOption(option)"
-        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-9 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
+        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-10 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
       >
         {{ option.display }}
       </div>

@@ -117,11 +117,11 @@ export class DiscoverRecipesComponent {
       if (darkMode.dark) {
         this.renderer.addClass(document.body, 'dark');
         this.renderer.removeClass(document.body, 'light');
-        this.stylesService.updateStyles('#1F2933', 'dark');
+        this.stylesService.updateStyles('#26221c', 'dark');
       } else {
         this.renderer.addClass(document.body, 'light');
         this.renderer.removeClass(document.body, 'dark');
-        this.stylesService.updateStyles('#FFFFFF', 'light');
+        this.stylesService.updateStyles('#e9e6e2', 'light');
       }
     });
     // if (Capacitor.isNativePlatform()) {
@@ -141,11 +141,11 @@ export class DiscoverRecipesComponent {
       if (darkMode === 'Enabled') {
         this.renderer.addClass(document.body, 'dark');
         this.renderer.removeClass(document.body, 'light');
-        this.stylesService.updateStyles('#1F2933', 'dark');
+        this.stylesService.updateStyles('#26221c', 'dark');
       } else if (darkMode === 'Disabled') {
         this.renderer.addClass(document.body, 'light');
         this.renderer.removeClass(document.body, 'dark');
-        this.stylesService.updateStyles('#FFFFFF', 'light');
+        this.stylesService.updateStyles('#e9e6e2', 'light');
       } else {
         // default is 'System Default'
         let darkModePreference: string;
@@ -159,11 +159,11 @@ export class DiscoverRecipesComponent {
           if (darkModePreference === 'Enabled') {
             this.renderer.addClass(document.body, 'dark');
             this.renderer.removeClass(document.body, 'light');
-            this.stylesService.updateStyles('#1F2933', 'dark');
+            this.stylesService.updateStyles('#26221c', 'dark');
           } else {
             this.renderer.addClass(document.body, 'light');
             this.renderer.removeClass(document.body, 'dark');
-            this.stylesService.updateStyles('#FFFFFF', 'light');
+            this.stylesService.updateStyles('#e9e6e2', 'light');
           }
         });
       }

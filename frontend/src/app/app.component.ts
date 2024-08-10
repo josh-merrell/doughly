@@ -198,7 +198,7 @@ export class AppComponent {
     // set initial styling to dark mode:
     this.renderer.addClass(document.body, 'dark');
     this.renderer.removeClass(document.body, 'light');
-    this.stylesService.updateStyles('#1F2933', 'dark');
+    this.stylesService.updateStyles('#26221C', 'dark');
 
     this.offerings.set(this.productService.offerings());
 
