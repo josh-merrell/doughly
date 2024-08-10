@@ -1,15 +1,15 @@
 <div
-  class="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden dark:bg-dl-grey-1"
+  class="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden bg-dl-tan-9 dark:bg-dl-tan-1"
 >
   <!-- Header with Profile Photo and name-->
   <div
     *ngIf="!expanded"
-    class="relative mx-dl-5 mt-dl-3 flex h-dl-9 items-center border-b-2 border-dl-grey-9 pb-dl-5 dark:border-dl-grey-3"
+    class="relative mx-dl-5 mt-dl-3 flex h-dl-9 items-center border-b-2 border-dl-tan-9 pb-dl-5 dark:border-dl-tan-3"
   >
     <!-- Profile Icon -->
     <button
       type="button"
-      class="flex shrink-0 rounded-full bg-dl-grey-10 text-sm focus:outline-none focus:ring-2 focus:ring-dl-blue-6 focus:ring-offset-2 dark:bg-dl-grey-2"
+      class="flex shrink-0 rounded-full bg-dl-tan-10 text-sm focus:outline-none focus:ring-2 focus:ring-dl-green-6 focus:ring-offset-2 dark:bg-dl-tan-2"
       id="user-profile-image"
       aria-expanded="false"
       aria-haspopup="true"
@@ -23,22 +23,22 @@
         alt="profile image"
       />
       <span
-        class="inline-flex h-dl-7 w-dl-7 items-center justify-center rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
+        class="inline-flex h-dl-7 w-dl-7 items-center justify-center rounded-full bg-dl-tan-8 dark:bg-dl-tan-3"
         *ngIf="!profileImageLink && initials"
         (click)="updatePhoto()"
       >
         <span
-          class="text-dl-7 font-dl-3 leading-none text-dl-grey-3 dark:text-dl-grey-9"
+          class="text-dl-7 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
           >{{ initials }}</span
         >
       </span>
       <span
         *ngIf="!profileImageLink && !initials"
-        class="inline-block h-dl-7 w-dl-7 overflow-hidden rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
+        class="inline-block h-dl-7 w-dl-7 overflow-hidden rounded-full bg-dl-tan-9 dark:bg-dl-tan-3"
         (click)="updatePhoto()"
       >
         <svg
-          class="h-full w-full text-dl-grey-3 dark:text-dl-grey-9"
+          class="h-full w-full text-dl-tan-3 dark:text-dl-tan-9"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
@@ -53,19 +53,19 @@
       *ngIf="profile.name_first || profile.name_last"
       class="ml-dl-5 flex shrink-0 flex-col"
     >
-      <span class="text-dl-7 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9">
+      <span class="text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
         {{ profile.name_first }} {{ profile.name_last }}
       </span>
       <span
         *ngIf="profile.joined_at"
-        class="text-dl-6 font-dl-1 text-dl-grey-4 dark:text-dl-grey-7"
+        class="text-dl-6 font-dl-1 text-dl-tan-4 dark:text-dl-tan-7"
         >joined {{ profile.joined_at | date : "MMM y" }}</span
       >
     </div>
     <!-- Photo Selection -->
     <div
       id="photo-profile"
-      class="border-1 absolute -bottom-8 right-3 h-dl-6 w-dl-6 rounded-full bg-dl-grey-9 dark:bg-dl-grey-3"
+      class="border-1 absolute -bottom-8 right-3 h-dl-6 w-dl-6 rounded-full bg-dl-tan-9 dark:bg-dl-tan-3"
       (click)="updatePhoto()"
     >
       <svg
@@ -94,10 +94,10 @@
     <!-- Name -->
     <div
       *ngIf="profile.name_first || profile.name_last"
-      class="z-15 absolute left-1/2 flex h-dl-4 w-3/4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white dark:border-dl-grey-2 dark:bg-dl-grey-1"
+      class="z-15 absolute left-1/2 flex h-dl-4 w-3/4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-dl-tan-9 dark:border-dl-tan-2 dark:bg-dl-tan-1"
     >
       <span
-        class="ml-dl-6 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="ml-dl-6 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         {{ profile.name_first }} {{ profile.name_last }}
       </span>
@@ -106,30 +106,28 @@
 
   <!-- Account Details inc username, email, city, state-->
   <div
-    class="items-left mt-dl-3 flex flex-col bg-white pb-dl-3 dark:bg-dl-grey-1"
+    class="items-left mt-dl-3 flex flex-col bg-dl-tan-9 pb-dl-3 dark:bg-dl-tan-1"
   >
     <span
-      class="ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
+      class="ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-green-5 dark:text-dl-green-8"
       >Account</span
     >
 
     <!--Email-->
     <div *ngIf="profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
       <span
-        class="p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
+        class="p-dl-1 text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.email }}</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Email</span
       >
     </div>
     <div *ngIf="!profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
-      <span class="text-dl-6 font-dl-2 text-dl-grey-6 dark:text-dl-grey-5"
+      <span class="text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Email</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add Email</span
       >
     </div>
@@ -137,20 +135,18 @@
     <!--Username-->
     <div *ngIf="profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
       <span
-        class="p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2 dark:text-dl-grey-9"
+        class="p-dl-1 text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.username }}</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Username</span
       >
     </div>
     <div *ngIf="!profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
-      <span class="text-dl-6 font-dl-2 text-dl-grey-6 dark:text-dl-grey-5"
+      <span class="text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Username</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add Username</span
       >
     </div>
@@ -162,11 +158,10 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.name_first }}</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >First Name</span
       >
     </div>
@@ -175,11 +170,11 @@
       *ngIf="!profile.name_first"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-grey-6 dark:text-dl-grey-5"
+      <span
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >First Name</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add First Name</span
       >
     </div>
@@ -188,14 +183,13 @@
     <div
       (click)="updateProfile('name_last')"
       *ngIf="profile.name_last"
-      class="ml-dl-5 mt-dl-4 flex flex-col rounded-dl-3"
+      class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.name_last }}</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Last Name</span
       >
     </div>
@@ -205,11 +199,10 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="p-dl-1 text-dl-6 font-dl-2 text-dl-grey-6 dark:text-dl-grey-5"
+        class="rounded-dl-2 border border-dl-tan-6 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Last Name</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add Last Name</span
       >
     </div>
@@ -221,11 +214,10 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.city }}</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >City</span
       >
     </div>
@@ -234,11 +226,11 @@
       *ngIf="!profile.city"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-grey-6 dark:text-dl-grey-5"
+      <span
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >City</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add City</span
       >
     </div>
@@ -250,11 +242,10 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-6 bg-dl-grey-10 p-dl-1 text-dl-6 font-dl-2 text-dl-grey-2 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+        class="w-dl-6 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.state }}</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >State</span
       >
     </div>
@@ -263,42 +254,42 @@
       *ngIf="!profile.state"
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
-      <span class="text-dl-6 font-dl-2 text-dl-grey-6 dark:text-dl-grey-5"
+      <span
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >State</span
       >
-      <span
-        class="mt-dl-1 text-dl-5 font-dl-1 text-dl-grey-7 dark:text-dl-grey-7"
+      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add State</span
       >
     </div>
   </div>
   <!-- Links for Privacy, Help, etc -->
   <div
-    class="items-left mt-dl-3 flex flex-col bg-white pb-dl-3 dark:bg-dl-grey-1"
+    class="items-left mt-dl-3 flex flex-col bg-dl-tan-9 pb-dl-3 dark:bg-dl-tan-1"
   >
     <span
-      class="mb-dl-2 ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-blue-5 dark:text-dl-blue-6"
+      class="mb-dl-2 ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-green-5 dark:text-dl-green-8"
       >Links</span
     >
     <div class="ml-dl-2 flex flex-col">
       <!--Help-->
       <div (click)="onHelpClick()" class="mb-dl-3 ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-8"
+          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
           >Help</span
         >
       </div>
       <!--Privacy-->
       <div (click)="onPrivacyClick()" class="mb-dl-3 ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-8"
+          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
           >Privacy Policy</span
         >
       </div>
       <!--Delete Account Data-->
       <div (click)="onDeleteAccountClick()" class="ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-grey-2 dark:text-dl-grey-8"
+          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
           >Delete Account and Data</span
         >
       </div>
@@ -313,7 +304,7 @@
       class="mb-dl-3 flex w-dl-10 items-center rounded-dl-3 bg-dl-teal-7 dark:bg-dl-teal-4 px-dl-0 py-dl-2"
     >
       <span
-        class="mt-dl-1 w-full text-center text-dl-3 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mt-dl-1 w-full text-center text-dl-3 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
         >Data Backups: {{ profile.permDataBackupDaily6MonthRetention }}</span
       >
     </div>
@@ -322,7 +313,7 @@
       class="mb-dl-3 flex w-dl-10 items-center rounded-dl-3 bg-dl-teal-7 dark:bg-dl-teal-4 px-dl-2 py-dl-2"
     >
       <span
-        class="mt-dl-1 w-full text-center text-dl-3 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mt-dl-1 w-full text-center text-dl-3 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
         >Sub No Limits: {{ profile.permRecipeSubscribeUnlimited }}</span
       >
     </div>
@@ -331,7 +322,7 @@
       class="mb-dl-3 flex w-dl-10 items-center rounded-dl-3 bg-dl-teal-7 dark:bg-dl-teal-4 px-dl-2 py-dl-2"
     >
       <span
-        class="mt-dl-1 w-full text-center text-dl-3 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+        class="mt-dl-1 w-full text-center text-dl-3 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
         >Create No Limits: {{ profile.permRecipeCreateUnlimited }}</span
       >
     </div>

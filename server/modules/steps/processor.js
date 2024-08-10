@@ -22,12 +22,12 @@ module.exports = ({ db }) => {
       const { data: steps, error } = await q;
 
       if (error) {
-        throw errorGen(`Error getting steps: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*steps-getAll* Error getting steps: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({ message: `Got ${steps.length} steps`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+      global.logger.info({ message: `*steps-getAll* Got ${steps.length} steps`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       return steps;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in steps getAll', err.code || 520, err.name || 'unhandledError_steps-getAll', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*steps-getAll* Unhandled Error', err.code || 520, err.name || 'unhandledError_steps-getAll', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -35,11 +35,11 @@ module.exports = ({ db }) => {
     try {
       const { data, error } = await db.from('steps').select().eq('stepID', options.stepID).eq('deleted', false).single();
       if (error) {
-        throw errorGen(`Error getting step by ID: ${options.stepID}:${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*steps-getStepByID* Error getting step by ID: ${options.stepID}:${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       return data;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in steps getStepByID', err.code || 520, err.name || 'unhandledError_steps-getStepByID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*steps-getStepByID* Unhandled Error', err.code || 520, err.name || 'unhandledError_steps-getStepByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -50,12 +50,12 @@ module.exports = ({ db }) => {
       //if step with provided title exists but is deleted, undelete it, reset versioning and return it
       const { data: deletedSteps, error: error3 } = await db.from('steps').select().eq('title', title).eq('deleted', true);
       if (error3) {
-        throw errorGen(`Error validating title: ${title} while creating step ${error3.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*steps-create* Error validating title: ${title} while creating step ${error3.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (deletedSteps.length > 0) {
         const { error: error4 } = await db.from('steps').update({ deleted: false, version: 1 }).eq('stepID', deletedSteps[0].stepID).single();
         if (error4) {
-          throw errorGen(`Error undeleting step: ${error4.message}`, 513, 'failSupabaseUpdate', true, 3);
+          throw errorGen(`*steps-create* Error undeleting step: ${error4.message}`, 513, 'failSupabaseUpdate', true, 3);
         }
         await createRecipeLog(userID, authorization, 'createStep', deletedSteps[0].stepID, null, null, null, `created step: ${deletedSteps[0].title}`);
         return {
@@ -68,7 +68,7 @@ module.exports = ({ db }) => {
 
       const { data, error } = await db.from('steps').insert({ stepID: customID, userID, title, description, version: 1 }).select().single();
       if (error) {
-        throw errorGen(`Error creating step: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*steps-create* Error creating step: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       }
       createRecipeLog(userID, authorization, 'createdStep', data.stepID, null, null, null, `created step: ${data.title}`);
       return {
@@ -78,7 +78,7 @@ module.exports = ({ db }) => {
         version: 1,
       };
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in steps create', err.code || 520, err.name || 'unhandledError_steps-create', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*steps-create* Unhandled Error', err.code || 520, err.name || 'unhandledError_steps-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -89,10 +89,10 @@ module.exports = ({ db }) => {
       //verify that provided stepID exists
       const { data: step, error } = await db.from('steps').select().eq('stepID', stepID);
       if (error) {
-        throw errorGen(`Error validating step ID: ${stepID} while updating step ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*steps-update* Error validating step ID: ${stepID} while updating step ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!step.length) {
-        throw errorGen(`Error validating step ID: ${stepID} while updating step`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*steps-update* Error validating step ID: ${stepID} while updating step`, 515, 'cannotComplete', false, 3);
       }
 
       if (!title || !description) {
@@ -109,7 +109,7 @@ module.exports = ({ db }) => {
       const updatedStep = await updater(options.userID, authorization, 'stepID', options.stepID, 'steps', updateFields);
       return updatedStep;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in steps update', err.code || 520, err.name || 'unhandledError_steps-update', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*steps-update* Unhandled Error', err.code || 520, err.name || 'unhandledError_steps-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -120,16 +120,16 @@ module.exports = ({ db }) => {
       //verify that provided stepID exists
       const { data: step, error } = await db.from('steps').select().eq('stepID', stepID).eq('deleted', false);
       if (error) {
-        throw errorGen(`Error validating step ID: ${stepID} while deleting step ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*steps-deleteStep* Error validating step ID: ${stepID} while deleting step ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       if (!step.length) {
-        throw errorGen(`Provided step ID: ${stepID} does not exist, can't delete`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*steps-deleteStep* Provided step ID: ${stepID} does not exist, can't delete`, 515, 'cannotComplete', false, 3);
       }
 
       //get list of related recipeSteps
       const { data: relatedRecipeSteps, error: stepError } = await db.from('recipeSteps').select().eq('stepID', stepID).eq('deleted', false);
       if (stepError) {
-        throw errorGen(`Error getting related recipeSteps for step to delete: ${stepID} : ${stepError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*steps-deleteStep* Error getting related recipeSteps for step to delete: ${stepID} : ${stepError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
 
       //delete any associated recipeSteps entries. The version update to the recipe will be handled by the DEL /recipeSteps/:recipeStepID endpoint
@@ -140,19 +140,19 @@ module.exports = ({ db }) => {
           },
         });
         if (recipeStepDeleteResult.error) {
-          throw errorGen(`Error deleting recipeStepID: ${relatedRecipeSteps[i].recipeStepID} prior to deleting step ID: ${stepID} : ${recipeStepDeleteResult.error}`, 514, 'failSupabaseDelete', true, 3);
+          throw errorGen(`*steps-deleteStep* Error deleting recipeStepID: ${relatedRecipeSteps[i].recipeStepID} prior to deleting step ID: ${stepID} : ${recipeStepDeleteResult.error}`, 514, 'failSupabaseDelete', true, 3);
         }
       }
 
       //delete step
       const { data, error: deleteError } = await db.from('steps').update({ deleted: true }).eq('stepID', stepID);
       if (deleteError) {
-        throw errorGen(`Error deleting step: ${deleteError.message}`, 514, 'failSupabaseDelete', true, 3);
+        throw errorGen(`*steps-deleteStep* Error deleting step: ${deleteError.message}`, 514, 'failSupabaseDelete', true, 3);
       }
       createRecipeLog(userID, authorization, 'deleteStep', Number(stepID), null, null, null, `deleted step: ${step[0].title}`);
       return data;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in steps deleteStep', err.code || 520, err.name || 'unhandledError_steps-deleteStep', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*steps-deleteStep* Unhandled Error', err.code || 520, err.name || 'unhandledError_steps-deleteStep', err.isOperational || false, err.severity || 2);
     }
   }
 

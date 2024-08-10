@@ -25,9 +25,9 @@ const authenticateJWT = async (req, res, next) => {
     req.userID = result.data.user.id;
     next();
   } else {
-    global.logger.info(`JWT AUTH RESULT ERROR: ${JSON.stringify(result)}`)
+    global.logger.info(`*authenticateJWT* JWT AUTH RESULT ERROR: ${JSON.stringify(result)}`)
     // The JWT token is invalid or missing.
-    global.logger.info({ message: `Error authenticating JWT for request made to: ${req.path}. Provided auth header: ${req.headers.authorization}`, level: 6, timestamp: new Date().toISOString(), userID: req.userID || 0 });
+    global.logger.info({ message: `*authenticateJWT* Error authenticating JWT for request made to: ${req.path}. Provided auth header: ${req.headers.authorization}`, level: 6, timestamp: new Date().toISOString(), userID: req.userID || 0 });
     res.status(401).send(`Error authenticating JWT for request made to: ${req.path}. Provided auth header: ${req.headers.authorization}`);
   }
 };

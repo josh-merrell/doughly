@@ -119,11 +119,11 @@ export class AppComponent {
       if (darkMode.dark) {
         this.renderer.addClass(document.body, 'dark');
         this.renderer.removeClass(document.body, 'light');
-        this.stylesService.updateStyles('#1F2933', 'dark');
+        this.stylesService.updateStyles('#26221C', 'dark');
       } else {
         this.renderer.addClass(document.body, 'light');
         this.renderer.removeClass(document.body, 'dark');
-        this.stylesService.updateStyles('#FFFFFF', 'light');
+        this.stylesService.updateStyles('#E9E6E2', 'light');
       }
     });
     // Listen for hardware back button press
@@ -164,11 +164,11 @@ export class AppComponent {
         if (darkMode === 'Enabled') {
           this.renderer.addClass(document.body, 'dark');
           this.renderer.removeClass(document.body, 'light');
-          this.stylesService.updateStyles('#1F2933', 'dark');
+          this.stylesService.updateStyles('#26221C', 'dark');
         } else if (darkMode === 'Disabled') {
           this.renderer.addClass(document.body, 'light');
           this.renderer.removeClass(document.body, 'dark');
-          this.stylesService.updateStyles('#FFFFFF', 'light');
+          this.stylesService.updateStyles('#E9E6E2', 'light');
         } else {
           // default is 'System Default'
           let darkModePreference: string;
@@ -182,11 +182,11 @@ export class AppComponent {
             if (darkModePreference === 'Enabled') {
               this.renderer.addClass(document.body, 'dark');
               this.renderer.removeClass(document.body, 'light');
-              this.stylesService.updateStyles('#1F2933', 'dark');
+              this.stylesService.updateStyles('#26221C', 'dark');
             } else {
               this.renderer.addClass(document.body, 'light');
               this.renderer.removeClass(document.body, 'dark');
-              this.stylesService.updateStyles('#FFFFFF', 'light');
+              this.stylesService.updateStyles('#E9E6E2', 'light');
             }
           });
         }
@@ -198,7 +198,7 @@ export class AppComponent {
     // set initial styling to dark mode:
     this.renderer.addClass(document.body, 'dark');
     this.renderer.removeClass(document.body, 'light');
-    this.stylesService.updateStyles('#1F2933', 'dark');
+    this.stylesService.updateStyles('#26221C', 'dark');
 
     this.offerings.set(this.productService.offerings());
 

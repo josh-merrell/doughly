@@ -1,10 +1,10 @@
 <div
-  class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-white px-dl-4 pb-dl-4 pt-dl-3 text-left transition-all dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex max-h-dl-21 w-full transform flex-col items-center rounded-dl-3 bg-dl-tan-9 px-dl-4 pb-dl-4 pt-dl-3 text-left transition-all dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="isAdding()"></mat-spinner>
-  <div class="mb-dl-3 text-center">
+  <div class="mb-dl-4 text-center">
     <p
-      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-2 dark:text-dl-grey-9"
+      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
     >
       Ingredients
     </p>
@@ -14,9 +14,9 @@
     class="flex h-full w-full flex-grow flex-col overflow-y-auto"
   >
     <!--List of Recipe Ingredients-->
-    <div class="mb-dl-5 flex w-full flex-grow flex-col overflow-y-auto">
+    <div class="mb-dl-5 px-dl-3 flex w-full flex-grow flex-col overflow-y-auto">
       <p
-        *ngIf="(displayNeedsReview().length)"
+        *ngIf="displayNeedsReview().length"
         class="text-dl-5 font-dl-3 text-dl-yellow-4 dark:text-dl-yellow-7"
       >
         AI Created Ingredients, Need Review
@@ -24,7 +24,7 @@
       <!-- Show Ingredients that need reviewing -->
       <ng-container *ngFor="let ingredient of displayNeedsReview()">
         <div
-          class="mb-dl-3 flex w-full flex-grow items-center justify-between rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-grey-9"
+          class="mb-dl-4 flex w-full flex-grow items-center justify-between rounded-dl-1 border-2 border-dl-yellow-8 bg-dl-yellow-10 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-4 dark:border-dl-yellow-3 dark:bg-dl-yellow-1 dark:text-dl-tan-9"
         >
           <div
             (click)="onIngredientClick(ingredient)"
@@ -40,13 +40,13 @@
             >
             <span
               *ngIf="ingredient.toAdd"
-              class="font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
+              class="font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
               >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
             >
           </div>
           <button
             type="button"
-            class="ml-dl-2 rounded-dl-2 bg-dl-yellow-10 text-dl-grey-3 dark:bg-dl-yellow-1 dark:text-dl-grey-8"
+            class="ml-dl-2 rounded-dl-2 bg-dl-yellow-10 text-dl-tan-3 dark:bg-dl-yellow-1 dark:text-dl-tan-8"
             (click)="
               onDeleteClick(
                 ingredient.recipeIngredientID,
@@ -74,7 +74,7 @@
       <!-- Show Ingredients that don't need reviewing -->
       <ng-container *ngFor="let ingredient of displayNoReview()">
         <div
-          class="mb-dl-3 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-grey-10 px-dl-3 py-dl-2 text-dl-5 text-dl-grey-4 dark:bg-dl-grey-2 dark:text-dl-grey-9"
+          class="mb-dl-4 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-4 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >
           <div (click)="onIngredientClick(ingredient)">
             <span class="font-dl-3"
@@ -87,13 +87,13 @@
             >
             <span
               *ngIf="ingredient.toAdd"
-              class="font-dl-2 italic text-dl-grey-5 dark:text-dl-grey-6"
+              class="font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
               >&nbsp;&nbsp;&nbsp;draft&nbsp;&nbsp;</span
             >
           </div>
           <button
             type="button"
-            class="ml-dl-2 rounded-dl-2 bg-dl-grey-10 text-dl-grey-3 hover:bg-dl-grey-9 focus:outline-none dark:bg-dl-grey-2 dark:text-dl-grey-8 dark:hover:bg-dl-grey-3"
+            class="ml-dl-2 rounded-dl-2 bg-dl-tan-10 text-dl-tan-3 hover:bg-dl-tan-9 focus:outline-none dark:bg-dl-tan-2 dark:text-dl-tan-8 dark:hover:bg-dl-tan-3"
             (click)="
               onDeleteClick(
                 ingredient.recipeIngredientID,
@@ -121,13 +121,13 @@
     </div>
     <button
       type="button"
-      class="relative mx-dl-1 flex py-dl-1 items-center justify-center rounded-dl-1 bg-dl-grey-10 text-dl-2 transition-all duration-150 hover:bg-dl-grey-9 focus:outline-none focus:ring-2 focus:ring-dl-grey-7 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-2 dark:hover:bg-dl-grey-3"
+      class="relative mx-dl-1 flex items-center justify-center rounded-dl-1 bg-dl-tan-10 py-dl-2 text-dl-2 transition-all duration-150 hover:bg-dl-tan-9 focus:outline-none focus:ring-2 focus:ring-dl-tan-7 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-2 dark:hover:bg-dl-tan-3"
       (click)="onAddClick()"
       id="addRecipeIngredientButton"
     >
       <span class="sr-only">Add Recipe Ingredient</span>
       <svg
-        class="text-dl-grey-2 dark:text-dl-grey-9"
+        class="text-dl-tan-2 dark:text-dl-tan-9"
         width="22"
         height="22"
         viewBox="0 0 15 15"
@@ -143,14 +143,14 @@
     </button>
 
     <!-- Cancel, Submit Buttons-->
-    <div class="sm:mt-dl-4 sm:flex sm:flex-row-reverse mx-dl-1 mb-dl-1 mt-dl-3">
+    <div class="mx-dl-1 mb-dl-1 mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
       <button
         type="button"
-        class="shadow-s sm:ml-dl-4 w-full justify-center rounded-dl-1 px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
+        class="shadow-s w-full justify-center rounded-dl-1 px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
         [ngClass]="{
-          'cursor-pointer bg-dl-pink-4 hover:bg-dl-pink-5 dark:bg-dl-pink-7 hover:dark:bg-dl-pink-6':
+          'cursor-pointer bg-dl-pinknew-4 hover:bg-dl-pinknew-5 dark:bg-dl-pinknew-7 hover:dark:bg-dl-pinknew-6':
             ingredientsToAdd().length > 0,
-          'bg-dl-grey-7': ingredientsToAdd().length === 0
+          'bg-dl-tan-7': ingredientsToAdd().length === 0
         }"
         [disabled]="ingredientsToAdd().length === 0"
         (click)="onSubmit()"
@@ -159,7 +159,7 @@
       </button>
       <button
         type="button"
-        class="sm:mt-0 sm:w-auto mt-dl-3 w-full justify-center rounded-dl-1 bg-white px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-dl-grey-2 shadow-sm ring-1 ring-inset ring-dl-grey-7 hover:bg-dl-grey-10 dark:bg-dl-grey-1 dark:text-dl-grey-9 dark:hover:bg-dl-grey-2"
+        class="mt-dl-3 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-1 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-2 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-9 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
         Cancel

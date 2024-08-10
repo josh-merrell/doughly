@@ -40,12 +40,12 @@ module.exports = ({ db }) => {
       const { data: persons, error } = await q;
 
       if (error) {
-        throw errorGen(`Error getting persons: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*persons-getAll* Error getting persons: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
-      global.logger.info({message:`Got ${persons.length} persons`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
+      global.logger.info({message:`*persons-getAll* Got ${persons.length} persons`, level:6, timestamp: new Date().toISOString(), 'userID': userID});
       return persons;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in persons getAll', err.code || 520, err.name || 'unhandledError_persons-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
+      throw errorGen(err.message || '*persons-getAll* Unhandled Error', err.code || 520, err.name || 'unhandledError_persons-getAll', err.isOperational || false, err.severity || 2); //message, code, name, operational, severity
     }
   }
 
@@ -57,9 +57,9 @@ module.exports = ({ db }) => {
       const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email').eq('email', email);
 
       if (emailExistsError) {
-        throw errorGen(`Error checking whether email ${email} exists: ${emailExistsError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*persons-create* Error checking whether email ${email} exists: ${emailExistsError.message}`, 511, 'failSupabaseSelect', true, 3);
       } else if (emailExists.length > 0) {
-        throw errorGen(`Email ${email} already exists, cannot create`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*persons-create* Email ${email} already exists, cannot create`, 515, 'cannotComplete', false, 3);
       }
 
       //if the email is new, add the new person to the 'persons' table,
@@ -83,14 +83,14 @@ module.exports = ({ db }) => {
         .single();
 
       if (error) {
-        throw errorGen(`Error creating person ${nameFirst} ${nameLast}: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        throw errorGen(`*persons-create* Error creating person ${nameFirst} ${nameLast}: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
       } else {
         //add a 'created' log entry
         createUserLog(userID, authorization, 'createPerson', data.personID, null, null, null, `created Person: ${data.nameFirst} ${data.nameLast}, ${data.email}`);
         return data;
       }
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in persons create', err.code || 520, err.name || 'unhandledError_persons-create', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*persons-create* Unhandled Error', err.code || 520, err.name || 'unhandledError_persons-create', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -107,9 +107,9 @@ module.exports = ({ db }) => {
         const { data: emailExists, error: emailExistsError } = await db.from('persons').select('email', 'version').match({ email: updateFields.email });
 
         if (emailExistsError) {
-          throw errorGen(`Error checking whether email ${updateFields.email} exists: ${emailExistsError.message}`, 511, 'failSupabaseSelect', true, 3);
+          throw errorGen(`*persons-update* Error checking whether email ${updateFields.email} exists: ${emailExistsError.message}`, 511, 'failSupabaseSelect', true, 3);
         } else if (emailExists.length > 0) {
-          throw errorGen(`Email ${updateFields.email} already exists, cannot update`, 515, 'cannotComplete', false, 3);
+          throw errorGen(`*persons-update* Email ${updateFields.email} already exists, cannot update`, 515, 'cannotComplete', false, 3);
         }
       }
 
@@ -117,7 +117,7 @@ module.exports = ({ db }) => {
       const updatedPerson = await updater(options.userID, options.authorization, 'personID', options.personID, 'persons', updateFields);
       return updatedPerson;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in persons update', err.code || 520, err.name || 'unhandledError_persons-update', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*persons-update* Unhandled Error', err.code || 520, err.name || 'unhandledError_persons-update', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -127,22 +127,22 @@ module.exports = ({ db }) => {
       const { data: personExists, error: personExistsError } = await db.from('persons').select().match({ personID: options.personID }).single();
 
       if (personExistsError) {
-        throw errorGen(`Error checking whether personID to del: ${options.personID} exists: ${personExistsError.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*persons-deletePerson* Error checking whether personID to del: ${options.personID} exists: ${personExistsError.message}`, 511, 'failSupabaseSelect', true, 3);
       } else if (!personExists) {
-        throw errorGen(`Person to delete ${options.personID} does not exist, cannot delete`, 515, 'cannotComplete', false, 3);
+        throw errorGen(`*persons-deletePerson* Person to delete ${options.personID} does not exist, cannot delete`, 515, 'cannotComplete', false, 3);
       }
 
       //if the person exists, delete the person from the 'persons' table,
       let { data, error } = await db.from('persons').update({ deleted: true }).eq('personID', options.personID);
       if (error) {
-        throw errorGen(`Error deleting personID: ${options.personID}: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
+        throw errorGen(`*persons-deletePerson* Error deleting personID: ${options.personID}: ${error.message}`, 513, 'failSupabaseUpdate', true, 3);
       }
 
       //add a 'deleted' log entry
       createUserLog(options.userID, options.authorization, 'deletePerson', Number(options.personID), null, null, null, `deleted Person, ${personExists.nameFirst} ${personExists.nameLast}, ${personExists.email}`);
       return data;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in persons deletePerson', err.code || 520, err.name || 'unhandledError_persons-deletePerson', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*persons-deletePerson* Unhandled Error', err.code || 520, err.name || 'unhandledError_persons-deletePerson', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -150,11 +150,11 @@ module.exports = ({ db }) => {
     try {
       const { data, error } = await db.from('persons').select('personID').match({ personID: options.personID });
       if (error) {
-        throw errorGen(`Error getting person by ID:${options.personID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*persons-getPersonByID* Error getting person by ID:${options.personID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       return data;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in persons getPersonByID', err.code || 520, err.name || 'unhandledError_persons-getPersonByID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*persons-getPersonByID* Unhandled Error', err.code || 520, err.name || 'unhandledError_persons-getPersonByID', err.isOperational || false, err.severity || 2);
     }
   }
 
@@ -162,11 +162,11 @@ module.exports = ({ db }) => {
     try {
       const { data, error } = await db.from('persons').select('personID').match({ personID: options.personID });
       if (error) {
-        throw errorGen(`Error checking whether person ${options.personID} exists: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
+        throw errorGen(`*persons-existsByPersonID* Error checking whether person ${options.personID} exists: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
       }
       return data.length > 0;
     } catch (err) {
-      throw errorGen(err.message || 'Unhandled Error in persons existsByPersonID', err.code || 520, err.name || 'unhandledError_persons-existsByPersonID', err.isOperational || false, err.severity || 2);
+      throw errorGen(err.message || '*persons-existsByPersonID* Unhandled Error', err.code || 520, err.name || 'unhandledError_persons-existsByPersonID', err.isOperational || false, err.severity || 2);
     }
   }
 

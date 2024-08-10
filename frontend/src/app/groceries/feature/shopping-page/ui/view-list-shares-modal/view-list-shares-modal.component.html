@@ -1,9 +1,7 @@
 <div
-  class="relative rounded-dl-3 flex flex-col items-center px-dl-5 pb-dl-3 pt-dl-4 dark:border dark:border-dl-grey-4 dark:bg-dl-grey-1"
+  class="relative flex flex-col items-center bg-dl-tan-9 rounded-dl-3 px-dl-5 pb-dl-3 pt-dl-4 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
-  <h3
-    class="leading-dl-4 text-dl-6 font-dl-3 text-dl-grey-3 dark:text-dl-grey-8"
-  >
+  <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8">
     Friends with access to list
   </h3>
   <mat-spinner
@@ -16,11 +14,11 @@
     <div class="max-h-dl-18 overflow-auto pb-dl-5">
       <dl-profile-card
         *ngFor="let profile of friendsShared(); let i = index"
-        class="h-dl-9 w-full border-dl-grey-9 py-dl-3 dark:border-dl-grey-3"
+        class="h-dl-9 w-full border-dl-tan-9 py-dl-3 dark:border-dl-tan-3"
         (click)="onCardClick(i)"
         [ngClass]="{
-          'bg-dl-blue-10': selectedCard() === i,
-          'bg-white dark:bg-dl-grey-1': selectedCard() !== i
+          'bg-dl-green-10': selectedCard() === i,
+          'bg-dl-tan-10 dark:bg-dl-tan-1': selectedCard() !== i
         }"
         [profile]="profile"
         [index]="i"
@@ -33,11 +31,11 @@
     <div class="mt-dl-3 flex w-full justify-between pb-dl-3">
       <button
         type="submit"
-        class="shadow-s sm:ml-dl-4 inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-white dark:text-dl-grey-1"
+        class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
         [ngClass]="{
-          'bg-dl-pink-4 text-white dark:bg-dl-pink-7 dark:text-dl-grey-1':
+          'bg-dl-pinknew-4 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             selectedCard() !== 999,
-          'bg-dl-grey-7': selectedCard() === 999
+          'bg-dl-tan-7': selectedCard() === 999
         }"
         (click)="onUnshareClick()"
       >
@@ -47,7 +45,7 @@
   </div>
   <!-- Exit Button -->
   <button
-    class="absolute right-3 top-2 rounded-full bg-dl-grey-9 p-dl-2 dark:bg-dl-grey-2"
+    class="absolute right-3 top-2 rounded-full bg-dl-tan-9 p-dl-2 dark:bg-dl-tan-2"
     (click)="onExitClick()"
     type="button"
   >

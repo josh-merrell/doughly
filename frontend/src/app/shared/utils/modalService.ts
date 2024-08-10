@@ -88,7 +88,6 @@ export class ModalService {
     this.modals = this.modals.filter((m) => m.level !== level);
   }
 
-
   private getComponentSelector<T>(component: ComponentType<T>): string | null {
     const metadata = reflectComponentType(component);
     return metadata?.selector || null;
@@ -114,9 +113,9 @@ export class ModalService {
       case 1:
       case 99:
         if (useDarkMode === true) {
-          this.stylesService.updateStyles('#141B23', 'dark');
+          this.stylesService.updateStyles('#26221C', 'dark');
         } else {
-          this.stylesService.updateStyles('#ACACAC', 'light');
+          this.stylesService.updateStyles('#D4CDC4', 'light');
         }
         break;
       case 2:
@@ -135,9 +134,9 @@ export class ModalService {
         break;
       case 0:
         if (useDarkMode === true) {
-          this.stylesService.updateStyles('#1F2933', 'dark');
+          this.stylesService.updateStyles('#26221c', 'dark');
         } else {
-          this.stylesService.updateStyles('#FFFFFF', 'light');
+          this.stylesService.updateStyles('#e9e6e2', 'light');
         }
         break;
       default:

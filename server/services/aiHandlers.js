@@ -43,10 +43,10 @@ const visionRequest = async (recipeImageURLs, userID, authorization, messageType
     i++;
   }
 
-  global.logger.info(`VISION REQUEST SOURCE IMAGES: ${JSON.stringify(body.messages[0].content.slice(1))}`);
+  global.logger.info(`*aiHandlers-visionRequest* VISION REQUEST SOURCE IMAGES: ${JSON.stringify(body.messages[0].content.slice(1))}`);
 
   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
-    throw errorGen(`OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
+    throw errorGen(`*aiHandlers-visionRequest* OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
   });
 
   //log token usage
@@ -54,10 +54,10 @@ const visionRequest = async (recipeImageURLs, userID, authorization, messageType
 
   //Check for unsuccessful completions
   if (chatCompletionObject.choices[0].finish_reason === 'length') {
-    throw errorGen(`OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
+    throw errorGen(`*aiHandlers-createUserLog* OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
   }
   if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
-    throw errorGen(`Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
+    throw errorGen(`*aiHandlers-createUserLog* Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
   }
 
   //Clean up the response JSON
@@ -92,7 +92,7 @@ const recipeFromTextRequest = async (recipeText, userID, authorization) => {
   });
 
   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
-    throw errorGen(`OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
+    throw errorGen(`*aiHandlers-recipeFromTextRequest* OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
   });
 
   //log token usage
@@ -100,11 +100,11 @@ const recipeFromTextRequest = async (recipeText, userID, authorization) => {
 
   //Check for unsuccessful completions
   if (chatCompletionObject.choices[0].finish_reason === 'length') {
-    throw errorGen(`OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', true, 3);
+    throw errorGen(`*aiHandlers-recipeFromTextRequest* OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', true, 3);
   }
   if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
     // throw errorGen('Content Omitted due to filter being flagged', 400);
-    throw errorGen(`Content Omitted due to filter being flagged`, 515, 'aiContentViolation', true, 3);
+    throw errorGen(`*aiHandlers-recipeFromTextRequest* Content Omitted due to filter being flagged`, 515, 'aiContentViolation', true, 3);
   }
   //Clean up the response JSON
   let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');
@@ -123,7 +123,7 @@ getPurchaseUnitLifespanDaysEstimate = async (ingredient) => {
     const vertexaiLocation = 'us-central1';
     const vertexaiEndpointID = '8420950649927106560';
     const promptText = `You are provided the name of a ingredient. You are also provided an array measurement units. Return two strings separated by a comma. The first should be a purchaseUnit appropriate for the ingredient and must be selected from the provided array of units. It should reflect the way in which this ingredient is purchased. When possible, this should be a specific unit, like 'weightOunce' or 'fluidOunce'. The second string should be a number estimate of how many days the ingredient will remain usable or fresh, assuming it is stored properly (this might involve refrigeration or freezing). For example, for the ingredient 'tomato', the return value might be 'weightOunce,12'. INGREDIENT:${ingredient}, UNITS: [${units}]`;
-    global.logger.info({ message: `GETTING PU/LD VERTEXAI REQUEST: ${promptText}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-getPurchaseUnitLifespanDaysEstimate* GETTING PU/LD VERTEXAI REQUEST: ${promptText}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
 
     const requestJson = {
       instances: [
@@ -151,19 +151,19 @@ getPurchaseUnitLifespanDaysEstimate = async (ingredient) => {
     const data = await response.json();
     const result = data.predictions[0].content.split(',');
     if (result[0] === 'weighOunce') result[0] = 'weightOunce';
-    global.logger.info({ message: `RI NAME: ${ingredient} PU/LD VERTEXAI RESPONSE: ${result[0]}, ${result[1]}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-getPurchaseUnitLifespanDaysEstimate* RI NAME: ${ingredient} PU/LD VERTEXAI RESPONSE: ${result[0]}, ${result[1]}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
 
     // calculate cost
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
     const cost = (characterCount / 1000) * billRatePer1000Chars;
-    global.logger.info({ message: `CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-getPurchaseUnitLifespanDaysEstimate* CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     return {
       purchaseUnit: result[0],
       lifespanDays: result[1],
       cost: cost,
     };
   } catch (error) {
-    global.logger.info({ message: `Error estimating purchaseUnit and lifespanDays: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-getPurchaseUnitLifespanDaysEstimate* Error estimating purchaseUnit and lifespanDays: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
     return {
       purchaseUnit: 'weightOunce',
       lifespanDays: 7,
@@ -205,12 +205,12 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
       body: JSON.stringify(requestJson),
     });
     const data = await response.json();
-    global.logger.info({ message: `RI NAME: ${recipeIngredient} MATCHING VERTEXAI RESPONSE: ${data.predictions[0].content}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* RI NAME: ${recipeIngredient} MATCHING VERTEXAI RESPONSE: ${data.predictions[0].content}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     const matchResult = data.predictions[0].content;
     let resultJSON;
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
     let cost = (characterCount / 1000) * billRatePer1000Chars;
-    global.logger.info({ message: `CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
 
     // get est for purchaseUnit and lifespanDays from vertexai
     resultJSON = await getPurchaseUnitLifespanDaysEstimate(recipeIngredient);
@@ -233,7 +233,7 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
       cost: cost,
     };
   } catch (error) {
-    global.logger.info({ message: `Error matching ingredient: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* Error matching ingredient: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
     return {
       reponse: { error: error.message },
       cost: cost || 0,
@@ -242,7 +242,7 @@ const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredi
 };
 
 const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, userItems) => {
-  global.logger.info({ message: `MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`, level: 6, timestamp: new Date().toISOString(), userID: userID | 0 });
+  global.logger.info({ message: `*aiHandlers-matchRecipeItemRequest* MATCHING RECIPE ITEM: ${JSON.stringify(recipeItem)}, WITH USER ITEMS`, level: 6, timestamp: new Date().toISOString(), userID: userID | 0 });
   const client = await getClient();
   const body = {
     messages: [requestMessages[type].message],
@@ -275,7 +275,7 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
     ],
   });
   const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
-    throw errorGen(`OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
+    throw errorGen(`*aiHandlers-matchRecipeItemRequest* OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
   });
 
   //log token usage
@@ -283,10 +283,10 @@ const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, u
 
   //Check for unsuccessful completions
   if (chatCompletionObject.choices[0].finish_reason === 'length') {
-    throw errorGen(`OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
+    throw errorGen(`*aiHandlers-matchRecipeItemRequest* OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
   }
   if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
-    throw errorGen(`Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
+    throw errorGen(`*aiHandlers-matchRecipeItemRequest* Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
   }
   //Clean up the response JSON
   let responseJSON = chatCompletionObject.choices[0].message.content.replace(/json\n|\n/g, '');
@@ -331,7 +331,7 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     const data = await response.json();
 
     if (!data.predictions || !Array.isArray(data.predictions) || data.predictions.length === 0) {
-      global.logger.info({ message: `API response did not include expected 'predictions' array or it was empty.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
+      global.logger.info({ message: `*aiHandlers-getUnitRatioAI* API response did not include expected 'predictions' array or it was empty.`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
       return {
         response: 1,
         cost: 0,
@@ -339,10 +339,10 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     }
 
     const result = data.predictions[0].content;
-    global.logger.info({ message: `UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-getUnitRatioAI* UNIT CONVERSION VERTEXAI ${substance}-${measurementUnit_A}-${measurementUnit_B} RESPONSE: ${result}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     // if result can not be converted to a number, return 1
     if (isNaN(result)) {
-      global.logger.info({ message: `AI Unit Ratio estimate was not a number: ${result}, returning default "1"`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
+      global.logger.info({ message: `*aiHandlers-getUnitRatioAI* AI Unit Ratio estimate was not a number: ${result}, returning default "1"`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
       return {
         response: 1,
         cost: cost || 0,
@@ -352,13 +352,13 @@ const getUnitRatioAI = async (userID, authorization, substance, measurementUnit_
     // calculate cost
     const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
     const cost = (characterCount / 1000) * billRatePer1000Chars;
-    global.logger.info({ message: `CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-getUnitRatioAI* CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
     return {
       response: result,
       cost: cost,
     };
   } catch (error) {
-    global.logger.info({ message: `Error estimating unit ratio: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
+    global.logger.info({ message: `*aiHandlers-getUnitRatioAI* Error estimating unit ratio: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
     return {
       response: 1,
       cost: cost || 0,

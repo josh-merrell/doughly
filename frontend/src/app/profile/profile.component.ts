@@ -204,12 +204,12 @@ export class ProfileComponent {
     switch (index) {
       case 1:
         return useDarkMode
-          ? this.stylesService.getHex('grey-9')
-          : this.stylesService.getHex('grey-3');
+          ? this.stylesService.getHex('tan-9')
+          : this.stylesService.getHex('tan-3');
       default:
         return useDarkMode
-          ? this.stylesService.getHex('grey-4')
-          : this.stylesService.getHex('grey-6');
+          ? this.stylesService.getHex('tan-4')
+          : this.stylesService.getHex('tan-6');
     }
   }
 }
