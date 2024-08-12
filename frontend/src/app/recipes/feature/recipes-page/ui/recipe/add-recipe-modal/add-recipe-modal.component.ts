@@ -4,6 +4,7 @@ import {
   WritableSignal,
   effect,
   signal,
+  Renderer2,
 } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import {
@@ -29,6 +30,8 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
+import { Capacitor } from '@capacitor/core';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 
 @Component({
   selector: 'dl-add-recipe-modal',
@@ -72,7 +75,9 @@ export class AddRecipeModalComponent {
     private stringsService: StringsService,
     private productService: ProductService,
     private modalService: ModalService,
-    public extraStuffService: ExtraStuffService
+    public extraStuffService: ExtraStuffService,
+    private renderer: Renderer2,
+    private stylesService: StylesService
   ) {
     this.recipeCategories = this.data.recipeCategories;
 
@@ -161,9 +166,12 @@ export class AddRecipeModalComponent {
   }
 
   onVisionAddClick(): void {
-    console.log('onVisionAddClick');
+    console.log('onVisionAddClick. isPremium: ', this.profile().isPremium);
     // first ensure user has at least one AI credit
-    if (this.profile().permAITokenCount < 1 && this.profile().isPremium) {
+    if (
+      this.profile().permAITokenCount < 1 &&
+      this.profile().isPremium === true
+    ) {
       const dialogRef = this.modalService.open(
         PrompUpgradeModalComponent,
         {
@@ -186,8 +194,10 @@ export class AddRecipeModalComponent {
         });
       } else {
       }
-    }
-    if (this.profile().permAITokenCount < 1 && !this.profile().isPremium) {
+    } else if (
+      this.profile().permAITokenCount < 1 &&
+      this.profile().isPremium === false
+    ) {
       const dialogRef = this.modalService.open(
         PrompUpgradeModalComponent,
         {
@@ -202,6 +212,10 @@ export class AddRecipeModalComponent {
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
           this.dialogRef.close();
+          if (Capacitor.isNativePlatform()) {
+            this.stylesService.updateStyles('#A54C18', 'dark');
+            this.renderer.addClass(document.body, 'product-page');
+          }
           if (result === 'routeToUpgrade') {
             this.router.navigate(['/products']);
           }
@@ -242,7 +256,10 @@ export class AddRecipeModalComponent {
 
   onFromUrlAddClick(): void {
     // first ensure user has at least one AI credit
-    if (this.profile().permAITokenCount < 1) {
+    if (
+      this.profile().permAITokenCount < 1 &&
+      this.profile().isPremium === true
+    ) {
       const dialogRef = this.modalService.open(
         PrompUpgradeModalComponent,
         {
@@ -263,6 +280,33 @@ export class AddRecipeModalComponent {
           }
         });
       } else {
+      }
+    } else if (
+      this.profile().permAITokenCount < 1 &&
+      this.profile().isPremium === false
+    ) {
+      const dialogRef = this.modalService.open(
+        PrompUpgradeModalComponent,
+        {
+          data: {
+            titleMessage: this.stringsService.productStrings.timeToTopUp,
+            promptMessage: `You need tokens to use advanced Recipe importing. Add a Premium subscription or buy a pack now to continue!`,
+            buttonMessage: 'ADD MORE TOKENS',
+          },
+        },
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.dialogRef.close();
+          if (Capacitor.isNativePlatform()) {
+            this.stylesService.updateStyles('#A54C18', 'dark');
+            this.renderer.addClass(document.body, 'product-page');
+          }
+          if (result === 'routeToUpgrade') {
+            this.router.navigate(['/products']);
+          }
+        });
       }
     } else {
       // update url to include '/from-url' if it's not already there
