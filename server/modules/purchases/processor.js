@@ -262,7 +262,7 @@ module.exports = ({ db, dbDefault }) => {
         const newProfile = {};
         for (const permission of permissions) {
           let tokenUpdate;
-          switch (permission.permissionId) {
+          switch (permission.identifier) {
             case 'recipe-subscribed-count-unlimited':
               newProfile['permRecipeSubscribeUnlimited'] = permission.isValid;
               break;
@@ -282,7 +282,7 @@ module.exports = ({ db, dbDefault }) => {
             case 'recipe-credits-10':
               break;
             default:
-              global.logger.info({ message: `*purchases-updatePermissions* Unhandled permissionId: ${permission.permissionId}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+              global.logger.info({ message: `*purchases-updatePermissions* Unhandled identifier: ${permission.identifier}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
               break;
           }
         }

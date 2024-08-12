@@ -1,4 +1,5 @@
 <div class="relative flex h-full w-full flex-col items-center px-dl-4 pt-dl-6">
+  <mat-spinner class="my-app-custom-spinner" *ngIf="isLoading()"></mat-spinner>
   <!-- Benefits View -->
   <div
     *ngIf="!isLoading() && view() === 'benefits'"
