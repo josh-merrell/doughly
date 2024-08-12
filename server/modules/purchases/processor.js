@@ -258,6 +258,22 @@ module.exports = ({ db, dbDefault }) => {
           return 'success';
         }
 
+        //get profile
+        const { data: profile, error1 } = await dbDefault.from('profiles').select('manualPerms').eq('user_id', userID).single();
+        //if error, throw error
+        if (error1) {
+          throw errorGen(`*purchases-updateEntitlementsRevenueCat* Error getting profile: ${error1.message}`, 511, 'failSupabaseSelect', true, 3);
+        }
+        //if no profile, throw error
+        if (!profile) {
+          throw errorGen(`*purchases-updateEntitlementsRevenueCat* Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
+        }
+        //if 'manualPerms' is true, skip updating entitlements
+        if (profile.manualPerms === true) {
+          global.logger.info({ message: `*purchases-updateEntitlementsRevenueCat* Skipping entitlements update for user with manualPerms`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+          return 'success';
+        }
+
         global.logger.info({ message: `*purchases-updatePermissions* PERMISSIONS TO UPDATE PROFILE: ${JSON.stringify(permissions)}`, level: 7, timestamp: new Date().toISOString(), userID: userID });
         const newProfile = {};
         for (const permission of permissions) {
@@ -285,6 +301,15 @@ module.exports = ({ db, dbDefault }) => {
               global.logger.info({ message: `*purchases-updatePermissions* Unhandled identifier: ${permission.identifier}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
               break;
           }
+        }
+        if (!newProfile['permRecipeSubscribeUnlimited']) {
+          newProfile['permRecipeSubscribeUnlimited'] = false;
+        }
+        if (!newProfile['permRecipeCreateUnlimited']) {
+          newProfile['permRecipeCreateUnlimited'] = false;
+        }
+        if (!newProfile['permDataBackupDaily6MonthRetention']) {
+          newProfile['permDataBackupDaily6MonthRetention'] = false;
         }
 
         // update profile with new permissions
@@ -353,6 +378,16 @@ module.exports = ({ db, dbDefault }) => {
               global.logger.info({ message: `*purchases-updateEntitlementsRevenueCat* Unhandled Entitlement identifier: ${entitlement.identifier}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
               break;
           }
+        }
+
+        if (!newProfile['permRecipeSubscribeUnlimited']) {
+          newProfile['permRecipeSubscribeUnlimited'] = false;
+        }
+        if (!newProfile['permRecipeCreateUnlimited']) {
+          newProfile['permRecipeCreateUnlimited'] = false;
+        }
+        if (!newProfile['permDataBackupDaily6MonthRetention']) {
+          newProfile['permDataBackupDaily6MonthRetention'] = false;
         }
 
         // update profile with new entitlements
