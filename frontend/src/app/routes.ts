@@ -36,6 +36,7 @@ import { UpgradePageComponent } from './account/feature/products/ui/upgrade-page
 import { YourPremiumComponent } from './account/feature/products/ui/your-premium/your-premium-page.component';
 import { WebPageComponent } from './webpage/web-page/web-page.component';
 import { AdminComponent } from './shared/ui/admin/admin.component';
+import { YourLifetimeComponent } from './account/feature/products/ui/your-lifetime/your-lifetime.component';
 
 export const routes: Route[] = [
   {
@@ -141,6 +142,11 @@ export const routes: Route[] = [
         component: YourPremiumComponent,
         canActivate: [ProfileGuard, stateLoaded],
       },
+      {
+        path: 'your-lifetime',
+        component: YourLifetimeComponent,
+        canActivate: [ProfileGuard, stateLoaded],
+      }
     ],
   },
   {

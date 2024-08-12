@@ -87,9 +87,16 @@ export class ProductService {
           });
         }
         const { customerInfo } = await Purchases.getCustomerInfo();
-        const entitlements = customerInfo.entitlements.active;
-        console.log('RevenueCat Entitlements: ', JSON.stringify(entitlements));
-        await this.handleExistingPermissions(entitlements).subscribe();
+        const activeEntitlementsArray = Object.values(
+          customerInfo.entitlements.active
+        );
+        console.log(
+          'RevenueCat Entitlements: ',
+          JSON.stringify(activeEntitlementsArray)
+        );
+        await this.handleExistingPermissions(
+          activeEntitlementsArray
+        ).subscribe();
 
         const offeringsRevenueCat: PurchasesOfferings =
           await Purchases.getOfferings();
@@ -107,11 +114,6 @@ export class ProductService {
 
   async updatePermissions() {
     // called when permissions may have changed
-    // ** GLASSFY **
-    // const permissions = await Glassfy.permissions();
-    // console.log('Updated Glassfy Permissions: ', JSON.stringify(permissions));
-    // await this.handleExistingPermissions(permissions.all).subscribe();
-
     // ** REVENUECAT **
     try {
       const { customerInfo } = await Purchases.getCustomerInfo();
@@ -319,13 +321,12 @@ export class ProductService {
         return this.http.post(`${this.API_URL}/updatePermissions`, body);
       } else {
         // use revenuecat backend route
-        return this.http.post(`${this.API_URL}/updatePermissions`, {
-          entitlements: permissions,
-        });
+        return this.http.post(`${this.API_URL}/updatePermissions`, body);
       }
     } else {
+      console.log('NO PERMISSIONS TO UPDATE, SENDING EMPTY ARRAY');
       return this.http.post(`${this.API_URL}/updatePermissions`, {
-        entitlements: [],
+        permissions: [],
       });
     }
   }
