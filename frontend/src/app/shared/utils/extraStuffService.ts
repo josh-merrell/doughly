@@ -35,13 +35,21 @@ export class ExtraStuffService {
       (darkMode === 'System Default' && this.systemDarkMode());
     switch (index) {
       case 1:
-        return useDarkMode ? this.stylesService.getHex('tan-9') : this.stylesService.getHex('tan-2');
+        return useDarkMode
+          ? this.stylesService.getHex('tan-9')
+          : this.stylesService.getHex('tan-2');
       case 2:
-        return useDarkMode ? this.stylesService.getHex('tan-10') : this.stylesService.getHex('tan-1');
+        return useDarkMode
+          ? this.stylesService.getHex('tan-10')
+          : this.stylesService.getHex('tan-1');
       case 3:
-        return useDarkMode ? this.stylesService.getHex('tan-7') : this.stylesService.getHex('tan-4');
+        return useDarkMode
+          ? this.stylesService.getHex('tan-7')
+          : this.stylesService.getHex('tan-4');
       case 4:
-        return useDarkMode ? this.stylesService.getHex('tan-8') : this.stylesService.getHex('tan-3');
+        return useDarkMode
+          ? this.stylesService.getHex('tan-8')
+          : this.stylesService.getHex('tan-3');
       case 5:
         return useDarkMode
           ? this.stylesService.getHex('green-9')
@@ -51,9 +59,13 @@ export class ExtraStuffService {
           ? this.stylesService.getHex('pinknew-4')
           : this.stylesService.getHex('pinknew-7');
       case 7:
-        return useDarkMode ? this.stylesService.getHex('teal-5') : this.stylesService.getHex('teal-6');
+        return useDarkMode
+          ? this.stylesService.getHex('teal-5')
+          : this.stylesService.getHex('teal-6');
       case 8:
-        return useDarkMode ? this.stylesService.getHex('pinknew-4') : this.stylesService.getHex('pinknew-6');
+        return useDarkMode
+          ? this.stylesService.getHex('pinknew-4')
+          : this.stylesService.getHex('pinknew-6');
       case 9:
         return useDarkMode
           ? this.stylesService.getHex('tan-1')
@@ -107,11 +119,19 @@ export class ExtraStuffService {
           ? this.stylesService.getHex('tan-8')
           : this.stylesService.getHex('tan-8');
       case 22:
+        return useDarkMode ? '#FFFFFF' : '000000';
+      case 23:
         return useDarkMode
-        ? '#FFFFFF'
-        : '000000'
+          ? this.stylesService.getHex('tan-7')
+          : this.stylesService.getHex('tan-7');
+      case 24:
+        return useDarkMode
+          ? this.stylesService.getHex('tan-10')
+          : this.stylesService.getHex('tan-10');
       default:
-        return useDarkMode ? this.stylesService.getHex('tan-8') : this.stylesService.getHex('tan-3');
+        return useDarkMode
+          ? this.stylesService.getHex('tan-8')
+          : this.stylesService.getHex('tan-3');
     }
   }
 }

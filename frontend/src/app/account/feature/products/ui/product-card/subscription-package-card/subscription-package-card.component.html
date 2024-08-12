@@ -1,18 +1,17 @@
 <div
-  class="h-dl-8 w-10/12 rounded-dl-3 p-dl-1"
+  class="h-dl-8 w-10/12 rounded-dl-4 p-dl-1"
   [ngStyle]="
     isSelected
       ? { transform: 'scale(1.1)', transition: 'transform 0.3s ease-in-out' }
       : { transform: 'scale(1)', transition: 'transform 0.3s ease-in-out' }
   "
   [ngClass]="{
-    'bg-gradient-to-br from-dl-teal-6 via-dl-green-6 to-dl-pinknew-7':
-      isSelected,
+    'bg-gradient-to-br from-dl-pinknew-3 to-dl-pinknew-6': isSelected,
     'bg-dl-tan-9': !isSelected
   }"
 >
   <div
-    class="relative flex h-full w-full items-center justify-between rounded-dl-3 px-dl-4 pb-dl-4"
+    class="relative flex h-full w-full items-center justify-between rounded-dl-4 px-dl-4 pb-dl-4"
     [ngClass]="{
       'bg-dl-tan-10 shadow-xl': isSelected,
       'bg-dl-tan-9 shadow-md': !isSelected
@@ -24,13 +23,13 @@
       class="absolute left-0 top-0 flex w-dl-9 flex-col items-center rounded-br-xl rounded-tl-md py-dl-1.5"
       [ngClass]="{
         'bg-dl-tan-9': !isSelected,
-        'bg-gradient-to-r from-dl-teal-6 to-dl-mid-teal-6-to-blue-7': isSelected
+        'bg-gradient-to-r from-dl-pinknew-3 to-dl-pinknew-4': isSelected
       }"
     >
       <span
         class="text-center text-dl-4 font-dl-4 text-dl-tan-10"
         [ngClass]="{
-          'text-dl-teal-7': !isSelected,
+          'text-dl-pinknew-6': !isSelected,
           'text-dl-tan-10': isSelected
         }"
         >MOST POPULAR</span
@@ -44,10 +43,10 @@
       'mt-dl-7': package.identifier === '$rc_six_month',
     }"
     >
-      <p class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-green-2">
+      <p class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-pinknew-1">
         {{ getTitleString(package.identifier) }}
       </p>
-      <span class="whitespace-nowrap text-dl-5 font-dl-2 text-dl-green-2"
+      <span class="whitespace-nowrap text-dl-5 font-dl-2 text-dl-pinknew-1"
         >{{ getPeriodString(package.product.subscriptionPeriod) }} -
         {{
           package.product.price
@@ -59,7 +58,7 @@
 
     <!-- Monthly Rate -->
     <span
-      class="whitespace-nowrap text-center text-dl-6 font-dl-3 text-dl-green-2"
+      class="whitespace-nowrap text-center text-dl-6 font-dl-3 text-dl-pinknew-1"
       [ngClass]="{
         'mt-dl-5': package.identifier === '$rc_six_month',
       }"

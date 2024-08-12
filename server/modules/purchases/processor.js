@@ -223,17 +223,15 @@ module.exports = ({ db, dbDefault }) => {
           case 'doughly_aicredits10_once_2.99':
             addTokens = 10;
             break;
+          case 'rc_lifetime':
+            newProfile['permRecipeSubscribeUnlimited'] = true;
+            newProfile['permRecipeCreateUnlimited'] = true;
+            newProfile['isPremium'] = false;
           default:
             global.logger.info({ message: `*purchases-newPurchaseRevenueCatProdPackage* Invalid purchase revenueCatProduct.identifier: ${revenueCatProduct.identifier}, cannot process purchase`, level: 3, timestamp: new Date().toISOString(), userID: userID });
         }
 
-        if (revenueCatProduct.identifier !== 'doughly_aicredits10_once_2.99') {
-          const tokenUpdate = await calculateAITokenUpdate(userID);
-          if (tokenUpdate.needsUpdate) {
-            newProfile['permAITokenCount'] = tokenUpdate.newCount;
-            newProfile['permAITokenLastRefreshDate'] = tokenUpdate.newDate;
-          }
-        } else {
+        if (revenueCatProduct.identifier === 'doughly_aicredits10_once_2.99') {
           newProfile['permAITokenCount'] = Math.min(productConstants.subscription.maxAICredits, profile.permAITokenCount + addTokens);
         }
 

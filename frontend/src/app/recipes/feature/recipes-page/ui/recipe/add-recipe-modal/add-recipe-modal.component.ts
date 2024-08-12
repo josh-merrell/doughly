@@ -163,7 +163,7 @@ export class AddRecipeModalComponent {
   onVisionAddClick(): void {
     console.log('onVisionAddClick');
     // first ensure user has at least one AI credit
-    if (this.profile().permAITokenCount < 1) {
+    if (this.profile().permAITokenCount < 1 && this.profile().isPremium) {
       const dialogRef = this.modalService.open(
         PrompUpgradeModalComponent,
         {
@@ -185,6 +185,27 @@ export class AddRecipeModalComponent {
           }
         });
       } else {
+      }
+    }
+    if (this.profile().permAITokenCount < 1 && !this.profile().isPremium) {
+      const dialogRef = this.modalService.open(
+        PrompUpgradeModalComponent,
+        {
+          data: {
+            titleMessage: this.stringsService.productStrings.timeToTopUp,
+            promptMessage: `You need tokens to use advanced Recipe importing. Add a Premium subscription or buy a pack now to continue!`,
+            buttonMessage: 'ADD MORE TOKENS',
+          },
+        },
+        2
+      );
+      if (dialogRef) {
+        dialogRef.afterClosed().subscribe((result) => {
+          this.dialogRef.close();
+          if (result === 'routeToUpgrade') {
+            this.router.navigate(['/products']);
+          }
+        });
       }
     } else {
       // if onboarding state is 11, progress to 12
@@ -282,8 +303,7 @@ export class AddRecipeModalComponent {
     this.dialogRef.close();
   }
 
-  onboardingHandler(onboardingState: number): void {
-  }
+  onboardingHandler(onboardingState: number): void {}
 
   onboardingCallback() {
     setTimeout(() => {

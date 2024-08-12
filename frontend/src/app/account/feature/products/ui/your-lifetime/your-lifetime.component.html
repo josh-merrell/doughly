@@ -1,56 +1,16 @@
 <div class="relative flex h-full w-full flex-col items-center px-dl-4 pt-dl-6">
-  <mat-spinner class="my-app-custom-spinner" *ngIf="isLoading()"></mat-spinner>
-  <!-- BENEFITS OVERVIEW -->
+  <!-- Benefits View -->
   <div
-    *ngIf="view() === 'overview' && !isLoading()"
-    class="flex h-full w-full flex-col items-center overflow-y-auto"
-  >
-    <span
-      class="mx-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
-      >{{ stringsService.productStrings.subscribeOverviewBenefit1of2
-      }}<span
-        class="items-center text-dl-7 font-dl-4 text-dl-pinknew-8 transition-all duration-100 ease-in-out"
-        >{{
-          stringsService.productStrings.subscribeOverviewBenefitmultiplier
-        }} </span
-      ><span
-        class="items-center text-dl-7 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
-        >{{ stringsService.productStrings.subscribeOverviewBenefit2of2 }}</span
-      ></span
-    >
-    <dl-benefits-overview
-      class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"
-    ></dl-benefits-overview>
-    <!-- Spacer Div -->
-    <dl class="flex flex-grow"></dl>
-    <!-- Buttons -->
-    <button
-      type="button"
-      class="mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-tan-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
-      (click)="onConfirm()"
-    >
-      GET FEATURES
-    </button>
-    <button
-      type="button"
-      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-10 transition-all duration-200 ease-in-out"
-      (click)="onCancel()"
-    >
-      NO THANKS
-    </button>
-  </div>
-
-  <!-- BENEFITS CHART -->
-  <div
-    *ngIf="view() === 'chart' && !isLoading()"
+    *ngIf="!isLoading() && view() === 'benefits'"
     class="flex h-full w-full flex-col items-center overflow-y-auto"
   >
     <dl-benefits-chart
-      [view]="'upgrade'"
-      class="mt-dl-6 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"
+      [view]="'your-lifetime'"
+      class="mt-dl-2 w-full overflow-y-auto [@media(max-width:767px)]:scrollbar-hide"
     ></dl-benefits-chart>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
+
     <!-- Buttons -->
     <div
       class="mb-dl-4 mt-dl-3 h-dl-7 w-full rounded-dl-4 bg-gradient-to-br from-dl-pinknew-3 to-dl-pinknew-6 p-dl-1 shadow-lg"
@@ -64,11 +24,12 @@
       </button>
     </div>
     <button
+      *ngIf="allowExtraTokenPurchase()"
       type="button"
       class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-4 bg-dl-tan-9 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
-      (click)="onConfirmLifetime()"
+      (click)="onConfirmAddTokens()"
     >
-      LIFETIME ACCESS - PURCHASE ONCE
+      ADD MORE TOKENS
     </button>
   </div>
 
@@ -113,10 +74,10 @@
     >
   </div>
 
-  <!-- LIFETIME PURCHASE OPTIONS -->
+  <!-- TOKEN OPTIONS -->
   <div
     *ngIf="
-      view() === 'optionsLifetime' &&
+      view() === 'optionsAddTokens' &&
       productPackages().length > 0 &&
       !isLoading()
     "
@@ -124,9 +85,8 @@
   >
     <span
       class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
-      >Choose a plan</span
+      >Use Tokens to import your Recipes from an image or URL</span
     >
-    <!-- RevenueCat -->
     <div class="flex w-full flex-col items-center">
       <dl-product-package-card
         class="mb-dl-6 flex w-full flex-col items-center"
@@ -138,31 +98,17 @@
     </div>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
+    <span
+      class="inline-flex items-center text-dl-4 font-dl-2 text-dl-tan-10 transition-all duration-100 ease-in-out"
+      >One time purchase</span
+    >
     <!-- Buttons -->
     <button
       type="button"
-      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 bg-dl-tan-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-1 transition-all duration-200 ease-in-out"
+      class="mb-dl-5 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 bg-dl-tan-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-1 transition-all duration-200 ease-in-out"
       (click)="onConfirm()"
     >
-      UPGRADE NOW
-    </button>
-  </div>
-  <div
-    *ngIf="view() === 'options' && subscribePackages().length === 0"
-    class="flex h-full flex-col items-center"
-  >
-    <span
-      class="mx-dl-7 mb-dl-7 items-center text-center text-dl-7 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
-      >{{ stringsService.productStrings.noSubscribeOfferings }}</span
-    >
-    <!-- Spacer Div -->
-    <dl class="flex flex-grow"></dl>
-    <button
-      type="button"
-      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-tan-10 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
-      (click)="onCancel()"
-    >
-      Back to Account
+      PURCHASE NOW
     </button>
   </div>
 </div>
