@@ -21,7 +21,7 @@ export class StringsService {
     recipeCreateImage: `Choose a photo or screenshot of a recipe you'd like to add, handwritten is fine! Add a display image if you have one. AI will extract the details, map them to your existing kitchen items, and create any new ones you need. Give it a try when ready!`,
     recipeCreateImageSuccess: `Amazing! While not always perfect, this tool gets the bulk of the work done for you. Review and confirm any draft Ingredients in order to use this recipe.`,
     recipeCreateOverview: `Aside from manual entry, you may also import recipes from URLs or images. Stop dealing with ad-covered websites and let AI do the work for you!`,
-    recipeCreateCreditUsage: `Using AI to create recipes requires credits. We start you off with a few. To add more, upgrade to a Subscription plan.`,
+    recipeCreateCreditUsage: `Using AI to import recipes requires tokens. We start you off with a few. To add more, upgrade to a Subscription plan.`,
     onboardingComplete: `We hope you're excited to build your collection for your loved ones to enjoy for years to come. Best wishes from Doughly.`,
   };
   public readonly productStrings = {
@@ -32,6 +32,7 @@ export class StringsService {
     subscribeOverviewBenefit2of2: `times faster with AI!`,
     subscribeChartBenefit: `Premium users get the most from thier recipes!`,
     subscribeYourPremium: `Your Premium Subscription is serving you well. Thank you for your support!`,
+    subscribeYourLifetime: `Add a Premium Subscription for monthly AI Import tokens and guaranteed data backups.`,
     manageSubscription: `You can manage your subscription in Google Play or App Store.`,
     timeToUpgrade: `Time to upgrade your account!`,
     timeToTopUp: `Time to top up your AI Tokens!`,
@@ -45,8 +46,8 @@ export class StringsService {
         description: `Create as many and Subscribe to as many recipes as you like`,
       },
       {
-        title: `Monthly AI Credits`,
-        description: `Regularly top up your credits to import recipes in a snap`,
+        title: `Monthly Tokens`,
+        description: `Regularly top up your tokens to import recipes in a snap`,
       },
       {
         title: `Daily Data Backups`,

@@ -41,6 +41,8 @@ export class ProductsPageComponent {
       const view = this.view();
       if (view === 'upgrade') {
         this.router.navigate(['/products/upgrade']);
+      } else if (view === 'your-lifetime') {
+        this.router.navigate(['/products/your-lifetime']);
       } else if (view === 'your-premium') {
         this.router.navigate(['/products/your-premium']);
       }
@@ -51,8 +53,10 @@ export class ProductsPageComponent {
         const profile = this.authService.profile();
         this.profile = profile;
         if (profile) {
-          if (profile.permRecipeCreateUnlimited) {
+          if (profile.isPremium) {
             this.view.set('your-premium');
+          } else if (profile.permRecipeCreateUnlimited) {
+            this.view.set('your-lifetime');
           }
         }
       },
@@ -62,7 +66,7 @@ export class ProductsPageComponent {
 
   ngOnInit(): void {
     if (Capacitor.isNativePlatform()) {
-      this.stylesService.updateStyles('#586b29', 'dark');
+      this.stylesService.updateStyles('#A54C18', 'dark');
       this.renderer.addClass(document.body, 'product-page');
     }
     // close all modals

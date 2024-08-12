@@ -23,28 +23,32 @@ export class BenefitsChartComponent {
     {
       title: '',
       freeTier: 'FREE',
+      lifetime: 'LIFETIME',
       premiumTier: 'PREMIUM',
     },
     {
       title: 'Subscribed Recipes',
       freeTier: this.productService.licences.recipeSubscribeLimit.toString(),
+      lifetime: 'no limit!',
       premiumTier: 'no limit!',
     },
     {
       title: 'Created Recipes',
       freeTier: this.productService.licences.recipeCreateLimit.toString(),
+      lifetime: 'no limit!',
       premiumTier: 'no limit!',
     },
     {
-      title: 'Monthly AI Credits',
+      title: 'Monthly Tokens',
       freeTier: 'dash',
+      lifetime: 'dash',
       premiumTier: '12',
     },
     {
       title: 'Daily Data Backups',
       freeTier: 'dash',
+      lifetime: 'dash',
       premiumTier: 'check',
     },
   ];
-
 }

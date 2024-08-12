@@ -1,42 +1,40 @@
-import { Component, WritableSignal, effect, signal } from '@angular/core';
-import { BenefitsOverviewComponent } from '../benefits-overview/benefits-overview.component';
-import { BenefitsChartComponent } from '../benefits-chart/benefits-chart.component';
-import { SubscriptionSkuCardComponent } from '../product-card/subscription-sku-card.component';
-import { ProductService } from 'src/app/shared/utils/productService';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { StringsService } from 'src/app/shared/utils/strings';
-import { GlassfyOffering, GlassfySku } from 'capacitor-plugin-glassfy';
-import { PurchasesPackage } from '@revenuecat/purchases-capacitor';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Component, effect, signal, WritableSignal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { PurchasesPackage } from '@revenuecat/purchases-capacitor';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
-import { PurchasesOffering } from '@revenuecat/purchases-capacitor';
+import { ProductService } from 'src/app/shared/utils/productService';
+import { StringsService } from 'src/app/shared/utils/strings';
+import { BenefitsChartComponent } from '../benefits-chart/benefits-chart.component';
 import { SubscriptionPackageCardComponent } from '../product-card/subscription-package-card/subscription-package-card.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductPackageCardComponent } from '../product-card/product-package-card/product-package-card.component';
+
 @Component({
-  selector: 'dl-upgrade-page',
+  selector: 'dl-your-lifetime',
   standalone: true,
   imports: [
     CommonModule,
-    BenefitsOverviewComponent,
-    BenefitsChartComponent,
-    SubscriptionSkuCardComponent,
     MatProgressSpinnerModule,
+    BenefitsChartComponent,
     SubscriptionPackageCardComponent,
     ProductPackageCardComponent,
   ],
-  templateUrl: './upgrade-page.component.html',
+  templateUrl: './your-lifetime.component.html',
 })
-export class UpgradePageComponent {
+export class YourLifetimeComponent {
+  public allowExtraTokenPurchase: WritableSignal<boolean> = signal(false);
   public isLoading: WritableSignal<boolean> = signal(false);
-  public view: WritableSignal<string> = signal('overview');
+  private profile: WritableSignal<any> = signal({});
+  public view: WritableSignal<string> = signal('benefits');
   public subscribePackages: WritableSignal<PurchasesPackage[]> = signal([]);
   public productPackages: WritableSignal<PurchasesPackage[]> = signal([]);
   public selectedIdentifier: WritableSignal<string> = signal('$rc_six_month');
+
   constructor(
     public dialog: MatDialog,
     private router: Router,
@@ -63,7 +61,7 @@ export class UpgradePageComponent {
             // );
           }
           const lifetimeOfferingRevenueCat = offeringsRevenueCat.find(
-            (offering) => offering.identifier === 'doughly-lifetime'
+            (offering) => offering.identifier === 'doughly-aicredits-10'
           );
           if (lifetimeOfferingRevenueCat) {
             this.productPackages.set(
@@ -76,38 +74,44 @@ export class UpgradePageComponent {
       },
       { allowSignalWrites: true }
     );
+
+    effect(
+      () => {
+        const profile = this.authService.profile();
+        this.profile.set(profile);
+        // console.log(`NEW PROFILE: `, profile);
+        if (profile) {
+          if (
+            profile.permAITokenCount <
+            this.productService.licences.maxAICredits -
+              this.productService.licences.extraAITokenPurchaseCount
+          ) {
+            this.allowExtraTokenPurchase.set(true);
+          }
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit() {}
 
   onConfirm() {
-    if (this.view() === 'overview') {
-      this.setView('chart');
-    } else if (this.view() === 'chart') {
+    if (this.view() === 'benefits') {
       this.setView('options');
     } else if (
-      (this.view() === 'options' || this.view() === 'optionsLifetime') &&
-      this.selectedIdentifier()
+      this.view() === 'options' ||
+      this.view() === 'optionsAddTokens'
     ) {
       this.makePurchase(this.selectedIdentifier());
     }
   }
 
-  onConfirmLifetime() {
-    if (this.view() === 'overview') {
-      this.setView('chart');
-    } else if (this.view() === 'chart') {
-      this.selectedIdentifier.set('$rc_lifetime');
-      this.setView('optionsLifetime');
-    } else if (this.view() === 'options' && this.selectedIdentifier()) {
-      this.makePurchase(this.selectedIdentifier());
-    } else if (this.view() === 'optionsLifetime' && this.selectedIdentifier()) {
-      this.makePurchase(this.selectedIdentifier());
+  onConfirmAddTokens() {
+    if (this.view() === 'benefits') {
+      this.selectedIdentifier.set('doughly_aicredits10_once_2.99');
+      this.setView('optionsAddTokens');
     }
-  }
-
-  onCancel() {
-    this.router.navigate(['/recipes/discover']);
   }
 
   async makePurchase(selectedID: string) {
@@ -265,12 +269,6 @@ export class UpgradePageComponent {
     }
   }
 
-  skuClick(sku) {
-    if (sku.skuId !== this.selectedIdentifier()) {
-      this.selectedIdentifier.set(sku.skuId);
-    }
-  }
-
   packageClick(revenueCatPackage) {
     if (revenueCatPackage.identifier !== this.selectedIdentifier()) {
       this.selectedIdentifier.set(revenueCatPackage.identifier);
@@ -279,5 +277,9 @@ export class UpgradePageComponent {
 
   setView(view: string) {
     this.view.set(view);
+  }
+
+  onCancel() {
+    this.router.navigate(['/recipes/discover']);
   }
 }

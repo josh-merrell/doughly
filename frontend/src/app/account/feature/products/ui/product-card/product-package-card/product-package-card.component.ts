@@ -21,6 +21,8 @@ export class ProductPackageCardComponent {
     switch (planId) {
       case 'doughly_aicredits10_once_2.99':
         return '10 AI Tokens';
+      case '$rc_lifetime':
+        return 'Lifetime Recipes';
     }
     return planId; // Return original if no match
   }
