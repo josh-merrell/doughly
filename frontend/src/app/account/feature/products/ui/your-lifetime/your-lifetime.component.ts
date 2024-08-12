@@ -1,4 +1,10 @@
-import { Component, effect, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  effect,
+  Renderer2,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -13,6 +19,8 @@ import { BenefitsChartComponent } from '../benefits-chart/benefits-chart.compone
 import { SubscriptionPackageCardComponent } from '../product-card/subscription-package-card/subscription-package-card.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductPackageCardComponent } from '../product-card/product-package-card/product-package-card.component';
+import { StylesService } from 'src/app/shared/utils/stylesService';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'dl-your-lifetime',
@@ -41,7 +49,9 @@ export class YourLifetimeComponent {
     private productService: ProductService,
     public stringsService: StringsService,
     private authService: AuthService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private renderer: Renderer2,
+    private stylesService: StylesService
   ) {
     // RevenueCat
     effect(
@@ -94,7 +104,12 @@ export class YourLifetimeComponent {
     );
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (Capacitor.isNativePlatform()) {
+      this.stylesService.updateStyles('#A54C18', 'dark');
+      this.renderer.addClass(document.body, 'product-page');
+    }
+  }
 
   onConfirm() {
     if (this.view() === 'benefits') {

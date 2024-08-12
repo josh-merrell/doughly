@@ -1,4 +1,4 @@
-import { Component, WritableSignal, effect, signal } from '@angular/core';
+import { Component, Renderer2, WritableSignal, effect, signal } from '@angular/core';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { BenefitsChartComponent } from '../benefits-chart/benefits-chart.component';
 import { CommonModule } from '@angular/common';
@@ -19,6 +19,8 @@ import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ProductPackageCardComponent } from '../product-card/product-package-card/product-package-card.component';
+import { Capacitor } from '@capacitor/core';
+import { StylesService } from 'src/app/shared/utils/stylesService';
 @Component({
   selector: 'dl-your-premium',
   standalone: true,
@@ -49,7 +51,9 @@ export class YourPremiumComponent {
     private productService: ProductService,
     private authService: AuthService,
     private store: Store,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private renderer: Renderer2,
+    private stylesService: StylesService
   ) {
     // Glassfy
     // effect(
@@ -114,7 +118,12 @@ export class YourPremiumComponent {
     );
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (Capacitor.isNativePlatform()) {
+      this.stylesService.updateStyles('#A54C18', 'dark');
+      this.renderer.addClass(document.body, 'product-page');
+    }
+  }
 
   onConfirm() {
     if (this.view() === 'benefits') {
