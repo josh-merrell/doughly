@@ -245,9 +245,13 @@ export class AppFooterComponent {
 
   navigateToProducts() {
     // if user profile 'permRecipeCreateUnlimited' is true, navigate to 'your-premium' page, else navigate to 'upgrade' page
-    if (this.profile.isPremium) {
+    const latestProfile = this.authService.profile();
+    if (!latestProfile) {
+      this.router.navigate(['/products']);
+    }
+    if (latestProfile!.isPremium) {
       this.router.navigate(['/products/your-premium']);
-    } else if (this.profile.permRecipeCreateUnlimited) {
+    } else if (latestProfile!.permRecipeCreateUnlimited) {
       this.router.navigate(['/products/your-lifetime']);
     } else {
       this.router.navigate(['/products/upgrade']);

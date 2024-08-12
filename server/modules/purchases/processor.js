@@ -223,7 +223,7 @@ module.exports = ({ db, dbDefault }) => {
           case 'doughly_aicredits10_once_2.99':
             addTokens = 10;
             break;
-          case 'rc_lifetime':
+          case '$rc_lifetime':
             newProfile['permRecipeSubscribeUnlimited'] = true;
             newProfile['permRecipeCreateUnlimited'] = true;
             newProfile['isPremium'] = false;
