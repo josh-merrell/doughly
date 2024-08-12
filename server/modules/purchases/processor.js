@@ -280,13 +280,13 @@ module.exports = ({ db, dbDefault }) => {
           let tokenUpdate;
           switch (permission.identifier) {
             case 'recipe-subscribed-count-unlimited':
-              newProfile['permRecipeSubscribeUnlimited'] = permission.isValid;
+              newProfile['permRecipeSubscribeUnlimited'] = permission.isActive;
               break;
             case 'recipe-created-count-unlimited':
-              newProfile['permRecipeCreateUnlimited'] = permission.isValid;
+              newProfile['permRecipeCreateUnlimited'] = permission.isActive;
               break;
             case 'data-backup-daily-6-month-retention':
-              newProfile['permDataBackupDaily6MonthRetention'] = permission.isValid;
+              newProfile['permDataBackupDaily6MonthRetention'] = permission.isActive;
               break;
             case 'recipe-create-AI-credit-count-12':
               tokenUpdate = await calculateAITokenUpdate(userID);
@@ -310,6 +310,9 @@ module.exports = ({ db, dbDefault }) => {
         }
         if (!newProfile['permDataBackupDaily6MonthRetention']) {
           newProfile['permDataBackupDaily6MonthRetention'] = false;
+        }
+        if (newProfile['permDataBackupDaily6MonthRetention'] === false) {
+          newProfile['isPremium'] = false;
         }
 
         // update profile with new permissions
@@ -388,6 +391,9 @@ module.exports = ({ db, dbDefault }) => {
         }
         if (!newProfile['permDataBackupDaily6MonthRetention']) {
           newProfile['permDataBackupDaily6MonthRetention'] = false;
+        }
+        if (newProfile['permDataBackupDaily6MonthRetention'] === false) {
+          newProfile['isPremium'] = false;
         }
 
         // update profile with new entitlements
