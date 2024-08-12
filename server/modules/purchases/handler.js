@@ -42,11 +42,11 @@ async function newPurchaseRevenueCatProdPackage(req, res) {
   const db = req.client.db;
   const dbDefault = req.defaultClient.db;
   const p = require('./processor')({ db, dbDefault });
-  const { activeEntitlements, revenueCatProduct } = req.body;
+  const { activeEntitlements, revenueCatProdPackage } = req.body;
   const returner = await p.newPurchaseRevenueCatProdPackage({
     userID: req.userID,
     activeEntitlements,
-    revenueCatProduct
+    revenueCatProdPackage
   });
   return res.json(returner);
 }
