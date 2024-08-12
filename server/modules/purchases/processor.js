@@ -201,10 +201,10 @@ module.exports = ({ db, dbDefault }) => {
     },
 
     newPurchaseRevenueCatProdPackage: async (options) => {
-      const { userID, activeEntitlements, revenueCatProduct } = options;
+      const { userID, activeEntitlements, revenueCatProdPackage } = options;
 
       try {
-        global.logger.info({ message: `*purchases-newPurchaseRevenueCatProdPackage* PROCESSING NEW PURCHASE. REVENUECAT PRODUCT: ${JSON.stringify(revenueCatProduct)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
+        global.logger.info({ message: `*purchases-newPurchaseRevenueCatProdPackage* PROCESSING NEW PURCHASE. REVENUECAT PRODUCT: ${JSON.stringify(revenueCatProdPackage)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
         // get current profile
         const { data: profile, error1 } = await dbDefault.from('profiles').select().eq('user_id', userID).single();
         if (error1) {
@@ -213,13 +213,13 @@ module.exports = ({ db, dbDefault }) => {
         if (!profile) {
           throw errorGen(`*purchases-newPurchaseRevenueCatProdPackage* Profile not found, cannot process purchase`, 515, 'cannotComplete', false, 2);
         }
-        if (!activeEntitlements || !revenueCatProduct) {
-          throw errorGen(`*purchases-newPurchaseRevenueCatProdPackage* Missing activeEntitlements or revenueCatProduct, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
+        if (!activeEntitlements || !revenueCatProdPackage) {
+          throw errorGen(`*purchases-newPurchaseRevenueCatProdPackage* Missing activeEntitlements or revenueCatProdPackage, cannot process purchase', 400`, 515, 'cannotComplete', false, 2);
         }
 
         const newProfile = {};
         let addTokens;
-        switch (revenueCatProduct.identifier) {
+        switch (revenueCatProdPackage.identifier) {
           case 'doughly_aicredits10_once_2.99':
             addTokens = 10;
             break;
@@ -228,10 +228,10 @@ module.exports = ({ db, dbDefault }) => {
             newProfile['permRecipeCreateUnlimited'] = true;
             newProfile['isPremium'] = false;
           default:
-            global.logger.info({ message: `*purchases-newPurchaseRevenueCatProdPackage* Invalid purchase revenueCatProduct.identifier: ${revenueCatProduct.identifier}, cannot process purchase`, level: 3, timestamp: new Date().toISOString(), userID: userID });
+            global.logger.info({ message: `*purchases-newPurchaseRevenueCatProdPackage* Invalid purchase revenueCatProdPackage.identifier: ${revenueCatProdPackage.identifier}, cannot process purchase`, level: 3, timestamp: new Date().toISOString(), userID: userID });
         }
 
-        if (revenueCatProduct.identifier === 'doughly_aicredits10_once_2.99') {
+        if (revenueCatProdPackage.identifier === 'doughly_aicredits10_once_2.99') {
           newProfile['permAITokenCount'] = Math.min(productConstants.subscription.maxAICredits, profile.permAITokenCount + addTokens);
         }
 
