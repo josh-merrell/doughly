@@ -434,6 +434,7 @@ export class ShoppingPageComponent {
     return name;
   }
   displayMeasurementUnit(unit: string, measurement: number) {
+    if (!unit) return '';
     if (unit === 'weightOunces' || unit === 'weightOunce') {
       return 'oz';
     } else if (unit.includes('tablespoon')) {

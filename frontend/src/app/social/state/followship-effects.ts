@@ -37,6 +37,22 @@ export class FollowshipEffects {
     );
   });
 
+  addFollowshipSuccess$ = createEffect(() =>
+    // this.actions$.pipe(
+    //   ofType(FollowshipActions.addFollowshipSuccess),
+    //   mergeMap(() => of(FollowshipActions.loadFollowships()))
+    // )
+    // need to reload Profile Following using ProfileActions.loadFollowing(), and followships with FollowshipActions.loadFollowships()
+    this.actions$.pipe(
+      ofType(FollowshipActions.addFollowshipSuccess),
+      mergeMap(() => [
+        ProfileActions.loadFollowing(),
+        FollowshipActions.loadFollowships(),
+      ])
+    )
+
+  );
+
   loadFollowships$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FollowshipActions.loadFollowships),
