@@ -14,6 +14,10 @@ import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ExtraStuffService } from './shared/utils/extraStuffService';
 import {
+  AppUpdate,
+  AppUpdateAvailability,
+} from '@capawesome/capacitor-app-update';
+import {
   ActionPerformed,
   PushNotificationSchema,
   PushNotifications,
@@ -292,5 +296,49 @@ export class AppComponent {
         }
       );
     }
+
+    // check for app updates
+    this.checkForAppUpdate();
   }
+
+  checkForAppUpdate = async () => {
+    // if platform is not android, return
+    if (Capacitor.getPlatform() !== 'android') {
+      return;
+    }
+    const currentVersion = await this.getCurrentAppVersion();
+    const availableVersion = await this.getAvailableAppVersion();
+    // if update is available, perform immediate update
+    if (currentVersion !== availableVersion) {
+      this.performImmediateUpdate();
+    }
+  };
+
+  getCurrentAppVersion = async () => {
+    const result = await AppUpdate.getAppUpdateInfo();
+    if (Capacitor.getPlatform() === 'android') {
+      return result.currentVersionCode;
+    } else {
+      return result.currentVersionName;
+    }
+  };
+
+  getAvailableAppVersion = async () => {
+    const result = await AppUpdate.getAppUpdateInfo();
+    if (Capacitor.getPlatform() === 'android') {
+      return result.availableVersionCode;
+    } else {
+      return result.availableVersionName;
+    }
+  };
+
+  performImmediateUpdate = async () => {
+    const result = await AppUpdate.getAppUpdateInfo();
+    if (result.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE) {
+      return;
+    }
+    if (result.immediateUpdateAllowed) {
+      await AppUpdate.performImmediateUpdate();
+    }
+  };
 }

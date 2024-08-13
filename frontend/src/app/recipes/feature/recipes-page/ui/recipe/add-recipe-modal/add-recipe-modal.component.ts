@@ -32,6 +32,7 @@ import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
 import { Capacitor } from '@capacitor/core';
 import { StylesService } from 'src/app/shared/utils/stylesService';
+import { AuthService } from 'src/app/shared/utils/authenticationService';
 
 @Component({
   selector: 'dl-add-recipe-modal',
@@ -77,7 +78,8 @@ export class AddRecipeModalComponent {
     private modalService: ModalService,
     public extraStuffService: ExtraStuffService,
     private renderer: Renderer2,
-    private stylesService: StylesService
+    private stylesService: StylesService,
+    private authService: AuthService
   ) {
     this.recipeCategories = this.data.recipeCategories;
 
@@ -106,12 +108,17 @@ export class AddRecipeModalComponent {
         this.checkUrlAndAct(navigationEndEvent.urlAfterRedirects);
       });
 
-    this.store.select(selectProfile).subscribe((profile) => {
-      if (profile && profile.onboardingState !== 0) {
-        this.showOnboardingBadge.set(true);
-      }
-      this.profile.set(profile);
-    });
+    // this.store.select(selectProfile).subscribe((profile) => {
+    //   if (profile && profile.onboardingState !== 0) {
+    //     this.showOnboardingBadge.set(true);
+    //   }
+    //   this.profile.set(profile);
+    // });
+
+    this.profile.set(this.authService.profile());
+    if (this.profile() && this.profile().onboardingState !== 0) {
+      this.showOnboardingBadge.set(true);
+    }
   }
 
   animationCreated(animationItem: AnimationItem): void {
@@ -166,7 +173,7 @@ export class AddRecipeModalComponent {
   }
 
   onVisionAddClick(): void {
-    console.log('onVisionAddClick. isPremium: ', this.profile().isPremium);
+    console.log('onVisionAddClick. PROFILE: ', this.profile());
     // first ensure user has at least one AI credit
     if (
       this.profile().permAITokenCount < 1 &&
