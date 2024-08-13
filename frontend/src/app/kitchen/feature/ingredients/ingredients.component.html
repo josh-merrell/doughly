@@ -72,7 +72,7 @@
         *ngFor="let ingredient of displayNeedsReview()"
         class="ingredient-card relative flex h-dl-7 flex-col justify-between rounded-dl-1 px-dl-3 py-dl-2 shadow-md"
         [ngClass]="{
-          'border-2 border-dl-yellow-6 bg-dl-yellow-10 dark:border-dl-yellow-2 dark:bg-dl-yellow-1':
+          'border border-dl-yellow-6 bg-dl-yellow-10 dark:border-dl-yellow-4 dark:bg-dl-yellow-1':
             ingredient.needsReview,
           'bg-dl-tan-8 dark:bg-dl-tan-3': ingredient.totalStock === 0,
           'bg-dl-tan-10 dark:bg-dl-tan-2': ingredient.totalStock > 0
@@ -106,7 +106,7 @@
         class="ingredient-card relative flex h-dl-7 flex-col justify-between rounded-dl-1 px-dl-3 py-dl-2 shadow-md"
         [ngClass]="{
           'bg-dl-tan-10 dark:bg-dl-tan-3': ingredient.totalStock === 0,
-          'bg-dl-green-10 dark:bg-dl-green-2 border-dl-green-3 border': ingredient.totalStock > 0
+          'bg-dl-green-10 dark:bg-dl-green-2 border-dl-green-6 border': ingredient.totalStock > 0
         }"
         (click)="ingredientCardClick(ingredient)"
         (touchstart)="ingredientCardTouchStart(ingredient.ingredientID)"

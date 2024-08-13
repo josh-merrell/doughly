@@ -5,11 +5,12 @@
 }"
 >
   <div *ngIf="recipe()" class="overflow-y-auto">
+    <!-- Image -->
     <img
       *ngIf="recipe().photoURL"
       [src]="recipe().photoURL | imageFromCDN"
       alt="Recipe Image"
-      class="w-full object-cover"
+      class="object-cover w-full rounded-dl-4"
     />
     <!-- Overview -->
     <div
@@ -87,7 +88,7 @@
             *ngIf="recipeSubscription()"
             (click)="onUnsubscribeClick()"
             type="button"
-            class="block cursor-pointer rounded-dl-1 px-dl-3 py-dl-2 text-dl-6 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
+            class="block cursor-pointer rounded-dl-1 ml-dl-2 px-dl-3 py-dl-2 text-dl-6 text-dl-tan-3 hover:bg-dl-tan-9 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
           >
             Unsubscribe
           </button>
@@ -95,7 +96,7 @@
         <span
           #syncMessage
           *ngIf="syncMessageOpen"
-          class="absolute right-24 top-2 z-10 rounded-dl-1 bg-dl-tan-10 p-dl-2 text-dl-5 text-dl-tan-3 shadow-md ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1 dark:text-dl-tan-8"
+          class="absolute right-24 top-2 z-10 rounded-dl-1 bg-dl-tan-9 p-dl-2 text-dl-5 text-dl-tan-3 shadow-md ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1 dark:text-dl-tan-8"
         >
           The source recipe authored by
           <span class="text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">{{
@@ -718,7 +719,7 @@
         <img
           *ngIf="step.photoURL"
           [src]="step.photoURL | imageFromCDN"
-          class="mt-dl-2 w-4/5 object-cover"
+          class="rounded-dl-3 mt-dl-2 w-4/5 object-cover"
         />
       </div>
     </div>
