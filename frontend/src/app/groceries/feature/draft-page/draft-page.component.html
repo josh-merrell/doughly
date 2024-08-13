@@ -58,18 +58,18 @@
         Items to Buy
       </p>
       <div
-        class="relative mb-dl-4 flex w-full flex-grow flex-col overflow-y-auto border-dl-tan-2 bg-dl-tan-9 px-dl-3 py-dl-2 dark:border-dl-tan-9 dark:bg-dl-tan-2"
+        class="relative mb-dl-4 flex w-full flex-grow flex-col overflow-y-auto border-dl-tan-2 bg-dl-tan-9 px-dl-3 py-dl-2 dark:border-dl-tan-9 dark:bg-dl-tan-1"
       >
         <!-- Planned Recipe Items -->
         <p
-          class="mb-dl-2 ml-dl-2 text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-9"
+          class="mb-dl-2 ml-dl-2 text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-8"
         >
           Planned Recipe Items
         </p>
         <div class="flex min-h-dl-2 flex-wrap overflow-y-auto rounded-dl-3">
           @for (item of displaySLRecipeIngr(); track item.ingredientName) {
           <div
-            class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-1 dark:bg-dl-tan-1"
+            class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-1 dark:bg-dl-tan-2"
           >
             <span
               class="px-dl-2 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
@@ -98,7 +98,7 @@
 
         <!-- Standalone Items -->
         <p
-          class="mb-dl-2 ml-dl-2 mt-dl-3 text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-9"
+          class="mb-dl-2 ml-dl-2 mt-dl-3 text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-8"
         >
           Other Items
         </p>
@@ -108,7 +108,7 @@
             (click)="standaloneIngredientCardClick(item)"
             class="relative mx-dl-2 mb-dl-2 flex items-center justify-between overflow-y-auto rounded-dl-1 border border-dl-tan-5 px-dl-1 transition-all duration-200 ease-in-out dark:border-dl-tan-6"
             [ngClass]="{
-              'border-dl-tan-8 bg-dl-tan-10  dark:bg-dl-tan-1':
+              'border-dl-tan-8 bg-dl-tan-10  dark:bg-dl-tan-2':
                 item.shoppingListIngredientID !== selectedSLIngrID(),
               'border-dl-yellow-8 bg-dl-yellow-10 dark:bg-dl-yellow-1':
                 item.shoppingListIngredientID === selectedSLIngrID()
@@ -132,7 +132,7 @@
           </div>
           } @empty {
           <p
-            class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
+            class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-8"
           >
             None
           </p>

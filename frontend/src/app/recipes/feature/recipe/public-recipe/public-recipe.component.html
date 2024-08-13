@@ -3,11 +3,12 @@
 >
   <mat-spinner class="my-app-custom-spinner" *ngIf="!ready()"></mat-spinner>
   <div *ngIf="ready()">
+    <!-- Image -->
     <img
       *ngIf="recipe().photoURL"
       [src]="recipe().photoURL | imageFromCDN"
       alt="Recipe Image"
-      class="w-full object-cover"
+      class="w-full rounded-dl-4 object-cover"
     />
     <!-- Overview -->
     <div
@@ -406,7 +407,7 @@
         <img
           *ngIf="step.photoURL"
           [src]="step.photoURL | imageFromCDN"
-          class="mt-dl-2 w-4/5 object-cover"
+          class="mt-dl-2 w-4/5 rounded-dl-3 object-cover"
         />
       </div>
     </div>
