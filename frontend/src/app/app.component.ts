@@ -309,7 +309,10 @@ export class AppComponent {
     const currentVersion = await this.getCurrentAppVersion();
     const availableVersion = await this.getAvailableAppVersion();
     // if update is available, perform immediate update
+    console.log('CURRENT VERSION: ', currentVersion);
+    console.log('AVAILABLE VERSION: ', availableVersion);
     if (currentVersion !== availableVersion) {
+      console.log('PERFORMING ANDROID IMMEDIATE UPDATE');
       this.performImmediateUpdate();
     }
   };
