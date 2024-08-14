@@ -62,13 +62,13 @@ export class AppFooterComponent {
   public currentLocation: WritableSignal<string> = signal('');
   private messages: WritableSignal<any> = signal([]);
   public unackedMessageLength: WritableSignal<number> = signal(0);
-  stars: string = '/assets/animations/lottie/stars-dark.json';
+  stars: string = '';
 
   // Lottie animation
   public creditCountRed: WritableSignal<boolean> = signal(false);
   private animationItem: AnimationItem | undefined;
   animationOptions: AnimationOptions = {
-    path: this.stars,
+    path: '',
     loop: true,
     autoplay: false,
   };
@@ -145,6 +145,7 @@ export class AppFooterComponent {
         this.playAnimation();
       }
     });
+    this.setAnimationPath();
   }
 
   ngAfterViewInit() {
@@ -158,10 +159,6 @@ export class AppFooterComponent {
         }
       }
     );
-
-    if (!document.body.classList.contains('dark')) {
-      this.stars = '/assets/animations/lottie/stars-light.json';
-    }
   }
 
   ngOnDestroy() {
@@ -170,10 +167,26 @@ export class AppFooterComponent {
     }
   }
 
-  animationCreated(animationItem: AnimationItem): void {
-    this.animationItem = animationItem;
-    this.animationItem.setSpeed(1.6);
-    this.animationItem.goToAndStop(0, true);
+  setAnimationPath() {
+    if (!document.body.classList.contains('dark')) {
+      this.stars = '/assets/animations/lottie/stars-dark.json';
+    } else {
+      this.stars = '/assets/animations/lottie/stars-dark.json';
+    }
+    this.updateAnimationOptions();
+  }
+
+  updateAnimationOptions() {
+    this.animationOptions = {
+      ...this.animationOptions,
+      path: this.stars,
+    };
+  }
+
+  animationCreated(animation: any) {
+    this.animationItem = animation;
+    this.animationItem?.setSpeed(1.6);
+    animation.play();
   }
   loopComplete(): void {
     this.animationItem?.pause();
