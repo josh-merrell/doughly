@@ -28,6 +28,16 @@ module.exports = {
     },
   },
   theme: {
+    fontFamily: {
+      sans: ["Poppins", "sans-serif"],
+      serif: [
+        ['"DM Serif Display"', "serif"],
+        {
+          fontStyle: "italic",
+        },
+      ],
+      body: ["Montserrat", "sans-serif"],
+    },
     screens: {
       xsm: "500px",
       sm: "640px",
