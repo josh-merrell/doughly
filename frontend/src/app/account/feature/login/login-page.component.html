@@ -33,7 +33,7 @@
       <div class="mb-dl-8 flex w-full flex-col items-center justify-between">
         <button
           (click)="signInWithGoogle()"
-          class="gsi-material-button !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
+          class="gsi-material-button  !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -96,7 +96,7 @@
               </svg>
             </div>
             <span
-              class="gsi-material-button-contents text-dl-tan-1 dark:text-dl-tan-10"
+              class="gsi-material-button-contents text-dl-tan-1  dark:text-dl-tan-10"
               >Sign in with Facebook</span
             >
             <span style="display: none">Sign in with Facebook</span>
@@ -104,7 +104,7 @@
         </button>
         <button
           (click)="signInWithApple()"
-          class="gsi-material-button mt-dl-2 !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
+          class="gsi-material-button mt-dl-2  !w-dl-15 bg-dl-tan-10 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2"
         >
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
@@ -122,7 +122,7 @@
               </svg>
             </div>
             <span
-              class="gsi-material-button-contents text-dl-tan-1 dark:text-dl-tan-10"
+              class="gsi-material-button-contents  text-dl-tan-1 dark:text-dl-tan-10"
               >Sign in with Apple</span
             >
             <span style="display: none">Sign in with Apple</span>
@@ -133,7 +133,7 @@
       <div id="form-email">
         <div class="relative mb-dl-2 flex flex-col">
           <label
-            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+            class="mb-dl-1 font-sans ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             for="email"
             >Email</label
           >
@@ -152,7 +152,7 @@
                   !login_form.get('email')!.touched ||
                   login_form.get('email')!.valid
               }"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
+              class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
             >
               Please enter a valid email.
             </div>
@@ -163,7 +163,7 @@
       <div id="form-password">
         <div class="relative mb-dl-3 flex flex-col">
           <label
-            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+            class="mb-dl-1 font-sans ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             for="password"
             >Password</label
           >
@@ -180,7 +180,7 @@
                   !login_form.get('password')!.touched ||
                   login_form.get('password')!.valid
               }"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
+              class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
             >
               Minimum password length is 6 characters.
             </div>
@@ -196,7 +196,7 @@
       >
         <div class="leading-dl-6 text-dl-2" (click)="resetPassword()">
           <a
-            class="cursor-pointer text-dl-5 font-dl-3 text-dl-green-5 hover:text-dl-green-5 dark:text-dl-green-8 dark:hover:text-dl-green-6"
+            class="cursor-pointer font-serif text-dl-5 font-dl-3 text-dl-green-5 hover:text-dl-green-5 dark:text-dl-green-8 dark:hover:text-dl-green-6"
             [ngClass]="{
               invisible: !showPasswordReset()
             }"
@@ -215,7 +215,7 @@
           login_form.get('email')!.value === ''
         "
         style="height: 40px; width: 296px"
-        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-dl-tan-10 dark:text-dl-tan-1"
+        class="shadow-s inline-flex font-serif items-center justify-center rounded-full text-dl-5 font-dl-2 text-dl-tan-10 dark:text-dl-tan-1"
         [ngClass]="{
           'cursor-pointer bg-dl-green-4 hover:bg-dl-green-5 dark:bg-dl-green-7 hover:dark:bg-dl-green-6':
             login_form.invalid === false,
@@ -232,20 +232,20 @@
 
     <p
       *ngIf="loginFailureMessage()"
-      class="mt-dl-4 text-center text-dl-5 text-dl-red-5 dark:text-dl-red-6"
+      class="mt-dl-4 text-center font-body text-dl-5 text-dl-red-5 dark:text-dl-red-6"
     >
       {{ loginFailureMessage() }}
     </p>
     <p
       *ngIf="successMessage()"
-      class="mt-dl-4 text-center text-dl-5 text-dl-teal-4 dark:text-dl-teal-7"
+      class="mt-dl-4 text-center font-body text-dl-5 text-dl-teal-4 dark:text-dl-teal-7"
     >
       {{ successMessage() }}
     </p>
-    <p class="mt-dl-4 text-center text-dl-5 text-dl-tan-4 dark:text-dl-tan-8">
+    <p class="mt-dl-4 text-center font-sans text-dl-5 text-dl-tan-4 dark:text-dl-tan-8">
       New here?
       <a
-        class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-green-5 dark:text-dl-green-8"
+        class="ml-dl-2 font-serif cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-green-5 dark:text-dl-green-8"
         routerLink="/register"
         tabindex="4"
         >Create an account</a

@@ -30,7 +30,7 @@
             "
           >
             <span
-              class="text-dl-6 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
+              class="font-body text-dl-6 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
               >{{ list.friend.nameFirst[0] + list.friend.nameLast[0] }}</span
             >
           </span>
@@ -38,14 +38,14 @@
         <!-- List Author Username and Item Count -->
         <div class="mr-dl-3 flex flex-col items-start justify-between">
           <p
-            class="mr-dl-3 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+            class="mr-dl-3 font-sans text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
           >
             {{ list.friend.username }}'s list
           </p>
           <!-- Item Count -->
           <div class="flex items-center">
             <span
-              class="mr-dl-2 inline-flex items-center justify-center text-dl-4 italic text-dl-teal-3 dark:text-dl-teal-7"
+              class="mr-dl-2 inline-flex items-center justify-center font-sans text-dl-4 italic text-dl-teal-3 dark:text-dl-teal-7"
             >
               {{ getItemCountString(list) }}
             </span>
@@ -74,12 +74,12 @@
     <!-- Header Row -->
     <div class="mb-dl-3 flex w-full justify-between px-dl-5">
       <p
-        class="mb-dl-3 mt-dl-5 pl-dl-7 text-center text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="mb-dl-3 mt-dl-5 pl-dl-7 text-center font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Item
       </p>
       <p
-        class="mb-dl-3 mt-dl-5 text-center text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="mb-dl-3 mt-dl-5 text-center font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Purchased Amount
       </p>
@@ -164,12 +164,14 @@
           ></div>
 
           <div class="ml-dl-4 flex flex-col">
-            <span class="text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10">
+            <span
+              class="font-body text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+            >
               {{ item.ingredientName }}
             </span>
             <div class="flex items-center">
               <span
-                class="mr-dl-2 text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+                class="mr-dl-2 font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               >
                 {{ Math.ceil(item.needMeasurement) }}
                 {{
@@ -180,7 +182,7 @@
               </span>
               <p
                 *ngIf="!item.valueValid && !item.store"
-                class="mr-dl-2 text-dl-4 font-dl-3 text-dl-red-4 dark:text-dl-red-7"
+                class="mr-dl-2 font-body text-dl-4 font-dl-3 text-dl-red-4 dark:text-dl-red-7"
               >
                 buy more
               </p>
@@ -210,7 +212,9 @@
             class="mr-dl-6 flex w-dl-6 flex-col items-center"
             *ngIf="item.store"
           >
-            <p class="text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
+            <p
+              class="font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+            >
               {{ Math.ceil(item.purchasedMeasurement) }}
             </p>
           </div>
@@ -229,7 +233,7 @@
         selectedSLIngred().itemsToSave &&
         selectedSLIngred().itemsToSave.length
       "
-      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center text-dl-4 font-dl-3 text-dl-tan-10 shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center font-serif text-dl-4 font-dl-3 text-dl-tan-10 shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
       (click)="onSaveClick()"
     >
       {{ saveButtonText }}

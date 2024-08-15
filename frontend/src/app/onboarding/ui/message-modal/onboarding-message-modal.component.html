@@ -51,7 +51,9 @@
       </svg>
     </div>
     <div class="ml-dl-5 flex w-full flex-col items-center" *ngIf="!isEditing()">
-      <p class="text-dl-5 font-dl-3 text-dl-green-2 dark:text-dl-green-9">
+      <p
+        class="font-body text-dl-5 font-dl-3 text-dl-green-2 dark:text-dl-green-9"
+      >
         {{ data.message }}
       </p>
     </div>
@@ -70,7 +72,7 @@
         <!-- Username -->
         <div class="mb-dl-3" id="form-username">
           <label
-            class="mb-dl-2 text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-2 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="username"
             >Username</label
           >
@@ -78,11 +80,11 @@
             <input
               type="text"
               formControlName="username"
-              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md border-0 bg-dl-green-10 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2 focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             />
             <div
               *ngIf="usernameErrorMessage()"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+              class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
             >
               {{ usernameErrorMessage() }}
             </div>
@@ -92,7 +94,7 @@
         <!-- nameFirst -->
         <div class="mb-dl-3" id="form-nameFirst">
           <label
-            class="mb-dl-2 text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-2 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="nameFirst"
             >First Name</label
           >
@@ -100,11 +102,11 @@
             <input
               type="text"
               formControlName="nameFirst"
-              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md border-0 bg-dl-green-10 font-body text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2 focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             />
             <div
               *ngIf="nameFirstErrorMessage()"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+              class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
             >
               {{ nameFirstErrorMessage() }}
             </div>
@@ -114,7 +116,7 @@
         <!-- nameLast -->
         <div class="mb-dl-3" id="form-nameLast">
           <label
-            class="mb-dl-2 text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-2 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="nameLast"
             >Last Name</label
           >
@@ -122,11 +124,11 @@
             <input
               type="text"
               formControlName="nameLast"
-              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md border-0 bg-dl-green-10 font-body text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2 focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             />
             <div
               *ngIf="nameLastErrorMessage()"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+              class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
             >
               {{ nameLastErrorMessage() }}
             </div>
@@ -136,7 +138,7 @@
         <!-- City -->
         <div class="mb-dl-3" id="form-city">
           <label
-            class="mb-dl-2 text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-2 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="city"
             >City</label
           >
@@ -144,11 +146,11 @@
             <input
               type="text"
               formControlName="city"
-              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md border-0 bg-dl-green-10 font-body text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2 focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             />
             <div
               *ngIf="cityErrorMessage()"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+              class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
             >
               {{ cityErrorMessage() }}
             </div>
@@ -180,23 +182,27 @@
         <!-- State -->
         <div class="mb-dl-3" id="form-state">
           <label
-            class="mb-dl-4 text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-4 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="state"
             >State</label
           >
           <div class="w-dl-13">
             <select
               formControlName="state"
-              class="w-dl-13 rounded-md bg-dl-green-10 border-0 text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2  focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
+              class="w-dl-13 rounded-md border-0 bg-dl-green-10 font-body text-dl-green-1 ring-2 ring-inset ring-dl-green-5 placeholder:text-dl-green-4 focus:shadow-md focus:ring-2 focus:ring-inset focus:ring-dl-green-7 dark:bg-dl-green-2 dark:text-dl-green-9"
             >
-              <option value="">Select a state</option>
-              <option *ngFor="let state of states" [value]="state">
+              <option class="font-body" value="">Select a state</option>
+              <option
+                class="font-body"
+                *ngFor="let state of states"
+                [value]="state"
+              >
                 {{ state }}
               </option>
             </select>
             <div
               *ngIf="stateErrorMessage()"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+              class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
             >
               {{ stateErrorMessage() }}
             </div>
@@ -217,7 +223,7 @@
         cityErrorMessage() !== '' ||
         stateErrorMessage() !== ''
       "
-      class="shadow-s mt-dl-3 inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
+      class="shadow-s mt-dl-3 inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
       [ngClass]="{
         'cursor-pointer bg-dl-green-2 hover:bg-dl-green-5 dark:bg-dl-green-8 hover:dark:bg-dl-green-6':
           form.invalid === false,
@@ -234,7 +240,7 @@
     </button>
     <div
       *ngIf="initialAccountStateReady() === false"
-      class="mb-dl-2 mt-dl-5 flex w-dl-13 text-dl-5 font-dl-3 italic text-dl-green-1 dark:text-dl-green-10"
+      class="mb-dl-2 mt-dl-5 flex w-dl-13 font-body text-dl-5 font-dl-3 italic text-dl-green-1 dark:text-dl-green-10"
     >
       <mat-spinner
         class="my-app-custom-spinner mr-dl-4 w-full"
@@ -246,7 +252,7 @@
       [ngClass]="{
         invisible: !submitFailureMessage()
       }"
-      class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
+      class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-6"
     >
       {{ submitFailureMessage() }}
     </div>

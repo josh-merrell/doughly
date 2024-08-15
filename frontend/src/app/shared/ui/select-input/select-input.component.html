@@ -1,14 +1,14 @@
 <div class="flex flex-col">
   <label
     *ngIf="!noLabel"
-    class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
+    class="mb-dl-1 ml-dl-1 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
     >{{ label }}</label
   >
   <div class="relative flex w-full flex-col items-center">
     <div
       (click)="toggleDropdown()"
       id="expanded"
-      class="relative min-h-dl-5 w-full cursor-pointer rounded-md border-0 px-dl-4 py-dl-4 text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:text-dl-tan-9"
+      class="relative min-h-dl-5 w-full cursor-pointer rounded-md border-0 px-dl-4 py-dl-4 font-body text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:text-dl-tan-9"
       [ngClass]="{
         'rounded-b-none bg-dl-tan-10 shadow-md shadow-dl-green-5/20 ring-dl-green-5 dark:bg-dl-tan-3  ':
           isOpen(),
@@ -55,7 +55,7 @@
           <input
             #inputField
             type="text"
-            class="border-y-1 w-full rounded-b-none border-x-0 border-dl-green-5 bg-dl-tan-10 py-dl-3 pl-dl-7 pr-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 ring-transparent focus:border-dl-green-4 focus:ring-transparent dark:bg-dl-tan-3 dark:text-dl-tan-8 focus:dark:border-dl-green-7"
+            class="border-y-1 w-full rounded-b-none border-x-0 border-dl-green-5 bg-dl-tan-10 py-dl-3 pl-dl-7 pr-dl-4 font-body text-dl-6 font-dl-3 text-dl-tan-4 ring-transparent focus:border-dl-green-4 focus:ring-transparent dark:bg-dl-tan-3 dark:text-dl-tan-8 focus:dark:border-dl-green-7"
             (input)="onFilterChange($event)"
           />
         </div>
@@ -63,14 +63,14 @@
       <div
         *ngIf="additionalOptionName"
         (click)="selectOption({ value: 'new', display: additionalOptionName })"
-        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-10 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
+        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 font-body text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-10 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
       >
         {{ additionalOptionName }}
       </div>
       <div
         *ngFor="let option of sortedOptions"
         (click)="selectOption(option)"
-        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-10 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
+        class="hover:dark:text-dl-tan- cursor-pointer px-dl-4 py-dl-3 font-body text-dl-6 font-dl-3 text-dl-tan-4 hover:bg-dl-green-10 hover:text-dl-tan-3 dark:text-dl-tan-8 dark:hover:bg-dl-green-2 dark:hover:text-dl-tan-9"
       >
         {{ option.display }}
       </div>
@@ -79,7 +79,7 @@
       [ngClass]="{
         invisible: !hasError
       }"
-      class="my-dl-1 text-dl-5 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
+      class="my-dl-1 font-body text-dl-5 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
     >
       <ng-container>
         <div>{{ errorMessage || "NA" }}</div>

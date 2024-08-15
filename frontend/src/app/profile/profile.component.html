@@ -28,7 +28,7 @@
         (click)="updatePhoto()"
       >
         <span
-          class="text-dl-7 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
+          class="font-sans text-dl-7 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
           >{{ initials }}</span
         >
       </span>
@@ -53,12 +53,14 @@
       *ngIf="profile.name_first || profile.name_last"
       class="ml-dl-5 flex shrink-0 flex-col"
     >
-      <span class="text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
+      <span
+        class="font-sans text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+      >
         {{ profile.name_first }} {{ profile.name_last }}
       </span>
       <span
         *ngIf="profile.joined_at"
-        class="text-dl-6 font-dl-1 text-dl-tan-4 dark:text-dl-tan-7"
+        class="font-body text-dl-6 font-dl-1 text-dl-tan-4 dark:text-dl-tan-7"
         >joined {{ profile.joined_at | date : "MMM y" }}</span
       >
     </div>
@@ -97,7 +99,7 @@
       class="z-15 absolute left-1/2 flex h-dl-4 w-3/4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-dl-tan-9 dark:border-dl-tan-2 dark:bg-dl-tan-1"
     >
       <span
-        class="ml-dl-6 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="ml-dl-6 font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         {{ profile.name_first }} {{ profile.name_last }}
       </span>
@@ -109,25 +111,28 @@
     class="items-left mt-dl-3 flex flex-col bg-dl-tan-9 pb-dl-3 dark:bg-dl-tan-1"
   >
     <span
-      class="ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-green-5 dark:text-dl-green-8"
+      class="ml-dl-5 mt-dl-5 font-sans text-dl-7 font-dl-2 text-dl-green-5 dark:text-dl-green-8"
       >Account</span
     >
 
     <!--Email-->
     <div *ngIf="profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
       <span
-        class="p-dl-1 text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+        class="p-dl-1 font-body text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.email }}</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Email</span
       >
     </div>
     <div *ngIf="!profile.email" class="ml-dl-5 mt-dl-4 flex flex-col">
-      <span class="text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+      <span
+        class="font-body text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Email</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add Email</span
       >
     </div>
@@ -135,18 +140,21 @@
     <!--Username-->
     <div *ngIf="profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
       <span
-        class="p-dl-1 text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+        class="p-dl-1 font-body text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.username }}</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Username</span
       >
     </div>
     <div *ngIf="!profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
-      <span class="text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+      <span
+        class="font-body text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Username</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add Username</span
       >
     </div>
@@ -158,10 +166,11 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 font-body text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.name_first }}</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >First Name</span
       >
     </div>
@@ -171,10 +180,11 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 font-body text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >First Name</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add First Name</span
       >
     </div>
@@ -186,10 +196,11 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 font-body text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.name_last }}</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Last Name</span
       >
     </div>
@@ -199,10 +210,11 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="rounded-dl-2 border border-dl-tan-6 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="rounded-dl-2 border border-dl-tan-6 p-dl-1 px-dl-2 font-body text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Last Name</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add Last Name</span
       >
     </div>
@@ -214,10 +226,11 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 font-body text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.city }}</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >City</span
       >
     </div>
@@ -227,10 +240,11 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 font-body text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >City</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add City</span
       >
     </div>
@@ -242,10 +256,11 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-6 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-6 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 font-body text-dl-6 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.state }}</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >State</span
       >
     </div>
@@ -255,10 +270,11 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 font-body text-dl-6 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >State</span
       >
-      <span class="mt-dl-1 text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
+      <span
+        class="mt-dl-1 font-body text-dl-5 font-dl-1 text-dl-tan-7 dark:text-dl-tan-7"
         >Tap to add State</span
       >
     </div>
@@ -268,28 +284,28 @@
     class="items-left mt-dl-3 flex flex-col bg-dl-tan-9 pb-dl-3 dark:bg-dl-tan-1"
   >
     <span
-      class="mb-dl-2 ml-dl-5 mt-dl-5 text-dl-7 font-dl-2 text-dl-green-5 dark:text-dl-green-8"
+      class="mb-dl-2 ml-dl-5 mt-dl-5 font-sans text-dl-7 font-dl-2 text-dl-green-5 dark:text-dl-green-8"
       >Links</span
     >
     <div class="ml-dl-2 flex flex-col">
       <!--Help-->
       <div (click)="onHelpClick()" class="mb-dl-3 ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
+          class="mt-dl-1 font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
           >Help</span
         >
       </div>
       <!--Privacy-->
       <div (click)="onPrivacyClick()" class="mb-dl-3 ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
+          class="mt-dl-1 font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
           >Privacy Policy</span
         >
       </div>
       <!--Delete Account Data-->
       <div (click)="onDeleteAccountClick()" class="ml-dl-5 flex flex-col">
         <span
-          class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
+          class="mt-dl-1 font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-8"
           >Delete Account and Data</span
         >
       </div>

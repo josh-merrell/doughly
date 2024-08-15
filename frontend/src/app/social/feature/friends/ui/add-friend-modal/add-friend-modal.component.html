@@ -1,7 +1,9 @@
 <div
-  class="relative flex flex-col items-center rounded-dl-3 px-dl-3 pb-dl-3 pt-dl-4 dark:border bg-dl-tan-9 dark:border-dl-tan-4 dark:bg-dl-tan-1"
+  class="relative flex flex-col items-center rounded-dl-3 bg-dl-tan-9 px-dl-3 pb-dl-3 pt-dl-4 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
-  <h3 class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8">
+  <h3
+    class="leading-dl-4 font-sans text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
+  >
     Find People
   </h3>
   <!-- Search Bar-->
@@ -25,7 +27,7 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-10 rounded-dl-2 border-none pt-dl-2 text-dl-4 text-dl-tan-4 bg-dl-tan-10 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
+        class="ml-dl-2 w-dl-10 rounded-dl-2 border-none bg-dl-tan-10 pt-dl-2 font-body text-dl-4 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
         [placeholder]="!searchFilter() ? 'Name or Username' : searchFilter()"
         (input)="searchFilter.set(searchInput.value)"
       />
@@ -33,7 +35,7 @@
     <button
       type="button"
       [disabled]="searchedQuery() === searchFilter()"
-      class="block whitespace-nowrap rounded-dl-2 px-dl-3 py-dl-2 text-center text-dl-5 font-dl-3 shadow-sm transition-all duration-200 ease-in-out"
+      class="block whitespace-nowrap rounded-dl-2 px-dl-3 py-dl-2 text-center font-serif text-dl-5 font-dl-3 shadow-sm transition-all duration-200 ease-in-out"
       [ngClass]="{
         'bg-dl-tan-7 text-dl-tan-2 dark:border-dl-tan-3 dark:bg-dl-tan-3 dark:text-dl-tan-8':
           searchedQuery() === searchFilter(),
@@ -72,7 +74,7 @@
     <div class="mt-dl-3 flex w-full justify-between pb-dl-3">
       <button
         type="button"
-        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
+        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
         [ngClass]="{
           'bg-dl-pinknew-4 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             buttonTexts()[selectedCard()].followButton === 'Follow',
@@ -86,7 +88,7 @@
       </button>
       <button
         type="button"
-        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm dark:text-dl-pinknew-7"
+        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center font-serif text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm dark:text-dl-pinknew-7"
         (click)="onFriendButtonClick()"
         [ngClass]="{
           'bg-dl-pinknew-4 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
@@ -106,7 +108,7 @@
   </div>
   <!-- Exit Button -->
   <button
-    class="absolute right-3 top-2 rounded-full bg-dl-tan-9 p-dl-2 dark:bg-dl-tan-2"
+    class="absolute right-3 top-2 rounded-full bg-dl-tan-9 p-dl-2 font-serif dark:bg-dl-tan-2"
     (click)="onExitClick()"
     type="button"
   >

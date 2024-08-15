@@ -12,7 +12,9 @@
     <!-- recipes/ingredients columns-->
     <div class="flex w-full flex-grow flex-col items-center overflow-y-auto">
       <!-- ShoppingListRecipes -->
-      <p class="w-full text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
+      <p
+        class="w-full font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+      >
         Planned Recipes
       </p>
       <div
@@ -35,7 +37,7 @@
           recipes().length - displayRecipes().length !== 0
         "
         type="button"
-        class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3"
+        class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-dl-3"
         [ngClass]="{
           'bg-dl-pinknew-4 text-dl-tan-9 dark:border-dl-tan-1 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             selectedRecipeID() === 0,
@@ -53,7 +55,7 @@
 
       <!-- ShoppingListIngredients -->
       <p
-        class="mb-dl-1 mt-dl-3 w-full text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="mb-dl-1 mt-dl-3 w-full font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Items to Buy
       </p>
@@ -62,7 +64,7 @@
       >
         <!-- Planned Recipe Items -->
         <p
-          class="mb-dl-2 ml-dl-2 text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-8"
+          class="mb-dl-2 ml-dl-2 font-sans text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-8"
         >
           Planned Recipe Items
         </p>
@@ -72,11 +74,11 @@
             class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-1 dark:bg-dl-tan-2"
           >
             <span
-              class="px-dl-2 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+              class="px-dl-2 py-dl-2 font-body text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             >
               {{ item.ingredientName }}
               <span
-                class="text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+                class="font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               >
                 {{ Math.ceil(item.quantity) }}
                 {{
@@ -89,7 +91,7 @@
           </div>
           } @empty {
           <p
-            class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
+            class="pl-dl-3 font-body text-dl-4 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-6"
           >
             None
           </p>
@@ -98,7 +100,7 @@
 
         <!-- Standalone Items -->
         <p
-          class="mb-dl-2 ml-dl-2 mt-dl-3 text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-8"
+          class="mb-dl-2 ml-dl-2 mt-dl-3 font-sans text-dl-5 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-8"
         >
           Other Items
         </p>
@@ -115,11 +117,11 @@
             }"
           >
             <span
-              class="px-dl-2 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+              class="px-dl-2 py-dl-2 font-body text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             >
               {{ item.name }}
               <span
-                class="text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+                class="font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               >
                 {{ Math.ceil(item.needMeasurement) }}
                 {{
@@ -132,7 +134,7 @@
           </div>
           } @empty {
           <p
-            class="pl-dl-3 text-dl-4 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-8"
+            class="pl-dl-3 font-body text-dl-4 font-dl-2 italic text-dl-tan-5 dark:text-dl-tan-8"
           >
             None
           </p>
@@ -142,7 +144,7 @@
     </div>
     <button
       type="button"
-      class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3"
+      class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-dl-3"
       (click)="onItemButtonClick()"
       [ngClass]="{
       'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-tan-2 dark:bg-dl-pinknew-7 dark:text-dl-tan-1': selectedSLIngrID() === 0,
@@ -157,7 +159,7 @@
     <button
       type="button"
       *ngIf="isLoading() === false"
-      class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-dl-3 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onShopClick()"
       [ngClass]="{
         'bg-dl-tan-7 text-dl-tan-3 dark:border-dl-tan-3 dark:bg-dl-tan-3 dark:text-dl-tan-8':

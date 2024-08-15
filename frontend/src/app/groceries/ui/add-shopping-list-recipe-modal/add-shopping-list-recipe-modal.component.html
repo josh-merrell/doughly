@@ -1,12 +1,12 @@
 <div
   *ngIf="displayRecipes().length > 0"
-  class="relative flex w-full bg-dl-tan-9 flex-col items-center overflow-x-hidden rounded-dl-3 p-dl-4 pb-dl-4 pt-dl-5 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+  class="relative flex w-full flex-col items-center overflow-x-hidden rounded-dl-3 bg-dl-tan-9 p-dl-4 pb-dl-4 pt-dl-5 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <!-- List View Header -->
   <div *ngIf="!isLoading()" class="mb-dl-5 flex w-full justify-around">
     <span
       (click)="onViewClick('byCategory')"
-      class="items-center border-b-4 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+      class="items-center border-b-4 px-1 pt-1 font-sans text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
       [ngClass]="{
         ' border-dl-green-7 font-dl-3 text-dl-tan-2 dark:border-dl-green-4 dark:text-dl-tan-9':
           view() === 'byCategory',
@@ -18,7 +18,7 @@
     </span>
     <span
       (click)="onViewClick('all')"
-      class="items-center border-b-4 px-1 pt-1 text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+      class="items-center border-b-4 px-1 pt-1 font-sans text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
       [ngClass]="{
         ' border-dl-green-7 font-dl-3 text-dl-tan-2 dark:border-dl-green-4 dark:text-dl-tan-9':
           view() === 'all',
@@ -52,7 +52,7 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-13 rounded-dl-2 border-none pt-dl-2 text-dl-5 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
+        class="ml-dl-2 w-dl-13 rounded-dl-2 border-none pt-dl-2 font-body text-dl-5 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
         [placeholder]="
           !searchFilter()
             ? view() === 'byCategory'
@@ -67,7 +67,7 @@
 
   <!-- Planned Date-->
   <div class="mb-dl-4 flex">
-    <p class="text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7">
+    <p class="font-body text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7">
       Planned Date:
     </p>
     <div
@@ -123,7 +123,7 @@
     <button
       id="add-button"
       type="button"
-      class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
+      class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
       (click)="onAddClick()"
       [ngClass]="{
         'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
@@ -136,7 +136,7 @@
     </button>
     <button
       type="button"
-      class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
+      class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
       (click)="onCancel()"
     >
       Cancel
@@ -150,7 +150,9 @@
   </div>
 </div>
 <div class="flex flex-col items-center" *ngIf="displayRecipes().length === 0">
-  <p class="p-dl-3 text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
+  <p
+    class="p-dl-3 font-body text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+  >
     No Recipes Found to Add
   </p>
 </div>

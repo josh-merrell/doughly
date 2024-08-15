@@ -130,7 +130,7 @@
       <div id="form-email">
         <div class="relative flex flex-col">
           <label
-            class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+            class="mb-dl-1 ml-dl-1 font-sans text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             for="email"
             >Email</label
           >
@@ -148,7 +148,7 @@
                 invisible:
                   !emailErrorMessage() || !signup_form.get('email')!.touched
               }"
-              class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
+              class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
             >
               {{ emailErrorMessage() || "empty" }}
             </div>
@@ -158,7 +158,7 @@
 
       <div id="form-password">
         <label
-          class="mb-dl-1 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+          class="mb-dl-1 ml-dl-1 font-sans text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
           for="email"
           >Password</label
         >
@@ -175,7 +175,7 @@
                 !signup_form.get('password')!.touched ||
                 signup_form.get('password')!.valid
             }"
-            class="mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
+            class="mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
           >
             Minimum password length is 6 characters.
           </div>
@@ -184,7 +184,7 @@
 
       <div id="form-username">
         <label
-          class="mb-dl-4 ml-dl-1 text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+          class="mb-dl-4 ml-dl-1 font-sans text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
           for="username"
           >Username</label
         >
@@ -199,7 +199,7 @@
             [ngClass]="{
               invisible: !usernameErrorMessage()
             }"
-            class="mb-dl-6 mt-dl-1 text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
+            class="mb-dl-6 mt-dl-1 font-body text-dl-4 font-dl-2 text-dl-red-5 dark:text-dl-red-8"
           >
             {{ usernameErrorMessage() }}
           </div>
@@ -215,7 +215,7 @@
           emailErrorMessage() !== ''
         "
         style="height: 40px; width: 296px"
-        class="shadow-s inline-flex items-center justify-center rounded-full text-dl-5 font-dl-2 text-dl-tan-10 dark:text-dl-tan-1"
+        class="shadow-s inline-flex items-center justify-center rounded-full font-serif text-dl-5 font-dl-2 text-dl-tan-10 dark:text-dl-tan-1"
         [ngClass]="{
           'cursor-pointer bg-dl-green-4 hover:bg-dl-green-5 dark:bg-dl-green-7 hover:dark:bg-dl-green-6':
             signup_form.invalid === false,
@@ -231,15 +231,17 @@
     </form>
     <p
       *ngIf="checkEmailMessage()"
-      class="mt-dl-4 text-center text-dl-5 text-dl-teal-3 dark:text-dl-teal-8"
+      class="mt-dl-4 font-body text-dl-5 text-dl-teal-3 placeholder:text-center dark:text-dl-teal-8"
     >
       {{ checkEmailMessage() }}
     </p>
 
-    <p class="mt-dl-4 text-center text-dl-5 text-dl-tan-3 dark:text-dl-tan-8">
+    <p
+      class="mt-dl-4 text-center font-sans text-dl-5 text-dl-tan-3 dark:text-dl-tan-8"
+    >
       Already have an account?
       <a
-        class="ml-dl-2 cursor-pointer text-dl-5 font-dl-3 leading-dl-2 text-dl-green-5 dark:text-dl-green-8"
+        class="ml-dl-2 cursor-pointer font-serif text-dl-5 font-dl-3 leading-dl-2 text-dl-green-5 dark:text-dl-green-8"
         tabindex="5"
         routerLink="/login"
         >Sign In</a

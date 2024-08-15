@@ -47,18 +47,20 @@
             ingredient.ingredientID !== selectedIngredient().ingredientID
         }"
       >
-        <p class="text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
+        <p
+          class="font-body text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        >
           {{ ingredient.name }}
         </p>
         <p
           *ngIf="ingredient.totalStock > 0"
-          class="text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7"
+          class="font-body text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7"
         >
           {{ ingredient.totalStock }} {{ ingredient.purchaseUnit }}
         </p>
         <p
           *ngIf="ingredient.totalStock === 0"
-          class="text-dl-5 font-dl-2 italic text-dl-tan-4 dark:text-dl-tan-7"
+          class="font-body text-dl-5 font-dl-2 italic text-dl-tan-4 dark:text-dl-tan-7"
         >
           Out of Stock
         </p>
@@ -90,7 +92,7 @@
         *ngIf="selectedIngredient().ingredientID !== 0 && isLoading === false"
         id="add-button"
         type="button"
-        class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
+        class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
         (click)="onSubmit()"
         [disabled]="!form.valid || form.pristine"
         [ngClass]="{
@@ -108,7 +110,7 @@
   <button
     type="button"
     *ngIf="isLoading === false"
-    class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
+    class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
     (click)="onCancel()"
   >
     Cancel
@@ -124,7 +126,9 @@
   class="flex flex-col items-center"
   *ngIf="displayIngredients().length === 0 && searchFilter() === ''"
 >
-  <p class="p-dl-3 text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
+  <p
+    class="p-dl-3 font-body text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+  >
     No Ingredients Found to Add
   </p>
 </div>

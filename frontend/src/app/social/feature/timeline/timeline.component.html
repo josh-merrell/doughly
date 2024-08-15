@@ -1,5 +1,6 @@
 <div class="mb-dl-6 flex h-full w-full flex-col items-center overflow-y-auto">
-  <span class="text-dl-6 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-6"
+  <span
+    class="font-sans text-dl-6 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-6"
     >Past Day</span
   >
   @for (log of pastDay(); track log.logTime; let isLast = $last) {
@@ -8,24 +9,25 @@
     [ngClass]="{ 'mb-dl-6': isLast }"
   >
     <p
-      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+      class="flex-grow overflow-hidden pl-dl-3 font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >
       {{ log.message }}
     </p>
     <p
-      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
+      class="whitespace-nowrap px-dl-2 font-body text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
     >
       {{ log.displayLogTime }}
     </p>
   </div>
   } @empty {
   <div
-    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-dl-tan-9 italic transition-all duration-200 ease-in-out dark:bg-dl-tan-1"
+    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-dl-tan-9 font-sans italic transition-all duration-200 ease-in-out dark:bg-dl-tan-1"
   >
     . . .
   </div>
   }
-  <span class="text-dl-6 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-6"
+  <span
+    class="font-sans text-dl-6 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-6"
     >Past Week</span
   >
   @for (log of pastWeek(); track log.logTime; let isLast = $last) {
@@ -34,24 +36,25 @@
     [ngClass]="{ 'mb-dl-6': isLast }"
   >
     <p
-      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+      class="flex-grow overflow-hidden pl-dl-3 font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >
       {{ log.message }}
     </p>
     <p
-      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
+      class="whitespace-nowrap px-dl-2 font-body text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
     >
       {{ log.displayLogTime }}
     </p>
   </div>
   } @empty {
   <div
-    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-dl-tan-9 italic transition-all duration-200 ease-in-out dark:bg-dl-tan-1"
+    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-dl-tan-9 font-sans italic transition-all duration-200 ease-in-out dark:bg-dl-tan-1"
   >
     . . .
   </div>
   }
-  <span class="text-dl-6 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-6"
+  <span
+    class="font-sans text-dl-6 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-6"
     >Past Month</span
   >
   @for (log of pastMonth(); track log.logTime; let isLast = $last) {
@@ -59,19 +62,19 @@
     class="relative my-dl-2 flex w-full items-center justify-between rounded-dl-3 bg-dl-tan-9 py-dl-1 shadow-md transition-all duration-200 ease-in-out dark:bg-dl-tan-2"
   >
     <p
-      class="flex-grow overflow-hidden pl-dl-3 text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+      class="flex-grow overflow-hidden pl-dl-3 font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >
       {{ log.message }}
     </p>
     <p
-      class="whitespace-nowrap px-dl-2 text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
+      class="whitespace-nowrap px-dl-2 font-body text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
     >
       {{ log.displayLogTime }}
     </p>
   </div>
   } @empty {
   <div
-    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-dl-tan-9 italic transition-all duration-200 ease-in-out dark:bg-dl-tan-1"
+    class="relative mb-dl-6 mt-dl-2 flex h-dl-3 items-center justify-between bg-dl-tan-9 font-sans italic transition-all duration-200 ease-in-out dark:bg-dl-tan-1"
   >
     . . .
   </div>

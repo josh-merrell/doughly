@@ -8,19 +8,19 @@
   }"
 >
   <div class="flex h-full flex-col justify-between py-dl-1 pl-dl-3">
-    <p class="text-dl-6 font-dl-3 text-dl-tan-1 dark:text-dl-tan-9">
+    <p class="font-sans text-dl-6 font-dl-3 text-dl-tan-1 dark:text-dl-tan-9">
       {{ recipe.title }}
     </p>
     <div class="mt-dl-2 flex items-baseline">
       <p
         *ngIf="recipe.recipeCategoryName && fromMyRecipes === false"
-        class="text-dl-5 font-dl-2 text-dl-tan-5 dark:text-dl-tan-6"
+        class="font-body text-dl-5 font-dl-2 text-dl-tan-5 dark:text-dl-tan-6"
       >
         {{ recipe.recipeCategoryName }}
       </p>
       <p
         *ngIf="recipe.status !== 'published'"
-        class="ml-dl-4 text-dl-5 italic text-dl-yellow-4 dark:text-dl-yellow-7"
+        class="ml-dl-4 font-body text-dl-5 italic text-dl-yellow-4 dark:text-dl-yellow-7"
       >
         Draft
       </p>
@@ -31,14 +31,14 @@
           !shoppingPage &&
           fromMyRecipes === true
         "
-        class="ml-dl-4 text-dl-5 italic text-dl-yellow-7 dark:text-dl-yellow-4"
+        class="ml-dl-4 font-body text-dl-5 italic text-dl-yellow-7 dark:text-dl-yellow-4"
       >
         From You!
       </p>
     </div>
     <p
       *ngIf="recipe.plannedDate"
-      class="text-dl-5 text-dl-tan-4 dark:text-dl-tan-7"
+      class="font-body text-dl-5 text-dl-tan-4 dark:text-dl-tan-7"
     >
       Planned: {{ recipe.plannedDate }}
     </p>

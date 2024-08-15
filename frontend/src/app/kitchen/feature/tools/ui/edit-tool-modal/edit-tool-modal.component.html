@@ -3,10 +3,12 @@
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-nowrap">
-      <span class="text-dl-6 text-dl-tan-5 dark:text-dl-tan-6">Edit</span
-      ><span class="text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">{{
-        (tool$ | async)!.name
-      }}</span>
+      <span class="font-sans text-dl-6 text-dl-tan-5 dark:text-dl-tan-6"
+        >Edit</span
+      ><span
+        class="font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        >{{ (tool$ | async)!.name }}</span
+      >
     </div>
   </div>
   <mat-spinner class="my-app-custom-spinner" *ngIf="isUpdating"></mat-spinner>
@@ -32,7 +34,7 @@
         <div class="mt-dl-2">
           <button
             type="button"
-            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
+            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 font-body text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
               'cursor-pointer bg-dl-pinknew-4 dark:bg-dl-pinknew-7':
@@ -46,7 +48,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+            class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 font-body text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
             (click)="onCancel()"
           >
             Cancel
