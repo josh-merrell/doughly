@@ -6,6 +6,7 @@ import {
   WritableSignal,
   signal,
 } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'dl-web-page',
@@ -34,17 +35,24 @@ export class WebPageComponent {
     media.play();
   }
 
-  getDoughlyClick() {
-    window.open('https://forms.gle/RBjciXpJ7gKXSTkF6', '_blank');
-  }
-
-  onTesterSignup() {
-    window.open('https://forms.gle/RBjciXpJ7gKXSTkF6', '_blank');
-  }
-
   mouseOver(button: string) {
     if (button === 'buttonOne') {
       this.buttonOneHover.set(true);
+    }
+  }
+
+  routeToStoreListing() {
+    if (Capacitor.isNativePlatform()) {
+      if (Capacitor.getPlatform() !== 'android') {
+        // send to play store listing
+        window.open(
+          'https://play.google.com/store/apps/details?id=co.doughly.app',
+          '_blank'
+        );
+      } else {
+        // send to app store listing
+        window.open('https://apps.apple.com/app/id6502307680', '_blank');
+      }
     }
   }
 

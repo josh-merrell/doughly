@@ -28,7 +28,7 @@
       }"
     >
       <span
-        class="text-center text-dl-4 font-dl-4 text-dl-tan-10"
+        class="text-center font-sans text-dl-4 font-dl-4 text-dl-tan-10"
         [ngClass]="{
           'text-dl-teal-7': !isSelected,
           'text-dl-tan-10': isSelected
@@ -44,14 +44,21 @@
       'mt-dl-7': sku.skuId === 'doughly_aicredits10_once_2.99',
     }"
     >
-      <p class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-green-2">
+      <p
+        class="whitespace-nowrap font-sans text-dl-5 font-dl-3 text-dl-green-2"
+      >
         {{ getTitleString(sku.skuId) }}
       </p>
     </div>
 
     <!-- Price -->
-    <span class="whitespace-nowrap text-dl-6 font-dl-3 text-dl-green-2">{{
-      sku.product.price | number : "1.0-2" | currency : sku.product.currencyCode
-    }}</span>
+    <span
+      class="whitespace-nowrap font-sans text-dl-5 font-dl-3 text-dl-green-2"
+      >{{
+        sku.product.price
+          | number : "1.0-2"
+          | currency : sku.product.currencyCode
+      }}</span
+    >
   </div>
 </div>

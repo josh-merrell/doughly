@@ -3,19 +3,20 @@
 >
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-normal">
-      <span class="text-dl-6 font-dl-2 text-dl-tan-5 dark:text-dl-tan-6"
+      <span
+        class="font-sans text-dl-5 font-dl-2 text-dl-tan-5 dark:text-dl-tan-6"
         >Edit
-        <span class="text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">{{
-          recipeIngredient().ingredient
-        }}</span
+        <span
+          class="font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+          >{{ recipeIngredient().ingredient }}</span
         ><span
           *ngIf="recipe()"
-          class="text-dl-6 font-dl-3 text-dl-tan-5 dark:text-dl-tan-6"
+          class="font-sans text-dl-5 font-dl-3 text-dl-tan-5 dark:text-dl-tan-6"
         >
           in </span
         ><span
           *ngIf="recipe()"
-          class="text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+          class="font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
           >{{ recipe().title }}</span
         ></span
       >
@@ -23,7 +24,7 @@
   </div>
   <p
     *ngIf="recipeIngredient().RIneedsReview"
-    class="mb-dl-3 text-dl-5 font-dl-3 text-dl-pinknew-4 dark:text-dl-pinknew-7"
+    class="mb-dl-3 font-sans text-dl-4 font-dl-3 text-dl-pinknew-4 dark:text-dl-pinknew-7"
   >
     Confirm or Edit details
   </p>
@@ -83,7 +84,7 @@
                 class="my-app-custom-spinner"
               ></mat-spinner>
               <p
-                class="ml-dl-3 text-dl-4 font-dl-2 italic text-dl-tan-3 dark:text-dl-tan-8"
+                class="ml-dl-3 font-body text-dl-4 font-dl-2 italic text-dl-tan-3 dark:text-dl-tan-8"
               >
                 Getting Suggested Ratio...
               </p>
@@ -106,7 +107,7 @@
                 purchaseUnitRatioSuggestion() ===
                 form.get('purchaseUnitRatio')?.value
               "
-              class="absolute -bottom-1 left-8 ml-dl-3 text-dl-4 font-dl-2 italic text-dl-tan-3 dark:text-dl-tan-8"
+              class="absolute -bottom-1 left-8 ml-dl-3 font-body text-dl-4 font-dl-2 italic text-dl-tan-3 dark:text-dl-tan-8"
             >
               Suggested Ratio
             </p>
@@ -127,7 +128,7 @@
               <div
                 *ngFor="let item of quickTapComponents()"
                 (click)="componentQuickTap(item)"
-                class="mb-dl-3 mr-dl-3 items-center rounded-dl-1 bg-dl-tan-10 px-dl-2 text-dl-5 font-dl-2 text-dl-tan-2 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2 dark:text-dl-tan-10"
+                class="mb-dl-3 mr-dl-3 items-center rounded-dl-1 border border-dl-tan-2 bg-dl-tan-10 px-dl-2 font-body text-dl-4 font-dl-2 text-dl-tan-2 dark:border dark:border-dl-tan-7 dark:bg-dl-tan-2 dark:text-dl-tan-10"
               >
                 {{ item }}
               </div>
@@ -152,14 +153,14 @@
           <button
             type="button"
             *ngIf="recipeIngredient().RIneedsReview && form.pristine"
-            class="mb-dl-3 h-dl-5 w-full justify-center rounded-dl-1 border-2 bg-dl-pinknew-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
+            class="mb-dl-3 h-dl-5 w-full justify-center rounded-dl-1 border-2 bg-dl-pinknew-4 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
             (click)="onConfirm()"
           >
             Confirm
           </button>
           <button
             type="button"
-            class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
+            class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
               'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
@@ -174,7 +175,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
+            class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
             (click)="onCancel()"
           >
             Close

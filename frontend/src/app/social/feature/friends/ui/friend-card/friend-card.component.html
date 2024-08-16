@@ -13,22 +13,25 @@
         *ngIf="!friend.imageURL && friend.nameFirst && friend.nameLast"
       >
         <span
-          class="text-dl-6 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
+          class="font-sans text-dl-5 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
           >{{ initials }}</span
         >
       </span>
     </div>
     <div class="items-left ml-dl-4 flex flex-col justify-between">
       <!-- Name -->
-      <div class="flex text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9">
+      <div
+        class="flex font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+      >
         <span>{{ friend.nameFirst }}</span>
-        <span class="mb-dl-2 ml-dl-1">{{ friend.nameLast }}</span>
+        <span class="mb-dl-2 ml-dl-1 font-sans">{{ friend.nameLast }}</span>
       </div>
 
       <!-- Username -->
-      <span class="text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5">{{
-        friend.username
-      }}</span>
+      <span
+        class="font-body text-dl-4 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        >{{ friend.username }}</span
+      >
     </div>
   </div>
 
@@ -36,9 +39,9 @@
   <div class="absolute bottom-1 right-2 pb-dl-1">
     <span
       *ngIf="friend.recipes.length"
-      class="text-dl-5 font-dl-2 text-dl-green-6 dark:text-dl-green-9"
+      class="font-body text-dl-4 font-dl-2 text-dl-green-6 dark:text-dl-green-9"
       >{{ friend.recipes.length }} recipe<span
-        class="text-dl-5 font-dl-2 text-dl-green-6 dark:text-dl-green-9"
+        class="font-body text-dl-4 font-dl-2 text-dl-green-6 dark:text-dl-green-9"
         *ngIf="friend.recipes.length !== 1"
         >s</span
       ></span

@@ -4,7 +4,7 @@
   <mat-spinner class="my-app-custom-spinner" *ngIf="isDeleting"></mat-spinner>
   <h2
     *ngIf="isDeleting"
-    class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 dark:text-dl-tan-7"
+    class="leading-dl-4 mt-dl-4 font-body text-dl-5 font-dl-3 text-dl-tan-4 dark:text-dl-tan-7"
   >
     Processing..
   </h2>
@@ -23,7 +23,7 @@
         />
       </svg>
       <p
-        class="leading-dl-4 ml-dl-2 text-dl-6 font-dl-3 text-dl-yellow-2 dark:text-dl-yellow-9"
+        class="leading-dl-4 ml-dl-2 font-sans text-dl-5 font-dl-3 text-dl-yellow-2 dark:text-dl-yellow-9"
       >
         Delete Recipe Ingredient
       </p>
@@ -32,13 +32,14 @@
       <div class="ml-dl-3 flex flex-col">
         <div class="mt-dl-4 space-x-1">
           <span
-            class="mt-dl-1 text-dl-5 text-dl-tan-5 dark:text-dl-tan-8"
+            class="mt-dl-1 font-sans text-dl-4 text-dl-tan-5 dark:text-dl-tan-8"
             *ngIf="!isDeleting"
             >Are you sure you want to remove</span
           ><span
-            class="mt-dl-1 text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+            class="mt-dl-1 font-sans text-dl-4 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
             >{{ this.ingredient.name }}</span
-          ><span class="mt-dl-1 text-dl-5 text-dl-tan-5 dark:text-dl-tan-8"
+          ><span
+            class="mt-dl-1 font-sans text-dl-4 text-dl-tan-5 dark:text-dl-tan-8"
             >from the recipe?</span
           >
         </div>
@@ -46,14 +47,14 @@
       <div class="mt-dl-5 flex w-full flex-row-reverse justify-between px-dl-4">
         <button
           type="button"
-          class="shadow-sinline-flex ml-dl-4 w-2/5 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 dark:bg-dl-yellow-7 dark:text-dl-tan-1 hover:dark:bg-dl-yellow-6"
+          class="shadow-sinline-flex ml-dl-4 w-2/5 cursor-pointer justify-center rounded-dl-1 bg-dl-yellow-4 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 hover:bg-dl-yellow-5 focus:border-dl-yellow-4 focus:outline-1 dark:bg-dl-yellow-7 dark:text-dl-tan-1 hover:dark:bg-dl-yellow-6"
           (click)="onSubmit()"
         >
           Delete
         </button>
         <button
           type="button"
-          class="inline-flex w-2/5 justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 focus:outline-1 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2"
+          class="inline-flex w-2/5 justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 focus:outline-1 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2"
           (click)="onCancel()"
         >
           Cancel

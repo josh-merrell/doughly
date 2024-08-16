@@ -6,7 +6,7 @@
     <span
       *ngIf="shoppingLists().length === 1 && shoppingLists()?.[0].status === 'shopping'"
       (click)="updateView('shopping')"
-      class="inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-100 ease-in-out"
+      class="inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
         'border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'shopping',
@@ -19,7 +19,7 @@
     <span
       *ngIf="shoppingLists().length === 1 && shoppingLists()?.[0].status === 'draft'"
       (click)="updateView('draft')"
-      class="inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-100 ease-in-out"
+      class="inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
         'border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'draft',
@@ -31,7 +31,7 @@
     </span>
     <span
       (click)="updateView('shared')"
-      class="mr-dl-5 inline-flex items-center border-b-4 text-dl-7 font-dl-3 transition-all duration-100 ease-in-out"
+      class="mr-dl-5 inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
         'border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'shared',

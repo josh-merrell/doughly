@@ -9,13 +9,13 @@
   <div class="text-center">
     <h3
       *ngIf="!isSubmitting"
-      class="leading-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 dark:text-dl-tan-9"
+      class="leading-dl-4 font-sans text-dl-5 font-dl-3 text-dl-tan-4 dark:text-dl-tan-9"
     >
       Use Recipe
     </h3>
     <h2
       *ngIf="isSubmitting"
-      class="leading-dl-4 mt-dl-4 text-dl-6 font-dl-3 text-dl-tan-4 dark:text-dl-tan-9"
+      class="leading-dl-4 mt-dl-4 font-body text-dl-5 font-dl-3 text-dl-tan-4 dark:text-dl-tan-9"
     >
       Processing..
     </h2>
@@ -31,7 +31,8 @@
       [(ngModel)]="confirmed"
       class="select-slider"
     ></mat-slide-toggle>
-    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-tan-4 dark:text-dl-tan-8"
+    <span
+      class="px-dl-3 py-dl-3 font-body text-dl-4 text-dl-tan-4 dark:text-dl-tan-8"
       >Use this recipe and deduct ingredient inventory from kitchen</span
     >
   </div>
@@ -44,12 +45,13 @@
       [(ngModel)]="confirmed"
       class="select-slider"
     ></mat-slide-toggle>
-    <span class="px-dl-3 py-dl-3 text-dl-4 text-dl-tan-4 dark:text-dl-tan-8"
+    <span
+      class="px-dl-3 py-dl-3 font-body text-dl-4 text-dl-tan-4 dark:text-dl-tan-8"
       >Your Kitchen Inventory will not be checked or used. You can change this
       behavior in
       <span
         (click)="onViewSettings()"
-        class="text-dl-5 font-dl-3 text-dl-green-4 dark:text-dl-green-9"
+        class="font-serif text-dl-5 font-dl-3 text-dl-green-4 dark:text-dl-green-9"
       >
         Settings</span
       ></span
@@ -99,7 +101,7 @@
         >
           <button
             type="button"
-            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
+            class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
               'cursor-pointer bg-dl-pinknew-4 dark:bg-dl-pinknew-7':
@@ -113,7 +115,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+            class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
             (click)="onCancel()"
           >
             Cancel
@@ -125,7 +127,7 @@
     <button
       *ngIf="!isSubmitting && !confirmed"
       type="button"
-      class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+      class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
       (click)="onCancel()"
     >
       Cancel

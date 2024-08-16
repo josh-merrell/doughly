@@ -2,6 +2,8 @@
 @use "tailwindcss/components";
 @use "tailwindcss/utilities";
 @use "@angular/material" as mat;
+// Poppins for sans-serif font (primary), DM Serif Dispaly for serif font (action), Montserrat for socondary font (body)
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:wght@500&display=swap');
 
 // Define the primary, accent, and warning palettes for light theme
 $my-primary: mat.define-palette(mat.$grey-palette, 200);
@@ -61,17 +63,17 @@ body {
 // Create light theme class
 .light {
   @include mat.all-component-themes($my-light-theme);
-  background-color: #E9E6E2;
+  background-color: #e9e6e2;
 }
 
 // Create dark theme class
 .dark {
   @include mat.all-component-themes($my-dark-theme);
-  background-color: #26221C;
+  background-color: #26221c;
 }
 
 .product-page {
-  background-color: #A54C18 !important;
+  background-color: #a54c18 !important;
 }
 
 .modal-global-styling {
