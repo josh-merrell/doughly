@@ -1,17 +1,17 @@
 <div class="flex w-full flex-col items-center">
   <span
     *ngIf="view === 'upgrade'"
-    class="mx-dl-7 mb-dl-7 font-sans items-center text-center text-dl-7 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
+    class="mx-dl-7 mb-dl-7 items-center text-center font-sans text-dl-6 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
     >{{ stringsService.productStrings.subscribeChartBenefit }}</span
   >
   <span
     *ngIf="view === 'your-premium'"
-    class="mx-dl-7 mb-dl-7 font-sans items-center text-center text-dl-7 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
+    class="mx-dl-7 mb-dl-7 items-center text-center font-sans text-dl-6 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
     >{{ stringsService.productStrings.subscribeYourPremium }}</span
   >
   <span
     *ngIf="view === 'your-lifetime'"
-    class="mx-dl-7 mb-dl-7 font-sans items-center text-center text-dl-6 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
+    class="mx-dl-7 mb-dl-7 items-center text-center font-sans text-dl-5 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
     >{{ stringsService.productStrings.subscribeYourLifetime }}</span
   >
   <!-- Benefits Grid -->
@@ -24,12 +24,12 @@
         }"
     >
       <span
-        class="max-w-dl-7 flex-grow font-body pl-dl-4 text-left text-dl-4 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
+        class="max-w-dl-7 flex-grow pl-dl-4 text-left font-body text-dl-4 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
         >{{ feature.title }}</span
       >
       <span
         *ngIf="feature.freeTier !== 'dash'"
-        class="w-1/5 text-center font-body text-dl-5 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
+        class="w-1/5 text-center font-body text-dl-4 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
         >{{ feature.freeTier }}</span
       >
 
@@ -54,7 +54,7 @@
       <!-- Lifetime -->
       <span
         *ngIf="feature.lifetime !== 'dash'"
-        class="w-1/5 text-center font-body text-dl-5 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
+        class="w-1/5 text-center font-body text-dl-4 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
         >{{ feature.lifetime }}</span
       >
       <svg
@@ -79,7 +79,7 @@
         *ngIf="
           feature.premiumTier !== 'check' && feature.premiumTier !== 'PREMIUM'
         "
-        class="w-1/4 text-center font-body text-dl-5 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
+        class="w-1/4 text-center font-body text-dl-4 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
         >{{ feature.premiumTier }}</span
       >
       <div
@@ -87,7 +87,7 @@
         class="flex w-1/4 justify-center px-dl-2"
       >
         <span
-          class="rounded-dl-3 font-body bg-gradient-to-r from-dl-pinknew-3 to-dl-pinknew-5 px-dl-2 py-dl-1 text-dl-5 font-dl-4 italic text-white shadow-sm transition-all duration-100 ease-in-out"
+          class="rounded-dl-3 bg-gradient-to-r from-dl-pinknew-3 to-dl-pinknew-5 px-dl-2 py-dl-1 font-body text-dl-4 font-dl-4 italic text-white shadow-sm transition-all duration-100 ease-in-out"
           >PREMIUM</span
         >
       </div>

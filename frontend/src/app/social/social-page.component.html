@@ -7,16 +7,16 @@
       (click)="setView('timeline')"
       class="inline-flex items-center px-1 pt-1 font-dl-2 transition-all duration-200 ease-in-out"
       [ngClass]="{
-        'border-b-2 border-dl-green-6 dark:border-dl-green-5 text-dl-6 text-dl-tan-2 dark:text-dl-tan-9 font-dl-3':
+        'border-b-2 border-dl-green-6 dark:border-dl-green-5 text-dl-5 text-dl-tan-2 dark:text-dl-tan-9 font-dl-3':
           view() === 'timeline',
-        'text-dl-5 text-dl-tan-4 dark:text-dl-tan-7 font-dl-2': view() !== 'timeline'
+        'text-dl-4 text-dl-tan-4 dark:text-dl-tan-7 font-dl-2': view() !== 'timeline'
       }"
     >
       Timeline
     </span> -->
     <span
       (click)="setView('friends')"
-      class="inline-flex items-center border-b-4 font-sans text-dl-7 font-dl-3 transition-all duration-200 ease-in-out"
+      class="inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
         ' border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'friends',
@@ -28,7 +28,7 @@
     </span>
     <span
       (click)="setView('followers')"
-      class="mr-dl-5 inline-flex items-center border-b-4 font-sans text-dl-7 font-dl-3 transition-all duration-200 ease-in-out"
+      class="mr-dl-5 inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
         ' border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'followers',

@@ -21,22 +21,27 @@
     <div class="relative flex w-full items-center justify-between">
       <!-- Title -->
       <div class="flex flex-col">
-        <p class="font-sans whitespace-nowrap text-dl-6 font-dl-3 text-dl-pinknew-1">
+        <p
+          class="whitespace-nowrap font-sans text-dl-5 font-dl-3 text-dl-pinknew-1"
+        >
           {{ getTitleString(package.identifier) }}
         </p>
       </div>
 
       <!-- Price -->
-      <span class="font-sans whitespace-nowrap text-dl-6 font-dl-3 text-dl-pinknew-1">{{
-        package.product.price
-          | number : "1.0-2"
-          | currency : package.product.currencyCode
-      }}</span>
+      <span
+        class="whitespace-nowrap font-sans text-dl-5 font-dl-3 text-dl-pinknew-1"
+        >{{
+          package.product.price
+            | number : "1.0-2"
+            | currency : package.product.currencyCode
+        }}</span
+      >
     </div>
     <!-- Description/Note -->
     <span
       *ngIf="package.identifier === '$rc_lifetime'"
-      class="font-body w-full text-dl-4 font-dl-2 text-dl-pinknew-3"
+      class="w-full font-body text-dl-4 font-dl-2 text-dl-pinknew-3"
       >Unlimited Recipes forever. AI Import tokens purchased separately.</span
     >
   </div>

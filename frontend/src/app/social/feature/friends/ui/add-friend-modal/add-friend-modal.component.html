@@ -2,7 +2,7 @@
   class="relative flex flex-col items-center rounded-dl-3 bg-dl-tan-9 px-dl-3 pb-dl-3 pt-dl-4 dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
 >
   <h3
-    class="leading-dl-4 font-sans text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
+    class="leading-dl-4 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
   >
     Find People
   </h3>
@@ -35,7 +35,7 @@
     <button
       type="button"
       [disabled]="searchedQuery() === searchFilter()"
-      class="block whitespace-nowrap rounded-dl-2 px-dl-3 py-dl-2 text-center font-serif text-dl-5 font-dl-3 shadow-sm transition-all duration-200 ease-in-out"
+      class="block whitespace-nowrap rounded-dl-2 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-dl-3 shadow-sm transition-all duration-200 ease-in-out"
       [ngClass]="{
         'bg-dl-tan-7 text-dl-tan-2 dark:border-dl-tan-3 dark:bg-dl-tan-3 dark:text-dl-tan-8':
           searchedQuery() === searchFilter(),
@@ -108,7 +108,7 @@
   </div>
   <!-- Exit Button -->
   <button
-    class="absolute right-3 top-2 rounded-full bg-dl-tan-9 p-dl-2 font-serif dark:bg-dl-tan-2"
+    class="absolute right-3 top-2 rounded-full bg-dl-tan-9 px-dl-2 py-dl-1 font-serif dark:bg-dl-tan-2"
     (click)="onExitClick()"
     type="button"
   >

@@ -4,7 +4,7 @@
   <div class="mb-dl-3 text-center">
     <div class="mt-dl-2 space-x-1 whitespace-nowrap">
       <span
-        class="font-sans text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-8"
+        class="font-sans text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-8"
         >Messages</span
       >
     </div>
@@ -29,7 +29,7 @@
           >
             <div class="flex w-full justify-between">
               <p
-                class="px-dl-2 font-sans text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+                class="px-dl-2 font-sans text-dl-4 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
               >
                 {{ message.messageData.title }}
               </p>
@@ -40,7 +40,7 @@
               </p>
             </div>
             <p
-              class="w-full pl-dl-2 pr-dl-4 font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+              class="w-full pl-dl-2 pr-dl-4 font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               [ngClass]="{
                 'truncate': selectedMessageIndex() !== i,
               }"
@@ -58,20 +58,20 @@
           >
             <button
               (click)="onView(message, i)"
-              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 sm:ml-dl-4"
+              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 sm:ml-dl-4"
             >
               View
             </button>
             <button
               (click)="onAck(message, i)"
               *ngIf="message.messageData.status === 'notAcked'"
-              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pinknew-4 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-pinknew-3 dark:border-dl-pinknew-7 dark:text-dl-pinknew-8 sm:ml-dl-4"
+              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pinknew-4 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-pinknew-3 dark:border-dl-pinknew-7 dark:text-dl-pinknew-8 sm:ml-dl-4"
             >
               Seen
             </button>
             <button
               (click)="onDelete(message, i)"
-              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pinknew-4 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-pinknew-3 dark:border-dl-pinknew-7 dark:text-dl-pinknew-8 sm:ml-dl-4"
+              class="shadow-s inline-flex w-dl-7 items-center justify-center rounded-dl-1 border-2 border-dl-pinknew-4 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-pinknew-3 dark:border-dl-pinknew-7 dark:text-dl-pinknew-8 sm:ml-dl-4"
             >
               Delete
             </button>
@@ -83,7 +83,7 @@
       <div class="mt-dl-2">
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
           [ngClass]="{
             'cursor-pointer bg-dl-pinknew-4 hover:bg-dl-pinknew-5 dark:bg-dl-pinknew-7 hover:dark:bg-dl-pinknew-6':
               messages() && messages().length > 0,
@@ -96,7 +96,7 @@
         </button>
         <button
           type="button"
-          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+          class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
           (click)="onCancel()"
         >
           Cancel

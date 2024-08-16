@@ -31,7 +31,7 @@
         *ngIf="!author.imageURL && author.nameFirst && author.nameLast"
       >
         <span
-          class="font-sans text-dl-6 font-dl-3 leading-none text-dl-tan-7 dark:text-dl-tan-3"
+          class="font-sans text-dl-5 font-dl-3 leading-none text-dl-tan-7 dark:text-dl-tan-3"
           >{{ initials }}</span
         >
       </span>
@@ -41,11 +41,11 @@
   <!-- Header Bar -->
   <div class="mb-dl-5 flex w-full justify-between">
     <label
-      class="pl-dl-5 font-sans text-dl-6 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
+      class="pl-dl-5 font-sans text-dl-5 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
       >Recipe</label
     >
     <label
-      class="mr-dl-5 font-sans text-dl-6 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
+      class="mr-dl-5 font-sans text-dl-5 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
       >Your Kitchen</label
     >
   </div>
@@ -83,7 +83,7 @@
           </svg>
         </div>
         <label
-          class="pl-dl-1 pr-dl-3 font-body text-dl-5 font-dl-3 text-dl-tan-6 dark:text-dl-tan-9"
+          class="pl-dl-1 pr-dl-3 font-body text-dl-4 font-dl-3 text-dl-tan-6 dark:text-dl-tan-9"
           >{{ i.name }}</label
         >
       </div>
@@ -162,7 +162,7 @@
           </svg>
         </div>
         <label
-          class="mr-dl-3 pl-dl-1 font-sans text-dl-5 font-dl-3 text-dl-tan-6 dark:text-dl-tan-9"
+          class="mr-dl-3 pl-dl-1 font-sans text-dl-4 font-dl-3 text-dl-tan-6 dark:text-dl-tan-9"
           >{{ t.name }}</label
         >
       </div>
@@ -194,7 +194,7 @@
   <div class="w-full">
     <button
       type="button"
-      class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
+      class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
       (click)="onSubscribeClick()"
       [ngClass]="{
         'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
@@ -208,7 +208,7 @@
     </button>
     <button
       type="button"
-      class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
+      class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
       (click)="onCancel()"
     >
       Cancel

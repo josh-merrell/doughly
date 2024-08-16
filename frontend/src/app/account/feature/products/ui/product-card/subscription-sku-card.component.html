@@ -44,10 +44,13 @@
       'mt-dl-7': sku.product.basePlanId === 'per-6-month-17-94',
     }"
     >
-      <p class="whitespace-nowrap font-sans text-dl-6 font-dl-3 text-dl-green-2">
+      <p
+        class="whitespace-nowrap font-sans text-dl-5 font-dl-3 text-dl-green-2"
+      >
         {{ getTitleString(sku.product.basePlanId) }}
       </p>
-      <span class="whitespace-nowrap font-sans text-dl-5 font-dl-2 text-dl-green-2"
+      <span
+        class="whitespace-nowrap font-sans text-dl-4 font-dl-2 text-dl-green-2"
         >{{ getPeriodString(sku.product.period) }} -
         {{
           sku.product.price
@@ -59,7 +62,7 @@
 
     <!-- Monthly Rate -->
     <span
-      class="whitespace-nowrap font-sans text-center text-dl-6 font-dl-3 text-dl-green-2"
+      class="whitespace-nowrap text-center font-sans text-dl-5 font-dl-3 text-dl-green-2"
       [ngClass]="{
         'mt-dl-5': sku.product.basePlanId === 'per-6-month-17-94',
       }"

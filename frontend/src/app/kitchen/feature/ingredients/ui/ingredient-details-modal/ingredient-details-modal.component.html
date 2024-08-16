@@ -6,7 +6,7 @@
     class="relative mb-dl-4 mt-dl-3 flex w-full items-center justify-between"
   >
     <h2
-      class="pl-dl-2 font-sans text-dl-6 font-dl-3 leading-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+      class="pl-dl-2 font-sans text-dl-5 font-dl-3 leading-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >
       {{ ingredient.name }}
     </h2>
@@ -74,12 +74,12 @@
           <div class="flex flex-col items-start justify-between py-dl-1">
             <div class="mb-dl-2 flex">
               <p
-                class="font-body text-dl-6 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+                class="font-body text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
               >
                 {{ stock.grams / ingredient.gramRatio | number : "1.0-2" }}
               </p>
               <p
-                class="ml-dl-2 font-body text-dl-6 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+                class="ml-dl-2 font-body text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
               >
                 {{ ingredient.purchaseUnit
                 }}{{ stock.grams / ingredient.gramRatio > 1 ? "s" : "" }}
@@ -87,12 +87,12 @@
             </div>
             <div class="relative flex items-center">
               <p
-                class="font-body text-dl-5 font-dl-2 italic text-dl-tan-4 dark:text-dl-tan-7"
+                class="font-body text-dl-4 font-dl-2 italic text-dl-tan-4 dark:text-dl-tan-7"
               >
                 exp
               </p>
               <p
-                class="ml-dl-2 mr-dl-3 font-body text-dl-5 font-dl-2 italic text-dl-tan-4 dark:text-dl-tan-7"
+                class="ml-dl-2 mr-dl-3 font-body text-dl-4 font-dl-2 italic text-dl-tan-4 dark:text-dl-tan-7"
               >
                 {{
                   getExpirationDate(
@@ -131,14 +131,14 @@
               <button
                 (click)="openEditStockDialog(stock.ingredientStockID)"
                 type="button"
-                class="block cursor-pointer px-dl-3 py-dl-2 font-serif text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
+                class="block cursor-pointer px-dl-3 py-dl-1 font-serif text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
               >
                 Edit
               </button>
               <button
                 (click)="openDeleteStockDialog(stock.ingredientStockID)"
                 type="button"
-                class="block cursor-pointer px-dl-3 py-dl-2 font-serif text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
+                class="block cursor-pointer px-dl-3 py-dl-1 font-serif text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
               >
                 Delete
               </button>
@@ -150,7 +150,7 @@
     <button
       id="test-button"
       type="button"
-      class="mt-dl-5 block w-full whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-2 text-center font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pinknew-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 hover:dark:bg-dl-pinknew-6"
+      class="mt-dl-5 block w-full whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-pinknew-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 hover:dark:bg-dl-pinknew-6"
       (click)="onAddStock()"
     >
       Add More
@@ -160,13 +160,13 @@
   <!-- Ingredient Recipes -->
   <div class="mt-dl-5 flex flex-col">
     <h3
-      class="pl-dl-2 pt-dl-3 font-sans text-dl-6 font-dl-3 leading-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+      class="pl-dl-2 pt-dl-3 font-sans text-dl-5 font-dl-3 leading-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >
       Recipes
     </h3>
     <span
       *ngIf="(displayRecipes$ | async)?.length === 0"
-      class="font-body text-dl-5 font-dl-2 italic text-dl-tan-3 dark:text-dl-tan-8"
+      class="font-body text-dl-4 font-dl-2 italic text-dl-tan-3 dark:text-dl-tan-8"
       >Not used in any Recipes</span
     >
     <div class="mt-dl-2 flex flex-wrap">
@@ -177,7 +177,7 @@
           (click)="onRecipeClick(recipe.recipeID)"
         >
           <p
-            class="overflow-x-hidden font-body text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+            class="overflow-x-hidden font-body text-dl-4 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
           >
             {{ recipe.title }}
           </p>
@@ -186,7 +186,7 @@
               !recipe.shoppingList.ingredients ||
               !recipe.shoppingList.ingredients.length
             "
-            class="font-body text-dl-5 font-dl-2 italic text-dl-teal-7 dark:text-dl-teal-4"
+            class="font-body text-dl-4 font-dl-2 italic text-dl-teal-7 dark:text-dl-teal-4"
           >
             Make Now
           </p>

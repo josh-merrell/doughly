@@ -5,11 +5,11 @@
   <div class="mb-dl-3 flex justify-between px-dl-2">
     <div class="flex w-dl-7 flex-col justify-normal pt-dl-7">
       <span
-        class="flex font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+        class="flex font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
         >Joined</span
       >
       <span
-        class="flex font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+        class="flex font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
         >{{ displayDate() }}</span
       >
     </div>
@@ -26,7 +26,7 @@
       *ngIf="!friend.imageURL && friend.nameFirst && friend.nameLast"
     >
       <span
-        class="font-sans text-dl-7 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
+        class="font-sans text-dl-6 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
         >{{ initials }}</span
       >
     </span>
@@ -35,24 +35,24 @@
     <div class="flex w-dl-7 flex-col items-end pt-dl-7">
       <div *ngIf="friend.friendCount > 0">
         <span
-          class="font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
         >
           {{ friend.friendCount }} friend</span
         >
         <span
-          class="font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
           *ngIf="friend.friendCount > 1"
           >s</span
         >
       </div>
       <div *ngIf="friend.followerCount > 0">
         <span
-          class="font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
         >
           {{ friend.followerCount }} follower</span
         >
         <span
-          class="font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
           *ngIf="friend.followerCount > 1"
           >s</span
         >
@@ -63,7 +63,7 @@
   <!-- Name -->
   <div class="flex flex-col items-center">
     <div
-      class="mb-dl-5 flex font-sans text-dl-7 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+      class="mb-dl-5 flex font-sans text-dl-6 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
     >
       <span>{{ friend.nameFirst }}</span>
       <span class="ml-dl-2 font-sans">{{ friend.nameLast }}</span>
@@ -150,7 +150,7 @@
     <div class="flex" *ngIf="!isLoading()">
       <button
         type="button"
-        class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-4 py-dl-1 text-center font-serif text-dl-5 font-dl-3 shadow-sm"
+        class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-dl-3 shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
           'bg-dl-pinknew-3 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
@@ -166,7 +166,7 @@
       </button>
       <button
         type="button"
-        class="block whitespace-nowrap rounded-dl-1 px-dl-4 py-dl-1 text-center font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
+        class="block whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
         [ngClass]="{
           'bg-dl-pinknew-3 text-dl-tan-10 dark:border-dl-pinknew-3 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             buttonTexts().followButton === 'Follow',
@@ -188,7 +188,7 @@
   <div>
     <div class="mb-dl-5 flex justify-around">
       <span
-        class="items-center border-b-4 px-1 pt-1 font-sans text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+        class="items-center border-b-4 px-1 pt-1 font-sans text-dl-5 font-dl-2 transition-all duration-200 ease-in-out"
         [ngClass]="{
           ' border-dl-green-7 font-dl-3 text-dl-tan-2 dark:border-dl-green-4 dark:text-dl-tan-9':
             view === 'recipes',
@@ -200,7 +200,7 @@
         Recipes
       </span>
       <span
-        class="items-center border-b-4 px-1 pt-1 font-sans text-dl-6 font-dl-2 transition-all duration-200 ease-in-out"
+        class="items-center border-b-4 px-1 pt-1 font-sans text-dl-5 font-dl-2 transition-all duration-200 ease-in-out"
         [ngClass]="{
           ' border-dl-green-7 font-dl-3 text-dl-tan-2 dark:border-dl-green-4 dark:text-dl-tan-9':
             view === 'timeline',
@@ -235,7 +235,7 @@
     <!-- Subscriptions of my Recipes -->
     <div *ngIf="recipesFromMe().length">
       <span
-        class="items-center px-1 pt-1 font-body text-dl-5 font-dl-3 text-dl-tan-2 transition-all duration-200 ease-in-out dark:text-dl-tan-9"
+        class="items-center px-1 pt-1 font-body text-dl-4 font-dl-3 text-dl-tan-2 transition-all duration-200 ease-in-out dark:text-dl-tan-9"
         (click)="view = 'recipes'"
       >
         Subscribed from My Recipes
@@ -252,7 +252,7 @@
     </div>
     <span
       *ngIf="friend.recipes.length > 0"
-      class="absolute bottom-1 left-1/2 -translate-x-1/2 font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+      class="absolute bottom-1 left-1/2 -translate-x-1/2 font-body text-dl-4 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
       >{{ friend.recipes.length }} total</span
     >
   </div>
@@ -262,7 +262,7 @@
   </div>
   <!-- Exit Button -->
   <button
-    class="absolute right-3 top-3 rounded-full bg-dl-tan-9 p-dl-2 font-serif dark:bg-dl-tan-2"
+    class="absolute right-3 top-3 rounded-full bg-dl-tan-9 px-dl-2 py-dl-1 font-serif dark:bg-dl-tan-2"
     (click)="onExitClick()"
     type="button"
   >

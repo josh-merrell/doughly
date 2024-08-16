@@ -8,7 +8,7 @@
       *ngIf="recipe().photoURL"
       [src]="recipe().photoURL | imageFromCDN"
       alt="Recipe Image"
-      class="w-full rounded-dl-4 object-cover"
+      class="w-full rounded-b-dl-4 object-cover"
     />
     <!-- Overview -->
     <div
@@ -18,7 +18,7 @@
         class="mx-dl-5 mb-dl-4 mt-dl-5 flex items-center justify-between pt-dl-2"
       >
         <h1
-          class="font-sans text-dl-7 font-dl-3 leading-dl-2 text-dl-tan-1 dark:text-dl-tan-10"
+          class="font-sans text-dl-6 font-dl-3 leading-dl-2 text-dl-tan-1 dark:text-dl-tan-10"
         >
           {{ recipe().title }}
         </h1>
@@ -37,7 +37,7 @@
             "
           >
             <span
-              class="font-sans text-dl-6 font-dl-3 leading-none text-dl-tan-9 dark:text-dl-tan-3"
+              class="font-sans text-dl-5 font-dl-3 leading-none text-dl-tan-9 dark:text-dl-tan-3"
               >{{ initials() }}</span
             >
           </span>
@@ -46,7 +46,7 @@
       <!-- Category, Servings , Subscriber Count-->
       <div class="mx-dl-5 mb-dl-5 flex items-center justify-between">
         <p
-          class="ml-dl-1 font-sans text-dl-6 font-dl-2 leading-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+          class="ml-dl-1 font-sans text-dl-5 font-dl-2 leading-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >
           {{ recipeCategory()?.name }}
         </p>
@@ -69,7 +69,7 @@
               />
             </svg>
             <span
-              class="ml-dl-1 font-body text-dl-6 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
+              class="ml-dl-1 font-body text-dl-5 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
               >{{ recipe().servings }}</span
             >
           </div>
@@ -91,7 +91,7 @@
               ></path>
             </svg>
             <span
-              class="ml-dl-1 font-body text-dl-6 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
+              class="ml-dl-1 font-body text-dl-5 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
               >{{ subscriptions().length }}</span
             >
           </div>
@@ -120,20 +120,20 @@
           </svg>
           <p
             *ngIf="recipe().timePrep"
-            class="ml-dl-2 font-body text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
+            class="ml-dl-2 font-body text-dl-4 font-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
           >
             Prep: {{ timeString(recipe().timePrep) }}
           </p>
         </div>
         <p
           *ngIf="recipe().timeBake"
-          class="mb-dl-3 font-body text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
+          class="mb-dl-3 font-body text-dl-4 font-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
         >
           Bake: {{ timeString(recipe().timeBake) }}
         </p>
         <p
           *ngIf="recipe().timeBake"
-          class="mb-dl-3 pl-dl-4 font-body text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-10"
+          class="mb-dl-3 pl-dl-4 font-body text-dl-4 font-dl-3 text-dl-tan-3 dark:text-dl-tan-10"
         >
           Total:
           {{ timeString(recipe().timeBake + recipe().timePrep) }}
@@ -146,7 +146,7 @@
         class="mx-dl-5 mb-dl-5 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
         <p
-          class="font-body text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7"
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7"
         >
           You are subscribed
         </p>
@@ -164,7 +164,7 @@
         class="mx-dl-5 mb-dl-3 flex items-center justify-between px-dl-1 pb-dl-5 pt-dl-1"
       >
         <p
-          class="font-body text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
         >
           Subscribe to use this recipe
         </p>
@@ -203,7 +203,7 @@
     >
       <div class="flex justify-between">
         <p
-          class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
+          class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
         >
           Ingredients
         </p>
@@ -214,7 +214,7 @@
         class="mt-dl-2 flex w-full justify-between"
       >
         <span
-          class="min-w-dl-9 pl-dl-5 font-body text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
+          class="min-w-dl-9 pl-dl-5 font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
         >
           {{
             displayIngredientName(
@@ -225,19 +225,19 @@
           }}
           <span
             *ngIf="ingredient.preparation"
-            class="pl-dl-3 font-body text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
+            class="pl-dl-3 font-body text-dl-4 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
           >
             {{ ingredient.preparation }}
           </span>
         </span>
         <div class="flex justify-end">
           <span
-            class="ml-dl-3 mr-dl-3 whitespace-nowrap font-body text-dl-6 font-dl-2 text-dl-tan-3 dark:text-dl-tan-10"
+            class="ml-dl-3 mr-dl-3 whitespace-nowrap font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-10"
           >
             {{ ingredient.measurement }}
           </span>
           <span
-            class="min-w-dl-6 font-body text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+            class="min-w-dl-6 font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
           >
             {{
               displayMeasurementUnit(
@@ -259,7 +259,7 @@
         <div>
           <!-- Italic Label with component name -->
           <span
-            class="absolute -top-4 left-1/2 -translate-x-1/2 font-body text-dl-6 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-8"
+            class="absolute -top-4 left-1/2 -translate-x-1/2 font-body text-dl-5 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-8"
             >for {{ component.key }}</span
           >
 
@@ -269,7 +269,7 @@
             class="mt-dl-2 flex w-full justify-between"
           >
             <span
-              class="min-w-dl-9 pl-dl-5 font-body text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
+              class="min-w-dl-9 pl-dl-5 font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
             >
               {{
                 displayIngredientName(
@@ -280,19 +280,19 @@
               }}
               <span
                 *ngIf="ingredient.preparation"
-                class="pl-dl-3 font-body text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
+                class="pl-dl-3 font-body text-dl-4 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
               >
                 {{ ingredient.preparation }}
               </span>
             </span>
             <div class="flex justify-end">
               <span
-                class="ml-dl-3 mr-dl-3 whitespace-nowrap font-body text-dl-6 font-dl-2 text-dl-tan-3 dark:text-dl-tan-10"
+                class="ml-dl-3 mr-dl-3 whitespace-nowrap font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-10"
               >
                 {{ ingredient.measurement }}
               </span>
               <span
-                class="min-w-dl-6 font-body text-dl-6 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+                class="min-w-dl-6 font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
               >
                 {{
                   displayMeasurementUnit(
@@ -315,7 +315,7 @@
     >
       <div class="relative flex justify-between" *ngIf="!toolsExpanded()">
         <p
-          class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+          class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
         >
           Tools
         </p>
@@ -335,7 +335,7 @@
       </div>
       <div class="flex items-center justify-between" *ngIf="toolsExpanded()">
         <p
-          class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
+          class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
         >
           Tools
         </p>
@@ -346,13 +346,13 @@
           class="mt-dl-2 flex w-full justify-between"
         >
           <span
-            class="min-w-dl-9 pl-dl-5 font-body text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
+            class="min-w-dl-9 pl-dl-5 font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
           >
             {{ tool.name }}
           </span>
           <span
             *ngIf="tool.quantity > 0"
-            class="mr-dl-7 font-body text-dl-6 font-dl-2 text-dl-tan-3 dark:text-dl-tan-9"
+            class="mr-dl-7 font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-9"
           >
             {{ tool.quantity }}
           </span>
@@ -360,7 +360,7 @@
       </div>
       <span
         *ngIf="(toolsExpanded() && (!tools() || !tools().length)) || tools()?.[0]?.quantity === -1"
-        class="pl-dl-5 font-body text-dl-6 font-dl-2 italic text-dl-tan-3 dark:text-dl-tan-9"
+        class="pl-dl-5 font-body text-dl-5 font-dl-2 italic text-dl-tan-3 dark:text-dl-tan-9"
       >
         None required
       </span>
@@ -372,7 +372,7 @@
     >
       <div class="mb-dl-4 flex w-full justify-between">
         <p
-          class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
+          class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
         >
           Steps
         </p>
@@ -387,14 +387,14 @@
         <div class="mb-dl-2 flex w-full items-start">
           <!-- Step number with consistent width and padding -->
           <div
-            class="pl-dl-5 font-sans text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
+            class="pl-dl-5 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
           >
             {{ i + 1 }})
           </div>
           <!-- Title taking the remaining width -->
           <div class="flex-1">
             <p
-              class="ml-dl-2 mr-dl-6 overflow-hidden whitespace-normal font-sans text-dl-6 font-dl-3 italic text-dl-tan-3 dark:text-dl-tan-10"
+              class="ml-dl-2 mr-dl-6 overflow-hidden whitespace-normal font-sans text-dl-5 font-dl-3 italic text-dl-tan-3 dark:text-dl-tan-10"
             >
               {{ step.title }}
             </p>
@@ -402,7 +402,7 @@
         </div>
         <!-- Step Description -->
         <p
-          class="my-dl-1 w-full px-dl-5 text-left font-body text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
+          class="my-dl-1 w-full px-dl-5 text-left font-body text-dl-4 font-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
           style="text-indent: 20px; text-align: justify"
         >
           {{ step.description }}

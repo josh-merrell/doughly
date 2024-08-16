@@ -21,7 +21,7 @@
       <input
         #searchInput
         type="text"
-        class="ml-dl-2 w-dl-13 rounded-dl-2 border-none bg-dl-tan-10 font-body text-dl-5 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
+        class="ml-dl-2 w-dl-13 rounded-dl-2 border-none bg-dl-tan-10 font-body text-dl-4 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
         [placeholder]="
           !searchFilter() ? 'Filter by First or Last Name...' : searchFilter()
         "
@@ -66,7 +66,7 @@
   <!-- Total Count -->
   <span
     *ngIf="friends().length > 0"
-    class="font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+    class="font-body text-dl-4 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >{{ friends().length }} total</span
   >
   <!-- Add Button -->
@@ -74,7 +74,7 @@
     <button
       id="font-serif test-button"
       type="button"
-      class="my-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-10 shadow-lg transition-all duration-200 ease-in-out dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
+      class="my-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border bg-dl-pinknew-4 px-dl-2 py-dl-1 text-center text-dl-5 font-dl-3 text-dl-tan-10 shadow-lg transition-all duration-200 ease-in-out dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
       (click)="onAddFriend()"
     >
       Search New Friends

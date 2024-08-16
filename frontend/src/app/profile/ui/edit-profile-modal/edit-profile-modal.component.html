@@ -6,13 +6,13 @@
     <div class="relative flex w-dl-13 max-w-full flex-col">
       <div class="mt-dl-1 text-center sm:ml-dl-1 sm:mt-dl-0 sm:text-left">
         <h3
-          class="leading-dl-4 font-sans text-dl-6 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
+          class="leading-dl-4 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
           id="editIngredientModal"
         >
           Edit Profile
         </h3>
         <div class="mt-dl-2 space-x-1 whitespace-nowrap">
-          <span class="font-sans text-dl-5 text-dl-tan-5 dark:text-dl-tan-6"
+          <span class="font-sans text-dl-4 text-dl-tan-5 dark:text-dl-tan-6"
             >Change {{ field }}</span
           >
         </div>
@@ -57,7 +57,7 @@
       <div class="mt-dl-3">
         <button
           type="button"
-          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
+          class="shadow-s inline-flex w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
           [class.cursor-pointer]="form.valid && !form.pristine"
           [ngClass]="{
             'cursor-pointer bg-dl-green-4 hover:bg-dl-green-5 dark:bg-dl-green-7 hover:dark:bg-dl-green-6':
@@ -71,7 +71,7 @@
         </button>
         <button
           type="button"
-          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+          class="mt-dl-3 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
           (click)="onCancel()"
         >
           Cancel

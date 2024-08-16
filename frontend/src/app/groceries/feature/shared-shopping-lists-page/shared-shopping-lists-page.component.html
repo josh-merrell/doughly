@@ -15,32 +15,32 @@
       >
         <!-- List Author Image -->
         <div class="ml-dl-3 mr-dl-4">
-          <img
-            *ngIf="list.friend.imageURL"
-            class="h-dl-5 w-dl-5 rounded-full"
-            [src]="list.friend.imageURL | imageFromCDN"
-            alt="friend profile image"
-          />
           <span
             class="inline-flex h-dl-5 w-dl-5 items-center justify-center rounded-full bg-dl-tan-9 dark:bg-dl-tan-3"
             *ngIf="
-              !list.friend.imageURL &&
-              list.friend.nameFirst &&
-              list.friend.nameLast
+              !list.friend?.imageURL &&
+              list.friend?.nameFirst &&
+              list.friend?.nameLast
             "
           >
             <span
-              class="font-body text-dl-6 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
-              >{{ list.friend.nameFirst[0] + list.friend.nameLast[0] }}</span
+              class="font-body text-dl-5 font-dl-3 leading-none text-dl-tan-3 dark:text-dl-tan-9"
+              >{{ list.friend?.nameFirst[0] + list.friend?.nameLast[0] }}</span
             >
           </span>
+          <img
+            *ngIf="list.friend?.imageURL?.length > 0"
+            class="h-dl-5 w-dl-5 rounded-full"
+            [src]="list.friend?.imageURL | imageFromCDN"
+            alt="friend profile image"
+          />
         </div>
         <!-- List Author Username and Item Count -->
         <div class="mr-dl-3 flex flex-col items-start justify-between">
           <p
-            class="mr-dl-3 font-sans text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+            class="mr-dl-3 font-sans text-dl-4 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
           >
-            {{ list.friend.username }}'s list
+            {{ list.friend?.username }}'s list
           </p>
           <!-- Item Count -->
           <div class="flex items-center">
@@ -74,12 +74,12 @@
     <!-- Header Row -->
     <div class="mb-dl-3 flex w-full justify-between px-dl-5">
       <p
-        class="mb-dl-3 mt-dl-5 pl-dl-7 text-center font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="mb-dl-3 mt-dl-5 pl-dl-7 text-center font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Item
       </p>
       <p
-        class="mb-dl-3 mt-dl-5 text-center font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="mb-dl-3 mt-dl-5 text-center font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Purchased Amount
       </p>
@@ -165,13 +165,13 @@
 
           <div class="ml-dl-4 flex flex-col">
             <span
-              class="font-body text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
+              class="font-body text-dl-4 font-dl-3 text-dl-tan-1 dark:text-dl-tan-10"
             >
               {{ item.ingredientName }}
             </span>
             <div class="flex items-center">
               <span
-                class="mr-dl-2 font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
+                class="mr-dl-2 font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8"
               >
                 {{ Math.ceil(item.needMeasurement) }}
                 {{
@@ -191,7 +191,7 @@
         </div>
         <div class="relative flex items-center justify-between">
           <input
-            class="w-full rounded-md border-0 bg-dl-tan-10 px-dl-4 py-dl-4 text-dl-6 text-dl-tan-1 outline-none ring-2 ring-inset ring-dl-tan-8 transition-all duration-200 ease-in-out placeholder:text-dl-tan-2 focus:bg-dl-tan-10 focus:shadow-md focus:shadow-dl-green-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-3 dark:text-dl-tan-9 dark:ring-dl-tan-1 placeholder:dark:text-dl-tan-9 dark:focus:bg-dl-tan-4"
+            class="w-full rounded-md border-0 bg-dl-tan-10 px-dl-4 py-dl-4 text-dl-5 text-dl-tan-1 outline-none ring-2 ring-inset ring-dl-tan-8 transition-all duration-200 ease-in-out placeholder:text-dl-tan-2 focus:bg-dl-tan-10 focus:shadow-md focus:shadow-dl-green-5/20 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-3 dark:text-dl-tan-9 dark:ring-dl-tan-1 placeholder:dark:text-dl-tan-9 dark:focus:bg-dl-tan-4"
             *ngIf="!item.store"
             type="number"
             [min]="item.needMeasurement"
@@ -213,7 +213,7 @@
             *ngIf="item.store"
           >
             <p
-              class="font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+              class="font-body text-dl-4 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
             >
               {{ Math.ceil(item.purchasedMeasurement) }}
             </p>
@@ -233,7 +233,7 @@
         selectedSLIngred().itemsToSave &&
         selectedSLIngred().itemsToSave.length
       "
-      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center font-serif text-dl-4 font-dl-3 text-dl-tan-10 shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
+      class="mb-dl-2 block h-dl-5 w-dl-16 whitespace-nowrap rounded-dl-1 bg-dl-pinknew-4 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-lg transition-all duration-200 ease-in-out dark:border dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
       (click)="onSaveClick()"
     >
       {{ saveButtonText }}

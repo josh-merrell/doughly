@@ -19,7 +19,7 @@
         *ngIf="!profile.imageURL && profile.nameFirst && profile.nameLast"
       >
         <span
-          class="font-sans text-dl-6 font-dl-3 leading-none text-dl-tan-9 dark:text-dl-tan-3"
+          class="font-sans text-dl-5 font-dl-3 leading-none text-dl-tan-9 dark:text-dl-tan-3"
           >{{ initials }}</span
         >
       </span>
@@ -27,7 +27,7 @@
     <div class="items-left ml-dl-4 flex flex-col justify-between pb-dl-2">
       <!-- Name -->
       <div
-        class="flex font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="flex font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         <span>{{ profile.nameFirst }}</span>
         <span class="mb-dl-2 ml-dl-1 font-sans">{{ profile.nameLast }}</span>
@@ -35,7 +35,7 @@
 
       <!-- Username -->
       <span
-        class="font-body text-dl-5 font-dl-2 text-dl-tan-5 dark:text-dl-tan-7"
+        class="font-body text-dl-4 font-dl-2 text-dl-tan-5 dark:text-dl-tan-7"
         >{{ profile.username }}</span
       >
     </div>
@@ -44,10 +44,10 @@
   <!-- Location-->
   <div *ngIf="profile.city && profile.state" class="ml-dl-4 mt-dl-4">
     <span
-      class="font-body text-dl-5 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
+      class="font-body text-dl-4 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
       >{{ profile.city }}</span
     ><span
-      class="font-body text-dl-5 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
+      class="font-body text-dl-4 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
       >, {{ profile.state }}</span
     >
   </div>
@@ -66,7 +66,7 @@
           clip-rule="evenodd"
         ></path>
       </svg>
-      <span class="font-body text-dl-5 text-dl-tan-3 dark:text-dl-tan-8">{{
+      <span class="font-body text-dl-4 text-dl-tan-3 dark:text-dl-tan-8">{{
         profile.recipes.length
       }}</span>
     </div>

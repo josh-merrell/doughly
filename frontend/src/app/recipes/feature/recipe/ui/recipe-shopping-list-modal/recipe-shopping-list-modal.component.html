@@ -16,13 +16,13 @@
   >
     <div class="mb-dl-4 text-center">
       <p
-        class="leading-dl-4 font-sans text-dl-7 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="leading-dl-4 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
         Recipe Groceries
       </p>
     </div>
     <div *ngIf="checkIngredientStock === false" class="mb-dl-4">
-      <p class="font-body text-dl-5 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8">
+      <p class="font-body text-dl-4 font-dl-2 text-dl-tan-3 dark:text-dl-tan-8">
         Your kitchen inventory is not being checked. You can change this in
         <span
           (click)="onViewSettings()"
@@ -44,7 +44,7 @@
               class="mr-dl-3 mt-dl-2 inline-flex whitespace-nowrap rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 dark:bg-dl-tan-2"
             >
               <span
-                class="font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+                class="font-body text-dl-4 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
                 >{{
                   displayIngredientName(
                     item.ingredientName,
@@ -54,7 +54,7 @@
                 }}&nbsp;&nbsp;&nbsp;</span
               >
               <span
-                class="font-body text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7"
+                class="font-body text-dl-4 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7"
               >
                 {{ item.quantity }}&nbsp;{{
                   getDisplayItemUnit(item.quantity, item.unit)
@@ -62,7 +62,7 @@
               >
               <span
                 *ngIf="item.purchaseAfter"
-                class="font-body text-dl-5 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
+                class="font-body text-dl-4 font-dl-2 italic text-dl-tan-2 dark:text-dl-tan-9"
                 >&nbsp;&nbsp;&nbsp;Buy After
                 {{ item.purchaseAfter }}&nbsp;&nbsp;</span
               >
@@ -77,13 +77,13 @@
       <!-- If List is in 'shopping' status and has this recipe-->
       <div *ngIf="draftList() === false && recipeOnList() === true">
         <p
-          class="font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >
           Recipe already on Shopping List
         </p>
         <span
           (click)="onViewShoppingList()"
-          class="font-body text-dl-5 font-dl-3 text-dl-green-4 dark:text-dl-green-9"
+          class="font-body text-dl-4 font-dl-3 text-dl-green-4 dark:text-dl-green-9"
         >
           finish shopping</span
         >
@@ -92,7 +92,7 @@
       <!-- If List is in 'shopping' status and does not have this recipe-->
       <div *ngIf="draftList() === false && recipeOnList() === false">
         <p
-          class="font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >
           Can't add to existing in-progress list
         </p>
@@ -108,7 +108,7 @@
       <button
         type="button"
         *ngIf="draftList() && recipeOnList() === false"
-        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 sm:ml-dl-4"
+        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 bg-dl-pinknew-4 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 sm:ml-dl-4"
         (click)="onAddToDraft()"
       >
         Add All to Draft List
@@ -118,7 +118,7 @@
       <button
         type="button"
         *ngIf="draftList() && recipeOnList() === true"
-        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-pinknew-4 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-7 sm:ml-dl-4"
+        class="shadow-s inline-flex w-full cursor-pointer justify-center rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-pinknew-4 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-7 sm:ml-dl-4"
         (click)="onViewDraftList()"
       >
         View Draft Shopping List
@@ -126,7 +126,7 @@
 
       <button
         type="button"
-        class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+        class="mt-dl-4 inline-flex w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 hover:dark:bg-dl-tan-2 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
         Close

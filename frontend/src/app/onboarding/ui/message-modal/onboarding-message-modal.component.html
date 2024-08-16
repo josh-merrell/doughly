@@ -52,7 +52,7 @@
     </div>
     <div class="ml-dl-5 flex w-full flex-col items-center" *ngIf="!isEditing()">
       <p
-        class="font-body text-dl-5 font-dl-3 text-dl-green-2 dark:text-dl-green-9"
+        class="font-body text-dl-4 font-dl-3 text-dl-green-2 dark:text-dl-green-9"
       >
         {{ data.message }}
       </p>
@@ -72,7 +72,7 @@
         <!-- Username -->
         <div class="mb-dl-3" id="form-username">
           <label
-            class="mb-dl-2 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-2 font-sans text-dl-4 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="username"
             >Username</label
           >
@@ -94,7 +94,7 @@
         <!-- nameFirst -->
         <div class="mb-dl-3" id="form-nameFirst">
           <label
-            class="mb-dl-2 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-2 font-sans text-dl-4 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="nameFirst"
             >First Name</label
           >
@@ -116,7 +116,7 @@
         <!-- nameLast -->
         <div class="mb-dl-3" id="form-nameLast">
           <label
-            class="mb-dl-2 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-2 font-sans text-dl-4 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="nameLast"
             >Last Name</label
           >
@@ -138,7 +138,7 @@
         <!-- City -->
         <div class="mb-dl-3" id="form-city">
           <label
-            class="mb-dl-2 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-2 font-sans text-dl-4 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="city"
             >City</label
           >
@@ -159,7 +159,7 @@
 
         <!-- State
         <div id="form-state">
-          <label class="mb-dl-4 text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10" for="state"
+          <label class="mb-dl-4 text-dl-4 font-dl-3 text-dl-green-1 dark:text-dl-green-10" for="state"
             >State</label
           >
           <div class="w-dl-13">
@@ -182,7 +182,7 @@
         <!-- State -->
         <div class="mb-dl-3" id="form-state">
           <label
-            class="mb-dl-4 font-sans text-dl-5 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
+            class="mb-dl-4 font-sans text-dl-4 font-dl-3 text-dl-green-1 dark:text-dl-green-10"
             for="state"
             >State</label
           >
@@ -223,7 +223,7 @@
         cityErrorMessage() !== '' ||
         stateErrorMessage() !== ''
       "
-      class="shadow-s mt-dl-3 inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
+      class="shadow-s mt-dl-3 inline-flex w-dl-13 justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
       [ngClass]="{
         'cursor-pointer bg-dl-green-2 hover:bg-dl-green-5 dark:bg-dl-green-8 hover:dark:bg-dl-green-6':
           form.invalid === false,
@@ -240,7 +240,7 @@
     </button>
     <div
       *ngIf="initialAccountStateReady() === false"
-      class="mb-dl-2 mt-dl-5 flex w-dl-13 font-body text-dl-5 font-dl-3 italic text-dl-green-1 dark:text-dl-green-10"
+      class="mb-dl-2 mt-dl-5 flex w-dl-13 font-body text-dl-4 font-dl-3 italic text-dl-green-1 dark:text-dl-green-10"
     >
       <mat-spinner
         class="my-app-custom-spinner mr-dl-4 w-full"

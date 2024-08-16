@@ -4,7 +4,7 @@
   <mat-spinner class="my-app-custom-spinner" *ngIf="isLoading"></mat-spinner>
   <div class="mb-dl-3 text-center">
     <p
-      class="leading-dl-4 font-sans text-dl-6 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
+      class="leading-dl-4 font-sans text-dl-5 font-dl-3 text-dl-tan-4 dark:text-dl-tan-8"
     >
       Tools
     </p>
@@ -17,7 +17,7 @@
     <div class="mb-dl-5 flex w-full flex-grow flex-col overflow-y-auto">
       <ng-container *ngFor="let tool of displayedTools$ | async">
         <div
-          class="mb-dl-2 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-5 text-dl-tan-4 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+          class="mb-dl-2 flex w-full flex-grow items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 text-dl-4 text-dl-tan-4 dark:bg-dl-tan-2 dark:text-dl-tan-9"
           (click)="onDeleteClick(tool.toolID, tool.recipeToolID)"
         >
           <div class="flex-grow flex-wrap">
@@ -85,7 +85,7 @@
     <div class="mx-dl-1 mb-dl-1 mt-dl-3 sm:mt-dl-4 sm:flex sm:flex-row-reverse">
       <button
         type="button"
-        class="shadow-s w-full cursor-pointer justify-center rounded-dl-1 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
+        class="shadow-s w-full cursor-pointer justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 dark:text-dl-tan-1 sm:ml-dl-4"
         [ngClass]="{
           'bg-dl-pinknew-4 dark:bg-dl-pinknew-7':
             toolsToAdd.length > 0 || submitMessage === 'No tools needed',
@@ -99,7 +99,7 @@
       </button>
       <button
         type="button"
-        class="mt-dl-3 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-2 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
+        class="mt-dl-3 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 hover:bg-dl-tan-10 dark:bg-dl-tan-1 dark:text-dl-tan-10 dark:hover:bg-dl-tan-2 sm:mt-0 sm:w-auto"
         (click)="onCancel()"
       >
         Cancel
