@@ -19,7 +19,7 @@
     <input
       #searchInput
       type="text"
-      class="ml-dl-2 w-dl-13 rounded-dl-2 border-none text-dl-5 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
+      class="ml-dl-2 w-dl-13 rounded-dl-2 border-none font-body text-dl-4 text-dl-tan-4 placeholder-dl-tan-4 focus:ring-transparent dark:bg-dl-tan-2 dark:text-dl-tan-7 dark:placeholder-dl-tan-7"
       [placeholder]="
         !searchFilter() ? 'Filter by First or Last Name...' : searchFilter()
       "
@@ -30,7 +30,7 @@
   <!-- View Selection -->
   <div class="mb-dl-3 flex w-full justify-around">
     <span
-      class="inline-flex items-center border-b-4 text-dl-6 font-dl-3 transition-all duration-200 ease-in-out"
+      class="inline-flex items-center border-b-4 font-sans text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
         ' border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'followers',
@@ -42,7 +42,7 @@
       Followers
     </span>
     <span
-      class="inline-flex items-center border-b-4 text-dl-6 font-dl-3 transition-all duration-200 ease-in-out"
+      class="inline-flex items-center border-b-4 font-sans text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
       [ngClass]="{
         ' border-dl-green-8 text-dl-tan-2 dark:border-dl-green-3 dark:text-dl-tan-9':
           view() === 'following',
@@ -75,7 +75,7 @@
   <!-- Total Count -->
   <span
     *ngIf="filteredPersons().length > 0"
-    class="text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
+    class="font-body text-dl-4 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >{{ filteredPersons().length }} total</span
   >
 </div>

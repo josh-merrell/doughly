@@ -1,5 +1,5 @@
 <div
-  class="bg-dl-white relative my-dl-4 flex h-dl-7 items-center justify-between rounded-dl-3 shadow-md transition-all duration-200 ease-in-out dark:border dark:border-dl-tan-4 bg-dl-tan-10 dark:bg-dl-tan-2"
+  class="bg-dl-white relative my-dl-4 flex h-dl-7 items-center justify-between rounded-dl-3 bg-dl-tan-10 shadow-md transition-all duration-200 ease-in-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-2"
   [ngClass]="{
     'w-dl-14': inModal === true,
     'w-dl-16': inModal === false
@@ -7,11 +7,13 @@
 >
   <div class="relative flex h-full w-full items-center justify-between">
     <div class="flex h-full flex-col justify-between py-dl-1 pl-dl-3">
-      <p class="text-dl-6 font-dl-3 text-dl-tan-1 dark:text-dl-tan-9">
+      <p class="font-sans text-dl-5 font-dl-3 text-dl-tan-1 dark:text-dl-tan-9">
         {{ category.name }}
       </p>
       <div class="mt-dl-2 flex items-baseline">
-        <span class="text-dl-5 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7">
+        <span
+          class="font-body text-dl-4 font-dl-2 text-dl-tan-4 dark:text-dl-tan-7"
+        >
           {{ category.recipeCount }} {{ countText() }}
         </span>
       </div>

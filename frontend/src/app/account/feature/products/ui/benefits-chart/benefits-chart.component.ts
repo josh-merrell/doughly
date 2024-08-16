@@ -45,7 +45,7 @@ export class BenefitsChartComponent {
       premiumTier: '12',
     },
     {
-      title: 'Daily Data Backups',
+      title: 'Data Backups',
       freeTier: 'dash',
       lifetime: 'dash',
       premiumTier: 'check',

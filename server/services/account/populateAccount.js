@@ -667,7 +667,7 @@ const initialData = {
             measurementUnit: 'teaspoon',
             measurement: 2,
             preparation: '',
-            component: '',
+            component: 'salad',
           },
         ],
         tools: [
