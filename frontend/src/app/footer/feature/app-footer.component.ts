@@ -35,6 +35,7 @@ import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
 
 @Component({
   selector: 'app-footer',
@@ -63,6 +64,10 @@ export class AppFooterComponent {
   private messages: WritableSignal<any> = signal([]);
   public unackedMessageLength: WritableSignal<number> = signal(0);
   stars: string = '';
+  kitchen: WritableSignal<string> = signal('');
+  recipes: WritableSignal<string> = signal('');
+  groceries: WritableSignal<string> = signal('');
+  social: WritableSignal<string> = signal('');
 
   // Lottie animation
   public creditCountRed: WritableSignal<boolean> = signal(false);
@@ -146,6 +151,9 @@ export class AppFooterComponent {
       }
     });
     this.setAnimationPath();
+    this.store.select(selectProfile).subscribe((profile) => {
+      this.setAnimationPath();
+    });
   }
 
   ngAfterViewInit() {
@@ -169,9 +177,17 @@ export class AppFooterComponent {
 
   setAnimationPath() {
     if (!document.body.classList.contains('dark')) {
-      this.stars = '/assets/animations/lottie/stars-dark.json';
+      this.stars = '/assets/animations/lottie/stars-light.json';
+      this.groceries.set('/assets/icons/Groceries-light.svg');
+      this.recipes.set('/assets/icons/Recipes-light.svg');
+      this.kitchen.set('/assets/icons/Kitchen-light.svg');
+      this.social.set('/assets/icons/Social-light.svg');
     } else {
       this.stars = '/assets/animations/lottie/stars-dark.json';
+      this.groceries.set('/assets/icons/Groceries-dark.svg');
+      this.recipes.set('/assets/icons/Recipes-dark.svg');
+      this.kitchen.set('/assets/icons/Kitchen-dark.svg');
+      this.social.set('/assets/icons/Social-dark.svg');
     }
     this.updateAnimationOptions();
   }

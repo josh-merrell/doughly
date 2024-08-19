@@ -64,7 +64,11 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('recipeFeedbacks').insert({ recipeFeedbackID: customID, userID, logTime, recipeID, satisfaction, difficulty, note, message }).select('*').single();
 
       if (error) {
-        throw errorGen(`*recipeFeedbackLogs-create* Error creating recipeFeedback log: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        // throw errorGen(`*recipeFeedbackLogs-create* Error creating recipeFeedback log: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        global.logger.error({message:`*recipeFeedbackLogs-create* Error creating recipeFeedback log: ${error.message}`, level:3, timestamp: new Date().toISOString(), 'userID': userID});
+        return {
+          recipeFeedbackID: 0
+        } 
       }
       return {
         recipeFeedbackID: log.recipeFeedbackID,

@@ -31,7 +31,7 @@ module.exports = {
     fontFamily: {
       sans: ["Poppins", "sans-serif"],
       serif: [
-        ['"DM Serif Display"', "serif"],
+        ['"Noto Serif"', "serif"],
         {
           fontStyle: "italic",
         },
