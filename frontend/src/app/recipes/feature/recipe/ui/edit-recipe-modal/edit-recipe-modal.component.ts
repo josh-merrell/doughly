@@ -315,62 +315,11 @@ export class EditRecipeModalComponent {
                 true
               );
             } else {
-              this.sendPushNotification();
               this.dialogRef.close('success');
             }
             this.isSubmitting = false;
           });
       });
-  }
-
-  sendPushNotification() {
-    if (!this.form.value.isPublicRecipe && !this.form.value.isHeirloomRecipe) {
-      return;
-    }
-    if (
-      this.form.value.isHeirloomRecipe &&
-      this.form.value.isPublicRecipe === false
-    ) {
-      this.pushTokenService
-        .getFriendPushTokensAndSendNotification(
-          'notifyFriendCreateRecipe',
-          'notifyFriendsHeirloomRecipeCreated',
-          {
-            recipeAuthor: `${this.profile().nameFirst} ${
-              this.profile().nameLast
-            }`,
-            recipeName: this.form.value.title,
-            imageUrl: this.photoURL || this.newPhotoURL,
-            recipeID: this.data.recipeID,
-          }
-        )
-        .subscribe(
-          () => {},
-          (error) => {
-            console.error('Error sending push notification:', error);
-          }
-        );
-    } else if (this.form.value.isPublicRecipe) {
-      this.pushTokenService
-        .getFollowerPushTokensAndSendNotification(
-          'notifyFolloweeCreateRecipe',
-          'notifyFollowersPublicRecipeCreated',
-          {
-            recipeAuthor: `${this.profile().nameFirst} ${
-              this.profile().nameLast
-            }`,
-            recipeName: this.form.value.title,
-            imageUrl: this.photoURL || this.newPhotoURL,
-            recipeID: this.data.recipeID,
-          }
-        )
-        .subscribe(
-          () => {},
-          (error) => {
-            console.error('Error sending push notification:', error);
-          }
-        );
-    }
   }
 
   ngOnDestroy(): void {

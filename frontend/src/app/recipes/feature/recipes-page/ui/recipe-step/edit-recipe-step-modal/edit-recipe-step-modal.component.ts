@@ -24,6 +24,7 @@ import {
   selectRecipeStepsByID,
 } from 'src/app/recipes/state/recipe-step/recipe-step-selectors';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
+import { AnimationOptions } from 'ngx-lottie';
 
 @Component({
   selector: 'dl-edit-recipe-step-modal',
@@ -36,7 +37,7 @@ import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.comp
     MatSelectModule,
     MatInputModule,
     ImageCropperModule,
-    TextInputComponent
+    TextInputComponent,
   ],
   templateUrl: './edit-recipe-step-modal.component.html',
 })
@@ -58,6 +59,12 @@ export class EditRecipeStepModalComponent {
   public photoURL?: string = '';
   public photo: any;
   newPhotoURL!: string;
+  dragToReorder: string = '';
+  animationOptions: AnimationOptions = {
+    path: '',
+    loop: true,
+    autoplay: false,
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -96,6 +103,8 @@ export class EditRecipeStepModalComponent {
           this.photoURL = recipeStep.photoURL;
         }
       });
+
+    this.setAnimationPath();
   }
 
   setForm() {
@@ -104,6 +113,22 @@ export class EditRecipeStepModalComponent {
       description: [this.data.description, Validators.required],
       // newPhotoURL: [null],
     });
+  }
+
+  setAnimationPath() {
+    if (!document.body.classList.contains('dark')) {
+      this.dragToReorder = '/assets/animations/lottie/dragToReorder-light.json';
+    } else {
+      this.dragToReorder = '/assets/animations/lottie/dragToReorder-dark.json';
+    }
+    this.updateAnimationOptions();
+  }
+
+  updateAnimationOptions() {
+    this.animationOptions = {
+      ...this.animationOptions,
+      path: this.dragToReorder,
+    };
   }
 
   titleValidator(): ValidatorFn {

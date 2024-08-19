@@ -58,7 +58,10 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('kitchenLogs').insert({ kitchenLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
       if (error) {
-        throw errorGen(`*kitchenLogs-create* Error creating kitchenLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        global.logger.error({message:`*kitchenLogs-create* Error creating kitchenLog: ${error.message}`, level:3, timestamp: new Date().toISOString(), 'userID': userID});
+        return {
+          kitchenLogID: 0
+        }  
       }
       return {
         kitchenLogID: log.kitchenLogID,
