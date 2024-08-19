@@ -91,8 +91,9 @@ export class RecipeStepsModalComponent {
 
   // Lottie animation
   private animationItem: AnimationItem | undefined;
+  dragToReorder: string = '';
   animationOptions: AnimationOptions = {
-    path: '/assets/animations/lottie/dragToReorder-dark.json',
+    path: '',
     loop: true,
     autoplay: true,
   };
@@ -241,6 +242,24 @@ export class RecipeStepsModalComponent {
     this.store.select(selectSteps).subscribe((steps) => {
       this.steps.set(steps);
     });
+
+    this.setAnimationPath();
+  }
+
+  setAnimationPath() {
+    if (!document.body.classList.contains('dark')) {
+      this.dragToReorder = '/assets/animations/lottie/dragToReorder-light.json';
+    } else {
+      this.dragToReorder = '/assets/animations/lottie/dragToReorder-dark.json';
+    }
+    this.updateAnimationOptions();
+  }
+
+  updateAnimationOptions() {
+    this.animationOptions = {
+      ...this.animationOptions,
+      path: this.dragToReorder,
+    };
   }
 
   checkStepsToAdd(): boolean {

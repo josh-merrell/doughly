@@ -34,6 +34,8 @@ export class ProfileCardComponent {
   public friendship: WritableSignal<Friendship | null> = signal(null);
   public followship: WritableSignal<Friendship | null> = signal(null);
   public initials: string = '';
+  recipeIcon: WritableSignal<string> = signal('');
+  social: WritableSignal<string> = signal('');
 
   constructor(
     private store: Store,
@@ -70,6 +72,18 @@ export class ProfileCardComponent {
             : { exists: false, followshipID: 0 }
         );
       });
+
+    this.setAnimationPath();
+  }
+
+  setAnimationPath() {
+    if (!document.body.classList.contains('dark')) {
+      this.recipeIcon.set('/assets/icons/Recipe-light.svg');
+      this.social.set('/assets/icons/Social-light.svg');
+    } else {
+      this.recipeIcon.set('/assets/icons/Recipe-dark.svg');
+      this.social.set('/assets/icons/Social-dark.svg');
+    }
   }
 
   pingUser() {

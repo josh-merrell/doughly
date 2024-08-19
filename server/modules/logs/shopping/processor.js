@@ -59,7 +59,11 @@ module.exports = ({ db }) => {
       const { data: log, error } = await db.from('shoppingLogs').insert({ shoppingLogID: customID, userID, subjectID, associatedID, eventType, oldValue, newValue, message, logTime }).select('*').single();
 
       if (error) {
-        throw errorGen(`*shoppingLogs-create* Error creating shoppingLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        // throw errorGen(`*shoppingLogs-create* Error creating shoppingLog: ${error.message}`, 512, 'failSupabaseInsert', true, 3);
+        global.logger.error({message:`*shoppingLogs-create* Error creating shoppingLog: ${error.message}`, level:3, timestamp: new Date().toISOString(), 'userID': userID});
+        return {
+          shoppingLogID: 0
+        } 
       }
       return {
         shoppingLogID: log.shoppingLogID,

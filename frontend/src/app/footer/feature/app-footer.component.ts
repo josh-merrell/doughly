@@ -177,7 +177,7 @@ export class AppFooterComponent {
 
   setAnimationPath() {
     if (!document.body.classList.contains('dark')) {
-      this.stars = '/assets/animations/lottie/stars-dark.json';
+      this.stars = '/assets/animations/lottie/stars-light.json';
       this.groceries.set('/assets/icons/Groceries-light.svg');
       this.recipes.set('/assets/icons/Recipes-light.svg');
       this.kitchen.set('/assets/icons/Kitchen-light.svg');
