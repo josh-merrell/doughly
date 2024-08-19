@@ -62,6 +62,9 @@ export class ShoppingPageComponent {
   Math = Math;
   public isDeleting: WritableSignal<boolean> = signal(false);
   public isLoading: WritableSignal<boolean> = signal(true);
+  checkmark: WritableSignal<string> = signal('');
+  trash: WritableSignal<string> = signal('');
+  draftIcon: WritableSignal<string> = signal('');
   @ViewChild('menu') rowItemMenu!: ElementRef;
   globalClickListener: () => void = () => {};
   menuOpen: boolean = false;
@@ -202,6 +205,20 @@ export class ShoppingPageComponent {
     this.store.select(selectSharedShoppingLists).subscribe((lists) => {
       this.allSharedLists.set(lists);
     });
+
+    this.setAnimationPath();
+  }
+
+  setAnimationPath() {
+    if (!document.body.classList.contains('dark')) {
+      this.checkmark.set('/assets/icons/Checkmark-light.svg');
+      this.trash.set('/assets/icons/Trash-light.svg');
+      this.draftIcon.set('/assets/icons/Edit-light.svg');
+    } else {
+      this.checkmark.set('/assets/icons/Checkmark-dark.svg');
+      this.trash.set('/assets/icons/Trash-dark.svg');
+      this.draftIcon.set('/assets/icons/Edit-dark.svg');
+    }
   }
 
   toggleMenu(event: any) {
@@ -247,7 +264,10 @@ export class ShoppingPageComponent {
     let modalResult;
     if (ref) {
       ref.afterClosed().subscribe((result) => {
-        if (result.status === 'cancel') {
+        if (result === undefined) {
+          this.isLoading.set(false);
+          return;
+        } else if (result.status === 'cancel') {
           this.isLoading.set(false);
           return;
         } else if (result.status === 'confirm') {

@@ -64,10 +64,6 @@ export class AppFooterComponent {
   private messages: WritableSignal<any> = signal([]);
   public unackedMessageLength: WritableSignal<number> = signal(0);
   stars: string = '';
-  // kitchen: string = '';
-  // recipes: string = '';
-  // groceries: string = '';
-  // social: string = '';
   kitchen: WritableSignal<string> = signal('');
   recipes: WritableSignal<string> = signal('');
   groceries: WritableSignal<string> = signal('');
@@ -180,7 +176,6 @@ export class AppFooterComponent {
   }
 
   setAnimationPath() {
-    console.log('SETTING ANIMATION PATH');
     if (!document.body.classList.contains('dark')) {
       this.stars = '/assets/animations/lottie/stars-dark.json';
       this.groceries.set('/assets/icons/Groceries-light.svg');

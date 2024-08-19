@@ -53,7 +53,7 @@
         <div class="flex pt-dl-2">
           <!--Servings-->
           <div class="relative flex">
-            <svg
+            <!-- <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
               version="1.1"
@@ -67,7 +67,8 @@
                 [attr.fill]="this.extraStuffService.getFillColor(10)"
                 d="M87.4,14.5c0,0,1.6-1.8,0.9-2.5s-2.5,0.9-2.5,0.9S75.6,21.5,74,23.1l0,0c0,0-1.2,1.2-2.1,0.2c-1-1,0.2-2.1,0.2-2.1  c1.7-1.7,10.3-11.7,10.3-11.7S84,7.7,83.2,7c-0.7-0.7-2.5,0.9-2.5,0.9S70.7,16.5,69,18.1c0,0-1.2,1.2-2.1,0.2c-1-1,0.2-2.1,0.2-2.1  c1.7-1.7,10.3-11.7,10.3-11.7S79,2.7,78.3,2s-2.5,0.9-2.5,0.9S65.7,11.5,64,13.1c0,0-1.9,1.9-3.9,3.9l0,0L57,20.1  c-3,3-4.3,6.8-3.9,10.1c0,0,0,0,0,0c0.2,2.8-1.5,4.6-1.5,4.6L3,80.7c-0.1,0.1-0.2,0.2-0.3,0.3c-2.2,2.2-2.6,5.5-0.8,7.3  c1.8,1.8,5.1,1.5,7.3-0.8c0.1-0.1,0.2-0.2,0.3-0.3l45.8-48.6c0,0,1.8-1.8,4.6-1.6c0.1,0,0.2,0,0.3,0c3.2,0.3,6.9-1,9.8-3.9l2.8-2.8  l0.3-0.3c1.9-1.9,3.9-3.9,3.9-3.9C78.7,24.5,87.4,14.5,87.4,14.5z"
               />
-            </svg>
+            </svg> -->
+            <img [src]="servings()" alt="Servings Icon" class="h-8 w-8" />
             <span
               class="ml-dl-1 font-body text-dl-5 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
               >{{ recipe().servings }}</span
@@ -75,7 +76,7 @@
           </div>
           <!--Subscriber Count-->
           <div class="ml-dl-5 mr-dl-2 flex">
-            <svg
+            <!-- <svg
               height="512"
               viewBox="0 0 24 24"
               width="512"
@@ -89,7 +90,8 @@
                 [attr.fill]="this.extraStuffService.getFillColor(10)"
                 d="m23 19a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1-1 6 6 0 0 1 6-6h2a6 6 0 0 1 6 6zm-7-15a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm-9 0a4 4 0 1 0 4 4 4 4 0 0 0 -4-4zm0 15a7.94 7.94 0 0 1 2.35-5.65 5.43 5.43 0 0 0 -1.91-.35h-.88a5.57 5.57 0 0 0 -5.56 5.56v.44a1 1 0 0 0 1 1h5.18a3 3 0 0 1 -.18-1z"
               ></path>
-            </svg>
+            </svg> -->
+            <img [src]="social()" alt="Social Icon" class="h-8 w-8" />
             <span
               class="ml-dl-1 font-body text-dl-5 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
               >{{ subscriptions().length }}</span

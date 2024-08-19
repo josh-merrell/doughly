@@ -73,6 +73,8 @@ export class PublicRecipeComponent {
   private profile: WritableSignal<any> = signal(null);
   private freeTierSubscribedRecipeCount: WritableSignal<number | null> =
     signal(null);
+  servings: WritableSignal<string> = signal('');
+  social: WritableSignal<string> = signal('');
 
   // Onboarding
   // ** OLD ONBOARDING **
@@ -346,6 +348,17 @@ export class PublicRecipeComponent {
     this.route.paramMap.subscribe((params) => {
       this.recipeID.set(Number(params.get('recipeID')!));
     });
+    this.setAnimationPath();
+  }
+
+  setAnimationPath() {
+    if (!document.body.classList.contains('dark')) {
+      this.servings.set('/assets/icons/Servings-light.svg');
+      this.social.set('/assets/icons/Social-light.svg');
+    } else {
+      this.social.set('/assets/icons/Social-dark.svg');
+      this.servings.set('/assets/icons/Servings-dark.svg');
+    }
   }
 
   onFriendClick(friend: any): void {

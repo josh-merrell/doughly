@@ -110,6 +110,8 @@ export class UserRecipeComponent {
   public recipeIngredientsNeedReview: WritableSignal<boolean> = signal(false);
   public profile: WritableSignal<Profile | null> = signal(null);
   public toolsExpanded: WritableSignal<boolean> = signal(false);
+  servings: WritableSignal<string> = signal('');
+  social: WritableSignal<string> = signal('');
 
   // Onboarding
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
@@ -337,6 +339,17 @@ export class UserRecipeComponent {
         );
       }
     });
+    this.setAnimationPath();
+  }
+
+  setAnimationPath() {
+    if (!document.body.classList.contains('dark')) {
+      this.servings.set('/assets/icons/Servings-light.svg');
+      this.social.set('/assets/icons/Social-light.svg');
+    } else {
+      this.social.set('/assets/icons/Social-dark.svg');
+      this.servings.set('/assets/icons/Servings-dark.svg');
+    }
   }
 
   // LIFECYCLE HOOKS  *********************************
