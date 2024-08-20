@@ -44,6 +44,9 @@ export class SharedShoppingListsPageComponent {
   private friends: WritableSignal<any[]> = signal([]);
   public selectedListID: WritableSignal<number | null> = signal(null);
   public sharedListIngredients: WritableSignal<any> = signal({});
+  checkmark: WritableSignal<string> = signal('');
+  trash: WritableSignal<string> = signal('');
+  draftIcon: WritableSignal<string> = signal('');
 
   constructor(
     private store: Store,
@@ -198,6 +201,20 @@ export class SharedShoppingListsPageComponent {
         })
       );
     });
+
+    this.setAnimationPath();
+  }
+
+  setAnimationPath() {
+    if (!document.body.classList.contains('dark')) {
+      this.checkmark.set('/assets/icons/Checkmark-light.svg');
+      this.trash.set('/assets/icons/Trash-light.svg');
+      this.draftIcon.set('/assets/icons/Edit-light.svg');
+    } else {
+      this.checkmark.set('/assets/icons/Checkmark-dark.svg');
+      this.trash.set('/assets/icons/Trash-dark.svg');
+      this.draftIcon.set('/assets/icons/Edit-dark.svg');
+    }
   }
 
   onSaveClick() {

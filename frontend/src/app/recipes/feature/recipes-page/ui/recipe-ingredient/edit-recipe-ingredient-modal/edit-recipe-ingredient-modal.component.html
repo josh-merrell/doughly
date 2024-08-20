@@ -153,14 +153,14 @@
           <button
             type="button"
             *ngIf="recipeIngredient().RIneedsReview && form.pristine"
-            class="mb-dl-3 h-dl-5 w-full justify-center rounded-dl-1 border-2 bg-dl-pinknew-4 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
+            class="mb-dl-3 h-dl-5 w-full justify-center rounded-dl-1 border-2 bg-dl-pinknew-4 px-dl-3 py-dl-1 font-serif text-dl-5 font-extrabold italic text-dl-tan-10 shadow-sm dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1"
             (click)="onConfirm()"
           >
             Confirm
           </button>
           <button
             type="button"
-            class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
+            class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-extrabold italic transition-all duration-200 ease-in-out"
             [class.cursor-pointer]="form.valid && !form.pristine"
             [ngClass]="{
               'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
@@ -175,7 +175,7 @@
           </button>
           <button
             type="button"
-            class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
+            class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-extrabold italic text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
             (click)="onCancel()"
           >
             Close
