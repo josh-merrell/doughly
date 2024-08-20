@@ -314,7 +314,7 @@ export class AppComponent {
     console.log('AVAILABLE VERSION: ', availableVersion);
 
     if (currentVersion !== availableVersion) {
-      console.log('VERSION OUTDATED, PROMPTING FOR UPDATE');
+      console.log('OLD VERSION FOUND, PROMPTING FOR UPDATE');
       if (platform === 'android') {
         this.promptForUpdate();
       } else if (platform === 'ios') {

@@ -141,7 +141,7 @@
             <input
               type="email"
               formControlName="email"
-              class="font-sans w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 font-sans text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
               appAutofocus
               tabindex="1"
             />
@@ -171,7 +171,7 @@
             <input
               type="password"
               formControlName="password"
-              class="w-dl-15 font-sans rounded-full border-0 p-dl-2 pl-dl-5 text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+              class="w-dl-15 rounded-full border-0 p-dl-2 pl-dl-5 font-sans text-dl-tan-2 ring-1 ring-inset ring-dl-tan-7 placeholder:text-dl-tan-6 focus:ring-2 focus:ring-inset focus:ring-dl-green-5 dark:bg-dl-tan-2 dark:text-dl-tan-9"
               tabindex="2"
             />
             <div
@@ -196,7 +196,7 @@
       >
         <div class="leading-dl-6 text-dl-2" (click)="resetPassword()">
           <a
-            class="cursor-pointer font-serif text-dl-5 font-dl-3 text-dl-green-5 hover:text-dl-green-5 dark:text-dl-green-8 dark:hover:text-dl-green-6"
+            class="cursor-pointer font-serif text-dl-5 font-extrabold italic text-dl-green-5 hover:text-dl-green-5 dark:text-dl-green-8 dark:hover:text-dl-green-6"
             [ngClass]="{
               invisible: !showPasswordReset()
             }"
@@ -215,7 +215,7 @@
           login_form.get('email')!.value === ''
         "
         style="height: 40px; width: 296px"
-        class="shadow-s inline-flex items-center justify-center rounded-full font-serif text-dl-5 font-dl-2 text-dl-tan-10 dark:text-dl-tan-1"
+        class="shadow-s inline-flex items-center justify-center rounded-full font-serif text-dl-5 font-extrabold italic text-dl-tan-10 dark:text-dl-tan-1"
         [ngClass]="{
           'cursor-pointer bg-dl-green-4 hover:bg-dl-green-5 dark:bg-dl-green-7 hover:dark:bg-dl-green-6':
             login_form.invalid === false,
@@ -247,7 +247,7 @@
     >
       New here?
       <a
-        class="ml-dl-2 cursor-pointer font-serif text-dl-5 font-dl-3 leading-dl-2 text-dl-green-5 dark:text-dl-green-8"
+        class="ml-dl-2 cursor-pointer font-serif text-dl-5 font-extrabold italic leading-dl-2 text-dl-green-5 dark:text-dl-green-8"
         routerLink="/register"
         tabindex="4"
         >Create an account</a
