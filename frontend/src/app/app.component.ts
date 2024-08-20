@@ -58,6 +58,7 @@ export class AppComponent {
     '/products',
     '/web',
     '/admin',
+    '/update',
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
@@ -161,7 +162,7 @@ export class AppComponent {
       });
     });
 
-    // listen for dark mode changes in app!
+    // listen for dark mode changes in app
     this.store.select(selectProfile).subscribe((profile) => {
       if (profile) {
         const darkMode = profile.darkMode;
@@ -302,18 +303,23 @@ export class AppComponent {
   }
 
   checkForAppUpdate = async () => {
-    // if platform is not android, return
-    if (Capacitor.getPlatform() !== 'android') {
+    // if platform is not mobile, return
+    if (!Capacitor.isNativePlatform()) {
       return;
     }
+    const platform = Capacitor.getPlatform();
     const currentVersion = await this.getCurrentAppVersion();
     const availableVersion = await this.getAvailableAppVersion();
-    // if update is available, perform immediate update
     console.log('CURRENT VERSION: ', currentVersion);
     console.log('AVAILABLE VERSION: ', availableVersion);
+
     if (currentVersion !== availableVersion) {
-      console.log('PERFORMING ANDROID IMMEDIATE UPDATE');
-      this.performImmediateUpdate();
+      console.log('VERSION OUTDATED, PROMPTING FOR UPDATE');
+      if (platform === 'android') {
+        this.promptForUpdate();
+      } else if (platform === 'ios') {
+        this.promptForUpdate();
+      }
     }
   };
 
@@ -335,13 +341,18 @@ export class AppComponent {
     }
   };
 
-  performImmediateUpdate = async () => {
-    const result = await AppUpdate.getAppUpdateInfo();
-    if (result.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE) {
-      return;
-    }
-    if (result.immediateUpdateAllowed) {
-      await AppUpdate.performImmediateUpdate();
-    }
+  // performImmediateUpdate = async () => {
+  //   const result = await AppUpdate.getAppUpdateInfo();
+  //   if (result.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE) {
+  //     return;
+  //   }
+  //   if (result.immediateUpdateAllowed) {
+  //     await AppUpdate.performImmediateUpdate();
+  //   }
+  // };
+
+  promptForUpdate = async () => {
+    // route to update route
+    this.router.navigate(['/update']);
   };
 }

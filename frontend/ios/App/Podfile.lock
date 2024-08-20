@@ -1,5 +1,5 @@
 PODS:
-  - AparajitaCapacitorDarkMode (5.0.1):
+  - AparajitaCapacitorDarkMode (5.0.2):
     - Capacitor
   - AppAuth (1.7.4):
     - AppAuth/Core (= 1.7.4)
@@ -7,35 +7,37 @@ PODS:
   - AppAuth/Core (1.7.4)
   - AppAuth/ExternalUserAgent (1.7.4):
     - AppAuth/Core
-  - Capacitor (5.7.5):
+  - Capacitor (6.1.1):
     - CapacitorCordova
-  - CapacitorApp (5.0.6):
+  - CapacitorApp (6.0.0):
     - Capacitor
-  - CapacitorBrowser (5.1.1-nightly-20231108T150452.0):
+  - CapacitorBrowser (6.0.1):
     - Capacitor
-  - CapacitorCamera (5.0.8):
+  - CapacitorCamera (6.0.1):
     - Capacitor
-  - CapacitorClipboard (5.0.7):
+  - CapacitorClipboard (6.0.0):
     - Capacitor
   - CapacitorCommunityFacebookLogin (5.0.3):
     - Capacitor
     - FBSDKCoreKit (= 16.1.3)
     - FBSDKLoginKit (= 16.1.3)
-  - CapacitorCordova (5.7.5)
-  - CapacitorPluginGlassfy (3.3.4):
+  - CapacitorCordova (6.1.1)
+  - CapacitorPluginGlassfy (4.0.0):
     - Capacitor
     - Glassfy (= 1.4.0)
     - GlassfyGlue (= 1.4.5)
-  - CapacitorPushNotifications (5.1.1):
+  - CapacitorPushNotifications (6.0.1):
     - Capacitor
-  - CapacitorShare (5.0.7):
+  - CapacitorShare (6.0.1):
     - Capacitor
-  - CapacitorStatusBar (5.0.7):
+  - CapacitorStatusBar (6.0.0):
+    - Capacitor
+  - CapawesomeCapacitorAppUpdate (6.0.0):
     - Capacitor
   - CodetrixStudioCapacitorGoogleAuth (0.0.1):
     - Capacitor
     - GoogleSignIn (~> 6.2.4)
-  - CordovaPlugins (5.6.0):
+  - CordovaPlugins (6.1.1):
     - CapacitorCordova
   - FBAEMKit (16.1.3):
     - FBSDKCoreKit_Basics (= 16.1.3)
@@ -110,7 +112,7 @@ PODS:
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
   - GTMSessionFetcher/Core (2.3.0)
-  - HugotomaziCapacitorNavigationBar (3.0.0):
+  - HugotomaziCapacitorNavigationBar (4.0.1):
     - Capacitor
   - nanopb (2.30910.0):
     - nanopb/decode (= 2.30910.0)
@@ -118,6 +120,12 @@ PODS:
   - nanopb/decode (2.30910.0)
   - nanopb/encode (2.30910.0)
   - PromisesObjC (2.4.0)
+  - PurchasesHybridCommon (13.0.0):
+    - RevenueCat (= 5.2.2)
+  - RevenueCat (5.2.2)
+  - RevenuecatPurchasesCapacitor (9.0.0):
+    - Capacitor
+    - PurchasesHybridCommon (= 13.0.0)
 
 DEPENDENCIES:
   - "AparajitaCapacitorDarkMode (from `../../node_modules/@aparajita/capacitor-dark-mode`)"
@@ -132,10 +140,12 @@ DEPENDENCIES:
   - "CapacitorPushNotifications (from `../../node_modules/@capacitor/push-notifications`)"
   - "CapacitorShare (from `../../node_modules/@capacitor/share`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - "CapawesomeCapacitorAppUpdate (from `../../node_modules/@capawesome/capacitor-app-update`)"
   - "CodetrixStudioCapacitorGoogleAuth (from `../../node_modules/@codetrix-studio/capacitor-google-auth`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - Firebase/Messaging
   - "HugotomaziCapacitorNavigationBar (from `../../node_modules/@hugotomazi/capacitor-navigation-bar`)"
+  - "RevenuecatPurchasesCapacitor (from `../../node_modules/@revenuecat/purchases-capacitor`)"
 
 SPEC REPOS:
   trunk:
@@ -158,6 +168,8 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
+    - PurchasesHybridCommon
+    - RevenueCat
 
 EXTERNAL SOURCES:
   AparajitaCapacitorDarkMode:
@@ -184,29 +196,34 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/share"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CapawesomeCapacitorAppUpdate:
+    :path: "../../node_modules/@capawesome/capacitor-app-update"
   CodetrixStudioCapacitorGoogleAuth:
     :path: "../../node_modules/@codetrix-studio/capacitor-google-auth"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
   HugotomaziCapacitorNavigationBar:
     :path: "../../node_modules/@hugotomazi/capacitor-navigation-bar"
+  RevenuecatPurchasesCapacitor:
+    :path: "../../node_modules/@revenuecat/purchases-capacitor"
 
 SPEC CHECKSUMS:
-  AparajitaCapacitorDarkMode: 01c1c60c0b330fe1113f68ee09c5857776edd24c
+  AparajitaCapacitorDarkMode: 28e1819fcd1859686171eca38e121015826d22d6
   AppAuth: 182c5b88630569df5acb672720534756c29b3358
-  Capacitor: 7d42085cb786b2d3ea9ac8a17ebd7e3305be7b72
-  CapacitorApp: 024e1b1bea5f883d79f6330d309bc441c88ad04a
-  CapacitorBrowser: c0caab992a8ee05f3368f27fcccea5124b0a4462
-  CapacitorCamera: 4be26c04b35e01f5e7ceb0fcaeafd7dc19b448e0
-  CapacitorClipboard: 45e5e25f2271f98712985d422776cdc5a779cca1
+  Capacitor: 8941aba4364ba9d1b22188569001f2ce45cc2b00
+  CapacitorApp: 9d53aec7101f7b030a950c5bdc4df8612576b279
+  CapacitorBrowser: 473c7fd70ddbe541608ff09ec1be14da0078279e
+  CapacitorCamera: 3b77b3e8311b98220de65e63445c0e4d0b30ce3a
+  CapacitorClipboard: 80282f684154124b9019ebf401235b70b0cf4994
   CapacitorCommunityFacebookLogin: c0e2bb54cb567d90443a80ae20569fdac0df3f89
-  CapacitorCordova: c946a6052b547e1e185fc46862003f7b9130ead1
-  CapacitorPluginGlassfy: b3fabae488929afe1a7cc42aa2104a98d9fc5db2
-  CapacitorPushNotifications: 2327900bc002f5ff49ee6d2231796d0635b4a1b0
-  CapacitorShare: c6a1ebbf0114ff9e863b966cd6052678fa25d480
-  CapacitorStatusBar: f390fbb49b82ffb754ea4b3cf71dc8b048baf3e7
+  CapacitorCordova: 8f2cc8d8d3619c566e9418fe8772064a94266106
+  CapacitorPluginGlassfy: fff3790bdd1c3b46dd15544e2792bfbe4ecf7d0d
+  CapacitorPushNotifications: 293fabe42c7229756078e81f2d3a60394ba4e5d8
+  CapacitorShare: 02222f2457ff003e642370a9c1ecd101baaa27c8
+  CapacitorStatusBar: 2e4369f99166125435641b1908d05f561eaba6f6
+  CapawesomeCapacitorAppUpdate: 3c05b5c8e42f9c6a88d666093406e9336d9bfdb1
   CodetrixStudioCapacitorGoogleAuth: fcce058390347c1ce5d8ac4764bdf1f5c1ee233b
-  CordovaPlugins: af720891c2ab245218e3626fe90551bc7380e2ae
+  CordovaPlugins: 66fd89535ee4dee6875cbbbb4c5ebd6ef5a3bd96
   FBAEMKit: af2972f39bb0f3f7c45998f435b007833c32ffb2
   FBSDKCoreKit: 19e2e18b3be578d7a51fed8fdd8c152bef0b9511
   FBSDKCoreKit_Basics: dd9826ce3c9fd9f8cdf8dbbd0ef0a53e6c0c9e7e
@@ -223,10 +240,13 @@ SPEC CHECKSUMS:
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
-  HugotomaziCapacitorNavigationBar: 5cad666e36f4292aa4e0b71bb3e15a39ffa9eefc
+  HugotomaziCapacitorNavigationBar: 57d7cd51c65ef5e40159bafb0095ee99fab432ba
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  PurchasesHybridCommon: ebf821766759155e09b710baa73264a37a4e62f0
+  RevenueCat: ba985d80069c1c4b9c9e0763f1852f2a0bdcc2d6
+  RevenuecatPurchasesCapacitor: 5f3cd0572ba0c58cbe18a1ec020d306c7a6d08e2
 
-PODFILE CHECKSUM: ceefe06f34465a701bc89c5344e87711436b1e28
+PODFILE CHECKSUM: 76b4f14e60751b9477d486c3ce8175766adf1427
 
 COCOAPODS: 1.15.2
