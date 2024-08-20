@@ -30,13 +30,7 @@ module.exports = {
   theme: {
     fontFamily: {
       sans: ["Poppins", "sans-serif"],
-      serif: [
-        ['"Noto Serif"', "serif"],
-        {
-          fontStyle: "italic",
-          fontWeight: "600",
-        },
-      ],
+      serif: ['"Noto Serif"', "serif"],
       body: ["Montserrat", "sans-serif"],
     },
     screens: {
