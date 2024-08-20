@@ -70,12 +70,12 @@
             </svg> -->
             <img [src]="servings()" alt="Servings Icon" class="h-8 w-8" />
             <span
-              class="ml-dl-1 font-body text-dl-5 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
+              class="ml-dl-2 font-body text-dl-6 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
               >{{ recipe().servings }}</span
             >
           </div>
           <!--Subscriber Count-->
-          <div class="ml-dl-5 mr-dl-2 flex">
+          <div class="ml-dl-5 mr-dl-2 flex" *ngIf="subscriptions().length > 0">
             <!-- <svg
               height="512"
               viewBox="0 0 24 24"
@@ -93,7 +93,7 @@
             </svg> -->
             <img [src]="social()" alt="Social Icon" class="h-8 w-8" />
             <span
-              class="ml-dl-1 font-body text-dl-5 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
+              class="ml-dl-2 font-body text-dl-6 font-dl-2 leading-dl-2 text-dl-tan-4 dark:text-dl-tan-9"
               >{{ subscriptions().length }}</span
             >
           </div>
