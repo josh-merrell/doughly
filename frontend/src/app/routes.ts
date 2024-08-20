@@ -37,12 +37,17 @@ import { YourPremiumComponent } from './account/feature/products/ui/your-premium
 import { WebPageComponent } from './webpage/web-page/web-page.component';
 import { AdminComponent } from './shared/ui/admin/admin.component';
 import { YourLifetimeComponent } from './account/feature/products/ui/your-lifetime/your-lifetime.component';
+import { UpdateComponent } from './update/update.component';
 
 export const routes: Route[] = [
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
+  },
+  {
+    path: 'update',
+    component: UpdateComponent,
   },
   {
     path: 'admin',
