@@ -92,7 +92,7 @@
         *ngIf="selectedIngredient().ingredientID !== 0 && isLoading === false"
         id="add-button"
         type="button"
-        class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 transition-all duration-200 ease-in-out"
+        class="shadow-s font serif h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 text-dl-5 font-bold italic transition-all duration-200 ease-in-out"
         (click)="onSubmit()"
         [disabled]="!form.valid || form.pristine"
         [ngClass]="{
@@ -110,7 +110,7 @@
   <button
     type="button"
     *ngIf="isLoading === false"
-    class="mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 font-serif text-dl-5 font-dl-3 text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
+    class="font serif mt-dl-3 h-dl-5 w-full justify-center rounded-dl-1 bg-dl-tan-10 px-dl-3 py-dl-1 text-dl-5 font-bold italic text-dl-tan-1 shadow-sm ring-1 ring-inset ring-dl-tan-7 dark:bg-dl-tan-1 dark:text-dl-tan-10"
     (click)="onCancel()"
   >
     Cancel

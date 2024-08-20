@@ -35,7 +35,7 @@
     <button
       type="button"
       [disabled]="searchedQuery() === searchFilter()"
-      class="block whitespace-nowrap rounded-dl-2 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-dl-3 shadow-sm transition-all duration-200 ease-in-out"
+      class="font serif block whitespace-nowrap rounded-dl-2 px-dl-3 py-dl-1 text-center text-dl-5 font-bold font-dl-3 italic shadow-sm transition-all duration-200 ease-in-out"
       [ngClass]="{
         'bg-dl-tan-7 text-dl-tan-2 dark:border-dl-tan-3 dark:bg-dl-tan-3 dark:text-dl-tan-8':
           searchedQuery() === searchFilter(),
@@ -74,7 +74,7 @@
     <div class="mt-dl-3 flex w-full justify-between pb-dl-3">
       <button
         type="button"
-        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center font-serif text-dl-5 font-dl-3 text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
+        class="font serif block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-bold font-dl-3 italic text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
         [ngClass]="{
           'bg-dl-pinknew-4 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             buttonTexts()[selectedCard()].followButton === 'Follow',
@@ -88,7 +88,7 @@
       </button>
       <button
         type="button"
-        class="block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center font-serif text-dl-5 font-dl-3 text-dl-pinknew-4 shadow-sm dark:text-dl-pinknew-7"
+        class="font serif block w-2/5 whitespace-nowrap rounded-dl-1 py-dl-1 text-center text-dl-5 font-bold font-dl-3 italic text-dl-pinknew-4 shadow-sm dark:text-dl-pinknew-7"
         (click)="onFriendButtonClick()"
         [ngClass]="{
           'bg-dl-pinknew-4 text-dl-tan-10 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
@@ -108,7 +108,7 @@
   </div>
   <!-- Exit Button -->
   <button
-    class="absolute right-3 top-2 rounded-full bg-dl-tan-9 px-dl-2 py-dl-1 font-serif dark:bg-dl-tan-2"
+    class="font serif absolute right-3 top-2 rounded-full bg-dl-tan-9 px-dl-2 py-dl-1 font-bold italic dark:bg-dl-tan-2"
     (click)="onExitClick()"
     type="button"
   >
