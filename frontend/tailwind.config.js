@@ -34,8 +34,7 @@ module.exports = {
         '"Noto Serif"',
         "serif",
         {
-          "font-weight": "600",
-          "font-style": "italic",
+          fontVariationSettings: "'wght' 600, 'ital' 1",
         },
       ],
       body: ["Montserrat", "sans-serif"],
