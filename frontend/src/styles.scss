@@ -5,7 +5,6 @@
 // Poppins for sans-serif font (primary), DM Serif Dispaly for serif font (action), Montserrat for socondary font (body), Noto Serif for serif replacement (action)
 @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@1,600&family=Poppins:wght@500&display=swap");
 
-
 // Define the primary, accent, and warning palettes for light theme
 $my-primary: mat.define-palette(mat.$grey-palette, 200);
 $my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
