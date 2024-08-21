@@ -23,11 +23,11 @@
       >
         <!-- Subscription Page -->
         <div
-          class="relative flex flex-col px-dl-0 pb-dl-3"
+          class="relative flex flex-col px-dl-0 pb-dl-1"
           (click)="navigateToProducts()"
         >
           <ng-lottie
-            containerClass="pb-dl-4"
+            containerClass="pb-dl-1"
             height="57px"
             width="57px"
             (animationCreated)="animationCreated($event)"
@@ -35,7 +35,7 @@
             [options]="animationOptions"
           />
           <a
-            class="absolute -top-1 right-0 font-sans text-dl-4 font-dl-3"
+            class="absolute top-0 right-0 font-sans text-dl-4 font-dl-3"
             [ngClass]="{
               'text-dl-red-3 dark:text-dl-red-7': creditCountRed(),
               'text-dl-tan-1 dark:text-dl-tan-10': !creditCountRed()
@@ -139,13 +139,13 @@
         <!-- Profile dropdown -->
         <div
           *ngIf="authService.profile() as profile"
-          class="relative pb-dl-3 pr-dl-3"
+          class="relative pb-dl-1 pr-dl-3"
         >
           <div>
             <button
               type="button"
               (click)="toggleMenu($event)"
-              class="flex rounded-full pb-dl-5 text-sm"
+              class="flex rounded-full pb-dl-3 text-sm"
               id="user-menu-button"
               aria-expanded="false"
               aria-haspopup="true"
