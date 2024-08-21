@@ -85,14 +85,19 @@ export class PublicRecipeComponent {
   enhancedIngredients = computed(() => {
     const recipeIngredients = this.recipeIngredients();
     const ingredients = this.ingredients();
-    if (!recipeIngredients || !ingredients) return [];
+    if (
+      !recipeIngredients ||
+      !ingredients ||
+      recipeIngredients.length !== ingredients.length
+    )
+      return [];
     const newIngredients: any[] = [];
     for (const ingredient of ingredients) {
       const ri = recipeIngredients.find(
         (ri) => ri.ingredientID === ingredient.ingredientID
       );
       if (!ri) {
-        return null;
+        continue;
       }
       newIngredients.push({
         ...ingredient,
@@ -102,12 +107,19 @@ export class PublicRecipeComponent {
         measurement: ri.measurement,
         measurementUnit: ri.measurementUnit,
       });
+
+      // now remove the item from the recipeIngredients array
+      const index = recipeIngredients.findIndex(
+        (ri) => ri.ingredientID === ingredient.ingredientID
+      );
+      recipeIngredients.splice(index, 1);
     }
     return newIngredients;
   });
   displayIngredientsByComponent: Signal<displayIngredientsByComponent> =
     computed(() => {
       const enhancedIngredients = this.enhancedIngredients();
+      // console.log(`ENHANCED INGREDIENTS: `, enhancedIngredients);
       if (!enhancedIngredients) return [];
 
       const mappedIngredients = enhancedIngredients.map((i) => {
@@ -141,15 +153,6 @@ export class PublicRecipeComponent {
       });
 
       mappedIngredients.sort((a, b) => a.name.localeCompare(b.name));
-      /**
-    displayIngredientsByComponent: {
-      noComponent: [mappedIngredients],
-      components: {
-        sauce: [mappedSauceIngredients],
-        filling: [mappedFillingIngredients],
-      }
-    }
-    **/
       const displayIngredientsByComponent: any = {
         noComponent: [],
         components: {},
@@ -213,19 +216,6 @@ export class PublicRecipeComponent {
     private modalService: ModalService,
     public extraStuffService: ExtraStuffService
   ) {
-    // handle onboarding
-    // ** OLD ONBOARDING **
-    // effect(
-    //   () => {
-    //     const profile = this.profile();
-    //     if (!profile || profile.onboardingState === 0) return;
-    //     if (!this.onboardingModalOpen() && this.reopenOnboardingModal()) {
-    //       this.onboardingHandler(profile.onboardingState);
-    //     }
-    //   },
-    //   { allowSignalWrites: true }
-    // );
-
     // if user is the author, redirect to the recipe page
     effect(() => {
       const recipeID = this.recipeID();
