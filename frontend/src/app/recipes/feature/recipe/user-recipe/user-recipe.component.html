@@ -441,7 +441,7 @@
       *ngIf="displayIngredientsByComponent()"
       class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg bg-dl-tan-10 pb-dl-5 shadow-md dark:bg-dl-tan-2"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between pt-dl-3">
         <p
           class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-10"
         >
@@ -518,7 +518,7 @@
         <div class="flex w-full flex-col items-center">
           <!-- Italic Label with component name -->
           <span
-            class="font-body text-dl-5 font-dl-3 italic text-dl-tan-5 dark:text-dl-tan-8"
+            class="font-body text-dl-5 font-dl-3 italic text-dl-green-5 dark:text-dl-green-8"
             >for {{ component.key }}</span
           >
 
@@ -573,7 +573,7 @@
       [ngClass]="{ 'h-dl-5': !toolsExpanded() }"
       class="mx-dl-5 mt-dl-5 flex flex-col rounded-lg bg-dl-tan-10 pb-dl-5 shadow-md transition-all duration-200 ease-in-out dark:bg-dl-tan-2"
     >
-      <div class="relative flex justify-between" *ngIf="!toolsExpanded()">
+      <div class="relative flex pt-dl-3 justify-between" *ngIf="!toolsExpanded()">
         <p
           class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
         >
@@ -593,7 +593,7 @@
           />
         </svg>
       </div>
-      <div class="flex items-center justify-between" *ngIf="toolsExpanded()">
+      <div class="flex items-center pt-dl-3 justify-between" *ngIf="toolsExpanded()">
         <p
           class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
         >
@@ -643,7 +643,7 @@
       *ngIf="displaySteps()"
       class="mx-dl-5 mb-dl-2 mt-dl-5 flex flex-col items-center rounded-lg bg-dl-tan-10 pb-dl-5 shadow-md dark:bg-dl-tan-2"
     >
-      <div class="mb-dl-4 flex w-full items-center justify-between">
+      <div class="mb-dl-4 flex w-full items-center pt-dl-3 justify-between">
         <p
           class="mb-dl-3 pl-dl-3 pt-dl-1 font-sans text-dl-6 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
         >
