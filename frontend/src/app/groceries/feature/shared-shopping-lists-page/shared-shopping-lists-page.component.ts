@@ -153,12 +153,16 @@ export class SharedShoppingListsPageComponent {
         itemsToSave.push({
           shoppingListIngredientID: ingr.shoppingListIngredientID,
           ingredientID: ingr.ingredientID,
-          purchasedMeasurement: ingr.purchasedMeasurement,
+          purchasedMeasurement: this.Math.floor(ingr.purchasedMeasurement),
           purchasedUnit: ingr.needUnit,
         });
       }
       if (ingr.ingredientID === ingredientID) {
-        return { ...ingr, purchasedMeasurement: newAmount, valueValid };
+        return {
+          ...ingr,
+          purchasedMeasurement: this.Math.floor(newAmount),
+          valueValid,
+        };
       }
       return { ...ingr, valueValid };
     });
@@ -300,7 +304,10 @@ export class SharedShoppingListsPageComponent {
                       true
                     );
                   } else {
-                    this.sendPushNotification(selectedList.friend.userID, itemsToSave.length);
+                    this.sendPushNotification(
+                      selectedList.friend.userID,
+                      itemsToSave.length
+                    );
                     this.modalService.open(
                       ConfirmationModalComponent,
                       {
@@ -338,7 +345,7 @@ export class SharedShoppingListsPageComponent {
         'notifyFriendListProgress',
         {
           purchasedBy: this.profile()!.username,
-          itemCount
+          itemCount,
         }
       )
       .subscribe(
