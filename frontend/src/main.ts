@@ -14,6 +14,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
+import {
+  provideCacheableAnimationLoader,
+  provideLottieOptions,
+} from 'ngx-lottie';
+import player from 'lottie-web';
 
 // Services
 import { authInterceptor } from './app/shared/utils/authInterceptor';
@@ -59,11 +64,6 @@ import { ShoppingListIngredientReducer } from './app/groceries/state/shopping-li
 import { ShoppingListIngredientEffects } from './app/groceries/state/shopping-list-ingredient-effects';
 import { MessageReducer } from './app/footer/state/message-reducers';
 import { MessageEffects } from './app/footer/state/message-effects';
-import {
-  provideCacheableAnimationLoader,
-  provideLottieOptions,
-} from 'ngx-lottie';
-import player from 'lottie-web';
 
 bootstrapApplication(AppComponent, {
   providers: [
