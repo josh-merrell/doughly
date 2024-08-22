@@ -26,11 +26,13 @@ import { ShoppingListActions } from '../../state/shopping-list-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
+
 
 @Component({
   selector: 'dl-shared-shopping-lists-page',
   standalone: true,
-  imports: [CommonModule, ImageFromCDN, MatProgressSpinnerModule, FormsModule],
+  imports: [CommonModule, ImageFromCDN, MatProgressSpinnerModule, FormsModule, NgAutoAnimateDirective],
   templateUrl: './shared-shopping-lists-page.component.html',
 })
 export class SharedShoppingListsPageComponent {

@@ -56,6 +56,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { selectSharedShoppingLists } from '../../state/sharedShoppingLists/shared-shopping-list-selectors';
+import { NgAutoAnimateDirective } from 'ng-auto-animate'; 
 
 @Component({
   selector: 'dl-draft-page',
@@ -65,6 +66,7 @@ import { selectSharedShoppingLists } from '../../state/sharedShoppingLists/share
     RecipeCardComponent,
     AddShoppingListRecipeModalComponent,
     MatProgressSpinnerModule,
+    NgAutoAnimateDirective
   ],
   templateUrl: './draft-page.component.html',
 })

@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { GLOBAL_AUTO_ANIMATE_OPTIONS } from 'ng-auto-animate';
 import 'hammerjs';
 import {
   provideCacheableAnimationLoader,
@@ -129,5 +130,14 @@ bootstrapApplication(AppComponent, {
       MatNativeDateModule,
       BrowserAnimationsModule
     ),
+    // Global Auto Animate Options
+    {
+      provide: GLOBAL_AUTO_ANIMATE_OPTIONS,
+      useValue: {
+        duration: 250,
+        easing: 'ease-in-out',
+        // etc.
+      },
+    },
   ],
 }).catch((err) => console.error(err));

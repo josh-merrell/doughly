@@ -28,11 +28,12 @@ import { AddToolStockModalComponent } from '../Inventory/feature/tool-inventory/
 import { ToolDetailsModalComponent } from './ui/tool-details-modal/tool-details-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
 
 @Component({
   selector: 'dl-tools',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgAutoAnimateDirective],
   templateUrl: './tools.component.html',
 })
 export class ToolsComponent {
@@ -160,12 +161,16 @@ export class ToolsComponent {
   }
 
   toolCardClick(tool: any) {
-    this.modalService.open(ToolDetailsModalComponent, {
-      data: {
-        tool: tool,
+    this.modalService.open(
+      ToolDetailsModalComponent,
+      {
+        data: {
+          tool: tool,
+        },
+        width: '75%',
       },
-      width: '75%',
-    }, 1);
+      1
+    );
   }
 
   toolCardTouchStart(toolID: number) {

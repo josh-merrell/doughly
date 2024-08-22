@@ -32,11 +32,12 @@ import { DeleteRecipeToolModalComponent } from '../delete-recipe-tool-modal/dele
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
 
 @Component({
   selector: 'dl-recipe-tools-modal',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatProgressSpinnerModule, NgAutoAnimateDirective],
   templateUrl: './recipe-tools-modal.component.html',
 })
 export class RecipeToolsModalComponent {

@@ -41,6 +41,7 @@ import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
 
 interface displayIngredientsByComponent {
   noComponent: any[];
@@ -57,6 +58,7 @@ interface displayIngredientsByComponent {
     MatProgressSpinnerModule,
     SubscribeRecipeModalComponent,
     ImageFromCDN,
+    NgAutoAnimateDirective,
   ],
   templateUrl: './public-recipe.component.html',
 })
