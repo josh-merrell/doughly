@@ -1,8 +1,4 @@
-import {
-  HttpEvent,
-  HttpHandlerFn,
-  HttpRequest,
-} from '@angular/common/http';
+import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { Observable, from, mergeMap } from 'rxjs';
 import { createClient, Session } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';

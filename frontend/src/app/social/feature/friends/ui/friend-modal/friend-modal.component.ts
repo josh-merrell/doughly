@@ -44,6 +44,7 @@ import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
 
 @Component({
   selector: 'dl-friend-modal',
@@ -54,6 +55,7 @@ import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
     RecipeCardComponent,
     TimelineComponent,
     ImageFromCDN,
+    NgAutoAnimateDirective,
   ],
   templateUrl: './friend-modal.component.html',
 })
@@ -550,7 +552,7 @@ export class FriendModalComponent {
         }
         return null;
       case 'notifyRequestFriendship':
-        console.log('Sending push notification to requested friend')
+        console.log('Sending push notification to requested friend');
         this.pushTokenService
           .sendPushNotificationToUserNoCheck(
             this.friend.userID,

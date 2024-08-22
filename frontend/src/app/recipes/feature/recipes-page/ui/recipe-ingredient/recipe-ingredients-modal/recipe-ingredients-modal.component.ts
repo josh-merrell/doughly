@@ -40,11 +40,13 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { EditRecipeIngredientModalComponent } from '../edit-recipe-ingredient-modal/edit-recipe-ingredient-modal.component';
 import { ModalService } from 'src/app/shared/utils/modalService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate'; 
+
 
 @Component({
   selector: 'dl-recipe-ingredients-modal',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatProgressSpinnerModule, NgAutoAnimateDirective],
   templateUrl: './recipe-ingredients-modal.component.html',
 })
 export class RecipeIngredientsModalComponent {

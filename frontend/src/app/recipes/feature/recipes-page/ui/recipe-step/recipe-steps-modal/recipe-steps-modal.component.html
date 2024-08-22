@@ -23,8 +23,12 @@
     class="flex h-full w-full flex-grow flex-col overflow-y-auto"
   >
     <!--List of Recipe Steps-->
-    <div class="mb-dl-4 flex w-full flex-grow flex-col overflow-y-auto">
+    <div
+      auto-animate
+      class="mb-dl-4 flex w-full flex-grow flex-col overflow-y-auto"
+    >
       <div
+        auto-animate
         cdkDropList
         (cdkDropListDropped)="onDrop($event)"
         class="mb-dl-2 flex w-full flex-col items-start"

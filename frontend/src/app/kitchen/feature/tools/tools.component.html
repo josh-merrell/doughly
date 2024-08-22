@@ -52,11 +52,12 @@
   <!-- Tool Rows -->
   <div
     #recipeContainer
+    auto-animate
     class="tool-container mb-dl-2 flex w-full flex-grow flex-col items-center overflow-y-auto overflow-x-hidden scroll-smooth"
     (scroll)="checkToolScroll($event.target)"
   >
     <!-- Tool Card -->
-    <div class="grid w-full grid-cols-2 gap-3">
+    <div auto-animate class="grid w-full grid-cols-2 gap-3">
       <div
         *ngFor="let tool of displayTools$ | async; let i = index"
         class="tool-card relative flex h-dl-7 flex-col justify-between rounded-dl-1 px-dl-3 py-dl-2 shadow-md"

@@ -13,10 +13,12 @@
   </div>
   <!-- Day Category List -->
   <div
+    auto-animate
     class="relative mb-dl-3 flex w-full flex-col items-center overflow-y-auto"
     #dayCategoryListContainer
   >
     <div
+      auto-animate
       class="flex w-full flex-col items-center"
       *ngFor="let category of dayCategories(); let i = index"
       (click)="scroll(target)"
@@ -97,6 +99,7 @@
     #worldCategoryListContainer
   >
     <div
+      auto-animate
       class="flex w-full flex-col items-center"
       *ngFor="let category of worldCategories(); let i = index"
       (click)="scroll(target)"

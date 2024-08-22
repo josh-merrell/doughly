@@ -14,7 +14,10 @@
     class="flex h-full w-full flex-grow flex-col overflow-y-auto"
   >
     <!--List of Recipe Ingredients-->
-    <div class="mb-dl-5 flex w-full flex-grow flex-col overflow-y-auto px-dl-3">
+    <div
+      auto-animate
+      class="mb-dl-5 flex w-full flex-grow flex-col overflow-y-auto px-dl-3"
+    >
       <p
         *ngIf="displayNeedsReview().length"
         class="font-body text-dl-4 font-dl-3 text-dl-yellow-4 dark:text-dl-yellow-7"

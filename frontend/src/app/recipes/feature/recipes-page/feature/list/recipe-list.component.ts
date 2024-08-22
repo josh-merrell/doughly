@@ -42,6 +42,8 @@ import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
+import { NgAutoAnimateDirective } from 'ng-auto-animate'; 
+
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -58,7 +60,7 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
 @Component({
   selector: 'dl-recipe-list',
   standalone: true,
-  imports: [CommonModule, RecipeCategoryCardComponent, RecipeCardComponent],
+  imports: [CommonModule, RecipeCategoryCardComponent, RecipeCardComponent, NgAutoAnimateDirective],
   templateUrl: './recipe-list.component.html',
 })
 export class RecipeListComponent {
