@@ -20,7 +20,7 @@
       <div
         class="relative mb-dl-2 flex max-h-dl-10 flex-col items-center overflow-y-auto"
       >
-        <div class="flex flex-col items-center">
+        <div auto-animate class="flex flex-col items-center">
           <dl-recipe-card
             *ngFor="let recipe of displayRecipes()"
             (click)="recipeCardClick(recipe)"
@@ -68,7 +68,7 @@
         >
           Planned Recipe Items
         </p>
-        <div class="flex min-h-dl-2 flex-wrap overflow-y-auto rounded-dl-3">
+        <div auto-animate class="flex min-h-dl-2 flex-wrap overflow-y-auto rounded-dl-3">
           @for (item of displaySLRecipeIngr(); track item.ingredientName) {
           <div
             class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-1 dark:bg-dl-tan-2"
@@ -104,7 +104,7 @@
         >
           Other Items
         </p>
-        <div class="flex flex-wrap overflow-y-auto rounded-dl-3">
+        <div auto-animate class="flex flex-wrap overflow-y-auto rounded-dl-3">
           @for (item of displaySLStandaloneIngr(); track item.ingredientID) {
           <div
             (click)="standaloneIngredientCardClick(item)"

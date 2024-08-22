@@ -63,6 +63,7 @@ import { StringsService } from 'src/app/shared/utils/strings';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -82,6 +83,7 @@ interface displayIngredientsByComponent {
     MatNativeDateModule,
     ProfileCardComponent,
     ImageFromCDN,
+    NgAutoAnimateDirective
   ],
   templateUrl: './user-recipe.component.html',
 })

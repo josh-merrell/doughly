@@ -3,6 +3,7 @@
   <div *ngIf="!isLoading()" class="flex h-full w-full flex-col items-center">
     <!-- Horizontal List of Shared List Chips -->
     <div
+      auto-animate
       class="mt-dl-4 flex min-h-dl-7 w-full overflow-x-auto whitespace-nowrap pb-dl-3 pl-dl-3"
     >
       <div
@@ -70,6 +71,7 @@
     </div>
     <!-- List -->
     <div
+      auto-animate
       *ngIf="!isLoading()"
       class="relative mb-dl-5 flex w-full flex-grow flex-col items-center overflow-y-auto px-dl-3"
     >

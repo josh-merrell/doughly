@@ -57,6 +57,7 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
 
 interface RecipeStepToUpdate {
   recipeStepID: any; // Replace 'any' with a more specific type if possible
@@ -73,6 +74,7 @@ interface RecipeStepToUpdate {
     MatProgressSpinnerModule,
     DragDropModule,
     LottieComponent,
+    NgAutoAnimateDirective
   ],
   templateUrl: './recipe-steps-modal.component.html',
 })

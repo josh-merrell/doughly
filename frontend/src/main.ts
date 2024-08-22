@@ -13,7 +13,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { GLOBAL_AUTO_ANIMATE_OPTIONS } from 'ng-auto-animate';
 import 'hammerjs';
+import {
+  provideCacheableAnimationLoader,
+  provideLottieOptions,
+} from 'ngx-lottie';
+import player from 'lottie-web';
 
 // Services
 import { authInterceptor } from './app/shared/utils/authInterceptor';
@@ -59,11 +65,6 @@ import { ShoppingListIngredientReducer } from './app/groceries/state/shopping-li
 import { ShoppingListIngredientEffects } from './app/groceries/state/shopping-list-ingredient-effects';
 import { MessageReducer } from './app/footer/state/message-reducers';
 import { MessageEffects } from './app/footer/state/message-effects';
-import {
-  provideCacheableAnimationLoader,
-  provideLottieOptions,
-} from 'ngx-lottie';
-import player from 'lottie-web';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -129,5 +130,14 @@ bootstrapApplication(AppComponent, {
       MatNativeDateModule,
       BrowserAnimationsModule
     ),
+    // Global Auto Animate Options
+    {
+      provide: GLOBAL_AUTO_ANIMATE_OPTIONS,
+      useValue: {
+        duration: 250,
+        easing: 'ease-in-out',
+        // etc.
+      },
+    },
   ],
 }).catch((err) => console.error(err));

@@ -150,7 +150,7 @@
     <div class="flex" *ngIf="!isLoading()">
       <button
         type="button"
-        class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-dl-3 font-extrabold italic shadow-sm"
+        class="blockwhitespace-nowrap mr-dl-3 rounded-dl-1 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic shadow-sm"
         (click)="onFriendButtonClick()"
         [ngClass]="{
           'bg-dl-pinknew-3 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
@@ -166,7 +166,7 @@
       </button>
       <button
         type="button"
-        class="block whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-dl-3 font-extrabold italic text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
+        class="block whitespace-nowrap rounded-dl-1 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out dark:text-dl-tan-1"
         [ngClass]="{
           'bg-dl-pinknew-3 text-dl-tan-10 dark:border-dl-pinknew-3 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             buttonTexts().followButton === 'Follow',
@@ -216,6 +216,7 @@
 
   <!-- Recipes that don't come from me -->
   <div
+    auto-animate
     *ngIf="view === 'recipes'"
     class="mb-dl-5 flex h-dl-14 flex-col items-center overflow-y-auto"
   >
@@ -257,7 +258,11 @@
     >
   </div>
   <!-- Timeline -->
-  <div *ngIf="view === 'timeline'" class="mb-dl-5 h-dl-14 overflow-y-auto">
+  <div
+    auto-animate
+    *ngIf="view === 'timeline'"
+    class="mb-dl-5 h-dl-14 overflow-y-auto"
+  >
     <dl-timeline [logs]="logs"> </dl-timeline>
   </div>
   <!-- Exit Button -->

@@ -88,7 +88,7 @@
   <div class="relative" *ngIf="expanded">
     <img
       *ngIf="profileImageLink"
-      class="w-full object-cover rounded-b-dl-3"
+      class="w-full rounded-b-dl-3 object-cover"
       [src]="profileImageLink | imageFromCDN"
       alt="profile image"
       (click)="toggleExpand()"
@@ -150,7 +150,7 @@
     </div>
     <div *ngIf="!profile.username" class="ml-dl-5 mt-dl-4 flex flex-col">
       <span
-        class="font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="py-dl-1 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Username</span
       >
       <span
@@ -180,7 +180,7 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 px-dl-2 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="w-dl-13 rounded-dl-2 border border-dl-tan-6 px-dl-2 py-dl-1 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >First Name</span
       >
       <span
@@ -207,10 +207,10 @@
     <div
       (click)="updateProfile('name_last')"
       *ngIf="!profile.name_last"
-      class="ml-dl-5 mt-dl-4 flex flex-col w-dl-13"
+      class="ml-dl-5 mt-dl-4 flex w-dl-13 flex-col"
     >
       <span
-        class="rounded-dl-2 border border-dl-tan-6 p-dl-1 px-dl-2 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="rounded-dl-2 border border-dl-tan-6 p-dl-1 px-dl-2 py-dl-1 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >Last Name</span
       >
       <span
@@ -237,10 +237,10 @@
     <div
       (click)="updateProfile('city')"
       *ngIf="!profile.city"
-      class="ml-dl-5 mt-dl-4 flex flex-col w-dl-13"
+      class="ml-dl-5 mt-dl-4 flex w-dl-13 flex-col"
     >
       <span
-        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 py-dl-1 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >City</span
       >
       <span
@@ -256,7 +256,7 @@
       class="ml-dl-5 mt-dl-4 flex flex-col"
     >
       <span
-        class="w-dl-6 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 p-dl-1 px-dl-2 font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
+        class="w-dl-6 rounded-dl-2 border border-dl-tan-6 bg-dl-tan-10 px-dl-2 py-dl-1 font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:bg-dl-tan-2 dark:text-dl-tan-9"
         >{{ profile.state }}</span
       >
       <span
@@ -267,10 +267,10 @@
     <div
       (click)="updateProfile('state')"
       *ngIf="!profile.state"
-      class="ml-dl-5 mt-dl-4 flex flex-col w-dl-13"
+      class="ml-dl-5 mt-dl-4 flex w-dl-13 flex-col"
     >
       <span
-        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
+        class="rounded-dl-2 border border-dl-tan-6 px-dl-2 py-dl-1 font-body text-dl-5 font-dl-2 text-dl-tan-6 dark:text-dl-tan-5"
         >State</span
       >
       <span

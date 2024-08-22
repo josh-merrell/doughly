@@ -26,6 +26,7 @@ import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { StringsService } from 'src/app/shared/utils/strings';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
 @Component({
   selector: 'dl-ingredients',
   standalone: true,
@@ -33,6 +34,7 @@ import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
     CommonModule,
     AddIngredientModalComponent,
     EditIngredientModalComponent,
+    NgAutoAnimateDirective
   ],
   templateUrl: './ingredients.component.html',
 })

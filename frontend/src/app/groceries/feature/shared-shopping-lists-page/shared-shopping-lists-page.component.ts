@@ -26,11 +26,13 @@ import { ShoppingListActions } from '../../state/shopping-list-actions';
 import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.component';
 import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
+
 
 @Component({
   selector: 'dl-shared-shopping-lists-page',
   standalone: true,
-  imports: [CommonModule, ImageFromCDN, MatProgressSpinnerModule, FormsModule],
+  imports: [CommonModule, ImageFromCDN, MatProgressSpinnerModule, FormsModule, NgAutoAnimateDirective],
   templateUrl: './shared-shopping-lists-page.component.html',
 })
 export class SharedShoppingListsPageComponent {
@@ -153,12 +155,16 @@ export class SharedShoppingListsPageComponent {
         itemsToSave.push({
           shoppingListIngredientID: ingr.shoppingListIngredientID,
           ingredientID: ingr.ingredientID,
-          purchasedMeasurement: ingr.purchasedMeasurement,
+          purchasedMeasurement: this.Math.floor(ingr.purchasedMeasurement),
           purchasedUnit: ingr.needUnit,
         });
       }
       if (ingr.ingredientID === ingredientID) {
-        return { ...ingr, purchasedMeasurement: newAmount, valueValid };
+        return {
+          ...ingr,
+          purchasedMeasurement: this.Math.floor(newAmount),
+          valueValid,
+        };
       }
       return { ...ingr, valueValid };
     });
@@ -300,7 +306,10 @@ export class SharedShoppingListsPageComponent {
                       true
                     );
                   } else {
-                    this.sendPushNotification(selectedList.friend.userID, itemsToSave.length);
+                    this.sendPushNotification(
+                      selectedList.friend.userID,
+                      itemsToSave.length
+                    );
                     this.modalService.open(
                       ConfirmationModalComponent,
                       {
@@ -338,7 +347,7 @@ export class SharedShoppingListsPageComponent {
         'notifyFriendListProgress',
         {
           purchasedBy: this.profile()!.username,
-          itemCount
+          itemCount,
         }
       )
       .subscribe(

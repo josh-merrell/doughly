@@ -20,6 +20,7 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { StringsService } from 'src/app/shared/utils/strings';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { filter, take } from 'rxjs';
+import { NgAutoAnimateDirective } from 'ng-auto-animate'; 
 
 import {
   selectError,
@@ -35,7 +36,7 @@ import { ProductService } from 'src/app/shared/utils/productService';
 @Component({
   selector: 'dl-discover-recipes',
   standalone: true,
-  imports: [CommonModule, RecipeCategoryCardComponent, RecipeCardComponent],
+  imports: [CommonModule, RecipeCategoryCardComponent, RecipeCardComponent, NgAutoAnimateDirective],
   templateUrl: './discover-recipes.component.html',
 })
 export class DiscoverRecipesComponent {
