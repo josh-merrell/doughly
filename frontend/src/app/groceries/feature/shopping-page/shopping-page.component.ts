@@ -348,7 +348,7 @@ export class ShoppingPageComponent {
   onPurchasedAmountChange(ingredientID: number, newAmount: number): void {
     const updatedIngredients = this.displaySLIngr().items.map((ingr) => {
       if (ingr.ingredientID === ingredientID) {
-        return { ...ingr, purchasedMeasurement: newAmount };
+        return { ...ingr, purchasedMeasurement: this.Math.floor(newAmount) };
       }
       return ingr;
     });
