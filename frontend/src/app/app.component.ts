@@ -155,17 +155,18 @@ export class AppComponent {
         console.log('URL OPENED: ', event.url);
         if (event.url.includes('link-previews/recipe')) {
           const recipeID = event.url.split('link-previews/recipe')[1];
-          const path = `/recipe/public/${recipeID}`;
+          const path = `/recipe/public${recipeID}`;
           console.log('IOS NAVIGATING TO', path);
           this.router.navigateByUrl(path);
-        }
-        const domain = 'doughly.co';
-        const pathArray = event.url.split(domain);
-        console.log('PATH ARRAY', pathArray);
-        const appPath = pathArray.pop();
-        if (appPath) {
-          console.log('NAVIGATING TO', appPath);
-          this.router.navigateByUrl(appPath);
+        } else {
+          const domain = 'doughly.co';
+          const pathArray = event.url.split(domain);
+          console.log('PATH ARRAY', pathArray);
+          const appPath = pathArray.pop();
+          if (appPath) {
+            console.log('NAVIGATING TO', appPath);
+            this.router.navigateByUrl(appPath);
+          }
         }
       });
     });
