@@ -72,7 +72,7 @@
             *ngIf="!recipeSubscription()"
             (click)="onUpdateClick()"
             type="button"
-            class="block cursor-pointer px-dl-3 py-dl-1 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
+            class="block cursor-pointer px-dl-3 py-dl-2 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
           >
             Edit
           </button>
@@ -80,7 +80,7 @@
             *ngIf="!recipeSubscription()"
             (click)="onDeleteClick()"
             type="button"
-            class="block cursor-pointer px-dl-3 py-dl-1 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
+            class="block cursor-pointer px-dl-3 py-dl-2 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
           >
             Delete
           </button>
@@ -88,7 +88,7 @@
             *ngIf="recipeSubscription()"
             (click)="onUnsubscribeClick()"
             type="button"
-            class="ml-dl-2 block cursor-pointer rounded-dl-1 px-dl-3 py-dl-1 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-9 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
+            class="ml-dl-2 block cursor-pointer rounded-dl-1 px-dl-3 py-dl-2 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-9 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
           >
             Unsubscribe
           </button>
@@ -396,7 +396,7 @@
                 !recipeIngredientsNeedReview()
               "
               type="button"
-              class="mr-dl-2 block whitespace-nowrap rounded-dl-1 border bg-dl-pinknew-4 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 dark:hover:bg-dl-tan-2"
+              class="mr-dl-2 block whitespace-nowrap rounded-dl-1 border bg-dl-pinknew-4 px-dl-3 py-dl-2 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-10 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1 dark:hover:bg-dl-tan-2"
               (click)="useRecipe()"
             >
               Make Now!
@@ -408,7 +408,7 @@
                 profile()?.checkIngredientStock === false
               "
               type="button"
-              class="block whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-2 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
+              class="block whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-2 py-dl-2 text-center font-serif text-dl-5 font-extrabold italic text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
               (click)="viewShoppingList()"
             >
               Shopping
@@ -450,7 +450,7 @@
         <div class="flex items-center">
           <button
             *ngIf="ingredientsNeedReview() || recipeIngredientsNeedReview()"
-            class="mr-dl-3 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-yellow-4 px-dl-2 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-yellow-2 dark:border-dl-yellow-7 dark:text-dl-yellow-10"
+            class="mr-dl-3 block whitespace-nowrap rounded-dl-1 border border-dl-yellow-4 px-dl-2 py-dl-2 text-center font-serif text-dl-5 font-extrabold italic text-dl-yellow-2 dark:border-dl-yellow-7 dark:text-dl-yellow-10"
             (click)="reviewIngredients()"
           >
             Needs Review
@@ -459,7 +459,7 @@
             *ngIf="!recipeSubscription()"
             id="edit-recipe-ingredients-button"
             type="button"
-            class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
+            class="mr-dl-4 block whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-2 text-center font-serif text-dl-5 font-extrabold italic text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
             (click)="editRecipeIngredients()"
           >
             Edit
@@ -610,7 +610,7 @@
           *ngIf="!recipeSubscription()"
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
+          class="mr-dl-4 block whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 py-dl-2 text-center font-serif text-dl-5 font-extrabold italic text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
           (click)="editRecipeTools()"
         >
           Edit
@@ -660,7 +660,7 @@
           *ngIf="!recipeSubscription()"
           id="edit-recipe-tools-button"
           type="button"
-          class="mr-dl-4 block h-dl-4 whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 px-dl-3 text-center font-serif text-dl-5 font-extrabold italic text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
+          class="mr-dl-4 block whitespace-nowrap rounded-dl-1 border border-dl-pinknew-4 bg-dl-tan-10 py-dl-2 px-dl-3 text-center font-serif text-dl-5 font-extrabold italic text-dl-pinknew-4 shadow-sm transition-all duration-200 ease-in-out hover:bg-dl-tan-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dl-pinknew-6 dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9 dark:hover:bg-dl-tan-2"
           (click)="editRecipeSteps()"
         >
           Edit
