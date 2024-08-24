@@ -32,7 +32,7 @@ export class StringsService {
     subscribeOverviewBenefit2of2: `times faster with AI!`,
     subscribeChartBenefit: `Premium users get the most from thier recipes!`,
     subscribeYourPremium: `Your Premium Subscription is serving you well. Thank you for your support!`,
-    subscribeYourLifetime: `Add a Premium Subscription for monthly AI Import tokens and guaranteed data backups.`,
+    subscribeYourLifetime: `You have Lifetime access for unlimited recipes! Add a Premium Subscription for monthly AI Import tokens and guaranteed data backups.`,
     manageSubscription: `You can manage your subscription in Google Play or App Store.`,
     timeToUpgrade: `Time to upgrade your account!`,
     timeToTopUp: `Time to top up your AI Tokens!`,

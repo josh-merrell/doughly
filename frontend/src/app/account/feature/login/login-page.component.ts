@@ -44,7 +44,7 @@ declare const google: any;
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
-  imagePlaceholder: string = '/assets/icons/logo-text-only-dark.svg';
+  imagePlaceholder: string = '/assets/icons/logo-primary-dark.svg';
   public isWeb: WritableSignal<boolean> = signal(false);
   public isLoading: WritableSignal<boolean> = signal(false);
   public loginFailureMessage: WritableSignal<string> = signal('');
@@ -141,7 +141,7 @@ export class LoginPageComponent {
   ngAfterViewInit(): void {
     // check document for 'dark' class to determine if dark mode is enabled
     if (!document.body.classList.contains('dark')) {
-      this.imagePlaceholder = '/assets/icons/logo-text-only-light.svg';
+      this.imagePlaceholder = '/assets/icons/logo-primary-light.svg';
     }
   }
 

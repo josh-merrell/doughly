@@ -32,7 +32,7 @@ import { catchError, debounceTime, map, of, startWith, switchMap } from 'rxjs';
   styleUrls: ['./signup-page.component.scss'],
 })
 export class SignupPageComponent {
-  imagePlaceholder: string = '/assets/icons/logo-text-only-dark.svg';
+  imagePlaceholder: string = '/assets/icons/logo-primary-dark.svg';
   checkEmailMessage: WritableSignal<string> = signal('');
   emailErrorMessage: WritableSignal<string> = signal('');
   usernameErrorMessage: WritableSignal<string> = signal('');
