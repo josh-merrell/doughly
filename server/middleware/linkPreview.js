@@ -17,6 +17,13 @@ const userAgentRedirect = (req, res, next) => {
     if (req.url.includes('recipe')) {
       const recipeID = req.url.split('recipe/')[1];
       redirectLink = `${redirectLink}/recipe/public/${recipeID}`;
+    } else if (req.url.includes('invite')) {
+      // if mobileUserAgent is Android or Blackberry, add "play-store" to the redirect link
+      if (userAgent.includes('Android') || userAgent.includes('BlackBerry')) {
+        redirectLink = `${process.env.PLAY_STORE_LINK}`;
+      } else {
+        redirectLink = `${process.env.APP_STORE_LINK}`;
+      }
     }
     global.logger.info({ message: `*userAgentRedirect* ${req.headers['user-agent']} USER REQUEST, REDIRECTING TO ${redirectLink}`, level: 6, timestamp: new Date().toISOString(), userID: 0 });
     return res.redirect(redirectLink);

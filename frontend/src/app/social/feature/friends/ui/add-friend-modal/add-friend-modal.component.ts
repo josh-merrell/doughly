@@ -14,6 +14,7 @@ import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ProfileCardComponent } from '../profile-card/profile-card.component';
 import { FriendshipActions } from 'src/app/social/state/friendship-actions';
 import { FollowshipActions } from 'src/app/social/state/followship-actions';
+import { environment } from 'src/environments/environment';
 import {
   selectDeleting as selectDeletingFriendship,
   selectUpdating as selectUpdatingFriendship,
@@ -31,6 +32,9 @@ import { ErrorModalComponent } from 'src/app/shared/ui/error-modal/error-modal.c
 import { PushTokenService } from 'src/app/shared/utils/pushTokenService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { Clipboard } from '@capacitor/clipboard';
+import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal/confirmation-modal.component';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'dl-add-friend-modal',
@@ -157,6 +161,34 @@ export class AddFriendModalComponent {
             this.isLoading.set(false);
           });
       });
+  }
+
+  async onInvite() {
+    console.log('Share clicked');
+    await Clipboard.write({
+      // this will send the social crawler to get the link preview details for app invite. Users will be redirected to the app/play store.
+      string: `${environment.BACKEND}/link-previews/invite`,
+    });
+    let confirmationMessage = 'Link copied to clipboard! Share via Whatsapp';
+    if (Capacitor.isNativePlatform()) {
+      const platform = Capacitor.getPlatform();
+      if (platform === 'android') {
+        confirmationMessage += ' or SMS.';
+      } else if (platform === 'ios') {
+        confirmationMessage += ' or iMessage.';
+      }
+    }
+
+    this.modalService.open(
+      ConfirmationModalComponent,
+      {
+        data: {
+          confirmationMessage,
+        },
+      },
+      1,
+      true
+    );
   }
 
   onFriendButtonClick(): void {

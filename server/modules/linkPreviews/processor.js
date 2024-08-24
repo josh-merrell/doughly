@@ -70,9 +70,39 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
+  async function invitePreview() {
+    try {
+      // Generate HTML content with Open Graph meta tags
+      const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+          <head>
+              <title>Join Doughly</title>
+              <meta property='og:title' content='Join Doughly' />
+              <meta property='og:description' content='Discover, create, and share your treasured recipes. Join free now.' />
+              <meta property='og:image' content='https://s3.us-west-2.amazonaws.com/dl.images-compressed/Invite+Image.png' />
+              <meta property='og:image:width' content='772' />  
+              <meta property='og:image:height' content='404' />
+              <meta property='og:url' content='https://doughly.co/invite' />
+              <meta property='og:type' content='website' />
+              <meta charset='utf-8'>
+              <meta property='fb:app_id' content='399157002973005' />
+              <meta property='og:image:alt' content='Image for Doughly invite preview' />
+          </head>
+          <body>
+          </body>
+      </html>`;
+
+      return htmlContent;
+    } catch (err) {
+      throw errorGen(err.message || '*linkPreviews-invitePreview* Unhandled Error', err.code || 520, err.name || 'unhandledError_linkPreviews-invitePreview', err.isOperational || false, err.severity || 2);
+    }
+  }
+
   return {
     get: {
       recipePreview,
+      invitePreview,
     },
   };
 };

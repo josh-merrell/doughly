@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -7,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'dl-web-page',
@@ -16,12 +18,13 @@ import { Capacitor } from '@capacitor/core';
   styleUrl: './web-page.component.scss',
 })
 export class WebPageComponent {
+  private API_URL = `${environment.BACKEND}/web`;
   @ViewChild('video1', { static: true }) video1!: ElementRef;
   videoSource!: string;
 
   public buttonOneHover: WritableSignal<boolean> = signal(false);
 
-  constructor(private elRef: ElementRef) {
+  constructor(private elRef: ElementRef, private http: HttpClient) {
     this.setVideoSource();
   }
 
@@ -44,15 +47,15 @@ export class WebPageComponent {
   routeToStoreListing() {
     if (Capacitor.isNativePlatform()) {
       if (Capacitor.getPlatform() === 'android') {
-        // send to play store listing
-        window.open(
-          'https://play.google.com/store/apps/details?id=co.doughly.app',
-          '_blank'
-        );
+        // send to backend, it will reroute to play store
+        this.http.get(`${this.API_URL}/play-store`).subscribe();
       } else {
-        // send to app store listing
-        window.open('https://apps.apple.com/app/id6502307680', '_blank');
+        // send to backend, it will reroute to app store
+        this.http.get(`${this.API_URL}/app-store`).subscribe();
       }
+    } else {
+      // send to backend, it will reroute to app store
+      this.http.get(`${this.API_URL}/app-store`).subscribe();
     }
   }
 
