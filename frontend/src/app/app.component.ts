@@ -161,7 +161,7 @@ export class AppComponent {
         } else {
           const domain = 'doughly.co';
           const pathArray = event.url.split(domain);
-          console.log('PATH ARRAY', pathArray);
+          // console.log('PATH ARRAY', pathArray);
           const appPath = pathArray.pop();
           if (appPath) {
             console.log('NAVIGATING TO', appPath);
