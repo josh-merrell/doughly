@@ -128,7 +128,7 @@ export class SignupPageComponent {
   ngAfterViewInit(): void {
     // check document for 'dark' class to determine if dark mode is enabled
     if (!document.body.classList.contains('dark')) {
-      this.imagePlaceholder = '/assets/icons/logo-text-only-light.svg';
+      this.imagePlaceholder = '/assets/icons/logo-primary-light.svg';
     }
   }
 
