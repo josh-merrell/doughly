@@ -43,7 +43,7 @@ export class WebPageComponent {
 
   routeToStoreListing() {
     if (Capacitor.isNativePlatform()) {
-      if (Capacitor.getPlatform() !== 'android') {
+      if (Capacitor.getPlatform() === 'android') {
         // send to play store listing
         window.open(
           'https://play.google.com/store/apps/details?id=co.doughly.app',
