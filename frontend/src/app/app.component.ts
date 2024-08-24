@@ -140,6 +140,7 @@ export class AppComponent {
         this.router.navigate(['/recipes/discover']);
       });
     });
+    // Listen for link events
     App.addListener('appUrlOpen', async (event: URLOpenListenerEvent) => {
       if (
         event.url.includes('access_token') &&
@@ -151,6 +152,13 @@ export class AppComponent {
       }
 
       this.zone.run(() => {
+        console.log('URL OPENED: ', event.url);
+        if (event.url.includes('link-previews/recipe')) {
+          const recipeID = event.url.split('link-previews/recipe')[1];
+          const path = `/recipe/public/${recipeID}`;
+          console.log('IOS NAVIGATING TO', path);
+          this.router.navigateByUrl(path);
+        }
         const domain = 'doughly.co';
         const pathArray = event.url.split(domain);
         console.log('PATH ARRAY', pathArray);
