@@ -42,6 +42,7 @@ import { SelectInputComponent } from 'src/app/shared/ui/select-input/select-inpu
 export class SettingsComponent {
   isEditing: boolean = false;
   form!: FormGroup;
+  imagePlaceholder: string = '/assets/icons/logo-primary-light.svg';
   private profile: WritableSignal<any> = signal({});
   notificationMethods: string[] = Object.values(notificationMethods);
   darkModeOptions: string[] = Object.values(darkModeOptions);
@@ -82,6 +83,19 @@ export class SettingsComponent {
       this.profile.set(profile);
     });
     this.setForm();
+  }
+
+  ngAfterViewInit() {
+    this.checkIconStyle();
+  }
+
+  checkIconStyle(): void {
+    // check document for 'dark' class to determine if dark mode is enabled
+    if (document.body.classList.contains('dark')) {
+      this.imagePlaceholder = '/assets/icons/logo-primary-dark.svg';
+    } else {
+      this.imagePlaceholder = '/assets/icons/logo-primary-light.svg';
+    }
   }
 
   setForm() {
@@ -151,6 +165,7 @@ export class SettingsComponent {
               true
             );
           } else {
+            this.checkIconStyle();
             this.modalService.open(
               ConfirmationModalComponent,
               {
