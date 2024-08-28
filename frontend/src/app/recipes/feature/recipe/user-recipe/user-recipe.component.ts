@@ -64,6 +64,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { NgAutoAnimateDirective } from 'ng-auto-animate';
+import { Capacitor } from '@capacitor/core';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -83,7 +84,7 @@ interface displayIngredientsByComponent {
     MatNativeDateModule,
     ProfileCardComponent,
     ImageFromCDN,
-    NgAutoAnimateDirective
+    NgAutoAnimateDirective,
   ],
   templateUrl: './user-recipe.component.html',
 })
@@ -877,13 +878,21 @@ export class UserRecipeComponent {
       // this will send the social crawler to get the link preview details for the recipe. Users will be redirected to the app.
       string: `${environment.BACKEND}/link-previews/recipe/${this.recipeID()}`,
     });
+    let confirmationMessage = 'Link copied to clipboard! Share via Whatsapp';
+    if (Capacitor.isNativePlatform()) {
+      const platform = Capacitor.getPlatform();
+      if (platform === 'android') {
+        confirmationMessage += ' or SMS.';
+      } else if (platform === 'ios') {
+        confirmationMessage += ' or iMessage.';
+      }
+    }
 
     this.modalService.open(
       ConfirmationModalComponent,
       {
         data: {
-          confirmationMessage:
-            'Link copied to clipboard! Share in any Messenging App.',
+          confirmationMessage,
         },
       },
       1,

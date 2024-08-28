@@ -58,6 +58,7 @@ const pushTokensRouter = require('./modules/pushNotifications/router');
 const messagesRouter = require('./modules/messages/router');
 const linkPreviewsRouter = require('./modules/linkPreviews/router');
 const purchasesRouter = require('./modules/purchases/router');
+const webRouter = require('./modules/web/router');
 
 // UTIL ROUTERS
 const unitRatioRouter = require('./modules/utility/unitRatios/router');
@@ -127,6 +128,7 @@ app.use('/pushTokens', pushTokensRouter);
 app.use('/messages', messagesRouter);
 app.use('/link-previews', linkPreviewsRouter);
 app.use('/purchases', purchasesRouter);
+app.use('/web', webRouter);
 
 const errHandler = new ErrorHandler();
 // Global error-handling middleware

@@ -11,6 +11,7 @@ const h = handler;
 router.use(userAgentRedirect);
 
 router.get('/recipe/:recipeID', errorCatcher(h.getRecipePreview));
+router.get('/invite', errorCatcher(h.getInvitePreview));
 
 module.exports = router;
 
