@@ -1,7 +1,8 @@
 <resources>
-    <color name="statusBarColor">#FFFFFF</color>
-    <color name="colorPrimary">#3F51B5</color> <!-- example primary color -->
-    <color name="colorPrimaryDark">#303F9F</color> <!-- example primary dark color -->
-    <color name="colorAccent">#5ED0FA</color>
-    <color name="navigationBarColor">#FFFFFF</color> <!-- set to white -->
+  <color name="statusBarColor">#E9E6E2</color>
+  <color name="colorPrimary">#C9702C</color>
+  <color name="colorPrimaryDark">#DB9D33</color>
+  <color name="colorAccent">#A2963A</color>
+  <color name="navigationBarColor">#E9E6E2</color>
+  <color name="defaultNotificationColor">#C9702C</color>
 </resources>
