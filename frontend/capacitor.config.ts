@@ -21,6 +21,9 @@ const config: CapacitorConfig = {
       forceCodeForRefreshToken: true,
     },
   },
+  ios: {
+    scheme: 'Doughly',
+  },
 };
 
 export default config;
