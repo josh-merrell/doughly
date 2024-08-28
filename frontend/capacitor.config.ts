@@ -4,7 +4,7 @@ import { environment as environment } from './src/environments/environment';
 
 const config: CapacitorConfig = {
   appId: 'co.doughly.app',
-  appName: 'doughleap',
+  appName: 'doughly',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
@@ -20,6 +20,9 @@ const config: CapacitorConfig = {
         environment.GOOGLE_BROWSER_CLIENT_ID,
       forceCodeForRefreshToken: true,
     },
+  },
+  ios: {
+    scheme: 'Doughly',
   },
 };
 

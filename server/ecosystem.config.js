@@ -43,6 +43,8 @@ module.exports = {
         NODE_ENV: 'production',
         NODE_HOST: 'http://localhost',
         PORT: '3000',
+        APP_STORE_LINK: 'https://apps.apple.com/app/id6502307680',
+        PLAY_STORE_LINK: 'https://play.google.com/store/apps/details?id=co.doughly.app',
         LOCAL_TAX_RATE: '0.07',
         MEASUREMENT_UNITS:
           'block,gram,drop,drizzle,can,clove,kilogram,pint,fluidOunce,fillet,head,weightOunce,pound,kernel,teaspoon,tablespoon,cup,quart,gallon,milliliter,liter,leaf,loaf,packet,bag,box,carton,pallet,bottle,sprig,strip,sheet,sprinkle,container,bunch,dash,pinch,bar,stalk,stick,slice,single,dozen,rib',

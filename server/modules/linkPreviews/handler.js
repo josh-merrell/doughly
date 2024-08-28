@@ -12,6 +12,16 @@ async function getRecipePreview(req, res) {
   return res.send(returner);
 }
 
+async function getInvitePreview(req, res) {
+  const db = req.client.db;
+  const dbPublic = req.defaultClient.db;
+  const p = require('./processor')({ db, dbPublic });
+  const returner = await p.get.invitePreview();
+  res.setHeader('Content-Type', 'text/html'); // Set the Content-Type to text/html
+  return res.send(returner);
+}
+
 module.exports = {
   getRecipePreview,
+  getInvitePreview,
 };

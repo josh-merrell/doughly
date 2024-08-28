@@ -27,6 +27,7 @@ import { UsingRecipeComponent } from './recipes/feature/recipe/ui/using-recipe/u
 import { LoadingPageComponent } from './account/feature/loading-page/loading-page.component';
 import { TempRouteComponent } from './shared/temp-route/temp-route.component';
 import { PrivacyPageComponent } from './privacy/privacy-page/privacy-page.component';
+import { TermsComponent } from './terms/terms.component';
 
 import { ProfileGuard } from './guards/profile.guard';
 import { stateLoaded } from './guards/stateLoaded.guard';
@@ -131,6 +132,10 @@ export const routes: Route[] = [
   {
     path: 'privacy',
     component: PrivacyPageComponent,
+  },
+  {
+    path: 'terms',
+    component: TermsComponent,
   },
   {
     path: 'products',

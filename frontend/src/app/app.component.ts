@@ -59,6 +59,7 @@ export class AppComponent {
     '/web',
     '/admin',
     '/update',
+    '/terms'
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
