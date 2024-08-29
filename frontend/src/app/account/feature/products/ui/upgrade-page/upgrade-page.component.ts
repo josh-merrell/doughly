@@ -275,6 +275,14 @@ export class UpgradePageComponent {
     this.productService.restorePurchases();
   }
 
+  onPrivacyClick() {
+    this.router.navigate(['/privacy']);
+  }
+
+  onTermsClick() {
+    this.router.navigate(['/terms']);
+  }
+
   packageClick(revenueCatPackage) {
     if (revenueCatPackage.identifier !== this.selectedIdentifier()) {
       this.selectedIdentifier.set(revenueCatPackage.identifier);
