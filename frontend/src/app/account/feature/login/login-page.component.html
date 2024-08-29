@@ -209,8 +209,6 @@
         type="submit"
         [disabled]="
           login_form.invalid ||
-          login_form.get('email')!.touched === false ||
-          login_form.get('password')!.touched === false ||
           login_form.get('password')!.value === '' ||
           login_form.get('email')!.value === ''
         "

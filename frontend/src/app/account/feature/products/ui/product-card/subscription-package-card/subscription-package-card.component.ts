@@ -13,6 +13,10 @@ export class SubscriptionPackageCardComponent {
 
   constructor() {}
 
+  ngOnInit() {
+    // console.log(`PACKAGE: `, this.package);
+  }
+
   getPeriodString(period: string) {
     const matches = period.match(/P(\d+)M/);
     if (matches) {
