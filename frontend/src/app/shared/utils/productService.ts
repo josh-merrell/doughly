@@ -24,11 +24,13 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from './authenticationService';
 import { HttpClient } from '@angular/common/http';
 import { Observable, lastValueFrom } from 'rxjs';
+import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 
 import { Store } from '@ngrx/store';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ProfileService } from 'src/app/profile/data/profile.service';
+import { Router } from '@angular/router';
 
 // define PurchaseResult interface--
 interface PurchaseResult {
@@ -52,7 +54,11 @@ export class ProductService {
     extraAITokenPurchaseCount: 10,
     maxAICredits: 30,
   };
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   // async initGlassfy() {
   //   try {
@@ -328,6 +334,21 @@ export class ProductService {
       return this.http.post(`${this.API_URL}/updatePermissions`, {
         permissions: [],
       });
+    }
+  }
+
+  async restorePurchases(): Promise<void> {
+    try {
+      const customerInfo = await Purchases.restorePurchases();
+      if (customerInfo) {
+        // sign out of the app
+        this.authService.logout().then(() => {
+          this.router.navigate(['/login']);
+        });
+        PushNotifications.unregister;
+      }
+    } catch (err) {
+      console.error('Error restoring purchases: ', err);
     }
   }
 }

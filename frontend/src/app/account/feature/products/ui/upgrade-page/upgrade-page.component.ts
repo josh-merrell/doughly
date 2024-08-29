@@ -271,6 +271,10 @@ export class UpgradePageComponent {
     }
   }
 
+  onRestorePurchases() {
+    this.productService.restorePurchases();
+  }
+
   packageClick(revenueCatPackage) {
     if (revenueCatPackage.identifier !== this.selectedIdentifier()) {
       this.selectedIdentifier.set(revenueCatPackage.identifier);

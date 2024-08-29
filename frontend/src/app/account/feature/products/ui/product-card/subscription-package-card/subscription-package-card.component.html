@@ -50,12 +50,16 @@
       </p>
       <span
         class="whitespace-nowrap font-sans text-dl-4 font-dl-2 text-dl-pinknew-1"
-        >{{ getPeriodString(package.product.subscriptionPeriod) }} -
+      >
         {{
-          package.product.price
+          getMonthlyPrice(
+            package.product.price,
+            package.product.subscriptionPeriod
+          )
             | number : "1.0-2"
             | currency : package.product.currencyCode
-        }}</span
+        }}
+        / MO</span
       >
     </div>
 
@@ -65,15 +69,12 @@
       [ngClass]="{
         'mt-dl-5': package.identifier === '$rc_six_month',
       }"
-      >{{
-        getMonthlyPrice(
-          package.product.price,
-          package.product.subscriptionPeriod
-        )
+      >{{ getPeriodString(package.product.subscriptionPeriod) }} -
+      {{
+        package.product.price
           | number : "1.0-2"
           | currency : package.product.currencyCode
-      }}
-      / MO</span
+      }}</span
     >
   </div>
 </div>
