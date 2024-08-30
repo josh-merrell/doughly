@@ -26,7 +26,7 @@ export class StringsService {
   };
   public readonly productStrings = {
     subscribeFinePrint: `You will be automatically billed at the end of each period. You may cancel anytime in Google Play or App Store.`,
-    noSubscribeOfferings: `We're sorry, we couldn't find any subscription offerings at this time. Please check again later.`,
+    noOfferings: `We're sorry, we couldn't find any offerings at this time. Please check again later.`,
     subscribeOverviewBenefit1of2: `Doughly Premium users import recipes`,
     subscribeOverviewBenefitmultiplier: ' 6.2 ',
     subscribeOverviewBenefit2of2: `times faster with AI!`,

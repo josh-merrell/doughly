@@ -21,7 +21,7 @@ export class PrivacyPageComponent {
 
   ngOnInit() {
     if (Capacitor.isNativePlatform()) {
-      this.stylesService.updateStyles('#A54C18', 'dark');
+      this.stylesService.updateStyles();
       this.renderer.addClass(document.body, 'product-page');
     }
   }
@@ -29,5 +29,4 @@ export class PrivacyPageComponent {
   onExitClick() {
     this.router.navigate(['/profile']);
   }
-
 }

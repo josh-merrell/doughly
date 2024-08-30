@@ -280,7 +280,6 @@ export class AuthService {
     // oauth raw data
     let nameFirst;
     let nameLast;
-    let photoUrl;
     if (newUser.user_metadata) {
       console.log('oauth raw data: ', newUser.user_metadata);
       nameFirst = newUser.user_metadata['full_name']
@@ -293,11 +292,6 @@ export class AuthService {
         : newUser.user_metadata['name']
         ? newUser.user_metadata['name'].split(' ')[1]
         : null;
-      photoUrl = newUser.user_metadata['avatar_url']
-        ? newUser.user_metadata['avatar_url']
-        : newUser.user_metadata['picture']
-        ? newUser.user_metadata['picture']
-        : null;
     }
 
     // Define the new profile based on the user details
@@ -305,7 +299,6 @@ export class AuthService {
       user_id: newUser.id,
       name_first: nameFirst,
       name_last: nameLast,
-      photo_url: photoUrl,
       email: newUser.email,
       joined_at: new Date(),
       onboardingState: 0.5,

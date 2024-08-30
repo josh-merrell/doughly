@@ -21,7 +21,7 @@ export class TermsComponent {
 
   ngOnInit() {
     if (Capacitor.isNativePlatform()) {
-      this.stylesService.updateStyles('#A54C18', 'dark');
+      this.stylesService.updateStyles();
       this.renderer.addClass(document.body, 'product-page');
     }
   }
