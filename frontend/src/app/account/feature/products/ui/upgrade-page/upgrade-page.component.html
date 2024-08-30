@@ -38,7 +38,7 @@
       class="mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-tan-10 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onConfirm()"
     >
-      VIEW OPTIONS
+      VIEW FEATURES
     </button>
     <div class="mb-dl-3 mt-dl-5 flex w-full justify-around">
       <span
@@ -82,7 +82,15 @@
       class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-4 bg-dl-tan-9 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onConfirmLifetime()"
     >
-      LIFETIME ACCESS - PURCHASE ONCE
+      LIFETIME ACCESS
+    </button>
+    <button
+      *ngIf="showTokenButton()"
+      type="button"
+      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-4 bg-dl-tan-9 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
+      (click)="onTokenClick()"
+    >
+      TOKEN PACK
     </button>
   </div>
 
@@ -161,13 +169,52 @@
       UPGRADE NOW
     </button>
   </div>
+  <!-- TOKEN OPTIONS -->
   <div
-    *ngIf="view() === 'options' && subscribePackages().length === 0"
+    *ngIf="
+      view() === 'optionsTokens' && productPackages().length > 0 && !isLoading()
+    "
+    class="flex h-full w-full flex-col items-center"
+  >
+    <span
+      class="mx-dl-7 mb-dl-7 items-center text-center font-sans text-dl-6 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
+      >Use Tokens to import your Recipes from an image or URL</span
+    >
+    <div class="flex w-full flex-col items-center">
+      <dl-product-package-card
+        class="mb-dl-6 flex w-full flex-col items-center"
+        *ngFor="let package of productPackages()"
+        (click)="packageClick(package)"
+        [package]="package"
+        [isSelected]="selectedIdentifier() === package.identifier"
+      ></dl-product-package-card>
+    </div>
+    <!-- Spacer Div -->
+    <dl class="flex flex-grow"></dl>
+    <span
+      class="inline-flex items-center font-sans text-dl-4 font-dl-2 text-dl-tan-10 transition-all duration-100 ease-in-out"
+      >One time purchase</span
+    >
+    <!-- Buttons -->
+    <button
+      type="button"
+      class="mb-dl-5 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 bg-dl-tan-10 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-1 transition-all duration-200 ease-in-out"
+      (click)="onConfirm()"
+    >
+      PURCHASE NOW
+    </button>
+  </div>
+  <div
+    *ngIf="
+      (view() === 'options' && subscribePackages().length === 0) ||
+      ((view() === 'optionsTokens' || view() === 'optionsLifetime') &&
+        productPackages().length === 0)
+    "
     class="flex h-full flex-col items-center"
   >
     <span
       class="mx-dl-7 mb-dl-7 items-center text-center font-body text-dl-6 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
-      >{{ stringsService.productStrings.noSubscribeOfferings }}</span
+      >{{ stringsService.productStrings.noOfferings }}</span
     >
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
