@@ -13,7 +13,7 @@ export class StringsService {
     subscribeRecipePage: `This copy of the Public recipe is now connected to your kitchen! Explore the "Make Now!" button, then navigate to "Social".`,
     socialPageOverview: `On the Social page you can connect with friends. Keep your cherished recipes in one place for family to refer to any time they're feeling hungry or nostalgic!`,
     kitchenPageOverview: `In the Kitchen page, you can see all your tools and ingredients. You can add new ones and manage stock entries.`,
-    shoppingPageOverview: `From the Groceries page, select recipes you plan on using. If you enable the setting, the app will check your kitchen inventory and add only what you don't have in stock to your shopping list!`,
+    shoppingPageOverview: `From the Groceries page, select recipes you plan on using. Optionally, the app will check your kitchen inventory and add only what you don't have in stock to your shopping list!`,
     recipesCreatedPage: `On the Created page, you'll see all the recipes you own. You have a few options when adding a new one...`,
     recipeCreateManual: `Want to get your hands dirty? Start a new recipe from scratch here.`,
     recipeCreateURL: `To speed things up, you can paste a URL from any recipe website and let AI build things for you. Avoid the stress of endless articles and ads!`,
@@ -26,7 +26,7 @@ export class StringsService {
   };
   public readonly productStrings = {
     subscribeFinePrint: `You will be automatically billed at the end of each period. You may cancel anytime in Google Play or App Store.`,
-    noSubscribeOfferings: `We're sorry, we couldn't find any subscription offerings at this time. Please check again later.`,
+    noOfferings: `We're sorry, we couldn't find any offerings at this time. Please check again later.`,
     subscribeOverviewBenefit1of2: `Doughly Premium users import recipes`,
     subscribeOverviewBenefitmultiplier: ' 6.2 ',
     subscribeOverviewBenefit2of2: `times faster with AI!`,

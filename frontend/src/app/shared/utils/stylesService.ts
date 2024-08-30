@@ -13,6 +13,7 @@ import { Capacitor } from '@capacitor/core';
 
 import { NavigationBar } from '@hugotomazi/capacitor-navigation-bar';
 import { ExtraStuffService } from './extraStuffService';
+import { AuthService } from './authenticationService';
 
 interface ModalInstance {
   ref: MatDialogRef<any>;
@@ -23,7 +24,6 @@ interface ModalInstance {
   providedIn: 'root',
 })
 export class StylesService {
-  private profile: WritableSignal<any> = signal(null);
   private extraStuffService!: ExtraStuffService;
   private colorClasses = {
     'tan-1': '#26221C',
@@ -88,9 +88,13 @@ export class StylesService {
     'green-10': '#F2F0E3',
   };
 
-  constructor(private store: Store, private injector: Injector) {
+  constructor(
+    private store: Store,
+    private injector: Injector,
+    private authService: AuthService
+  ) {
     effect(() => {
-      const profile = this.profile();
+      const profile = this.authService.profile();
       if (profile) {
         this.updateStyles();
       }
@@ -99,9 +103,6 @@ export class StylesService {
 
   ngOnInit(): void {
     this.extraStuffService = this.injector.get(ExtraStuffService);
-    this.store.select(selectProfile).subscribe((profile) => {
-      this.profile.set(profile);
-    });
   }
 
   public updateStyles(color: string = '', style: string = ''): void {
@@ -119,12 +120,12 @@ export class StylesService {
       }
       return;
     } else {
-      if (!this.profile()) {
+      if (!this.authService.profile()) {
         return;
       }
     }
 
-    switch (this.profile['darkMode']) {
+    switch (this.authService.profile()!['darkMode']) {
       case 'Enabled' ||
         ('System Default' && this.extraStuffService.systemDarkMode()):
         this.setColor('#26221C', 'dark');

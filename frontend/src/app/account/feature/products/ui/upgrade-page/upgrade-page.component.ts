@@ -17,6 +17,8 @@ import { ModalService } from 'src/app/shared/utils/modalService';
 import { PurchasesOffering } from '@revenuecat/purchases-capacitor';
 import { SubscriptionPackageCardComponent } from '../product-card/subscription-package-card/subscription-package-card.component';
 import { ProductPackageCardComponent } from '../product-card/product-package-card/product-package-card.component';
+import { selectProfile } from 'src/app/profile/state/profile-selectors';
+import { Store } from '@ngrx/store';
 @Component({
   selector: 'dl-upgrade-page',
   standalone: true,
@@ -32,18 +34,23 @@ import { ProductPackageCardComponent } from '../product-card/product-package-car
   templateUrl: './upgrade-page.component.html',
 })
 export class UpgradePageComponent {
+  // private profile: WritableSignal<any> = signal({});
   public isLoading: WritableSignal<boolean> = signal(false);
   public view: WritableSignal<string> = signal('overview');
   public subscribePackages: WritableSignal<PurchasesPackage[]> = signal([]);
   public productPackages: WritableSignal<PurchasesPackage[]> = signal([]);
   public selectedIdentifier: WritableSignal<string> = signal('$rc_six_month');
+  private tokenOffering: PurchasesOffering | undefined;
+  public showTokenButton: WritableSignal<boolean> = signal(false);
+  private lifetimeOffering: PurchasesOffering | undefined;
   constructor(
     public dialog: MatDialog,
     private router: Router,
     private productService: ProductService,
     public stringsService: StringsService,
     private authService: AuthService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private store: Store
   ) {
     // RevenueCat
     effect(
@@ -65,10 +72,17 @@ export class UpgradePageComponent {
           const lifetimeOfferingRevenueCat = offeringsRevenueCat.find(
             (offering) => offering.identifier === 'doughly-lifetime'
           );
+          const tokenOffering = offeringsRevenueCat.find(
+            (offering) => offering.identifier === 'doughly-aicredits-10'
+          );
           if (lifetimeOfferingRevenueCat) {
+            this.lifetimeOffering = lifetimeOfferingRevenueCat;
             this.productPackages.set(
               lifetimeOfferingRevenueCat.availablePackages
             );
+          }
+          if (tokenOffering) {
+            this.tokenOffering = tokenOffering;
           }
         } else {
           this.subscribePackages.set([]);
@@ -76,9 +90,47 @@ export class UpgradePageComponent {
       },
       { allowSignalWrites: true }
     );
+
+    effect(
+      () => {
+        const profile = this.authService.profile();
+        if (profile) {
+          if (
+            profile.permAITokenCount <
+            this.productService.licences.maxAICredits -
+              this.productService.licences.extraAITokenPurchaseCount
+          ) {
+            this.showTokenButton.set(true);
+          }
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
-  ngOnInit() {}
+  // ngOnInit() {
+  //   this.store.select(selectProfile).subscribe((profile) => {
+  //     this.profile.set(profile);
+  //     console.log('PROFILE: ', profile);
+  //     console.log(
+  //       'MAX AI CREDITS: ',
+  //       this.productService.licences.maxAICredits
+  //     );
+  //     console.log(
+  //       'EXTRA AI TOKEN PURCHASE COUNT: ',
+  //       this.productService.licences.extraAITokenPurchaseCount
+  //     );
+  //     if (profile) {
+  //       if (
+  //         profile.permAITokenCount <
+  //         this.productService.licences.maxAICredits -
+  //           this.productService.licences.extraAITokenPurchaseCount
+  //       ) {
+  //         this.showTokenButton.set(true);
+  //       }
+  //     }
+  //   });
+  // }
 
   onConfirm() {
     if (this.view() === 'overview') {
@@ -86,7 +138,9 @@ export class UpgradePageComponent {
     } else if (this.view() === 'chart') {
       this.setView('options');
     } else if (
-      (this.view() === 'options' || this.view() === 'optionsLifetime') &&
+      (this.view() === 'options' ||
+        this.view() === 'optionsLifetime' ||
+        this.view() === 'optionsTokens') &&
       this.selectedIdentifier()
     ) {
       this.makePurchase(this.selectedIdentifier());
@@ -281,6 +335,14 @@ export class UpgradePageComponent {
 
   onTermsClick() {
     this.router.navigate(['/terms']);
+  }
+
+  onTokenClick() {
+    if (this.tokenOffering) {
+      this.productPackages.set(this.tokenOffering.availablePackages);
+      this.setView('optionsTokens');
+      this.selectedIdentifier.set('doughly_aicredits10_once_2.99');
+    }
   }
 
   packageClick(revenueCatPackage) {
