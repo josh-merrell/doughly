@@ -52,9 +52,7 @@ export class OnboardingComponent {
       if (
         profile.username &&
         profile.nameFirst &&
-        profile.nameLast &&
-        profile.city &&
-        profile.state
+        profile.nameLast
       ) {
         this.isLoading.set(true);
         this.store.dispatch(
