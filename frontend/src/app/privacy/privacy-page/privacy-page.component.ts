@@ -22,7 +22,7 @@ export class PrivacyPageComponent {
   ngOnInit() {
     if (Capacitor.isNativePlatform()) {
       this.stylesService.updateStyles();
-      this.renderer.addClass(document.body, 'product-page');
+      this.renderer.removeClass(document.body, 'product-page');
     }
   }
 
