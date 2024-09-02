@@ -612,23 +612,23 @@ export class AuthService {
     }
   }
 
-  // USING NATIVE INSTEAD SINCE THIS OPENS IN BROWSER, DOESN'T REDIRECT BACK TO APP
-  // async signInWithApple(): Promise<void> {
-  //   try {
-  //     const redirectTo = 'https://doughly.co';
-  //     const { data, error } = await this.supabase.auth.signInWithOAuth({
-  //       provider: 'apple',
-  //       options: {
-  //         redirectTo: redirectTo,
-  //       },
-  //     });
+  // USING NATIVE INSTEAD ON IOS DEVICES SINCE THIS OPENS IN BROWSER, DOESN'T REDIRECT BACK TO APP
+  async signInWithApple(): Promise<void> {
+    try {
+      const redirectTo = 'https://doughly.co';
+      const { data, error } = await this.supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: redirectTo,
+        },
+      });
 
-  //     if (error) throw error;
-  //   } catch (error) {
-  //     console.error('Error during Apple sign-in:', error);
-  //     throw error;
-  //   }
-  // }
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error during Apple sign-in:', error);
+      throw error;
+    }
+  }
 
   async signInWithAppleNative(): Promise<void> {
     try {
