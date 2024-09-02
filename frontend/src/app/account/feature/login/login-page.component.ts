@@ -179,11 +179,36 @@ export class LoginPageComponent {
     });
   }
 
+  public async appleClick() {
+    // if native and ios, use signInWithAppleNative. If android, use signInWithApple
+    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+      this.signInWithAppleNative();
+    } else {
+      this.signInWithApple();
+    }
+  }
+
   public async signInWithApple() {
     this.isLoading.set(true);
     this.ngZone.run(() => {
       this.authService
         .signInWithApple()
+        .then(() => {
+          // Handle successful sign in
+          this.router.navigate(['/loading']);
+        })
+        .catch((error) => {
+          // Handle sign in error
+          this.loginFailureMessage = error.message;
+        });
+    });
+  }
+
+  public async signInWithAppleNative() {
+    this.isLoading.set(true);
+    this.ngZone.run(() => {
+      this.authService
+        .signInWithAppleNative()
         .then(() => {
           // Handle successful sign in
           this.router.navigate(['/loading']);

@@ -4,6 +4,7 @@ import { Router, RouterLinkWithHref } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AutofocusDirective } from 'src/app/shared/utils/autofocusDirective';
 import { AuthService } from '../../../shared/utils/authenticationService';
+import { Capacitor } from '@capacitor/core';
 import {
   ReactiveFormsModule,
   FormControl,
@@ -175,11 +176,36 @@ export class SignupPageComponent {
     });
   }
 
+  public async appleClick() {
+    // if native and ios, use signInWithAppleNative. If android, use signInWithApple
+    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+      this.signUpWithAppleNative();
+    } else {
+      this.signUpWithApple();
+    }
+  }
+
   public async signUpWithApple() {
     this.isLoading.set(true);
     this.ngZone.run(() => {
       this.authService
         .signInWithApple()
+        .then(() => {
+          // Handle successful sign in
+          this.router.navigate(['/loading']);
+        })
+        .catch((error) => {
+          // Handle sign in error
+          this.signUpFailureMessage = error.message;
+        });
+    });
+  }
+
+  public async signUpWithAppleNative() {
+    this.isLoading.set(true);
+    this.ngZone.run(() => {
+      this.authService
+        .signInWithAppleNative()
         .then(() => {
           // Handle successful sign in
           this.router.navigate(['/loading']);
