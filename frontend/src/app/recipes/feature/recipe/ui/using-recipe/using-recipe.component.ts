@@ -23,6 +23,8 @@ import { ConfirmationModalComponent } from 'src/app/shared/ui/confirmation-modal
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
+import { AngularSplitModule } from 'angular-split';
+
 
 interface displayIngredientsByComponent {
   noComponent: any[];
@@ -32,7 +34,7 @@ interface displayIngredientsByComponent {
 @Component({
   selector: 'dl-using-recipe',
   standalone: true,
-  imports: [CommonModule, ImageFromCDN],
+  imports: [CommonModule, ImageFromCDN, AngularSplitModule],
   templateUrl: './using-recipe.component.html',
 })
 export class UsingRecipeComponent {

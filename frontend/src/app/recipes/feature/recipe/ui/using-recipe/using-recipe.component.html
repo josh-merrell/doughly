@@ -1,10 +1,10 @@
-<div
+<as-split unit="percent" gutterSize="20" direction="vertical"
   class="flex h-full flex-col overflow-y-hidden bg-dl-tan-9 dark:bg-dl-tan-1"
 >
   <!-- Ingredients -->
-  <div
+  <as-split-area size="20" maxSize="50" minSize="20"
     *ngIf="displayIngredientsByComponent()"
-    class="relative flex h-1/3 min-h-dl-10 flex-col overflow-y-auto pb-dl-5 shadow-md"
+    class="relative flex min-h-dl-10 flex-col overflow-y-auto pb-dl-5 shadow-md"
   >
     <!-- Base Ingredients (no assigned component) -->
     <div
@@ -89,16 +89,16 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="relative h-dl-1 w-full">
-    <!-- blurry bottom -->
+  </as-split-area>
+  <!-- blurry bottom -->
+  <!-- <div class="relative h-dl-1 w-full">
     <div
       class="absolute -top-3 z-20 h-dl-3 w-full bg-gradient-to-b from-transparent to-dl-tan-6"
     ></div>
-  </div>
+  </div> -->
 
   <!-- Steps -->
-  <div
+  <as-split-area size="80" maxSize="80" minSize="50"
     *ngIf="displaySteps()"
     #stepsContainer
     class="relative mb-dl-2 mt-dl-5 flex flex-col items-center overflow-y-auto pb-dl-5"
@@ -148,7 +148,7 @@
         class="mt-dl-2 w-4/5 rounded-dl-3 object-cover"
       />
     </div>
-  </div>
+  </as-split-area>
 
   <!-- Spacer Div -->
   <div class="flex flex-grow"></div>
@@ -232,4 +232,4 @@
       </button>
     </div>
   </div>
-</div>
+</as-split>
