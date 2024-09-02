@@ -382,6 +382,10 @@ export class SubscribeRecipeModalComponent {
           newIngredient['measurement'] = Number(ingredients[i].measurement);
           newIngredient['name'] = ingredients[i].name;
         }
+        // use 'weightOunce' instead of 'oz'
+        if (newIngredient['measurementUnit'] === 'oz') {
+          newIngredient['measurementUnit'] = 'weightOunce';
+        }
 
         if (ingredients[i].brand) {
           newIngredient['brand'] = ingredients[i].brand;

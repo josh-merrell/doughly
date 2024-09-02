@@ -16,11 +16,13 @@ module.exports = ({ db, dbPublic }) => {
   async function constructRecipe(options) {
     const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps, sourceAuthor, sourceURL } = options;
 
+    let draftRecipeID;
+    const createdItems = [];
+
     try {
       //start timer
       const constructStartTime = new Date();
       let recipeID;
-      const createdItems = [];
       //first create the recipe, save as {'recipeID': recipeID} to createdItems
       const { data: recipe, error } = await axios.post(
         `${process.env.NODE_HOST}:${process.env.PORT}/recipes`,
@@ -80,7 +82,7 @@ module.exports = ({ db, dbPublic }) => {
         if (result.status === 'fulfilled') {
           createdItems.push({ ingredientID: result.value.ingredientID });
         } else {
-          throw errorGen(`*recipes-constructRecipe* constructRecipe' Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason}`, 515, 'cannotComplete', false, 3);
+          throw errorGen(`*recipes-constructRecipe* constructRecipe' Failed when creating recipeIngredients. Rolled-back. Failure: ${result.reason.message}`, 515, 'cannotComplete', false, 3);
         }
       }
 
@@ -94,7 +96,7 @@ module.exports = ({ db, dbPublic }) => {
           if (result.status === 'fulfilled') {
             createdItems.push({ toolID: result.value.toolID });
           } else {
-            throw errorGen(`*recipes-constructRecipe* constructRecipe' Failed when creating recipeTools. Rolled-back. Failure: ${result.reason}`, 515, 'cannotComplete', false, 3);
+            throw errorGen(`*recipes-constructRecipe* constructRecipe' Failed when creating recipeTools. Rolled-back. Failure: ${result.reason.message}`, 515, 'cannotComplete', false, 3);
           }
         }
       }
@@ -153,11 +155,14 @@ module.exports = ({ db, dbPublic }) => {
       return { recipeID: recipe.recipeID };
     } catch (error) {
       //rollback any created recipe items (the API endpoint will delete associated recipeIngredients, recipeTools, and recipeSteps)
-      if (recipeID) {
-        await deleteItem({ recipeID: recipeID }, authorization);
+      if (draftRecipeID) {
+        global.logger.info(`ROLLING BACK RECIPE: ${draftRecipeID}`);
+        await deleteItem({ recipeID: draftRecipeID }, authorization);
         for (let i in createdItems) {
           deleteItem(createdItems[i], authorization);
         }
+      } else {
+        global.logger.info(`NO RECIPEID TO ROLLBACK`);
       }
       throw errorGen(error.message || '*recipes-constructRecipe* Unhandled Error', error.code || 520, error.name || 'unhandledError_recipe-constructRecipe', error.isOperational || false, error.severity || 2);
     }
@@ -866,7 +871,13 @@ module.exports = ({ db, dbPublic }) => {
       sendSSEMessage(userID, { message: `Details ready! Building new Recipe...` });
       const { data: recipeID, error: constructError } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/recipes/constructed`, constructBody, { headers: { authorization } });
       if (constructError) {
-        throw errorGen(constructError.message || `*recipes-processRecipeJSON* Error constructing recipe from image details: ${constructError.message}`, constructError.code || 520, constructError.name || 'unhandledError_recipes-processRecipeJSON', constructError.isOperational || false, constructError.severity || 3);
+        throw errorGen(
+          constructError.message || `*recipes-processRecipeJSON* Error constructing recipe from image details: ${constructError.message}`,
+          constructError.code || 520,
+          constructError.name || 'unhandledError_recipes-processRecipeJSON',
+          constructError.isOperational || false,
+          constructError.severity || 3,
+        );
       }
       // const recipeID = recipe.recipeID;
 
