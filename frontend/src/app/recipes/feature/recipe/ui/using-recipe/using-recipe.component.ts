@@ -25,7 +25,6 @@ import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { AngularSplitModule } from 'angular-split';
 
-
 interface displayIngredientsByComponent {
   noComponent: any[];
   components: { [componentName: string]: any[] };
@@ -36,6 +35,13 @@ interface displayIngredientsByComponent {
   standalone: true,
   imports: [CommonModule, ImageFromCDN, AngularSplitModule],
   templateUrl: './using-recipe.component.html',
+  styles: [
+    `
+      ::ng-deep .as-split-gutter-icon {
+        background-color: #e9e6e2 !important;
+      }
+    `,
+  ],
 })
 export class UsingRecipeComponent {
   @ViewChildren('stepElement') stepElements!: QueryList<ElementRef>;
