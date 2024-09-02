@@ -216,6 +216,7 @@ export class AppFooterComponent {
   }
 
   toggleMenu(event: any) {
+    console.log('toggleMenu');
     event.stopPropagation();
     this.isMenuOpen = !this.isMenuOpen;
   }
