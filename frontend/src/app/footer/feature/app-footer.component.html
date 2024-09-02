@@ -1,4 +1,4 @@
-<div class="relative overflow-y-hidden">
+<div class="relative">
   <nav
     class="border-t-2 border-dl-tan-8 bg-dl-tan-9 dark:border-dl-tan-3 dark:bg-dl-tan-1"
   >
@@ -19,7 +19,7 @@
     <!-- Mobile menu, show/hide based on menu state. -->
     <div class="flex justify-center" id="mobile-menu">
       <div
-        class="flex w-full items-center justify-between space-y-1 px-dl-2 pt-1"
+        class="flex w-full items-center justify-between px-dl-2 pt-1"
       >
         <!-- Subscription Page -->
         <div
@@ -47,12 +47,12 @@
         <ng-container *ngIf="authService.profile() as profile">
           <div
             (click)="navigate('/groceries')"
-            class="flex h-full flex-col items-center justify-between pb-dl-1.5"
+            class="flex h-full flex-col items-center justify-between "
           >
             <img
               [src]="groceries()"
               alt="Groceries Icon"
-              class="h-11 w-11"
+              class="h-11 w-11 pb-dl-1"
             />
             <a
               [ngClass]="{
@@ -70,12 +70,12 @@
         <ng-container *ngIf="authService.profile() as profile">
           <div
             (click)="navigate('/recipes')"
-            class="flex h-full flex-col items-center justify-between pb-dl-1.5"
+            class="flex h-full flex-col items-center justify-between "
           >
             <img
               [src]="recipes()"
               alt="Recipes Icon"
-              class="h-11 w-11"
+              class="h-11 w-11 pb-dl-1"
             />
             <a
               [ngClass]="{
@@ -93,12 +93,12 @@
         <ng-container *ngIf="authService.profile() as profile">
           <div
             (click)="navigate('/social')"
-            class="flex h-full flex-col items-center justify-between pb-dl-1.5"
+            class="flex h-full flex-col items-center justify-between"
           >
             <img
               [src]="social()"
               alt="Social Icon"
-              class="h-11 w-11"
+              class="h-11 w-11 pb-dl-1"
             />
             <a
               [ngClass]="{
@@ -116,12 +116,12 @@
         <ng-container *ngIf="authService.profile() as profile">
           <div
             (click)="navigate('/kitchen')"
-            class="flex h-full flex-col items-center justify-between pb-dl-1.5"
+            class="flex h-full flex-col items-center justify-between "
           >
             <img
               [src]="kitchen()"
               alt="Kitchen Icon"
-              class="h-11 w-11"
+              class="h-11 w-11 pb-dl-1"
             />
             <a
               [ngClass]="{
@@ -189,7 +189,7 @@
               'scale-100 opacity-100 duration-200': isMenuOpen,
               'scale-95 opacity-0 duration-75': !isMenuOpen
             }"
-            class="absolute bottom-28 right-5 z-20 flex w-dl-8 flex-col items-center rounded-md bg-dl-tan-10 py-1 shadow-lg ring-1 ring-dl-tan-1 ring-opacity-5 ease-out focus:outline-none dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+            class="absolute -top-36 right-5 z-20 flex w-dl-8 flex-col items-center rounded-md bg-dl-tan-10 py-1 shadow-lg ring-1 ring-dl-tan-1 ring-opacity-5 ease-out focus:outline-none dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="user-menu-button"
