@@ -9,6 +9,12 @@ import { Capacitor } from '@capacitor/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
+import {
+  SignInWithApple,
+  SignInWithAppleResponse,
+  SignInWithAppleOptions,
+} from '@capacitor-community/apple-sign-in';
+
 export interface Profile {
   user_id: string;
   username: string;
@@ -606,19 +612,66 @@ export class AuthService {
     }
   }
 
-  async signInWithApple(): Promise<void> {
+  // USING NATIVE INSTEAD SINCE THIS OPENS IN BROWSER, DOESN'T REDIRECT BACK TO APP
+  // async signInWithApple(): Promise<void> {
+  //   try {
+  //     const redirectTo = 'https://doughly.co';
+  //     const { data, error } = await this.supabase.auth.signInWithOAuth({
+  //       provider: 'apple',
+  //       options: {
+  //         redirectTo: redirectTo,
+  //       },
+  //     });
+
+  //     if (error) throw error;
+  //   } catch (error) {
+  //     console.error('Error during Apple sign-in:', error);
+  //     throw error;
+  //   }
+  // }
+
+  async signInWithAppleNative(): Promise<void> {
     try {
-      const redirectTo = 'https://doughly.co';
-      const { data, error } = await this.supabase.auth.signInWithOAuth({
+      let options: SignInWithAppleOptions = {
+        clientId: 'co.doughly.app',
+        redirectURI: 'https://doughly.co',
+        scopes: 'email',
+        state: '12345',
+      };
+
+      const result: SignInWithAppleResponse = await SignInWithApple.authorize(
+        options
+      );
+
+      const token = result.response.identityToken;
+
+      const { data, error } = await this.supabase.auth.signInWithIdToken({
         provider: 'apple',
-        options: {
-          redirectTo: redirectTo,
-        },
+        token: token,
       });
+
+      // now add the first and last name to the new supabase user profile using the raw data from the apple sign in
+      console.log('APPLE SIGN IN RAW DATA: ', result.response);
+      const nameFirst = result.response.givenName;
+      const nameLast = result.response.familyName;
+
+      // use supabase.auth.updateUser to update the user's profile with the first and last name
+      if (
+        nameFirst &&
+        nameFirst !== 'null' &&
+        nameLast &&
+        nameLast !== 'null'
+      ) {
+        await this.supabase.auth.updateUser({
+          data: {
+            full_name: nameFirst + ' ' + nameLast,
+          },
+        });
+      }
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error during Apple sign-in:', error);
+      console.error('Error during Apple Native sign-in:', error);
       throw error;
     }
   }

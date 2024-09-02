@@ -179,7 +179,7 @@ export class SignupPageComponent {
     this.isLoading.set(true);
     this.ngZone.run(() => {
       this.authService
-        .signInWithApple()
+        .signInWithAppleNative()
         .then(() => {
           // Handle successful sign in
           this.router.navigate(['/loading']);
