@@ -9,7 +9,6 @@ const SUPABASE_ANON_KEY = environment.SUPABASE_DOUGHLEAP_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-
 export function authInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
@@ -17,15 +16,16 @@ export function authInterceptor(
   return from(supabase.auth.getSession()).pipe(
     mergeMap((result: any) => {
       if (result) {
+        const tokenPresent = result.data?.session?.access_token ? true : false;
         const authReq = req.clone({
           headers: req.headers.set(
             'Authorization',
-            `${result.data.session.access_token}`
+            `${tokenPresent ? result.data.session.access_token : 'override'}`
           ),
         });
         return next(authReq);
       } else {
-        console.log(`NO SESSION FOUND`)
+        console.log(`NO SESSION FOUND`);
         return throwError(new Error('No session found, unauthorized request'));
       }
     })
