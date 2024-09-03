@@ -33,7 +33,7 @@ async function newPurchaseRevenueCatSubPackage(req, res) {
   const returner = await p.newPurchaseRevenueCatSubPackage({
     userID: req.userID,
     activeEntitlements,
-    revenueCatPackage: revenueCatSubPackage
+    revenueCatPackage: revenueCatSubPackage,
   });
   return res.json(returner);
 }
@@ -46,7 +46,7 @@ async function newPurchaseRevenueCatProdPackage(req, res) {
   const returner = await p.newPurchaseRevenueCatProdPackage({
     userID: req.userID,
     activeEntitlements,
-    revenueCatProdPackage
+    revenueCatProdPackage,
   });
   return res.json(returner);
 }
@@ -63,10 +63,19 @@ async function updateEntitlementsRevenueCat(req, res) {
   return res.json(returner);
 }
 
+async function revenueCatWebhook(req, res) {
+  const db = req.client.db;
+  const dbDefault = req.defaultClient.db;
+  const p = require('./processor')({ db, dbDefault });
+  const returner = await p.revenueCatWebhook({ body: req.body });
+  return res.json(returner);
+}
+
 module.exports = {
   processNewPurchase,
   updatePermissions,
   newPurchaseRevenueCatSubPackage,
   newPurchaseRevenueCatProdPackage,
   updateEntitlementsRevenueCat,
+  revenueCatWebhook,
 };

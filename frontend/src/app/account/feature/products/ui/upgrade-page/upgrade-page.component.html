@@ -9,7 +9,7 @@
       class="mx-dl-7 items-center text-center font-sans text-dl-6 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
       >{{ stringsService.productStrings.subscribeOverviewBenefit1of2
       }}<span
-        class="items-center font-sans text-dl-6 font-dl-3 text-dl-pinknew-1 transition-all duration-100 ease-in-out"
+        class="items-center font-sans text-dl-6 font-dl-3 text-dl-pinknew-9 transition-all duration-100 ease-in-out"
         >{{
           stringsService.productStrings.subscribeOverviewBenefitmultiplier
         }} </span
@@ -24,13 +24,13 @@
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
     <span
+      (click)="onRestorePurchases()"
       class="mb-dl-2 max-w-dl-14 text-center font-body text-dl-5 font-dl-3 text-dl-tan-10 transition-all duration-100 ease-in-out"
-      >Already purchased on a previous device?
-      <span
-        (click)="onRestorePurchases()"
-        class="mb-dl-2 max-w-dl-14 text-center font-body text-dl-5 font-dl-4 text-white transition-all duration-100 ease-in-out"
-        >Restore Purchases</span
-      ></span
+      >Restore Purchases</span
+    >
+    <span
+      class="items-center text-center font-sans text-dl-4 font-dl-3 text-dl-tan-9 transition-all duration-100 ease-in-out"
+      >{{ stringsService.productStrings.subscriptionNotNeeded }}</span
     >
     <!-- Buttons -->
     <button
@@ -38,7 +38,7 @@
       class="mt-dl-4 block h-dl-5 w-full whitespace-nowrap rounded-dl-2 bg-dl-tan-10 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
       (click)="onConfirm()"
     >
-      VIEW FEATURES
+      VIEW OPTIONS
     </button>
     <div class="mb-dl-3 mt-dl-5 flex w-full justify-around">
       <span
@@ -65,21 +65,25 @@
     ></dl-benefits-chart>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
+    <span
+      class="mt-dl-2 items-center text-center font-sans text-dl-4 font-dl-3 text-dl-tan-9 transition-all duration-100 ease-in-out"
+      >{{ stringsService.productStrings.subscriptionNotNeeded }}</span
+    >
     <!-- Buttons -->
     <div
-      class="mb-dl-4 mt-dl-3 h-dl-7 w-full rounded-dl-4 bg-gradient-to-br from-dl-pinknew-3 to-dl-pinknew-6 p-dl-1 shadow-lg"
+      class="mb-dl-2 mt-dl-3 h-dl-5 w-full rounded-dl-4 bg-gradient-to-br from-dl-pinknew-4 to-dl-pinknew-7 p-dl-1"
     >
       <button
         type="button"
         class="block h-full w-full whitespace-nowrap rounded-dl-4 bg-dl-tan-10 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-1 transition-all duration-200 ease-in-out"
         (click)="onConfirm()"
       >
-        PREMIUM SUBSCRIPTION OPTIONS
+        VIEW SUBSCRIPTION OPTIONS
       </button>
     </div>
     <button
       type="button"
-      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-4 bg-dl-tan-9 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-2 mt-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-4 border-2 border-dl-tan-9 bg-transparent px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-10 transition-all duration-200 ease-in-out"
       (click)="onConfirmLifetime()"
     >
       LIFETIME ACCESS
@@ -87,7 +91,7 @@
     <button
       *ngIf="showTokenButton()"
       type="button"
-      class="mb-dl-4 mt-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-4 bg-dl-tan-9 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-1 shadow-lg transition-all duration-200 ease-in-out"
+      class="mb-dl-2 mt-dl-2 block h-dl-5 w-full whitespace-nowrap rounded-dl-4 border-2 border-dl-tan-9 bg-transparent px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic text-dl-tan-10 transition-all duration-200 ease-in-out"
       (click)="onTokenClick()"
     >
       TOKEN PACK
@@ -117,6 +121,10 @@
     </div>
     <!-- Spacer Div -->
     <dl class="flex flex-grow"></dl>
+    <span
+      class="mt-dl-2 items-center text-center font-sans text-dl-4 font-dl-3 text-dl-tan-9 transition-all duration-100 ease-in-out"
+      >{{ stringsService.productStrings.subscriptionNotNeeded }}</span
+    >
     <span
       class="inline-flex items-center font-body text-dl-4 font-dl-2 text-dl-tan-10 transition-all duration-100 ease-in-out"
       >Recurring billing, cancel anytime</span

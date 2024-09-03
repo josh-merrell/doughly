@@ -6,6 +6,9 @@ const handler = require('./handler');
 const router = express.Router();
 const h = handler;
 
+// process revenue cat webhooks without authentication
+router.post('/revenueCatWebhook', errorCatcher(h.revenueCatWebhook));
+
 router.use(authenticateJWT);
 
 router.post('/newPurchase', authenticateJWT, errorCatcher(h.processNewPurchase));

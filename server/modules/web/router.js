@@ -5,7 +5,7 @@ const handler = require('./handler');
 const router = express.Router();
 const h = handler;
 
-router.get('/app-store', errorCatcher(h.getAppStorePreview));
-router.get('/play-store', errorCatcher(h.getPlayStorePreview));
+router.get('/appStore', errorCatcher(h.getAppStorePreview));
+router.get('/playStore', errorCatcher(h.getPlayStorePreview));
 
 module.exports = router;

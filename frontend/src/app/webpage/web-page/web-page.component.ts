@@ -48,14 +48,20 @@ export class WebPageComponent {
     if (Capacitor.isNativePlatform()) {
       if (Capacitor.getPlatform() === 'android') {
         // send to backend, it will reroute to play store
-        this.http.get(`${this.API_URL}/play-store`).subscribe();
+        // this.http.get(`${this.API_URL}/playStore`).subscribe();
+        window.open(
+          'https://play.google.com/store/apps/details?id=co.doughly.app',
+          '_blank'
+        );
       } else {
         // send to backend, it will reroute to app store
-        this.http.get(`${this.API_URL}/app-store`).subscribe();
+        // this.http.get(`${this.API_URL}/appStore`).subscribe();
+        window.open('https://apps.apple.com/app/id6502307680', '_blank');
       }
     } else {
       // send to backend, it will reroute to app store
-      this.http.get(`${this.API_URL}/app-store`).subscribe();
+      // this.http.get(`${this.API_URL}/appStore`).subscribe();
+      window.open('https://apps.apple.com/app/id6502307680', '_blank');
     }
   }
 
