@@ -1,5 +1,7 @@
 const { errorGen } = require('../../middleware/errorHandling');
 const { productConstants } = require('../../services/purchaseService');
+const AWS = require('aws-sdk');
+
 ('use strict');
 module.exports = ({ db, dbDefault }) => {
   const unhideRecipes = async (userID) => {
@@ -406,6 +408,44 @@ module.exports = ({ db, dbDefault }) => {
       } catch (err) {
         throw errorGen(err.message || '*purchases-updateEntitlementsRevenueCat* Unhandled Error', err.code || 520, err.name || 'unhandledError_purchases-updateEntitlementsRevenueCat', err.isOperational || false, err.severity || 2);
       }
+    },
+
+    revenueCatWebhook: async (options) => {
+      const { body } = options;
+
+      const awsConfig = {
+        region: process.env.AWS_REGION,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      };
+      AWS.config.update(awsConfig);
+
+      const ses = new AWS.SES();
+
+      const params = {
+        Source: 'support@doughly.co', // Your verified sender email address
+        Destination: {
+          ToAddresses: [process.env.REVENUECAT_PURCHASE_NOTIFICATION_RECIPIENT],
+        },
+        Message: {
+          Subject: {
+            Data: 'Doughly Purchase Event: ' + body.event,
+          },
+          Body: {
+            Text: {
+              Data: 'testing email sent upon receiving revenuecat webhook',
+            },
+          },
+        },
+      };
+
+      ses.sendEmail(params, function (err, data) {
+        if (err) {
+          global.logger.info({ message: `*purchases-revenueCatWebhook* Error sending email: ${err}`, level: 3, timestamp: new Date().toISOString() });
+        } else {
+          global.logger.info({ message: `*purchases-revenueCatWebhook* Email sent: ${data}`, level: 6, timestamp: new Date().toISOString() });
+        }
+      });
     },
   };
 };

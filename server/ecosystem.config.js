@@ -78,6 +78,9 @@ module.exports = {
 
         //SOCIAL MEDIA
         FB_APP_ID: '399157002973005',
+
+        //REVENUE CAT
+        REVENUECAT_PURCHASE_NOTIFICATION_RECIPIENT: 'joshmerrell.us@doughly.co',
       },
     },
   ],
