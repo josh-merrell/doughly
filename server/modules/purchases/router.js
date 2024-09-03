@@ -18,5 +18,3 @@ router.post('/updatePermissions', authenticateJWT, errorCatcher(h.updatePermissi
 router.post('/updateEntitlementsRevenueCat', authenticateJWT, errorCatcher(h.updateEntitlementsRevenueCat));
 
 module.exports = router;
-
-//https://api.doughly.co/purchases/revenueCatWebhook
