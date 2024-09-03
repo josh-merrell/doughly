@@ -422,18 +422,42 @@ module.exports = ({ db, dbDefault }) => {
 
       const ses = new AWS.SES();
 
+      let emailBodyTextData;
+      switch (body.event.type) {
+        case 'TEST':
+          emailBodyTextData = 'testing email sent upon receiving revenuecat webhook. FULL BODY: ' + JSON.stringify(body);
+          break;
+        case 'INITIAL_PURCHASE':
+          emailBodyTextData = `**INITIAL_PURCHASE** Product ID: ${body.event.product_id}, Price: ${body.event.price_in_purchased_currency} ${body.event.currency}, Store: ${body.event.store}, Env: ${body.event.environment}`;
+        case 'RENEWAL':
+          emailBodyTextData = `**RENEWAL** Product ID: ${body.event.product_id}, Price: ${body.event.price_in_purchased_currency} ${body.event.currency}, Store: ${body.event.store}, Env: ${body.event.environment}`;
+        case 'PRODUCT_CHANGE':
+          emailBodyTextData = `**PRODUCT_CHANGE** Product ID: ${body.event.product_id}, Price: ${body.event.price_in_purchased_currency} ${body.event.currency}, Store: ${body.event.store}, Env: ${body.event.environment}`;
+        case 'CANCELLATION':
+          emailBodyTextData = `**CANCELLATION** Product ID: ${body.event.product_id}, Store: ${body.event.store}, Env: ${body.event.environment}`;
+        case 'BILLING_ISSUE':
+          emailBodyTextData = `**BILLING_ISSUE** Product ID: ${body.event.product_id}, Store: ${body.event.store}, Env: ${body.event.environment}`;
+        case 'NON_RENEWING_PURCHASE':
+          emailBodyTextData = `**NON_RENEWING_PURCHASE** Product ID: ${body.event.product_id}, Store: ${body.event.store}, Env: ${body.event.environment}`;
+        case 'UNCANCELLATION':
+          emailBodyTextData = `**UNCANCELLATION** Product ID: ${body.event.product_id}, Store: ${body.event.store}, Env: ${body.event.environment}`;
+        default:
+          emailBodyTextData = 'EVENT TYPE NOT SUPPORTED. FULL BODY: ' + JSON.stringify(body);
+          break;
+      }
+
       const params = {
-        Source: 'support@doughly.co', // Your verified sender email address
+        Source: 'admin@doughly.co',
         Destination: {
           ToAddresses: [process.env.REVENUECAT_PURCHASE_NOTIFICATION_RECIPIENT],
         },
         Message: {
           Subject: {
-            Data: 'Doughly Purchase Event: ' + body.event,
+            Data: 'Doughly Purchase Event: ' + body.event.type,
           },
           Body: {
             Text: {
-              Data: 'testing email sent upon receiving revenuecat webhook',
+              Data: emailBodyTextData,
             },
           },
         },
