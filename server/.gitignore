@@ -6,3 +6,7 @@ userdata-api.sh
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+ecosystem.config.js
+services/google/
+services/firebase/
+pem_keys/
