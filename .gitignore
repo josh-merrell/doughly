@@ -12,3 +12,4 @@ node_modules
 ./server/pem_keys/
 ./server/ecosystem.config.js
 ./server/userdata-api.sh
+./frontend/environments/
