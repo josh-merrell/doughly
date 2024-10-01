@@ -59,8 +59,8 @@ module.exports = {
         SUPABASE_USER_PW: 'ginger93!',
 
         //AWS
-        AWS_ACCESS_KEY_ID: 'AKIASN6TRMFANQHTJNO3',
-        AWS_SECRET_ACCESS_KEY: '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',
+        AWS_ACCESS_KEY_ID: 'AKIASN6TRMFAB5MI6YFE',
+        AWS_SECRET_ACCESS_KEY: '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',
         AWS_REGION: 'us-west-2',
         AWS_IMAGE_BUCKET_NAME: 'dl.images',
         AWS_TEMP_IMAGE_BUCKET_NAME: 'dl.temp-images',
@@ -73,7 +73,7 @@ module.exports = {
         SUPABASE_GOOGLE_OAUTH_CALLBACK_URL: 'https://jlsvceuxoiayhibrwobf.supabase.co/auth/v1/callback',
 
         //OPENAI
-        OPENAI_API_KEY: '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',
+        OPENAI_API_KEY: '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',
         OPENAI_ORG_ID: 'org-GuHibS3Y06woyL0PLqn5FLsr',
 
         //SOCIAL MEDIA

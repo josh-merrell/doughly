@@ -1,7 +1,7 @@
 const { initializeApp, cert } = require('firebase-admin/app');
 const { getMessaging } = require('firebase-admin/messaging');
 const { errorGen } = require('../../middleware/errorHandling');
-const serviceAccount = require('./doughly-d93badfe1987.json');
+const serviceAccount = require('./doughly-7287e2d441ac.json');
 
 const app = initializeApp({
   credential: cert(serviceAccount),
