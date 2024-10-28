@@ -320,10 +320,12 @@ export class AppComponent {
     const platform = Capacitor.getPlatform();
     const currentVersion = await this.getCurrentAppVersion();
     const availableVersion = await this.getAvailableAppVersion();
-    console.log('CURRENT VERSION: ', currentVersion);
-    console.log('AVAILABLE VERSION: ', availableVersion);
-
-    if (currentVersion !== availableVersion) {
+    console.log('CURRENT VERSION: ', typeof currentVersion, currentVersion);
+    console.log('AVAILABLE VERSION: ', typeof availableVersion, availableVersion);
+    if (!currentVersion || !availableVersion) {
+      return;
+    }
+    if (currentVersion < availableVersion) {
       console.log('OLD VERSION FOUND, PROMPTING FOR UPDATE');
       if (platform === 'android') {
         this.promptForUpdate();
