@@ -1,5 +1,7 @@
 # Doughly - Recipe Management Application
 
+[Website](https://doughly.co)
+
 [Architecture Diagram](https://drive.google.com/file/d/10KTAOBiAnRqcTHLFYKmyeECASQscFeRv/view?usp=sharing)
 
 Doughly is an Angular-based recipe management application, designed to offer a seamless user experience for storing, editing, and sharing cooking recipes. The application is published on the Apple App Store and Android Play Store, being deployed to mobile using the Ionic Capacitor framework. This repository is organized into two major sections: the **frontend** (built using Angular, Tailwind CSS) and the **backend** (server side, built using Node.js and Express). Additionally, the project includes cloud-based services and infrastructure for scalable deployment and data management.
