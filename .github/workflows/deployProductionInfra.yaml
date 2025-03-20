@@ -28,7 +28,6 @@ jobs:
         uses: webfactory/create-aws-codedeploy-deployment@v0.2.2
         with:
           application: doughly
-          deployment-config-name: CodeDeployDefault.AllAtOnce
     # USE FOLLOWING TO UPDATE CODE ON SINGLE EC2 INSTANCE
     # steps:
     #   - name: Checkout Repository
