@@ -10,6 +10,8 @@ module.exports = ({ db, dbPublic }) => {
     const { shoppingListID } = options;
 
     try {
+      // first check state of each to ensure they're marked as fulfilled if needed
+      await refreshShoppingLists({ userID });
       const { data: shoppingList, error } = await db.from('shoppingLists').select('shoppingListID, status, fulfilledDate, fulfilledMethod').where('shoppingListID', shoppingListID).single();
       if (error) {
         throw errorGen(`*shoppingLists-getShoppingListByID* Error getting shopping list ${shoppingListID}: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
@@ -25,6 +27,8 @@ module.exports = ({ db, dbPublic }) => {
     const { userID, shoppingListIDs } = options;
 
     try {
+      // first check state of each to ensure they're marked as fulfilled if needed
+      await refreshShoppingLists({ userID });
       let q = db.from('shoppingLists').select('shoppingListID, status, fulfilledDate, fulfilledMethod').filter('userID', 'eq', userID).neq('status', 'deleted').neq('status', 'fulfilled').order('shoppingListID', { descending: true });
       if (shoppingListIDs) {
         q = q.in('shoppingListID', shoppingListIDs);
@@ -52,7 +56,13 @@ module.exports = ({ db, dbPublic }) => {
         );
 
         if (createListError) {
-          throw errorGen(createListError.message || `*shoppingLists-getShoppingLists* Error creating new shopping list: ${createListError.message}`, createListError.code || 520, createListError.name || 'unhandledError_shoppingLists-getShoppingLists', createListError.isOperational || false, createListError.severity || 2);
+          throw errorGen(
+            createListError.message || `*shoppingLists-getShoppingLists* Error creating new shopping list: ${createListError.message}`,
+            createListError.code || 520,
+            createListError.name || 'unhandledError_shoppingLists-getShoppingLists',
+            createListError.isOperational || false,
+            createListError.severity || 2,
+          );
         }
         const { data: newShoppingLists, error: newShoppingListsError } = await q;
         if (newShoppingListsError) {
@@ -73,6 +83,8 @@ module.exports = ({ db, dbPublic }) => {
     const { userID } = options;
 
     try {
+      // first check state of each to ensure they're marked as fulfilled if needed
+      await refreshShoppingLists({ userID });
       const { data: sharedLists, error } = await db.from('sharedShoppingLists').select('*').or(`userID.eq.${userID},invitedUserID.eq.${userID}`);
       if (error) {
         throw errorGen(`*shoppingLists-getShared* Error getting shared shopping lists: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
@@ -147,29 +159,35 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       const updatedShoppingList = await updater(userID, authorization, 'shoppingListID', shoppingListID, 'shoppingLists', updateFields);
-      //if the list was fulfilled, create a new draft list using axios
+      //if the list was fulfilled, create a new draft list using axios, only if none currently exists
       if (status === 'fulfilled') {
-        const { error: createListError } = await axios.post(
-          `${process.env.NODE_HOST}:${process.env.PORT}/shopping/lists`,
-          {
-            userID: userID,
-            IDtype: 26,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              authorization: 'override',
+        const { data: shoppingLists, error: shoppingListsError } = await db.from('shoppingLists').select('shoppingListID').filter('userID', 'eq', userID).in('status', ['draft', 'shopping']);
+        if (shoppingListsError) {
+          throw errorGen(`*shoppingLists-updateShoppingList* Error getting shoppingLists: ${shoppingListsError.message}`, 511, 'failSupabaseSelect', true, 3);
+        }
+        if (shoppingLists.length === 0) {
+          const { error: createListError } = await axios.post(
+            `${process.env.NODE_HOST}:${process.env.PORT}/shopping/lists`,
+            {
+              userID: userID,
+              IDtype: 26,
             },
-          },
-        );
-        if (createListError) {
-          throw errorGen(
-            createListError.message || `*shoppingLists-updateShoppingList* Error creating new shopping list after updating ${shoppingListID} to 'fulfilled': ${createListError.message}`,
-            createListError.code || 520,
-            createListError.name || 'unhandledError_shoppingLists-updateShoppingList',
-            createListError.isOperational || false,
-            createListError.severity || 2,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                authorization: 'override',
+              },
+            },
           );
+          if (createListError) {
+            throw errorGen(
+              createListError.message || `*shoppingLists-updateShoppingList* Error creating new shopping list after updating ${shoppingListID} to 'fulfilled': ${createListError.message}`,
+              createListError.code || 520,
+              createListError.name || 'unhandledError_shoppingLists-updateShoppingList',
+              createListError.isOperational || false,
+              createListError.severity || 2,
+            );
+          }
         }
 
         // also need to delete any sharedShoppingLists associated with the fulfilled list
@@ -210,7 +228,7 @@ module.exports = ({ db, dbPublic }) => {
 
   async function receiveItems(options) {
     const { authorization, userID, purchasedBy, shoppingListID, items, store } = options;
-    console.log(`SLI: ${JSON.stringify(items)}, store: ${store}, purchasedBy: ${purchasedBy}, shoppingListID: ${shoppingListID}, userID: ${userID}`)
+    console.log(`SLI: ${JSON.stringify(items)}, store: ${store}, purchasedBy: ${purchasedBy}, shoppingListID: ${shoppingListID}, userID: ${userID}`);
 
     try {
       if (!shoppingListID) {
@@ -263,7 +281,7 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       // get all shoppingListIngredients for the shoppingList
-      const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID, needMeasurement, purchasedMeasurement').filter('shoppingListID', 'eq', shoppingListID);
+      const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID, needMeasurement, purchasedMeasurement').filter('shoppingListID', 'eq', shoppingListID).filter('deleted', 'eq', false);
       if (shoppingListIngredientsError) {
         throw errorGen(`*shoppingLists-receiveItems* Error getting shoppingListIngredients for shoppingList ${shoppingListID}: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
       }
@@ -373,7 +391,7 @@ module.exports = ({ db, dbPublic }) => {
     const { userID, authorization, shoppingListID, invitedUserID } = options;
 
     try {
-      global.logger.info(`*shoppingLists-unshare* Unsharing shoppingList ${shoppingListID} with ${invitedUserID}`)
+      global.logger.info(`*shoppingLists-unshare* Unsharing shoppingList ${shoppingListID} with ${invitedUserID}`);
       // attempt to remove any sharedShoppingLists with the invited user
       const { data: sharedShoppingLists, error: sharedShoppingListsError } = await db.from('sharedShoppingLists').delete().eq('userID', userID).eq('invitedUserID', invitedUserID).eq('shoppingListID', shoppingListID);
       if (sharedShoppingListsError) {
@@ -383,6 +401,43 @@ module.exports = ({ db, dbPublic }) => {
       return { shoppingListID: shoppingListID };
     } catch (err) {
       throw errorGen(err.message || '*shoppingLists-unshare* Unhandled Error', err.code || 520, err.name || 'unhandledError_shoppingLists-unshare', err.isOperational || false, err.severity || 2);
+    }
+  };
+
+  refreshShoppingLists = async (options) => {
+    console.log(`*shoppingLists-refreshShoppingLists* Refreshing shopping lists`);
+    const { userID } = options;
+
+    try {
+      // get all unfulfilled shoppingLists for the user
+      const { data: shoppingLists, error: shoppingListsError } = await db.from('shoppingLists').select('shoppingListID, status, fulfilledDate, fulfilledMethod').filter('userID', 'eq', userID).eq('status', 'shopping');
+      if (shoppingListsError) {
+        throw errorGen(`*shoppingLists-refreshShoppingLists* Error getting shopping lists: ${shoppingListsError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+
+      // for each list, get all shoppingListIngredients. If purchasedMeasurement >= needMeasurement for all ingredients, update the list to 'fulfilled'
+      const listsToFulfill = [];
+      for (let i = 0; i < shoppingLists.length; i++) {
+        const shoppingList = shoppingLists[i];
+        const { data: shoppingListIngredients, error: shoppingListIngredientsError } = await db.from('shoppingListIngredients').select('shoppingListIngredientID, needMeasurement, purchasedMeasurement').filter('shoppingListID', 'eq', shoppingList.shoppingListID).filter('deleted', 'eq', false);
+        if (shoppingListIngredientsError) {
+          throw errorGen(`*shoppingLists-refreshShoppingLists* Error getting shoppingListIngredients for shoppingList ${shoppingList.shoppingListID}: ${shoppingListIngredientsError.message}`, 511, 'failSupabaseSelect', true, 3);
+        }
+
+        if (shoppingListIngredients.every((sli) => sli.purchasedMeasurement >= sli.needMeasurement)) {
+          listsToFulfill.push(shoppingList.shoppingListID);
+        }
+      }
+
+      // update all lists that need to be fulfilled
+      console.log(`*shoppingLists-refreshShoppingLists* Found ${listsToFulfill.length} shopping lists to fulfill`);
+      const updatePromises = [];
+      for (let i = 0; i < listsToFulfill.length; i++) {
+        updatePromises.push(updateShoppingList({ userID, shoppingListID: listsToFulfill[i], status: 'fulfilled', fulfilledMethod: 'manual', fulfilledDate: new Date().toISOString() }));
+      }
+      await Promise.all(updatePromises);
+    } catch (err) {
+      throw errorGen(err.message || '*shoppingLists-refreshShoppingLists* Unhandled Error', err.code || 520, err.name || 'unhandledError_shoppingLists-refreshShoppingLists', err.isOperational || false, err.severity || 2);
     }
   };
 
@@ -398,5 +453,6 @@ module.exports = ({ db, dbPublic }) => {
     update: updateShoppingList,
     delete: deleteShoppingList,
     receiveItems,
+    refreshShoppingLists,
   };
 };
