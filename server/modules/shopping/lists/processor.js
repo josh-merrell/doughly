@@ -409,6 +409,20 @@ module.exports = ({ db, dbPublic }) => {
     const { userID } = options;
 
     try {
+      // check for and remove duplicate 'draft' shoppingLists. If more than one, delete all but oldest by shoppingListID
+      const { data: draftShoppingLists, error: draftShoppingListsError } = await db.from('shoppingLists').select('shoppingListID').filter('userID', 'eq', userID).eq('status', 'draft');
+      if (draftShoppingListsError) {
+        throw errorGen(`*shoppingLists-refreshShoppingLists* Error getting draft shopping lists: ${draftShoppingListsError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+      if (draftShoppingLists.length > 1) {
+        const sortedDraftShoppingLists = draftShoppingLists.sort((a, b) => a.shoppingListID - b.shoppingListID);
+        const shoppingListIDsToDelete = sortedDraftShoppingLists.slice(1).map((dsl) => dsl.shoppingListID);
+        const { data: deleteResults, error: deleteResultsError } = await db.from('shoppingLists').delete().in('shoppingListID', shoppingListIDsToDelete);
+        if (deleteResultsError) {
+          throw errorGen(`*shoppingLists-refreshShoppingLists* Error deleting duplicate draft shopping lists: ${deleteResultsError.message}`, 513, 'failSupabaseDelete', true, 3);
+        }
+      }
+
       // get all unfulfilled shoppingLists for the user
       const { data: shoppingLists, error: shoppingListsError } = await db.from('shoppingLists').select('shoppingListID, status, fulfilledDate, fulfilledMethod').filter('userID', 'eq', userID).eq('status', 'shopping');
       if (shoppingListsError) {
