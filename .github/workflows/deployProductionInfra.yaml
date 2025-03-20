@@ -11,7 +11,6 @@ jobs:
   deploy-api-ec2-prod:
   # USE FOLLOWING TO TRIGGER CODE DEPLOY TO AUTOSCALING EC2 GROUP
     name: deploy-api-ec2-prod
-    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-back-api-production')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
