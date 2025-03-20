@@ -430,7 +430,7 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       // update all lists that need to be fulfilled
-      console.log(`*shoppingLists-refreshShoppingLists* Found ${listsToFulfill.length} shopping lists to fulfill`);
+      console.log(`*shoppingLists-refreshShoppingLists* Found ${listsToFulfill.length} shopping lists to fulfill!`);
       const updatePromises = [];
       for (let i = 0; i < listsToFulfill.length; i++) {
         updatePromises.push(updateShoppingList({ userID, shoppingListID: listsToFulfill[i], status: 'fulfilled', fulfilledMethod: 'manual', fulfilledDate: new Date().toISOString() }));
