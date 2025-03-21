@@ -21,6 +21,7 @@ export interface Profile {
 
   // settings
   checkIngredientStock: boolean;
+  reviewAIIngredients: boolean;
   notifyOnLowStock: string;
   notifyOnNoStock: string;
   notifyUpcomingStockExpiry: string;
