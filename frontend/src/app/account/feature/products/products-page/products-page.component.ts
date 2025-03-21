@@ -87,7 +87,7 @@ export class ProductsPageComponent {
           this.previousUrl === '/products/your-premium' &&
           event.url === '/products'
         ) {
-          this.router.navigate(['/recipes/discover']);
+          this.router.navigate(['/recipes/created']);
         }
 
         // Update previous URL
@@ -111,6 +111,6 @@ export class ProductsPageComponent {
   }
 
   onCancel() {
-    this.router.navigate(['/recipes/discover']);
+    this.router.navigate(['/recipes/created']);
   }
 }

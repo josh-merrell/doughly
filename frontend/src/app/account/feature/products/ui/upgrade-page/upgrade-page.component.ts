@@ -161,7 +161,7 @@ export class UpgradePageComponent {
   }
 
   onCancel() {
-    this.router.navigate(['/recipes/discover']);
+    this.router.navigate(['/recipes/created']);
   }
 
   async makePurchase(selectedID: string) {
@@ -243,7 +243,7 @@ export class UpgradePageComponent {
           true
         );
       }
-      this.router.navigate(['/recipes/discover']);
+      this.router.navigate(['/recipes/created']);
     } else if (revenueCatProductPackage) {
       this.isLoading.set(true);
       // RevenueCat
@@ -315,7 +315,7 @@ export class UpgradePageComponent {
           true
         );
       }
-      this.router.navigate(['/recipes/discover']);
+      this.router.navigate(['/recipes/created']);
     }
   }
 

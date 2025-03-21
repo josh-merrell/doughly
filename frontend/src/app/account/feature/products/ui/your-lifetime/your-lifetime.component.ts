@@ -208,7 +208,7 @@ export class YourLifetimeComponent {
           true
         );
       }
-      this.router.navigate(['/recipes/discover']);
+      this.router.navigate(['/recipes/created']);
     } else if (revenueCatProductPackage) {
       this.isLoading.set(true);
       // RevenueCat
@@ -280,7 +280,7 @@ export class YourLifetimeComponent {
           true
         );
       }
-      this.router.navigate(['/recipes/discover']);
+      this.router.navigate(['/recipes/created']);
     }
   }
 
@@ -295,6 +295,6 @@ export class YourLifetimeComponent {
   }
 
   onCancel() {
-    this.router.navigate(['/recipes/discover']);
+    this.router.navigate(['/recipes/created']);
   }
 }

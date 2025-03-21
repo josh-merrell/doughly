@@ -236,7 +236,7 @@ export class SelectFreeTierRecipesModalComponent {
               2,
               true
             );
-            this.router.navigate(['/recipes/discover']);
+            this.router.navigate(['/recipes/created']);
             this.dialogRef.close();
           }
         });
