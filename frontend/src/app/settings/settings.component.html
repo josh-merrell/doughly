@@ -6,11 +6,7 @@
       class="inline-flex items-center border-b-4 border-dl-green-8 font-sans text-dl-6 font-dl-3 text-dl-tan-2 transition-all duration-100 ease-in-out dark:border-dl-green-3 dark:text-dl-tan-9"
       >Settings</span
     >
-    <img
-      class="h-11 w-auto"
-      [src]="imagePlaceholder"
-      alt="doughleap logo"
-    />
+    <img class="h-11 w-auto" [src]="imagePlaceholder" alt="doughleap logo" />
   </div>
   <div *ngIf="isEditing" class="flex h-full w-full items-center justify-center">
     <mat-spinner class="my-app-custom-spinner"></mat-spinner>
@@ -20,11 +16,11 @@
   <div *ngIf="!isEditing" class="flex-grow overflow-y-auto px-dl-4">
     <form class="h-full" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="flex h-full flex-col">
-        <div class="mb-dl-2 mt-dl-3 flex-grow overflow-y-auto">
+        <div class="mb-dl-2 mt-dl-2 flex-grow overflow-y-auto">
           <!-- Check Ingredient Stock -->
           <div
             id="form-checkIngredientStock"
-            class="relative mt-dl-2 flex flex-row items-center"
+            class="relative flex flex-row items-center"
           >
             <mat-slide-toggle
               formControlName="checkIngredientStock"
@@ -40,7 +36,7 @@
           <!-- Auto Delete Expired Stock-->
           <div
             id="form-autoDeleteExpiredStock"
-            class="relative mt-dl-2 flex flex-row items-center"
+            class="relative flex flex-row items-center"
           >
             <mat-slide-toggle formControlName="autoDeleteExpiredStock">
             </mat-slide-toggle>
@@ -54,7 +50,7 @@
           <!-- Review AI Ingredients -->
           <div
             id="form-reviewAIIngredients"
-            class="relative mt-dl-2 flex flex-row items-center"
+            class="relative flex flex-row items-center"
           >
             <mat-slide-toggle
               formControlName="reviewAIIngredients"
@@ -62,13 +58,14 @@
             ></mat-slide-toggle>
             <span
               class="px-dl-3 py-dl-3 font-body text-dl-4 text-dl-tan-2 dark:text-dl-tan-9"
-              >Review and approve details of AI generated Ingredients prior to using them in recipes</span
+              >Review and approve details of AI generated Ingredients prior to
+              using them in recipes</span
             >
           </div>
           <!-- Dark Mode-->
           <div
             id="form-darkMode"
-            class="relative mt-dl-2 flex flex-row items-start"
+            class="relative mt-dl-3 flex flex-row items-start"
           >
             <span
               class="py-dl-4 pl-dl-2 pr-dl-4 font-sans text-dl-4 text-dl-tan-2 dark:text-dl-tan-9"
