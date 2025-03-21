@@ -84,6 +84,7 @@ module.exports = ({ db, dbPublic }) => {
         onboardingState: profile.onboardingState,
         checkIngredientStock: profile.checkIngredientStock,
         autoDeleteExpiredStock: profile.autoDeleteExpiredStock,
+        reviewAIIngredients: profile.reviewAIIngredients,
         notifyOnLowStock: profile.notifyOnLowStock,
         notifyOnNoStock: profile.notifyOnNoStock,
         notifyUpcomingStockExpiry: profile.notifyUpcomingStockExpiry,

@@ -42,6 +42,8 @@ import { ProductService } from 'src/app/shared/utils/productService';
 export class DiscoverRecipesComponent {
   public discoverRecipes: WritableSignal<Recipe[]> = signal([]);
   public selectedCategory: WritableSignal<RecipeCategory | null> = signal(null);
+  public listView: WritableSignal<string> = signal('byCuisine');
+
   private categories: WritableSignal<RecipeCategory[]> = signal([]);
   public dayCategories: WritableSignal<RecipeCategory[]> = signal([]);
   public worldCategories: WritableSignal<RecipeCategory[]> = signal([]);
@@ -169,6 +171,10 @@ export class DiscoverRecipesComponent {
         });
       }
     });
+  }
+
+  setListView(listView: string) {
+    this.listView.set(listView);
   }
 
   onRecipeCardClick(recipeID: number): void {

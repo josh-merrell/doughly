@@ -1,3 +1,5 @@
+const { type } = require('os');
+
 const getRecipesSchema_query = {
   type: 'object',
   properties: {
@@ -38,6 +40,7 @@ const newRecipeVisionSchema_body = {
   properties: {
     recipeSourceImageURLs: { type: 'array', items: { type: 'string' } },
     recipePhotoURL: { type: 'string' },
+    reviewAIIngredients: { type: 'boolean' },
   },
 };
 
@@ -46,6 +49,7 @@ const newRecipeFromUrlSchema_body = {
   required: ['recipeURL'],
   properties: {
     recipeURL: { type: 'string' },
+    reviewAIIngredients: { type: 'boolean' },
   },
 };
 
@@ -154,6 +158,7 @@ const constructRecipeSchema_body = {
     ingredients: { type: 'array', items: { type: 'object' } },
     tools: { type: 'array', items: { type: 'object' } },
     steps: { type: 'array', items: { type: 'object' } },
+    reviewAIIngredients: { type: 'boolean' },
   },
 };
 

@@ -14,7 +14,7 @@ const { sendSSEMessage } = require('../../server.js');
 // const fs = require('fs');
 module.exports = ({ db, dbPublic }) => {
   async function constructRecipe(options) {
-    const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps, sourceAuthor, sourceURL } = options;
+    const { sourceRecipeID, recipeCategoryID, authorization, userID, title, servings, lifespanDays, type = 'subscription', timePrep, timeBake, photoURL, ingredients, tools, steps, sourceAuthor, sourceURL, reviewAIIngredients = true } = options;
 
     let draftRecipeID;
     const createdItems = [];
@@ -61,7 +61,7 @@ module.exports = ({ db, dbPublic }) => {
       for (const [name, value] of Object.entries(uniqueNameIngredients)) {
         // first get 'ingredientID' for each group of ingredients with the same name using 'getIngredientID' endpoint
         ingredientIDPromises.push(
-          getIngredientID(name, value.ingredients, userID, authorization).then((ingredientID) => {
+          getIngredientID(name, value.ingredients, userID, reviewAIIngredients, authorization).then((ingredientID) => {
             value.ingredientID = ingredientID;
           }),
         );
@@ -168,7 +168,7 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
-  async function getIngredientID(ingredientName, ingredientGroup, userID, authorization) {
+  async function getIngredientID(ingredientName, ingredientGroup, userID, reviewAIIngredients, authorization) {
     try {
       let ingredientID = 0;
       // look through ingredientGroup for any with a non-zero ingredientID. If found, return that ingredientID
@@ -190,7 +190,9 @@ module.exports = ({ db, dbPublic }) => {
       if (ingredientGroup[0].brand) {
         body.brand = ingredientGroup[0].brand;
       }
-      if (ingredientGroup[0].needsReview) {
+      if (reviewAIIngredients == false) {
+        body.needsReview = false;
+      } else if (ingredientGroup[0].needsReview) {
         body.needsReview = ingredientGroup[0].needsReview;
       }
       const { data } = await axios.post(`${process.env.NODE_HOST}:${process.env.PORT}/ingredients`, body, { headers: { authorization } });
@@ -636,7 +638,7 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
-  async function processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID) {
+  async function processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID, reviewAIIngredients) {
     try {
       // validate resulting json, return if it lacks minimum requirements
       if (recipeJSON.error) {
@@ -860,6 +862,7 @@ module.exports = ({ db, dbPublic }) => {
         ...(recipeJSON.timeBake && { timeBake: recipeJSON.timeBake }), //include 'timeBake' if not null,
         sourceAuthor: recipeJSON.sourceAuthor || '',
         sourceURL: recipeJSON.sourceURL || '',
+        reviewAIIngredients
       };
       global.logger.info({ message: `*recipes-processRecipeJSON* CALLING CONSTRUCT WITH BODY: ${JSON.stringify(constructBody)}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       if (recipePhotoURL) {
@@ -904,7 +907,7 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function createVision(options) {
-    const { userID, recipeSourceImageURLs, recipePhotoURL, authorization } = options;
+    const { userID, recipeSourceImageURLs, recipePhotoURL, reviewAIIngredients, authorization } = options;
 
     try {
       // call openaiHandler to build recipe json
@@ -926,7 +929,7 @@ module.exports = ({ db, dbPublic }) => {
       const visionDuration = visionEndTime - visionStartTime; // duration in milliseconds
       global.logger.info({ message: `*recipes-createVision* *TIME* recipe visionRequest: ${visionDuration / 1000} seconds`, level: 6, timestamp: new Date().toISOString(), userID: userID });
 
-      const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
+      const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID, reviewAIIngredients);
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;
@@ -939,7 +942,7 @@ module.exports = ({ db, dbPublic }) => {
   }
 
   async function createFromURL(options) {
-    const { userID, recipeURL, recipePhotoURL, authorization } = options;
+    const { userID, recipeURL, recipePhotoURL, reviewAIIngredients, authorization } = options;
 
     try {
       // max attempts to create recipe from URL
@@ -951,7 +954,7 @@ module.exports = ({ db, dbPublic }) => {
       while (attempt <= maxAttempts) {
         try {
           global.logger.info({ message: `*recipes-createFromURL* Attempt ${attempt} to create recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
-          recipeID = await createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL);
+          recipeID = await createFromURLAttempt(userID, authorization, recipeURL, reviewAIIngredients, recipePhotoURL);
           break;
         } catch (error) {
           global.logger.info({ message: `*recipes-createFromURL* Error creating recipe from URL: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: userID });
@@ -968,7 +971,7 @@ module.exports = ({ db, dbPublic }) => {
     }
   }
 
-  async function createFromURLAttempt(userID, authorization, recipeURL, recipePhotoURL) {
+  async function createFromURLAttempt(userID, authorization, recipeURL, reviewAIIngredients, recipePhotoURL) {
     try {
       global.logger.info({ message: `*recipes-createFromURLAttempt* Creating recipe from URL: ${recipeURL}`, level: 6, timestamp: new Date().toISOString(), userID: userID });
       // call 'getHtml' to get recipe details from URL
@@ -997,7 +1000,7 @@ module.exports = ({ db, dbPublic }) => {
       const recipeJSON = JSON.parse(result.response);
       recipeJSON.sourceURL = recipeURL;
 
-      const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID);
+      const recipeID = await processRecipeJSON(recipeJSON, recipePhotoURL, authorization, userID, reviewAIIngredients);
 
       const endTime = new Date();
       const totalDuration = endTime - visionStartTime;

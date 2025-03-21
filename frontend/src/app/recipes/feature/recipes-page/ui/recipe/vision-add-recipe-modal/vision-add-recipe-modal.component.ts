@@ -299,6 +299,7 @@ export class VisionAddRecipeModalComponent {
         RecipeActions.visionAddRecipe({
           recipeSourceImageURLs: [...sourceImageURLs],
           recipePhotoURL: this.photoURL,
+          reviewAIIngredients: this.profile.reviewAIIngredients
         })
       );
       this.store
