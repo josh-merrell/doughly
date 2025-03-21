@@ -131,17 +131,21 @@ export class RecipeService {
     return this.http.post<Recipe>(this.API_URL, body);
   }
 
-  visionAdd(recipeSourceImageURLs, recipePhotoURL): Observable<any> {
+  visionAdd(recipeSourceImageURLs, recipePhotoURL,
+    reviewAIIngredients
+  ): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/vision`, {
       recipeSourceImageURLs,
       recipePhotoURL,
+      reviewAIIngredients
     });
   }
 
-  fromURLAdd(recipeURL, recipePhotoURL): Observable<any> {
+  fromURLAdd(recipeURL, recipePhotoURL, reviewAIIngredients): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/fromURL`, {
       recipeURL,
       recipePhotoURL,
+      reviewAIIngredients
     });
   }
 
