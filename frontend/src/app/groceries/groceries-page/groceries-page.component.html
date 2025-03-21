@@ -14,7 +14,7 @@
           view() !== 'shopping'
       }"
     >
-      In Progress
+      Current Shopping List
     </span>
     <span
       *ngIf="shoppingLists().length === 1 && shoppingLists()?.[0].status === 'draft'"
@@ -27,7 +27,7 @@
           view() !== 'draft'
       }"
     >
-      Draft
+      My Draft List
     </span>
     <span
       (click)="updateView('shared')"
@@ -40,7 +40,7 @@
       }"
       *ngIf="hasSharedList()"
     >
-      Shared
+      Shared Lists
     </span>
   </div>
   <!-- Main content -->
