@@ -99,7 +99,7 @@ export class AddShoppingListIngredientModalComponent {
   setForm() {
     this.form = this.fb.group({
       measurement: [
-        '',
+        1,
         [
           Validators.required,
           positiveIntegerValidator(),

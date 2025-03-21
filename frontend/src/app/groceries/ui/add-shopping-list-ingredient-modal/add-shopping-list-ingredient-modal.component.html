@@ -94,12 +94,12 @@
         type="button"
         class="shadow-s h-dl-5 w-full justify-center rounded-dl-1 px-dl-3 py-dl-1 font-serif text-dl-5 font-extrabold italic transition-all duration-200 ease-in-out"
         (click)="onSubmit()"
-        [disabled]="!form.valid || form.pristine"
+        [disabled]="!form.valid"
         [ngClass]="{
           ' bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-pinknew-7 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
-            form.valid && !form.pristine,
+            form.valid,
           'bg-dl-tan-9 text-dl-tan-4 dark:bg-dl-tan-2 dark:text-dl-tan-7':
-            !form.valid || form.pristine,
+            !form.valid,
           invisible: selectedIngredient().ingredientID === 0
         }"
       >

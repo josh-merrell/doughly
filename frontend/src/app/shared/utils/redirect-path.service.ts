@@ -18,7 +18,7 @@ export class RedirectPathService {
   }
 
   public getPath(): string {
-    return this.path || '/recipes/discover'; // Default path if none is set
+    return this.path || '/recipes/created'; // Default path if none is set
   }
 
   public clearPath(): void {

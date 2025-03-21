@@ -27,6 +27,7 @@ export interface Profile {
   onboardingState?: number;
   checkIngredientStock?: boolean;
   autoDeleteExpiredStock?: boolean;
+  reviewAIIngredients?: boolean;
   notifyOnLowStock?: string;
   notifyOnNoStock?: string;
   notifyUpcomingStockExpiry?: string;
@@ -310,6 +311,7 @@ export class AuthService {
       onboardingState: 0.5,
       checkIngredientStock: false,
       autoDeleteExpiredStock: true,
+      reviewAIIngredients: false,
       notifyOnLowStock: 'Enabled',
       notifyOnNoStock: 'Enabled',
       notifyUpcomingStockExpiry: 'Enabled',

@@ -65,6 +65,7 @@ import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { NgAutoAnimateDirective } from 'ng-auto-animate';
 import { Capacitor } from '@capacitor/core';
+import { Share } from '@capacitor/share';
 
 function isRecipeStepError(obj: any): obj is RecipeIngredientError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -874,19 +875,32 @@ export class UserRecipeComponent {
 
   async onShareClicked() {
     console.log('Share clicked');
-    await Clipboard.write({
-      // this will send the social crawler to get the link preview details for the recipe. Users will be redirected to the app.
-      string: `${environment.BACKEND}/link-previews/recipe/${this.recipeID()}`,
+    // **CLIPBOARD SHARE**
+    // await Clipboard.write({
+    //   // this will send the social crawler to get the link preview details for the recipe. Users will be redirected to the app.
+    //   string: `${environment.BACKEND}/link-previews/recipe/${this.recipeID()}`,
+    // });
+    // let confirmationMessage = 'Link copied to clipboard! Share via Whatsapp';
+    // if (Capacitor.isNativePlatform()) {
+    //   const platform = Capacitor.getPlatform();
+    //   if (platform === 'android') {
+    //     confirmationMessage += ' or SMS.';
+    //   } else if (platform === 'ios') {
+    //     confirmationMessage += ' or iMessage.';
+    //   }
+    // }
+
+    // **APP SHARE**
+    const shareLink = `${
+      environment.BACKEND
+    }/link-previews/recipe/${this.recipeID()}`;
+    await Share.share({
+      title: this.recipe().title,
+      text: 'Check out this recipe ->',
+      url: shareLink,
+      dialogTitle: 'Check out this recipe ->',
     });
-    let confirmationMessage = 'Link copied to clipboard! Share via Whatsapp';
-    if (Capacitor.isNativePlatform()) {
-      const platform = Capacitor.getPlatform();
-      if (platform === 'android') {
-        confirmationMessage += ' or SMS.';
-      } else if (platform === 'ios') {
-        confirmationMessage += ' or iMessage.';
-      }
-    }
+    let confirmationMessage = 'Link shared successfully!';
 
     this.modalService.open(
       ConfirmationModalComponent,

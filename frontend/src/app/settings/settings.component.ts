@@ -57,6 +57,7 @@ export class SettingsComponent {
       this.form.patchValue({
         checkIngredientStock: newProfile.checkIngredientStock,
         autoDeleteExpiredStock: newProfile.autoDeleteExpiredStock,
+        reviewAIIngredients: newProfile.reviewAIIngredients,
         darkMode: newProfile.darkMode,
         notifyOnLowStock:
           newProfile.notifyOnLowStock === 'Enabled' ? true : false,
@@ -102,6 +103,7 @@ export class SettingsComponent {
     this.form = this.fb.group({
       checkIngredientStock: [false],
       autoDeleteExpiredStock: [false],
+      reviewAIIngredients: [false],
       darkMode: ['', [Validators.required]],
       notifyOnLowStock: [true],
       notifyOnNoStock: ['', [Validators.required]],
@@ -121,6 +123,9 @@ export class SettingsComponent {
         ? 'true'
         : 'false',
       autoDeleteExpiredStock: this.form.value.autoDeleteExpiredStock
+        ? 'true'
+        : 'false',
+      reviewAIIngredients: this.form.value.reviewAIIngredients
         ? 'true'
         : 'false',
       darkMode: this.form.value.darkMode,

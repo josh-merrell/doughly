@@ -49,7 +49,7 @@
         }"
         (click)="onRecipeButtonClick()"
       >
-        @if (selectedRecipeID() === 0) { Add Recipe } @else { Remove Recipe and
+        @if (selectedRecipeID() === 0) { Add Recipe to List } @else { Remove Recipe and
         Related Items }
       </button>
 
@@ -174,7 +174,7 @@
         displaySLStandaloneIngr().length === 0
       "
     >
-      Confirm and Go Shopping
+    @if (displaySLRecipeIngr().length === 0) { Add Items to Proceed } @else { Confirm and Go Shopping }
     </button>
     <div
       *ngIf="isLoading() === true"

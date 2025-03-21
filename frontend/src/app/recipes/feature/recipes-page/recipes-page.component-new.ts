@@ -32,7 +32,7 @@ export class RecipesPageNewComponent {
     public dialog: MatDialog,
     private route: ActivatedRoute
   ) {
-    this.view = signal('discover'); // Default view
+    this.view = signal('created'); // Default view
   }
 
   ngOnInit(): void {

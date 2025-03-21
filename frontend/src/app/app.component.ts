@@ -138,7 +138,7 @@ export class AppComponent {
       // this.router.navigate(['/tempRoute']);
       this.zone.run(() => {
         console.log('BACK BUTTON PRESSED');
-        this.router.navigate(['/recipes/discover']);
+        this.router.navigate(['/recipes/created']);
       });
     });
     // Listen for link events

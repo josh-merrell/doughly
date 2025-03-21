@@ -129,7 +129,7 @@ export class YourPremiumComponent {
     if (this.view() === 'benefits') {
       this.setView('chooseMapping');
     } else if (this.view() === 'chooseMapping') {
-      this.router.navigate(['/recipes/discover']);
+      this.router.navigate(['/recipes/created']);
     } else if (this.view() === 'options') {
       this.makePurchase(this.selectedIdentifier());
     }
@@ -211,7 +211,7 @@ export class YourPremiumComponent {
           true
         );
       }
-      this.router.navigate(['/recipes/discover']);
+      this.router.navigate(['/recipes/created']);
     }
   }
 

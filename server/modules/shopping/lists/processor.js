@@ -85,6 +85,9 @@ module.exports = ({ db, dbPublic }) => {
     try {
       // first check state of each to ensure they're marked as fulfilled if needed
       await refreshShoppingLists({ userID });
+
+      // remove any stale shared lists due to un-friending
+      await refreshSharedLists({ userID });
       const { data: sharedLists, error } = await db.from('sharedShoppingLists').select('*').or(`userID.eq.${userID},invitedUserID.eq.${userID}`);
       if (error) {
         throw errorGen(`*shoppingLists-getShared* Error getting shared shopping lists: ${error.message}`, 511, 'failSupabaseSelect', true, 3);
@@ -405,7 +408,7 @@ module.exports = ({ db, dbPublic }) => {
   };
 
   refreshShoppingLists = async (options) => {
-    console.log(`*shoppingLists-refreshShoppingLists* Refreshing shopping lists`);
+    global.logger.info({ message: `*shoppingLists-refreshShoppingLists* Refreshing shopping lists`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
     const { userID } = options;
 
     try {
@@ -444,7 +447,7 @@ module.exports = ({ db, dbPublic }) => {
       }
 
       // update all lists that need to be fulfilled
-      console.log(`*shoppingLists-refreshShoppingLists* Found ${listsToFulfill.length} shopping lists to fulfill`);
+      global.logger.info({ message: `*shoppingLists-refreshShoppingLists* Found ${listsToFulfill.length} shopping lists to fulfill`, level: 6, timestamp: new Date().toISOString(), userID });
       const updatePromises = [];
       for (let i = 0; i < listsToFulfill.length; i++) {
         updatePromises.push(updateShoppingList({ userID, shoppingListID: listsToFulfill[i], status: 'fulfilled', fulfilledMethod: 'manual', fulfilledDate: new Date().toISOString() }));
@@ -452,6 +455,46 @@ module.exports = ({ db, dbPublic }) => {
       await Promise.all(updatePromises);
     } catch (err) {
       throw errorGen(err.message || '*shoppingLists-refreshShoppingLists* Unhandled Error', err.code || 520, err.name || 'unhandledError_shoppingLists-refreshShoppingLists', err.isOperational || false, err.severity || 2);
+    }
+  };
+
+  refreshSharedLists = async (options) => {
+    global.logger.info({ message: `*shoppingLists-refreshSharedLists* Refreshing shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID: options.userID });
+    const { userID } = options;
+
+    try {
+      // get all sharedShoppingLists for the user
+      const { data: sharedShoppingLists, error: sharedShoppingListsError } = await db.from('sharedShoppingLists').select('*').or(`userID.eq.${userID},invitedUserID.eq.${userID}`);
+      if (sharedShoppingListsError) {
+        throw errorGen(`*shoppingLists-refreshSharedLists* Error getting shared shopping lists: ${sharedShoppingListsError.message}`, 511, 'failSupabaseSelect', true, 3);
+      }
+
+      // for each sharedShoppingList, verify that the shoppingList author is still a friend of the invited user
+      const listsToRemove = [];
+      for (let i = 0; i < sharedShoppingLists.length; i++) {
+        const sharedShoppingList = sharedShoppingLists[i];
+        global.logger.info({ message: `*shoppingLists-refreshSharedLists* Checking friendship for shared shopping list ${sharedShoppingList.shoppingListID}`, level: 6, timestamp: new Date().toISOString(), userID });
+
+        const { data: friendship, error: friendshipError } = await db.from('friendships').select().filter('userID', 'eq', sharedShoppingList.userID).filter('friend', 'eq', sharedShoppingList.invitedUserID).filter('status', 'eq', 'confirmed').filter('deleted', 'eq', false).maybeSingle();
+
+        if (friendshipError) {
+          throw errorGen(`*shoppingLists-refreshSharedLists* Error getting friendship for shared shopping list ${sharedShoppingList.shoppingListID}: ${friendshipError.message}`, 511, 'failSupabaseSelect', true, 3);
+        }
+
+        global.logger.info({ message: `*shoppingLists-refreshSharedLists* Friendship for shared shopping list ${sharedShoppingList.shoppingListID}: ${friendship ? 'confirmed' : 'not confirmed'}`, level: 6, timestamp: new Date().toISOString(), userID });
+        if (!friendship) {
+          listsToRemove.push(sharedShoppingList.shoppingListID);
+        }
+      }
+
+      global.logger.info({ message: `*shoppingLists-refreshSharedLists* Removing ${listsToRemove.length} shared shopping lists`, level: 6, timestamp: new Date().toISOString(), userID });
+      const deletePromises = [];
+      for (let i = 0; i < listsToRemove.length; i++) {
+        deletePromises.push(db.from('sharedShoppingLists').delete().eq('shoppingListID', listsToRemove[i]));
+      }
+      await Promise.all(deletePromises);
+    } catch (err) {
+      throw errorGen(err.message || '*shoppingLists-refreshSharedLists* Unhandled Error', err.code || 520, err.name || 'unhandledError_shoppingLists-refreshSharedLists', err.isOperational || false, err.severity || 2);
     }
   };
 
