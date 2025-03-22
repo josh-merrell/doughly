@@ -106,7 +106,7 @@ export class VisionAddRecipeModalComponent {
       const profile = this.authService.profile();
       this.profile = profile;
       console.log(`profile: `, profile);
-    })
+    });
   }
 
   // for recipe source image
@@ -149,8 +149,7 @@ export class VisionAddRecipeModalComponent {
     this.sourceImage2SelectedFileUrl = sourceImageBase64!;
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   animationCreated(animationItem: AnimationItem): void {
     this.animationItem = animationItem;
@@ -299,7 +298,7 @@ export class VisionAddRecipeModalComponent {
         RecipeActions.visionAddRecipe({
           recipeSourceImageURLs: [...sourceImageURLs],
           recipePhotoURL: this.photoURL,
-          reviewAIIngredients: this.profile.reviewAIIngredients
+          reviewAIIngredients: this.profile.reviewAIIngredients || false,
         })
       );
       this.store

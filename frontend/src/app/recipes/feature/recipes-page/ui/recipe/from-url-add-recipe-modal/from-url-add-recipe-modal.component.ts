@@ -208,7 +208,7 @@ export class FromUrlAddRecipeModalComponent {
         RecipeActions.UrlAddRecipe({
           recipeURL: this.form.value.sourceURL,
           recipePhotoURL: this.photoURL,
-          reviewAIIngredients: this.profile().reviewAIIngredients
+          reviewAIIngredients: this.profile().reviewAIIngredients || false,
         })
       );
       this.store
