@@ -27,6 +27,8 @@ import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-m
 import { StringsService } from 'src/app/shared/utils/strings';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { NgAutoAnimateDirective } from 'ng-auto-animate';
+import { UnitService } from 'src/app/shared/utils/unitService';
+
 @Component({
   selector: 'dl-ingredients',
   standalone: true,
@@ -39,6 +41,7 @@ import { NgAutoAnimateDirective } from 'ng-auto-animate';
   templateUrl: './ingredients.component.html',
 })
 export class IngredientsComponent {
+  Math = Math;
   public ingredients: WritableSignal<Ingredient[]> = signal([]);
   public enhancedIngredients: WritableSignal<Ingredient[]> = signal([]);
   public totalInStock: WritableSignal<Number> = signal(0);
@@ -73,7 +76,8 @@ export class IngredientsComponent {
     private router: Router,
     private modalService: ModalService,
     private stringsService: StringsService,
-    public extraStuffService: ExtraStuffService
+    public extraStuffService: ExtraStuffService,
+    public unitService: UnitService
   ) {
     effect(
       () => {

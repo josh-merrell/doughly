@@ -174,7 +174,7 @@
         displaySLStandaloneIngr().length === 0
       "
     >
-    @if (displaySLRecipeIngr().length === 0) { Add Items to Proceed } @else { Confirm and Go Shopping }
+    @if (displaySLRecipeIngr().length === 0 && displaySLStandaloneIngr().length === 0) { Add Items to Proceed } @else { Confirm and Go Shopping }
     </button>
     <div
       *ngIf="isLoading() === true"
