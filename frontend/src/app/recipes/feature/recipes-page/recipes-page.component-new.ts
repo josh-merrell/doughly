@@ -11,6 +11,7 @@ import {
 import { DiscoverRecipesComponent } from '../discover/discover-recipes.component';
 import { RecipeListComponent } from './feature/list/recipe-list.component';
 import { Subject, filter, takeUntil } from 'rxjs';
+import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 
 @Component({
   selector: 'dl-recipes-page-new',
@@ -30,7 +31,8 @@ export class RecipesPageNewComponent {
   constructor(
     private router: Router,
     public dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public extraStuffService: ExtraStuffService
   ) {
     this.view = signal('created'); // Default view
   }
@@ -83,6 +85,14 @@ export class RecipesPageNewComponent {
       currentRoute = currentRoute.firstChild;
     }
     return routes;
+  }
+
+  onHelpClick() {
+    // this.extraStuffService.recipePageShowHelp.set(false);
+    // toggle current state
+    this.extraStuffService.recipePageShowHelp.set(
+      !this.extraStuffService.recipePageShowHelp()
+    );
   }
 
   navigateToCreated() {

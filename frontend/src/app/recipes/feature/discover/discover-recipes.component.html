@@ -2,8 +2,9 @@
   class="relative flex h-full w-full flex-col transition-all duration-200 ease-in-out"
 >
   <!-- Explainer Text -->
-  <div class="relative mt-dl-1 px-dl-3 flex flex-row items-center">
+  <div auto-animate class="relative mt-dl-1 px-dl-3 flex flex-row items-center transition-all duration-200 ease-in-out">
     <span
+      *ngIf="extraStuffService.recipePageShowHelp()"
       class="px-dl-3 py-dl-2 font-body text-dl-4 text-dl-tan-2 dark:text-dl-tan-9"
       >These are public Doughly recipes. To connect them to your kitchen
       inventory, view one and tap "Subscribe".</span

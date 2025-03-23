@@ -14,6 +14,7 @@ export class ExtraStuffService {
   public onboardingSubscribedRecipe: WritableSignal<number> = signal(0);
   public onboardingVisionRecipe: WritableSignal<number> = signal(0);
   public systemDarkMode: WritableSignal<boolean> = signal(false);
+  public recipePageShowHelp: WritableSignal<boolean> = signal(true);
 
   constructor(
     private http: HttpClient,
