@@ -78,7 +78,8 @@ export class DeleteRecipeToolModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.dialogRef.close('success');

@@ -362,7 +362,8 @@ export class PublicRecipeComponent {
         maxWidth: '540px',
       },
       1,
-      true
+      true,
+      'FriendModalComponent'
     );
   }
 
@@ -388,7 +389,9 @@ export class PublicRecipeComponent {
               buttonMessage: 'UPGRADE',
             },
           },
-          1
+          1,
+          false,
+          'PrompUpgradeModalComponent'
         );
         if (ref) {
           ref.afterClosed().subscribe((result) => {
@@ -429,7 +432,9 @@ export class PublicRecipeComponent {
             maxWidth: '640px',
             maxHeight: '840px',
           },
-          1
+          1,
+          false,
+          'SubscribeRecipeModalComponent'
         );
       }
     }
@@ -474,44 +479,4 @@ export class PublicRecipeComponent {
     window.open(this.recipe().sourceURL, '_blank');
   }
 
-  onboardingHandler(onboardingState: number) {
-    // ** OLD ONBOARDING **
-    // if (onboardingState === 3) {
-    //   this.onboardingModalOpen.set(true);
-    //   this.reopenOnboardingModal.set(false);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.publicRecipePage,
-    //         currentStep: 3,
-    //         showNextButton: false,
-    //       },
-    //       position: {
-    //         top: '40%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe(() => {
-    //       this.onboardingModalOpen.set(false);
-    //       if (this.profile().onboardingState === 3) {
-    //         this.showOnboardingBadge.set(true);
-    //       } else {
-    //         this.showOnboardingBadge.set(false);
-    //       }
-    //     });
-    //   } else {
-    //   }
-    // }
-    // if (onboardingState === 4) {
-    //   this.onSubscribeClick();
-    // }
-  }
-
-  // onboardingBadgeClick() {
-  //   this.showOnboardingBadge.set(false);
-  //   this.onboardingHandler(this.profile().onboardingState);
-  // }
 }

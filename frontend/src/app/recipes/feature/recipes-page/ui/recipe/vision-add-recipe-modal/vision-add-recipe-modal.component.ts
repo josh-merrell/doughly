@@ -26,6 +26,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
 import { ImageFromCDN } from 'src/app/shared/utils/imageFromCDN.pipe';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
+import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
 
 @Component({
   selector: 'dl-vision-add-recipe-modal',
@@ -100,7 +101,8 @@ export class VisionAddRecipeModalComponent {
     private stringsService: StringsService,
     public extraStuffService: ExtraStuffService,
     private authService: AuthService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private redirectPathService: RedirectPathService
   ) {
     effect(() => {
       const profile = this.authService.profile();
@@ -149,7 +151,9 @@ export class VisionAddRecipeModalComponent {
     this.sourceImage2SelectedFileUrl = sourceImageBase64!;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // this.redirectPathService.setTargetModal(''); // reset target modal now that we're at a terminal modal
+  }
 
   animationCreated(animationItem: AnimationItem): void {
     this.animationItem = animationItem;
@@ -202,9 +206,8 @@ export class VisionAddRecipeModalComponent {
     if (imageToUpload) {
       try {
         const type =
-          variableName === 'sourceImageSelectedFile'
-            ? 'temp'
-            : 'sourceImage2SelectedFile'
+          variableName === 'sourceImageSelectedFile' ||
+          variableName === 'sourceImage2SelectedFile'
             ? 'temp'
             : 'recipe';
         const url: string = await this.photoUploadService
@@ -272,6 +275,7 @@ export class VisionAddRecipeModalComponent {
     }
 
     try {
+      this.redirectPathService.resetPath();
       // Start listening for SSE messages relating to the recipe vision progress
       this.recipeProgressService.startListening().subscribe({
         next: (message) => {
@@ -326,7 +330,8 @@ export class VisionAddRecipeModalComponent {
                     data: {},
                   },
                   3,
-                  true
+                  true,
+                  'VisionAddExampleModalComponent'
                 );
 
                 // show the error modal
@@ -340,7 +345,8 @@ export class VisionAddRecipeModalComponent {
                     },
                   },
                   4,
-                  true
+                  true,
+                  'ErrorModalComponent'
                 );
               } else {
                 this.removeFiles(false);
@@ -376,40 +382,11 @@ export class VisionAddRecipeModalComponent {
     this.dialogRef.close();
   }
 
-  onDestroy() {
+  ngOnDestroy() {
     this.removeFiles(false);
     this.recipeProgressService.stopListening();
-  }
-
-  onboardingHandler(onboardingState: number): void {
-    // ** OLD ONBOARDING **
-    // if (onboardingState === 12) {
-    //   if (this.onboardingModalOpen()) return;
-    //   this.onboardingModalOpen.set(true);
-    //   this.showOnboardingBadge.set(false);
-    //   this.reopenOnboardingModal.set(false);
-    //   const dialogRef = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.recipeCreateImage,
-    //         currentStep: 12,
-    //         showNextButton: false,
-    //       },
-    //       position: {
-    //         top: '30%',
-    //       },
-    //     },
-    //     3
-    //   );
-    //   if (dialogRef) {
-    //     dialogRef.afterClosed().subscribe(() => {
-    //       this.onboardingModalOpen.set(false);
-    //       this.showOnboardingBadge.set(true);
-    //     });
-    //   } else {
-    //   }
-    // }
+    this.redirectPathService.sharedUrl.set('');
+    this.redirectPathService.resetPath();
   }
 
   onClickHelp() {
@@ -420,7 +397,8 @@ export class VisionAddRecipeModalComponent {
         data: {},
       },
       3,
-      true
+      true,
+      'VisionAddExampleModalComponent'
     );
   }
 }

@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, WritableSignal, signal } from '@angular/core';
+import { Component, WritableSignal, signal, Inject } from '@angular/core';
 import { Camera, CameraResultType } from '@capacitor/camera';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { TextInputComponent } from 'src/app/shared/ui/text-input/text-input.component';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
@@ -30,6 +34,7 @@ import { AuthService } from 'src/app/shared/utils/authenticationService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
+import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
 
 @Component({
   selector: 'dl-from-url-add-recipe-modal',
@@ -50,6 +55,9 @@ export class FromUrlAddRecipeModalComponent {
   form!: FormGroup;
   isAdding: boolean = false;
   statusMessage: WritableSignal<string> = signal('');
+  promptMessage: WritableSignal<string> = signal(
+    'Paste the URL of the recipe you wish to add to your collection. Optionally, choose a photo of the completed dish.'
+  );
   private profile: WritableSignal<any> = this.authService.profile;
 
   // Lottie animation
@@ -77,8 +85,11 @@ export class FromUrlAddRecipeModalComponent {
   public imageLoadFailed: boolean = false;
   public imagePresent: boolean = false;
   public isChecked = true;
+  public sharedUrl: string = '';
 
   constructor(
+    @Inject(MAT_DIALOG_DATA)
+    public data: { sharedUrl: string },
     public dialogRef: MatDialogRef<FromUrlAddRecipeModalComponent>,
     private photoUploadService: PhotoService,
     public dialog: MatDialog,
@@ -88,7 +99,8 @@ export class FromUrlAddRecipeModalComponent {
     private router: Router,
     private fb: FormBuilder,
     private authService: AuthService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private redirectPathService: RedirectPathService
   ) {}
 
   // for recipe photo
@@ -168,12 +180,18 @@ export class FromUrlAddRecipeModalComponent {
   }
 
   ngOnInit(): void {
+    if (this.data?.sharedUrl) {
+      this.promptMessage.set(
+        "We'll import the recipe from the URL you shared if present. Optionally, choose a photo of the completed dish before starting!"
+      );
+    }
     this.setForm();
+    // this.redirectPathService.setTargetModal(''); // reset target modal now that we're at a terminal modal
   }
 
   setForm() {
     this.form = this.fb.group({
-      sourceURL: ['', [Validators.required]],
+      sourceURL: [this.data?.sharedUrl || '', [Validators.required]],
     });
   }
 
@@ -186,6 +204,8 @@ export class FromUrlAddRecipeModalComponent {
     }
 
     try {
+      this.redirectPathService.sharedUrl.set('');
+      this.redirectPathService.resetPath();
       // Start listening for recipe vision progress
       this.recipeProgressService.startListening().subscribe({
         next: (message) => {
@@ -238,7 +258,8 @@ export class FromUrlAddRecipeModalComponent {
                     },
                   },
                   3,
-                  true
+                  true,
+                  'ErrorModalComponent'
                 );
               } else {
                 this.removeFiles(false);
@@ -274,8 +295,10 @@ export class FromUrlAddRecipeModalComponent {
     this.dialogRef.close('cancel');
   }
 
-  onDestroy() {
+  ngOnDestroy() {
     this.removeFiles(true);
     this.recipeProgressService.stopListening();
+    this.redirectPathService.sharedUrl.set('');
+    this.redirectPathService.resetPath();
   }
 }

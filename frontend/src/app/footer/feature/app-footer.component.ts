@@ -263,7 +263,9 @@ export class AppFooterComponent {
       {
         width: '440px',
       },
-      1
+      1,
+      false,
+      'MessagesModalComponent'
     );
     if (ref) {
       ref!.afterClosed().subscribe((result: any) => {

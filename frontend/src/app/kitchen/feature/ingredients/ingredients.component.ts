@@ -208,7 +208,9 @@ export class IngredientsComponent {
       {
         data: {},
       },
-      1
+      1,
+      false,
+      'AddIngredientModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -222,7 +224,8 @@ export class IngredientsComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -236,7 +239,9 @@ export class IngredientsComponent {
       {
         data: {},
       },
-      1
+      1,
+      false,
+      'AddIngredientStockModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -249,7 +254,8 @@ export class IngredientsComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -305,7 +311,9 @@ export class IngredientsComponent {
         },
         width: '75%',
       },
-      1
+      1,
+      false,
+      'IngredientsDetailsModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -358,7 +366,9 @@ export class IngredientsComponent {
             top: '30%',
           },
         },
-        1
+        1,
+        false,
+        'OnboardingMessageModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe(() => {

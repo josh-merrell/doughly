@@ -75,7 +75,9 @@ export class FollowersComponent {
         width: '80%',
         maxWidth: '540px',
       },
-      1
+      1,
+      false,
+      'FriendModalComponent'
     );
   }
 }

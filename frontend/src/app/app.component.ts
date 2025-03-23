@@ -59,7 +59,7 @@ export class AppComponent {
     '/web',
     '/admin',
     '/update',
-    '/terms'
+    '/terms',
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
@@ -75,7 +75,8 @@ export class AppComponent {
     private extraStuffService: ExtraStuffService,
     private productService: ProductService,
     private renderer: Renderer2,
-    private stylesService: StylesService
+    private stylesService: StylesService,
+    private redirectService: RedirectPathService
   ) {
     // Listen to routing events, ensuring only NavigationEnd events are processed
     this.router.events
@@ -88,7 +89,7 @@ export class AppComponent {
         console.log('NAVIGATION: ', event.urlAfterRedirects);
         // Check if the current URL matches any in the list where the footer should be hidden
         this.showFooter = !this.hideFooterRoutes.some((route) =>
-          event.urlAfterRedirects.includes(route)
+          event.urlAfterRedirects.startsWith(route)
         );
       });
 
@@ -170,6 +171,14 @@ export class AppComponent {
           }
         }
       });
+    });
+
+    window.addEventListener('urlShared', (event: any) => {
+      console.log('Shared URL received in app:', event.url);
+      this.redirectService.sharedUrl.set(event.url);
+      this.redirectPathService.setTargetModal('fromURL');
+      this.redirectPathService.setPath('/recipes/created');
+      this.router.navigateByUrl('/loading');
     });
 
     // listen for dark mode changes in app
@@ -321,7 +330,11 @@ export class AppComponent {
     const currentVersion = await this.getCurrentAppVersion();
     const availableVersion = await this.getAvailableAppVersion();
     console.log('CURRENT VERSION: ', typeof currentVersion, currentVersion);
-    console.log('AVAILABLE VERSION: ', typeof availableVersion, availableVersion);
+    console.log(
+      'AVAILABLE VERSION: ',
+      typeof availableVersion,
+      availableVersion
+    );
     if (!currentVersion || !availableVersion) {
       return;
     }

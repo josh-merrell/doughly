@@ -13,8 +13,7 @@
       *ngIf="!isAdding"
       class="px-dl-4 font-body text-dl-4 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >
-      Paste the URL of the recipe you wish to add to your collection.
-      Optionally, choose a photo of the completed dish.
+      {{ promptMessage()}}
     </p>
     <!-- AI Stars animation -->
     <ng-lottie
@@ -92,7 +91,7 @@
                 form.valid || !form.pristine,
               'bg-dl-tan-7': !form.valid || form.pristine
             }"
-            [disabled]="!form.valid || form.pristine"
+            [disabled]="!form.valid"
             (click)="onSubmit()"
           >
             Submit

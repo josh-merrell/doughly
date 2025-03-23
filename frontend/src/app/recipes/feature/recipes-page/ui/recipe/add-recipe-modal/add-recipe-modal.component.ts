@@ -33,6 +33,7 @@ import { AnimationItem } from 'lottie-web';
 import { Capacitor } from '@capacitor/core';
 import { StylesService } from 'src/app/shared/utils/stylesService';
 import { AuthService } from 'src/app/shared/utils/authenticationService';
+import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
 
 @Component({
   selector: 'dl-add-recipe-modal',
@@ -79,7 +80,8 @@ export class AddRecipeModalComponent {
     public extraStuffService: ExtraStuffService,
     private renderer: Renderer2,
     private stylesService: StylesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private redirectService: RedirectPathService
   ) {
     this.recipeCategories = this.data.recipeCategories;
 
@@ -93,32 +95,18 @@ export class AddRecipeModalComponent {
   }
 
   ngOnInit() {
-    // Check the initial URL
-    this.checkUrlAndAct(this.location.path());
-
-    // Listen for future URL changes
-    this.router.events
-      .pipe(
-        filter(
-          (event): event is NavigationEnd => event instanceof NavigationEnd
-        ),
-        map((event) => event as NavigationEnd)
-      )
-      .subscribe((navigationEndEvent) => {
-        this.checkUrlAndAct(navigationEndEvent.urlAfterRedirects);
-      });
-
-    // this.store.select(selectProfile).subscribe((profile) => {
-    //   if (profile && profile.onboardingState !== 0) {
-    //     this.showOnboardingBadge.set(true);
-    //   }
-    //   this.profile.set(profile);
-    // });
-
     this.profile.set(this.authService.profile());
     if (this.profile() && this.profile().onboardingState !== 0) {
       this.showOnboardingBadge.set(true);
     }
+    // Check the initial URL
+    this.checkUrlAndAct();
+
+    // Listen for future URL changes
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map((event) => event as NavigationEnd)
+    );
   }
 
   animationCreated(animationItem: AnimationItem): void {
@@ -140,15 +128,20 @@ export class AddRecipeModalComponent {
     this.animation2Item?.stop();
   }
 
-  private checkUrlAndAct(fullUrl: string) {
-    console.log('fullUrl', fullUrl);
-    if (fullUrl.includes('/vision')) {
+  private checkUrlAndAct() {
+    const targetModal = this.redirectService.getTargetModal();
+    console.log(`checkUrlAndAct targetModal: ${targetModal}`);
+    if (targetModal == 'add') {
+      // we're there, reset targetModal and return
+      // this.redirectService.setTargetModal('');
+      return;
+    }
+    if (targetModal == 'vision') {
       this.onVisionAddClick();
+    } else if (targetModal == 'fromURL') {
+      const sharedUrl = this.redirectService.sharedUrl();
+      this.onFromUrlAddClick(sharedUrl);
     }
-    if (fullUrl.includes('/from-url')) {
-      this.onFromUrlAddClick();
-    }
-    // Any other URL checks can be added here
   }
 
   onManualAddClick(): void {
@@ -160,7 +153,9 @@ export class AddRecipeModalComponent {
         },
         width: '90%',
       },
-      2
+      2,
+      false,
+      'ManualAddRecipeModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result) => {
@@ -190,7 +185,9 @@ export class AddRecipeModalComponent {
             buttonMessage: 'ADD MORE TOKENS',
           },
         },
-        2
+        2,
+        false,
+        'PrompUpgradeModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -214,7 +211,9 @@ export class AddRecipeModalComponent {
             buttonMessage: 'ADD MORE TOKENS',
           },
         },
-        2
+        2,
+        false,
+        'PrompUpgradeModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -246,7 +245,9 @@ export class AddRecipeModalComponent {
         {
           width: '90%',
         },
-        2
+        2,
+        false,
+        'VisionAddRecipeModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -261,8 +262,9 @@ export class AddRecipeModalComponent {
     }
   }
 
-  onFromUrlAddClick(): void {
+  onFromUrlAddClick(sharedUrl?: String): void {
     // first ensure user has at least one AI credit
+    console.log(`onFromUrlAddClick sharedUrl: ${sharedUrl}`);
     if (
       this.profile().permAITokenCount < 1 &&
       this.profile().isPremium === true
@@ -278,7 +280,9 @@ export class AddRecipeModalComponent {
             buttonMessage: 'ADD MORE TOKENS',
           },
         },
-        2
+        2,
+        false,
+        'PrompUpgradeModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -301,7 +305,9 @@ export class AddRecipeModalComponent {
             buttonMessage: 'ADD MORE TOKENS',
           },
         },
-        2
+        2,
+        false,
+        'PrompUpgradeModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -323,8 +329,13 @@ export class AddRecipeModalComponent {
         FromUrlAddRecipeModalComponent,
         {
           width: '90%',
+          data: {
+            sharedUrl,
+          },
         },
-        2
+        2,
+        false,
+        'FromUrlAddRecipeModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -350,7 +361,7 @@ export class AddRecipeModalComponent {
     return nextRefreshDate.toDateString();
   }
 
-  onDestroy() {
+  ngOnDestroy() {
     this.dialogRef.close();
   }
 

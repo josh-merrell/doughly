@@ -259,7 +259,9 @@ export class ShoppingPageComponent {
         width: '50%',
         maxWidth: '360px',
       },
-      1
+      1,
+      false,
+      'PurchaseIngredientsModalComponent'
     );
     let modalResult;
     if (ref) {
@@ -314,7 +316,8 @@ export class ShoppingPageComponent {
                         },
                       },
                       1,
-                      true
+                      true,
+                      'ErrorModalComponent'
                     );
                   } else {
                     this.modalService.open(
@@ -331,7 +334,8 @@ export class ShoppingPageComponent {
                         },
                       },
                       1,
-                      true
+                      true,
+                      'ConfirmationModalComponent'
                     );
                   }
                 });
@@ -398,7 +402,8 @@ export class ShoppingPageComponent {
                   },
                 },
                 1,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.modalService.open(
@@ -410,7 +415,8 @@ export class ShoppingPageComponent {
                   },
                 },
                 1,
-                true
+                true,
+                'ConfirmationModalComponent'
               );
             }
             this.isDeleting.set(false);
@@ -430,7 +436,9 @@ export class ShoppingPageComponent {
           shoppingListID: this.shoppingListID(),
         },
       },
-      1
+      1,
+      false,
+      'ViewListSharesModalComponent'
     );
   }
 
@@ -477,7 +485,9 @@ export class ShoppingPageComponent {
           shoppingListID: this.shoppingListID(),
         },
       },
-      1
+      1,
+      false,
+      'ShareListModalComponent'
     );
   }
 }

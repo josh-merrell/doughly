@@ -13,6 +13,7 @@ import {
 import { filter, take } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+import { ModalService } from '../utils/modalService';
 
 @Component({
   selector: 'dl-temp-route',
@@ -28,7 +29,8 @@ export class TempRouteComponent {
     private router: Router,
     private authService: AuthService,
     private extraStuffService: ExtraStuffService,
-    private store: Store
+    private store: Store,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +38,9 @@ export class TempRouteComponent {
       this.profile.set(profile);
     });
     const path = this.redirectPathService.getPath();
+    console.log(
+      `TempRouteComponent: Got stored redirectPathService Path: ${path}`
+    );
     const profile = this.profile();
     switch (profile?.onboardingState) {
       case 0.5:
@@ -237,6 +242,8 @@ export class TempRouteComponent {
       //   break;
       default: // onboardingState 0 (done)
         if (path) {
+          console.log(`TempRouteComponent: Redirecting to stored redirectPathService Path: ${path}`);
+          this.modalService.closeAll();
           this.router.navigate([path], { onSameUrlNavigation: 'reload' });
         }
     }

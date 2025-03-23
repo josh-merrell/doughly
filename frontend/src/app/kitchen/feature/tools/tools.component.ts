@@ -112,7 +112,9 @@ export class ToolsComponent {
       {
         data: {},
       },
-      1
+      1,
+      false,
+      'AddToolModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -125,7 +127,8 @@ export class ToolsComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -169,7 +172,9 @@ export class ToolsComponent {
         },
         width: '75%',
       },
-      1
+      1,
+      false,
+      'ToolDetailsModalComponent'
     );
   }
 

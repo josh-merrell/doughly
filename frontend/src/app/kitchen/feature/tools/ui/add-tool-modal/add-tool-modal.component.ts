@@ -109,7 +109,8 @@ export class AddToolModalComponent {
                   },
                 },
                 1,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.store

@@ -56,7 +56,7 @@ import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { UnitService } from 'src/app/shared/utils/unitService';
 import { selectSharedShoppingLists } from '../../state/sharedShoppingLists/shared-shopping-list-selectors';
-import { NgAutoAnimateDirective } from 'ng-auto-animate'; 
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
 
 @Component({
   selector: 'dl-draft-page',
@@ -66,7 +66,7 @@ import { NgAutoAnimateDirective } from 'ng-auto-animate';
     RecipeCardComponent,
     AddShoppingListRecipeModalComponent,
     MatProgressSpinnerModule,
-    NgAutoAnimateDirective
+    NgAutoAnimateDirective,
   ],
   templateUrl: './draft-page.component.html',
 })
@@ -207,7 +207,11 @@ export class DraftPageComponent {
 
         displayRecipes.forEach((recipe) => {
           this.recipeService
-            .getShoppingList(recipe.recipeID, this.profile().checkIngredientStock, new Date(recipe.plannedDate))
+            .getShoppingList(
+              recipe.recipeID,
+              this.profile().checkIngredientStock,
+              new Date(recipe.plannedDate)
+            )
             .subscribe((sl) => {
               tempMap.set(recipe.recipeID, sl);
 
@@ -377,7 +381,9 @@ export class DraftPageComponent {
             shoppingListID: this.shoppingLists()[0].shoppingListID,
           },
         },
-        1
+        1,
+        false,
+        'AddShoppingListRecipeModalComponent'
       );
 
       if (ref) {
@@ -393,7 +399,8 @@ export class DraftPageComponent {
                 },
               },
               1,
-              true
+              true,
+              'ConfirmationModalComponent'
             );
             if (this.profile().onboardingState === 7) {
               this.store.dispatch(
@@ -429,7 +436,9 @@ export class DraftPageComponent {
             shoppingListID: this.shoppingLists()[0].shoppingListID,
           },
         },
-        1
+        1,
+        false,
+        'AddShoppingListIngredientModalComponent'
       );
       // after the modal closes, trigger the 'loadShoppingListIngredients' action
       if (ref) {
@@ -445,7 +454,8 @@ export class DraftPageComponent {
                 },
               },
               1,
-              true
+              true,
+              'ConfirmationModalComponent'
             );
           }
           this.store.dispatch(
@@ -458,68 +468,6 @@ export class DraftPageComponent {
       }
     }
   }
-
-  // INTERACTIVITY FUNCTIONS **************************
-  // onDeleteClick() {
-  //   this.closeMenu();
-  //   this.isDeleting.set(true);
-  //   this.store.dispatch(
-  //     ShoppingListActions.deleteShoppingList({
-  //       shoppingListID: this.shoppingLists()[0].shoppingListID,
-  //     })
-  //   );
-  //   this.store
-  //     .select(selectDeletingShoppingList)
-  //     .pipe(
-  //       filter((deleting) => !deleting),
-  //       take(1)
-  //     )
-  //     .subscribe(() => {
-  //       this.store
-  //         .select(selectErrorShoppingList)
-  //         .pipe(take(1))
-  //         .subscribe((error) => {
-  //           if (error) {
-  //             console.error(
-  //               `Failed to delete shopping list: ${error.message}, CODE: ${error.statusCode}`
-  //             );
-  //             this.modalService.open(
-  //               ErrorModalComponent,
-  //               {
-  //                 maxWidth: '380px',
-  //                 data: {
-  //                   errorMessage: error.message,
-  //                   statusCode: error.statusCode,
-  //                 },
-  //               },
-  //               1,
-  //               true
-  //             );
-  //           } else {
-  //             this.modalService.open(
-  //               ConfirmationModalComponent,
-  //               {
-  //                 maxWidth: '380px',
-  //                 data: {
-  //                   confirmationMessage: 'Shopping list deleted',
-  //                 },
-  //               },
-  //               1,
-  //               true
-  //             );
-  //           }
-  //           this.isDeleting.set(false);
-  //         });
-  //     });
-  // }
-
-  // closeMenu() {
-  //   this.menuOpen = false;
-  // }
-  // toggleMenu(event: any) {
-  //   event.stopPropagation();
-  //   this.menuOpen = !this.menuOpen;
-  // }
 
   deleteListRecipe(shoppingListRecipeID: number, reason?: string) {
     this.isDeleting.set(true);
@@ -554,7 +502,8 @@ export class DraftPageComponent {
                   },
                 },
                 1,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               if (reason === 'date') {
@@ -569,7 +518,8 @@ export class DraftPageComponent {
                     },
                   },
                   1,
-                  true
+                  true,
+                  'ConfirmationModalComponent'
                 );
               }
               this.modalService.open(
@@ -581,7 +531,8 @@ export class DraftPageComponent {
                   },
                 },
                 1,
-                true
+                true,
+                'ConfirmationModalComponent'
               );
             }
             this.isDeleting.set(false);
@@ -622,7 +573,8 @@ export class DraftPageComponent {
                   },
                 },
                 1,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.modalService.open(
@@ -635,7 +587,8 @@ export class DraftPageComponent {
                   },
                 },
                 1,
-                true
+                true,
+                'ConfirmationModalComponent'
               );
             }
             this.isDeleting.set(false);
@@ -682,15 +635,21 @@ export class DraftPageComponent {
                   )}`
                 );
                 this.isLoading.set(false);
-                this.modalService.open(ErrorModalComponent, {
-                  maxWidth: '380px',
-                  data: {
-                    errorMessage: `Error creating shopping list ingredients for recipes on list: ${JSON.stringify(
-                      error
-                    )}`,
-                    statusCode: '500',
+                this.modalService.open(
+                  ErrorModalComponent,
+                  {
+                    maxWidth: '380px',
+                    data: {
+                      errorMessage: `Error creating shopping list ingredients for recipes on list: ${JSON.stringify(
+                        error
+                      )}`,
+                      statusCode: '500',
+                    },
                   },
-                });
+                  1,
+                  false,
+                  'ErrorModalComponent'
+                );
               }
               if (isNotAdding) {
                 this.store.dispatch(
@@ -717,15 +676,21 @@ export class DraftPageComponent {
                             )}`
                           );
                           this.isLoading.set(false);
-                          this.modalService.open(ErrorModalComponent, {
-                            maxWidth: '380px',
-                            data: {
-                              errorMessage: `Error updating shopping list status to 'shopping': ${JSON.stringify(
-                                error
-                              )}`,
-                              statusCode: '500',
+                          this.modalService.open(
+                            ErrorModalComponent,
+                            {
+                              maxWidth: '380px',
+                              data: {
+                                errorMessage: `Error updating shopping list status to 'shopping': ${JSON.stringify(
+                                  error
+                                )}`,
+                                statusCode: '500',
+                              },
                             },
-                          });
+                            1,
+                            false,
+                            'ErrorModalComponent'
+                          );
                         } else {
                           this.router.navigate(['/groceries']);
                         }
@@ -749,15 +714,21 @@ export class DraftPageComponent {
         `Error creating shopping list ingredients: ${JSON.stringify(err)}`
       );
       this.isLoading.set(false);
-      this.modalService.open(ErrorModalComponent, {
-        maxWidth: '380px',
-        data: {
-          errorMessage: `Error creating shopping list ingredients: ${JSON.stringify(
-            err
-          )}`,
-          statusCode: '500',
+      this.modalService.open(
+        ErrorModalComponent,
+        {
+          maxWidth: '380px',
+          data: {
+            errorMessage: `Error creating shopping list ingredients: ${JSON.stringify(
+              err
+            )}`,
+            statusCode: '500',
+          },
         },
-      });
+        1,
+        false,
+        'ErrorModalComponent'
+      );
     }
   }
 
@@ -778,7 +749,9 @@ export class DraftPageComponent {
             top: '50%',
           },
         },
-        1
+        1,
+        false,
+        'OnboardingMessageModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -792,35 +765,6 @@ export class DraftPageComponent {
     } else {
       this.router.navigate(['/tempRoute']);
     }
-    // ** OLD ONBOARDING **
-    // if (onboardingState === 7) {
-    //   this.showOnboardingBadge.set(false);
-    //   this.reopenOnboardingModal.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.shoppingPageOverview,
-    //         currentStep: 7,
-    //         showNextButton: false,
-    //       },
-    //       position: {
-    //         bottom: '50%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe(() => {
-    //       this.onboardingModalOpen.set(false);
-    //       this.showOnboardingBadge.set(true);
-    //     });
-    //   } else {
-    //   }
-    // } else if (onboardingState === 8) {
-    //   this.router.navigate(['/recipes/created']);
-    // }
   }
 
   onboardingCallback() {

@@ -74,7 +74,8 @@ export class ViewListSharesModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.modalService.open(
@@ -86,7 +87,8 @@ export class ViewListSharesModalComponent {
                   },
                 },
                 2,
-                false
+                false,
+                'ConfirmationModalComponent'
               );
               this.dialogRef.close();
             }
