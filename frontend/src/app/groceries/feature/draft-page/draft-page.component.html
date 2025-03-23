@@ -15,7 +15,7 @@
       <p
         class="w-full font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
-        Planned Recipes
+        Planned Recipes: {{ displayRecipes().length }}
       </p>
       <div
         class="relative mb-dl-2 flex max-h-dl-10 flex-col items-center overflow-y-auto"
@@ -39,7 +39,7 @@
         type="button"
         class="mb-dl-3 block h-dl-5 w-full whitespace-nowrap rounded-dl-1 border-2 px-dl-1 py-dl-1 text-center font-serif text-dl-5 font-extrabold italic"
         [ngClass]="{
-          'bg-dl-pinknew-4 text-dl-tan-9 dark:border-dl-tan-1 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
+          'bg-dl-pinknew-4 text-dl-tan-10 dark:border-dl-tan-2 dark:bg-dl-pinknew-7 dark:text-dl-tan-1':
             selectedRecipeID() === 0,
           'border-dl-pinknew-4 bg-dl-tan-9 text-dl-pinknew-4  dark:border-dl-pinknew-7 dark:bg-dl-tan-1 dark:text-dl-pinknew-9':
             selectedRecipeID() !== 0,
@@ -57,7 +57,7 @@
       <p
         class="mb-dl-1 mt-dl-3 w-full font-sans text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
       >
-        Items to Buy
+        Items to Buy: {{ displaySLRecipeIngr().length + displaySLStandaloneIngr().length }}
       </p>
       <div
         class="relative mb-dl-4 flex w-full flex-grow flex-col overflow-y-auto border-dl-tan-2 bg-dl-tan-9 px-dl-3 py-dl-2 dark:border-dl-tan-9 dark:bg-dl-tan-1"
@@ -66,9 +66,10 @@
         <p
           class="mb-dl-2 ml-dl-2 font-sans text-dl-4 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-8"
         >
-          Planned Recipe Items
+          Planned Recipe Items {{ displaySLRecipeIngr().length > 0 ? '(' + displaySLRecipeIngr().length + ')' : '' }}
+
         </p>
-        <div auto-animate class="flex min-h-dl-2 flex-wrap overflow-y-auto rounded-dl-3">
+        <div auto-animate class="flex min-h-dl-2 max-h-dl-12 flex-wrap overflow-y-auto rounded-dl-3">
           @for (item of displaySLRecipeIngr(); track item.ingredientName) {
           <div
             class="relative mx-dl-2 mb-dl-2 flex items-center justify-between rounded-dl-1 bg-dl-tan-10 px-dl-1 dark:bg-dl-tan-2"
@@ -102,7 +103,7 @@
         <p
           class="mb-dl-2 ml-dl-2 mt-dl-3 font-sans text-dl-4 font-dl-3 text-dl-pinknew-6 dark:text-dl-pinknew-8"
         >
-          Other Items
+          Other Items {{ displaySLStandaloneIngr().length > 0 ? '(' + displaySLStandaloneIngr().length + ')' : '' }}
         </p>
         <div auto-animate class="flex flex-wrap overflow-y-auto rounded-dl-3">
           @for (item of displaySLStandaloneIngr(); track item.ingredientID) {
