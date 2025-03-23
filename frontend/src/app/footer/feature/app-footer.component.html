@@ -189,7 +189,7 @@
               'scale-100 opacity-100 duration-200': isMenuOpen,
               'scale-95 opacity-0 duration-75': !isMenuOpen
             }"
-            class="absolute -top-36 right-5 z-20 flex w-dl-8 flex-col items-center rounded-md bg-dl-tan-10 py-1 shadow-lg ring-1 ring-dl-tan-1 ring-opacity-5 ease-out focus:outline-none dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+            class="absolute -top-44 right-5 z-20 flex w-dl-9 flex-col items-center rounded-md bg-dl-tan-10 py-1 shadow-lg ring-1 ring-dl-tan-1 ring-opacity-5 ease-out focus:outline-none dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="user-menu-button"
@@ -197,7 +197,7 @@
           >
             <a
               (click)="profileNavigate('/profile')"
-              class="cursor-pointer px-2 py-2 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
+              class="cursor-pointer px-2 py-3 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-0"
@@ -206,7 +206,7 @@
             </a>
             <a
               (click)="profileNavigate('/settings')"
-              class="cursor-pointer px-2 py-2 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
+              class="cursor-pointer px-2 py-3 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-1"
@@ -215,7 +215,7 @@
             </a>
             <a
               (click)="onMessagesClick()"
-              class="cursor-pointer px-2 py-2 font-sans text-dl-5 font-dl-3"
+              class="cursor-pointer px-2 w-full flex flex-col items-center py-3 font-sans text-dl-5 font-dl-3"
               [ngClass]="{
                 'bg-dl-pinknew-10 text-dl-tan-3 dark:bg-dl-pinknew-7 dark:text-dl-tan-8':
                   unackedMessageLength() > 0,
@@ -229,7 +229,7 @@
             </a>
             <a
               (click)="logout()"
-              class="cursor-pointer px-2 py-2 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
+              class="cursor-pointer px-2 py-3 font-sans text-dl-5 font-dl-3 text-dl-tan-3 dark:text-dl-tan-8"
               role="menuitem"
               tabindex="-1"
               id="user-menu-item-2"

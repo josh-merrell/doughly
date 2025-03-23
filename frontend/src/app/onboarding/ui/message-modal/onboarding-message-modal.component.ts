@@ -109,7 +109,8 @@ export class OnboardingMessageModalComponent {
                 },
               },
               2,
-              true
+              true,
+              'ErrorModalComponent'
             );
             if (ref) {
               ref.afterClosed().subscribe(() => {

@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
 import { RecipeCategoryCardComponent } from '../../ui/recipe-category/recipe-category-card/recipe-category-card.component';
 import { RecipeCardComponent } from '../../ui/recipe/recipe-card/recipe-card.component';
 import { Recipe } from 'src/app/recipes/state/recipe/recipe-state';
-import { Location } from '@angular/common';
 
 import {
   RecipeCategory,
@@ -42,8 +41,8 @@ import { ProductService } from 'src/app/shared/utils/productService';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
-import { NgAutoAnimateDirective } from 'ng-auto-animate'; 
-
+import { NgAutoAnimateDirective } from 'ng-auto-animate';
+import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service';
 
 function isRecipeCategoryError(obj: any): obj is RecipeCategoryError {
   return obj && obj.errorType !== undefined && obj.message !== undefined;
@@ -60,7 +59,12 @@ function isRecipeStepError(obj: any): obj is RecipeIngredientError {
 @Component({
   selector: 'dl-recipe-list',
   standalone: true,
-  imports: [CommonModule, RecipeCategoryCardComponent, RecipeCardComponent, NgAutoAnimateDirective],
+  imports: [
+    CommonModule,
+    RecipeCategoryCardComponent,
+    RecipeCardComponent,
+    NgAutoAnimateDirective,
+  ],
   templateUrl: './recipe-list.component.html',
 })
 export class RecipeListComponent {
@@ -139,11 +143,11 @@ export class RecipeListComponent {
   constructor(
     private router: Router,
     private store: Store,
-    private location: Location,
     private stringsService: StringsService,
     private productService: ProductService,
     private modalService: ModalService,
-    public extraStuffService: ExtraStuffService
+    public extraStuffService: ExtraStuffService,
+    private redirectPathService: RedirectPathService
   ) {
     effect(
       () => {
@@ -185,8 +189,7 @@ export class RecipeListComponent {
   }
 
   ngOnInit(): void {
-    // Check the initial URL
-    this.checkUrlAndAct(this.router.url);
+    this.checkUrlAndAct();
 
     console.log(`TYPE: `, this.type);
 
@@ -198,9 +201,6 @@ export class RecipeListComponent {
         ),
         map((event) => event as NavigationEnd)
       )
-      .subscribe((navigationEndEvent) => {
-        this.checkUrlAndAct(navigationEndEvent.urlAfterRedirects);
-      });
 
     this.store.select(selectProfile).subscribe((profile) => {
       this.profile.set(profile);
@@ -236,11 +236,15 @@ export class RecipeListComponent {
     checkScrollHeight();
   }
 
-  private checkUrlAndAct(fullUrl: string) {
-    if (fullUrl.includes('/add')) {
+  private checkUrlAndAct() {
+    const targetModal = this.redirectPathService.getTargetModal();
+    console.log(`RecipeListComponent: targetModal: ${targetModal}`);
+    if (['add', 'fromURL', 'vision'].includes(targetModal)) {
       this.onAddClick();
+    } else {
+      // reset targetModal
+      this.redirectPathService.setTargetModal('');
     }
-    // Any other URL checks can be added here
   }
 
   checkScroll(target: EventTarget | null) {
@@ -281,7 +285,9 @@ export class RecipeListComponent {
               buttonMessage: 'UPGRADE',
             },
           },
-          1
+          1,
+          false,
+          'PrompUpgradeModalComponent'
         );
         if (ref) {
           ref.afterClosed().subscribe((result) => {
@@ -299,8 +305,6 @@ export class RecipeListComponent {
     }
 
     if (allowCreate) {
-      // update url to include '/add' if it's not already there
-      this.location.go('/recipes/created/add');
       console.log('OPEN ADD RECIPE MODAL');
       const ref = this.modalService.open(
         AddRecipeModalComponent,
@@ -310,7 +314,9 @@ export class RecipeListComponent {
           },
           width: '80%',
         },
-        1
+        1,
+        false,
+        'AddRecipeModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -324,11 +330,10 @@ export class RecipeListComponent {
                 },
               },
               1,
-              true
+              true,
+              'ConfirmationModalComponent'
             );
           }
-          // remove '/add' from the url
-          this.location.go('/recipes/created');
         });
       } else {
       }
@@ -348,7 +353,9 @@ export class RecipeListComponent {
             recipe,
           },
         },
-        1
+        1,
+        false,
+        'RecipeIngredientsModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -362,7 +369,8 @@ export class RecipeListComponent {
                 },
               },
               1,
-              true
+              true,
+              'AddRequestConfirmationModalComponent'
             );
           } else if (isRecipeIngredientError(result)) {
             this.modalService.open(
@@ -374,7 +382,8 @@ export class RecipeListComponent {
                 },
               },
               1,
-              true
+              true,
+              'AddRequestErrorModalComponent'
             );
           }
         });
@@ -389,7 +398,9 @@ export class RecipeListComponent {
             recipe,
           },
         },
-        1
+        1,
+        false,
+        'RecipeToolsModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -403,7 +414,8 @@ export class RecipeListComponent {
                 },
               },
               1,
-              true
+              true,
+              'AddRequestConfirmationModalComponent'
             );
           } else if (isRecipeToolError(result)) {
             this.modalService.open(
@@ -415,7 +427,8 @@ export class RecipeListComponent {
                 },
               },
               1,
-              true
+              true,
+              'AddRequestErrorModalComponent'
             );
           }
         });
@@ -430,7 +443,9 @@ export class RecipeListComponent {
             recipe,
           },
         },
-        1
+        1,
+        false,
+        'RecipeStepsModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -444,7 +459,8 @@ export class RecipeListComponent {
                 },
               },
               1,
-              true
+              true,
+              'AddRequestConfirmationModalComponent'
             );
           } else if (isRecipeStepError(result)) {
             this.modalService.open(
@@ -456,7 +472,8 @@ export class RecipeListComponent {
                 },
               },
               1,
-              true
+              true,
+              'AddRequestErrorModalComponent'
             );
           }
         });
@@ -487,7 +504,9 @@ export class RecipeListComponent {
             top: '30%',
           },
         },
-        1
+        1,
+        false,
+        'OnboardingMessageModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -515,7 +534,9 @@ export class RecipeListComponent {
             bottom: '10%',
           },
         },
-        2
+        2,
+        false,
+        'OnboardingMessageModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {

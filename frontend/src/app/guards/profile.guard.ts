@@ -23,6 +23,7 @@ export const canActivate: CanActivateFn = (
   // Allow access if the user's profile is set
   if (profile) return true;
   else {
+    console.log(`ProfileGuard: Saving path: ${state.url}`);
     redirectPathService.setPath(state.url); // '/temp' will use this path to redirect after login
     // Redirect to the /login route, while capturing the current url so we can redirect after login
     router.navigate(['/login']);

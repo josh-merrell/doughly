@@ -10,6 +10,7 @@ export class UnitService {
   constructor(private http: HttpClient) {}
 
   singular(value: string) {
+    console.log(`SINGULAR: ${value}`);
     if (!value || value === '') return value;
     if (value[value.length - 1] === 's') {
       if (value === 'leaves' || value === 'loaves') {
@@ -37,6 +38,7 @@ export class UnitService {
   }
 
   plural(value: string) {
+    console.log(`PLURAL: ${value}`);
     if (!value || value === '') return value;
     if (value[value.length - 1] !== 's') {
       if (value === 'leaf' || value === 'loaf') {

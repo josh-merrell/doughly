@@ -269,7 +269,9 @@ export class DiscoverRecipesComponent {
             top: '30%',
           },
         },
-        1
+        1,
+        false,
+        'OnboardingMessageModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -297,7 +299,9 @@ export class DiscoverRecipesComponent {
             top: '30%',
           },
         },
-        1
+        1,
+        false,
+        'OnboardingMessageModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -336,60 +340,6 @@ export class DiscoverRecipesComponent {
     } else {
       this.router.navigate(['/tempRoute']);
     }
-    // ** OLD ONBOARDING STEPS **
-    // if (onboardingState === 1) {
-    //   this.reopenOnboardingModal.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.welcomeToDoughly,
-    //         currentStep: 1,
-    //         showNextButton: true,
-    //       },
-    //       position: {
-    //         top: '50%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe((result) => {
-    //       this.showOnboardingBadge.set(true);
-    //       this.onboardingModalOpen.set(false);
-    //       if (result === 'nextClicked') {
-    //         this.onboardingCallback();
-    //       }
-    //     });
-    //   } else {
-    //   }
-    // } else if (onboardingState === 2) {
-    //   this.reopenOnboardingModal.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.discoverPageOverview,
-    //         currentStep: 2,
-    //         showNextButton: false,
-    //       },
-    //       position: {
-    //         top: '20%',
-    //       },
-    //     },
-    //     1,
-    //     true
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe(() => {
-    //       this.onboardingModalOpen.set(false);
-    //       this.showOnboardingBadge.set(true);
-    //     });
-    //   } else {
-    //   }
-    // } else this.router.navigate(['/tempRoute']);
   }
 
   onboardingCallback() {

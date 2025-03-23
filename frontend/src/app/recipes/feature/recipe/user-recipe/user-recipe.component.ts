@@ -339,7 +339,8 @@ export class UserRecipeComponent {
             },
           },
           1,
-          true
+          true,
+          'ConfirmationModalComponent'
         );
       }
     });
@@ -421,7 +422,9 @@ export class UserRecipeComponent {
             authorName: this.sourceAuthor()!.username,
           },
         },
-        1
+        1,
+        false,
+        'UnsubscribeRecipeModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {
@@ -436,7 +439,8 @@ export class UserRecipeComponent {
                 },
               },
               1,
-              true
+              true,
+              'ConfirmationModalComponent'
             );
             this.router.navigate(['/recipes']);
           }
@@ -453,7 +457,9 @@ export class UserRecipeComponent {
         data: this.recipe(),
         width: '90%',
       },
-      1
+      1,
+      false,
+      'EditRecipeModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -467,7 +473,8 @@ export class UserRecipeComponent {
               },
             },
             1,
-            true
+            true,
+            'UpdateRequestErrorModalComponent'
           );
         } else if (result === 'success') {
           this.modalService.open(
@@ -478,7 +485,8 @@ export class UserRecipeComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -494,7 +502,9 @@ export class UserRecipeComponent {
           recipeID: this.recipeID(),
         },
       },
-      1
+      1,
+      false,
+      'DeleteRecipeModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -504,7 +514,7 @@ export class UserRecipeComponent {
             data: {
               confirmationMessage: 'Recipe deleted successfully!',
             },
-          });
+          }, 1, false, 'ConfirmationModalComponent');
           //navigate to recipes page
           this.router.navigate(['/recipes']);
         }
@@ -707,7 +717,9 @@ export class UserRecipeComponent {
           },
         },
       },
-      1
+      1,
+      false,
+      'RecipeIngredientsModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -720,7 +732,8 @@ export class UserRecipeComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -737,7 +750,9 @@ export class UserRecipeComponent {
           },
         },
       },
-      1
+      1,
+      false,
+      'RecipeToolsModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -750,7 +765,8 @@ export class UserRecipeComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -776,7 +792,9 @@ export class UserRecipeComponent {
         },
         width: '90%',
       },
-      1
+      1,
+      false,
+      'RecipeShoppingListModalComponent'
     );
   }
   useRecipe() {
@@ -823,7 +841,9 @@ export class UserRecipeComponent {
           },
         },
       },
-      1
+      1,
+      false,
+      'RecipeStepsModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -836,7 +856,8 @@ export class UserRecipeComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         } else if (isRecipeStepError(result)) {
           this.modalService.open(
@@ -848,7 +869,8 @@ export class UserRecipeComponent {
               },
             },
             1,
-            true
+            true,
+            'AddRequestErrorModalComponent'
           );
         }
       });
@@ -917,145 +939,6 @@ export class UserRecipeComponent {
   //***************************************************
 
   onboardingHandler(state: number) {
-    // ** OLD ONBOARDING STEPS **
-    // if (state === 5) {
-    //   this.showOnboardingBadge.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   this.reopenOnboardingModal.set(false);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.subscribeRecipePage,
-    //         currentStep: 5,
-    //         showNextButton: false,
-    //       },
-    //       position: {
-    //         top: '10%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe(() => {
-    //       this.onboardingModalOpen.set(false);
-    //       this.showOnboardingBadge.set(true);
-    //     });
-    //   } else {
-    //   }
-    // } else if (state === 13) {
-    //   this.showOnboardingBadge.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   this.reopenOnboardingModal.set(false);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message:
-    //           this.stringsService.onboardingStrings.recipeCreateImageSuccess,
-    //         currentStep: 13,
-    //         showNextButton: true,
-    //       },
-    //       position: {
-    //         bottom: '70%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //     ref.afterClosed().subscribe((result) => {
-    //       this.onboardingModalOpen.set(false);
-    //       if (result === 'nextClicked') {
-    //         this.onboardingCallback();
-    //       } else this.showOnboardingBadge.set(true);
-    //     });
-    //   } else {
-    //   }
-    // } else if (state === 14) {
-    //   this.showOnboardingBadge.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   this.reopenOnboardingModal.set(false);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message:
-    //           this.stringsService.onboardingStrings.recipeCreateCreditUsage,
-    //         currentStep: 14,
-    //         showNextButton: true,
-    //       },
-    //       position: {
-    //         bottom: '20%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //   } else {
-    //   }
-    //   if (ref) {
-    //     ref.afterClosed().subscribe((result) => {
-    //       this.onboardingModalOpen.set(false);
-    //       if (result === 'nextClicked') {
-    //         this.onboardingCallback();
-    //       } else this.showOnboardingBadge.set(true);
-    //     });
-    //   } else {
-    //   }
-    // } else if (state === 15) {
-    //   this.showOnboardingBadge.set(false);
-    //   this.onboardingModalOpen.set(true);
-    //   this.reopenOnboardingModal.set(false);
-    //   const ref = this.modalService.open(
-    //     OnboardingMessageModalComponent,
-    //     {
-    //       data: {
-    //         message: this.stringsService.onboardingStrings.onboardingComplete,
-    //         currentStep: 15,
-    //         showNextButton: false,
-    //       },
-    //       position: {
-    //         bottom: '50%',
-    //       },
-    //     },
-    //     1
-    //   );
-    //   if (ref) {
-    //   } else {
-    //   }
-    //   if (ref) {
-    //     ref.afterClosed().subscribe(() => {
-    //       this.onboardingModalOpen.set(false);
-    //       this.showOnboardingBadge.set(false);
-    //       // set onboardingState back to 0 (done)
-    //       this.store.dispatch(
-    //         ProfileActions.updateProfileProperty({
-    //           property: 'onboardingState',
-    //           value: 0,
-    //         })
-    //       );
-    //       this.store
-    //         .select(selectUpdating)
-    //         .pipe(
-    //           filter((updating) => !updating),
-    //           take(1)
-    //         )
-    //         .subscribe(() => {
-    //           this.store
-    //             .select(selectError)
-    //             .pipe(take(1))
-    //             .subscribe((error) => {
-    //               if (error) {
-    //                 console.error(
-    //                   `Error updating onboarding state: ${error.message}, CODE: ${error.statusCode}`
-    //                 );
-    //               }
-    //             });
-    //         });
-    //     });
-    //   } else {
-    //   }
-    // }
   }
 
   onboardingCallback() {

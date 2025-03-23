@@ -92,7 +92,9 @@ export class ProfileComponent {
           value: this.profile[property],
         },
       },
-      1
+      1,
+      false,
+      'EditProfileModalComponent'
     );
 
     if (ref) {
@@ -107,7 +109,8 @@ export class ProfileComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -124,7 +127,9 @@ export class ProfileComponent {
         },
         width: '70%',
       },
-      1
+      1,
+      false,
+      'EditPhotoModalComponent'
     );
 
     if (ref) {
@@ -141,7 +146,8 @@ export class ProfileComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
           // wait 10 seconds, then refresh profile
           setTimeout(() => {
@@ -171,7 +177,9 @@ export class ProfileComponent {
           userID: this.profile.user_id,
         },
       },
-      1
+      1,
+      false,
+      'DeleteProfileModalComponent'
     );
 
     if (ref) {
@@ -185,7 +193,9 @@ export class ProfileComponent {
                 userID: this.profile.user_id,
               },
             },
-            2
+            2,
+            false,
+            'DeleteProfileModalComponent'
           );
         }
       });

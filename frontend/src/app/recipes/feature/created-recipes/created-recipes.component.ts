@@ -8,4 +8,8 @@ import { RecipeListComponent } from '../recipes-page/feature/list/recipe-list.co
   imports: [RecipeListComponent],
   templateUrl: './created-recipes.component.html',
 })
-export class CreatedRecipesComponent {}
+export class CreatedRecipesComponent {
+  constructor() {
+    console.log('CreatedRecipesComponent CREATED');
+  }
+}

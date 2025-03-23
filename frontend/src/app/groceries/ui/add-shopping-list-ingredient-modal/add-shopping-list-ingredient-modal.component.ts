@@ -168,7 +168,8 @@ export class AddShoppingListIngredientModalComponent {
                   },
                 },
                 1,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.dialogRef.close('success');

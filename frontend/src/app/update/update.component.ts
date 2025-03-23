@@ -22,12 +22,12 @@ export class UpdateComponent {
       );
     } else if (platform === 'ios') {
       window.open(
-        'https://apps.apple.com/us/app/doughly/id1588157263',
+        'https://apps.apple.com/us/app/doughly/id6502307680',
         '_blank'
       );
     } else {
       window.open(
-        'https://apps.apple.com/us/app/doughly/id1588157263',
+        'https://apps.apple.com/us/app/doughly/id6502307680',
         '_blank'
       );
     }

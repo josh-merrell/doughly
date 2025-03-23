@@ -222,7 +222,8 @@ export class SelectFreeTierRecipesModalComponent {
                 },
               },
               2,
-              true
+              true,
+              'ErrorModalComponent'
             );
           } else {
             this.store.dispatch(RecipeActions.loadRecipes());
@@ -234,7 +235,8 @@ export class SelectFreeTierRecipesModalComponent {
                 },
               },
               2,
-              true
+              true,
+              'ConfirmationModalComponent'
             );
             this.router.navigate(['/recipes/created']);
             this.dialogRef.close();

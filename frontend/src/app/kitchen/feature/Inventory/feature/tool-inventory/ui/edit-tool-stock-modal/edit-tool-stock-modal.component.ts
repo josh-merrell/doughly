@@ -166,7 +166,8 @@ export class EditToolStockModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.dialogRef.close('success');

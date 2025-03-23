@@ -238,7 +238,9 @@ export class SharedShoppingListsPageComponent {
         width: '50%',
         maxWidth: '360px',
       },
-      1
+      1,
+      false,
+      'PurchaseIngredientsModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -255,7 +257,8 @@ export class SharedShoppingListsPageComponent {
               },
             },
             1,
-            true
+            true,
+            'ErrorModalComponent'
           );
         } else if (result.status === 'cancel') {
           this.isLoading.set(false);
@@ -303,7 +306,8 @@ export class SharedShoppingListsPageComponent {
                         },
                       },
                       1,
-                      true
+                      true,
+                      'ErrorModalComponent'
                     );
                   } else {
                     this.sendPushNotification(
@@ -324,7 +328,8 @@ export class SharedShoppingListsPageComponent {
                         },
                       },
                       1,
-                      true
+                      true,
+                      'ConfirmationModalComponent'
                     );
                   }
                 });

@@ -176,7 +176,8 @@ export class RecipeIngredientsModalComponent {
                     },
                   },
                   2,
-                  true
+                  true,
+                  'ErrorModalComponent'
                 );
                 this.dialogRef.close(); // Close the current modal
               }
@@ -206,7 +207,9 @@ export class RecipeIngredientsModalComponent {
             ingredientID,
           },
         },
-        2
+        2,
+        false,
+        'DeleteRecipeIngredientModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -219,7 +222,8 @@ export class RecipeIngredientsModalComponent {
                 },
               },
               2,
-              true
+              true,
+              'ConfirmationModalComponent'
             );
           }
         });
@@ -258,7 +262,9 @@ export class RecipeIngredientsModalComponent {
         },
         width: '75%',
       },
-      2
+      2,
+      false,
+      'AddRecipeIngredientModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result) => {
@@ -316,7 +322,9 @@ export class RecipeIngredientsModalComponent {
         },
         width: '75%',
       },
-      2
+      2,
+      false,
+      'EditRecipeIngredientModalComponent'
     );
     if (dialogRef) {
       dialogRef!.afterClosed().subscribe((result: any) => {
@@ -356,7 +364,8 @@ export class RecipeIngredientsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });

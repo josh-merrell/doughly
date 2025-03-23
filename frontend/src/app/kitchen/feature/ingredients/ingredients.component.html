@@ -83,7 +83,7 @@
         (touchend)="ingredientCardTouchEnd()"
       >
         <p
-          class="font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+        class="font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9 line-clamp-2"
         >
           {{ ingredient.name }}
         </p>
@@ -91,7 +91,12 @@
           *ngIf="ingredient.totalStock > 0"
           class="font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >
-          {{ ingredient.totalStock }} {{ ingredient.purchaseUnit }}
+          {{ ingredient.totalStock }}
+          {{
+            Math.ceil(ingredient.totalStock) <= 1
+              ? unitService.singular(ingredient.purchaseUnit)
+              : unitService.plural(ingredient.purchaseUnit)
+          }}
         </p>
         <p
           *ngIf="ingredient.totalStock === 0"
@@ -117,7 +122,7 @@
         (touchend)="ingredientCardTouchEnd()"
       >
         <p
-          class="font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9"
+          class="font-body text-dl-5 font-dl-3 text-dl-tan-2 dark:text-dl-tan-9 line-clamp-2"
         >
           {{ ingredient.name }}
         </p>
@@ -125,7 +130,12 @@
           *ngIf="ingredient.totalStock > 0"
           class="font-body text-dl-5 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
         >
-          {{ ingredient.totalStock }} {{ ingredient.purchaseUnit }}
+          {{ ingredient.totalStock }}
+          {{
+            Math.ceil(ingredient.totalStock) <= 1
+              ? unitService.singular(ingredient.purchaseUnit)
+              : unitService.plural(ingredient.purchaseUnit)
+          }}
         </p>
         <p
           *ngIf="ingredient.totalStock === 0"

@@ -465,7 +465,8 @@ export class SubscribeRecipeModalComponent {
                     },
                   },
                   2,
-                  true
+                  true,
+                  'ErrorModalComponent'
                 );
               } else {
                 this.store.select(selectNewRecipeID).subscribe((recipeID) => {

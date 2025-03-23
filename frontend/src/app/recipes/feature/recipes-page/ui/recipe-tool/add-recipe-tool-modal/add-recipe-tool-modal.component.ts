@@ -111,7 +111,8 @@ export class AddRecipeToolModalComponent {
               },
             },
             3,
-            true
+            true,
+            'AddRequestConfirmationModalComponent'
           );
           this.cdr.detectChanges();
           this.form.get('toolID')?.setValue(result);
@@ -125,7 +126,8 @@ export class AddRecipeToolModalComponent {
               },
             },
             3,
-            true
+            true,
+            'AddRequestErrorModalComponent'
           );
         }
       });

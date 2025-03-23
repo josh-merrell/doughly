@@ -154,7 +154,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ErrorModalComponent'
         );
       } else if (result.result === 'cancelled') {
         this.modalService.open(
@@ -166,7 +167,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ErrorModalComponent'
         );
       } else if (result.result === 'alreadyOwned') {
         this.modalService.open(
@@ -178,7 +180,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ErrorModalComponent'
         );
       } else if (result.result === 'error') {
         this.modalService.open(
@@ -190,7 +193,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ErrorModalComponent'
         );
       } else {
         setTimeout(() => {
@@ -205,7 +209,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ConfirmationModalComponent'
         );
       }
       this.router.navigate(['/recipes/created']);
@@ -226,7 +231,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ErrorModalComponent'
         );
       } else if (result.result === 'cancelled') {
         this.modalService.open(
@@ -238,7 +244,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ErrorModalComponent'
         );
       } else if (result.result === 'alreadyOwned') {
         this.modalService.open(
@@ -250,7 +257,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ErrorModalComponent'
         );
       } else if (result.result === 'error') {
         this.modalService.open(
@@ -262,7 +270,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ErrorModalComponent'
         );
       } else {
         setTimeout(() => {
@@ -277,7 +286,8 @@ export class YourLifetimeComponent {
             },
           },
           1,
-          true
+          true,
+          'ConfirmationModalComponent'
         );
       }
       this.router.navigate(['/recipes/created']);

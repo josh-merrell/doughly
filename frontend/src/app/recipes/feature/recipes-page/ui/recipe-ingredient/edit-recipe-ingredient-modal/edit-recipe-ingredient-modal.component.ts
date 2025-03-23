@@ -292,7 +292,8 @@ export class EditRecipeIngredientModalComponent {
                 },
               },
               3,
-              true
+              true,
+              'ErrorModalComponent'
             );
           } else {
             this.dialogRef.close('success');

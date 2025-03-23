@@ -179,7 +179,9 @@ export class IngredientDetailsModalComponent {
           ingredientID: this.ingredient.ingredientID,
         },
       },
-      2
+      2,
+      false,
+      'AddIngredientStockModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result: any) => {
@@ -193,7 +195,8 @@ export class IngredientDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'AddRequestConfirmationModalComponent'
           );
         } else if (result === 'error') {
           this.modalService.open(
@@ -205,7 +208,8 @@ export class IngredientDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'AddRequestErrorModalComponent'
           );
         }
       });
@@ -221,7 +225,9 @@ export class IngredientDetailsModalComponent {
           itemID: ingredientStockID,
         },
       },
-      2
+      2,
+      false,
+      'EditIngredientStockModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result: any) => {
@@ -234,7 +240,8 @@ export class IngredientDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
           this.dialogRef.close();
         }
@@ -252,7 +259,9 @@ export class IngredientDetailsModalComponent {
           itemID: this.ingredient.ingredientID,
         },
       },
-      2
+      2,
+      false,
+      'EditIngredientModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result: any) => {
@@ -265,7 +274,8 @@ export class IngredientDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
           this.dialogRef.close('success');
         }
@@ -283,7 +293,9 @@ export class IngredientDetailsModalComponent {
           ingredientName: this.ingredient.name,
         },
       },
-      2
+      2,
+      false,
+      'DeleteIngredientStockModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result: any) => {
@@ -296,7 +308,8 @@ export class IngredientDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -313,7 +326,9 @@ export class IngredientDetailsModalComponent {
           itemName: this.ingredient.name,
         },
       },
-      2
+      2,
+      false,
+      'DeleteIngredientModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result: any) => {
@@ -326,7 +341,8 @@ export class IngredientDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
           this.dialogRef.close();
         }
