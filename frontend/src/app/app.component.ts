@@ -151,6 +151,13 @@ export class AppComponent {
         const access = event.url.split('#access_token=').pop()?.split('&')[0];
         const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
         await this.authService.setSession(access, refresh);
+      } else {
+        const url = new URL(event.url);
+        console.log('URL OPENED: ', url.pathname);
+        if (url.pathname === '/share') {
+          const sharedUrl = url.searchParams.get('url');
+          console.log(`GOT SHARED URL FROM IOS: ${sharedUrl}`);
+        }
       }
 
       this.zone.run(() => {
