@@ -27,8 +27,8 @@
         </h1>
         <svg
           class="ml-dl-2"
-          width="50"
-          height="50"
+          width="44"
+          height="44"
           viewBox="0 0 15 15"
           fill="none"
           (click)="toggleMenu($event)"
@@ -66,13 +66,13 @@
         <div
           #menu
           *ngIf="menuOpen"
-          class="focus:outling-none absolute right-16 top-2 z-10 flex flex-col rounded-dl-1 bg-dl-tan-10 shadow-md ring-1 ring-dl-tan-1 ring-opacity-5 ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
+          class="focus:outling-none absolute w-dl-7 py-1 right-16 top-2 z-10 flex flex-col rounded-dl-1 bg-dl-tan-10 shadow-md ring-1 ring-dl-tan-1 ring-opacity-5 ease-out dark:border dark:border-dl-tan-4 dark:bg-dl-tan-1"
         >
           <button
             *ngIf="!recipeSubscription()"
             (click)="onUpdateClick()"
             type="button"
-            class="block cursor-pointer px-dl-3 py-dl-2 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
+            class="block cursor-pointer px-dl-2 py-dl-4 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
           >
             Edit
           </button>
@@ -80,7 +80,7 @@
             *ngIf="!recipeSubscription()"
             (click)="onDeleteClick()"
             type="button"
-            class="block cursor-pointer px-dl-3 py-dl-2 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
+            class="block cursor-pointer px-dl-2 py-dl-4 font-sans text-dl-5 text-dl-tan-3 hover:bg-dl-tan-10 dark:text-dl-tan-8 dark:hover:bg-dl-tan-2"
           >
             Delete
           </button>
