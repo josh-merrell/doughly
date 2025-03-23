@@ -13,7 +13,7 @@
       *ngIf="!isAdding"
       class="px-dl-4 font-body text-dl-4 font-dl-2 text-dl-tan-2 dark:text-dl-tan-9"
     >
-      {{ promptMessage()}}
+      {{ promptMessage() }}
     </p>
     <!-- AI Stars animation -->
     <ng-lottie
@@ -89,7 +89,7 @@
             [ngClass]="{
               'cursor-pointer bg-dl-pinknew-4 hover:bg-dl-pinknew-5 dark:bg-dl-pinknew-7 hover:dark:bg-dl-pinknew-6':
                 form.valid || !form.pristine,
-              'bg-dl-tan-7': !form.valid || form.pristine
+              'bg-dl-tan-7': !form.valid
             }"
             [disabled]="!form.valid"
             (click)="onSubmit()"

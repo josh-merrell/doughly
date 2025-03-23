@@ -25,6 +25,7 @@ import { selectProfile } from 'src/app/profile/state/profile-selectors';
 import { OnboardingMessageModalComponent } from 'src/app/onboarding/ui/message-modal/onboarding-message-modal.component';
 import { PrompUpgradeModalComponent } from 'src/app/account/feature/products/ui/promp-upgrade-modal/promp-upgrade-modal.component';
 import { ProductService } from 'src/app/shared/utils/productService';
+import { selectRecipes } from 'src/app/recipes/state/recipe/recipe-selectors';
 import { ModalService } from 'src/app/shared/utils/modalService';
 import { ProfileActions } from 'src/app/profile/state/profile-actions';
 import { ExtraStuffService } from 'src/app/shared/utils/extraStuffService';
@@ -44,6 +45,7 @@ import { RedirectPathService } from 'src/app/shared/utils/redirect-path.service'
 export class AddRecipeModalComponent {
   recipeCategories: RecipeCategory[] = [];
   public profile: WritableSignal<any> = signal(null);
+  public freeTierRecipeCount: WritableSignal<number> = signal(0);
 
   // Onboarding
   public showOnboardingBadge: WritableSignal<boolean> = signal(false);
@@ -81,7 +83,7 @@ export class AddRecipeModalComponent {
     private renderer: Renderer2,
     private stylesService: StylesService,
     private authService: AuthService,
-    private redirectService: RedirectPathService
+    private redirectPathService: RedirectPathService
   ) {
     this.recipeCategories = this.data.recipeCategories;
 
@@ -99,6 +101,16 @@ export class AddRecipeModalComponent {
     if (this.profile() && this.profile().onboardingState !== 0) {
       this.showOnboardingBadge.set(true);
     }
+    this.store.select(selectRecipes).subscribe((recipes) => {
+      recipes = recipes.filter((recipe) => {
+        return recipe.type !== 'subscription';
+      });
+      console.log(`RECIPES: `, recipes);
+
+      this.freeTierRecipeCount.set(
+        recipes.filter((recipe) => recipe.freeTier === true).length
+      );
+    });
     // Check the initial URL
     this.checkUrlAndAct();
 
@@ -129,7 +141,7 @@ export class AddRecipeModalComponent {
   }
 
   private checkUrlAndAct() {
-    const targetModal = this.redirectService.getTargetModal();
+    const targetModal = this.redirectPathService.getTargetModal();
     console.log(`checkUrlAndAct targetModal: ${targetModal}`);
     if (targetModal == 'add') {
       // we're there, reset targetModal and return
@@ -139,7 +151,7 @@ export class AddRecipeModalComponent {
     if (targetModal == 'vision') {
       this.onVisionAddClick();
     } else if (targetModal == 'fromURL') {
-      const sharedUrl = this.redirectService.sharedUrl();
+      const sharedUrl = this.redirectPathService.sharedUrl();
       this.onFromUrlAddClick(sharedUrl);
     }
   }
@@ -169,11 +181,38 @@ export class AddRecipeModalComponent {
 
   onVisionAddClick(): void {
     console.log('onVisionAddClick. PROFILE: ', this.profile());
-    // first ensure user has at least one AI credit
-    if (
+    const license = this.productService.licences.recipeCreateLimit;
+    if (license <= this.freeTierRecipeCount()) {
+      this.redirectPathService.setTargetModal('');
+      this.redirectPathService.resetPath();
+      // open upgradePromptModal
+      const ref = this.modalService.open(
+        PrompUpgradeModalComponent,
+        {
+          data: {
+            titleMessage: this.stringsService.productStrings.timeToUpgrade,
+            promptMessage: `You have reached the number of allowed free-tier Created Recipes. Please upgrade to create more.`,
+            buttonMessage: 'UPGRADE',
+          },
+        },
+        1,
+        true,
+        'PrompUpgradeModalComponent'
+      );
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
+          if (result === 'routeToUpgrade') {
+            this.router.navigate(['/products']);
+          }
+        });
+      } else {
+      }
+    } else if (
       this.profile().permAITokenCount < 1 &&
       this.profile().isPremium === true
     ) {
+      this.redirectPathService.setTargetModal('');
+      this.redirectPathService.resetPath();
       const dialogRef = this.modalService.open(
         PrompUpgradeModalComponent,
         {
@@ -202,6 +241,8 @@ export class AddRecipeModalComponent {
       this.profile().permAITokenCount < 1 &&
       this.profile().isPremium === false
     ) {
+      this.redirectPathService.setTargetModal('');
+      this.redirectPathService.resetPath();
       const dialogRef = this.modalService.open(
         PrompUpgradeModalComponent,
         {
@@ -237,8 +278,6 @@ export class AddRecipeModalComponent {
           })
         );
       }
-      // update url to include '/vision' if it's not already there
-      this.location.go('/recipes/created/add/vision');
 
       const dialogRef = this.modalService.open(
         VisionAddRecipeModalComponent,
@@ -265,10 +304,39 @@ export class AddRecipeModalComponent {
   onFromUrlAddClick(sharedUrl?: String): void {
     // first ensure user has at least one AI credit
     console.log(`onFromUrlAddClick sharedUrl: ${sharedUrl}`);
-    if (
+    const license = this.productService.licences.recipeCreateLimit;
+
+    if (license <= this.freeTierRecipeCount()) {
+      this.redirectPathService.setTargetModal('');
+      this.redirectPathService.resetPath();
+      // open upgradePromptModal
+      const ref = this.modalService.open(
+        PrompUpgradeModalComponent,
+        {
+          data: {
+            titleMessage: this.stringsService.productStrings.timeToUpgrade,
+            promptMessage: `You have reached the number of allowed free-tier Created Recipes. Please upgrade to create more.`,
+            buttonMessage: 'UPGRADE',
+          },
+        },
+        1,
+        true,
+        'PrompUpgradeModalComponent'
+      );
+      if (ref) {
+        ref.afterClosed().subscribe((result) => {
+          if (result === 'routeToUpgrade') {
+            this.router.navigate(['/products']);
+          }
+        });
+      } else {
+      }
+    } else if (
       this.profile().permAITokenCount < 1 &&
       this.profile().isPremium === true
     ) {
+      this.redirectPathService.setTargetModal('');
+      this.redirectPathService.resetPath();
       const dialogRef = this.modalService.open(
         PrompUpgradeModalComponent,
         {
@@ -296,6 +364,8 @@ export class AddRecipeModalComponent {
       this.profile().permAITokenCount < 1 &&
       this.profile().isPremium === false
     ) {
+      this.redirectPathService.setTargetModal('');
+      this.redirectPathService.resetPath();
       const dialogRef = this.modalService.open(
         PrompUpgradeModalComponent,
         {

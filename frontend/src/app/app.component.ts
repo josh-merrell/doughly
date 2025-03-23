@@ -152,12 +152,12 @@ export class AppComponent {
         const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
         await this.authService.setSession(access, refresh);
       } else {
-        const url = new URL(event.url);
-        console.log('URL OPENED: ', url.pathname);
-        if (url.pathname === '/share') {
-          const sharedUrl = url.searchParams.get('url');
-          console.log(`GOT SHARED URL FROM IOS: ${sharedUrl}`);
-        }
+        // const url = new URL(event.url);
+        // console.log('URL OPENED: ', url.pathname);
+        // if (url.pathname === '/share') {
+        //   const sharedUrl = url.searchParams.get('url');
+        //   console.log(`GOT SHARED URL FROM IOS: ${sharedUrl}`);
+        // }
       }
 
       this.zone.run(() => {
@@ -167,6 +167,14 @@ export class AppComponent {
           const path = `/recipe/public${recipeID}`;
           console.log('IOS NAVIGATING TO', path);
           this.router.navigateByUrl(path);
+        } else if (event.url.includes('/share')) {
+          // split url at "share?url=" and save as sharedUrl, then set targetModal to 'fromURL' and path to '/recipes/created'
+          const sharedUrl = event.url.split('share?url=')[1];
+          console.log(`GOT SHARED URL FROM IOS: ${sharedUrl}`);
+          this.redirectService.sharedUrl.set(sharedUrl);
+          this.redirectPathService.setTargetModal('fromURL');
+          this.redirectPathService.setPath('/recipes/created');
+          this.router.navigateByUrl('/loading');
         } else {
           const domain = 'doughly.co';
           const pathArray = event.url.split(domain);
