@@ -243,7 +243,8 @@ export class ManualAddRecipeModalComponent {
                   },
                 },
                 3,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.sendPushNotification();

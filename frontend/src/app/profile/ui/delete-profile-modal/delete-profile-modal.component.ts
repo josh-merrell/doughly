@@ -87,7 +87,8 @@ export class DeleteProfileModalComponent {
                     },
                   },
                   2,
-                  true
+                  true,
+                  'ErrorModalComponent'
                 );
               } else {
                 PushNotifications.unregister;

@@ -131,7 +131,8 @@ export class EditToolModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.dialogRef.close('success');
@@ -145,7 +146,7 @@ export class EditToolModalComponent {
     this.dialogRef.close();
   }
 
-  onDestroy() {
+  ngOnDestroy() {
     if (this.updatingSubscription) {
       this.updatingSubscription.unsubscribe();
     }

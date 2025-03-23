@@ -155,7 +155,8 @@ export class AddFriendModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             }
             this.isLoading.set(false);
@@ -187,7 +188,8 @@ export class AddFriendModalComponent {
         },
       },
       1,
-      true
+      true,
+      'ConfirmationModalComponent'
     );
   }
 
@@ -226,7 +228,8 @@ export class AddFriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 this.isLoading.set(false);
@@ -267,7 +270,8 @@ export class AddFriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 // notify user of confirmed friendship
@@ -309,7 +313,8 @@ export class AddFriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 this.isLoading.set(false);
@@ -348,7 +353,8 @@ export class AddFriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 // notify user of friend request
@@ -398,7 +404,8 @@ export class AddFriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 this.isLoading.set(false);
@@ -437,7 +444,8 @@ export class AddFriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 //notify user of followship request

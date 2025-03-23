@@ -3,37 +3,109 @@
 >
   <!-- View Header -->
   <div class="mb-dl-3 flex w-full flex-row-reverse pr-dl-5">
+    <!-- Created Help Button -->
     <span
       (click)="navigateToCreated()"
-      class="inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
+      class="relative inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
         ' border-dl-green-8 dark:border-dl-green-3 text-dl-tan-2 dark:text-dl-tan-9 ':
         view() === 'created',
         ' text-dl-tan-4 dark:text-dl-tan-7 border-transparent': view() !== 'created'
       }"
     >
+      <button
+        *ngIf="view() === 'created'"
+        class="absolute -left-7 -top-0"
+        (click)="onHelpClick()"
+        type="button"
+      >
+        <svg viewBox="0 0 36 45" height="30px" width="30px">
+          <path
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            d="M32.74643,11.79066a16.00049,16.00049,0,1,0-8.5377,20.95552A16.01936,16.01936,0,0,0,32.74643,11.79066ZM23.202,30.3551a13.40561,13.40561,0,1,1,7.15339-17.55767A13.42294,13.42294,0,0,1,23.202,30.3551Z"
+          />
+          <path
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            d="M17.55577,8.32059A5.58325,5.58325,0,0,0,13.08949,10.528a1.29746,1.29746,0,0,0,2.06084,1.57688,3.027,3.027,0,1,1,2.40544,4.86451,1.29712,1.29712,0,0,0-1.29732,1.29732v2.59463a1.29732,1.29732,0,0,0,2.59463,0v-1.4485A5.622,5.622,0,0,0,17.55577,8.32059Z"
+          />
+          <circle
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            cx="17.55582"
+            cy="25.08439"
+            r="1.29732"
+          />
+        </svg>
+      </button>
       Created
     </span>
     <span
       (click)="navigateToSubscribed()"
-      class="mr-dl-5 inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
+      class="relative mr-dl-7 inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
       ' border-dl-green-8 dark:border-dl-green-3  text-dl-tan-2 dark:text-dl-tan-9 ':
       view() === 'subscribed',
       ' text-dl-tan-4 dark:text-dl-tan-7 border-transparent': view() !== 'subscribed'
     }"
     >
+      <!-- Subscribed Help Button -->
+      <button
+        *ngIf="view() === 'subscribed'"
+        class="absolute -left-7 -top-0"
+        (click)="onHelpClick()"
+        type="button"
+      >
+        <svg viewBox="0 0 36 45" height="30px" width="30px">
+          <path
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            d="M32.74643,11.79066a16.00049,16.00049,0,1,0-8.5377,20.95552A16.01936,16.01936,0,0,0,32.74643,11.79066ZM23.202,30.3551a13.40561,13.40561,0,1,1,7.15339-17.55767A13.42294,13.42294,0,0,1,23.202,30.3551Z"
+          />
+          <path
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            d="M17.55577,8.32059A5.58325,5.58325,0,0,0,13.08949,10.528a1.29746,1.29746,0,0,0,2.06084,1.57688,3.027,3.027,0,1,1,2.40544,4.86451,1.29712,1.29712,0,0,0-1.29732,1.29732v2.59463a1.29732,1.29732,0,0,0,2.59463,0v-1.4485A5.622,5.622,0,0,0,17.55577,8.32059Z"
+          />
+          <circle
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            cx="17.55582"
+            cy="25.08439"
+            r="1.29732"
+          />
+        </svg>
+      </button>
       Subscribed
     </span>
+    <!-- Discover Help Button -->
     <span
       (click)="navigateToDiscover()"
-      class="mr-dl-5 inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
+      class="relative mr-dl-7 inline-flex items-center border-b-4 font-sans text-dl-6 font-dl-3 transition-all duration-100 ease-in-out"
       [ngClass]="{
         ' border-dl-green-8 dark:border-dl-green-3 text-dl-tan-2 dark:text-dl-tan-9 ':
         view() === 'discover',
         ' text-dl-tan-4 dark:text-dl-tan-7 border-transparent': view() !== 'discover'
       }"
     >
+      <button
+        *ngIf="view() === 'discover'"
+        class="absolute -left-7 -top-0"
+        (click)="onHelpClick()"
+        type="button"
+      >
+        <svg viewBox="0 0 36 45" height="30px" width="30px">
+          <path
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            d="M32.74643,11.79066a16.00049,16.00049,0,1,0-8.5377,20.95552A16.01936,16.01936,0,0,0,32.74643,11.79066ZM23.202,30.3551a13.40561,13.40561,0,1,1,7.15339-17.55767A13.42294,13.42294,0,0,1,23.202,30.3551Z"
+          />
+          <path
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            d="M17.55577,8.32059A5.58325,5.58325,0,0,0,13.08949,10.528a1.29746,1.29746,0,0,0,2.06084,1.57688,3.027,3.027,0,1,1,2.40544,4.86451,1.29712,1.29712,0,0,0-1.29732,1.29732v2.59463a1.29732,1.29732,0,0,0,2.59463,0v-1.4485A5.622,5.622,0,0,0,17.55577,8.32059Z"
+          />
+          <circle
+            [attr.fill]="this.extraStuffService.getFillColor(5)"
+            cx="17.55582"
+            cy="25.08439"
+            r="1.29732"
+          />
+        </svg>
+      </button>
       Discover
     </span>
   </div>

@@ -175,7 +175,9 @@ export class ToolDetailsModalComponent {
           toolID: this.tool.toolID,
         },
       },
-      2
+      2,
+      false,
+      'AddToolStockModalComponent'
     );
     if (dialogRef) {
       dialogRef!.afterClosed().subscribe((result: any) => {
@@ -188,7 +190,8 @@ export class ToolDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -204,7 +207,9 @@ export class ToolDetailsModalComponent {
           itemID: toolStockID,
         },
       },
-      2
+      2,
+      false,
+      'EditToolStockModalComponent'
     );
     if (dialogRef) {
       dialogRef!.afterClosed().subscribe((result: any) => {
@@ -217,7 +222,8 @@ export class ToolDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -233,7 +239,9 @@ export class ToolDetailsModalComponent {
           itemID: this.tool.toolID,
         },
       },
-      2
+      2,
+      false,
+      'EditToolModalComponent'
     );
     if (dialogRef) {
       dialogRef!.afterClosed().subscribe((result: any) => {
@@ -246,7 +254,8 @@ export class ToolDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -263,7 +272,9 @@ export class ToolDetailsModalComponent {
           toolName: this.tool.name,
         },
       },
-      2
+      2,
+      false,
+      'DeleteToolStockModalComponent'
     );
     if (dialogRef) {
       dialogRef!.afterClosed().subscribe((result: any) => {
@@ -276,7 +287,8 @@ export class ToolDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
         }
       });
@@ -293,7 +305,9 @@ export class ToolDetailsModalComponent {
           itemName: this.tool.name,
         },
       },
-      2
+      2,
+      false,
+      'DeleteToolModalComponent'
     );
     if (dialogRef) {
       dialogRef!.afterClosed().subscribe((result: any) => {
@@ -306,7 +320,8 @@ export class ToolDetailsModalComponent {
               },
             },
             2,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
           this.dialogRef.close();
         }

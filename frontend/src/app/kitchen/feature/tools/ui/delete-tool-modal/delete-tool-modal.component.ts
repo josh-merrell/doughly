@@ -60,7 +60,7 @@ export class DeleteToolModalComponent {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              }, 1, true);
+              }, 1, true, 'ErrorModalComponent');
             } else {
               this.dialogRef.close('success');
             }

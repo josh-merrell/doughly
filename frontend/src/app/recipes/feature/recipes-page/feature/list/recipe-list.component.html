@@ -1,14 +1,17 @@
 <div class="relative flex h-full w-full flex-col px-dl-3">
   <!-- Explainer Text -->
-  <div class="relative mt-dl-1 flex flex-row items-center">
+  <div
+    auto-animate
+    class="relative mt-dl-1 flex flex-row items-center transition-all duration-200 ease-in-out"
+  >
     <span
-      *ngIf="type === 'created'"
+      *ngIf="type === 'created' && extraStuffService.recipePageShowHelp()"
       class="px-dl-3 py-dl-2 font-body text-dl-4 text-dl-tan-2 dark:text-dl-tan-9"
       >These are recipes you manually created or imported via webpage or photo.
       They are connected to your kitchen and are ready to use or share!</span
     >
     <span
-      *ngIf="type === 'subscription'"
+      *ngIf="type === 'subscription' && extraStuffService.recipePageShowHelp()"
       class="px-dl-3 py-dl-2 font-body text-dl-4 text-dl-tan-2 dark:text-dl-tan-9"
       >These are recipes you have subscribed to from other users. They are
       connected to your kitchen inventory and are ready to use.</span

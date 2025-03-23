@@ -254,7 +254,8 @@ export class FriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 this.isLoading.set(false);
@@ -294,7 +295,8 @@ export class FriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 // notify user of confirmed friendship
@@ -336,7 +338,8 @@ export class FriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 this.isLoading.set(false);
@@ -377,7 +380,8 @@ export class FriendModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
                 // notify user of friend request
@@ -421,7 +425,8 @@ export class FriendModalComponent {
                     },
                   },
                   2,
-                  true
+                  true,
+                  'ErrorModalComponent'
                 );
               }
               this.isLoading.set(false);
@@ -459,7 +464,8 @@ export class FriendModalComponent {
                     },
                   },
                   2,
-                  true
+                  true,
+                  'ErrorModalComponent'
                 );
               }
               // notify user of new follower

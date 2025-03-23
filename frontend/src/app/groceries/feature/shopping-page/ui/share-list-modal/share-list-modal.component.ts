@@ -107,7 +107,8 @@ export class ShareListModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.sendPushNotification(friend.userID);
@@ -120,7 +121,8 @@ export class ShareListModalComponent {
                   },
                 },
                 2,
-                false
+                false,
+                'ConfirmationModalComponent'
               );
               this.dialogRef.close();
             }

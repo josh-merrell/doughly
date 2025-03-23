@@ -295,7 +295,9 @@ export class RecipeStepsModalComponent {
         width: '75%',
         data: { recipeID: this.recipe.recipeID },
       },
-      2
+      2,
+      false,
+      'AddRecipeStepModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result) => {
@@ -333,7 +335,9 @@ export class RecipeStepsModalComponent {
         data: displayRecipeStep,
         width: '75%',
       },
-      2
+      2,
+      false,
+      'EditRecipeStepModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result) => {
@@ -425,7 +429,9 @@ export class RecipeStepsModalComponent {
             recipeStep: displayRecipeStep,
           },
         },
-        2
+        2,
+        false,
+        'DeleteRecipeStepModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -440,7 +446,8 @@ export class RecipeStepsModalComponent {
                 },
               },
               2,
-              true
+              true,
+              'DeleteRequestConfirmationModalComponent'
             );
 
             // Compose a new 'updatedDisplayRecipeSteps' list
@@ -490,7 +497,8 @@ export class RecipeStepsModalComponent {
                 },
               },
               2,
-              true
+              true,
+              'DeleteRequestErrorModalComponent'
             );
           }
         });
@@ -694,7 +702,8 @@ export class RecipeStepsModalComponent {
                       },
                     },
                     2,
-                    true
+                    true,
+                    'ErrorModalComponent'
                   );
                 }
               })

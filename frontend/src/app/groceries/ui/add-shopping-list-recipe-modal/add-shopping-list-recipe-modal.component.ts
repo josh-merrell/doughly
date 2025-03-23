@@ -310,7 +310,8 @@ export class AddShoppingListRecipeModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.dialogRef.close('successOnboarding');

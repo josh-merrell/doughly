@@ -71,7 +71,7 @@ export class DeleteRecipeModalComponent {
                   errorMessage: error.message,
                   statusCode: error.statusCode,
                 },
-              }, 2, true);
+              }, 2, true, 'ErrorModalComponent');
             } else {
               this.dialogRef.close('success');
             }

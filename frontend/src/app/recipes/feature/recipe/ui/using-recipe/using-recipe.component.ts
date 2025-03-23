@@ -245,7 +245,9 @@ export class UsingRecipeComponent {
           recipeID: this.recipeID(),
         },
       },
-      1
+      1,
+      false,
+      'UseRecipeModalComponent'
     );
     if (ref) {
       ref.afterClosed().subscribe((result) => {
@@ -260,7 +262,8 @@ export class UsingRecipeComponent {
               },
             },
             1,
-            true
+            true,
+            'ConfirmationModalComponent'
           );
           this.router.navigate(['/recipe/' + this.recipeID()]);
         }

@@ -279,7 +279,9 @@ export class AddRecipeIngredientModalComponent {
           recipeCategories: this.data.recipeCategories,
         },
       },
-      3
+      3,
+      false,
+      'AddIngredientModalComponent'
     );
     if (dialogRef) {
       dialogRef.afterClosed().subscribe((result) => {
@@ -294,7 +296,8 @@ export class AddRecipeIngredientModalComponent {
               },
             },
             3,
-            true
+            true,
+            'AddRequestConfirmationModalComponent'
           );
           // update the value of the ingredientID form control
           console.log(`NEW INGREDIENT: `, result);
@@ -310,7 +313,8 @@ export class AddRecipeIngredientModalComponent {
               },
             },
             3,
-            true
+            true,
+            'AddRequestErrorModalComponent'
           );
         }
       });

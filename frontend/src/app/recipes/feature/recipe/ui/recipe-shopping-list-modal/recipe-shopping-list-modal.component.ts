@@ -133,7 +133,8 @@ export class RecipeShoppingListModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.modalService.open(
@@ -146,7 +147,8 @@ export class RecipeShoppingListModalComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ConfirmationModalComponent'
               );
             }
             this.isLoading = false;

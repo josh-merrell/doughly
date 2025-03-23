@@ -59,7 +59,7 @@ export class AppComponent {
     '/web',
     '/admin',
     '/update',
-    '/terms'
+    '/terms',
   ];
   pushToken: WritableSignal<string | null> = signal(null);
   private prevPushToken: WritableSignal<string | null> = signal(null);
@@ -75,7 +75,8 @@ export class AppComponent {
     private extraStuffService: ExtraStuffService,
     private productService: ProductService,
     private renderer: Renderer2,
-    private stylesService: StylesService
+    private stylesService: StylesService,
+    private redirectService: RedirectPathService
   ) {
     // Listen to routing events, ensuring only NavigationEnd events are processed
     this.router.events
@@ -88,7 +89,7 @@ export class AppComponent {
         console.log('NAVIGATION: ', event.urlAfterRedirects);
         // Check if the current URL matches any in the list where the footer should be hidden
         this.showFooter = !this.hideFooterRoutes.some((route) =>
-          event.urlAfterRedirects.includes(route)
+          event.urlAfterRedirects.startsWith(route)
         );
       });
 
@@ -150,6 +151,13 @@ export class AppComponent {
         const access = event.url.split('#access_token=').pop()?.split('&')[0];
         const refresh = event.url.split('refresh_token=').pop()?.split('&')[0];
         await this.authService.setSession(access, refresh);
+      } else {
+        // const url = new URL(event.url);
+        // console.log('URL OPENED: ', url.pathname);
+        // if (url.pathname === '/share') {
+        //   const sharedUrl = url.searchParams.get('url');
+        //   console.log(`GOT SHARED URL FROM IOS: ${sharedUrl}`);
+        // }
       }
 
       this.zone.run(() => {
@@ -159,6 +167,14 @@ export class AppComponent {
           const path = `/recipe/public${recipeID}`;
           console.log('IOS NAVIGATING TO', path);
           this.router.navigateByUrl(path);
+        } else if (event.url.includes('/share')) {
+          // split url at "share?url=" and save as sharedUrl, then set targetModal to 'fromURL' and path to '/recipes/created'
+          const sharedUrl = event.url.split('share?url=')[1];
+          console.log(`GOT SHARED URL FROM IOS: ${sharedUrl}`);
+          this.redirectService.sharedUrl.set(sharedUrl);
+          this.redirectPathService.setTargetModal('fromURL');
+          this.redirectPathService.setPath('/recipes/created');
+          this.router.navigateByUrl('/loading');
         } else {
           const domain = 'doughly.co';
           const pathArray = event.url.split(domain);
@@ -170,6 +186,14 @@ export class AppComponent {
           }
         }
       });
+    });
+
+    window.addEventListener('urlShared', (event: any) => {
+      console.log('Shared URL received in app:', event.url);
+      this.redirectService.sharedUrl.set(event.url);
+      this.redirectPathService.setTargetModal('fromURL');
+      this.redirectPathService.setPath('/recipes/created');
+      this.router.navigateByUrl('/loading');
     });
 
     // listen for dark mode changes in app
@@ -321,7 +345,11 @@ export class AppComponent {
     const currentVersion = await this.getCurrentAppVersion();
     const availableVersion = await this.getAvailableAppVersion();
     console.log('CURRENT VERSION: ', typeof currentVersion, currentVersion);
-    console.log('AVAILABLE VERSION: ', typeof availableVersion, availableVersion);
+    console.log(
+      'AVAILABLE VERSION: ',
+      typeof availableVersion,
+      availableVersion
+    );
     if (!currentVersion || !availableVersion) {
       return;
     }

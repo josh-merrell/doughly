@@ -110,7 +110,8 @@ export class RequestCardComponent {
                   },
                 },
                 2,
-                true
+                true,
+                'ErrorModalComponent'
               );
             }
             this.sendPushNotification('notifyConfirmFriendship');

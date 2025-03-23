@@ -73,7 +73,8 @@ export class DeleteRecipeIngredientModalComponent {
                   },
                 },
                 3,
-                true
+                true,
+                'ErrorModalComponent'
               );
             } else {
               this.dialogRef.close('success');

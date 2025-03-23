@@ -22,6 +22,7 @@ export const stateLoaded: CanActivateFn = (
   return store.select(selectProfile).pipe(
     map((profile) => {
       if (!profile) {
+        console.log(`StateLoadedGuard: Saving path: ${state.url}`);
         redirectPathService.setPath(state.url); // '/temp' will use this path to redirect after login
         router.navigate(['/loading']); // Redirect to loading page if profile is not loaded
         return false;

@@ -132,7 +132,8 @@ export class RecipeToolsModalComponent {
                     },
                   },
                   2,
-                  true
+                  true,
+                  'ErrorModalComponent'
                 );
                 this.isLoading = false;
               }
@@ -169,7 +170,8 @@ export class RecipeToolsModalComponent {
                         },
                       },
                       2,
-                      true
+                      true,
+                      'ErrorModalComponent'
                     );
                     this.dialogRef.close(); // Close the current modal
                   }
@@ -201,7 +203,9 @@ export class RecipeToolsModalComponent {
             toolID,
           },
         },
-        2
+        2,
+        false,
+        'DeleteRecipeToolModalComponent'
       );
       if (dialogRef) {
         dialogRef.afterClosed().subscribe((result) => {
@@ -214,7 +218,8 @@ export class RecipeToolsModalComponent {
                 },
               },
               2,
-              true
+              true,
+              'ConfirmationModalComponent'
             );
           }
         });
@@ -253,7 +258,9 @@ export class RecipeToolsModalComponent {
               toolsToExclude,
             },
           },
-          2
+          2,
+          false,
+          'AddRecipeToolModalComponent'
         );
         if (dialogRef) {
           dialogRef.afterClosed().subscribe((result) => {

@@ -5,10 +5,13 @@ import { StylesService } from './stylesService';
 import { AuthService } from './authenticationService';
 import { ExtraStuffService } from './extraStuffService';
 import { reflectComponentType } from '@angular/core';
+import { Router, RouterLinkWithHref } from '@angular/router';
+import { RedirectPathService } from './redirect-path.service';
 
 interface ModalInstance {
   ref: MatDialogRef<any>;
   level: number;
+  name?: string;
 }
 
 @Injectable({
@@ -21,17 +24,35 @@ export class ModalService {
     private dialog: MatDialog,
     private stylesService: StylesService,
     private authService: AuthService,
-    private extraStuffService: ExtraStuffService
+    private extraStuffService: ExtraStuffService,
+    private redirectService: RedirectPathService,
+    private router: Router
   ) {}
 
   open<T>(
     component: ComponentType<T>,
     config: any,
     level: number = 1,
-    allowMultipleSameLevel: boolean = false
+    allowMultipleSameLevel: boolean = false,
+    name: string = ''
   ): MatDialogRef<T> | null {
     if (!component || component === null) {
       console.error(`No component ref provided, not opening modal.`);
+      return null;
+    }
+    // if provided component is equal to the component of an already open modal, don't open another
+    if (
+      this.modals.some((m) => {
+        // if (m.ref.componentInstance.constructor === component) {
+        if (m.name === name && allowMultipleSameLevel === false) {
+          console.warn(
+            `A modal of type ${name} is already open, returning`
+          );
+          return true;
+        }
+        return false;
+      })
+    ) {
       return null;
     }
     if (this.isLevelOpen(level) && !allowMultipleSameLevel) {
@@ -68,6 +89,7 @@ export class ModalService {
     this.modals.push({
       ref: dialogRef,
       level: allowMultipleSameLevel ? 99 : level,
+      name,
     }); // push notifications or other modals we are okay having multiples of to 99, only one of each other modal type
     this.setModalStyles();
 

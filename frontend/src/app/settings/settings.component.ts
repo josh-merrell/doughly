@@ -167,7 +167,8 @@ export class SettingsComponent {
                 },
               },
               1,
-              true
+              true,
+              'ErrorModalComponent'
             );
           } else {
             this.checkIconStyle();
@@ -180,7 +181,8 @@ export class SettingsComponent {
                 },
               },
               1,
-              true
+              true,
+              'ConfirmationModalComponent'
             );
           }
           this.isEditing = false;

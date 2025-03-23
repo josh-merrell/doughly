@@ -119,7 +119,9 @@ export class FriendsComponent {
         width: '90%',
         maxWidth: '500px',
       },
-      1
+      1,
+      false,
+      'FriendRequestsModalComponent'
     );
 
     if (ref) {
@@ -132,7 +134,9 @@ export class FriendsComponent {
               data: result.profile,
               width: '90%',
             },
-            1
+            1,
+            false,
+            'FriendModalComponent'
           );
         }
       });
@@ -147,7 +151,9 @@ export class FriendsComponent {
         width: '80%',
         maxWidth: '500px',
       },
-      1
+      1,
+      false,
+      'AddFriendModalComponent'
     );
   }
 
@@ -158,7 +164,9 @@ export class FriendsComponent {
         data: friend,
         width: '90%',
       },
-      1
+      1,
+      false,
+      'FriendModalComponent'
     );
   }
 
@@ -184,7 +192,9 @@ export class FriendsComponent {
             top: '30%',
           },
         },
-        1
+        1,
+        false,
+        'OnboardingMessageModalComponent'
       );
       if (ref) {
         ref.afterClosed().subscribe((result) => {

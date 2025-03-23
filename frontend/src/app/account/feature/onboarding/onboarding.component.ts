@@ -100,7 +100,9 @@ export class OnboardingComponent {
               },
               position: {},
             },
-            1
+            1,
+            false,
+            'OnboardingMessageModalComponent'
           );
           if (dialogRef) {
             dialogRef.afterClosed().subscribe((result) => {
