@@ -173,72 +173,150 @@ getPurchaseUnitLifespanDaysEstimate = async (ingredient) => {
 };
 
 const matchRecipeIngredientRequest = async (userID, authorization, recipeIngredient, userIngredients) => {
-  try {
-    const billRatePer1000Chars = 0.00025;
-    const token = await getAccessToken();
-    const vertexaiProject = '911585064385';
-    const vertexaiLocation = 'us-central1';
-    const vertexaiEndpointID = '2044698002500616192';
-    const promptText = `You are provided the name of a recipe ingredient. You are also provided an array of user ingredient names. Attempt to find the most closely related match from the user ingredients for the provided recipe ingredient. If no close match is found, return 'null'. RECIPE INGREDIENT:${recipeIngredient}, USER INGREDIENTS:[${userIngredients}]`;
+  // ** PRE MARCH 2025 CODE - USES VERTEXAI FINE TUNED **
+  // try {
+  //   const billRatePer1000Chars = 0.00025;
+  //   const token = await getAccessToken();
+  //   const vertexaiProject = '911585064385';
+  //   const vertexaiLocation = 'us-central1';
+  //   const vertexaiEndpointID = '2044698002500616192';
+  //   const promptText = `You are provided the name of a recipe ingredient. You are also provided an array of user ingredient names. Attempt to find the most closely related match from the user ingredients for the provided recipe ingredient. If no close match is found, return 'null'. RECIPE INGREDIENT:${recipeIngredient}, USER INGREDIENTS:[${userIngredients}]`;
 
-    const requestJson = {
-      instances: [
-        {
-          content: promptText,
-        },
-      ],
-      parameters: {
-        candidateCount: 1,
-        maxOutputTokens: 1024,
-        temperature: 0.2,
-        topP: 0.8,
-        topK: 40,
+  //   const requestJson = {
+  //     instances: [
+  //       {
+  //         content: promptText,
+  //       },
+  //     ],
+  //     parameters: {
+  //       candidateCount: 1,
+  //       maxOutputTokens: 1024,
+  //       temperature: 0.2,
+  //       topP: 0.8,
+  //       topK: 40,
+  //     },
+  //   };
+  //   const API_ENDPOINT = `${vertexaiLocation}-aiplatform.googleapis.com`;
+  //   const response = await fetch(`https://${API_ENDPOINT}/v1/projects/${vertexaiProject}/locations/${vertexaiLocation}/endpoints/${vertexaiEndpointID}:predict`, {
+  //     method: 'POST',
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(requestJson),
+  //   });
+  //   const data = await response.json();
+  //   global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* RI NAME: ${recipeIngredient} MATCHING VERTEXAI RESPONSE: ${data.predictions[0].content}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+  //   const matchResult = data.predictions[0].content;
+  //   let resultJSON;
+  //   const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
+  //   let cost = (characterCount / 1000) * billRatePer1000Chars;
+  //   global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+
+  //   // get est for purchaseUnit and lifespanDays from vertexai
+  //   resultJSON = await getPurchaseUnitLifespanDaysEstimate(recipeIngredient);
+  //   // add cost from finding purchaseUnit and lifespanDays
+  //   cost += resultJSON.cost;
+
+  //   const prepReturn = async () => {
+  //     if (matchResult === 'null') {
+  //       resultJSON['foundMatch'] = false;
+  //     } else {
+  //       // remove 'lifespanDays' from resultJSON
+  //       delete resultJSON.lifespanDays;
+  //       resultJSON['ingredientName'] = matchResult;
+  //       resultJSON['foundMatch'] = true;
+  //     }
+  //   };
+  //   await prepReturn();
+  //   return {
+  //     response: resultJSON,
+  //     cost: cost,
+  //   };
+  // } catch (error) {
+  //   global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* Error matching ingredient: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
+  //   return {
+  //     reponse: { error: error.message },
+  //     cost: cost || 0,
+  //   };
+  // }
+
+  // ** POST MARCH 2025 CODE - USES OPENAI FINE TUNED**
+  const billRatePer1MTokens = 3.75;
+  const client = await getClient();
+  const body = {
+    messages: [requestMessages['findMatchingIngredient'].message],
+    temperature: 1.0,
+    user: userID,
+    model: 'ft:gpt-4o-2024-08-06:doughly:ingredient-matching-03242025:BErV6mF1',
+    max_tokens: 2048,
+    top_p: 1,
+  };
+  // add the recipe ingredient to the request
+  body.messages.push({
+    role: 'user',
+    content: [
+      {
+        type: 'text',
+        text: `RECIPE INGREDIENT:${recipeIngredient}`,
       },
-    };
-    const API_ENDPOINT = `${vertexaiLocation}-aiplatform.googleapis.com`;
-    const response = await fetch(`https://${API_ENDPOINT}/v1/projects/${vertexaiProject}/locations/${vertexaiLocation}/endpoints/${vertexaiEndpointID}:predict`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+    ],
+  });
+  // add the user ingredients to the request
+  body.messages.push({
+    role: 'user',
+    content: [
+      {
+        type: 'text',
+        text: `USER INGREDIENTS:[${userIngredients}]`,
       },
-      body: JSON.stringify(requestJson),
-    });
-    const data = await response.json();
-    global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* RI NAME: ${recipeIngredient} MATCHING VERTEXAI RESPONSE: ${data.predictions[0].content}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
-    const matchResult = data.predictions[0].content;
-    let resultJSON;
-    const characterCount = data.metadata.tokenMetadata.inputTokenCount.totalBillableCharacters + data.metadata.tokenMetadata.outputTokenCount.totalBillableCharacters;
-    let cost = (characterCount / 1000) * billRatePer1000Chars;
-    global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* CHARACTER COUNT: ${characterCount}, COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: 0 });
+    ],
+  });
 
-    // get est for purchaseUnit and lifespanDays from vertexai
-    resultJSON = await getPurchaseUnitLifespanDaysEstimate(recipeIngredient);
-    // add cost from finding purchaseUnit and lifespanDays
-    cost += resultJSON.cost;
+  const chatCompletionObject = await client.chat.completions.create(body).catch((err) => {
+    throw errorGen(`*aiHandlers-matchRecipeIngredientRequest* OpenAI request failed: ${err.message}`, 515, 'cannotComplete', false, 3);
+  });
 
-    const prepReturn = async () => {
-      if (matchResult === 'null') {
-        resultJSON['foundMatch'] = false;
-      } else {
-        // remove 'lifespanDays' from resultJSON
-        delete resultJSON.lifespanDays;
-        resultJSON['ingredientName'] = matchResult;
-        resultJSON['foundMatch'] = true;
-      }
-    };
-    await prepReturn();
-    return {
-      response: resultJSON,
-      cost: cost,
-    };
-  } catch (error) {
-    global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* Error matching ingredient: ${error.message}`, level: 3, timestamp: new Date().toISOString(), userID: 0 });
-    return {
-      reponse: { error: error.message },
-      cost: cost || 0,
-    };
+  //log token usage
+  createUserLog(userID, authorization, 'openaiTokensUsed', 0, null, null, `${chatCompletionObject.usage.total_tokens}`, `Used ${chatCompletionObject.usage.total_tokens} tokens to findMatchingIngredient`);
+
+  //Check for unsuccessful completions
+  if (chatCompletionObject.choices[0].finish_reason === 'length') {
+    throw errorGen(`*aiHandlers-matchRecipeIngredientRequest* OpenAI request or response too long. Consider increasing "max_tokens" request property`, 515, 'aiContentTooLong', false, 3);
   }
+
+  if (chatCompletionObject.choices[0].finish_reason === 'content_fiter') {
+    throw errorGen(`*aiHandlers-matchRecipeIngredientRequest* Content Omitted due to filter being flagged`, 515, 'aiContentViolation', false, 3);
+  }
+
+  const matchResult = chatCompletionObject.choices[0].message.content;
+  const total_tokens = chatCompletionObject.usage.total_tokens;
+  let cost = (total_tokens / 1000000) * billRatePer1MTokens;
+  let resultJSON;
+  resultJSON = await getPurchaseUnitLifespanDaysEstimate(recipeIngredient);
+  const prepReturn = async () => {
+    if (matchResult === 'null') {
+      resultJSON['foundMatch'] = false;
+    } else {
+      // remove 'lifespanDays' from resultJSON
+      delete resultJSON.lifespanDays;
+      resultJSON['ingredientName'] = matchResult;
+      resultJSON['foundMatch'] = true;
+    }
+  };
+  if (matchResult !== 'null') {
+    global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* FOUND USER INGR MATCH FOR ${recipeIngredient}: ${matchResult}`, level: 6, timestamp: new Date().toISOString(), userID: userID | 0 });
+  } else {
+    global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* NO USER INGR MATCH FOR ${recipeIngredient}`, level: 6, timestamp: new Date().toISOString(), userID: userID | 0 });
+  }
+  // print cost
+  global.logger.info({ message: `*aiHandlers-matchRecipeIngredientRequest* COST: $${cost}`, level: 7, timestamp: new Date().toISOString(), userID: userID | 0 });
+
+  await prepReturn();
+  return {
+    response: resultJSON,
+    cost: cost,
+  };
 };
 
 const matchRecipeItemRequest = async (userID, authorization, type, recipeItem, userItems) => {
@@ -482,6 +560,18 @@ Do not include any other properties in the JSON object response. If an optional 
       ],
     },
     response_format: 'json_object',
+  },
+  findMatchingIngredient: {
+    message: {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: `You are provided the name of a recipe ingredient. You are also provided an array of user ingredient names. Attempt to find the most closely related match from the user ingredients for the provided recipe ingredient. If no close match is found, return 'null'.`,
+        },
+      ],
+    },
+    response_format: 'text',
   },
   findMatchingTool: {
     message: {
